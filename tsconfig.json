@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ES2020",
+        "jsx": "react-jsx",
+        "lib": ["ES2020", "DOM"],
+        "allowSyntheticDefaultImports": true,
+        "allowJs": false,
+        "sourceMap": true,
+        "declaration": false,
+        "alwaysStrict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noFallthroughCasesInSwitch": true,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "outDir": "./build",
+        "noImplicitUseStrict": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true
+        // "isolatedModules": true
+    },
+    "include": ["frontend", "backend", "webpack.config.jsconfig.ts"]
+}
