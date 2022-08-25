@@ -1,9 +1,9 @@
 import { Fragment, useMemo } from 'react'
+import { ITableColumn, ItemView, PageHeader } from '../../../framework'
 import { createdColumn, modifiedColumn, nameColumn } from '../../common/columns'
 import { deleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, useItems } from '../../Data'
-import { ITableColumn, ItemView, PageHeader } from '../../framework'
 import { RouteE } from '../../route'
 
 export interface IExecutionEnvironments {
@@ -20,7 +20,7 @@ const breadcrumbs = [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Exe
 export default function ExecutionEnvironmentsPage() {
     return (
         <Fragment>
-            <PageHeader title="ExecutionEnvironments" breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title="ExecutionEnvironments" breadcrumbs={breadcrumbs} />
             <ExecutionEnvironments />
         </Fragment>
     )

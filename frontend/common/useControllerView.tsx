@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import useSWR from 'swr'
+import { useSelected } from '../../framework/useTableItems'
 import { ItemsResponse, useFetcher } from '../Data'
-import { useSelected } from '../framework/useTableItems'
 import { usePagedView } from './useView'
 
 export function useControllerView<T extends object>(url: string, getItemKey: (item: T) => string | number) {

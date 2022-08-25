@@ -1,6 +1,6 @@
 import { Fragment, Suspense, useMemo } from 'react'
-import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
+import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
 import { useCreatedColumn, useEnabledColumn, useModifiedColumn, useNameColumn } from '../../common/columns'
 import { useDeleteItemAction } from '../../common/item-actions'
 import { useEnabledFilter } from '../../common/item-filters'
@@ -24,7 +24,7 @@ export default function HostsPage() {
     const breadcrumbs = [{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Hosts') }]
     return (
         <Fragment>
-            <PageHeader title={t('Hosts')} breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title={t('Hosts')} breadcrumbs={breadcrumbs} />
             <Suspense fallback={<LoadingTable toolbar />}>
                 <Hosts />
             </Suspense>

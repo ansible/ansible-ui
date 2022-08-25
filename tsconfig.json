@@ -23,5 +23,5 @@
         "esModuleInterop": true
         // "isolatedModules": true
     },
-    "include": ["frontend", "backend", "webpack.config.jsconfig.ts"]
+    "include": ["frontend", "framework", "backend"]
 }

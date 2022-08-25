@@ -3,6 +3,9 @@ import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons
 import { Type } from '@sinclair/typebox'
 import { Fragment, Suspense, useMemo } from 'react'
 import useSWR from 'swr'
+import { IItemAction, ITableColumn, ItemView, IToolbarAction, LoadingTable, PageHeader, SinceCell, TextCell } from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
+import { PageContent } from '../../../framework/PageContent'
 import {
     useCreatedColumn,
     useModifiedColumn,
@@ -14,9 +17,6 @@ import {
 } from '../../common/columns'
 import { useCreateToolbarAction, useDeleteToolbarAction, useSyncToolbarAction } from '../../common/toolbar-actions'
 import { fetchOptions, getItemKey, IItem, useItem, useItems } from '../../Data'
-import { IItemAction, ITableColumn, ItemView, IToolbarAction, LoadingTable, PageHeader, SinceCell, TextCell } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
-import { PageContent } from '../../framework/PageContent'
 import { RouteE } from '../../route'
 
 export interface Project extends IItem {

@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "name": "Controller",
+            "path": "frontend/controller"
+        },
+        {
+            "name": "Framework",
+            "path": "framework"
+        }
+    ],
+    "settings": {}
+}

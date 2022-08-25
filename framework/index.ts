@@ -1,5 +1,6 @@
 export * from './Catalog'
 export * from './CatalogCard'
+export * from './Collapse'
 export * from './components/BulkSelector'
 export * from './components/Details'
 export * from './components/Help'

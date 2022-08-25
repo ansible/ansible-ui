@@ -1,7 +1,7 @@
 import { SubmitHandler } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
+import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPage, FormTextInput } from '../../../common/FormPage'
-import { useTranslation } from '../../../framework/components/useTranslation'
 import { RouteE } from '../../../route'
 import { CreateTeamType, Team } from './Team'
 

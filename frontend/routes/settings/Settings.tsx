@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from 'react'
-import { PageHeader } from '../../framework'
+import { PageHeader } from '../../../framework'
 import { RouteE } from '../../route'
 
 export default function Settings() {

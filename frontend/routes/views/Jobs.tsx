@@ -1,12 +1,21 @@
 import { CheckCircleIcon, ExclamationCircleIcon, RunningIcon } from '@patternfly/react-icons'
 import { Fragment, Suspense, useMemo } from 'react'
+import {
+    getPatternflyColor,
+    ITableColumn,
+    ItemView,
+    LoadingTable,
+    PageHeader,
+    PatternFlyColor,
+    SinceCell,
+    TextCell,
+} from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../common/columns'
 import { compareNumbers, compareStrings } from '../../common/compare'
 import { useDeleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, IItem, useItems } from '../../Data'
-import { getPatternflyColor, ITableColumn, ItemView, LoadingTable, PageHeader, PatternFlyColor, SinceCell, TextCell } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../../route'
 // import { UserName } from '../access/users/Users'
 import { Template } from '../resources/Templates'
@@ -34,7 +43,7 @@ export default function JobsPage() {
     const breadcrumbs = useMemo(() => [{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Jobs') }], [t])
     return (
         <Fragment>
-            <PageHeader title={t('Jobs')} breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title={t('Jobs')} breadcrumbs={breadcrumbs} />
             <Suspense fallback={<LoadingTable toolbar />}>
                 <Jobs />
             </Suspense>

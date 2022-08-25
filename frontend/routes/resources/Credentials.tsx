@@ -1,10 +1,10 @@
 import { Fragment, Suspense, useMemo } from 'react'
+import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../common/columns'
 import { useCopyItemAction, useDeleteItemAction, useEditItemAction } from '../../common/item-actions'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, IItem, useItems } from '../../Data'
-import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../../route'
 
 export interface ICredentials extends IItem {
@@ -23,7 +23,7 @@ export default function CredentialsPage() {
     const breadcrumbs = useMemo(() => [{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Credentials') }], [t])
     return (
         <Fragment>
-            <PageHeader title={t('Credentials')} breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title={t('Credentials')} breadcrumbs={breadcrumbs} />
             <Suspense fallback={<LoadingTable toolbar />}>
                 <Credentials />
             </Suspense>
