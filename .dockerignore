@@ -1,0 +1,7 @@
+/build
+/certs
+/docs
+/scripts
+/node_modules
+/Dockerfile
+/.dockerignore

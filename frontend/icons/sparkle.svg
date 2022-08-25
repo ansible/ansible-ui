@@ -1,0 +1,17 @@
+<svg version="1.1" viewBox="0 0 192 192" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="myGradient" gradientTransform="rotate(90)">
+            <stop offset="20%" stop-color="#fff0" />
+            <stop offset="50%" stop-color="#fffc" />
+            <stop offset="80%" stop-color="#fff0" />
+        </linearGradient>
+    </defs>
+    <g>
+        <circle stroke="url(#myGradient)" fill="none" stroke-width="8" r="92" cx="96" cy="96" />
+        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 96 96" to="360 96 96"
+            dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;" dur="10s"
+            repeatCount="indefinite" />
+
+    </g>
+</svg>

@@ -1,0 +1,36 @@
+.collapsed {
+    max-height: 0;
+    transition: max-height 0.15s ease-out, opacity 0.15s ease-out;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.expanded {
+    max-height: 500px;
+    transition: max-height 0.25s ease-in, opacity 0.25s ease-in;
+    opacity: 1;
+}
+
+.pt-8 {
+    padding-top: 8px;
+}
+
+.pb-8 {
+    padding-bottom: 8px;
+}
+
+.pt-16 {
+    padding-top: 16px;
+}
+
+.pb-16 {
+    padding-bottom: 16px;
+}
+
+.pt-24 {
+    padding-top: 24px;
+}
+
+.pb-24 {
+    padding-bottom: 24px;
+}
