@@ -1,8 +1,8 @@
 {
     "folders": [
         {
-            "name": "Controller",
-            "path": "frontend/controller"
+            "name": "Frontend",
+            "path": "frontend"
         },
         {
             "name": "Framework",

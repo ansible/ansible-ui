@@ -23,5 +23,5 @@
         "esModuleInterop": true
         // "isolatedModules": true
     },
-    "include": ["frontend", "framework", "backend"]
+    "include": ["frontend", "framework", "backend", "rollup.config.ts"]
 }
