@@ -1,9 +1,9 @@
 import { Fragment, useMemo } from 'react'
+import { ITableColumn, ItemView, PageHeader } from '../../../framework'
 import { createdColumn, modifiedColumn, nameColumn } from '../../common/columns'
 import { deleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, useItems } from '../../Data'
-import { ITableColumn, ItemView, PageHeader } from '../../framework'
 import { RouteE } from '../../route'
 
 export interface ICredentialTypes {
@@ -20,7 +20,7 @@ const breadcrumbs = [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Cre
 export default function CredentialTypesPage() {
     return (
         <Fragment>
-            <PageHeader title="CredentialTypes" breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title="CredentialTypes" breadcrumbs={breadcrumbs} />
             <CredentialTypes />
         </Fragment>
     )

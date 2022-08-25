@@ -2,8 +2,8 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { IToolbarAction, ToolbarActionType } from '../framework'
-import { useTranslation } from '../framework/components/useTranslation'
+import { IToolbarAction, ToolbarActionType } from '../../framework'
+import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
 
 export function useCreateToolbarAction(route: RouteE) {

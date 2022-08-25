@@ -1,6 +1,6 @@
 import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons'
-import { IItemAction } from '../framework'
-import { useTranslation } from '../framework/components/useTranslation'
+import { IItemAction } from '../../framework'
+import { useTranslation } from '../../framework/components/useTranslation'
 
 export function useDeleteItemAction() {
     const { t } = useTranslation()

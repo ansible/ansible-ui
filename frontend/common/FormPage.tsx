@@ -22,8 +22,8 @@ import { CaretDownIcon } from '@patternfly/react-icons'
 import { Children, Fragment, isValidElement, ReactNode, useState } from 'react'
 import { FormProvider, SubmitHandler, useController, useForm, useFormContext, useFormState } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../framework'
-import { Scrollable } from '../framework/components/Scrollable'
+import { PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../../framework'
+import { Scrollable } from '../../framework/components/Scrollable'
 
 export type FormPageProps = PageHeaderProps & {
     children?: ReactNode

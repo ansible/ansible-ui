@@ -1,7 +1,6 @@
 import { Alert, AlertGroup } from '@patternfly/react-core'
 import { ReactNode } from 'react'
-import { PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
-import { Collapse } from '../common/Collapse'
+import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
 import { PagePagination, PagePaginationProps } from './PagePagination'
 import { LoadingTable, PageTable, PageTableProps } from './PageTable'
 import { PageToolbar2, PageToolbar2Props } from './PageToolbar'

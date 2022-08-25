@@ -1,9 +1,9 @@
 import { Fragment, useMemo } from 'react'
+import { ITableColumn, ItemView, PageHeader } from '../../../framework'
 import { createdColumn, modifiedColumn, nameColumn } from '../../common/columns'
 import { deleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, useItems } from '../../Data'
-import { ITableColumn, ItemView, PageHeader } from '../../framework'
 import { RouteE } from '../../route'
 
 export interface IInstances {
@@ -20,7 +20,7 @@ const breadcrumbs = [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Ins
 export default function InstancesPage() {
     return (
         <Fragment>
-            <PageHeader title="Instances" breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title="Instances" breadcrumbs={breadcrumbs} />
             <Instances />
         </Fragment>
     )

@@ -1,6 +1,6 @@
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 import { ReactNode } from 'react'
-import { getPatternflyColor, PatternFlyColor } from '../framework'
+import { getPatternflyColor, PatternFlyColor } from '../../framework'
 
 export function getStatus(project?: { status?: string }): { text: string; icon: ReactNode } | undefined {
     switch (project?.status) {

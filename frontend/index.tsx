@@ -1,8 +1,8 @@
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 import '@patternfly/react-core/dist/styles/base.css'
 import { render } from 'react-dom'
-import { ThemeProvider } from './framework'
-import { TranslationProvider } from './framework/components/useTranslation'
+import { ThemeProvider } from '../framework'
+import { TranslationProvider } from '../framework/components/useTranslation'
 import Demo from './Main'
 
 const container = document.createElement('div')

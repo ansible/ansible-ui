@@ -1,10 +1,10 @@
 import { Fragment, Suspense, useMemo } from 'react'
+import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../common/columns'
 import { useDeleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
 import { getItemKey, IItem, useItems } from '../../Data'
-import { ITableColumn, ItemView, LoadingTable, PageHeader } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../../route'
 
 export interface IActivityStream extends IItem {
@@ -22,7 +22,7 @@ export default function ActiviyStreamsPage() {
     const breadcrumbs = useMemo(() => [{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Activiy Stream') }], [t])
     return (
         <Fragment>
-            <PageHeader title={t('Activity Stream')} breadcrumbs={breadcrumbs} noBorderBottom />
+            <PageHeader title={t('Activity Stream')} breadcrumbs={breadcrumbs} />
             <Suspense fallback={<LoadingTable toolbar />}>
                 <ActiviyStreams />
             </Suspense>

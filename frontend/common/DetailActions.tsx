@@ -1,6 +1,6 @@
 import { Dropdown, DropdownItem, DropdownPosition, DropdownSeparator, KebabToggle } from '@patternfly/react-core'
 import { useCallback, useState } from 'react'
-import { IItemAction, isItemActionClick, isItemActionSeperator } from '../framework'
+import { IItemAction, isItemActionClick, isItemActionSeperator } from '../../framework'
 
 export function DetailActions<T>(props: { item: T; actions: IItemAction<T>[]; position?: DropdownPosition | 'right' | 'left' }) {
     const [open, setOpen] = useState(false)

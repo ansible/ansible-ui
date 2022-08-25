@@ -2,9 +2,6 @@ import { PageSection } from '@patternfly/react-core'
 import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { Fragment, Suspense, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { DetailActions } from '../../common/DetailActions'
-import { getScmType } from '../../common/scm'
-import { getStatus } from '../../common/status'
 import {
     CopyCell,
     Detail,
@@ -16,12 +13,15 @@ import {
     TextCell,
     ThemeE,
     useTheme,
-} from '../../framework'
-import { LoadingPage } from '../../framework/components/LoadingPage'
-import { Scrollable } from '../../framework/components/Scrollable'
-import { useTranslation } from '../../framework/components/useTranslation'
-import { PageContent } from '../../framework/PageContent'
-import { PageTab, PageTabs } from '../../framework/PageTabs'
+} from '../../../framework'
+import { LoadingPage } from '../../../framework/components/LoadingPage'
+import { Scrollable } from '../../../framework/components/Scrollable'
+import { useTranslation } from '../../../framework/components/useTranslation'
+import { PageContent } from '../../../framework/PageContent'
+import { PageTab, PageTabs } from '../../../framework/PageTabs'
+import { DetailActions } from '../../common/DetailActions'
+import { getScmType } from '../../common/scm'
+import { getStatus } from '../../common/status'
 import { RouteE } from '../../route'
 // import { Users } from '../access/users/Users'
 import { Notifications } from '../administration/Notifications'
