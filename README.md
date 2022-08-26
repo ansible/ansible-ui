@@ -9,7 +9,9 @@
 
 1. Prerequisites
 
-   Node 18.x and NPM 8.x are recommended. See [prerequsites](./docs/PREREQUSITES.md) for more information.
+   Node 18 and NPM 8 are recommended.
+
+   See [prerequsites](./docs/PREREQUSITES.md) for more information.
 
 2. Clone Repository
   
