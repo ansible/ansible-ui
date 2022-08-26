@@ -1,94 +1,35 @@
 # Ansible UI
 
-- [Documentation](#documentation)
-  - [Framework](#framework)
-- [Development](#development)
-  - [Prerequisites](#prerequisites)
-    - [Node 18](#node-18)
-    - [NPM 8](#npm-8)
-  - [Clone Repository](#clone-repository)
-  - [Install Package Dependencies](#install-package-dependencies)
-  - [Run Tests](#run-tests)
-  - [Start Project](#start-project)
-  - [VSCode](#vscode)
-
 ## Documentation
 
-### [Framework](./docs/FRAMEWORK.md)
+- [Framework](./docs/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
+- [Development](./docs/DEVELOPMENT.md) - Development guide.
 
-## Development
+## Getting Started
 
-### Prerequisites
+1. Prerequisites
 
-#### [Node 18](https://nodejs.org)
+   Node 18.x and NPM 8.x are recommended. See [prerequsites](./docs/PREREQUSITES.md) for more information.
 
-Check the node version.
+2. Clone Repository
+  
+    ```
+    git clone https://github.com/jamestalton/ansible
+    ```
 
-```
-node -v
-```
+3. Install Package Dependencies
 
-On OSX you can setup [homebrew](https://brew.sh/).
+    ```
+    npm ci
+    ```
 
-Then you can install a specific node version:
+4. Start Project
 
-```
-brew install node@18
-brew link node@18
-```
+    ```
+    npm start
+    ```
 
-You can upgrade the node version with:
+    This will start the frontend and the backend in parallel.
 
-```
-brew upgrade node@18
-```
+    The UI will open and load after a few seconds.
 
-#### NPM 8
-
-Each node version comes with a specific version of NPM.
-
-Check Version
-
-```
-npm -v
-```
-
-Install/Update to version 8.x
-
-```
-npm i -g npm@8
-```
-
-### Clone Repository
-
-```
-git clone https://github.com/jamestalton/ansible
-```
-
-### Install Package Dependencies
-
-```
-npm ci
-```
-
-### Run Tests
-
-```
-npm test
-```
-
-### Start Project
-
-```
-npm start
-```
-
-This will start the frontend and the backend in parallel.
-
-The UI will open and load after a few seconds.
-
-### VSCode
-
-VSCode is the recommended way to develop for the project.
-
-Opening the `ansible.code-workspace` should prompt to install recommended extensions.
