@@ -55,7 +55,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                 gridBreakPoint=""
                 isStickyHeader
             >
-                <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 0} scrollRight={scroll.right > 0} />
+                <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 1} scrollRight={scroll.right > 1} />
                 <Tbody>
                     {pageItems?.map((item, rowIndex) => (
                         <TableRow<T>
