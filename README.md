@@ -1,8 +1,8 @@
 # Ansible UI
 
-The UI for [Ansible Automation Platform](https://www.ansible.com).
+The UI for the [Ansible Automation Platform](https://www.ansible.com).
 
-A live instance of the latest dversion is running at [AnsibleDev.com](http://ansibledev.com).
+A live instance of the latest version is running at [AnsibleDev.com](http://ansibledev.com).
 
 ## Documentation
 
