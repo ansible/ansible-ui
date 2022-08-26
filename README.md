@@ -1,5 +1,9 @@
 # Ansible UI
 
+The UI for [Ansible Automation Platform](https://www.ansible.com).
+
+[Live Instance](http://ansibledev.com)
+
 ## Documentation
 
 - [Development](./docs/DEVELOPMENT.md) - Development guide.
