@@ -31,7 +31,9 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
             res.setHeader('X-DNS-Prefetch-Control', 'off')
             res.setHeader('Expect-CT', 'enforce, max-age=30')
             // res.setHeader('Content-Security-Policy', ["default-src 'self'"].join(';'))
-        } else if (url === '/plugin/plugin-entry.js' || url === '/plugin/plugin-manifest.json') {
+        } else if (url === '/manifest.webmanifest') {
+            res.setHeader('Cache-Control', 'no-cache')
+        } else if (url === '/service-worker.js') {
             res.setHeader('Cache-Control', 'no-cache')
         } else if (url.includes('/locales/')) {
             res.setHeader('Cache-Control', localesCacheControl)
@@ -42,7 +44,7 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
         const acceptEncoding = (req.headers['accept-encoding'] as string) ?? ''
         const contentType = contentTypes[ext]
         if (contentType === undefined) {
-            logger.debug('unknown content type', `ext=${ext}`)
+            logger.debug({ msg: 'unknown content type', ext, url: req.url })
             res.writeHead(404).end()
             return
         }
@@ -136,15 +138,17 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
 }
 
 const contentTypes: Record<string, string> = {
-    '.html': 'text/html; charset=utf-8',
-    '.css': 'text/css; charset=UTF-8',
-    '.js': 'application/javascript; charset=UTF-8',
-    '.map': 'application/json; charset=utf-8',
+    '.txt': 'text/plain;charset=UTF-8',
+    '.html': 'text/html;charset=UTF-8',
+    '.css': 'text/css;charset=UTF-8',
+    '.js': 'application/javascript;charset=UTF-8',
+    '.map': 'application/json;charset=UTF-8',
     '.jpg': 'image/jpeg',
-    '.json': 'application/json; charset=utf-8',
-    '.svg': 'image/svg+xml',
+    '.json': 'application/json;charset=UTF-8',
+    '.svg': 'image/svg+xml;charset=UTF-8',
     '.png': 'image/png',
     '.ttf': 'font/ttf',
     '.woff': 'font/woff',
     '.woff2': 'font/woff2',
+    '.webmanifest': 'application/manifest+json;charset=UTF-8',
 }
