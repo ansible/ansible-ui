@@ -2,12 +2,12 @@
 
 The UI for the [Ansible Automation Platform](https://www.ansible.com).
 
-A live instance of the latest version is running at [AnsibleDev.com](http://ansibledev.com).
+A live instance of the latest development version is running at [AnsibleDev.com](http://ansibledev.com).
 
 ## Documentation
 
-- [Development](./docs/DEVELOPMENT.md) - Development guide.
-- [Framework](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
+- [Development guide](./docs/DEVELOPMENT.md)
+- [Framework documentation](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
 
 ## Getting Started
 
