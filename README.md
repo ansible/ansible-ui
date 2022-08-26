@@ -1,47 +1,66 @@
-# Stolostron / React Item View [![GitHub package.json version](https://img.shields.io/github/package-json/v/stolostron/react-data-view)](https://www.npmjs.com/package/@stolostron/react-data-view)
+# Ansible UI / Page Framework
 
-A react component for viewing items as a table or catalog card view.
+## Prerequisites
 
-[DEMO](https://stolostron.github.io/react-data-view/)
+### [Node.js](https://nodejs.org)
 
-## Installation
+#### Install Node 18
+
+Check the node version
 
 ```
-npm i @stolostron/react-data-view
+node -v
 ```
 
-## Goals
+On OSX you can setup [homebrew](https://brew.sh/).
 
-### PatternFly
+Then you can install a specific node version:
 
-- Use PatternFly guidelines
-- Support small screens using PatternFly responsive designs
-  - Toolbar collapsing
-  - Filters collapsing
-- Use shadows as a visual indication that one surface has slid behind another surface
-  - Work with PatternFly to adopt shadows
+```
+brew install node@18
+brew link node@18
+```
 
-### Table
+You can upgrade the node version with
 
-- Support table only view (no catalog)
-- Support horizontal scrolling with sticky headers and columns
-- Support column management
-  - Support custom columns based on data labels
-  - Persist column configuration to local storage
-  - Save multiple column configurations and switch between
-- Virtualized table rendering (performance)
+```
+brew upgrade node@18
+```
 
-### Catalog
+### Install NPM 8
 
-- Support catalog only view (no table)
-- Virtualized catalog rendering (performance)
-- Card click supporting details drawer or navigation
+Each node version comes with a specific version of NPM.
 
-### Search & Filter
+- Check Version
 
-- Filtering, Searching, Sorting of 100,000 items (performance)
-- Fuzzy search (Fuse.js)
-  - Search on fields with weights
-- Persist search and filters to url query string
-  - Allows saving a URL with preselected search & filters
-  - Allow reload of page without losing filter & search
+  ```
+  npm -v
+  ```
+
+- Install/Update to version 8.x
+
+  ```
+  npm i -g npm@8
+  ```
+
+## Development
+
+1. Clone repository
+
+   ```
+   git clone https://github.com/jamestalton/ansible
+   ```
+
+2. Install dependencies
+
+   ```
+   npm ci
+   ```
+
+3. Start the development services
+
+   ```
+   npm start
+   ```
+
+   This will start the frontend and the backend in parallel.
