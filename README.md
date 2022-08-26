@@ -1,12 +1,20 @@
-# Ansible UI / Page Framework
+# Ansible UI
+
+- [Prerequisites](#prerequisites)
+  - [Node 18](#node-18)
+  - [NPM 8](#npm-8)
+- [Development](#development)
+  - [Clone](#clone)
+  - [Install](#install)
+  - [Test](#test)
+  - [Run](#run)
+- [VSCode](#vscode)
 
 ## Prerequisites
 
-### [Node.js](https://nodejs.org)
+### [Node 18](https://nodejs.org)
 
-#### Install Node 18
-
-Check the node version
+Check the node version.
 
 ```
 node -v
@@ -21,13 +29,13 @@ brew install node@18
 brew link node@18
 ```
 
-You can upgrade the node version with
+You can upgrade the node version with:
 
 ```
 brew upgrade node@18
 ```
 
-### Install NPM 8
+### NPM 8
 
 Each node version comes with a specific version of NPM.
 
@@ -45,22 +53,36 @@ Each node version comes with a specific version of NPM.
 
 ## Development
 
-1. Clone repository
+### Clone
 
-   ```
-   git clone https://github.com/jamestalton/ansible
-   ```
+```
+git clone https://github.com/jamestalton/ansible
+```
 
-2. Install dependencies
+### Install
 
-   ```
-   npm ci
-   ```
+```
+npm ci
+```
 
-3. Start the development services
+### Test
 
-   ```
-   npm start
-   ```
+```
+npm test
+```
 
-   This will start the frontend and the backend in parallel.
+### Run
+
+```
+npm start
+```
+
+This will start the frontend and the backend in parallel.
+
+The UI will open and load after a few seconds.
+
+## VSCode
+
+VSCode is the recommended way to develop for the project.
+
+Opening the `ansible.code-workspace` should prompt to install recommended extensions.
