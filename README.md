@@ -2,8 +2,8 @@
 
 ## Documentation
 
-- [Framework](./docs/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
 - [Development](./docs/DEVELOPMENT.md) - Development guide.
+- [Framework](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
 
 ## Getting Started
 
@@ -32,4 +32,3 @@
     This will start the frontend and the backend in parallel.
 
     The UI will open and load after a few seconds.
-
