@@ -2,7 +2,7 @@
 
 The UI for [Ansible Automation Platform](https://www.ansible.com).
 
-[Live Instance](http://ansibledev.com)
+A live instance of the latest dversion is running at [AnsibleDev.com](http://ansibledev.com).
 
 ## Documentation
 
