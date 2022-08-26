@@ -46,10 +46,11 @@ module.exports = function (_env, argv) {
                 chunkFilename: '[id].[contenthash:8].css',
                 ignoreOrder: false,
             }),
-            new GenerateSW({
-                clientsClaim: true,
-                skipWaiting: true,
-            }),
+            isProduction &&
+                new GenerateSW({
+                    clientsClaim: true,
+                    skipWaiting: true,
+                }),
             new CopyPlugin({
                 patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }],
             }),
