@@ -60,7 +60,7 @@ export default function Login() {
                         JSON.stringify([...new Set([{ server: data.server, username: data.username }, ...servers])])
                     )
 
-                    history.push(RouteE.Dashboard)
+                    history.push(RouteE.Teams)
                 } catch (err) {
                     if (err instanceof Error) {
                         setError(err.message)
