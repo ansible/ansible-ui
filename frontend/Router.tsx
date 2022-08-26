@@ -63,7 +63,7 @@ export function DemoRouter(): JSX.Element {
             <Route exact path={RouteE.Settings} component={Settings} />
 
             <Route path="*">
-                <Redirect to={RouteE.Dashboard} />
+                <Redirect to={RouteE.Login} />
             </Route>
         </Switch>
     )
