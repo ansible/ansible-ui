@@ -1,7 +1,7 @@
 
 # Page Framework
 
-A web application framwork using PatternFly.
+A framework for creating performant, consistent, and responsive web applications using [PatternFly](https://www.patternfly.org).
 
 - [PageLayout](#pagelayout)
   - [PageHeader](#pageheader)
