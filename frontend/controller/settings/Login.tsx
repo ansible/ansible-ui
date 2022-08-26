@@ -1,12 +1,11 @@
 import { ActionGroup, Alert, AlertGroup, Button, Page, PageSection, SelectOption, Title } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import ky from 'ky'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Collapse, useWindowSizeOrLarger, WindowSize } from '../../../framework'
 import { FormPage, FormSelect, FormTextInput } from '../../common/FormPage'
 import { headers } from '../../Data'
-import BG from '../../icons/background.svg'
 import { RouteE } from '../../route'
 
 export const InputType = Type.Object({
@@ -81,64 +80,61 @@ export default function Login() {
     const padding = md ? 48 : sm ? 32 : 16
 
     return (
-        <Fragment>
-            <BG style={{ position: 'absolute', width: '100%', height: '100%' }} />
-            <Page style={{ backgroundColor: sm ? '#222' : 'white', backgroundImage: `url(${BG})` }}>
-                <PageSection
-                    variant="light"
-                    padding={{ default: 'noPadding' }}
-                    style={{
-                        width: 500,
-                        maxWidth: '100%',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        marginTop: sm ? 'auto' : undefined,
-                        marginBottom: sm ? 'auto' : undefined,
-                        padding,
-                    }}
-                    isFilled={!sm}
+        <Page style={{ backgroundColor: sm ? '#222' : 'white' }}>
+            <PageSection
+                variant="light"
+                padding={{ default: 'noPadding' }}
+                style={{
+                    width: 500,
+                    maxWidth: '100%',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: sm ? 'auto' : undefined,
+                    marginBottom: sm ? 'auto' : undefined,
+                    padding,
+                }}
+                isFilled={!sm}
+            >
+                <Title headingLevel="h2">Welcome to the</Title>
+                <Title className="pt-8 pb-24" headingLevel="h1">
+                    Ansible Automation Platform
+                </Title>
+                <Collapse open={!!error}>
+                    <AlertGroup className="pb-16">
+                        <Alert variant="danger" title={error ?? ''} isInline />
+                    </AlertGroup>
+                </Collapse>
+                <FormPage
+                    defaultValues={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
+                    onSubmit={onSubmit}
+                    schema={InputType}
+                    isVertical
+                    hideHeader
+                    noPadding
                 >
-                    <Title headingLevel="h2">Welcome to the</Title>
-                    <Title className="pt-8 pb-24" headingLevel="h1">
-                        Ansible Automation Platform
-                    </Title>
-                    <Collapse open={!!error}>
-                        <AlertGroup className="pb-16">
-                            <Alert variant="danger" title={error ?? ''} isInline />
-                        </AlertGroup>
-                    </Collapse>
-                    <FormPage
-                        defaultValues={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
-                        onSubmit={onSubmit}
-                        schema={InputType}
-                        isVertical
-                        hideHeader
-                        noPadding
-                    >
-                        {/* <FormSelectInput name="server" label="Server" required>
+                    {/* <FormSelectInput name="server" label="Server" required>
                         {servers.map((server, index) => (
                             <SelectOption key={index} value={server.server}>
                                 {server.server}
                             </SelectOption>
                         ))}
                     </FormSelectInput> */}
-                        <FormSelect name="server" label="Server" required isCreatable>
-                            {servers.map((server, index) => (
-                                <SelectOption key={index} value={server.server}>
-                                    {server.server}
-                                </SelectOption>
-                            ))}
-                        </FormSelect>
-                        <FormTextInput name="username" label="Username" required />
-                        <FormTextInput name="password" label="Password" required secret autoFocus={servers && servers.length > 0} />
-                        <ActionGroup>
-                            <Button type="submit" style={{ flexGrow: 1 }}>
-                                Log In
-                            </Button>
-                        </ActionGroup>
-                    </FormPage>
-                </PageSection>
-            </Page>
-        </Fragment>
+                    <FormSelect name="server" label="Server" required isCreatable>
+                        {servers.map((server, index) => (
+                            <SelectOption key={index} value={server.server}>
+                                {server.server}
+                            </SelectOption>
+                        ))}
+                    </FormSelect>
+                    <FormTextInput name="username" label="Username" required />
+                    <FormTextInput name="password" label="Password" required secret autoFocus={servers && servers.length > 0} />
+                    <ActionGroup>
+                        <Button type="submit" style={{ flexGrow: 1 }}>
+                            Log In
+                        </Button>
+                    </ActionGroup>
+                </FormPage>
+            </PageSection>
+        </Page>
     )
 }

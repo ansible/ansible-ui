@@ -35,24 +35,27 @@ import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
+import { AccessCode } from './common/AccessCode'
+import Login from './controller/settings/Login'
+import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
 import { useFetcher } from './Data'
 import AnsiblePng from './icons/ansible.png'
 import SparkleSvg from './icons/sparkle.svg'
 import { RouteE } from './route'
 import { DemoRouter } from './Router'
-import Login from './routes/settings/Login'
-import { useWorkflowApprovals } from './routes/views/WorkflowApprovals'
 
 export default function Demo() {
     return (
-        <BrowserRouter>
-            <Switch>
-                <Route exact path={RouteE.Login} component={Login} />
-                <Route path="*">
-                    <Main />
-                </Route>
-            </Switch>
-        </BrowserRouter>
+        <AccessCode>
+            <BrowserRouter>
+                <Switch>
+                    <Route exact path={RouteE.Login} component={Login} />
+                    <Route path="*">
+                        <Main />
+                    </Route>
+                </Switch>
+            </BrowserRouter>
+        </AccessCode>
     )
 }
 
