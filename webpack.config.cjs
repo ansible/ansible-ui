@@ -40,7 +40,7 @@ module.exports = function (_env, argv) {
                 'process.env.NODE_ENV': isProduction ? JSON.stringify('production') : JSON.stringify('development'),
             }),
             isDevelopment && new ReactRefreshWebpackPlugin(),
-            new HtmlWebpackPlugin({ title: 'Ansible', favicon: 'frontend/icons/favicon.png', template: 'frontend/index.html' }),
+            new HtmlWebpackPlugin({ title: 'AnsibleDev', favicon: 'frontend/icons/favicon.png', template: 'frontend/index.html' }),
             new MiniCssExtractPlugin({
                 filename: '[contenthash].css',
                 chunkFilename: '[id].[contenthash:8].css',

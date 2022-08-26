@@ -1,6 +1,6 @@
 {
-    "name": "Ansible",
-    "short_name": "Ansible",
+    "name": "AnsibleDev",
+    "short_name": "AnsibleDev",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
