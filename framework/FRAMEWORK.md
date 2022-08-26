@@ -1,13 +1,11 @@
 
-# Page Framework
+# Framework
 
 A framework for creating performant, consistent, and responsive web applications using [PatternFly](https://www.patternfly.org).
 
 The framework is made up of high level components using PatternFly components underneath.
-
 This allows the framework to adjust the web application for responsive layout.
-
-Basic structure of the framework can be seen in the table of contents below.
+Basic structure of the framework can be seen in the tree below.
 
 - [PageLayout](#pagelayout)
   - [PageHeader](#pageheader)
