@@ -30,9 +30,6 @@ export function Teams() {
         [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
 
-    // TODO const viewDefaults = useQueryStringView({ sort: 'name' })
-    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, { sort: 'name' })
-
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
     const deleteToolbarAction = useDeleteToolbarAction()
@@ -55,6 +52,8 @@ export function Teams() {
     const editItemAction = useEditItemAction()
     const deleteItemAction = useDeleteItemAction()
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+
+    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, tableColumns)
 
     return (
         <TablePage

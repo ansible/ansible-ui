@@ -1,29 +1,32 @@
 import { useRef } from 'react'
 import useSWR from 'swr'
+import { ITableColumn } from '../../framework'
 import { IToolbarFilter } from '../../framework/PageToolbar'
 import { useSelected } from '../../framework/useTableItems'
-import { IPagedView, usePagedView } from '../common/useView'
+import { usePagedView } from '../common/useView'
 import { ItemsResponse, useFetcher } from '../Data'
 
 export function useControllerView<T extends object>(
     url: string,
     getItemKey: (item: T) => string | number,
     toolbarFilters?: IToolbarFilter[],
-    defaultView?: IPagedView
+    tableColumns?: ITableColumn<T>[]
 ) {
-    const view = usePagedView(defaultView)
+    const view = usePagedView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined })
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view
-    url += `?page=${page}`
-    url += `&page_size=${perPage}`
+    let queryString = '?'
     if (sort) {
         if (sortDirection === 'desc') {
-            url += `&order_by=-${sort}`
+            queryString += `order_by=-${sort}`
         } else {
-            url += `&order_by=${sort}`
+            queryString += `order_by=${sort}`
         }
+        queryString += '&'
     }
+    queryString += `page=${page}`
+    queryString += `&page_size=${perPage}`
     if (filters) {
         for (const key in filters) {
             const filter = toolbarFilters?.find((filter) => filter.key === key)
@@ -33,6 +36,7 @@ export function useControllerView<T extends object>(
             }
         }
     }
+    url += queryString
     const fetcher = useFetcher()
     const response = useSWR<ItemsResponse<T>>(url, fetcher)
     const { data } = response
