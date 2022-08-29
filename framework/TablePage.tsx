@@ -2,7 +2,7 @@ import { Alert, AlertGroup } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
 import { PagePagination, PagePaginationProps } from './PagePagination'
-import { LoadingTable, PageTable, PageTableProps } from './PageTable'
+import { PageTable, PageTableProps } from './PageTable'
 import { PageToolbar2, PageToolbar2Props } from './PageToolbar'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
@@ -11,14 +11,6 @@ export type TablePageProps<T extends object> = PageHeaderProps &
     PagePaginationProps & { error?: Error }
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
-    if (props.itemCount === undefined) {
-        return (
-            <>
-                <PageHeader {...props} />
-                <LoadingTable padding toolbar {...props} />
-            </>
-        )
-    }
     return (
         <PageLayout>
             <PageHeader {...props} />

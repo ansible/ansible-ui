@@ -21,10 +21,12 @@ export type PageTableProps<T extends object> = {
     setSort: (sort: string) => void
     sortDirection: 'asc' | 'desc'
     setSortDirection: (sortDirection: 'asc' | 'desc') => void
+    itemCount?: number
+    perPage: number
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-    const { tableColumns, pageItems, selectItem, unselectItem, isSelected, keyFn, rowActions, toolbarActions } = props
+    const { tableColumns, pageItems, selectItem, unselectItem, isSelected, keyFn, rowActions, toolbarActions, itemCount, perPage } = props
     const showSelect = toolbarActions?.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
@@ -48,24 +50,62 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     return (
         <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
-            <TableComposable aria-label="Simple table" variant="compact" gridBreakPoint="" isStickyHeader>
-                <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 1} scrollRight={scroll.right > 1} />
+            <TableComposable
+                aria-label="Simple table"
+                // variant="compact"
+                gridBreakPoint=""
+                isStickyHeader
+            >
+                {itemCount === undefined ? (
+                    <Thead>
+                        <Tr>
+                            <Th>
+                                <Skeleton />
+                            </Th>
+                        </Tr>
+                    </Thead>
+                ) : (
+                    <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 1} scrollRight={scroll.right > 1} />
+                )}
                 <Tbody>
-                    {pageItems?.map((item, rowIndex) => (
-                        <TableRow<T>
-                            key={keyFn ? keyFn(item) : rowIndex}
-                            columns={tableColumns}
-                            item={item}
-                            isItemSelected={isSelected?.(item)}
-                            selectItem={selectItem}
-                            unselectItem={unselectItem}
-                            rowActions={rowActions}
-                            rowIndex={rowIndex}
-                            showSelect={showSelect}
-                            scrollLeft={scroll.left > 0}
-                            scrollRight={scroll.right > 0}
-                        />
-                    ))}
+                    {itemCount === undefined
+                        ? new Array(perPage).fill(0).map((_, index) => (
+                              <Tr key={index}>
+                                  <Td>
+                                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                                          <Skeleton height="27px" />
+                                      </div>
+                                  </Td>
+                              </Tr>
+                          ))
+                        : pageItems === undefined
+                        ? new Array(perPage).fill(0).map((_, index) => (
+                              <Tr key={index}>
+                                  {showSelect && <Td></Td>}
+                                  {tableColumns.map((column, index) => (
+                                      <Td key={column.id ?? index}>
+                                          <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                                              <Skeleton height="27px" />
+                                          </div>
+                                      </Td>
+                                  ))}
+                              </Tr>
+                          ))
+                        : pageItems?.map((item, rowIndex) => (
+                              <TableRow<T>
+                                  key={keyFn ? keyFn(item) : rowIndex}
+                                  columns={tableColumns}
+                                  item={item}
+                                  isItemSelected={isSelected?.(item)}
+                                  selectItem={selectItem}
+                                  unselectItem={unselectItem}
+                                  rowActions={rowActions}
+                                  rowIndex={rowIndex}
+                                  showSelect={showSelect}
+                                  scrollLeft={scroll.left > 0}
+                                  scrollRight={scroll.right > 0}
+                              />
+                          ))}
                 </Tbody>
             </TableComposable>
         </div>
@@ -83,7 +123,7 @@ function TableHead<T extends object>(props: {
     scrollLeft?: boolean
     scrollRight?: boolean
 }) {
-    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect } = props
+    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect, itemCount } = props
 
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
