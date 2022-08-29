@@ -79,16 +79,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                               </Tr>
                           ))
                         : pageItems === undefined
-                        ? new Array(perPage).fill(0).map((_, index) => (
+                        ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
                               <Tr key={index}>
                                   {showSelect && <Td></Td>}
-                                  {tableColumns.map((column, index) => (
-                                      <Td key={column.id ?? index}>
-                                          <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                                              <Skeleton height="27px" />
-                                          </div>
-                                      </Td>
-                                  ))}
+                                  <Td colSpan={tableColumns.length}>
+                                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                                          <Skeleton height="27px" />
+                                      </div>
+                                  </Td>
                               </Tr>
                           ))
                         : pageItems?.map((item, rowIndex) => (

@@ -9,7 +9,7 @@ export interface IPagedView {
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
 }
 
-export function usePagedView(view?: IPagedView) {
+export function usePagedView(view?: Partial<IPagedView>) {
     const [page, setPage] = useState(() => view?.page ?? 1)
     const [perPage, setPerPage] = useState(() => view?.perPage ?? 10)
     const [sort, setSort] = useState(() => view?.sort ?? '')

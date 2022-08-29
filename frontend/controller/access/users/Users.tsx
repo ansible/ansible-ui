@@ -4,7 +4,6 @@ import { useTranslation } from '../../../../framework/components/useTranslation'
 import { IToolbarFilter } from '../../../../framework/PageToolbar'
 import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
-import { compareStrings } from '../../../common/compare'
 import {
     useEmailToolbarFilter,
     useFirstNameToolbarFilter,
@@ -47,17 +46,17 @@ export default function Users() {
             {
                 header: t('Username'),
                 cell: (user) => <TextCell text={user.username} to={RouteE.UserDetails.replace(':id', user.id.toString())} />,
-                sortFn: (l, r) => compareStrings(l.username, r.username),
+                sort: 'username',
             },
             {
                 header: t('First Name'),
                 cell: (user) => <TextCell text={user.first_name} />,
-                sortFn: (l, r) => compareStrings(l.first_name, r.first_name),
+                sort: 'first_name',
             },
             {
                 header: t('Last Name'),
                 cell: (user) => <TextCell text={user.last_name} />,
-                sortFn: (l, r) => compareStrings(l.last_name, r.last_name),
+                sort: 'last_name',
             },
             createdColumn,
             modifiedColumn,
@@ -70,7 +69,7 @@ export default function Users() {
     const deleteItemAction = useDeleteItemAction()
     const rowActions = useMemo<IItemAction<User>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
-    const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters)
+    const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)
 
     return (
         <TablePage
