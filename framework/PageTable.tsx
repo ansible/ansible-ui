@@ -3,6 +3,7 @@ import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Fragment, MouseEvent, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
 import { ITableColumn } from './TableColumn'
@@ -201,7 +202,7 @@ function TableRow<T extends object>(props: {
     scrollRight?: boolean
 }) {
     const { columns, selectItem, unselectItem, isItemSelected, item, rowActions, rowIndex, showSelect } = props
-
+    const md = useWindowSizeOrLarger(WindowSize.xl)
     return (
         <Tr
             className={isItemSelected ? 'selected' : undefined}
@@ -220,7 +221,7 @@ function TableRow<T extends object>(props: {
                         },
                         isSelected: isItemSelected,
                     }}
-                    style={{ width: '0%' }}
+                    style={{ width: '0%', paddingLeft: md ? undefined : 20 }}
                     isStickyColumn
                     stickyMinWidth="0px"
                     hasRightBorder={props.scrollLeft}
@@ -246,6 +247,8 @@ function TableCells<T extends object>(props: {
     scrollLeft?: boolean
     scrollRight?: boolean
 }) {
+    const md = useWindowSizeOrLarger(WindowSize.xl)
+
     const { columns, item, rowActions, rowIndex } = props
     const actions: IAction[] | undefined = useMemo(
         () =>
@@ -289,7 +292,7 @@ function TableCells<T extends object>(props: {
                         // isActionCell
                         style={{
                             zIndex: 100 - rowIndex,
-                            paddingRight: 0,
+                            paddingRight: md ? 0 : 8,
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
@@ -309,7 +312,7 @@ function TableCells<T extends object>(props: {
                 )}
             </Fragment>
         ),
-        [actions, columns, item, props.scrollRight, rowIndex]
+        [actions, columns, item, md, props.scrollRight, rowIndex]
     )
 }
 
