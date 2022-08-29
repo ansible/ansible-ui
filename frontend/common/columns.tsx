@@ -11,7 +11,7 @@ export function useNameColumn(url?: string) {
     const column: ITableColumn<{ name: string; id: number }> = {
         header: t('Name'),
         cell: (item) => <TextCell text={item.name} iconSize="sm" to={url?.replace(':id', item.id.toString())} />,
-        sortFn: (l, r) => compareStrings(l.name, r.name),
+        sort: 'name',
     }
     return column
 }
@@ -21,7 +21,7 @@ export const nameColumn: ITableColumn<{ name: string; url?: string }> = {
     cell: (item) => {
         return <TextCell text={item.name} iconSize="sm" to={item.url?.replace('/api/v2', '')} />
     },
-    sortFn: (l, r) => l.name.localeCompare(r.name),
+    sort: 'name',
 }
 
 export function useStatusColumn() {
@@ -109,7 +109,7 @@ export function useCreatedColumn() {
             if (!item.created) return <></>
             return <SinceCell value={item.created} />
         },
-        sortFn: (l, r) => compareStrings(l.created, r.created),
+        sort: 'created',
     }
     return column
 }
@@ -131,7 +131,7 @@ export function useModifiedColumn() {
             if (!item.modified) return <></>
             return <SinceCell value={item.modified} />
         },
-        sortFn: (l, r) => compareStrings(l.modified, r.modified),
+        sort: 'modified',
     }
     return column
 }
@@ -213,7 +213,7 @@ export function useOrganizationNameColumn() {
                 to={RouteE.OrganizationDetails.replace(':id', item.summary_fields.organization.id.toString())}
             />
         ),
-        // sortFn: (l, r) => compareStrings(l.modified, r.modified),
+        sort: 'organization',
     }
     return column
 }

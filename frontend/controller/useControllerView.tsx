@@ -1,8 +1,8 @@
 import { useRef } from 'react'
 import useSWR from 'swr'
 import { useSelected } from '../../framework/useTableItems'
+import { usePagedView } from '../common/useView'
 import { ItemsResponse, useFetcher } from '../Data'
-import { usePagedView } from './useView'
 
 export function useControllerView<T extends object>(url: string, getItemKey: (item: T) => string | number) {
     const view = usePagedView()

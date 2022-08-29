@@ -7,7 +7,6 @@ import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
 import { ITableColumn } from './TableColumn'
 import { IToolbarAction, ToolbarActionType } from './Toolbar'
-// import './virtual-table.css'
 
 export type PageTableProps<T extends object> = {
     pageItems?: T[]
@@ -49,12 +48,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     return (
         <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
-            <TableComposable
-                aria-label="Simple table"
-                // variant="compact"
-                gridBreakPoint=""
-                isStickyHeader
-            >
+            <TableComposable aria-label="Simple table" variant="compact" gridBreakPoint="" isStickyHeader>
                 <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 1} scrollRight={scroll.right > 1} />
                 <Tbody>
                     {pageItems?.map((item, rowIndex) => (
@@ -92,18 +86,18 @@ function TableHead<T extends object>(props: {
     const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect } = props
 
     const sortBy = useMemo<ISortBy>(() => {
-        let index: number | undefined = columns.findIndex((column) => column.header === sort)
+        let index: number | undefined = columns.findIndex((column) => column.sort === sort)
         if (index === -1) index = undefined
         return { index, direction: sortDirection }
     }, [columns, sort, sortDirection])
 
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
-            if (!column.sortFn) return undefined
+            if (!column.sort) return undefined
             return {
                 onSort: (_event: MouseEvent, _columnIndex: number, sortByDirection: SortByDirection) => {
-                    if (column.sortFn) {
-                        setSort(column.header)
+                    if (column.sort) {
+                        setSort(column.sort)
                         setSortDirection(sortByDirection)
                     }
                 },
@@ -135,7 +129,11 @@ function TableHead<T extends object>(props: {
     return (
         <Thead>
             <Tr>
-                {showSelect && <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />}
+                {showSelect && (
+                    <Th isStickyColumn style={{ width: '0%' }} stickyMinWidth="45px" hasRightBorder={props.scrollLeft}>
+                        &nbsp;
+                    </Th>
+                )}
                 {columns
                     .filter((column) => column.enabled !== false)
                     .map((column, index) => {
@@ -161,9 +159,11 @@ function TableHead<T extends object>(props: {
                             // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
                         }}
                         isStickyColumn
-                        stickyMinWidth="0px"
+                        stickyMinWidth="45px"
                         className={props.scrollRight ? 'pf-m-border-left' : undefined}
-                    ></Th>
+                    >
+                        &nbsp;
+                    </Th>
                 )}
             </Tr>
         </Thead>
