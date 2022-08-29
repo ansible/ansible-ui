@@ -64,7 +64,7 @@ export function FormPage<T>(props: FormPageProps) {
                     style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
                 >
                     <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-                        <PageSection padding={{ default: props.noPadding ? 'noPadding' : 'padding' }}>
+                        <PageSection padding={{ default: props.noPadding ? 'noPadding' : 'padding' }} isWidthLimited>
                             <FormSection>{inputs}</FormSection>
                         </PageSection>
                     </Scrollable>

@@ -171,7 +171,7 @@ function TableHead<T extends object>(props: {
                     <Th
                         style={{
                             // zIndex: 100 - rowIndex,
-                            paddingRight: 0,
+                            paddingRight: 8,
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
@@ -292,7 +292,7 @@ function TableCells<T extends object>(props: {
                         // isActionCell
                         style={{
                             zIndex: 100 - rowIndex,
-                            paddingRight: md ? 0 : 8,
+                            paddingRight: 8,
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
