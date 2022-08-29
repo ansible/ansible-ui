@@ -24,8 +24,14 @@ export function useControllerView<T extends object>(
             const filter = toolbarFilters?.find((filter) => filter.key === key)
             if (filter) {
                 const values = filters[key]
-                queryString ? (queryString += '&') : (queryString += '?')
-                queryString += `${filter.query}=${values.join(',')}`
+                if (values.length > 0) {
+                    queryString ? (queryString += '&') : (queryString += '?')
+                    if (values.length > 1) {
+                        queryString += values.map((value) => `or__${filter.query}=${value}`).join('&')
+                    } else {
+                        queryString += `${filter.query}=${values.join(',')}`
+                    }
+                }
             }
         }
     }
