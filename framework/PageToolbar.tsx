@@ -29,7 +29,7 @@ import {
     ToolbarToggleGroup,
 } from '@patternfly/react-core'
 import { FilterIcon, TimesIcon } from '@patternfly/react-icons'
-import { ComponentClass, Fragment, useCallback, useMemo, useState } from 'react'
+import { ComponentClass, Dispatch, Fragment, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
 import { DropdownControlled } from './components/DropdownControlled'
 import { SingleSelect2 } from './components/SingleSelect'
@@ -92,34 +92,15 @@ export type PageToolbar2Props<T extends object> = {
     selectedItems?: T[]
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
+    filters: Record<string, string[]>
+    setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
 }
 
 export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
-    const { itemCount, page, perPage, setPage, setPerPage, toolbarFilters, toolbarActions, selectedItems } = props
-
+    const { itemCount, page, perPage, setPage, setPerPage, toolbarFilters, toolbarActions, selectedItems, filters, setFilters } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
-
-    const [filterState, setFilterState] = useState<IFilterState>(() => {
-        const filterState: IFilterState = {}
-        // searchParams.forEach((value, key) => {
-        //     switch (key) {
-        //         case 'view':
-        //         case 'route':
-        //         case 'search':
-        //             break
-        //         default:
-        //             filterState[key] = value.split(',')
-        //     }
-        // })
-        return filterState
-    })
-    // const setFilterValues = useCallback((filter: IItemFilter<T>, values: string[]) => {
-    //     setFilterState((filtersState) => ({ ...filtersState, ...{ [filter.label]: values } }))
-    // }, [])
-    const clearAllFilters = useCallback(() => {
-        setFilterState({})
-    }, [])
+    const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
 
     const toolbarActionButtons = useMemo(
         () => (
@@ -219,7 +200,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     // const isXlOrLarger = useWindowSizeOrLarger(WindowSize.xl)
 
     const [selectedFilter, setSeletedFilter] = useState(() =>
-        toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].label : '') : ''
+        toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
     )
 
     if (!showToolbar) {
@@ -242,7 +223,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                             <ToolbarItem>
                                 <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
                                     {toolbarFilters.map((filter) => (
-                                        <SelectOption key={filter.label} value={filter.label}>
+                                        <SelectOption key={filter.key} value={filter.key}>
                                             <Flex
                                                 spaceItems={{ default: 'spaceItemsNone' }}
                                                 alignItems={{ default: 'alignItemsCenter' }}
@@ -260,30 +241,43 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                             <ToolbarItem>
                                 <TextFilter
                                     addFilter={(value: string) => {
-                                        let values = filterState[selectedFilter]
+                                        let values = filters[selectedFilter]
                                         if (!values) values = []
                                         if (!values.includes(value)) values.push(value)
-                                        setFilterState({ ...filterState, [selectedFilter]: values })
+                                        setFilters({ ...filters, [selectedFilter]: values })
                                     }}
                                 />
                             </ToolbarItem>
-                            {Object.keys(filterState).length > 0 &&
-                                Object.keys(filterState).map((filterKey) => {
-                                    const values = filterState[filterKey]
+                            {Object.keys(filters).length > 0 &&
+                                Object.keys(filters).map((filterKey) => {
+                                    const values = filters[filterKey]
                                     return (
                                         <ToolbarFilter
                                             key={filterKey}
                                             categoryName={toolbarFilters.find((filter) => filter.key === filterKey)?.label ?? filterKey}
                                             chips={values}
                                             deleteChip={(_group, value) => {
-                                                // value = typeof value === 'string' ? value : value.key
-                                                // setFilterValues(
-                                                //     filter,
-                                                //     values.filter((v) => v != value)
-                                                // )
+                                                setFilters((filters) => {
+                                                    const newState = { ...filters }
+                                                    value = typeof value === 'string' ? value : value.key
+                                                    let values = filters[filterKey]
+                                                    if (values) {
+                                                        values = values.filter((v) => v !== value)
+                                                        if (values.length === 0) {
+                                                            delete newState[filterKey]
+                                                        } else {
+                                                            newState[filterKey] = values
+                                                        }
+                                                    }
+                                                    return newState
+                                                })
                                             }}
                                             deleteChipGroup={() => {
-                                                // setFilterState({ ...filterState, filterKey: [] })
+                                                setFilters((filters) => {
+                                                    const newState = { ...filters }
+                                                    delete newState[filterKey]
+                                                    return newState
+                                                })
                                             }}
                                             showToolbarItem={false}
                                         >
@@ -293,7 +287,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                 })}
 
                             {/* {toolbarFilters.map((filter) => {
-                                const values = filterState[filter.label] ?? []
+                                const values = filters[filter.label] ?? []
                                 return (
                                     <ToolbarFilter
                                         key={filter.label}

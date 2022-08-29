@@ -19,8 +19,6 @@ import { Team } from './Team'
 
 export function Teams() {
     const { t } = useTranslation()
-    // TODO const viewDefaults = useQueryStringView({ sort: 'name' })
-    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, { sort: 'name' })
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
@@ -31,6 +29,9 @@ export function Teams() {
         () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
         [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
+
+    // TODO const viewDefaults = useQueryStringView({ sort: 'name' })
+    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, { sort: 'name' })
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
