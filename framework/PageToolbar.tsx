@@ -18,18 +18,21 @@ import {
     SelectOption,
     SelectOptionObject,
     SelectVariant,
+    TextInputGroup,
+    TextInputGroupMain,
+    TextInputGroupUtilities,
     Toolbar,
     ToolbarContent,
+    ToolbarFilter,
     ToolbarGroup,
     ToolbarItem,
     ToolbarToggleGroup,
 } from '@patternfly/react-core'
-import { FilterIcon, SearchIcon } from '@patternfly/react-icons'
+import { FilterIcon, TimesIcon } from '@patternfly/react-icons'
 import { ComponentClass, Fragment, useCallback, useMemo, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
 import { DropdownControlled } from './components/DropdownControlled'
 import { SingleSelect2 } from './components/SingleSelect'
-import { IItemFilter } from './ItemFilter'
 
 export enum ToolbarActionType {
     seperator = 'seperator',
@@ -111,9 +114,9 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
         // })
         return filterState
     })
-    const setFilterValues = useCallback((filter: IItemFilter<T>, values: string[]) => {
-        setFilterState((filtersState) => ({ ...filtersState, ...{ [filter.label]: values } }))
-    }, [])
+    // const setFilterValues = useCallback((filter: IItemFilter<T>, values: string[]) => {
+    //     setFilterState((filtersState) => ({ ...filtersState, ...{ [filter.label]: values } }))
+    // }, [])
     const clearAllFilters = useCallback(() => {
         setFilterState({})
     }, [])
@@ -126,7 +129,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                         switch (action.type) {
                             case ToolbarActionType.button:
                             case ToolbarActionType.bulk: {
-                                const Icon = action.icon
+                                // const Icon = action.icon
                                 switch (action.variant) {
                                     case ButtonVariant.primary:
                                     case ButtonVariant.secondary:
@@ -136,14 +139,14 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                                     variant={action.variant}
                                                     onClick={() => action.onClick(selectedItems)}
                                                     isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                                    icon={
-                                                        Icon ? (
-                                                            <span>
-                                                                <Icon />
-                                                                &nbsp;
-                                                            </span>
-                                                        ) : undefined
-                                                    }
+                                                    // icon={
+                                                    //     Icon ? (
+                                                    //         <span>
+                                                    //             <Icon />
+                                                    //             &nbsp;
+                                                    //         </span>
+                                                    //     ) : undefined
+                                                    // }
                                                 >
                                                     {action.label}
                                                 </Button>
@@ -234,24 +237,61 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                     </ToolbarGroup>
                 )}
                 {toolbarFilters && toolbarFilters.length > 0 && (
-                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 999 }}>
                         <ToolbarGroup variant="filter-group">
                             <ToolbarItem>
                                 <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
                                     {toolbarFilters.map((filter) => (
                                         <SelectOption key={filter.label} value={filter.label}>
                                             <Flex
-                                                spaceItems={{ default: 'spaceItemsSm' }}
+                                                spaceItems={{ default: 'spaceItemsNone' }}
                                                 alignItems={{ default: 'alignItemsCenter' }}
                                                 flexWrap={{ default: 'nowrap' }}
                                             >
-                                                <FlexItem>{filter.type === 'search' ? <SearchIcon /> : <FilterIcon />}</FlexItem>
+                                                <FlexItem style={{ paddingLeft: 4, paddingRight: 8 }}>
+                                                    <FilterIcon />
+                                                </FlexItem>
                                                 <FlexItem>{filter.label}</FlexItem>
                                             </Flex>
                                         </SelectOption>
                                     ))}
                                 </SingleSelect2>
                             </ToolbarItem>
+                            <ToolbarItem>
+                                <TextFilter
+                                    addFilter={(value: string) => {
+                                        let values = filterState[selectedFilter]
+                                        if (!values) values = []
+                                        if (!values.includes(value)) values.push(value)
+                                        setFilterState({ ...filterState, [selectedFilter]: values })
+                                    }}
+                                />
+                            </ToolbarItem>
+                            {Object.keys(filterState).length > 0 &&
+                                Object.keys(filterState).map((filterKey) => {
+                                    const values = filterState[filterKey]
+                                    return (
+                                        <ToolbarFilter
+                                            key={filterKey}
+                                            categoryName={toolbarFilters.find((filter) => filter.key === filterKey)?.label ?? filterKey}
+                                            chips={values}
+                                            deleteChip={(_group, value) => {
+                                                // value = typeof value === 'string' ? value : value.key
+                                                // setFilterValues(
+                                                //     filter,
+                                                //     values.filter((v) => v != value)
+                                                // )
+                                            }}
+                                            deleteChipGroup={() => {
+                                                // setFilterState({ ...filterState, filterKey: [] })
+                                            }}
+                                            showToolbarItem={false}
+                                        >
+                                            <></>
+                                        </ToolbarFilter>
+                                    )
+                                })}
+
                             {/* {toolbarFilters.map((filter) => {
                                 const values = filterState[filter.label] ?? []
                                 return (
@@ -321,6 +361,47 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                 </ToolbarItem>
             </ToolbarContent>
         </Toolbar>
+    )
+}
+
+function TextFilter(props: { addFilter: (value: string) => void }) {
+    const [value, setValue] = useState('')
+    // const ref = useRef<HTMLInputElement>()
+    return (
+        <TextInputGroup>
+            <TextInputGroupMain
+                // ref={ref}
+                value={value}
+                onChange={setValue}
+                onKeyUp={(event) => {
+                    if (value && event.key === 'Enter') {
+                        props.addFilter(value)
+                        setValue('')
+                        // ref.current?.focus() // Does not work because PF does not expose ref
+                    }
+                }}
+            />
+            <TextInputGroupUtilities>
+                <Button
+                    variant="plain"
+                    aria-label="add filter"
+                    onClick={() => setValue('')}
+                    style={{ opacity: value ? undefined : 0 }}
+                    tabIndex={value ? undefined : -1}
+                >
+                    <TimesIcon />
+                </Button>
+                {/* <Button
+                    variant="plain"
+                    aria-label="add filter"
+                    onClick={() => props.setFilter(value)}
+                    style={{ opacity: value ? undefined : 0 }}
+                    tabIndex={-1}
+                >
+                    <SearchPlusIcon />
+                </Button> */}
+            </TextInputGroupUtilities>
+        </TextInputGroup>
     )
 }
 
