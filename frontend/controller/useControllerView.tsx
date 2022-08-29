@@ -1,10 +1,16 @@
 import { useRef } from 'react'
 import useSWR from 'swr'
+import { IToolbarFilter } from '../../framework/PageToolbar'
 import { useSelected } from '../../framework/useTableItems'
 import { IPagedView, usePagedView } from '../common/useView'
 import { ItemsResponse, useFetcher } from '../Data'
 
-export function useControllerView<T extends object>(url: string, getItemKey: (item: T) => string | number, defaultView?: IPagedView) {
+export function useControllerView<T extends object>(
+    url: string,
+    getItemKey: (item: T) => string | number,
+    toolbarFilters?: IToolbarFilter[],
+    defaultView?: IPagedView
+) {
     const view = usePagedView(defaultView)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
@@ -20,7 +26,12 @@ export function useControllerView<T extends object>(url: string, getItemKey: (it
     }
     if (filters) {
         for (const key in filters) {
-            url += `&${key}=${filters[key]}`
+            console.log(key)
+            const filter = toolbarFilters?.find((filter) => filter.key === key)
+            if (filter) {
+                const values = filters[key]
+                url += `&${filter.query}=${values.join(',')}`
+            }
         }
     }
     const fetcher = useFetcher()
