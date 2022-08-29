@@ -19,7 +19,7 @@ import { Team } from './Team'
 
 export function Teams() {
     const { t } = useTranslation()
-    const view = useControllerView<Team>('/api/v2/teams/', getItemKey)
+    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, { sort: 'name', page: 1, perPage: 10 })
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
