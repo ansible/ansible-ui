@@ -6,7 +6,7 @@ import { extname } from 'path'
 import { pipeline } from 'stream'
 import { logger } from './logger'
 
-const cacheControl = process.env.NODE_ENV === 'production' ? 'public, max-age=604800' : 'no-store'
+const cacheControl = process.env.NODE_ENV === 'production' ? 'public, max-age=31536000' : 'no-store'
 const localesCacheControl = process.env.NODE_ENV === 'production' ? 'public, max-age=3600' : 'no-store'
 
 export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): Promise<void> {
@@ -30,7 +30,7 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
             res.setHeader('Referrer-Policy', 'no-referrer')
             res.setHeader('X-DNS-Prefetch-Control', 'off')
             res.setHeader('Expect-CT', 'enforce, max-age=30')
-            // res.setHeader('Content-Security-Policy', ["default-src 'self'"].join(';'))
+            res.setHeader('Content-Security-Policy', ["default-src 'self'"].join(';'))
         } else if (url === '/manifest.webmanifest') {
             res.setHeader('Cache-Control', 'no-cache')
         } else if (url === '/service-worker.js') {
