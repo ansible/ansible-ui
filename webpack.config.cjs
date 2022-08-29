@@ -89,7 +89,7 @@ module.exports = function (_env, argv) {
                 writeToDisk: true,
             },
         },
-        devtool: isDevelopment && 'source-map',
+        devtool: isProduction ? 'source-map' : 'eval-source-map',
     }
     return config
 }
