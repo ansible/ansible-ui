@@ -10,15 +10,11 @@ export enum ThemeE {
 function themeInit() {
     let theme = localStorage.getItem('theme') as ThemeE
 
-    if (!theme) {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme = ThemeE.Dark
-        } else {
-            theme = ThemeE.Light
-        }
+    if (!theme || theme !== ThemeE.Dark) {
+        theme = ThemeE.Light
     }
 
-    if (theme === 'dark') {
+    if (theme === ThemeE.Dark) {
         document.documentElement.classList.add('pf-theme-dark')
     }
 }
@@ -38,11 +34,11 @@ export function ThemeProvider(props: { children: ReactNode }) {
         switch (newTheme) {
             case ThemeE.Light:
                 document.documentElement.classList.remove('pf-theme-dark')
-                localStorage.setItem('theme', 'light')
+                localStorage.removeItem('theme')
                 break
             case ThemeE.Dark:
                 document.documentElement.classList.add('pf-theme-dark')
-                localStorage.setItem('theme', 'dark')
+                localStorage.setItem('theme', ThemeE.Dark)
                 break
         }
         setThemeState(newTheme)
