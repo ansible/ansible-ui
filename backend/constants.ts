@@ -2,6 +2,7 @@ import { constants } from 'http2'
 
 export const HTTP2_HEADER_AUTHORITY = constants.HTTP2_HEADER_AUTHORITY
 export const HTTP2_HEADER_CONNECTION = constants.HTTP2_HEADER_CONNECTION
+export const HTTP2_HEADER_COOKIE = constants.HTTP2_HEADER_COOKIE
 export const HTTP2_HEADER_CONTENT_LENGTH = constants.HTTP2_HEADER_CONTENT_LENGTH
 export const HTTP2_HEADER_CONTENT_TYPE = constants.HTTP2_HEADER_CONTENT_TYPE
 export const HTTP2_HEADER_HOST = constants.HTTP2_HEADER_HOST

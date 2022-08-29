@@ -1,9 +1,11 @@
 /* Copyright Contributors to the Open Cluster Management project */
+import cookie from 'cookie'
 import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2'
 import { request, RequestOptions } from 'https'
 import { pipeline } from 'stream'
 import {
     HTTP2_HEADER_CONNECTION,
+    HTTP2_HEADER_COOKIE,
     HTTP2_HEADER_HOST,
     HTTP2_HEADER_KEEP_ALIVE,
     HTTP2_HEADER_PROXY_AUTHENTICATE,
@@ -33,6 +35,15 @@ export function proxyHandler(
     const url = req.url
 
     const headers: OutgoingHttpHeaders = {}
+
+    const cookieHeader = req.headers[HTTP2_HEADER_COOKIE]
+    if (cookieHeader) {
+        const cookies = cookie.parse(cookieHeader)
+        if (cookies['csrftoken']) {
+            headers['X-CSRFToken'] = cookies['csrftoken']
+        }
+    }
+
     for (const header in req.headers) {
         if (header.startsWith(':')) continue
         headers[header] = req.headers[header]
