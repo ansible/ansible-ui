@@ -34,3 +34,7 @@
 .pb-24 {
     padding-bottom: 24px;
 }
+
+.pf-c-toolbar__expandable-content.pf-m-expanded {
+    z-index: 400;
+}
