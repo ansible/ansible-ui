@@ -4,8 +4,8 @@ import { useSelected } from '../../framework/useTableItems'
 import { IPagedView, usePagedView } from '../common/useView'
 import { ItemsResponse, useFetcher } from '../Data'
 
-export function useControllerView<T extends object>(url: string, getItemKey: (item: T) => string | number, pagedView?: IPagedView) {
-    const view = usePagedView(pagedView)
+export function useControllerView<T extends object>(url: string, getItemKey: (item: T) => string | number, defaultView?: IPagedView) {
+    const view = usePagedView(defaultView)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view

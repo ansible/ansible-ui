@@ -9,13 +9,13 @@ cd $SCRIPT_DIR/../frontend/icons
 # convert -density 2560 -background none -resize 208x208 -border 24 -bordercolor transparent ansible.svg 256.png
 # convert -density 3840 -background none -resize 312x312 -border 36 -bordercolor transparent ansible.svg 384.png
 # convert -density 5120 -background none -resize 416x416 -border 48 -bordercolor transparent ansible.svg 512.png
-convert -density 1920 -background none -resize 168x168 -border 12 -bordercolor transparent ansible.svg 192.png
-convert -density 2560 -background none -resize 224x224 -border 16 -bordercolor transparent ansible.svg 256.png
-convert -density 3840 -background none -resize 336x336 -border 24 -bordercolor transparent ansible.svg 384.png
-convert -density 5120 -background none -resize 448x448 -border 32 -bordercolor transparent ansible.svg 512.png
+convert -density 1920 -background "#00000000" -resize 168x168 -border 12 -bordercolor "#00000000" ansible.svg 192.png
+convert -density 2560 -background "#00000000" -resize 224x224 -border 16 -bordercolor "#00000000" ansible.svg 256.png
+convert -density 3840 -background "#00000000" -resize 336x336 -border 24 -bordercolor "#00000000" ansible.svg 384.png
+convert -density 5120 -background "#00000000" -resize 448x448 -border 32 -bordercolor "#00000000" ansible.svg 512.png
 
-convert -density 1920 -background none -resize 192x192 ansible.svg ansible.png
-convert -density 480 -background none -resize 48x48 favicon.svg favicon.png
+convert -density 1920 -background "#00000000" -resize 192x192 ansible.svg ansible.png
+convert -density 480 -background "#00000000" -resize 48x48 favicon.svg favicon.png
 
 # iOS requires an 'apple-touch-icon' non-transparent 192px
 convert -density 1920 -background "#EE0000" -resize 192x192 ansible.svg ansible192.png
