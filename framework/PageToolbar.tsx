@@ -261,73 +261,42 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                     }}
                                 />
                             </ToolbarItem>
-                            {Object.keys(filters).length > 0 &&
-                                Object.keys(filters).map((filterKey) => {
-                                    const values = filters[filterKey]
-                                    return (
-                                        <ToolbarFilter
-                                            key={filterKey}
-                                            categoryName={toolbarFilters.find((filter) => filter.key === filterKey)?.label ?? filterKey}
-                                            chips={values}
-                                            deleteChip={(_group, value) => {
-                                                setFilters((filters) => {
-                                                    const newState = { ...filters }
-                                                    value = typeof value === 'string' ? value : value.key
-                                                    let values = filters[filterKey]
-                                                    if (values) {
-                                                        values = values.filter((v) => v !== value)
-                                                        if (values.length === 0) {
-                                                            delete newState[filterKey]
-                                                        } else {
-                                                            newState[filterKey] = values
-                                                        }
-                                                    }
-                                                    return newState
-                                                })
-                                            }}
-                                            deleteChipGroup={() => {
-                                                setFilters((filters) => {
-                                                    const newState = { ...filters }
-                                                    delete newState[filterKey]
-                                                    return newState
-                                                })
-                                            }}
-                                            showToolbarItem={false}
-                                        >
-                                            <></>
-                                        </ToolbarFilter>
-                                    )
-                                })}
-
-                            {/* {toolbarFilters.map((filter) => {
-                                const values = filters[filter.label] ?? []
+                            {toolbarFilters.map((filter) => {
+                                const values = filters[filter.key] ?? []
                                 return (
                                     <ToolbarFilter
                                         key={filter.label}
                                         categoryName={filter.label}
-                                        chips={values.map((value) => ({
-                                            key: value,
-                                            node: filter.options.find((option) => option.value === value)?.label ?? value,
-                                        }))}
+                                        chips={values}
                                         deleteChip={(_group, value) => {
-                                            value = typeof value === 'string' ? value : value.key
-                                            setFilterValues(
-                                                filter,
-                                                values.filter((v) => v != value)
-                                            )
+                                            setFilters((filters) => {
+                                                const newState = { ...filters }
+                                                value = typeof value === 'string' ? value : value.key
+                                                let values = filters[filter.key]
+                                                if (values) {
+                                                    values = values.filter((v) => v !== value)
+                                                    if (values.length === 0) {
+                                                        delete newState[filter.key]
+                                                    } else {
+                                                        newState[filter.key] = values
+                                                    }
+                                                }
+                                                return newState
+                                            })
                                         }}
-                                        deleteChipGroup={() => setFilterValues(filter, [])}
-                                        showToolbarItem={selectedFilter === filter.label}
+                                        deleteChipGroup={() => {
+                                            setFilters((filters) => {
+                                                const newState = { ...filters }
+                                                delete newState[filter.key]
+                                                return newState
+                                            })
+                                        }}
+                                        showToolbarItem={false}
                                     >
-                                        <SelectFilter
-                                            label={'All'}
-                                            values={values}
-                                            setValues={(values) => setFilterValues(filter, values)}
-                                            options={filter.options}
-                                        />
+                                        <></>
                                     </ToolbarFilter>
                                 )
-                            })} */}
+                            })}
                         </ToolbarGroup>
                     </ToolbarToggleGroup>
                 )}
