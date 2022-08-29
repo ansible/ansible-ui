@@ -1,5 +1,5 @@
 import { Skeleton, Split, SplitItem, Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core'
-import { ActionsColumn, IAction, ISortBy, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
+import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Fragment, MouseEvent, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -85,12 +85,6 @@ function TableHead<T extends object>(props: {
 }) {
     const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect } = props
 
-    const sortBy = useMemo<ISortBy>(() => {
-        let index: number | undefined = columns.findIndex((column) => column.sort === sort)
-        if (index === -1) index = undefined
-        return { index, direction: sortDirection }
-    }, [columns, sort, sortDirection])
-
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
             if (!column.sort) return undefined
@@ -101,30 +95,16 @@ function TableHead<T extends object>(props: {
                         setSortDirection(sortByDirection)
                     }
                 },
-                sortBy,
+                sortBy: {
+                    index: column.sort === sort ? columnIndex : undefined,
+                    direction: column.sort === sort ? sortDirection : undefined,
+                    defaultDirection: column.defaultSortDirection,
+                },
                 columnIndex,
             }
         },
-        [setSort, setSortDirection, sortBy]
+        [setSort, setSortDirection, sort, sortDirection]
     )
-
-    //   /** Provide the currently active column's index and direction */
-    //   sortBy: ISortBy;
-    //   /** The column index */
-    //   columnIndex: number;
-    //   /** True to make this a favoritable sorting cell */
-    //   isFavorites?: boolean;
-
-    // sortBy: {
-    //     index: activeSortIndex,
-    //     direction: activeSortDirection,
-    //     defaultDirection: 'asc' // starting sort direction when first sorting a column. Defaults to 'asc'
-    //   },
-    //   onSort: (_event, index, direction) => {
-    //     setActiveSortIndex(index);
-    //     setActiveSortDirection(direction);
-    //   },
-    //   columnIndex
 
     return (
         <Thead>
