@@ -1,6 +1,6 @@
 {
-    "name": "AnsibleDev",
-    "short_name": "AnsibleDev",
+    "name": "Ansible",
+    "short_name": "Ansible",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
@@ -8,24 +8,34 @@
     "background_color": "#121212",
     "icons": [
         {
+            "src": "/ansible.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
             "src": "/192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
             "src": "/256.png",
             "sizes": "256x256",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
             "src": "/384.png",
             "sizes": "384x384",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
             "src": "/512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ]
 }
