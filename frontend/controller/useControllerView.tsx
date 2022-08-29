@@ -16,26 +16,35 @@ export function useControllerView<T extends object>(
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view
-    let queryString = '?'
-    if (sort) {
-        if (sortDirection === 'desc') {
-            queryString += `order_by=-${sort}`
-        } else {
-            queryString += `order_by=${sort}`
-        }
-        queryString += '&'
-    }
-    queryString += `page=${page}`
-    queryString += `&page_size=${perPage}`
+
+    let queryString = ''
+
     if (filters) {
         for (const key in filters) {
             const filter = toolbarFilters?.find((filter) => filter.key === key)
             if (filter) {
                 const values = filters[key]
-                url += `&${filter.query}=${values.join(',')}`
+                queryString ? (queryString += '&') : (queryString += '?')
+                queryString += `${filter.query}=${values.join(',')}`
             }
         }
     }
+
+    if (sort) {
+        queryString ? (queryString += '&') : (queryString += '?')
+        if (sortDirection === 'desc') {
+            queryString += `order_by=-${sort}`
+        } else {
+            queryString += `order_by=${sort}`
+        }
+    }
+
+    queryString ? (queryString += '&') : (queryString += '?')
+    queryString += `page=${page}`
+
+    queryString ? (queryString += '&') : (queryString += '?')
+    queryString += `page_size=${perPage}`
+
     url += queryString
     const fetcher = useFetcher()
     const response = useSWR<ItemsResponse<T>>(url, fetcher)
