@@ -8,11 +8,22 @@ import { getPatternflyColor, PatternFlyColor } from './components/patternfly-col
 type CellFn<T extends object> = (item: T) => ReactNode
 
 export interface ITableColumn<T extends object> {
+    id?: string
     header: string
     cell: CellFn<T>
     minWidth?: number
-    type?: 'labels' | 'progress' | 'date'
     enabled?: boolean
+
+    sort?: string
+
+    /**
+     * @deprecated The method should not be used
+     */
+    type?: 'labels' | 'progress' | 'date'
+
+    /**
+     * @deprecated The method should not be used
+     */
     sortFn?: (l: T, r: T) => number
 }
 

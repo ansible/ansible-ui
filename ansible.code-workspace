@@ -12,7 +12,8 @@
     "settings": {
         "files.exclude": {
             "tsconfig.json": true,
-            "typings.d.ts": true
+            "typings.d.ts": true,
+            "manifest.webmanifest": true
         },
         "files.autoSave": "onFocusChange",
         "editor.formatOnSave": true,

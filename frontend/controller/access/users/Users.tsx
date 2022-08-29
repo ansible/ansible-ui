@@ -13,9 +13,9 @@ import {
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
-import { useControllerView } from '../../../common/useControllerView'
 import { getItemKey } from '../../../Data'
 import { RouteE } from '../../../route'
+import { useControllerView } from '../../useControllerView'
 import { User } from './User'
 
 export default function Users() {
