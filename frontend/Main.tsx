@@ -103,7 +103,7 @@ function DemoHeader() {
                         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                             <div style={{ marginTop: 6 }}>
                                 <SparkleSvg style={{ width: 48, height: 48, position: 'absolute' }} />
-                                <img src={AnsiblePng} style={{ width: 48 }} alt="ansible logo" />
+                                <img src={AnsiblePng} width="192" height="192" style={{ width: 48 }} alt="ansible logo" />
                             </div>
                             <div style={{ color: 'white', textDecoration: 'none' }}>
                                 <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
