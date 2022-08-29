@@ -18,6 +18,7 @@ import {
     SelectOption,
     SelectOptionObject,
     SelectVariant,
+    Skeleton,
     TextInputGroup,
     TextInputGroupMain,
     TextInputGroupUtilities,
@@ -207,6 +208,18 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
         return <Fragment />
     }
 
+    if (itemCount === undefined) {
+        return (
+            <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+                <ToolbarContent>
+                    <ToolbarItem style={{ width: '100%' }}>
+                        <Skeleton height="36px" />
+                    </ToolbarItem>
+                </ToolbarContent>
+            </Toolbar>
+        )
+    }
+
     return (
         <Toolbar clearAllFilters={clearAllFilters} style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
             <ToolbarContent>
@@ -218,7 +231,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                     </ToolbarGroup>
                 )}
                 {toolbarFilters && toolbarFilters.length > 0 && (
-                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 999 }}>
+                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
                         <ToolbarGroup variant="filter-group">
                             <ToolbarItem>
                                 <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
