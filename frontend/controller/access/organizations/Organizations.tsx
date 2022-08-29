@@ -7,9 +7,9 @@ import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../com
 import { compareNumbers } from '../../../common/compare'
 import {
     useCreatedByToolbarFilter,
+    useDescriptionToolbarFilter,
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
-    useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
@@ -20,16 +20,15 @@ import { Organization } from './Organization'
 
 export function Organizations() {
     const { t } = useTranslation()
-    const view = useControllerView<Organization>('/api/v2/organizations/', getItemKey)
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
-    const organizationToolbarFilter = useOrganizationToolbarFilter()
+    const descriptionToolbarFilter = useDescriptionToolbarFilter()
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
+        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
 
     // Toolbar Actions
@@ -67,6 +66,8 @@ export function Organizations() {
     const editItemAction = useEditItemAction()
     const deleteItemAction = useDeleteItemAction()
     const rowActions = useMemo<IItemAction<Organization>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+
+    const view = useControllerView<Organization>('/api/v2/organizations/', getItemKey, toolbarFilters)
 
     return (
         <TablePage

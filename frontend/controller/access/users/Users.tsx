@@ -6,10 +6,10 @@ import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { compareStrings } from '../../../common/compare'
 import {
-    useCreatedByToolbarFilter,
-    useModifiedByToolbarFilter,
-    useNameToolbarFilter,
-    useOrganizationToolbarFilter,
+    useEmailToolbarFilter,
+    useFirstNameToolbarFilter,
+    useLastNameToolbarFilter,
+    useUsernameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
@@ -20,16 +20,15 @@ import { User } from './User'
 
 export default function Users() {
     const { t } = useTranslation()
-    const view = useControllerView<User>('/api/v2/users/', getItemKey)
 
     // Toolbar Filters
-    const nameToolbarFilter = useNameToolbarFilter()
-    const organizationToolbarFilter = useOrganizationToolbarFilter()
-    const createdByToolbarFilter = useCreatedByToolbarFilter()
-    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+    const emailToolbarFilter = useEmailToolbarFilter()
+    const usernameToolbarFilter = useUsernameToolbarFilter()
+    const firstnameByToolbarFilter = useFirstNameToolbarFilter()
+    const lastnameToolbarFilter = useLastNameToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter],
+        [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter]
     )
 
     // Toolbar Actions
@@ -70,6 +69,8 @@ export default function Users() {
     const editItemAction = useEditItemAction()
     const deleteItemAction = useDeleteItemAction()
     const rowActions = useMemo<IItemAction<User>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+
+    const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters)
 
     return (
         <TablePage

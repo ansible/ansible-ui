@@ -26,7 +26,6 @@ export function useControllerView<T extends object>(
     }
     if (filters) {
         for (const key in filters) {
-            console.log(key)
             const filter = toolbarFilters?.find((filter) => filter.key === key)
             if (filter) {
                 const values = filters[key]
@@ -37,6 +36,7 @@ export function useControllerView<T extends object>(
     const fetcher = useFetcher()
     const response = useSWR<ItemsResponse<T>>(url, fetcher)
     const { data } = response
+    useSWR<ItemsResponse<T>>(data?.next, fetcher)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const error: Error | undefined = response.error
