@@ -110,6 +110,7 @@ export function useCreatedColumn() {
             return <SinceCell value={item.created} />
         },
         sort: 'created',
+        defaultSortDirection: 'desc',
     }
     return column
 }
@@ -132,6 +133,7 @@ export function useModifiedColumn() {
             return <SinceCell value={item.modified} />
         },
         sort: 'modified',
+        defaultSortDirection: 'desc',
     }
     return column
 }
