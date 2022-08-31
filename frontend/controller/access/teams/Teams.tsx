@@ -1,6 +1,8 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { IItemAction, ITableColumn, IToolbarAction } from '../../../../framework'
+import { BulkActionDialog } from '../../../../framework/BulkActionDialog'
 import { useTranslation } from '../../../../framework/components/useTranslation'
+import { useDialog } from '../../../../framework/DialogContext'
 import { IToolbarFilter } from '../../../../framework/PageToolbar'
 import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
@@ -19,6 +21,7 @@ import { Team } from './Team'
 
 export function Teams() {
     const { t } = useTranslation()
+    const [_, setDialog] = useDialog()
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
@@ -30,16 +33,8 @@ export function Teams() {
         [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
 
-    // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
-    const deleteToolbarAction = useDeleteToolbarAction()
-    const toolbarActions = useMemo<IToolbarAction<Team>[]>(
-        () => [createToolbarAction, deleteToolbarAction],
-        [createToolbarAction, deleteToolbarAction]
-    )
-
     // Table Columns
-    const nameColumn = useNameColumn(RouteE.TeamDetails)
+    const nameColumn = useNameColumn({ url: RouteE.TeamDetails })
     const organizationColumn = useOrganizationNameColumn()
     const createdColumn = useCreatedColumn()
     const modifiedColumn = useModifiedColumn()
@@ -48,12 +43,41 @@ export function Teams() {
         [createdColumn, modifiedColumn, nameColumn, organizationColumn]
     )
 
+    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, tableColumns)
+
+    // Toolbar Actions
+    const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
+    const deleteNameColumn = useNameColumn({})
+    const handleDelete = useCallback(() => {
+        setDialog(
+            <BulkActionDialog<Team>
+                title={t('Delete teams')}
+                prompt={t('Are you sure you want to delete these teams?')}
+                confirm={t('Yes, I confirm that I want to delete these teams.')}
+                submit={t('Delete')}
+                submitting={t('Deleting')}
+                submittingTitle={t('Deleting teams')}
+                success={t('Success')}
+                cancel={t('Cancel')}
+                close={t('Close')}
+                error={t('There were errors deleting teams')}
+                items={view.selectedItems}
+                keyFn={getItemKey}
+                isDanger
+                columns={[deleteNameColumn, organizationColumn, createdColumn, modifiedColumn]}
+            />
+        )
+    }, [createdColumn, modifiedColumn, deleteNameColumn, organizationColumn, setDialog, t, view.selectedItems])
+    const deleteToolbarAction = useDeleteToolbarAction(handleDelete)
+    const toolbarActions = useMemo<IToolbarAction<Team>[]>(
+        () => [createToolbarAction, deleteToolbarAction],
+        [createToolbarAction, deleteToolbarAction]
+    )
+
     // Row Actions
     const editItemAction = useEditItemAction()
     const deleteItemAction = useDeleteItemAction()
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
-
-    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, tableColumns)
 
     return (
         <TablePage

@@ -24,6 +24,7 @@ export type PageTableProps<T extends object> = {
     setSortDirection: (sortDirection: 'asc' | 'desc') => void
     itemCount?: number
     perPage: number
+    compact?: boolean
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -50,13 +51,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
     return (
-        <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%', marginBottom: -1 }} ref={containerRef} onScroll={onScroll}>
-            <TableComposable
-                aria-label="Simple table"
-                // variant="compact"
-                gridBreakPoint=""
-                isStickyHeader
-            >
+        <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
+            <TableComposable aria-label="Simple table" variant={props.compact ? 'compact' : undefined} gridBreakPoint="" isStickyHeader>
                 {itemCount === undefined ? (
                     <Thead>
                         <Tr>

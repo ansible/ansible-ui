@@ -1,5 +1,5 @@
 import { OnPerPageSelect, OnSetPage, Pagination, PaginationVariant } from '@patternfly/react-core'
-import { useCallback } from 'react'
+import { CSSProperties, useCallback } from 'react'
 
 export type PagePaginationProps = {
     itemCount?: number
@@ -7,6 +7,7 @@ export type PagePaginationProps = {
     perPage: number
     setPage: (page: number) => void
     setPerPage: (perPage: number) => void
+    style?: CSSProperties
 }
 
 export function PagePagination(props: PagePaginationProps) {
@@ -23,9 +24,11 @@ export function PagePagination(props: PagePaginationProps) {
             onSetPage={onSetPage}
             onPerPageSelect={onPerPageSelect}
             style={{
+                ...props.style,
                 borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                 boxShadow: 'none',
                 zIndex: 301,
+                marginTop: -1,
             }}
         />
     )

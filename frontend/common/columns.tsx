@@ -15,7 +15,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
                 text={item.name}
                 iconSize="sm"
                 to={options.url?.replace(':id', item.id.toString())}
-                onClick={() => options.onClick(item)}
+                onClick={options.onClick ? () => options.onClick(item) : undefined}
             />
         ),
         sort: 'name',

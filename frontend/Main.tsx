@@ -34,6 +34,7 @@ import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
+import { DialogProvider } from '../framework/DialogContext'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
 import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
@@ -60,9 +61,11 @@ export default function Demo() {
 
 export function Main() {
     return (
-        <Page header={<DemoHeader />} sidebar={<Sidebar />} isManagedSidebar defaultManagedSidebarIsOpen={false}>
-            <DemoRouter />
-        </Page>
+        <DialogProvider>
+            <Page header={<DemoHeader />} sidebar={<Sidebar />} isManagedSidebar defaultManagedSidebarIsOpen={false}>
+                <DemoRouter />
+            </Page>
+        </DialogProvider>
     )
 }
 
