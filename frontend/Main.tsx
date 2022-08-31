@@ -15,7 +15,6 @@ import {
     MastheadToggle,
     Nav,
     NavExpandable,
-    NavGroup,
     NavItem,
     NavList,
     NotificationBadge,
@@ -222,7 +221,7 @@ function Sidebar() {
                             <NavItem isActive={isRouteActive(RouteE.Dashboard, location)}>
                                 <Link to={RouteE.Dashboard}>Dashboard</Link>
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Jobs, location)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.Jobs, location)}>
                                 <Link to={RouteE.Jobs}>Jobs</Link>
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Schedules, location)}>
@@ -230,12 +229,12 @@ function Sidebar() {
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.ActivityStream, location)}>
                                 <Link to={RouteE.ActivityStream}>Activity stream</Link>
-                            </NavItem>
+                            </NavItem> */}
                             <NavItem isActive={isRouteActive(RouteE.WorkflowApprovals, location)}>
                                 <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
                             </NavItem>
                         </NavExpandable>
-                        <NavExpandable
+                        {/* <NavExpandable
                             key="resources"
                             title="Resources"
                             isExpanded
@@ -259,7 +258,7 @@ function Sidebar() {
                             <NavItem isActive={isRouteActive(RouteE.Hosts, location)}>
                                 <Link to={RouteE.Hosts}>Hosts</Link>
                             </NavItem>
-                        </NavExpandable>
+                        </NavExpandable> */}
                         <NavExpandable
                             key="access"
                             title="Access"
@@ -269,14 +268,14 @@ function Sidebar() {
                             <NavItem isActive={isRouteActive(RouteE.Organizations, location)}>
                                 <Link to={RouteE.Organizations}>Organizations</Link>
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Users, location)}>
-                                <Link to={RouteE.Users}>Users</Link>
-                            </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Teams, location)}>
                                 <Link to={RouteE.Teams}>Teams</Link>
                             </NavItem>
+                            <NavItem isActive={isRouteActive(RouteE.Users, location)}>
+                                <Link to={RouteE.Users}>Users</Link>
+                            </NavItem>
                         </NavExpandable>
-                        <NavExpandable
+                        {/* <NavExpandable
                             key="administration"
                             title="Administration"
                             isExpanded
@@ -318,12 +317,12 @@ function Sidebar() {
                             <NavItem isActive={isRouteActive(RouteE.TopologyView, location)}>
                                 <Link to={RouteE.TopologyView}>Topology view</Link>
                             </NavItem>
-                        </NavExpandable>
-                        <NavGroup>
+                        </NavExpandable> */}
+                        {/* <NavGroup>
                             <NavItem isActive={isRouteActive(RouteE.Settings, location)}>
                                 <Link to={RouteE.Settings}>Settings</Link>
                             </NavItem>
-                        </NavGroup>
+                        </NavGroup> */}
                         {/* </NavExpandable> */}
                     </NavList>
                 </Nav>
