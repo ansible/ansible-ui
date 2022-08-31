@@ -25,6 +25,7 @@ export function PagePagination(props: PagePaginationProps) {
             style={{
                 borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                 boxShadow: 'none',
+                zIndex: 301,
             }}
         />
     )
