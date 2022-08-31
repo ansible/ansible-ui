@@ -9,14 +9,6 @@ Basic structure of the framework can be seen in the tree below.
 
 - [PageLayout](#pagelayout)
   - [PageHeader](#pageheader)
-    - [PageBreadcrumbs](#pagebreadcrumbs)
-      - [PageBreadcrumb](#pagebreadcrumb)
-    - [PageTitle](#pagetitle)
-      - [PageTitleHelp](#pagetitlehelp)
-    - [PageDescription](#pagedescription)
-    - [PageActions](#pageactions)
-      - [PageAction](#pageaction)
-    - [PageControls](#pagecontrols)
   - [PageBody](#pagebody)
     - [PageTable](#pagetable)
     - [PageTabs](#pagetabs)
@@ -82,23 +74,6 @@ The PageHeader is used at the start of each page. It provides a consistent layou
 |    description | The description of the page.                                               |
 |        actions | The actions for the page. Actions are used on details pages.               |
 |       controls | Support for extra page controls that show up at the top right of the page. |
-|        loading | Indicates if the header is loading. Adds a skeleton state.                 |
-
-#### PageBreadcrumbs
-
-##### PageBreadcrumb
-
-#### PageTitle
-
-##### PageTitleHelp
-
-#### PageDescription
-
-#### PageActions
-
-##### PageAction
-
-#### PageControls
 
 ### PageBody
 

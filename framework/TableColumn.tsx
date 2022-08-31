@@ -69,7 +69,7 @@ export function TextCell(props: {
                 <SplitItem>
                     <Link to={props.to}>{props.text}</Link>
                 </SplitItem>
-            ) : props.onClick ? (
+            ) : props.onClick !== undefined ? (
                 <SplitItem onClick={props.onClick}>
                     <Button variant="link">{props.text}</Button>
                 </SplitItem>

@@ -178,7 +178,7 @@ export interface ISort<T extends object> {
     sortFn: (l: T, r: T) => number
     direction: 'asc' | 'desc'
 }
-function useSorted<T extends object>(items: T[]) {
+export function useSorted<T extends object>(items: T[]) {
     const [sort, setSort] = useState<ISort<T>>()
 
     const { direction, sortFn } = sort ?? {}
@@ -198,7 +198,7 @@ function useSorted<T extends object>(items: T[]) {
     return useMemo(() => ({ sorted, sort, setSort }), [sort, sorted])
 }
 
-function useFiltered<T extends object>(items: T[], keyFn: (item: T) => string | number) {
+export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => string | number) {
     const filterMapRef = useRef<{ map: Record<string | number, { item: T; passes: boolean }> }>({ map: {} })
     const [filterFn, setFilterFnState] = useState<(item: T) => boolean>()
     const setFilterFn = useCallback((filterFn: (item: T) => boolean) => setFilterFnState(() => filterFn), [])

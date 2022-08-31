@@ -22,7 +22,7 @@ export function useCreateToolbarAction(route: RouteE) {
     return toolbarAction
 }
 
-export function useDeleteToolbarAction() {
+export function useDeleteToolbarAction(onClick: () => void) {
     const { t } = useTranslation()
     const toolbarAction: IToolbarAction<{ id: number }> = useMemo(
         () => ({
@@ -30,9 +30,9 @@ export function useDeleteToolbarAction() {
             // variant: ButtonVariant.secondary,
             icon: TrashIcon,
             label: t('Delete'),
-            onClick: () => null,
+            onClick,
         }),
-        [t]
+        [onClick, t]
     )
     return toolbarAction
 }
