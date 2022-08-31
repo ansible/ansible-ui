@@ -82,7 +82,6 @@ export function Organizations() {
 
     return (
         <TablePage
-            breadcrumbs={[{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Organizations') }]}
             title={t('Organizations')}
             description="An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy."
             toolbarFilters={toolbarFilters}

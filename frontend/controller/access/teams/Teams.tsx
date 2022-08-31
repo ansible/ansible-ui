@@ -57,7 +57,6 @@ export function Teams() {
 
     return (
         <TablePage
-            breadcrumbs={[{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Teams') }]}
             title={t('Teams')}
             titleHelpTitle={t('Team')}
             titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."

@@ -1,3 +1,4 @@
+import ky from 'ky'
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
@@ -6,6 +7,18 @@ import { RouteE } from './route'
 
 export const headers: Record<string, string> = {
     'x-server': localStorage.getItem('server'),
+}
+
+export function getUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+    return ky.get(url, { credentials: 'include', headers }).json<ResponseBody>()
+}
+
+export function postUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
+    return ky.post(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+}
+
+export function deleteUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+    return ky.delete(url, { credentials: 'include', headers }).json<ResponseBody>()
 }
 
 export function useFetcher() {

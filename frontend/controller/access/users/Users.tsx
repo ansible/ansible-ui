@@ -73,7 +73,6 @@ export default function Users() {
 
     return (
         <TablePage
-            breadcrumbs={[{ label: t('Dashboard'), to: RouteE.Dashboard }, { label: t('Users') }]}
             title={t('Users')}
             titleHelpTitle={t('User')}
             description={t('A user is someone who has access to Tower with associated permissions and credentials.')}
