@@ -1,10 +1,10 @@
 import { Static, Type } from '@sinclair/typebox'
-import ky, { HTTPError } from 'ky'
+import { HTTPError } from 'ky'
 import { useHistory } from 'react-router-dom'
 import { PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { headers, ItemsResponse } from '../../../Data'
+import { getUrl, ItemsResponse, postUrl } from '../../../Data'
 import { RouteE } from '../../../route'
 import { Organization } from '../organizations/Organization'
 import { Team } from './Team'
@@ -18,7 +18,7 @@ export function CreateTeam() {
             title: t('Name'),
             placeholder: t('Enter the name'),
             minLength: 1,
-            errorMessage: { required: 'Name is required', minLength: 'Name is required' },
+            errorMessage: { minLength: t('Name is required') },
         }),
         description: Type.Optional(
             Type.String({
@@ -32,9 +32,9 @@ export function CreateTeam() {
             organization: Type.Object({
                 name: Type.String({
                     title: t('Organization'),
-                    placeholder: 'Enter the organization',
+                    placeholder: t('Enter the organization'),
                     minLength: 1,
-                    errorMessage: { required: 'Organization is required', minLength: 'Organization is required' },
+                    errorMessage: { minLength: t('Organization is required') },
                     variant: 'select',
                 }),
             }),
@@ -46,19 +46,16 @@ export function CreateTeam() {
     const onSubmit: FormPageSubmitHandler<CreateTeam> = async (createTeam, setError, setFieldError) => {
         try {
             if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
-            const result = await ky
-                .get(`/api/v2/organizations/?name=${createTeam.summary_fields.organization.name}`, { credentials: 'include', headers })
-                .json<ItemsResponse<Organization>>()
+            const result = await getUrl<ItemsResponse<Organization>>(
+                `/api/v2/organizations/?name=${createTeam.summary_fields.organization.name}`
+            )
             if (result.results.length === 0) {
-                setFieldError('summary_fields.organization.name', {
-                    type: 'manual',
-                    message: `Organization "${createTeam.summary_fields.organization.name}" not found`,
-                })
+                setFieldError('summary_fields.organization.name', { message: t('Organization not found') })
                 return false
             }
             const organization = result.results[0]
             createTeam.organization = organization.id
-            const team = await ky.post('/api/v2/teams/', { json: createTeam, credentials: 'include', headers }).json<Team>()
+            const team = await postUrl<Team>('/api/v2/teams/', createTeam)
             history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))
         } catch (err) {
             if (err instanceof HTTPError) {
@@ -83,14 +80,7 @@ export function CreateTeam() {
 
     return (
         <>
-            <PageHeader
-                title={t('Create Team')}
-                breadcrumbs={[
-                    { label: t('Dashboard'), to: RouteE.Dashboard },
-                    { label: t('Teams'), to: RouteE.Teams },
-                    { label: t('Create Team') },
-                ]}
-            />
+            <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
             <PageForm schema={CreateTeamSchema} submitText={t('Create')} onSubmit={onSubmit} cancelText={t('Cancel')} onCancel={onCancel} />
         </>
     )

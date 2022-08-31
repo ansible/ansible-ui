@@ -35,11 +35,7 @@ export function TeamDetails() {
         <Fragment>
             <PageHeader
                 title={team?.name}
-                breadcrumbs={[
-                    { label: t('Dashboard'), to: RouteE.Dashboard },
-                    { label: t('Teams'), to: RouteE.Teams },
-                    { label: team?.name },
-                ]}
+                breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
                 pageActions={<DetailActions item={team} actions={itemActions} />}
             />
             {team && (
