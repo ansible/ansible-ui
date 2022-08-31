@@ -6,11 +6,18 @@ import { compareStrings, compareUnknowns } from './compare'
 import { getScmType } from './scm'
 import { getStatus } from './status'
 
-export function useNameColumn(url?: string) {
+export function useNameColumn<T extends { name: string; id: number }>(options: { url?: string; onClick?: (item: T) => void }) {
     const { t } = useTranslation()
     const column: ITableColumn<{ name: string; id: number }> = {
         header: t('Name'),
-        cell: (item) => <TextCell text={item.name} iconSize="sm" to={url?.replace(':id', item.id.toString())} />,
+        cell: (item: T) => (
+            <TextCell
+                text={item.name}
+                iconSize="sm"
+                to={options.url?.replace(':id', item.id.toString())}
+                onClick={() => options.onClick(item)}
+            />
+        ),
         sort: 'name',
     }
     return column

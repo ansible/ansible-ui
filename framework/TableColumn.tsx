@@ -1,4 +1,4 @@
-import { ClipboardCopy, Label, LabelGroup, Split, SplitItem, Truncate } from '@patternfly/react-core'
+import { Button, ClipboardCopy, Label, LabelGroup, Split, SplitItem, Truncate } from '@patternfly/react-core'
 import { DateTime } from 'luxon'
 import { Fragment, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -55,6 +55,7 @@ export function TextCell(props: {
     text?: string
     iconSize?: 'sm' | 'md' | 'lg'
     to?: string
+    onClick?: () => void
     textColor?: PatternFlyColor
 }) {
     return (
@@ -67,6 +68,10 @@ export function TextCell(props: {
             {props.to ? (
                 <SplitItem>
                     <Link to={props.to}>{props.text}</Link>
+                </SplitItem>
+            ) : props.onClick ? (
+                <SplitItem onClick={props.onClick}>
+                    <Button variant="link">{props.text}</Button>
                 </SplitItem>
             ) : (
                 <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>{props.text}</SplitItem>

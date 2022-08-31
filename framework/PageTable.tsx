@@ -15,9 +15,9 @@ export type PageTableProps<T extends object> = {
     rowActions?: IItemAction<T>[]
     keyFn: (item: T) => string | number
     tableColumns: ITableColumn<T>[]
-    selectItem: (item: T) => void
-    unselectItem: (item: T) => void
-    isSelected: (item: T) => boolean
+    selectItem?: (item: T) => void
+    unselectItem?: (item: T) => void
+    isSelected?: (item: T) => boolean
     sort: string
     setSort: (sort: string) => void
     sortDirection: 'asc' | 'desc'
@@ -50,7 +50,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
     return (
-        <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
+        <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%', marginBottom: -1 }} ref={containerRef} onScroll={onScroll}>
             <TableComposable
                 aria-label="Simple table"
                 // variant="compact"
@@ -122,7 +122,7 @@ function TableHead<T extends object>(props: {
     scrollLeft?: boolean
     scrollRight?: boolean
 }) {
-    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect, itemCount } = props
+    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect } = props
 
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
@@ -247,7 +247,7 @@ function TableCells<T extends object>(props: {
     scrollLeft?: boolean
     scrollRight?: boolean
 }) {
-    const md = useWindowSizeOrLarger(WindowSize.xl)
+    // const md = useWindowSizeOrLarger(WindowSize.xl)
 
     const { columns, item, rowActions, rowIndex } = props
     const actions: IAction[] | undefined = useMemo(
@@ -312,7 +312,7 @@ function TableCells<T extends object>(props: {
                 )}
             </Fragment>
         ),
-        [actions, columns, item, md, props.scrollRight, rowIndex]
+        [actions, columns, item, props.scrollRight, rowIndex]
     )
 }
 

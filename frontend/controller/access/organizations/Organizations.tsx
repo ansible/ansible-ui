@@ -18,10 +18,7 @@ import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
 
-export function Organizations() {
-    const { t } = useTranslation()
-
-    // Toolbar Filters
+export function useOrganizationsFilters() {
     const nameToolbarFilter = useNameToolbarFilter()
     const descriptionToolbarFilter = useDescriptionToolbarFilter()
     const createdByToolbarFilter = useCreatedByToolbarFilter()
@@ -30,17 +27,12 @@ export function Organizations() {
         () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
         [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
+    return toolbarFilters
+}
 
-    // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.CreateOrganization)
-    const deleteToolbarAction = useDeleteToolbarAction()
-    const toolbarActions = useMemo<IToolbarAction<Organization>[]>(
-        () => [createToolbarAction, deleteToolbarAction],
-        [createToolbarAction, deleteToolbarAction]
-    )
-
-    // Table Columns
-    const nameColumn = useNameColumn(RouteE.OrganizationDetails)
+export function useOrganizationsColumns(onClick?: (organization: Organization) => void) {
+    const { t } = useTranslation()
+    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.OrganizationDetails })
     const createdColumn = useCreatedColumn()
     const modifiedColumn = useModifiedColumn()
     const tableColumns = useMemo<ITableColumn<Organization>[]>(
@@ -61,6 +53,25 @@ export function Organizations() {
         ],
         [createdColumn, modifiedColumn, nameColumn, t]
     )
+    return tableColumns
+}
+
+export function Organizations() {
+    const { t } = useTranslation()
+
+    // Toolbar Filters
+    const toolbarFilters = useOrganizationsFilters()
+
+    // Toolbar Actions
+    const createToolbarAction = useCreateToolbarAction(RouteE.CreateOrganization)
+    const deleteToolbarAction = useDeleteToolbarAction()
+    const toolbarActions = useMemo<IToolbarAction<Organization>[]>(
+        () => [createToolbarAction, deleteToolbarAction],
+        [createToolbarAction, deleteToolbarAction]
+    )
+
+    // Table Columns
+    const tableColumns = useOrganizationsColumns()
 
     // Row Actions
     const editItemAction = useEditItemAction()

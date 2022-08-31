@@ -1,25 +1,41 @@
-import { ActionGroup, Alert, AlertGroup, Button, Page, PageSection, SelectOption, Title } from '@patternfly/react-core'
+import { Page, PageSection, Title } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import ky from 'ky'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Collapse, useWindowSizeOrLarger, WindowSize } from '../../../framework'
-import { FormPage, FormSelect, FormTextInput } from '../../common/FormPage'
+import { useWindowSizeOrLarger, WindowSize } from '../../../framework'
+import { useTranslation } from '../../../framework/components/useTranslation'
+import { FormPageSubmitHandler, PageForm } from '../../common/FormPage'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 
-export const InputType = Type.Object({
-    server: Type.String(),
-    username: Type.String(),
-    password: Type.String(),
-})
-
-type InputData = Static<typeof InputType>
-
 export default function Login() {
+    const { t } = useTranslation()
+
     const history = useHistory()
 
-    const [error, setError] = useState('')
+    const DataType = Type.Object({
+        server: Type.String({
+            title: t('Server'),
+            placeholder: t('Enter server'),
+            minLength: 1,
+            errorMessage: { required: 'Server is required', minLength: 'Server is required' },
+        }),
+        username: Type.String({
+            title: t('Username'),
+            placeholder: t('Enter username'),
+            minLength: 1,
+            errorMessage: { required: 'Username is required', minLength: 'Username is required' },
+        }),
+        password: Type.String({
+            title: t('Password'),
+            placeholder: t('Enter password'),
+            minLength: 1,
+            errorMessage: { required: 'Password is required', minLength: 'Password is required' },
+        }),
+    })
+
+    type Data = Static<typeof DataType>
 
     const servers = useMemo<{ server: string; username: string }[]>(() => {
         try {
@@ -36,40 +52,35 @@ export default function Login() {
         }
     }, [])
 
-    const onSubmit = useCallback(
-        (data: InputData) => {
-            async function login() {
-                try {
-                    setError('')
+    const onSubmit = useCallback<FormPageSubmitHandler<Data>>(
+        async (data, setError) => {
+            try {
+                let loginPage = await ky.get('/api/login/', { credentials: 'include', headers: { 'x-server': data.server } }).text()
+                loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
+                loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
+                const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
 
-                    let loginPage = await ky.get('/api/login/', { credentials: 'include', headers: { 'x-server': data.server } }).text()
-                    loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
-                    loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
-                    const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
+                const searchParams = new URLSearchParams()
+                searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
+                searchParams.set('username', data.username)
+                searchParams.set('password', data.password)
+                await ky.post('/api/login/', { credentials: 'include', headers: { 'x-server': data.server }, body: searchParams })
 
-                    const searchParams = new URLSearchParams()
-                    searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
-                    searchParams.set('username', data.username)
-                    searchParams.set('password', data.password)
-                    await ky.post('/api/login/', { credentials: 'include', headers: { 'x-server': data.server }, body: searchParams })
+                headers['x-server'] = data.server
+                localStorage.setItem('server', data.server)
+                localStorage.setItem(
+                    'servers',
+                    JSON.stringify([...new Set([{ server: data.server, username: data.username }, ...servers])])
+                )
 
-                    headers['x-server'] = data.server
-                    localStorage.setItem('server', data.server)
-                    localStorage.setItem(
-                        'servers',
-                        JSON.stringify([...new Set([{ server: data.server, username: data.username }, ...servers])])
-                    )
-
-                    history.push(RouteE.Teams)
-                } catch (err) {
-                    if (err instanceof Error) {
-                        setError(err.message)
-                    } else {
-                        setError('Invalid username or password. Please try again.')
-                    }
+                history.push(RouteE.Teams)
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message)
+                } else {
+                    setError('Invalid username or password. Please try again.')
                 }
             }
-            void login()
         },
         [history, servers]
     )
@@ -99,41 +110,14 @@ export default function Login() {
                 <Title className="pt-8 pb-24" headingLevel="h1">
                     Ansible Automation Platform
                 </Title>
-                <Collapse open={!!error}>
-                    <AlertGroup className="pb-16">
-                        <Alert variant="danger" title={error ?? ''} isInline />
-                    </AlertGroup>
-                </Collapse>
-                <FormPage
-                    defaultValues={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
+                <PageForm
+                    schema={DataType}
+                    submitText={t('Submit')}
                     onSubmit={onSubmit}
-                    schema={InputType}
+                    cancelText={t('Cancel')}
                     isVertical
-                    hideHeader
-                    noPadding
-                >
-                    {/* <FormSelectInput name="server" label="Server" required>
-                        {servers.map((server, index) => (
-                            <SelectOption key={index} value={server.server}>
-                                {server.server}
-                            </SelectOption>
-                        ))}
-                    </FormSelectInput> */}
-                    <FormSelect name="server" label="Server" required isCreatable>
-                        {servers.map((server, index) => (
-                            <SelectOption key={index} value={server.server}>
-                                {server.server}
-                            </SelectOption>
-                        ))}
-                    </FormSelect>
-                    <FormTextInput name="username" label="Username" required />
-                    <FormTextInput name="password" label="Password" required secret autoFocus={servers && servers.length > 0} />
-                    <ActionGroup>
-                        <Button type="submit" style={{ flexGrow: 1 }}>
-                            Log In
-                        </Button>
-                    </ActionGroup>
-                </FormPage>
+                    defaultValue={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
+                />
             </PageSection>
         </Page>
     )
