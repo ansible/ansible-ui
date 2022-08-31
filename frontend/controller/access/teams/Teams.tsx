@@ -6,6 +6,7 @@ import { useDialog } from '../../../../framework/DialogContext'
 import { IToolbarFilter } from '../../../../framework/PageToolbar'
 import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
+import { compareStrings } from '../../../common/compare'
 import {
     useCreatedByToolbarFilter,
     useModifiedByToolbarFilter,
@@ -47,28 +48,7 @@ export function Teams() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
-    const deleteNameColumn = useNameColumn({})
-    const handleDelete = useCallback(() => {
-        setDialog(
-            <BulkActionDialog<Team>
-                title={t('Delete teams')}
-                prompt={t('Are you sure you want to delete these teams?')}
-                confirm={t('Yes, I confirm that I want to delete these teams.')}
-                submit={t('Delete')}
-                submitting={t('Deleting')}
-                submittingTitle={t('Deleting teams')}
-                success={t('Success')}
-                cancel={t('Cancel')}
-                close={t('Close')}
-                error={t('There were errors deleting teams')}
-                items={view.selectedItems}
-                keyFn={getItemKey}
-                isDanger
-                columns={[deleteNameColumn, organizationColumn, createdColumn, modifiedColumn]}
-            />
-        )
-    }, [createdColumn, modifiedColumn, deleteNameColumn, organizationColumn, setDialog, t, view.selectedItems])
-    const deleteToolbarAction = useDeleteToolbarAction(handleDelete)
+    const deleteToolbarAction = useDeleteTeamToolbarAction()
     const toolbarActions = useMemo<IToolbarAction<Team>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
@@ -92,4 +72,44 @@ export function Teams() {
             {...view}
         />
     )
+}
+
+export function useDeleteTeamToolbarAction() {
+    const { t } = useTranslation()
+    const [_, setDialog] = useDialog()
+    const deleteActionNameColumn = useNameColumn({ disableSort: true })
+    const deleteActionOrganizationColumn = useOrganizationNameColumn({ disableLink: true, disableSort: true })
+    const deleteActionCreatedColumn = useCreatedColumn({ disableSort: true })
+    const deleteActionModifiedColumn = useModifiedColumn({ disableSort: true })
+    const handleDelete = useCallback(
+        (items: Team[]) => {
+            setDialog(
+                <BulkActionDialog<Team>
+                    title={t('Delete teams')}
+                    prompt={t('Are you sure you want to delete these teams?')}
+                    confirm={t('Yes, I confirm that I want to delete these teams.')}
+                    submit={t('Delete')}
+                    submitting={t('Deleting')}
+                    submittingTitle={t('Deleting teams')}
+                    success={t('Success')}
+                    cancel={t('Cancel')}
+                    close={t('Close')}
+                    error={t('There were errors deleting teams')}
+                    items={items.sort((l, r) => compareStrings(l.name, r.name))}
+                    keyFn={getItemKey}
+                    isDanger
+                    columns={[
+                        deleteActionNameColumn,
+                        deleteActionOrganizationColumn,
+                        deleteActionCreatedColumn,
+                        deleteActionModifiedColumn,
+                    ]}
+                    errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
+                />
+            )
+        },
+        [setDialog, t, deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]
+    )
+    const deleteToolbarAction = useDeleteToolbarAction(handleDelete)
+    return deleteToolbarAction
 }
