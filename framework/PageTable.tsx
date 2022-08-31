@@ -66,7 +66,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                         </Tr>
                     </Thead>
                 ) : (
-                    <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 1} scrollRight={scroll.right > 1} />
+                    <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 0} scrollRight={scroll.right > 1} />
                 )}
                 <Tbody>
                     {itemCount === undefined
@@ -102,7 +102,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                                   rowIndex={rowIndex}
                                   showSelect={showSelect}
                                   scrollLeft={scroll.left > 0}
-                                  scrollRight={scroll.right > 0}
+                                  scrollRight={scroll.right > 1}
                               />
                           ))}
                 </Tbody>
