@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Modal, ModalVariant, Progress, ProgressSize, ProgressVariant } from '@patternfly/react-core'
+import { Button, Checkbox, Modal, ModalVariant, Progress, ProgressSize, ProgressVariant } from '@patternfly/react-core'
 import { useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
@@ -25,6 +25,7 @@ export function BulkActionDialog<T extends object>(props: {
     isDanger?: boolean
     items: T[]
     columns: ITableColumn<T>[]
+    errorColumns: ITableColumn<T>[]
     keyFn: (item: T) => string | number
 }) {
     const [_, setDialog] = useDialog()
@@ -43,7 +44,7 @@ export function BulkActionDialog<T extends object>(props: {
             let hasError = false
             for (const item of props.items) {
                 if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, Math.random() * 300 + 200))
-                if (Math.random() < 0.1) {
+                if (Math.random() < 0.8) {
                     setErrors((errors) => ({ ...(errors ?? {}), [props.keyFn(item)]: `Error ${progress}` }))
                     setErrorItems((errorItems) => [...errorItems, item])
                     setError(props.error)
@@ -95,7 +96,7 @@ export function BulkActionDialog<T extends object>(props: {
             }
             description={<Collapse open={!isSubmitting && !isSubmited}>{props.prompt}</Collapse>}
         >
-            <Collapse open={isSubmitting || (isSubmited && !error)}>
+            <Collapse open={isSubmitting || isSubmited}>
                 <Progress
                     value={(progress / props.items.length) * 100}
                     title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
@@ -103,9 +104,6 @@ export function BulkActionDialog<T extends object>(props: {
                     variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
                     style={{ marginBottom: 16 }}
                 />
-            </Collapse>
-            <Collapse open={!!error && !isSubmitting}>
-                <Alert title={error} variant="danger" isInline style={{ marginBottom: 16 }} />
             </Collapse>
             <Collapse open={!isSubmitting && !isSubmited}>
                 <div
@@ -149,7 +147,7 @@ export function BulkActionDialog<T extends object>(props: {
                         pageItems={errorItemsPagination.paged}
                         itemCount={errorItems.length}
                         tableColumns={[
-                            props.columns[0],
+                            ...props.errorColumns,
                             {
                                 header: 'Error',
                                 cell: (item) => (
@@ -162,7 +160,7 @@ export function BulkActionDialog<T extends object>(props: {
                         compact
                     />
                 </div>
-                {props.items.length > perPage && (
+                {errorItems.length > perPage && (
                     <PagePagination
                         itemCount={errorItems.length}
                         {...errorItemsPagination}

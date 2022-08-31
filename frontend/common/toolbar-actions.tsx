@@ -22,9 +22,9 @@ export function useCreateToolbarAction(route: RouteE) {
     return toolbarAction
 }
 
-export function useDeleteToolbarAction(onClick: () => void) {
+export function useDeleteToolbarAction<T>(onClick: (items: T[]) => void) {
     const { t } = useTranslation()
-    const toolbarAction: IToolbarAction<{ id: number }> = useMemo(
+    const toolbarAction: IToolbarAction<T> = useMemo(
         () => ({
             type: ToolbarActionType.bulk,
             // variant: ButtonVariant.secondary,

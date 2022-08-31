@@ -6,7 +6,11 @@ import { compareStrings, compareUnknowns } from './compare'
 import { getScmType } from './scm'
 import { getStatus } from './status'
 
-export function useNameColumn<T extends { name: string; id: number }>(options: { url?: string; onClick?: (item: T) => void }) {
+export function useNameColumn<T extends { name: string; id: number }>(options: {
+    url?: string
+    onClick?: (item: T) => void
+    disableSort?: boolean
+}) {
     const { t } = useTranslation()
     const column: ITableColumn<{ name: string; id: number }> = {
         header: t('Name'),
@@ -18,7 +22,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
                 onClick={options.onClick ? () => options.onClick(item) : undefined}
             />
         ),
-        sort: 'name',
+        sort: options.disableSort ? undefined : 'name',
     }
     return column
 }
@@ -108,7 +112,7 @@ export const scmRevisionColumn: ITableColumn<{ scm_revision?: string }> = {
     sortFn: (l, r) => compareStrings(l.scm_revision, r.scm_revision),
 }
 
-export function useCreatedColumn() {
+export function useCreatedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{ created?: string }> = {
         header: t('Created'),
@@ -116,7 +120,7 @@ export function useCreatedColumn() {
             if (!item.created) return <></>
             return <SinceCell value={item.created} />
         },
-        sort: 'created',
+        sort: options?.disableSort ? undefined : 'created',
         defaultSortDirection: 'desc',
     }
     return column
@@ -131,7 +135,7 @@ export const createdColumn: ITableColumn<{ created?: string }> = {
     sortFn: (l, r) => compareStrings(l.created, r.created),
 }
 
-export function useModifiedColumn() {
+export function useModifiedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{ modified?: string }> = {
         header: t('Modified'),
@@ -139,7 +143,7 @@ export function useModifiedColumn() {
             if (!item.modified) return <></>
             return <SinceCell value={item.modified} />
         },
-        sort: 'modified',
+        sort: options?.disableSort ? undefined : 'modified',
         defaultSortDirection: 'desc',
     }
     return column
@@ -205,7 +209,7 @@ export const summaryOrganizationColumn: ITableColumn<{
     sortFn: (l, r) => compareStrings(l.summary_fields.organization.name, r.summary_fields.organization.name),
 }
 
-export function useOrganizationNameColumn() {
+export function useOrganizationNameColumn(options?: { disableLink?: boolean; disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{
         summary_fields: {
@@ -219,10 +223,14 @@ export function useOrganizationNameColumn() {
         cell: (item) => (
             <TextCell
                 text={item.summary_fields.organization.name}
-                to={RouteE.OrganizationDetails.replace(':id', item.summary_fields.organization.id.toString())}
+                to={
+                    options?.disableLink
+                        ? undefined
+                        : RouteE.OrganizationDetails.replace(':id', item.summary_fields.organization.id.toString())
+                }
             />
         ),
-        sort: 'organization',
+        sort: options?.disableSort ? undefined : 'organization',
     }
     return column
 }
