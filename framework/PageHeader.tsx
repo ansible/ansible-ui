@@ -80,16 +80,18 @@ export function PageHeader(props: PageHeaderProps) {
                     {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
                     <Fragment>
                         {title ? (
-                            <Title headingLevel="h1">
-                                {title}
-                                {props.titleHelp && (
-                                    <Popover headerContent={props.titleHelpTitle} bodyContent={props.titleHelp}>
-                                        <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'middle' }}>
+                            props.titleHelp ? (
+                                <Popover headerContent={props.titleHelpTitle} bodyContent={props.titleHelp} position="bottom-start">
+                                    <Title headingLevel="h1">
+                                        {title}
+                                        <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'top' }}>
                                             <OutlinedQuestionCircleIcon />
                                         </Button>
-                                    </Popover>
-                                )}
-                            </Title>
+                                    </Title>
+                                </Popover>
+                            ) : (
+                                <Title headingLevel="h1">{title}</Title>
+                            )
                         ) : (
                             <Title headingLevel="h1">
                                 <Skeleton width="160px" />
