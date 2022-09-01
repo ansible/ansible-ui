@@ -1,4 +1,13 @@
-import { Button, Checkbox, Modal, ModalVariant, Progress, ProgressSize, ProgressVariant } from '@patternfly/react-core'
+import {
+    Button,
+    Checkbox,
+    Modal,
+    ModalVariant,
+    Progress,
+    ProgressMeasureLocation,
+    ProgressSize,
+    ProgressVariant,
+} from '@patternfly/react-core'
 import { useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
@@ -37,29 +46,33 @@ export function BulkActionDialog<T extends object>(props: {
     const [error, setError] = useState('')
     const [errors, setErrors] = useState<Record<string | number, string>>()
     const [errorItems, setErrorItems] = useState<T[]>([])
-    const onConfirm = async () => {
-        try {
-            setSubmitting(true)
-            let progress = 0
-            let hasError = false
-            for (const item of props.items) {
-                if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, Math.random() * 300 + 200))
-                if (Math.random() < 0.8) {
-                    setErrors((errors) => ({ ...(errors ?? {}), [props.keyFn(item)]: `Error ${progress}` }))
-                    setErrorItems((errorItems) => [...errorItems, item])
-                    setError(props.error)
+    const onConfirm = () => {
+        async function handleConfirm() {
+            try {
+                setSubmitting(true)
+                let progress = 0
+                let hasError = false
+                for (const item of props.items) {
+                    if (process.env.NODE_ENV === 'development')
+                        await new Promise((resolve) => setTimeout(resolve, Math.random() * 300 + 200))
+                    if (Math.random() < 0.1) {
+                        setErrors((errors) => ({ ...(errors ?? {}), [props.keyFn(item)]: `Error ${progress}` }))
+                        setErrorItems((errorItems) => [...errorItems, item])
+                        setError(props.error)
+                    }
+                    setProgress(++progress)
+                    hasError = true
                 }
-                setProgress(++progress)
-                hasError = true
-            }
 
-            if (!hasError) onClose()
-        } catch {
-            // todo?
-        } finally {
-            setSubmitting(false)
-            setSubmited(true)
+                if (!hasError) onClose()
+            } catch {
+                // todo?
+            } finally {
+                setSubmitting(false)
+                setSubmited(true)
+            }
         }
+        void handleConfirm()
     }
     const { paged, page, perPage, setPage, setPerPage } = usePaged(props.items)
     const [confirmed, setConfirmed] = useState(!props.confirm)
@@ -103,6 +116,7 @@ export function BulkActionDialog<T extends object>(props: {
                     size={ProgressSize.lg}
                     variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
                     style={{ marginBottom: 16 }}
+                    measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
                 />
             </Collapse>
             <Collapse open={!isSubmitting && !isSubmited}>

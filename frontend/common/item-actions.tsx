@@ -2,19 +2,19 @@ import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { IItemAction } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
 
-export function useDeleteItemAction() {
+export function useDeleteItemAction<T>(onClick: (item: T) => void) {
     const { t } = useTranslation()
-    const action: IItemAction<{ id: number }> = {
+    const action: IItemAction<T> = {
         icon: TrashIcon,
         label: t('Delete'),
-        onClick: () => null,
+        onClick,
     }
     return action
 }
 
-export function useCopyItemAction() {
+export function useCopyItemAction<T>() {
     const { t } = useTranslation()
-    const action: IItemAction<{ id: number }> = {
+    const action: IItemAction<T> = {
         icon: CopyIcon,
         label: t('Copy'),
         onClick: () => null,
@@ -22,9 +22,9 @@ export function useCopyItemAction() {
     return action
 }
 
-export function useEditItemAction() {
+export function useEditItemAction<T>() {
     const { t } = useTranslation()
-    const action: IItemAction<{ id: number }> = {
+    const action: IItemAction<T> = {
         icon: EditIcon,
         label: t('Edit'),
         onClick: () => null,
@@ -32,7 +32,7 @@ export function useEditItemAction() {
     return action
 }
 
-export const deleteItemAction: IItemAction<{ id: number }> = {
+export const deleteItemAction: IItemAction = {
     label: 'Delete',
     onClick: () => null,
 }

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 
 export interface IPagedView {
     page: number
@@ -15,5 +15,6 @@ export function usePagedView(view?: Partial<IPagedView>) {
     const [sort, setSort] = useState(() => view?.sort ?? '')
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => view?.sortDirection ?? 'asc')
     const [filters, setFilters] = useState<Record<string, string[]>>(() => view?.filters ?? {})
-    return { page, setPage, perPage, setPerPage, sort, setSort, sortDirection, setSortDirection, filters, setFilters }
+    const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
+    return { page, setPage, perPage, setPerPage, sort, setSort, sortDirection, setSortDirection, filters, setFilters, clearAllFilters }
 }

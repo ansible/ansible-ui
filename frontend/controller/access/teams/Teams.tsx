@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { IItemAction, ITableColumn, IToolbarAction } from '../../../../framework'
 import { BulkActionDialog } from '../../../../framework/BulkActionDialog'
 import { useTranslation } from '../../../../framework/components/useTranslation'
@@ -22,7 +22,6 @@ import { Team } from './Team'
 
 export function Teams() {
     const { t } = useTranslation()
-    const [_, setDialog] = useDialog()
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
@@ -56,7 +55,7 @@ export function Teams() {
 
     // Row Actions
     const editItemAction = useEditItemAction()
-    const deleteItemAction = useDeleteItemAction()
+    const deleteItemAction = useDeleteTeamRowAction()
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     return (
@@ -74,42 +73,43 @@ export function Teams() {
     )
 }
 
-export function useDeleteTeamToolbarAction() {
+export function useDeleteTeams() {
     const { t } = useTranslation()
     const [_, setDialog] = useDialog()
     const deleteActionNameColumn = useNameColumn({ disableSort: true })
     const deleteActionOrganizationColumn = useOrganizationNameColumn({ disableLink: true, disableSort: true })
     const deleteActionCreatedColumn = useCreatedColumn({ disableSort: true })
     const deleteActionModifiedColumn = useModifiedColumn({ disableSort: true })
-    const handleDelete = useCallback(
-        (items: Team[]) => {
-            setDialog(
-                <BulkActionDialog<Team>
-                    title={t('Delete teams')}
-                    prompt={t('Are you sure you want to delete these teams?')}
-                    confirm={t('Yes, I confirm that I want to delete these teams.')}
-                    submit={t('Delete')}
-                    submitting={t('Deleting')}
-                    submittingTitle={t('Deleting teams')}
-                    success={t('Success')}
-                    cancel={t('Cancel')}
-                    close={t('Close')}
-                    error={t('There were errors deleting teams')}
-                    items={items.sort((l, r) => compareStrings(l.name, r.name))}
-                    keyFn={getItemKey}
-                    isDanger
-                    columns={[
-                        deleteActionNameColumn,
-                        deleteActionOrganizationColumn,
-                        deleteActionCreatedColumn,
-                        deleteActionModifiedColumn,
-                    ]}
-                    errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
-                />
-            )
-        },
-        [setDialog, t, deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]
-    )
-    const deleteToolbarAction = useDeleteToolbarAction(handleDelete)
-    return deleteToolbarAction
+    const deleteTeams = (items: Team[]) => {
+        setDialog(
+            <BulkActionDialog<Team>
+                title={t('Delete teams', { count: items.length })}
+                prompt={t('Are you sure you want to delete these {{count}} teams?', { count: items.length })}
+                confirm={t('Yes, I confirm that I want to delete these {{count}} teams.', { count: items.length })}
+                submit={t('Delete')}
+                submitting={t('Deleting')}
+                submittingTitle={t('Deleting {{count}} teams', { count: items.length })}
+                success={t('Success')}
+                cancel={t('Cancel')}
+                close={t('Close')}
+                error={t('There were errors deleting teams', { count: items.length })}
+                items={items.sort((l, r) => compareStrings(l.name, r.name))}
+                keyFn={getItemKey}
+                isDanger
+                columns={[deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]}
+                errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
+            />
+        )
+    }
+    return deleteTeams
+}
+
+export function useDeleteTeamToolbarAction() {
+    const deleteTeams = useDeleteTeams()
+    return useDeleteToolbarAction(deleteTeams)
+}
+
+export function useDeleteTeamRowAction() {
+    const deleteTeams = useDeleteTeams()
+    return useDeleteItemAction((item: Team) => deleteTeams([item]))
 }
