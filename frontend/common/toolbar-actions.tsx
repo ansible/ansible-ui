@@ -27,7 +27,7 @@ export function useDeleteToolbarAction<T>(onClick: (items: T[]) => void) {
     const toolbarAction: IToolbarAction<T> = useMemo(
         () => ({
             type: ToolbarActionType.bulk,
-            // variant: ButtonVariant.secondary,
+            variant: ButtonVariant.secondary,
             icon: TrashIcon,
             label: t('Delete'),
             onClick,

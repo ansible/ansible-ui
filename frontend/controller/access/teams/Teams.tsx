@@ -49,7 +49,7 @@ export function Teams() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
-    const deleteToolbarAction = useDeleteTeamToolbarAction()
+    const deleteToolbarAction = useDeleteTeamToolbarAction(view.refresh)
     const toolbarActions = useMemo<IToolbarAction<Team>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
@@ -57,7 +57,7 @@ export function Teams() {
 
     // Row Actions
     const editItemAction = useEditItemAction((team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())))
-    const deleteItemAction = useDeleteTeamRowAction()
+    const deleteItemAction = useDeleteTeamRowAction(view.refresh)
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     return (
@@ -75,7 +75,7 @@ export function Teams() {
     )
 }
 
-export function useDeleteTeams() {
+export function useDeleteTeams(callback: () => void) {
     const { t } = useTranslation()
     const [_, setDialog] = useDialog()
     const deleteActionNameColumn = useNameColumn({ disableSort: true })
@@ -100,18 +100,19 @@ export function useDeleteTeams() {
                 isDanger
                 columns={[deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]}
                 errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
+                onClose={callback}
             />
         )
     }
     return deleteTeams
 }
 
-export function useDeleteTeamToolbarAction() {
-    const deleteTeams = useDeleteTeams()
+export function useDeleteTeamToolbarAction(callback: () => void) {
+    const deleteTeams = useDeleteTeams(callback)
     return useDeleteToolbarAction(deleteTeams)
 }
 
-export function useDeleteTeamRowAction() {
-    const deleteTeams = useDeleteTeams()
+export function useDeleteTeamRowAction(callback: () => void) {
+    const deleteTeams = useDeleteTeams(callback)
     return useDeleteItemAction((item: Team) => deleteTeams([item]))
 }
