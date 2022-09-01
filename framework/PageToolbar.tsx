@@ -95,13 +95,25 @@ export type PageToolbar2Props<T extends object> = {
     unselectAll?: () => void
     filters: Record<string, string[]>
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
+    clearAllFilters: () => void
 }
 
 export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
-    const { itemCount, page, perPage, setPage, setPerPage, toolbarFilters, toolbarActions, selectedItems, filters, setFilters } = props
+    const {
+        itemCount,
+        page,
+        perPage,
+        setPage,
+        setPerPage,
+        toolbarFilters,
+        toolbarActions,
+        selectedItems,
+        filters,
+        setFilters,
+        clearAllFilters,
+    } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
-    const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
 
     const toolbarActionButtons = useMemo(
         () => (

@@ -1,4 +1,18 @@
-import { Skeleton, Split, SplitItem, Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core'
+import {
+    Button,
+    EmptyState,
+    EmptyStateBody,
+    EmptyStateIcon,
+    EmptyStateSecondaryActions,
+    Skeleton,
+    Split,
+    SplitItem,
+    Title,
+    Toolbar,
+    ToolbarContent,
+    ToolbarItem,
+} from '@patternfly/react-core'
+import { SearchIcon } from '@patternfly/react-icons'
 import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
@@ -25,10 +39,23 @@ export type PageTableProps<T extends object> = {
     itemCount?: number
     perPage: number
     compact?: boolean
+    clearAllFilters?: () => void
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-    const { tableColumns, pageItems, selectItem, unselectItem, isSelected, keyFn, rowActions, toolbarActions, itemCount, perPage } = props
+    const {
+        tableColumns,
+        pageItems,
+        selectItem,
+        unselectItem,
+        isSelected,
+        keyFn,
+        rowActions,
+        toolbarActions,
+        itemCount,
+        perPage,
+        clearAllFilters,
+    } = props
     const showSelect = toolbarActions?.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
@@ -103,6 +130,24 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                           ))}
                 </Tbody>
             </TableComposable>
+            {itemCount === 0 && (
+                <div style={{ paddingTop: 16 }}>
+                    <EmptyState>
+                        <EmptyStateIcon icon={SearchIcon} />
+                        <Title headingLevel="h2" size="lg">
+                            No results found
+                        </Title>
+                        <EmptyStateBody>No results match this filter criteria. Adjust your filters and try again.</EmptyStateBody>
+                        {clearAllFilters && (
+                            <EmptyStateSecondaryActions>
+                                <Button variant="link" onClick={clearAllFilters}>
+                                    Clear all filters
+                                </Button>
+                            </EmptyStateSecondaryActions>
+                        )}
+                    </EmptyState>
+                </div>
+            )}
         </div>
     )
 }

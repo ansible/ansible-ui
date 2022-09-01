@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@patternfly/react-core'
 import { createContext, ReactNode, useContext, useState } from 'react'
 
@@ -19,11 +20,16 @@ export function useTranslation() {
     const devMode = useContext(TranslationContext)
     if (devMode) {
         return {
-            t: (text: string) => text.toUpperCase(),
+            t: (text: string, options?: { count?: number }) => text.toUpperCase(),
         }
     }
     return {
-        t: (text: string) => text,
+        t: (text: string, options?: { count?: number }) => {
+            if (options?.count !== undefined) {
+                text = text.replace('{{count}}', options.count.toString())
+            }
+            return text
+        },
     }
 }
 
