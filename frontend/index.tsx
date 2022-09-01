@@ -1,5 +1,6 @@
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 import '@patternfly/react-core/dist/styles/base.css'
+
+import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 import { render } from 'react-dom'
 import { ThemeProvider } from '../framework'
 import { TranslationProvider } from '../framework/components/useTranslation'
