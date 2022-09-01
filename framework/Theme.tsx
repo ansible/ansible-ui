@@ -1,5 +1,3 @@
-import { Button } from '@patternfly/react-core'
-import { MoonIcon, SunIcon } from '@patternfly/react-icons'
 import { createContext, ReactNode, useContext, useState } from 'react'
 
 export enum ThemeE {
@@ -51,8 +49,8 @@ export function useTheme(): [ThemeE | undefined, ((theme: ThemeE) => void) | und
     return [theme, setTheme]
 }
 
-export function ThemeSwitcher() {
-    const [theme, setTheme] = useTheme()
-    const toggleTheme = () => setTheme?.(theme === ThemeE.Light ? ThemeE.Dark : ThemeE.Light)
-    return <Button onClick={toggleTheme} variant="plain" icon={theme === ThemeE.Light ? <SunIcon /> : <MoonIcon />} />
-}
+// export function ThemeSwitcher() {
+//     const [theme, setTheme] = useTheme()
+//     const toggleTheme = () => setTheme?.(theme === ThemeE.Light ? ThemeE.Dark : ThemeE.Light)
+//     return <Button onClick={toggleTheme} variant="plain" icon={theme === ThemeE.Light ? <SunIcon /> : <MoonIcon />} />
+// }
