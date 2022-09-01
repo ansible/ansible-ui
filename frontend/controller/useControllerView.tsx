@@ -54,7 +54,9 @@ export function useControllerView<T extends object>(
     url += queryString
     const fetcher = useFetcher()
     const response = useSWR<ItemsResponse<T>>(url, fetcher)
-    const { data } = response
+    const { data, mutate } = response
+    const refresh = () => mutate()
+
     useSWR<ItemsResponse<T>>(data?.next, fetcher)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -67,6 +69,7 @@ export function useControllerView<T extends object>(
     }
 
     return {
+        refresh,
         itemCount: itemCountRef.current.itemCount,
         pageItems: data ? data.results : undefined,
         error,

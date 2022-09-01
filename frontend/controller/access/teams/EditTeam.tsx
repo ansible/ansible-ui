@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 import { HTTPError } from 'ky'
 import { useHistory, useParams } from 'react-router-dom'
-import useSWR, { useSWRConfig } from 'swr'
+import useSWR from 'swr'
 import { PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
@@ -51,11 +51,11 @@ export function EditTeam() {
 
     type CreateTeam = Static<typeof EditTeamSchema>
 
-    const { cache } = useSWRConfig()
+    // const { cache } = useSWRConfig()
 
     const onSubmit: FormPageSubmitHandler<CreateTeam> = async (editedTeam, setError, setFieldError) => {
         try {
-            if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
+            if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
             const result = await getUrl<ItemsResponse<Organization>>(
                 `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
             )
@@ -71,7 +71,7 @@ export function EditTeam() {
             } else {
                 team = await postUrl<Team>('/api/v2/teams/', editedTeam)
             }
-            ;(cache as unknown as { clear: () => void }).clear()
+            // ;(cache as unknown as { clear: () => void }).clear()
             history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))
         } catch (err) {
             if (err instanceof HTTPError) {

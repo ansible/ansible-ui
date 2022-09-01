@@ -8,6 +8,7 @@ import {
     ProgressSize,
     ProgressVariant,
 } from '@patternfly/react-core'
+import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
 import { useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
@@ -36,16 +37,19 @@ export function BulkActionDialog<T extends object>(props: {
     columns: ITableColumn<T>[]
     errorColumns: ITableColumn<T>[]
     keyFn: (item: T) => string | number
+    onClose?: () => void
 }) {
     const [_, setDialog] = useDialog()
-    const onClose = () => setDialog()
+    const onClose = () => {
+        setDialog()
+        props.onClose?.()
+    }
     const [isSubmitting, setSubmitting] = useState(false)
     const [isSubmited, setSubmited] = useState(false)
     const [progress, setProgress] = useState(0)
 
     const [error, setError] = useState('')
-    const [errors, setErrors] = useState<Record<string | number, string>>()
-    const [errorItems, setErrorItems] = useState<T[]>([])
+    const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>()
     const onConfirm = () => {
         async function handleConfirm() {
             try {
@@ -53,18 +57,21 @@ export function BulkActionDialog<T extends object>(props: {
                 let progress = 0
                 let hasError = false
                 for (const item of props.items) {
-                    if (process.env.NODE_ENV === 'development')
-                        await new Promise((resolve) => setTimeout(resolve, Math.random() * 300 + 200))
+                    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
                     if (Math.random() < 0.1) {
-                        setErrors((errors) => ({ ...(errors ?? {}), [props.keyFn(item)]: `Error ${progress}` }))
-                        setErrorItems((errorItems) => [...errorItems, item])
+                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: `Not found` }))
                         setError(props.error)
+                        hasError = true
+                    } else {
+                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null }))
                     }
                     setProgress(++progress)
-                    hasError = true
                 }
 
-                if (!hasError) onClose()
+                if (!hasError) {
+                    await new Promise((resolve) => setTimeout(resolve, 1500))
+                    onClose()
+                }
             } catch {
                 // todo?
             } finally {
@@ -76,8 +83,6 @@ export function BulkActionDialog<T extends object>(props: {
     }
     const { paged, page, perPage, setPage, setPerPage } = usePaged(props.items)
     const [confirmed, setConfirmed] = useState(!props.confirm)
-
-    const errorItemsPagination = usePaged(errorItems)
 
     return (
         <Modal
@@ -119,69 +124,94 @@ export function BulkActionDialog<T extends object>(props: {
                     measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
                 />
             </Collapse>
-            <Collapse open={!isSubmitting && !isSubmited}>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        maxHeight: 425,
-                        overflow: 'hidden',
-                    }}
-                >
-                    <PageTable
-                        pageItems={paged}
-                        itemCount={props.items.length}
-                        tableColumns={props.columns}
-                        keyFn={props.keyFn}
-                        perPage={perPage}
-                        compact
-                    />
-                </div>
-                {props.items.length > perPage && (
-                    <PagePagination
-                        itemCount={props.items.length}
-                        page={page}
-                        perPage={perPage}
-                        setPage={setPage}
-                        setPerPage={setPerPage}
-                        style={{ paddingBottom: 0, marginBottom: -8 }}
-                    />
-                )}
-            </Collapse>
-            <Collapse open={!!errors}>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        maxHeight: 425,
-                        overflow: 'hidden',
-                    }}
-                >
-                    <PageTable
-                        pageItems={errorItemsPagination.paged}
-                        itemCount={errorItems.length}
-                        tableColumns={[
-                            ...props.errorColumns,
-                            {
-                                header: 'Error',
-                                cell: (item) => (
-                                    <span style={{ color: 'var(--pf-global--danger-color--100)' }}>{errors[props.keyFn(item)]}</span>
-                                ),
-                            },
-                        ]}
-                        keyFn={props.keyFn}
-                        perPage={errorItemsPagination.perPage}
-                        compact
-                    />
-                </div>
-                {errorItems.length > perPage && (
-                    <PagePagination
-                        itemCount={errorItems.length}
-                        {...errorItemsPagination}
-                        style={{ paddingBottom: 0, marginBottom: -8 }}
-                    />
-                )}
-            </Collapse>
+            {!isSubmitting && !isSubmited ? (
+                <>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxHeight: 425,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <PageTable
+                            pageItems={paged}
+                            itemCount={props.items.length}
+                            tableColumns={props.columns}
+                            keyFn={props.keyFn}
+                            perPage={perPage}
+                            compact
+                        />
+                    </div>
+                    {props.items.length > perPage && (
+                        <PagePagination
+                            itemCount={props.items.length}
+                            page={page}
+                            perPage={perPage}
+                            setPage={setPage}
+                            setPerPage={setPerPage}
+                            style={{ paddingBottom: 0, marginBottom: -8 }}
+                        />
+                    )}
+                </>
+            ) : (
+                <>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxHeight: 425,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <PageTable
+                            pageItems={paged}
+                            itemCount={props.items.length}
+                            tableColumns={[
+                                ...props.errorColumns,
+                                {
+                                    header: 'Status',
+                                    cell: (item) => {
+                                        const status = statuses?.[props.keyFn(item)]
+                                        if (status === undefined) {
+                                            return (
+                                                <span style={{ color: 'var(--pf-global--info-color--100)' }}>
+                                                    {<PendingIcon />}&nbsp; Pending
+                                                </span>
+                                            )
+                                        }
+                                        if (status === null) {
+                                            return (
+                                                <span style={{ color: 'var(--pf-global--success-color--100)' }}>
+                                                    {<CheckCircleIcon />}&nbsp; Success
+                                                </span>
+                                            )
+                                        }
+                                        return (
+                                            <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
+                                                {<ExclamationCircleIcon />}&nbsp; {statuses?.[props.keyFn(item)]}
+                                            </span>
+                                        )
+                                    },
+                                },
+                            ]}
+                            keyFn={props.keyFn}
+                            perPage={perPage}
+                            compact
+                        />
+                    </div>
+                    {props.items.length > perPage && perPage === 10 && (
+                        <PagePagination
+                            itemCount={props.items.length}
+                            page={page}
+                            perPage={perPage}
+                            setPage={setPage}
+                            setPerPage={setPerPage}
+                            style={{ paddingBottom: 0, marginBottom: -8 }}
+                        />
+                    )}
+                </>
+            )}
             {props.confirm && (
                 <Collapse open={!isSubmitting && !isSubmited}>
                     <div style={{ marginLeft: 16, marginTop: 32, marginBottom: 8 }}>

@@ -1,4 +1,5 @@
-import '@patternfly/react-core/dist/styles/base.css'
+// import '@patternfly/react-core/dist/styles/base.css'
+import '@patternfly/patternfly/patternfly-base.css'
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 
@@ -31,7 +32,7 @@ if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
                 console.log('SW registered: ', registration)
             })
             .catch((registrationError) => {
-                console.log('SW registration failed: ', registrationError)
+                console.error('SW registration failed: ', registrationError)
             })
     })
 }
