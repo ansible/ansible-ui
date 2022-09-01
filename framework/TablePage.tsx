@@ -33,7 +33,7 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
  *   </PageLayout>
  * <Page>
  */
-function PageLayout(props: { children: ReactNode }) {
+export function PageLayout(props: { children: ReactNode }) {
     return (
         <div
             style={{
@@ -48,7 +48,7 @@ function PageLayout(props: { children: ReactNode }) {
     )
 }
 
-function PageBody(props: { children: ReactNode }) {
+export function PageBody(props: { children: ReactNode }) {
     const lg = useWindowSizeOrLarger(WindowSize.xl)
     return (
         <div
@@ -57,7 +57,7 @@ function PageBody(props: { children: ReactNode }) {
                 flexDirection: 'column',
                 height: '100%',
                 maxHeight: '100%',
-                padding: lg ? 16 : 0,
+                padding: lg ? 24 : 0,
                 overflow: 'hidden',
             }}
         >
@@ -66,7 +66,7 @@ function PageBody(props: { children: ReactNode }) {
     )
 }
 
-function PageCard(props: { children: ReactNode }) {
+export function PageCard(props: { children: ReactNode }) {
     const lg = useWindowSizeOrLarger(WindowSize.xl)
     return (
         <div

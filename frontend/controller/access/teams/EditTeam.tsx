@@ -1,19 +1,27 @@
 import { Static, Type } from '@sinclair/typebox'
 import { HTTPError } from 'ky'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import useSWR, { useSWRConfig } from 'swr'
 import { PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { getUrl, ItemsResponse, postUrl } from '../../../Data'
+import { getUrl, ItemsResponse, patchUrl, postUrl, useFetcher } from '../../../Data'
 import { RouteE } from '../../../route'
 import { Organization } from '../organizations/Organization'
 import { Team } from './Team'
 
-export function CreateTeam() {
+export function EditTeam() {
     const { t } = useTranslation()
     const history = useHistory()
 
-    const CreateTeamSchema = Type.Object({
+    const params = useParams<{ id?: string }>()
+    const id = Number(params.id)
+
+    // const project = useProject(id)
+    const fetcher = useFetcher()
+    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, getUrl)
+
+    const EditTeamSchema = Type.Object({
         name: Type.String({
             title: t('Name'),
             placeholder: t('Enter the name'),
@@ -41,21 +49,29 @@ export function CreateTeam() {
         }),
     })
 
-    type CreateTeam = Static<typeof CreateTeamSchema>
+    type CreateTeam = Static<typeof EditTeamSchema>
 
-    const onSubmit: FormPageSubmitHandler<CreateTeam> = async (createTeam, setError, setFieldError) => {
+    const { cache } = useSWRConfig()
+
+    const onSubmit: FormPageSubmitHandler<CreateTeam> = async (editedTeam, setError, setFieldError) => {
         try {
             if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
             const result = await getUrl<ItemsResponse<Organization>>(
-                `/api/v2/organizations/?name=${createTeam.summary_fields.organization.name}`
+                `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
             )
             if (result.results.length === 0) {
                 setFieldError('summary_fields.organization.name', { message: t('Organization not found') })
                 return false
             }
             const organization = result.results[0]
-            createTeam.organization = organization.id
-            const team = await postUrl<Team>('/api/v2/teams/', createTeam)
+            editedTeam.organization = organization.id
+            let team: Team
+            if (Number.isInteger(id)) {
+                team = await patchUrl<Team>(`/api/v2/teams/${id}/`, editedTeam)
+            } else {
+                team = await postUrl<Team>('/api/v2/teams/', editedTeam)
+            }
+            ;(cache as unknown as { clear: () => void }).clear()
             history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))
         } catch (err) {
             if (err instanceof HTTPError) {
@@ -78,10 +94,40 @@ export function CreateTeam() {
     }
     const onCancel = () => history.push(RouteE.Teams)
 
-    return (
-        <>
-            <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
-            <PageForm schema={CreateTeamSchema} submitText={t('Create')} onSubmit={onSubmit} cancelText={t('Cancel')} onCancel={onCancel} />
-        </>
-    )
+    if (Number.isInteger(id)) {
+        if (!team) {
+            return (
+                <>
+                    <PageHeader breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
+                </>
+            )
+        } else {
+            return (
+                <>
+                    <PageHeader title={t('Edit Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
+                    <PageForm
+                        schema={EditTeamSchema}
+                        submitText={t('Save')}
+                        onSubmit={onSubmit}
+                        cancelText={t('Cancel')}
+                        onCancel={onCancel}
+                        defaultValue={team}
+                    />
+                </>
+            )
+        }
+    } else {
+        return (
+            <>
+                <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
+                <PageForm
+                    schema={EditTeamSchema}
+                    submitText={t('Create')}
+                    onSubmit={onSubmit}
+                    cancelText={t('Cancel')}
+                    onCancel={onCancel}
+                />
+            </>
+        )
+    }
 }

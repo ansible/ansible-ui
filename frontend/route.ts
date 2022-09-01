@@ -24,10 +24,11 @@ export enum RouteE {
     UserDetails = '/users/:id/details',
     CreateUser = '/users/create',
     EditUser = '/users/:id/edit',
+
     Teams = '/teams',
     TeamDetails = '/teams/details/:id',
-    TeamCreate = '/teams/create',
-    TeamEdit = '/teams/edit/:id',
+    CreateTeam = '/teams/create',
+    EditTeam = '/teams/edit/:id',
 
     // Administration
     CredentialTypes = '/credential-types',

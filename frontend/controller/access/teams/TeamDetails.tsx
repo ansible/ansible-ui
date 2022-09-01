@@ -1,12 +1,12 @@
-import { PageSection } from '@patternfly/react-core'
-import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
-import { Fragment, useMemo } from 'react'
+import { PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { EditIcon, TrashIcon } from '@patternfly/react-icons'
+import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Detail, DetailsList, IItemAction, PageHeader, SinceCell, TextCell } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { PageContent } from '../../../../framework/PageContent'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
+import { PageBody, PageCard, PageLayout } from '../../../../framework/TablePage'
 import { DetailActions } from '../../../common/DetailActions'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
@@ -19,35 +19,52 @@ export function TeamDetails() {
     const history = useHistory()
     const itemActions: IItemAction<Team>[] = useMemo(
         () => [
-            { icon: SyncIcon, label: t('Sync'), onClick: () => null },
             {
                 icon: EditIcon,
                 label: t('Edit'),
-                onClick: () => history.push(RouteE.TeamEdit.replace(':id', team?.id.toString() ?? '')),
+                onClick: () => history.push(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
             },
-            { icon: CopyIcon, label: t('Copy'), onClick: () => null },
             { icon: TrashIcon, label: t('Delete'), onClick: () => null },
         ],
         [history, team, t]
     )
 
     return (
-        <Fragment>
+        <PageLayout>
             <PageHeader
                 title={team?.name}
                 breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
                 pageActions={<DetailActions item={team} actions={itemActions} />}
             />
-            {team && (
-                <PageContent padding={true}>
-                    <PageTabs>
-                        <PageTab title={t('Details')}>
-                            <TeamDetailsTab team={team} />
-                        </PageTab>
-                    </PageTabs>
-                </PageContent>
-            )}
-        </Fragment>
+            <PageBody>
+                {team ? (
+                    <PageCard>
+                        <PageTabs>
+                            <PageTab title={t('Details')}>
+                                <TeamDetailsTab team={team} />
+                            </PageTab>
+                            <PageTab title={t('Access')}>TODO</PageTab>
+                            <PageTab title={t('Roles')}>TODO</PageTab>
+                        </PageTabs>
+                    </PageCard>
+                ) : (
+                    <PageCard>
+                        <PageTabs>
+                            <PageTab>
+                                <PageSection variant="light">
+                                    <Stack hasGutter>
+                                        <Skeleton />
+                                        <Skeleton />
+                                        <Skeleton />
+                                        <Skeleton />
+                                    </Stack>
+                                </PageSection>
+                            </PageTab>
+                        </PageTabs>
+                    </PageCard>
+                )}
+            </PageBody>
+        </PageLayout>
     )
 }
 
