@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarAction } from '../../../../framework'
 import { BulkActionDialog } from '../../../../framework/BulkActionDialog'
 import { useTranslation } from '../../../../framework/components/useTranslation'
@@ -22,6 +23,7 @@ import { Team } from './Team'
 
 export function Teams() {
     const { t } = useTranslation()
+    const history = useHistory()
 
     // Toolbar Filters
     const nameToolbarFilter = useNameToolbarFilter()
@@ -46,7 +48,7 @@ export function Teams() {
     const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, tableColumns)
 
     // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.TeamCreate)
+    const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
     const deleteToolbarAction = useDeleteTeamToolbarAction()
     const toolbarActions = useMemo<IToolbarAction<Team>[]>(
         () => [createToolbarAction, deleteToolbarAction],
@@ -54,7 +56,7 @@ export function Teams() {
     )
 
     // Row Actions
-    const editItemAction = useEditItemAction()
+    const editItemAction = useEditItemAction((team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())))
     const deleteItemAction = useDeleteTeamRowAction()
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 

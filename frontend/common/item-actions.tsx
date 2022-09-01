@@ -22,17 +22,17 @@ export function useCopyItemAction<T>() {
     return action
 }
 
-export function useEditItemAction<T>() {
+export function useEditItemAction<T>(onClick: (item: T) => void) {
     const { t } = useTranslation()
     const action: IItemAction<T> = {
         icon: EditIcon,
         label: t('Edit'),
-        onClick: () => null,
+        onClick,
     }
     return action
 }
 
-export const deleteItemAction: IItemAction = {
+export const deleteItemAction: IItemAction<unknown> = {
     label: 'Delete',
     onClick: () => null,
 }

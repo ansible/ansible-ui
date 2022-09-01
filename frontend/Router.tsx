@@ -1,6 +1,6 @@
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { Organizations } from './controller/access/organizations/Organizations'
-import { CreateTeam } from './controller/access/teams/TeamCreate'
+import { EditTeam } from './controller/access/teams/EditTeam'
 import { TeamDetails } from './controller/access/teams/TeamDetails'
 import { Teams } from './controller/access/teams/Teams'
 import Users from './controller/access/users/Users'
@@ -47,9 +47,11 @@ export function DemoRouter(): JSX.Element {
             <Route exact path={RouteE.Organizations} component={Organizations} />
             <Route exact path={RouteE.Users} component={Users} />
             {/* <Route exact path={RouteE.UserDetails} component={UserDetails} /> */}
+
             <Route exact path={RouteE.Teams} component={Teams} />
             <Route exact path={RouteE.TeamDetails} component={TeamDetails} />
-            <Route exact path={RouteE.TeamCreate} component={CreateTeam} />
+            <Route exact path={RouteE.CreateTeam} component={EditTeam} />
+            <Route exact path={RouteE.EditTeam} component={EditTeam} />
 
             <Route exact path={RouteE.CredentialTypes} component={CredentialTypesPage} />
             <Route exact path={RouteE.Notifications} component={NotificationsPage} />

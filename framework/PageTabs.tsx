@@ -1,4 +1,4 @@
-import { Divider, Flex, FlexItem, PageSection, PageSectionTypes, Tab, Tabs } from '@patternfly/react-core'
+import { Divider, Flex, FlexItem, PageSection, PageSectionTypes, Skeleton, Tab, Tabs } from '@patternfly/react-core'
 import { Children, Dispatch, Fragment, isValidElement, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
 export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode; postComponents?: ReactNode }) {
@@ -8,7 +8,8 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
     const tabs = children.map((child, index) => {
         if (isValidElement(child)) {
             if (child.type === PageTab) {
-                return <Tab title={child.props.title} eventKey={index} />
+                const title = child.props.title
+                return <Tab title={title ? title : <Skeleton width="60px" />} eventKey={index} />
             }
         }
         return child
@@ -59,7 +60,7 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
     )
 }
 
-export function PageTab(props: { title: string; children: ReactNode }) {
+export function PageTab(props: { title?: string; children: ReactNode }) {
     return <Fragment>{props.children}</Fragment>
 }
 

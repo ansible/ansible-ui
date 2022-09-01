@@ -9,15 +9,28 @@ export const headers: Record<string, string> = {
     'x-server': localStorage.getItem('server'),
 }
 
-export function getUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+export async function getUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
     return ky.get(url, { credentials: 'include', headers }).json<ResponseBody>()
 }
 
-export function postUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
+export async function putUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
+    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
+    return ky.put(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+}
+
+export async function postUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
+    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
     return ky.post(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
 }
 
-export function deleteUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+export async function patchUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
+    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
+    return ky.patch(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+}
+
+export async function deleteUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
     return ky.delete(url, { credentials: 'include', headers }).json<ResponseBody>()
 }
 
