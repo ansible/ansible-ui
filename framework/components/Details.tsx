@@ -9,6 +9,7 @@ import {
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import { useSettings } from '../Settings'
 import { CopyCell, SinceCell } from '../TableColumn'
 import { Help } from './Help'
 import { IconWrapper } from './IconWrapper'
@@ -115,10 +116,23 @@ export function Details(props: { details: IDetail[] }) {
 }
 
 export function DetailsList(props: { children?: ReactNode }) {
+    const settings = useSettings()
+    const orientation = settings.formLayout
+    const columns = settings.formColumns
     return (
         <DescriptionList
-            orientation={{ sm: 'vertical', md: 'vertical', lg: 'vertical', xl: 'vertical', '2xl': 'vertical' }}
-            columnModifier={{ default: '3Col' }}
+            orientation={{ sm: orientation, md: orientation, lg: orientation, xl: orientation, '2xl': orientation }}
+            columnModifier={
+                columns === 'multiple' && {
+                    default: '1Col',
+                    sm: '1Col',
+                    md: '2Col',
+                    lg: '2Col',
+                    xl: '3Col',
+                    '2xl': '3Col',
+                }
+            }
+            style={{ maxWidth: 1200 }}
         >
             {props.children}
         </DescriptionList>
