@@ -4,7 +4,6 @@ import '@patternfly/patternfly/patternfly-base.css'
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 
 import { render } from 'react-dom'
-import { ThemeProvider } from '../framework'
 import { TranslationProvider } from '../framework/components/useTranslation'
 import Demo from './Main'
 
@@ -16,11 +15,9 @@ container.style.overflow = 'hidden'
 document.body.appendChild(container)
 
 render(
-    <ThemeProvider>
-        <TranslationProvider>
-            <Demo />
-        </TranslationProvider>
-    </ThemeProvider>,
+    <TranslationProvider>
+        <Demo />
+    </TranslationProvider>,
     container
 )
 
@@ -28,10 +25,11 @@ if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker
             .register('/service-worker.js')
-            .then((registration) => {
-                console.log('SW registered: ', registration)
-            })
+            // .then((registration) => {
+            //     console.log('SW registered: ', registration)
+            // })
             .catch((registrationError) => {
+                // eslint-disable-next-line no-console
                 console.error('SW registration failed: ', registrationError)
             })
     })

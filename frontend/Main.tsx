@@ -3,6 +3,8 @@ import './styles.css'
 import {
     ApplicationLauncher,
     ApplicationLauncherItem,
+    Button,
+    ButtonVariant,
     Dropdown,
     DropdownItem,
     DropdownToggle,
@@ -29,12 +31,13 @@ import {
     ToolbarItem,
     Truncate,
 } from '@patternfly/react-core'
-import { BarsIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
+import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
 import { DialogProvider } from '../framework/DialogContext'
+import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
 import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
@@ -47,14 +50,16 @@ import { DemoRouter } from './Router'
 export default function Demo() {
     return (
         <AccessCode>
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path={RouteE.Login} component={Login} />
-                    <Route path="*">
-                        <Main />
-                    </Route>
-                </Switch>
-            </BrowserRouter>
+            <SettingsProvider>
+                <BrowserRouter>
+                    <Switch>
+                        <Route exact path={RouteE.Login} component={Login} />
+                        <Route path="*">
+                            <Main />
+                        </Route>
+                    </Switch>
+                </BrowserRouter>
+            </SettingsProvider>
         </AccessCode>
     )
 }
@@ -92,6 +97,7 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
 
 function DemoHeader() {
     const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const openSettings = useSettingsDialog()
     return (
         <Masthead display={{ default: 'inline' }}>
             <MastheadToggle>
@@ -160,6 +166,9 @@ function DemoHeader() {
                                         </DropdownGroup>
                                     </AppBarDropdown>
                                 </ToolbarItem> */}
+                                <ToolbarItem>
+                                    <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings}></Button>
+                                </ToolbarItem>
                                 <ToolbarItem>
                                     <AppBarDropdown icon={<QuestionCircleIcon />}>
                                         <DropdownItem

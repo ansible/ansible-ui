@@ -20,6 +20,7 @@ import { Fragment, MouseEvent, UIEvent, useCallback, useEffect, useMemo, useRef,
 import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
+import { useSettings } from './Settings'
 import { ITableColumn } from './TableColumn'
 import { IToolbarAction, ToolbarActionType } from './Toolbar'
 
@@ -77,9 +78,16 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     useResizeObserver(containerRef, () => updateScroll(containerRef.current))
     useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
+    const settings = useSettings()
+
     return (
         <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
-            <TableComposable aria-label="Simple table" variant={props.compact ? 'compact' : undefined} gridBreakPoint="" isStickyHeader>
+            <TableComposable
+                aria-label="Simple table"
+                variant={props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined}
+                gridBreakPoint=""
+                isStickyHeader
+            >
                 {itemCount === undefined ? (
                     <Thead>
                         <Tr>

@@ -1,9 +1,7 @@
 import ky from 'ky'
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
-import { RouteE } from './route'
 
 export const headers: Record<string, string> = {
     'x-server': localStorage.getItem('server'),
@@ -35,25 +33,26 @@ export async function deleteUrl<ResponseBody>(url: string): Promise<ResponseBody
 }
 
 export function useFetcher() {
-    const history = useHistory()
-    return async function fetcher(url: string) {
-        if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-        return fetch(url, { headers }).then(async (res) => {
-            if (!res.ok) {
-                switch (res.status) {
-                    case 401:
-                        history.push(RouteE.Login)
-                        return
-                }
-                const error = new Error(res.statusText)
-                // Attach extra info to the error object.
-                error.info = await res.json()
-                error.status = res.status
-                throw error
-            }
-            return res.json()
-        })
-    }
+    return getUrl
+    // const history = useHistory()
+    // return async function fetcher(url: string) {
+    //     if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
+    //     return fetch(url, { headers }).then(async (res) => {
+    //         if (!res.ok) {
+    //             switch (res.status) {
+    //                 case 401:
+    //                     history.push(RouteE.Login)
+    //                     return
+    //             }
+    //             const error = new Error(res.statusText)
+    //             // Attach extra info to the error object.
+    //             error.info = await res.json()
+    //             error.status = res.status
+    //             throw error
+    //         }
+    //         return res.json()
+    //     })
+    // }
 }
 export async function fetcher(url: string) {
     if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
