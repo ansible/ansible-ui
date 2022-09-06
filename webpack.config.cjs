@@ -12,9 +12,7 @@ module.exports = function (_env, argv) {
     var isDevelopment = !isProduction
     var config = {
         entry: './frontend',
-        resolve: {
-            extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        },
+        resolve: { extensions: ['.ts', '.tsx', '.js', '.jsx'] },
         module: {
             rules: [
                 { test: /\.(hbs|yaml)$/, type: 'asset/source' },
@@ -28,9 +26,7 @@ module.exports = function (_env, argv) {
                     test: /\.(ts|tsx|js|jsx)$/,
                     exclude: /node_modules/,
                     loader: require.resolve('babel-loader'),
-                    options: {
-                        plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
-                    },
+                    options: { plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean) },
                     type: 'javascript/auto',
                 },
             ],
@@ -47,14 +43,8 @@ module.exports = function (_env, argv) {
                 chunkFilename: '[id].[contenthash:8].css',
                 ignoreOrder: false,
             }),
-            isProduction &&
-                new GenerateSW({
-                    clientsClaim: true,
-                    skipWaiting: true,
-                }),
-            new CopyPlugin({
-                patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }],
-            }),
+            isProduction && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
+            new CopyPlugin({ patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }] }),
         ].filter(Boolean),
         output: {
             clean: true,

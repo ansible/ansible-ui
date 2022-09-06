@@ -32,6 +32,7 @@ export default function Login() {
             placeholder: t('Enter password'),
             minLength: 1,
             errorMessage: { required: 'Password is required', minLength: 'Password is required' },
+            variant: 'password',
         }),
     })
 

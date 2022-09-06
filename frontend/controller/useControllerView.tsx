@@ -21,15 +21,15 @@ export function useControllerView<T extends object>(
 
     if (filters) {
         for (const key in filters) {
-            const filter = toolbarFilters?.find((filter) => filter.key === key)
-            if (filter) {
+            const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key)
+            if (toolbarFilter) {
                 const values = filters[key]
                 if (values.length > 0) {
                     queryString ? (queryString += '&') : (queryString += '?')
                     if (values.length > 1) {
-                        queryString += values.map((value) => `or__${filter.query}=${value}`).join('&')
+                        queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
                     } else {
-                        queryString += `${filter.query}=${values.join(',')}`
+                        queryString += `${toolbarFilter.query}=${values.join(',')}`
                     }
                 }
             }
