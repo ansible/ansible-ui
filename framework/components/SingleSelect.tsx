@@ -1,27 +1,30 @@
-import { FormGroup, Select, SelectOption } from '@patternfly/react-core'
-import { ReactNode, useCallback, useState } from 'react'
+import { FormGroup, Select } from '@patternfly/react-core'
+import { CSSProperties, ReactNode, useCallback, useState } from 'react'
 
-export function SingleSelect(props: { options: string[]; value?: string; onChange: (value: string) => void; label?: string }) {
+export function SingleSelect(props: {
+    id?: string
+    label: string
+    value: string
+    onChange: (value: string) => void
+    children: ReactNode
+    style?: CSSProperties
+}) {
     const [open, setOpen] = useState(false)
     const onToggle = useCallback(() => {
         setOpen((open) => !open)
     }, [])
     const onSelect = useCallback(
-        (_e, v) => {
+        (_e, v: string) => {
             props.onChange(v)
             setOpen(false)
         },
         [props]
     )
-    const id = '111'
+    const id = props.id ?? props.label.toLocaleLowerCase().split(' ').join('-')
     return (
-        <FormGroup label={props.label} fieldId={id}>
+        <FormGroup label={props.label} fieldId={id} style={props.style}>
             <Select id={id} selections={props.value} isOpen={open} onToggle={onToggle} onSelect={onSelect}>
-                {props.options.map((option) => (
-                    <SelectOption key={option} value={option}>
-                        {option}
-                    </SelectOption>
-                ))}
+                {props.children as any}
             </Select>
         </FormGroup>
     )
