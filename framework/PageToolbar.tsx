@@ -131,7 +131,13 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                         return (
                                             <OverflowMenuItem key={action.label}>
                                                 <Button
-                                                    variant={action.variant}
+                                                    variant={
+                                                        selectedItems.length
+                                                            ? action.variant === ButtonVariant.primary
+                                                                ? ButtonVariant.tertiary
+                                                                : ButtonVariant.primary
+                                                            : action.variant
+                                                    }
                                                     onClick={() => action.onClick(selectedItems)}
                                                     isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
                                                     // icon={
@@ -385,7 +391,7 @@ function TextFilter(props: { addFilter: (value: string) => void }) {
                 </TextInputGroupUtilities>
             </TextInputGroup>
             <Button
-                variant="control"
+                variant={value ? 'primary' : 'contorl'}
                 aria-label="add filter"
                 onClick={() => {
                     props.addFilter(value)

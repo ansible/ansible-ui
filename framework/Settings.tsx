@@ -4,7 +4,7 @@ import { SingleSelect } from './components/SingleSelect'
 import { useDialog } from './DialogContext'
 
 export interface Settings {
-    theme?: 'light' | 'dark'
+    theme?: 'system' | 'light' | 'dark'
     tableLayout?: 'compact' | 'comfortable'
     formColumns?: 'single' | 'multiple'
     formLayout?: 'vertical' | 'horizontal'
@@ -21,13 +21,19 @@ export function useSettings() {
 export function SettingsProvider(props: { children?: ReactNode }) {
     const [settings, setSettingsState] = useState<Settings>(() => {
         const settings: Settings = {
-            theme: localStorage.getItem('theme') as 'light' | 'dark',
+            theme: localStorage.getItem('theme') as 'system' | 'light' | 'dark',
             tableLayout: localStorage.getItem('tableLayout') as 'compact' | 'comfortable',
             formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
             formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
-            borders: localStorage.getItem('borders') === 'true',
+            borders: localStorage.getItem('borders') !== 'false',
         }
-        if (settings.theme === 'dark') {
+        const activeTheme =
+            settings.theme !== 'dark' && settings.theme !== 'light'
+                ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light'
+                : settings.theme
+        if (activeTheme === 'dark') {
             document.documentElement.classList.add('pf-theme-dark')
         } else {
             document.documentElement.classList.remove('pf-theme-dark')
@@ -36,13 +42,15 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     })
 
     const setSettings = useCallback((settings: Settings) => {
-        localStorage.setItem('theme', settings.theme ?? 'light')
+        localStorage.setItem('theme', settings.theme ?? 'system')
         localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable')
         localStorage.setItem('formColumns', settings.formColumns ?? 'multiple')
         localStorage.setItem('formLayout', settings.formLayout ?? 'vertical')
         localStorage.setItem('borders', settings.borders ? 'true' : 'false')
         setSettingsState(settings)
-        if (settings.theme === 'dark') {
+        const activeTheme =
+            settings.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : settings.theme
+        if (activeTheme === 'dark') {
             document.documentElement.classList.add('pf-theme-dark')
         } else {
             document.documentElement.classList.remove('pf-theme-dark')
@@ -86,9 +94,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
             <Form isHorizontal={settings.formLayout === 'horizontal'}>
                 <SingleSelect
                     label="Theme"
-                    value={settings.theme ?? 'light'}
-                    onChange={(theme: 'light' | 'dark') => setSettings({ ...settings, theme })}
+                    value={settings.theme ?? 'system'}
+                    onChange={(theme: 'system' | 'light' | 'dark') => setSettings({ ...settings, theme })}
                 >
+                    <SelectOption value="system">System default</SelectOption>
                     <SelectOption value="light">Light</SelectOption>
                     <SelectOption value="dark">Dark</SelectOption>
                 </SingleSelect>
