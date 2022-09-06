@@ -4,7 +4,7 @@ import { useTranslation } from '../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../common/columns'
 import { useDeleteItemAction } from '../../common/item-actions'
 import { useDeleteToolbarAction } from '../../common/toolbar-actions'
-import { getItemKey, IItem, useItems } from '../../Data'
+import { getItemKey, IItem } from '../../Data'
 import { RouteE } from '../../route'
 
 export interface IWorkflowApprovals extends IItem {
@@ -14,8 +14,8 @@ export interface IWorkflowApprovals extends IItem {
 }
 
 export function useWorkflowApprovals() {
-    const { items: workflowApprovals } = useItems<IWorkflowApprovals>('workflow_approvals')
-    return workflowApprovals
+    // const { items: workflowApprovals } = useItems<IWorkflowApprovals>('workflow_approvals')
+    return [] as IWorkflowApprovals[]
 }
 
 export default function WorkflowApprovalsPage() {

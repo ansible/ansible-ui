@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { getUrl, ItemsResponse, patchUrl, postUrl, useFetcher } from '../../../Data'
+import { ItemsResponse, requestGet, requestPatch, requestPost, useFetcher } from '../../../Data'
 import { RouteE } from '../../../route'
 import { Organization } from '../organizations/Organization'
 import { Team } from './Team'
@@ -19,7 +19,7 @@ export function EditTeam() {
 
     // const project = useProject(id)
     const fetcher = useFetcher()
-    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, getUrl)
+    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet)
 
     const EditTeamSchema = Type.Object({
         name: Type.String({
@@ -56,7 +56,7 @@ export function EditTeam() {
     const onSubmit: FormPageSubmitHandler<CreateTeam> = async (editedTeam, setError, setFieldError) => {
         try {
             if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-            const result = await getUrl<ItemsResponse<Organization>>(
+            const result = await requestGet<ItemsResponse<Organization>>(
                 `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
             )
             if (result.results.length === 0) {
@@ -67,9 +67,9 @@ export function EditTeam() {
             editedTeam.organization = organization.id
             let team: Team
             if (Number.isInteger(id)) {
-                team = await patchUrl<Team>(`/api/v2/teams/${id}/`, editedTeam)
+                team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam)
             } else {
-                team = await postUrl<Team>('/api/v2/teams/', editedTeam)
+                team = await requestPost<Team>('/api/v2/teams/', editedTeam)
             }
             // ;(cache as unknown as { clear: () => void }).clear()
             history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))

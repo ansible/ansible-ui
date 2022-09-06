@@ -1,6 +1,7 @@
 import { Alert, AlertGroup } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
+import ErrorBoundary from './components/ErrorBoundary'
 import { PagePagination, PagePaginationProps } from './PagePagination'
 import { PageTable, PageTableProps } from './PageTable'
 import { PageToolbar2, PageToolbar2Props } from './PageToolbar'
@@ -36,16 +37,18 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
  */
 export function PageLayout(props: { children: ReactNode }) {
     return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                maxHeight: '100%',
-            }}
-        >
-            {props.children}
-        </div>
+        <ErrorBoundary>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    maxHeight: '100%',
+                }}
+            >
+                {props.children}
+            </div>
+        </ErrorBoundary>
     )
 }
 

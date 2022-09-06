@@ -1,4 +1,5 @@
-import ky from 'ky'
+import ky, { HTTPError, ResponsePromise } from 'ky'
+import { Input, Options } from 'ky/distribution/types/options'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
@@ -7,62 +8,63 @@ export const headers: Record<string, string> = {
     'x-server': localStorage.getItem('server'),
 }
 
-export async function getUrl<ResponseBody>(url: string): Promise<ResponseBody> {
-    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    return ky.get(url, { credentials: 'include', headers }).json<ResponseBody>()
+export async function headUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, {}, ky.head)
 }
 
-export async function putUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
-    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    return ky.put(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+export async function requestOptions<ResponseBody>(url: string): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get)
 }
 
-export async function postUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
-    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    return ky.post(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+export async function requestGet<ResponseBody>(url: string): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, {}, ky.get)
 }
 
-export async function patchUrl<ResponseBody, RequestBody = unknown>(url: string, data: RequestBody): Promise<ResponseBody> {
-    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    return ky.patch(url, { json: data, credentials: 'include', headers }).json<ResponseBody>()
+export async function requestPut<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { json }, ky.put)
 }
 
-export async function deleteUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+export async function requestPost<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { json }, ky.post)
+}
+
+export async function requestPatch<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { json }, ky.patch)
+}
+
+export async function requestDelete<ResponseBody>(url: string): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, {}, ky.delete)
+}
+
+async function requestCommon<ResponseBody>(url: string, options: Options, methodFn: (input: Input, options: Options) => ResponsePromise) {
     if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    return ky.delete(url, { credentials: 'include', headers }).json<ResponseBody>()
+    try {
+        const result = await methodFn(url, {
+            ...options,
+            credentials: 'include',
+            headers: { ...headers, ...(options.headers ?? {}) },
+        }).json<ResponseBody>()
+        if (process.env.NODE_ENV === 'development') {
+            console.debug(result)
+        }
+        return result
+    } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+            console.error(err)
+        }
+        if (err instanceof HTTPError) {
+            switch (err.response.status) {
+                case 401:
+                    location.replace('/login')
+                    break
+            }
+        }
+        throw err
+    }
 }
 
 export function useFetcher() {
-    return getUrl
-    // const history = useHistory()
-    // return async function fetcher(url: string) {
-    //     if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    //     return fetch(url, { headers }).then(async (res) => {
-    //         if (!res.ok) {
-    //             switch (res.status) {
-    //                 case 401:
-    //                     history.push(RouteE.Login)
-    //                     return
-    //             }
-    //             const error = new Error(res.statusText)
-    //             // Attach extra info to the error object.
-    //             error.info = await res.json()
-    //             error.status = res.status
-    //             throw error
-    //         }
-    //         return res.json()
-    //     })
-    // }
-}
-export async function fetcher(url: string) {
-    if (process.env.NODE_ENV === 'development') await new Promise((resolve) => setTimeout(resolve, 2000))
-    return fetch(url, { headers })
-        .then((res) => res.json())
-        .catch(() => [])
-}
-
-export async function fetchOptions(url: string) {
-    return fetch(url, { method: 'OPTIONS', headers }).then((res) => res.json())
+    return requestGet
 }
 
 export interface IOptionsString {
@@ -95,11 +97,12 @@ export interface IOptions {
 }
 
 export function useOptions(url: string) {
-    const { data } = useSWR<IOptions>(url, fetchOptions)
+    const { data } = useSWR<IOptions>(url, requestOptions)
     return data
 }
 
 export function useItems<T extends IItem>(api: string) {
+    const fetcher = useFetcher()
     function getKey(pageIndex: number, previousPageData: ItemsResponse<unknown>) {
         if (previousPageData && !previousPageData.next) return null
         return `/api/v2/${api}/?page=${pageIndex + 1}&page_size=100`

@@ -16,7 +16,7 @@ import {
     useStatusColumn,
 } from '../../common/columns'
 import { useCreateToolbarAction, useDeleteToolbarAction, useSyncToolbarAction } from '../../common/toolbar-actions'
-import { fetchOptions, getItemKey, IItem, useItem, useItems } from '../../Data'
+import { getItemKey, IItem, requestOptions, useItem, useItems } from '../../Data'
 import { RouteE } from '../../route'
 
 export interface Project extends IItem {
@@ -157,7 +157,7 @@ export function Projects() {
 
     const projectsOptions = useSWR<{ actions: { GET: Record<string, { type: string; label: 'string'; filterable: boolean }> } }>(
         '/api/v2/projects/',
-        fetchOptions
+        requestOptions
     )
 
     const searchKeys = useMemo(() => [{ name: 'name' }], [])
