@@ -116,7 +116,10 @@ export function Details(props: { details: IDetail[] }) {
 
 export function DetailsList(props: { children?: ReactNode }) {
     return (
-        <DescriptionList orientation={{ sm: 'vertical', md: 'horizontal', lg: 'horizontal', xl: 'horizontal', '2xl': 'horizontal' }}>
+        <DescriptionList
+            orientation={{ sm: 'vertical', md: 'vertical', lg: 'vertical', xl: 'vertical', '2xl': 'vertical' }}
+            columnModifier={{ default: '3Col' }}
+        >
             {props.children}
         </DescriptionList>
     )

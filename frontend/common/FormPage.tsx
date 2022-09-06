@@ -485,6 +485,17 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                             required={required}
                         />
                     )
+                } else if ((property as { variant?: string }).variant === 'password') {
+                    p.push(
+                        <FormTextInput
+                            key={base + propertyName}
+                            name={base + propertyName}
+                            label={title}
+                            placeholder={placeholder}
+                            required={required}
+                            secret
+                        />
+                    )
                 } else {
                     p.push(
                         <FormTextInput
