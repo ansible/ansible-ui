@@ -25,6 +25,11 @@ export function SettingsProvider(props: { children?: ReactNode }) {
             formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
             formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
         }
+        if (settings.theme === 'dark') {
+            document.documentElement.classList.add('pf-theme-dark')
+        } else {
+            document.documentElement.classList.remove('pf-theme-dark')
+        }
         return settings
     })
 

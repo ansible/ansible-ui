@@ -59,6 +59,7 @@ export function PageBody(props: { children: ReactNode }) {
                 maxHeight: '100%',
                 padding: lg ? 24 : 0,
                 overflow: 'hidden',
+                background: 'var(--pf-c-page__main-section--BackgroundColor)',
             }}
         >
             {props.children}
@@ -76,7 +77,7 @@ export function PageCard(props: { children: ReactNode }) {
                 height: '100%',
                 maxHeight: '100%',
                 overflow: 'hidden',
-                border: lg ? 'thin solid #0002' : undefined,
+                border: lg ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                 backgroundColor: 'var(--pf-global--BackgroundColor--100)',
             }}
         >
