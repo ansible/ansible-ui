@@ -17,7 +17,6 @@ jobs:
 
             - name: Increment Version
               run: |
-                  cd agent
                   INCREMENT=${{ github.event.inputs.versionIncrement }}
                   INCREMENT="${INCREMENT:-patch}"
                   VERSION=$(npm version $INCREMENT --no-git-tag-version)
