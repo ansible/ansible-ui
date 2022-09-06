@@ -8,6 +8,7 @@ export interface Settings {
     tableLayout?: 'compact' | 'comfortable'
     formColumns?: 'single' | 'multiple'
     formLayout?: 'vertical' | 'horizontal'
+    borders?: boolean
 }
 
 export const SettingsContext = createContext<[Settings, (settings?: Settings) => void]>([{}, () => null])
@@ -24,6 +25,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
             tableLayout: localStorage.getItem('tableLayout') as 'compact' | 'comfortable',
             formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
             formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
+            borders: localStorage.getItem('borders') === 'true',
         }
         if (settings.theme === 'dark') {
             document.documentElement.classList.add('pf-theme-dark')
@@ -38,6 +40,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
         localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable')
         localStorage.setItem('formColumns', settings.formColumns ?? 'multiple')
         localStorage.setItem('formLayout', settings.formLayout ?? 'vertical')
+        localStorage.setItem('borders', settings.borders ? 'true' : 'false')
         setSettingsState(settings)
         if (settings.theme === 'dark') {
             document.documentElement.classList.add('pf-theme-dark')
@@ -109,10 +112,18 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                     label="Form Layout"
                     value={settings.formLayout ?? 'vertical'}
                     onChange={(formLayout: 'vertical' | 'horizontal') => setSettings({ ...settings, formLayout })}
-                    style={{ paddingBottom: 120 }}
                 >
                     <SelectOption value="vertical">Vertical labels</SelectOption>
                     <SelectOption value="horizontal">Horizontal labels</SelectOption>
+                </SingleSelect>
+                <SingleSelect
+                    label="Borders"
+                    value={settings.borders ? 'true' : 'false'}
+                    onChange={(value: 'true' | 'false') => setSettings({ ...settings, borders: value === 'true' })}
+                    style={{ paddingBottom: 120 }}
+                >
+                    <SelectOption value="true">Yes</SelectOption>
+                    <SelectOption value="false">No</SelectOption>
                 </SingleSelect>
             </Form>
         </Modal>

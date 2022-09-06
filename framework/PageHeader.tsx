@@ -16,6 +16,7 @@ import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
 import { CSSProperties, Fragment, ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
+import { useSettings } from './Settings'
 
 export interface ICatalogBreadcrumb {
     id?: string
@@ -66,13 +67,14 @@ export function PageHeader(props: PageHeaderProps) {
     const { breadcrumbs, title, description, controls, pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
     const isSmOrLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const settings = useSettings()
     return (
         <PageSection
             variant={PageSectionVariants.light}
             style={{
                 paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 24 : 16,
                 paddingBottom: xl ? 24 : 16,
-                borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+                borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
             }}
         >
             <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>

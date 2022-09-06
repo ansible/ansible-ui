@@ -222,7 +222,9 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
 
     if (itemCount === undefined) {
         return (
-            <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+            <Toolbar
+            //  style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
+            >
                 <ToolbarContent>
                     <ToolbarItem style={{ width: '100%' }}>
                         <Skeleton height="36px" />
@@ -233,7 +235,10 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     }
 
     return (
-        <Toolbar clearAllFilters={clearAllFilters} style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+        <Toolbar
+            clearAllFilters={clearAllFilters}
+            // style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
+        >
             <ToolbarContent>
                 {showSelect && (
                     <ToolbarGroup>

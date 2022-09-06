@@ -4,6 +4,7 @@ import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSiz
 import { PagePagination, PagePaginationProps } from './PagePagination'
 import { PageTable, PageTableProps } from './PageTable'
 import { PageToolbar2, PageToolbar2Props } from './PageToolbar'
+import { useSettings } from './Settings'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
     PageToolbar2Props<T> &
@@ -69,6 +70,7 @@ export function PageBody(props: { children: ReactNode }) {
 
 export function PageCard(props: { children: ReactNode }) {
     const lg = useWindowSizeOrLarger(WindowSize.xl)
+    const settings = useSettings()
     return (
         <div
             style={{
@@ -77,7 +79,7 @@ export function PageCard(props: { children: ReactNode }) {
                 height: '100%',
                 maxHeight: '100%',
                 overflow: 'hidden',
-                border: lg ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                border: settings.borders && lg ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                 backgroundColor: 'var(--pf-global--BackgroundColor--100)',
             }}
         >
