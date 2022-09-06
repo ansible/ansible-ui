@@ -5,16 +5,16 @@ on:
         - cron: '0 12 * * 0'
 jobs:
     npm-check-updates:
-        if: (github.event_name == 'schedule' && github.repository == 'stolostron/react-data-view') || (github.event_name != 'schedule')
+        if: (github.event_name == 'schedule' && github.repository == 'jamestalton/ansible') || (github.event_name != 'schedule')
         runs-on: ubuntu-latest
-        concurrency: react-data-view
+        concurrency: ansible
         steps:
             - uses: actions/checkout@v2
               with:
                   token: ${{ secrets.GH_TOKEN }}
             - uses: actions/setup-node@v2
               with:
-                  node-version: '14'
+                  node-version: '18'
                   registry-url: https://registry.npmjs.org/
                   cache: npm
             - run: npm run upgrade
