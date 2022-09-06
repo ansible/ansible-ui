@@ -7,7 +7,7 @@ on:
 jobs:
     publish:
         runs-on: ubuntu-latest
-        concurrency: deploy
+        concurrency: ansible-ui
         steps:
             - uses: actions/checkout@v2
 
@@ -22,6 +22,7 @@ jobs:
                   VERSION=$(npm version $INCREMENT --no-git-tag-version)
                   echo $VERSION
                   echo "VERSION=$(echo $VERSION | cut -c 2-)" >> $GITHUB_ENV
+
             - name: Commit changes
               uses: EndBug/add-and-commit@v7
               with:

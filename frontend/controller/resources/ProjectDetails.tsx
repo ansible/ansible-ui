@@ -2,18 +2,7 @@ import { PageSection } from '@patternfly/react-core'
 import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { Fragment, Suspense, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-    CopyCell,
-    Detail,
-    DetailsList,
-    ICatalogBreadcrumb,
-    IItemAction,
-    PageHeader,
-    SinceCell,
-    TextCell,
-    ThemeE,
-    useTheme,
-} from '../../../framework'
+import { CopyCell, Detail, DetailsList, ICatalogBreadcrumb, IItemAction, PageHeader, SinceCell, TextCell } from '../../../framework'
 import { LoadingPage } from '../../../framework/components/LoadingPage'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { useTranslation } from '../../../framework/components/useTranslation'
@@ -103,12 +92,14 @@ export function ProjectsDetailsContent(props: { baseBreadcrumbs: ICatalogBreadcr
 export function ProjectDetails(props: { id: number }) {
     const project = useProject(props.id)
     const { t } = useTranslation()
-    const [theme] = useTheme()
+    // const [theme] = useTheme()
 
     if (!project) return <></>
     return (
         <Scrollable>
-            <PageSection variant={theme === ThemeE.Dark ? undefined : 'light'}>
+            <PageSection
+            //  variant={theme === ThemeE.Dark ? undefined : 'light'}
+            >
                 <DetailsList>
                     <Detail label={t('Name')}>{project.name}</Detail>
                     <Detail label={t('Description')}>{project.description}</Detail>

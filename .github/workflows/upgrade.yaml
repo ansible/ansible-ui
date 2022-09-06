@@ -7,7 +7,7 @@ jobs:
     npm-check-updates:
         if: (github.event_name == 'schedule' && github.repository == 'jamestalton/ansible') || (github.event_name != 'schedule')
         runs-on: ubuntu-latest
-        concurrency: ansible
+        concurrency: ansible-ui
         steps:
             - uses: actions/checkout@v2
               with:
