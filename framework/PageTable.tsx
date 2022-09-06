@@ -139,7 +139,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                 </Tbody>
             </TableComposable>
             {itemCount === 0 && (
-                <div style={{ paddingTop: 16 }}>
+                <div style={{ margin: 'auto' }}>
                     <EmptyState>
                         <EmptyStateIcon icon={SearchIcon} />
                         <Title headingLevel="h2" size="lg">

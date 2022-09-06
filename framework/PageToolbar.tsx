@@ -4,6 +4,7 @@ import {
     DropdownSeparator,
     Flex,
     FlexItem,
+    InputGroup,
     OnPerPageSelect,
     OnSetPage,
     OverflowMenu,
@@ -29,7 +30,7 @@ import {
     ToolbarItem,
     ToolbarToggleGroup,
 } from '@patternfly/react-core'
-import { FilterIcon, TimesIcon } from '@patternfly/react-icons'
+import { ArrowRightIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
 import { ComponentClass, Dispatch, Fragment, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
 import { DropdownControlled } from './components/DropdownControlled'
@@ -222,9 +223,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
 
     if (itemCount === undefined) {
         return (
-            <Toolbar
-            //  style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
-            >
+            <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
                 <ToolbarContent>
                     <ToolbarItem style={{ width: '100%' }}>
                         <Skeleton height="36px" />
@@ -235,10 +234,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     }
 
     return (
-        <Toolbar
-            clearAllFilters={clearAllFilters}
-            // style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
-        >
+        <Toolbar clearAllFilters={clearAllFilters} style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
             <ToolbarContent>
                 {showSelect && (
                     <ToolbarGroup>
@@ -361,40 +357,45 @@ function TextFilter(props: { addFilter: (value: string) => void }) {
     const [value, setValue] = useState('')
     // const ref = useRef<HTMLInputElement>()
     return (
-        <TextInputGroup>
-            <TextInputGroupMain
-                // ref={ref}
-                value={value}
-                onChange={setValue}
-                onKeyUp={(event) => {
-                    if (value && event.key === 'Enter') {
-                        props.addFilter(value)
-                        setValue('')
-                        // ref.current?.focus() // Does not work because PF does not expose ref
-                    }
+        <InputGroup>
+            <TextInputGroup>
+                <TextInputGroupMain
+                    // ref={ref}
+                    value={value}
+                    onChange={setValue}
+                    onKeyUp={(event) => {
+                        if (value && event.key === 'Enter') {
+                            props.addFilter(value)
+                            setValue('')
+                            // ref.current?.focus() // Does not work because PF does not expose ref
+                        }
+                    }}
+                />
+                <TextInputGroupUtilities>
+                    <Button
+                        variant="plain"
+                        aria-label="add filter"
+                        onClick={() => setValue('')}
+                        style={{ opacity: value ? undefined : 0 }}
+                        // tabIndex={value ? undefined : -1}
+                        tabIndex={-1}
+                    >
+                        <TimesIcon />
+                    </Button>
+                </TextInputGroupUtilities>
+            </TextInputGroup>
+            <Button
+                variant="control"
+                aria-label="add filter"
+                onClick={() => {
+                    props.addFilter(value)
+                    setValue('')
                 }}
-            />
-            <TextInputGroupUtilities>
-                <Button
-                    variant="plain"
-                    aria-label="add filter"
-                    onClick={() => setValue('')}
-                    style={{ opacity: value ? undefined : 0 }}
-                    tabIndex={value ? undefined : -1}
-                >
-                    <TimesIcon />
-                </Button>
-                {/* <Button
-                    variant="plain"
-                    aria-label="add filter"
-                    onClick={() => props.setFilter(value)}
-                    style={{ opacity: value ? undefined : 0 }}
-                    tabIndex={-1}
-                >
-                    <SearchPlusIcon />
-                </Button> */}
-            </TextInputGroupUtilities>
-        </TextInputGroup>
+                isDisabled={!value}
+            >
+                <ArrowRightIcon />
+            </Button>
+        </InputGroup>
     )
 }
 
