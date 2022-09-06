@@ -35,7 +35,6 @@ import { SingleSelect2 } from './components/SingleSelect'
 import { useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
 import { IFilterState, IItemFilter, SetFilterValues } from './ItemFilter'
 import { ItemViewTypeE } from './ItemView'
-import { useTheme } from './Theme'
 
 export enum ToolbarActionType {
     seperator = 'seperator',
@@ -131,7 +130,7 @@ export function PageToolbar<T extends object>(props: {
     const clearSearch = useCallback(() => setSearch(''), [setSearch])
     const hideFilters = useWindowSizeOrSmaller(WindowSize.lg)
 
-    const [theme] = useTheme()
+    // const [theme] = useTheme()
 
     const toolbarActionButtons = useMemo(
         () => (

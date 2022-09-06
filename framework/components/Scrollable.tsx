@@ -1,6 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer'
 import { CSSProperties, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { ThemeE, useTheme } from '../Theme'
 
 export function Scrollable(props: { children?: ReactNode; borderTop?: boolean; borderBottom?: boolean; style?: CSSProperties }) {
     const divEl = useRef<HTMLDivElement>(null)
@@ -18,13 +17,13 @@ export function Scrollable(props: { children?: ReactNode; borderTop?: boolean; b
     useResizeObserver(divEl, () => {
         update()
     })
-    let shadowOpacityTop = 0.2 * topShadow
-    let shadowOpacityBottom = 0.2 * bottomShadow
-    const [theme] = useTheme()
-    if (theme === ThemeE.Dark) {
-        shadowOpacityTop *= 6
-        shadowOpacityBottom *= 6
-    }
+    const shadowOpacityTop = 0.2 * topShadow
+    const shadowOpacityBottom = 0.2 * bottomShadow
+    // const [theme] = useTheme()
+    // if (theme === ThemeE.Dark) {
+    //     shadowOpacityTop *= 6
+    //     shadowOpacityBottom *= 6
+    // }
 
     /* istanbul ignore next */
     const borderTop = props.borderTop ? 'thin solid rgba(0, 0, 0, 0.12)' : ''

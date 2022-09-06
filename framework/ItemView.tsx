@@ -16,13 +16,11 @@ import Fuse from 'fuse.js'
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { ICatalogCard } from './CatalogCard'
 import { useColumnModal } from './ColumnModal'
-import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 import { useSearchParams } from './components/useWindowLocation'
 import { IItemAction } from './ItemActions'
 import { IFilterState, IItemFilter } from './ItemFilter'
 import { ItemTable } from './ItemTable'
 import { ITableColumn } from './TableColumn'
-import { ThemeE, useTheme } from './Theme'
 import { IToolbarAction, PageToolbar, toolbarActionsHaveBulkActions } from './Toolbar'
 import { useTableItems } from './useTableItems'
 
@@ -211,7 +209,6 @@ export function ItemView<T extends object>(props: {
     const { openColumnModal, columnModal, managedColumns } = useColumnModal(columns ?? [])
 
     const showSelect = toolbarActionsHaveBulkActions(toolbarActions)
-    const [theme] = useTheme()
 
     return (
         <Fragment>
@@ -251,7 +248,10 @@ export function ItemView<T extends object>(props: {
             )}
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
                 {!props.isLoading && props.items?.length === 0 ? (
-                    <PageSection padding={{ default: 'noPadding' }} variant={theme === ThemeE.Dark ? undefined : 'light'}>
+                    <PageSection
+                        padding={{ default: 'noPadding' }}
+                        // variant={theme === ThemeE.Dark ? undefined : 'light'}
+                    >
                         <div style={{ paddingTop: 32 }}>
                             <EmptyState>
                                 <EmptyStateIcon icon={PlusCircleIcon} />

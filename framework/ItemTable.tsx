@@ -18,7 +18,6 @@ import { Fragment, MouseEvent, UIEvent, useCallback, useLayoutEffect, useMemo, u
 import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
 import { ITableColumn } from './TableColumn'
-import { ThemeE, useTheme } from './Theme'
 import { ISort } from './useTableItems'
 import './virtual-table.css'
 
@@ -256,7 +255,7 @@ function TableRow<T extends object>(props: {
     rowIndex: number
 }) {
     const { columns, selectItem, unselectItem, isItemSelected, item, rowActions, rowIndex } = props
-    const [theme] = useTheme()
+    // const [theme] = useTheme()
 
     return (
         <Tr
@@ -369,15 +368,17 @@ function TableCells<T extends object>(props: { rowIndex: number; columns: ITable
 // }
 
 export function LoadingTable(props: { toolbar?: boolean; padding?: boolean }) {
-    const [theme] = useTheme()
+    // const [theme] = useTheme()
     return (
         <PageContent padding={props.padding}>
             {props.toolbar && (
                 <Toolbar
-                    style={{
-                        backgroundColor:
-                            theme === ThemeE.Dark ? 'var(--pf-global--BackgroundColor--300)' : 'var(--pf-global--BackgroundColor--100)',
-                    }}
+                    style={
+                        {
+                            // backgroundColor:
+                            // theme === ThemeE.Dark ? 'var(--pf-global--BackgroundColor--300)' : 'var(--pf-global--BackgroundColor--100)',
+                        }
+                    }
                 >
                     <ToolbarContent>
                         <ToolbarItem style={{ width: '100%' }}>
@@ -398,27 +399,27 @@ export function LoadingTable(props: { toolbar?: boolean; padding?: boolean }) {
                     </Tr>
                 </Thead>
                 <Tbody style={{ backgroundColor: 'transparent' }}>
-                    <Tr style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}>
+                    <Tr>
                         <Td>
                             <Skeleton />
                         </Td>
                     </Tr>
-                    <Tr style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}>
+                    <Tr>
                         <Td>
                             <Skeleton />
                         </Td>
                     </Tr>
-                    <Tr style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}>
+                    <Tr>
                         <Td>
                             <Skeleton />
                         </Td>
                     </Tr>
-                    <Tr style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}>
+                    <Tr>
                         <Td>
                             <Skeleton />
                         </Td>
                     </Tr>
-                    <Tr style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}>
+                    <Tr>
                         <Td>
                             <Skeleton />
                         </Td>
