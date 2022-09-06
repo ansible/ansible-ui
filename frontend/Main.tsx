@@ -36,6 +36,7 @@ import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
+import ErrorBoundary from '../framework/components/ErrorBoundary'
 import { DialogProvider } from '../framework/DialogContext'
 import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
@@ -49,18 +50,20 @@ import { DemoRouter } from './Router'
 
 export default function Demo() {
     return (
-        <AccessCode>
-            <SettingsProvider>
-                <BrowserRouter>
-                    <Switch>
-                        <Route exact path={RouteE.Login} component={Login} />
-                        <Route path="*">
-                            <Main />
-                        </Route>
-                    </Switch>
-                </BrowserRouter>
-            </SettingsProvider>
-        </AccessCode>
+        <ErrorBoundary>
+            <AccessCode>
+                <SettingsProvider>
+                    <BrowserRouter>
+                        <Switch>
+                            <Route exact path={RouteE.Login} component={Login} />
+                            <Route path="*">
+                                <Main />
+                            </Route>
+                        </Switch>
+                    </BrowserRouter>
+                </SettingsProvider>
+            </AccessCode>
+        </ErrorBoundary>
     )
 }
 
@@ -386,7 +389,7 @@ function AccountDropdown() {
 function AccountDropdownInternal() {
     const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
     const fetcher = useFetcher()
-    const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, { suspense: true })
+    const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher)
     const history = useHistory()
     const [open, setOpen] = useState(false)
     const onSelect = useCallback(() => {
