@@ -25,7 +25,7 @@ export function PagePagination(props: PagePaginationProps) {
             onPerPageSelect={onPerPageSelect}
             style={{
                 ...props.style,
-                // borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+                borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                 boxShadow: 'none',
                 zIndex: 301,
                 marginTop: -1,
