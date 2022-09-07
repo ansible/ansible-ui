@@ -6,7 +6,7 @@ import { Teams } from './controller/access/teams/Teams'
 import Users from './controller/access/users/Users'
 import Settings from './controller/settings/Settings'
 // import Dashboard from './controller/views/Dashboard/Dashboard.old'
-import WorkflowApprovalsPage from './controller/views/WorkflowApprovals'
+// import WorkflowApprovalsPage from './controller/views/WorkflowApprovals'
 import { RouteE } from './route'
 
 export function DemoRouter(): JSX.Element {
@@ -16,7 +16,7 @@ export function DemoRouter(): JSX.Element {
             {/* <Route exact path={RouteE.Jobs} component={JobsPage} /> */}
             {/* <Route exact path={RouteE.Schedules} component={SchedulesPage} /> */}
             {/* <Route exact path={RouteE.ActivityStream} component={ActivityStreeam} /> */}
-            <Route exact path={RouteE.WorkflowApprovals} component={WorkflowApprovalsPage} />
+            {/* <Route exact path={RouteE.WorkflowApprovals} component={WorkflowApprovalsPage} /> */}
 
             {/* <Route exact path={RouteE.Templates} component={TemplatesPage} /> */}
             {/* <Route exact path={RouteE.Credentials} component={CredentialsPage} />

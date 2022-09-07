@@ -19,7 +19,6 @@ import {
     NavExpandable,
     NavItem,
     NavList,
-    NotificationBadge,
     Page,
     PageSidebar,
     PageToggleButton,
@@ -41,7 +40,7 @@ import { DialogProvider } from '../framework/DialogContext'
 import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
-import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
+// import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
 import { useFetcher } from './Data'
 import AnsiblePng from './icons/ansible.png'
 import SparkleSvg from './icons/sparkle.svg'
@@ -450,14 +449,15 @@ function Notifications() {
 }
 
 function NotificationsInternal() {
-    const workflowApprovals = useWorkflowApprovals()
-    const history = useHistory()
-    return (
-        <NotificationBadge
-            variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
-            count={workflowApprovals.length}
-            style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-            onClick={() => history.push(RouteE.WorkflowApprovals)}
-        />
-    )
+    // const workflowApprovals = useWorkflowApprovals()
+    // const history = useHistory()
+    // return (
+    //     <NotificationBadge
+    //         variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
+    //         count={workflowApprovals.length}
+    //         style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
+    //         onClick={() => history.push(RouteE.WorkflowApprovals)}
+    //     />
+    // )
+    return <></>
 }
