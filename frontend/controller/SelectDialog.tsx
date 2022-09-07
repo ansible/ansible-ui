@@ -1,7 +1,6 @@
 import { Modal, ModalVariant, Skeleton } from '@patternfly/react-core'
 import { Collapse } from '../../framework'
 import { PageTable } from '../../framework/PageTable'
-import { PageToolbar2 } from '../../framework/PageToolbar'
 import { getItemKey } from '../Data'
 import { Organization } from './access/organizations/Organization'
 import { useOrganizationsColumns, useOrganizationsFilters } from './access/organizations/Organizations'
@@ -33,9 +32,7 @@ export function SelectDialog(props: { open: boolean; setOpen: (open: boolean) =>
                         overflow: 'hidden',
                     }}
                 >
-                    <PageToolbar2 toolbarFilters={toolbarFilters} {...view} />
-                    <PageTable tableColumns={tableColumns} {...view} />
-                    {/* <Divider /> */}
+                    <PageTable tableColumns={tableColumns} toolbarFilters={toolbarFilters} {...view} />
                 </div>
             </Collapse>
         </Modal>

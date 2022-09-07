@@ -4,11 +4,11 @@ import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSiz
 import { PageLayout } from './PageLayout'
 import { PagePaginationProps } from './PagePagination'
 import { PageTable, PageTableProps } from './PageTable'
-import { PageToolbar2Props } from './PageToolbar'
+import { PagetableToolbarProps } from './PageToolbar'
 import { useSettings } from './Settings'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
-    PageToolbar2Props<T> &
+    PagetableToolbarProps<T> &
     PageTableProps<T> &
     PagePaginationProps & { error?: Error }
 
@@ -75,7 +75,7 @@ function PageAlert(props: { error?: Error }) {
     )
 }
 
-export type PageTableCardProps<T extends object> = PageToolbar2Props<T> & PageTableProps<T> & PagePaginationProps & { error?: Error }
+export type PageTableCardProps<T extends object> = PagetableToolbarProps<T> & PageTableProps<T> & PagePaginationProps & { error?: Error }
 
 function PageTableCard<T extends object>(props: PageTableCardProps<T>) {
     return (
