@@ -9,8 +9,8 @@ import {
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import { CopyCell, SinceCell } from '../PageTable'
 import { useSettings } from '../Settings'
-import { CopyCell, SinceCell } from '../TableColumn'
 import { Help } from './Help'
 import { IconWrapper } from './IconWrapper'
 

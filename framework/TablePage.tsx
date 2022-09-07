@@ -2,15 +2,10 @@ import { Alert, AlertGroup } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
 import { PageLayout } from './PageLayout'
-import { PagePaginationProps } from './PagePagination'
 import { PageTable, PageTableProps } from './PageTable'
-import { PagetableToolbarProps } from './PageToolbar'
 import { useSettings } from './Settings'
 
-export type TablePageProps<T extends object> = PageHeaderProps &
-    PagetableToolbarProps<T> &
-    PageTableProps<T> &
-    PagePaginationProps & { error?: Error }
+export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<T> & { error?: Error }
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
     return (
