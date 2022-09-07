@@ -22,7 +22,7 @@ import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
 import { PagePagination } from './PagePagination'
-import { PageToolbar2 } from './PageToolbar'
+import { PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITableColumn } from './TableColumn'
 import { IToolbarAction, ToolbarActionType } from './Toolbar'
@@ -87,7 +87,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     return (
         <Fragment>
             {columnModal}
-            <PageToolbar2 {...props} openColumnModal={openColumnModal} />
+            <PageTableToolbar {...props} openColumnModal={openColumnModal} />
             <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
                 <TableComposable
                     aria-label="Simple table"

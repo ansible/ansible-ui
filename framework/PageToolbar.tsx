@@ -75,7 +75,7 @@ export interface IToolbarFilter {
 
 export type IFilterState = Record<string, string[] | undefined>
 
-export type PageToolbar2Props<T extends object> = {
+export type PagetableToolbarProps<T extends object> = {
     itemCount?: number
     pageItems?: T[]
     toolbarFilters?: IToolbarFilter[]
@@ -94,7 +94,7 @@ export type PageToolbar2Props<T extends object> = {
     openColumnModal: () => void
 }
 
-export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
+export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
     const {
         itemCount,
         page,
@@ -301,7 +301,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                 </SingleSelect2>
                             </ToolbarItem>
                             <ToolbarItem>
-                                <TextFilter
+                                <ToolbarTextFilter
                                     value={filterValue}
                                     setValue={setFilterValue}
                                     addFilter={(value: string) => {
@@ -379,7 +379,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     )
 }
 
-function TextFilter(props: { value: string; setValue: (value: string) => void; addFilter: (value: string) => void }) {
+function ToolbarTextFilter(props: { value: string; setValue: (value: string) => void; addFilter: (value: string) => void }) {
     const { value, setValue } = props
     // const ref = useRef<HTMLInputElement>()
     return (
