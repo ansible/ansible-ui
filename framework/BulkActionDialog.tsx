@@ -9,6 +9,7 @@ import {
     ProgressVariant,
 } from '@patternfly/react-core'
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
+import pLimit from 'p-limit'
 import { useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
@@ -37,6 +38,7 @@ export function BulkActionDialog<T extends object>(props: {
     columns: ITableColumn<T>[]
     errorColumns: ITableColumn<T>[]
     keyFn: (item: T) => string | number
+    action: (item: T) => Promise<void>
     onClose?: () => void
 }) {
     const [_, setDialog] = useDialog()
@@ -53,20 +55,33 @@ export function BulkActionDialog<T extends object>(props: {
     const onConfirm = () => {
         async function handleConfirm() {
             try {
+                const limit = pLimit(5)
                 setSubmitting(true)
                 let progress = 0
                 let hasError = false
-                for (const item of props.items) {
-                    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-                    if (Math.random() < 0.1) {
-                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: `Not found` }))
-                        setError(props.error)
-                        hasError = true
-                    } else {
-                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null }))
-                    }
-                    setProgress(++progress)
-                }
+                await Promise.all(
+                    props.items.map((item) =>
+                        limit(() =>
+                            props
+                                .action(item)
+                                .then(() => {
+                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null }))
+                                })
+                                .catch((err) => {
+                                    if (err instanceof Error) {
+                                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: err.message }))
+                                    } else {
+                                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: `Unknown error` }))
+                                    }
+                                    setError(props.error)
+                                    hasError = true
+                                })
+                                .finally(() => {
+                                    setProgress(++progress)
+                                })
+                        )
+                    )
+                )
 
                 if (!hasError) {
                     await new Promise((resolve) => setTimeout(resolve, 1500))

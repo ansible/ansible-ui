@@ -18,7 +18,7 @@ import {
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
 import { randomString } from '../../../common/random-string'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
-import { getItemKey, requestPost } from '../../../Data'
+import { getItemKey, requestDelete, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
@@ -104,6 +104,7 @@ export function useDeleteTeams(callback: () => void) {
                 columns={[deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]}
                 errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
                 onClose={callback}
+                action={(team: Team) => requestDelete(`/api/v2/teams/${team.id}/`)}
             />
         )
     }
