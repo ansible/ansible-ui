@@ -34,7 +34,7 @@ module.exports = function (_env, argv) {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isProduction ? JSON.stringify('production') : JSON.stringify('development'),
-                'process.env.DELAY': isProduction ? JSON.stringify('') : JSON.stringify('2000'),
+                'process.env.DELAY': isProduction ? JSON.stringify('') : JSON.stringify(''),
             }),
             isDevelopment && new ReactRefreshWebpackPlugin(),
             new HtmlWebpackPlugin({ title: 'AnsibleDev', favicon: 'frontend/icons/favicon.png', template: 'frontend/index.html' }),
