@@ -111,6 +111,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
 
     const [filterValue, setFilterValue] = useState('')
+    const [dropdownOpen, setDropdownOpen] = useState(false)
 
     const collapseButtons = useWindowSizeOrSmaller(WindowSize.md)
 
@@ -131,7 +132,11 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
             return toolbarActions
         } else {
             const actions = toolbarActions.filter(
-                (action) => action.type !== ToolbarActionType.button && action.type !== ToolbarActionType.bulk
+                (action) =>
+                    !(
+                        (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                    )
             )
             while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
             while (actions.length && actions[actions.length - 1].type === ToolbarActionType.seperator) actions.pop()
@@ -199,40 +204,39 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
         if (!toolbarDropdownActions.length) return <></>
         return (
             <Dropdown
+                onSelect={() => setDropdownOpen(false)}
                 toggle={
                     <KebabToggle
                         id="toggle-kebab"
-                        onToggle={() => {}}
+                        onToggle={() => setDropdownOpen(!dropdownOpen)}
                         toggleVariant={dropdownHasBulk && selectedItems.length ? 'primary' : undefined}
                     />
                 }
+                isOpen={dropdownOpen}
                 isPlain={!dropdownHasBulk || selectedItems.length === 0}
-            >
-                {toolbarActions
-                    ?.map((action, index) => {
-                        switch (action.type) {
-                            case ToolbarActionType.button:
-                            case ToolbarActionType.bulk: {
-                                const Icon = action.icon
-                                return (
-                                    <DropdownItem
-                                        key={action.label}
-                                        onClick={() => action.onClick(selectedItems)}
-                                        isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                        icon={Icon ? <Icon /> : undefined}
-                                    >
-                                        {action.label}
-                                    </DropdownItem>
-                                )
-                            }
-                            case ToolbarActionType.seperator:
-                                return <DropdownSeparator key={`separator-${index}`} />
+                dropdownItems={toolbarDropdownActions.map((action, index) => {
+                    switch (action.type) {
+                        case ToolbarActionType.button:
+                        case ToolbarActionType.bulk: {
+                            const Icon = action.icon
+                            return (
+                                <DropdownItem
+                                    key={action.label}
+                                    onClick={() => action.onClick(selectedItems)}
+                                    isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
+                                    icon={Icon ? <Icon /> : undefined}
+                                >
+                                    {action.label}
+                                </DropdownItem>
+                            )
                         }
-                    })
-                    .filter((a) => !!a)}
-            </Dropdown>
+                        case ToolbarActionType.seperator:
+                            return <DropdownSeparator key={`separator-${index}`} />
+                    }
+                })}
+            ></Dropdown>
         )
-    }, [dropdownHasBulk, selectedItems, toolbarActions, toolbarDropdownActions.length])
+    }, [dropdownHasBulk, dropdownOpen, selectedItems, toolbarDropdownActions])
 
     const showSearchAndFilters = toolbarFilters !== undefined
     const showToolbarActions = toolbarActions !== undefined
