@@ -134,7 +134,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                                     variant={
                                                         selectedItems.length
                                                             ? action.variant === ButtonVariant.primary
-                                                                ? ButtonVariant.tertiary
+                                                                ? ButtonVariant.secondary
                                                                 : ButtonVariant.primary
                                                             : action.variant
                                                     }
