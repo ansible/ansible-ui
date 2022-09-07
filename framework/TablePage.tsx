@@ -1,10 +1,10 @@
 import { Alert, AlertGroup } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
-import ErrorBoundary from './components/ErrorBoundary'
-import { PagePagination, PagePaginationProps } from './PagePagination'
+import { PageLayout } from './PageLayout'
+import { PagePaginationProps } from './PagePagination'
 import { PageTable, PageTableProps } from './PageTable'
-import { PageToolbar2, PageToolbar2Props } from './PageToolbar'
+import { PageToolbar2Props } from './PageToolbar'
 import { useSettings } from './Settings'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
@@ -21,34 +21,6 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
                 <PageTableCard {...props} />
             </PageBody>
         </PageLayout>
-    )
-}
-
-/**
- * PageLayout enables the responsive layout of the page.
- *
- * @example
- * <Page>
- *   <PageLayout>
- *     <PageHeader />
- *     <PageBody />
- *   </PageLayout>
- * <Page>
- */
-export function PageLayout(props: { children: ReactNode }) {
-    return (
-        <ErrorBoundary>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                    maxHeight: '100%',
-                }}
-            >
-                {props.children}
-            </div>
-        </ErrorBoundary>
     )
 }
 
@@ -108,9 +80,7 @@ export type PageTableCardProps<T extends object> = PageToolbar2Props<T> & PageTa
 function PageTableCard<T extends object>(props: PageTableCardProps<T>) {
     return (
         <PageCard>
-            <PageToolbar2 {...props} />
             <PageTable {...props} />
-            <PagePagination {...props} />
         </PageCard>
     )
 }
