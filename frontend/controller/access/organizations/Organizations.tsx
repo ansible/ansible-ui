@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
-import { IItemAction, ITableColumn, IToolbarAction, TextCell } from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarAction, IToolbarFilter, TablePage, TextCell } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { IToolbarFilter } from '../../../../framework/PageToolbar'
-import { TablePage } from '../../../../framework/TablePage'
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
 import { compareNumbers } from '../../../../framework/utils/compare'
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,

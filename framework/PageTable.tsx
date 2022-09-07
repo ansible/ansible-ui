@@ -151,7 +151,13 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                             </Tr>
                         </Thead>
                     ) : (
-                        <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 0} scrollRight={scroll.right > 1} />
+                        <TableHead
+                            {...props}
+                            showSelect={showSelect}
+                            scrollLeft={scroll.left > 0}
+                            scrollRight={scroll.right > 1}
+                            tableColumns={managedColumns}
+                        />
                     )}
                     <Tbody>
                         {itemCount === undefined
@@ -646,7 +652,9 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             return toolbarActions.filter(
                 (action) =>
                     (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
-                    (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                    (action.variant === ButtonVariant.primary ||
+                        action.variant === ButtonVariant.secondary ||
+                        action.variant === ButtonVariant.danger)
             )
         }
     }, [collapseButtons, toolbarActions])
@@ -659,7 +667,9 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 (action) =>
                     !(
                         (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
-                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                        (action.variant === ButtonVariant.primary ||
+                            action.variant === ButtonVariant.secondary ||
+                            action.variant === ButtonVariant.danger)
                     )
             )
             while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
@@ -672,13 +682,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         if (collapseButtons) {
             return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
         } else {
-            return (
-                toolbarDropdownActions.find(
-                    (action) =>
-                        action.type === ToolbarActionType.bulk &&
-                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
-                ) !== undefined
-            )
+            return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
         }
     }, [collapseButtons, toolbarDropdownActions])
 
@@ -694,6 +698,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                 switch (action.variant) {
                                     case ButtonVariant.primary:
                                     case ButtonVariant.secondary:
+                                    case ButtonVariant.danger:
                                         return (
                                             <ToolbarItem>
                                                 <Button
@@ -703,7 +708,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                                             : selectedItems.length
                                                             ? action.variant === ButtonVariant.primary
                                                                 ? ButtonVariant.secondary
-                                                                : ButtonVariant.primary
+                                                                : action.variant
                                                             : action.variant
                                                     }
                                                     onClick={() => action.onClick(selectedItems)}
@@ -907,7 +912,7 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
     // const ref = useRef<HTMLInputElement>()
     return (
         <InputGroup>
-            <TextInputGroup>
+            <TextInputGroup style={{ minWidth: 220 }}>
                 <TextInputGroupMain
                     // ref={ref}
                     value={value}
@@ -920,20 +925,44 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
                         }
                     }}
                 />
-                <TextInputGroupUtilities>
-                    <Button
-                        variant="plain"
-                        aria-label="add filter"
-                        onClick={() => setValue('')}
-                        style={{ opacity: value ? undefined : 0 }}
-                        // tabIndex={value ? undefined : -1}
-                        tabIndex={-1}
-                    >
-                        <TimesIcon />
-                    </Button>
-                </TextInputGroupUtilities>
+                {value !== '' && (
+                    <TextInputGroupUtilities>
+                        <Button
+                            variant="plain"
+                            aria-label="add filter"
+                            onClick={() => setValue('')}
+                            style={{ opacity: value ? undefined : 0 }}
+                            // tabIndex={value ? undefined : -1}
+                            tabIndex={-1}
+                        >
+                            <TimesIcon />
+                        </Button>
+                    </TextInputGroupUtilities>
+                )}
             </TextInputGroup>
-            <Button
+
+            {!value ? (
+                <Button variant={'control'} aria-label="add filter">
+                    <SearchIcon />
+                </Button>
+            ) : (
+                <Button
+                    variant={value ? 'primary' : 'control'}
+                    aria-label="add filter"
+                    onClick={() => {
+                        props.addFilter(value)
+                        setValue('')
+                    }}
+                    isDisabled={!value}
+                >
+                    <ArrowRightIcon />
+                </Button>
+            )}
+
+            {/* <Button variant={'control'} aria-label="add filter">
+                <SearchIcon />
+            </Button> */}
+            {/* <Button
                 variant={value ? 'primary' : 'control'}
                 aria-label="add filter"
                 onClick={() => {
@@ -943,7 +972,7 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
                 isDisabled={!value}
             >
                 <ArrowRightIcon />
-            </Button>
+            </Button> */}
         </InputGroup>
     )
 }
