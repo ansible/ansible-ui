@@ -211,7 +211,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                     </div>
                 )}
             </div>
-            <PagePagination {...props} />
+            {itemCount > perPage && <PagePagination {...props} />}
         </Fragment>
     )
 }
@@ -544,7 +544,7 @@ export function PagePagination(props: PagePaginationProps) {
     const { setPage, setPerPage } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
-
+    const sm = useWindowSizeOrLarger(WindowSize.md)
     return (
         <Pagination
             variant={PaginationVariant.bottom}
@@ -559,6 +559,8 @@ export function PagePagination(props: PagePaginationProps) {
                 boxShadow: 'none',
                 zIndex: 301,
                 marginTop: -1,
+                paddingTop: sm ? 6 : undefined,
+                paddingBottom: sm ? 6 : undefined,
             }}
         />
     )
@@ -619,13 +621,16 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         setPage,
         setPerPage,
         toolbarFilters,
-        toolbarActions,
         selectedItems,
         filters,
         setFilters,
         clearAllFilters,
         openColumnModal,
     } = props
+
+    let { toolbarActions } = props
+    toolbarActions = toolbarActions ?? []
+
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
 
@@ -758,12 +763,13 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     }, [dropdownHasBulk, dropdownOpen, selectedItems, toolbarDropdownActions])
 
     const showSearchAndFilters = toolbarFilters !== undefined
-    const showToolbarActions = toolbarActions !== undefined
+    const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
 
     const showSelect =
         selectedItems !== undefined &&
         toolbarActions &&
         toolbarActions.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type)
+
     const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
 
     const [selectedFilter, setSeletedFilter] = useState(() =>

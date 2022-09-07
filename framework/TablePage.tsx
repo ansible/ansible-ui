@@ -70,7 +70,7 @@ function PageAlert(props: { error?: Error }) {
     )
 }
 
-export type PageTableCardProps<T extends object> = PagetableToolbarProps<T> & PageTableProps<T> & PagePaginationProps & { error?: Error }
+export type PageTableCardProps<T extends object> = PageTableProps<T> & { error?: Error }
 
 function PageTableCard<T extends object>(props: PageTableCardProps<T>) {
     return (
