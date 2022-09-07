@@ -1,31 +1,69 @@
 import {
     Button,
+    ButtonVariant,
+    ClipboardCopy,
+    Dropdown,
+    DropdownItem,
+    DropdownSeparator,
     EmptyState,
     EmptyStateBody,
     EmptyStateIcon,
     EmptyStateSecondaryActions,
+    Flex,
+    FlexItem,
+    InputGroup,
+    KebabToggle,
+    Label,
+    LabelGroup,
+    OnPerPageSelect,
+    OnSetPage,
+    Pagination,
+    PaginationVariant,
+    SelectOption,
     Skeleton,
     Split,
     SplitItem,
+    TextInputGroup,
+    TextInputGroupMain,
+    TextInputGroupUtilities,
     Title,
     Toolbar,
     ToolbarContent,
+    ToolbarFilter,
+    ToolbarGroup,
     ToolbarItem,
+    ToolbarToggleGroup,
+    Truncate,
 } from '@patternfly/react-core'
-import { SearchIcon } from '@patternfly/react-icons'
+import { ArrowRightIcon, ColumnsIcon, FilterIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons'
 import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Fragment, MouseEvent, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { DateTime } from 'luxon'
+import {
+    ComponentClass,
+    CSSProperties,
+    Dispatch,
+    Fragment,
+    MouseEvent,
+    ReactNode,
+    SetStateAction,
+    UIEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react'
+import { Link } from 'react-router-dom'
 import { useColumnModal } from './ColumnModal'
-import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
+import { BulkSelector } from './components/BulkSelector'
+import { IconWrapper } from './components/IconWrapper'
+import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
+import { SingleSelect2 } from './components/SingleSelect'
+import { useWindowSizeOrLarger, useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
 import { IItemAction, isItemActionClick } from './ItemActions'
-import { PageContent } from './PageContent'
-import { PagePagination } from './PagePagination'
-import { PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
-import { ITableColumn } from './TableColumn'
-import { IToolbarAction, ToolbarActionType } from './Toolbar'
 
 export type PageTableProps<T extends object> = {
     pageItems?: T[]
@@ -43,7 +81,16 @@ export type PageTableProps<T extends object> = {
     itemCount?: number
     perPage: number
     compact?: boolean
-    clearAllFilters?: () => void
+    clearAllFilters: () => void
+    toolbarFilters?: IToolbarFilter[]
+    page: number
+    setPage: (page: number) => void
+    setPerPage: (perPage: number) => void
+    selectedItems?: T[]
+    selectItems?: (items: T[]) => void
+    unselectAll?: () => void
+    filters: Record<string, string[]>
+    setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -374,66 +421,523 @@ function TableCells<T extends object>(props: {
     )
 }
 
-// function TablePagination(props: {
-//     itemCount: number
-//     page: number
-//     perPage: number
-//     onSetPage: (event: unknown, page: number) => void
-//     onPerPageSelect: (event: unknown, perPage: number) => void
-// }) {
-//     const { itemCount, page, perPage, onSetPage, onPerPageSelect } = props
-//     return useMemo(
-//         () => (
-//             <Pagination
-//                 itemCount={itemCount}
-//                 widgetId="pagination-options-menu-bottom"
-//                 perPage={perPage}
-//                 page={page}
-//                 variant={PaginationVariant.bottom}
-//                 onSetPage={onSetPage}
-//                 onPerPageSelect={onPerPageSelect}
-//                 // perPage={this.state.perPage}
-//                 // page={this.state.page}
-//                 // variant={PaginationVariant.bottom}
-//                 // onSetPage={this.onSetPage}
-//                 // onPerPageSelect={this.onPerPageSelect}
-//                 style={{ borderTop: '1px solid var(--pf-global--BorderColor--dark-100)', marginTop: -1, zIndex: 300 }}
-//             />
-//         ),
-//         [itemCount, onPerPageSelect, onSetPage, page, perPage]
-//     )
-// }
+export interface IItemFilter<T extends object> {
+    label: string
+    type?: 'search' | 'filter'
+    options: {
+        label: string
+        value: string
+    }[]
+    filter: (item: T, values: string[]) => boolean
+}
 
-export function LoadingTable(props: { toolbar?: boolean; padding?: boolean; perPage?: number }) {
+export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void
+
+type CellFn<T extends object> = (item: T) => ReactNode
+
+export interface ITableColumn<T extends object> {
+    id?: string
+    header: string
+    cell: CellFn<T>
+    minWidth?: number
+    enabled?: boolean
+
+    sort?: string
+    defaultSortDirection?: 'asc' | 'desc'
+
+    /**
+     * @deprecated The method should not be used
+     */
+    type?: 'labels' | 'progress' | 'date'
+
+    /**
+     * @deprecated The method should not be used
+     */
+    sortFn?: (l: T, r: T) => number
+}
+
+export function Labels(props: { labels: string[] }) {
     return (
-        <PageContent padding={props.padding}>
-            {props.toolbar && (
-                <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
-                    <ToolbarContent>
-                        <ToolbarItem style={{ width: '100%' }}>
-                            <Skeleton height="36px" />
-                        </ToolbarItem>
-                    </ToolbarContent>
-                </Toolbar>
+        <LabelGroup numLabels={999} isCompact>
+            {props.labels.map((label) => (
+                <Label isCompact key={label}>
+                    {label}
+                </Label>
+            ))}
+        </LabelGroup>
+    )
+}
+
+export function DateCell(props: { value: number | string }) {
+    const date = new Date(props.value)
+    return (
+        <Split hasGutter>
+            <SplitItem>{date.toLocaleDateString()}</SplitItem>
+            <SplitItem>{date.toLocaleTimeString()}</SplitItem>
+        </Split>
+    )
+}
+
+export function TextCell(props: {
+    icon?: ReactNode
+    text?: string
+    iconSize?: 'sm' | 'md' | 'lg'
+    to?: string
+    onClick?: () => void
+    textColor?: PatternFlyColor
+}) {
+    return (
+        <Split>
+            {props.icon && (
+                <SplitItem>
+                    <IconWrapper size={props.iconSize ?? 'md'}>{props.icon}</IconWrapper>
+                </SplitItem>
             )}
-            <TableComposable gridBreakPoint="">
-                <Thead>
-                    <Tr>
-                        <Th>
-                            <Skeleton />
-                        </Th>
-                    </Tr>
-                </Thead>
-                <Tbody style={{ backgroundColor: 'transparent' }}>
-                    {new Array(props.perPage ?? 5).fill(0).map((_, index) => (
-                        <Tr key={index}>
-                            <Td>
-                                <Skeleton />
-                            </Td>
-                        </Tr>
-                    ))}
-                </Tbody>
-            </TableComposable>
-        </PageContent>
+            {props.to ? (
+                <SplitItem>
+                    <Link to={props.to}>{props.text}</Link>
+                </SplitItem>
+            ) : props.onClick !== undefined ? (
+                <SplitItem onClick={props.onClick}>
+                    <Button variant="link">{props.text}</Button>
+                </SplitItem>
+            ) : (
+                <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>{props.text}</SplitItem>
+            )}
+        </Split>
+    )
+}
+
+export function CopyCell(props: { text?: string; minWidth?: number }) {
+    if (!props.text) return <></>
+    return (
+        <ClipboardCopy
+            hoverTip="Copy"
+            clickTip="Copied"
+            variant="inline-compact"
+            style={{ display: 'flex', flexWrap: 'nowrap', borderRadius: 4 }}
+            onCopy={() => {
+                void navigator.clipboard.writeText(props.text ?? '')
+            }}
+        >
+            <Truncate content={props.text} style={{ minWidth: props.minWidth }} />
+        </ClipboardCopy>
+    )
+}
+
+export function SinceCell(props: { value?: string }) {
+    if (props.value === undefined) return <></>
+    const dateTime = DateTime.fromISO(props.value)
+    return <Fragment>{dateTime.toRelative()}</Fragment>
+}
+
+export type PagePaginationProps = {
+    itemCount?: number
+    page: number
+    perPage: number
+    setPage: (page: number) => void
+    setPerPage: (perPage: number) => void
+    style?: CSSProperties
+}
+
+export function PagePagination(props: PagePaginationProps) {
+    const { setPage, setPerPage } = props
+    const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
+    const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
+
+    return (
+        <Pagination
+            variant={PaginationVariant.bottom}
+            itemCount={props.itemCount}
+            page={props.page}
+            perPage={props.perPage}
+            onSetPage={onSetPage}
+            onPerPageSelect={onPerPageSelect}
+            style={{
+                ...props.style,
+                borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+                boxShadow: 'none',
+                zIndex: 301,
+                marginTop: -1,
+            }}
+        />
+    )
+}
+
+export enum ToolbarActionType {
+    seperator = 'seperator',
+    button = 'button',
+    bulk = 'bulk',
+}
+
+export interface IToolbarActionSeperator {
+    type: ToolbarActionType.seperator
+}
+
+export interface IToolbarActionButton {
+    type: ToolbarActionType.button
+    variant?: ButtonVariant
+    icon?: ComponentClass
+    label: string
+    onClick: () => void
+}
+
+export interface IToolbarBulkAction<T extends object> {
+    type: ToolbarActionType.bulk
+    variant?: ButtonVariant
+    icon?: ComponentClass
+    label: string
+    onClick: (selectedItems: T[]) => void
+}
+
+export type IToolbarAction<T extends object> = IToolbarActionSeperator | IToolbarActionButton | IToolbarBulkAction<T>
+
+export function toolbarActionsHaveBulkActions<T extends object>(actions?: IToolbarAction<T>[]) {
+    if (!actions) return false
+    for (const action of actions) {
+        if (action.type === 'bulk') return true
+    }
+    return false
+}
+
+export interface IToolbarFilter {
+    key: string
+    label: string
+    type: string
+    query: string
+}
+
+export type IFilterState = Record<string, string[] | undefined>
+
+export type PagetableToolbarProps<T extends object> = { openColumnModal: () => void } & PageTableProps<T>
+
+export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
+    const {
+        itemCount,
+        page,
+        perPage,
+        setPage,
+        setPerPage,
+        toolbarFilters,
+        toolbarActions,
+        selectedItems,
+        filters,
+        setFilters,
+        clearAllFilters,
+        openColumnModal,
+    } = props
+    const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
+    const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
+
+    const [filterValue, setFilterValue] = useState('')
+    const [dropdownOpen, setDropdownOpen] = useState(false)
+
+    const collapseButtons = useWindowSizeOrSmaller(WindowSize.md)
+
+    const toolbarButtonActions: IToolbarAction<T>[] = useMemo(() => {
+        if (collapseButtons) {
+            return []
+        } else {
+            return toolbarActions.filter(
+                (action) =>
+                    (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                    (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+            )
+        }
+    }, [collapseButtons, toolbarActions])
+
+    const toolbarDropdownActions: IToolbarAction<T>[] = useMemo(() => {
+        if (collapseButtons) {
+            return toolbarActions
+        } else {
+            const actions = toolbarActions.filter(
+                (action) =>
+                    !(
+                        (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                    )
+            )
+            while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
+            while (actions.length && actions[actions.length - 1].type === ToolbarActionType.seperator) actions.pop()
+            return actions
+        }
+    }, [collapseButtons, toolbarActions])
+
+    const dropdownHasBulk = useMemo(() => {
+        if (collapseButtons) {
+            return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
+        } else {
+            return (
+                toolbarDropdownActions.find(
+                    (action) =>
+                        action.type === ToolbarActionType.bulk &&
+                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                ) !== undefined
+            )
+        }
+    }, [collapseButtons, toolbarDropdownActions])
+
+    const toolbarActionButtons = useMemo(() => {
+        if (!toolbarButtonActions.length) return <></>
+        return (
+            <>
+                {toolbarButtonActions
+                    ?.map((action) => {
+                        switch (action.type) {
+                            case ToolbarActionType.button:
+                            case ToolbarActionType.bulk: {
+                                switch (action.variant) {
+                                    case ButtonVariant.primary:
+                                    case ButtonVariant.secondary:
+                                        return (
+                                            <ToolbarItem>
+                                                <Button
+                                                    variant={
+                                                        filterValue
+                                                            ? ButtonVariant.secondary
+                                                            : selectedItems.length
+                                                            ? action.variant === ButtonVariant.primary
+                                                                ? ButtonVariant.secondary
+                                                                : ButtonVariant.primary
+                                                            : action.variant
+                                                    }
+                                                    onClick={() => action.onClick(selectedItems)}
+                                                    isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
+                                                >
+                                                    {action.label}
+                                                </Button>
+                                            </ToolbarItem>
+                                        )
+                                }
+                                break
+                            }
+                        }
+                        return undefined
+                    })
+                    .filter((e) => !!e)}
+            </>
+        )
+    }, [toolbarButtonActions, filterValue, selectedItems])
+
+    const toolbarActionDropDownItems = useMemo(() => {
+        if (!toolbarDropdownActions.length) return <></>
+        return (
+            <Dropdown
+                onSelect={() => setDropdownOpen(false)}
+                toggle={
+                    <KebabToggle
+                        id="toggle-kebab"
+                        onToggle={() => setDropdownOpen(!dropdownOpen)}
+                        toggleVariant={dropdownHasBulk && selectedItems.length ? 'primary' : undefined}
+                    />
+                }
+                isOpen={dropdownOpen}
+                isPlain={!dropdownHasBulk || selectedItems.length === 0}
+                dropdownItems={toolbarDropdownActions.map((action, index) => {
+                    switch (action.type) {
+                        case ToolbarActionType.button:
+                        case ToolbarActionType.bulk: {
+                            const Icon = action.icon
+                            return (
+                                <DropdownItem
+                                    key={action.label}
+                                    onClick={() => action.onClick(selectedItems)}
+                                    isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
+                                    icon={Icon ? <Icon /> : undefined}
+                                >
+                                    {action.label}
+                                </DropdownItem>
+                            )
+                        }
+                        case ToolbarActionType.seperator:
+                            return <DropdownSeparator key={`separator-${index}`} />
+                    }
+                })}
+            />
+        )
+    }, [dropdownHasBulk, dropdownOpen, selectedItems, toolbarDropdownActions])
+
+    const showSearchAndFilters = toolbarFilters !== undefined
+    const showToolbarActions = toolbarActions !== undefined
+
+    const showSelect =
+        selectedItems !== undefined &&
+        toolbarActions &&
+        toolbarActions.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type)
+    const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
+
+    const [selectedFilter, setSeletedFilter] = useState(() =>
+        toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
+    )
+
+    if (!showToolbar) {
+        return <Fragment />
+    }
+
+    if (itemCount === undefined) {
+        return (
+            <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+                <ToolbarContent>
+                    <ToolbarItem style={{ width: '100%' }}>
+                        <Skeleton height="36px" />
+                    </ToolbarItem>
+                </ToolbarContent>
+            </Toolbar>
+        )
+    }
+
+    return (
+        <Toolbar clearAllFilters={clearAllFilters} style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+            <ToolbarContent>
+                {showSelect && (
+                    <ToolbarGroup>
+                        <ToolbarItem variant="bulk-select">
+                            <BulkSelector {...props} />
+                        </ToolbarItem>
+                    </ToolbarGroup>
+                )}
+                {toolbarFilters && toolbarFilters.length > 0 && (
+                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+                        <ToolbarGroup variant="filter-group">
+                            <ToolbarItem>
+                                <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
+                                    {toolbarFilters.map((filter) => (
+                                        <SelectOption key={filter.key} value={filter.key}>
+                                            <Flex
+                                                spaceItems={{ default: 'spaceItemsNone' }}
+                                                alignItems={{ default: 'alignItemsCenter' }}
+                                                flexWrap={{ default: 'nowrap' }}
+                                            >
+                                                <FlexItem style={{ paddingLeft: 4, paddingRight: 8 }}>
+                                                    <FilterIcon />
+                                                </FlexItem>
+                                                <FlexItem>{filter.label}</FlexItem>
+                                            </Flex>
+                                        </SelectOption>
+                                    ))}
+                                </SingleSelect2>
+                            </ToolbarItem>
+                            <ToolbarItem>
+                                <ToolbarTextFilter
+                                    value={filterValue}
+                                    setValue={setFilterValue}
+                                    addFilter={(value: string) => {
+                                        let values = filters[selectedFilter]
+                                        if (!values) values = []
+                                        if (!values.includes(value)) values.push(value)
+                                        setFilters({ ...filters, [selectedFilter]: values })
+                                    }}
+                                />
+                            </ToolbarItem>
+                            {toolbarFilters.map((filter) => {
+                                const values = filters[filter.key] ?? []
+                                return (
+                                    <ToolbarFilter
+                                        key={filter.label}
+                                        categoryName={filter.label}
+                                        chips={values}
+                                        deleteChip={(_group, value) => {
+                                            setFilters((filters) => {
+                                                const newState = { ...filters }
+                                                value = typeof value === 'string' ? value : value.key
+                                                let values = filters[filter.key]
+                                                if (values) {
+                                                    values = values.filter((v) => v !== value)
+                                                    if (values.length === 0) {
+                                                        delete newState[filter.key]
+                                                    } else {
+                                                        newState[filter.key] = values
+                                                    }
+                                                }
+                                                return newState
+                                            })
+                                        }}
+                                        deleteChipGroup={() => {
+                                            setFilters((filters) => {
+                                                const newState = { ...filters }
+                                                delete newState[filter.key]
+                                                return newState
+                                            })
+                                        }}
+                                        showToolbarItem={false}
+                                    >
+                                        <></>
+                                    </ToolbarFilter>
+                                )
+                            })}
+                        </ToolbarGroup>
+                    </ToolbarToggleGroup>
+                )}
+
+                {/* Action Buttons */}
+                <ToolbarGroup variant="button-group">
+                    {toolbarActionButtons}
+                    {toolbarActionDropDownItems}
+                    <ToolbarItem>
+                        <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
+                    </ToolbarItem>
+                </ToolbarGroup>
+
+                {/* Pagination */}
+                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', lg: 'visible' }}>
+                    <Pagination
+                        variant={PaginationVariant.top}
+                        isCompact
+                        itemCount={itemCount}
+                        perPage={perPage}
+                        page={page}
+                        onSetPage={onSetPage}
+                        onPerPageSelect={onPerPageSelect}
+                        style={{ marginTop: -8, marginBottom: -8 }}
+                    />
+                </ToolbarItem>
+            </ToolbarContent>
+        </Toolbar>
+    )
+}
+
+function ToolbarTextFilter(props: { value: string; setValue: (value: string) => void; addFilter: (value: string) => void }) {
+    const { value, setValue } = props
+    // const ref = useRef<HTMLInputElement>()
+    return (
+        <InputGroup>
+            <TextInputGroup>
+                <TextInputGroupMain
+                    // ref={ref}
+                    value={value}
+                    onChange={setValue}
+                    onKeyUp={(event) => {
+                        if (value && event.key === 'Enter') {
+                            props.addFilter(value)
+                            setValue('')
+                            // ref.current?.focus() // Does not work because PF does not expose ref
+                        }
+                    }}
+                />
+                <TextInputGroupUtilities>
+                    <Button
+                        variant="plain"
+                        aria-label="add filter"
+                        onClick={() => setValue('')}
+                        style={{ opacity: value ? undefined : 0 }}
+                        // tabIndex={value ? undefined : -1}
+                        tabIndex={-1}
+                    >
+                        <TimesIcon />
+                    </Button>
+                </TextInputGroupUtilities>
+            </TextInputGroup>
+            <Button
+                variant={value ? 'primary' : 'control'}
+                aria-label="add filter"
+                onClick={() => {
+                    props.addFilter(value)
+                    setValue('')
+                }}
+                isDisabled={!value}
+            >
+                <ArrowRightIcon />
+            </Button>
+        </InputGroup>
     )
 }

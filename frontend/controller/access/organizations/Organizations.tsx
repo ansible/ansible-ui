@@ -4,7 +4,7 @@ import { useTranslation } from '../../../../framework/components/useTranslation'
 import { IToolbarFilter } from '../../../../framework/PageToolbar'
 import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
-import { compareNumbers } from '../../../common/compare'
+import { compareNumbers } from '../../../../framework/utils/compare'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,

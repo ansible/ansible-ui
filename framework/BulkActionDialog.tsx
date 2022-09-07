@@ -13,9 +13,7 @@ import pLimit from 'p-limit'
 import { useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
-import { PagePagination } from './PagePagination'
-import { PageTable } from './PageTable'
-import { ITableColumn } from './TableColumn'
+import { ITableColumn, PageTable } from './PageTable'
 import { usePaged } from './useTableItems'
 
 export interface BulkActionDialogProps {
@@ -158,16 +156,6 @@ export function BulkActionDialog<T extends object>(props: {
                             compact
                         />
                     </div>
-                    {props.items.length > perPage && (
-                        <PagePagination
-                            itemCount={props.items.length}
-                            page={page}
-                            perPage={perPage}
-                            setPage={setPage}
-                            setPerPage={setPerPage}
-                            style={{ paddingBottom: 0, marginBottom: -8 }}
-                        />
-                    )}
                 </>
             ) : (
                 <>
@@ -215,16 +203,6 @@ export function BulkActionDialog<T extends object>(props: {
                             compact
                         />
                     </div>
-                    {props.items.length > perPage && perPage === 10 && (
-                        <PagePagination
-                            itemCount={props.items.length}
-                            page={page}
-                            perPage={perPage}
-                            setPage={setPage}
-                            setPerPage={setPerPage}
-                            style={{ paddingBottom: 0, marginBottom: -8 }}
-                        />
-                    )}
                 </>
             )}
             {props.confirm && (

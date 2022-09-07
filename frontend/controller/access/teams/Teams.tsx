@@ -1,14 +1,20 @@
 import { PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarAction, ToolbarActionType } from '../../../../framework'
-import { BulkActionDialog } from '../../../../framework/BulkActionDialog'
+import {
+    BulkActionDialog,
+    IItemAction,
+    ITableColumn,
+    IToolbarAction,
+    IToolbarFilter,
+    TablePage,
+    ToolbarActionType,
+    useDialog,
+} from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { useDialog } from '../../../../framework/DialogContext'
-import { IToolbarFilter } from '../../../../framework/PageToolbar'
-import { TablePage } from '../../../../framework/TablePage'
+import { randomString } from '../../../../framework/utils/random-string'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
-import { compareStrings } from '../../../common/compare'
+import { compareStrings } from '../../../../framework/utils/compare'
 import {
     useCreatedByToolbarFilter,
     useModifiedByToolbarFilter,
@@ -16,7 +22,6 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { randomString } from '../../../common/random-string'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
 import { getItemKey, requestDelete, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'

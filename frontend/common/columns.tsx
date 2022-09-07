@@ -2,7 +2,7 @@ import { Switch } from '@patternfly/react-core'
 import { CopyCell, ITableColumn, SinceCell, TextCell } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
-import { compareStrings, compareUnknowns } from './compare'
+import { compareStrings, compareUnknowns } from '../../framework/utils/compare'
 import { getScmType } from './scm'
 import { getStatus } from './status'
 
