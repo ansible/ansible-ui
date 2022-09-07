@@ -19,7 +19,7 @@ import {
     TextInputGroup,
     TextInputGroupMain,
     TextInputGroupUtilities,
-    Tooltip,
+    Tooltip
 } from '@patternfly/react-core'
 import { CaretDownIcon, SearchIcon } from '@patternfly/react-icons'
 import { JSONSchema6 } from 'json-schema'
@@ -33,7 +33,7 @@ import {
     useForm,
     useFormContext,
     UseFormReturn,
-    useFormState,
+    useFormState
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../../framework'
@@ -131,9 +131,16 @@ export function FormPageButtons(props: { submitText: string; onCancel: () => voi
                 variant="light"
             >
                 <ActionGroup style={{ marginTop: 0 }}>
-                    <Button type="submit" isDisabled={errors && Object.keys(errors).length > 0}>
-                        {props.submitText}
-                    </Button>
+                    {errors && Object.keys(errors).length > 0 ? (
+                        <Tooltip content={'Please fix validation errors'}>
+                            <Button type="submit" isAriaDisabled>
+                                {props.submitText}
+                            </Button>
+                        </Tooltip>
+                    ) : (
+                        <Button type="submit">{props.submitText}</Button>
+                    )}
+
                     <Button type="button" variant="link" onClick={props.onCancel}>
                         Cancel
                     </Button>
