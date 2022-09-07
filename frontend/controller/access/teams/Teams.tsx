@@ -1,6 +1,7 @@
+import { PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarAction } from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarAction, ToolbarActionType } from '../../../../framework'
 import { BulkActionDialog } from '../../../../framework/BulkActionDialog'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { useDialog } from '../../../../framework/DialogContext'
@@ -15,8 +16,9 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
+import { randomString } from '../../../common/random-string'
 import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
-import { getItemKey } from '../../../Data'
+import { getItemKey, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
@@ -49,15 +51,16 @@ export function Teams() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
-    const deleteToolbarAction = useDeleteTeamToolbarAction(view.refresh)
+    const deleteToolbarAction = useDeleteTeamToolbarAction(() => void view.refresh())
+    const create100TeamsToolbarAction = useCreate100TeamsToolbarAction(() => void view.refresh())
     const toolbarActions = useMemo<IToolbarAction<Team>[]>(
-        () => [createToolbarAction, deleteToolbarAction],
-        [createToolbarAction, deleteToolbarAction]
+        () => [createToolbarAction, deleteToolbarAction, create100TeamsToolbarAction],
+        [create100TeamsToolbarAction, createToolbarAction, deleteToolbarAction]
     )
 
     // Row Actions
     const editItemAction = useEditItemAction((team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())))
-    const deleteItemAction = useDeleteTeamRowAction(view.refresh)
+    const deleteItemAction = useDeleteTeamRowAction(() => void view.refresh())
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     return (
@@ -105,6 +108,33 @@ export function useDeleteTeams(callback: () => void) {
         )
     }
     return deleteTeams
+}
+
+export function useCreate100TeamsToolbarAction(callback: () => void) {
+    const { t } = useTranslation()
+    const toolbarAction: IToolbarAction<object> = useMemo(
+        () => ({
+            type: ToolbarActionType.button,
+            icon: PlusIcon,
+            label: t('Create 100 teams'),
+            onClick: () => {
+                const promises: Promise<unknown>[] = []
+                for (let i = 0; i < 100; i++) {
+                    promises.push(
+                        requestPost<Team, Partial<Team>>('/api/v2/teams/', {
+                            name: randomString(8),
+                            organization: 1,
+                        }).catch(() => {
+                            // do nothing
+                        })
+                    )
+                }
+                void Promise.allSettled(promises).then(callback)
+            },
+        }),
+        [callback, t]
+    )
+    return toolbarAction
 }
 
 export function useDeleteTeamToolbarAction(callback: () => void) {

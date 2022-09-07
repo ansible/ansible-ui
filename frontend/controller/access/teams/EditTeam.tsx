@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { ItemsResponse, requestGet, requestPatch, requestPost, useFetcher } from '../../../Data'
+import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
 import { Organization } from '../organizations/Organization'
 import { Team } from './Team'
@@ -18,7 +18,6 @@ export function EditTeam() {
     const id = Number(params.id)
 
     // const project = useProject(id)
-    const fetcher = useFetcher()
     const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet)
 
     const EditTeamSchema = Type.Object({
