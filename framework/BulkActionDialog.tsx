@@ -143,7 +143,7 @@ export function BulkActionDialog<T extends object>(props: {
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            maxHeight: 425,
+                            maxHeight: 480,
                             overflow: 'hidden',
                         }}
                     >
