@@ -99,6 +99,7 @@ export function BulkActionDialog<T extends object>(props: {
 
     return (
         <Modal
+            titleIconVariant={props.isDanger ? 'warning' : undefined}
             title={props.title}
             variant={ModalVariant.medium}
             isOpen

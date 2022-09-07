@@ -12,9 +12,9 @@ import {
     useDialog,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
+import { compareStrings } from '../../../../framework/utils/compare'
 import { randomString } from '../../../../framework/utils/random-string'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
-import { compareStrings } from '../../../../framework/utils/compare'
 import {
     useCreatedByToolbarFilter,
     useModifiedByToolbarFilter,
@@ -93,8 +93,8 @@ export function useDeleteTeams(callback: () => void) {
     const deleteTeams = (items: Team[]) => {
         setDialog(
             <BulkActionDialog<Team>
-                title={t('Delete teams', { count: items.length })}
-                prompt={t('Are you sure you want to delete these {{count}} teams?', { count: items.length })}
+                title={t('Permanently delete teams', { count: items.length })}
+                // prompt={t('Are you sure you want to delete these {{count}} teams?', { count: items.length })}
                 confirm={t('Yes, I confirm that I want to delete these {{count}} teams.', { count: items.length })}
                 submit={t('Delete')}
                 submitting={t('Deleting')}

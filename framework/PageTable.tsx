@@ -33,6 +33,7 @@ import {
     ToolbarGroup,
     ToolbarItem,
     ToolbarToggleGroup,
+    Tooltip,
     Truncate,
 } from '@patternfly/react-core'
 import { ArrowRightIcon, ColumnsIcon, FilterIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons'
@@ -701,21 +702,28 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                     case ButtonVariant.danger:
                                         return (
                                             <ToolbarItem>
-                                                <Button
-                                                    variant={
-                                                        filterValue
-                                                            ? ButtonVariant.secondary
-                                                            : selectedItems.length
-                                                            ? action.variant === ButtonVariant.primary
+                                                {action.type === ToolbarActionType.bulk && selectedItems?.length === 0 ? (
+                                                    <Tooltip content="No items selected">
+                                                        <Button variant={ButtonVariant.secondary} isAriaDisabled>
+                                                            {action.label}
+                                                        </Button>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Button
+                                                        variant={
+                                                            filterValue
                                                                 ? ButtonVariant.secondary
+                                                                : selectedItems.length
+                                                                ? action.variant === ButtonVariant.primary
+                                                                    ? ButtonVariant.secondary
+                                                                    : action.variant
                                                                 : action.variant
-                                                            : action.variant
-                                                    }
-                                                    onClick={() => action.onClick(selectedItems)}
-                                                    isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                                >
-                                                    {action.label}
-                                                </Button>
+                                                        }
+                                                        onClick={() => action.onClick(selectedItems)}
+                                                    >
+                                                        {action.label}
+                                                    </Button>
+                                                )}
                                             </ToolbarItem>
                                         )
                                 }
@@ -881,8 +889,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 )}
 
                 {/* Action Buttons */}
+                {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>}
                 <ToolbarGroup variant="button-group">
-                    {toolbarActionButtons}
                     {toolbarActionDropDownItems}
                     <ToolbarItem>
                         <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
@@ -953,7 +961,6 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
                         props.addFilter(value)
                         setValue('')
                     }}
-                    isDisabled={!value}
                 >
                     <ArrowRightIcon />
                 </Button>
