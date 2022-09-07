@@ -17,9 +17,12 @@ import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Fragment, MouseEvent, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useColumnModal } from './ColumnModal'
 import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 import { IItemAction, isItemActionClick } from './ItemActions'
 import { PageContent } from './PageContent'
+import { PagePagination } from './PagePagination'
+import { PageToolbar2 } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITableColumn } from './TableColumn'
 import { IToolbarAction, ToolbarActionType } from './Toolbar'
@@ -79,84 +82,90 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
     const settings = useSettings()
+    const { openColumnModal, columnModal, managedColumns } = useColumnModal(tableColumns)
 
     return (
-        <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
-            <TableComposable
-                aria-label="Simple table"
-                variant={props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined}
-                gridBreakPoint=""
-                isStickyHeader
-            >
-                {itemCount === undefined ? (
-                    <Thead>
-                        <Tr>
-                            <Th>
-                                <Skeleton />
-                            </Th>
-                        </Tr>
-                    </Thead>
-                ) : (
-                    <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 0} scrollRight={scroll.right > 1} />
+        <Fragment>
+            {columnModal}
+            <PageToolbar2 {...props} openColumnModal={openColumnModal} />
+            <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
+                <TableComposable
+                    aria-label="Simple table"
+                    variant={props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined}
+                    gridBreakPoint=""
+                    isStickyHeader
+                >
+                    {itemCount === undefined ? (
+                        <Thead>
+                            <Tr>
+                                <Th>
+                                    <Skeleton />
+                                </Th>
+                            </Tr>
+                        </Thead>
+                    ) : (
+                        <TableHead {...props} showSelect={showSelect} scrollLeft={scroll.left > 0} scrollRight={scroll.right > 1} />
+                    )}
+                    <Tbody>
+                        {itemCount === undefined
+                            ? new Array(perPage).fill(0).map((_, index) => (
+                                  <Tr key={index}>
+                                      <Td>
+                                          <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                                              <Skeleton height="27px" />
+                                          </div>
+                                      </Td>
+                                  </Tr>
+                              ))
+                            : pageItems === undefined
+                            ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
+                                  <Tr key={index}>
+                                      {showSelect && <Td></Td>}
+                                      <Td colSpan={managedColumns.length}>
+                                          <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                                              <Skeleton height="27px" />
+                                          </div>
+                                      </Td>
+                                  </Tr>
+                              ))
+                            : pageItems?.map((item, rowIndex) => (
+                                  <TableRow<T>
+                                      key={keyFn ? keyFn(item) : rowIndex}
+                                      columns={managedColumns}
+                                      item={item}
+                                      isItemSelected={isSelected?.(item)}
+                                      selectItem={selectItem}
+                                      unselectItem={unselectItem}
+                                      rowActions={rowActions}
+                                      rowIndex={rowIndex}
+                                      showSelect={showSelect}
+                                      scrollLeft={scroll.left > 0}
+                                      scrollRight={scroll.right > 1}
+                                  />
+                              ))}
+                    </Tbody>
+                </TableComposable>
+                {itemCount === 0 && (
+                    <div style={{ margin: 'auto' }}>
+                        <EmptyState>
+                            <EmptyStateIcon icon={SearchIcon} />
+                            <Title headingLevel="h2" size="lg">
+                                No results found
+                            </Title>
+                            <EmptyStateBody>No results match this filter criteria. Adjust your filters and try again.</EmptyStateBody>
+                            {clearAllFilters && (
+                                <EmptyStateSecondaryActions>
+                                    <Button variant="link" onClick={clearAllFilters}>
+                                        Clear all filters
+                                    </Button>
+                                </EmptyStateSecondaryActions>
+                            )}
+                        </EmptyState>
+                    </div>
                 )}
-                <Tbody>
-                    {itemCount === undefined
-                        ? new Array(perPage).fill(0).map((_, index) => (
-                              <Tr key={index}>
-                                  <Td>
-                                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                                          <Skeleton height="27px" />
-                                      </div>
-                                  </Td>
-                              </Tr>
-                          ))
-                        : pageItems === undefined
-                        ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
-                              <Tr key={index}>
-                                  {showSelect && <Td></Td>}
-                                  <Td colSpan={tableColumns.length}>
-                                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                                          <Skeleton height="27px" />
-                                      </div>
-                                  </Td>
-                              </Tr>
-                          ))
-                        : pageItems?.map((item, rowIndex) => (
-                              <TableRow<T>
-                                  key={keyFn ? keyFn(item) : rowIndex}
-                                  columns={tableColumns}
-                                  item={item}
-                                  isItemSelected={isSelected?.(item)}
-                                  selectItem={selectItem}
-                                  unselectItem={unselectItem}
-                                  rowActions={rowActions}
-                                  rowIndex={rowIndex}
-                                  showSelect={showSelect}
-                                  scrollLeft={scroll.left > 0}
-                                  scrollRight={scroll.right > 1}
-                              />
-                          ))}
-                </Tbody>
-            </TableComposable>
-            {itemCount === 0 && (
-                <div style={{ margin: 'auto' }}>
-                    <EmptyState>
-                        <EmptyStateIcon icon={SearchIcon} />
-                        <Title headingLevel="h2" size="lg">
-                            No results found
-                        </Title>
-                        <EmptyStateBody>No results match this filter criteria. Adjust your filters and try again.</EmptyStateBody>
-                        {clearAllFilters && (
-                            <EmptyStateSecondaryActions>
-                                <Button variant="link" onClick={clearAllFilters}>
-                                    Clear all filters
-                                </Button>
-                            </EmptyStateSecondaryActions>
-                        )}
-                    </EmptyState>
-                </div>
-            )}
-        </div>
+            </div>
+            <PagePagination {...props} />
+        </Fragment>
     )
 }
 

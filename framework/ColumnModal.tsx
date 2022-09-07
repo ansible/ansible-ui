@@ -23,14 +23,14 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
     const onClose = useCallback(() => {
         setColumnModalOpen(false)
     }, [])
-    const selectAllColumns = useCallback(() => {
-        setManagedColumns((managedColumns) => {
-            for (const column of managedColumns) {
-                column.enabled = true
-            }
-            return [...managedColumns]
-        })
-    }, [])
+    // const selectAllColumns = useCallback(() => {
+    //     setManagedColumns((managedColumns) => {
+    //         for (const column of managedColumns) {
+    //             column.enabled = true
+    //         }
+    //         return [...managedColumns]
+    //     })
+    // }, [])
     const onDragFinish = useCallback((itemOrder: string[]) => {
         setManagedColumns((managedColumns) => {
             return itemOrder.map((header) => managedColumns.find((column) => column.header === header))

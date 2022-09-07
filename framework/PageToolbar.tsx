@@ -91,6 +91,7 @@ export type PageToolbar2Props<T extends object> = {
     filters: Record<string, string[]>
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
     clearAllFilters: () => void
+    openColumnModal: () => void
 }
 
 export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
@@ -106,6 +107,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
         filters,
         setFilters,
         clearAllFilters,
+        openColumnModal,
     } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
@@ -146,17 +148,17 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
 
     const dropdownHasBulk = useMemo(() => {
         if (collapseButtons) {
-            return toolbarActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
+            return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
         } else {
             return (
-                toolbarActions.find(
+                toolbarDropdownActions.find(
                     (action) =>
                         action.type === ToolbarActionType.bulk &&
                         (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
                 ) !== undefined
             )
         }
-    }, [collapseButtons, toolbarActions])
+    }, [collapseButtons, toolbarDropdownActions])
 
     const toolbarActionButtons = useMemo(() => {
         if (!toolbarButtonActions.length) return <></>
@@ -234,7 +236,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                             return <DropdownSeparator key={`separator-${index}`} />
                     }
                 })}
-            ></Dropdown>
+            />
         )
     }, [dropdownHasBulk, dropdownOpen, selectedItems, toolbarDropdownActions])
 
@@ -246,8 +248,6 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
         toolbarActions &&
         toolbarActions.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type)
     const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
-
-    // const isXlOrLarger = useWindowSizeOrLarger(WindowSize.xl)
 
     const [selectedFilter, setSeletedFilter] = useState(() =>
         toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
@@ -357,7 +357,7 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                     {toolbarActionButtons}
                     {toolbarActionDropDownItems}
                     <ToolbarItem>
-                        <Button variant="plain" icon={<ColumnsIcon />} onClick={() => {}} />
+                        <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
                     </ToolbarItem>
                 </ToolbarGroup>
 
