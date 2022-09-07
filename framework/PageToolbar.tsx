@@ -1,24 +1,18 @@
 import {
     Button,
     ButtonVariant,
+    Dropdown,
+    DropdownItem,
     DropdownSeparator,
     Flex,
     FlexItem,
     InputGroup,
+    KebabToggle,
     OnPerPageSelect,
     OnSetPage,
-    OverflowMenu,
-    OverflowMenuContent,
-    OverflowMenuControl,
-    OverflowMenuDropdownItem,
-    OverflowMenuGroup,
-    OverflowMenuItem,
     Pagination,
     PaginationVariant,
-    Select,
     SelectOption,
-    SelectOptionObject,
-    SelectVariant,
     Skeleton,
     TextInputGroup,
     TextInputGroupMain,
@@ -30,11 +24,11 @@ import {
     ToolbarItem,
     ToolbarToggleGroup,
 } from '@patternfly/react-core'
-import { ArrowRightIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
+import { ArrowRightIcon, ColumnsIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
 import { ComponentClass, Dispatch, Fragment, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
-import { DropdownControlled } from './components/DropdownControlled'
 import { SingleSelect2 } from './components/SingleSelect'
+import { useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
 
 export enum ToolbarActionType {
     seperator = 'seperator',
@@ -116,23 +110,68 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
 
-    const toolbarActionButtons = useMemo(
-        () => (
-            <Fragment>
-                {toolbarActions
+    const [filterValue, setFilterValue] = useState('')
+
+    const collapseButtons = useWindowSizeOrSmaller(WindowSize.md)
+
+    const toolbarButtonActions: IToolbarAction<T>[] = useMemo(() => {
+        if (collapseButtons) {
+            return []
+        } else {
+            return toolbarActions.filter(
+                (action) =>
+                    (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                    (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+            )
+        }
+    }, [collapseButtons, toolbarActions])
+
+    const toolbarDropdownActions: IToolbarAction<T>[] = useMemo(() => {
+        if (collapseButtons) {
+            return toolbarActions
+        } else {
+            const actions = toolbarActions.filter(
+                (action) => action.type !== ToolbarActionType.button && action.type !== ToolbarActionType.bulk
+            )
+            while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
+            while (actions.length && actions[actions.length - 1].type === ToolbarActionType.seperator) actions.pop()
+            return actions
+        }
+    }, [collapseButtons, toolbarActions])
+
+    const dropdownHasBulk = useMemo(() => {
+        if (collapseButtons) {
+            return toolbarActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
+        } else {
+            return (
+                toolbarActions.find(
+                    (action) =>
+                        action.type === ToolbarActionType.bulk &&
+                        (action.variant === ButtonVariant.primary || action.variant === ButtonVariant.secondary)
+                ) !== undefined
+            )
+        }
+    }, [collapseButtons, toolbarActions])
+
+    const toolbarActionButtons = useMemo(() => {
+        if (!toolbarButtonActions.length) return <></>
+        return (
+            <>
+                {toolbarButtonActions
                     ?.map((action) => {
                         switch (action.type) {
                             case ToolbarActionType.button:
                             case ToolbarActionType.bulk: {
-                                // const Icon = action.icon
                                 switch (action.variant) {
                                     case ButtonVariant.primary:
                                     case ButtonVariant.secondary:
                                         return (
-                                            <OverflowMenuItem key={action.label}>
+                                            <ToolbarItem>
                                                 <Button
                                                     variant={
-                                                        selectedItems.length
+                                                        filterValue
+                                                            ? ButtonVariant.secondary
+                                                            : selectedItems.length
                                                             ? action.variant === ButtonVariant.primary
                                                                 ? ButtonVariant.secondary
                                                                 : ButtonVariant.primary
@@ -140,18 +179,10 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                                                     }
                                                     onClick={() => action.onClick(selectedItems)}
                                                     isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                                    // icon={
-                                                    //     Icon ? (
-                                                    //         <span>
-                                                    //             <Icon />
-                                                    //             &nbsp;
-                                                    //         </span>
-                                                    //     ) : undefined
-                                                    // }
                                                 >
                                                     {action.label}
                                                 </Button>
-                                            </OverflowMenuItem>
+                                            </ToolbarItem>
                                         )
                                 }
                                 break
@@ -160,53 +191,48 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                         return undefined
                     })
                     .filter((e) => !!e)}
-            </Fragment>
-        ),
-        [selectedItems, toolbarActions]
-    )
+            </>
+        )
+    }, [toolbarButtonActions, filterValue, selectedItems])
 
-    const toolbarActionDropDownItems = useMemo(
-        () =>
-            toolbarActions
-                ?.map((action) => {
-                    switch (action.type) {
-                        case ToolbarActionType.button:
-                        case ToolbarActionType.bulk: {
-                            const Icon = action.icon
-                            switch (action.variant) {
-                                case ButtonVariant.primary:
-                                case ButtonVariant.secondary:
-                                    return (
-                                        <OverflowMenuDropdownItem
-                                            key={action.label}
-                                            isShared
-                                            onClick={() => action.onClick(selectedItems)}
-                                            icon={Icon ? <Icon /> : undefined}
-                                        >
-                                            {action.label}
-                                        </OverflowMenuDropdownItem>
-                                    )
-                                default:
-                                    return (
-                                        <OverflowMenuDropdownItem
-                                            key={action.label}
-                                            onClick={() => action.onClick(selectedItems)}
-                                            isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                            icon={Icon ? <Icon /> : undefined}
-                                        >
-                                            {action.label}
-                                        </OverflowMenuDropdownItem>
-                                    )
+    const toolbarActionDropDownItems = useMemo(() => {
+        if (!toolbarDropdownActions.length) return <></>
+        return (
+            <Dropdown
+                toggle={
+                    <KebabToggle
+                        id="toggle-kebab"
+                        onToggle={() => {}}
+                        toggleVariant={dropdownHasBulk && selectedItems.length ? 'primary' : undefined}
+                    />
+                }
+                isPlain={!dropdownHasBulk || selectedItems.length === 0}
+            >
+                {toolbarActions
+                    ?.map((action, index) => {
+                        switch (action.type) {
+                            case ToolbarActionType.button:
+                            case ToolbarActionType.bulk: {
+                                const Icon = action.icon
+                                return (
+                                    <DropdownItem
+                                        key={action.label}
+                                        onClick={() => action.onClick(selectedItems)}
+                                        isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
+                                        icon={Icon ? <Icon /> : undefined}
+                                    >
+                                        {action.label}
+                                    </DropdownItem>
+                                )
                             }
+                            case ToolbarActionType.seperator:
+                                return <DropdownSeparator key={`separator-${index}`} />
                         }
-                        case 'seperator':
-                            return <DropdownSeparator key="separator" />
-                    }
-                    return undefined
-                })
-                .filter((a) => !!a),
-        [selectedItems, toolbarActions]
-    )
+                    })
+                    .filter((a) => !!a)}
+            </Dropdown>
+        )
+    }, [dropdownHasBulk, selectedItems, toolbarActions, toolbarDropdownActions.length])
 
     const showSearchAndFilters = toolbarFilters !== undefined
     const showToolbarActions = toolbarActions !== undefined
@@ -272,6 +298,8 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                             </ToolbarItem>
                             <ToolbarItem>
                                 <TextFilter
+                                    value={filterValue}
+                                    setValue={setFilterValue}
                                     addFilter={(value: string) => {
                                         let values = filters[selectedFilter]
                                         if (!values) values = []
@@ -321,25 +349,13 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
                 )}
 
                 {/* Action Buttons */}
-                {showToolbarActions && (
-                    <ToolbarGroup variant="button-group">
-                        <ToolbarItem>
-                            <OverflowMenu breakpoint="md">
-                                {toolbarActionButtons && (
-                                    <OverflowMenuContent>
-                                        <OverflowMenuGroup groupType="button">{toolbarActionButtons}</OverflowMenuGroup>
-                                    </OverflowMenuContent>
-                                )}
-                                <OverflowMenuControl hasAdditionalOptions>
-                                    <DropdownControlled items={toolbarActionDropDownItems ?? []} />
-                                </OverflowMenuControl>
-                            </OverflowMenu>
-                        </ToolbarItem>
-                        {/* <ToolbarItem>
-                            <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
-                        </ToolbarItem> */}
-                    </ToolbarGroup>
-                )}
+                <ToolbarGroup variant="button-group">
+                    {toolbarActionButtons}
+                    {toolbarActionDropDownItems}
+                    <ToolbarItem>
+                        <Button variant="plain" icon={<ColumnsIcon />} onClick={() => {}} />
+                    </ToolbarItem>
+                </ToolbarGroup>
 
                 {/* Pagination */}
                 <ToolbarItem variant="pagination" visibility={{ default: 'hidden', lg: 'visible' }}>
@@ -359,8 +375,8 @@ export function PageToolbar2<T extends object>(props: PageToolbar2Props<T>) {
     )
 }
 
-function TextFilter(props: { addFilter: (value: string) => void }) {
-    const [value, setValue] = useState('')
+function TextFilter(props: { value: string; setValue: (value: string) => void; addFilter: (value: string) => void }) {
+    const { value, setValue } = props
     // const ref = useRef<HTMLInputElement>()
     return (
         <InputGroup>
@@ -391,7 +407,7 @@ function TextFilter(props: { addFilter: (value: string) => void }) {
                 </TextInputGroupUtilities>
             </TextInputGroup>
             <Button
-                variant={value ? 'primary' : 'contorl'}
+                variant={value ? 'primary' : 'control'}
                 aria-label="add filter"
                 onClick={() => {
                     props.addFilter(value)
@@ -402,65 +418,5 @@ function TextFilter(props: { addFilter: (value: string) => void }) {
                 <ArrowRightIcon />
             </Button>
         </InputGroup>
-    )
-}
-
-function SelectFilter(props: {
-    label: string
-    values: string[]
-    setValues: (values: string[]) => void
-    options: { label: string; value: string }[]
-}) {
-    const [open, setOpen] = useState(false)
-    const onToggle = useCallback(() => setOpen((open) => !open), [])
-    const onSelect = useCallback(
-        (event: React.MouseEvent | React.ChangeEvent, value: string | SelectOptionObject, isPlaceholder?: boolean) => {
-            event.preventDefault()
-            if (isPlaceholder) {
-                props.setValues([])
-            } else {
-                if (props.values.includes(value.toString())) {
-                    const newValues = [...props.values]
-                    newValues.splice(props.values.indexOf(value.toString()), 1)
-                    props.setValues(newValues)
-                } else {
-                    props.setValues([...props.values, value.toString()])
-                }
-            }
-        },
-        [props]
-    )
-    const options = useMemo(
-        () =>
-            props.options.map((option) => (
-                <SelectOption key={option.label} value={option.value}>
-                    {option.label}
-                </SelectOption>
-            )),
-        [props.options]
-    )
-    return (
-        <Select
-            // placeholder="hhh"
-            variant={SelectVariant.checkbox}
-            aria-label="Status"
-            onToggle={onToggle}
-            onSelect={onSelect}
-            selections={props.values}
-            isOpen={open}
-            placeholderText={props.values.length === 0 ? props.label : undefined}
-            // toggleIcon={<SearchIcon />}
-            // placeholderText="jjj"
-
-            onClear={
-                props.values.length !== 0
-                    ? () => {
-                          props.setValues([])
-                      }
-                    : undefined
-            }
-        >
-            {options}
-        </Select>
     )
 }
