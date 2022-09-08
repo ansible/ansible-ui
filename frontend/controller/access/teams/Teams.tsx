@@ -56,7 +56,12 @@ export function Teams() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
-    const deleteToolbarAction = useDeleteTeamToolbarAction(() => void view.refresh())
+    const deleteToolbarAction = useDeleteTeamToolbarAction((teams: Team[]) => {
+        for (const team of teams) {
+            view.unselectItem(team)
+        }
+        void view.refresh()
+    })
     const create100TeamsToolbarAction = useCreate100TeamsToolbarAction(() => void view.refresh())
     const toolbarActions = useMemo<IToolbarAction<Team>[]>(
         () => [createToolbarAction, deleteToolbarAction, create100TeamsToolbarAction],
@@ -88,7 +93,7 @@ export function Teams() {
     )
 }
 
-export function useDeleteTeams(callback: () => void) {
+export function useDeleteTeams(callback: (teams: Team[]) => void) {
     const { t } = useTranslation()
     const [_, setDialog] = useDialog()
     const deleteActionNameColumn = useNameColumn({ disableSort: true })
@@ -148,7 +153,7 @@ export function useCreate100TeamsToolbarAction(callback: () => void) {
     return toolbarAction
 }
 
-export function useDeleteTeamToolbarAction(callback: () => void) {
+export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void) {
     const deleteTeams = useDeleteTeams(callback)
     return useDeleteToolbarAction(deleteTeams)
 }

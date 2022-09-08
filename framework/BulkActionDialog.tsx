@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core'
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
 import pLimit from 'p-limit'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Collapse } from './Collapse'
 import { useDialog } from './DialogContext'
 import { ITableColumn, PageTable } from './PageTable'
@@ -37,62 +37,52 @@ export function BulkActionDialog<T extends object>(props: {
     errorColumns: ITableColumn<T>[]
     keyFn: (item: T) => string | number
     action: (item: T) => Promise<void>
-    onClose?: () => void
+    onClose?: (items: T[]) => void
 }) {
     const [_, setDialog] = useDialog()
-    const onClose = () => {
-        setDialog()
-        props.onClose?.()
-    }
     const [isSubmitting, setSubmitting] = useState(false)
     const [isSubmited, setSubmited] = useState(false)
     const [progress, setProgress] = useState(0)
 
     const [error, setError] = useState('')
     const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>()
+    const onClose = useCallback(() => {
+        props.onClose?.(props.items.filter((item) => statuses?.[props.keyFn(item)] === null))
+        setDialog()
+    }, [props, setDialog, statuses])
+
     const onConfirm = () => {
         async function handleConfirm() {
-            try {
-                const limit = pLimit(5)
-                setSubmitting(true)
-                let progress = 0
-                let hasError = false
-                await Promise.all(
-                    props.items.map((item: T) =>
-                        limit(async () => {
-                            const key = props.keyFn(item)
-                            try {
-                                await props.action(item)
-                                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }))
-                            } catch (err) {
-                                if (err instanceof Error) {
-                                    const message = err.message
-                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: message }))
-                                } else {
-                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: `Unknown error` }))
-                                }
-                                setError(props.error)
-                                hasError = true
-                            } finally {
-                                setProgress(++progress)
+            const limit = pLimit(5)
+            setSubmitting(true)
+            let progress = 0
+            await Promise.all(
+                props.items.map((item: T) =>
+                    limit(async () => {
+                        const key = props.keyFn(item)
+                        try {
+                            await props.action(item)
+                            setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }))
+                        } catch (err) {
+                            if (err instanceof Error) {
+                                const message = err.message
+                                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: message }))
+                            } else {
+                                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: `Unknown error` }))
                             }
-                        })
-                    )
+                            setError(props.error)
+                        } finally {
+                            setProgress(++progress)
+                        }
+                    })
                 )
-
-                if (!hasError) {
-                    await new Promise((resolve) => setTimeout(resolve, 1500))
-                    onClose()
-                }
-            } catch {
-                // todo?
-            } finally {
-                setSubmitting(false)
-                setSubmited(true)
-            }
+            )
+            setSubmitting(false)
+            setSubmited(true)
         }
         void handleConfirm()
     }
+
     const { paged, page, perPage, setPage, setPerPage } = usePaged(props.items)
     const [confirmed, setConfirmed] = useState(!props.confirm)
 

@@ -56,9 +56,9 @@ async function requestCommon<ResponseBody>(url: string, options: Options, method
         // }
         return result
     } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-            console.error(err)
-        }
+        // if (process.env.NODE_ENV === 'development') {
+        //     console.error(err)
+        // }
         if (err instanceof HTTPError) {
             switch (err.response.status) {
                 case 401:
