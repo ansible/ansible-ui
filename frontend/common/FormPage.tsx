@@ -525,7 +525,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
     return <>{p}</>
 }
 
-export function PageForm<T>(props: {
+export function PageForm<T extends object>(props: {
     schema?: JSONSchema6
     children?: ReactNode
     submitText: string

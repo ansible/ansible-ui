@@ -41,10 +41,12 @@ export default function Login() {
     const servers = useMemo<{ server: string; username: string }[]>(() => {
         try {
             const serversString = localStorage.getItem('servers')
-            const servers = JSON.parse(serversString) as { server: string; username: string }[]
-            if (Array.isArray(servers)) {
-                if (servers.every((server) => typeof server === 'object')) {
-                    return servers.filter((server) => 'server' in server && 'username' in server)
+            if (typeof serversString === 'string') {
+                const servers = JSON.parse(serversString) as { server: string; username: string }[]
+                if (Array.isArray(servers)) {
+                    if (servers.every((server) => typeof server === 'object')) {
+                        return servers.filter((server) => 'server' in server && 'username' in server)
+                    }
                 }
             }
             return []
