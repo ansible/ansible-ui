@@ -755,10 +755,14 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                         id="toggle-kebab"
                         onToggle={() => setDropdownOpen(!dropdownOpen)}
                         toggleVariant={dropdownHasBulk && selectedItems?.length ? 'primary' : undefined}
+                        style={{
+                            color: dropdownHasBulk && selectedItems?.length ? 'var(--pf-global--Color--light-100)' : undefined,
+                            backgroundColor: dropdownHasBulk && selectedItems?.length ? 'var(--pf-global--primary-color--100)' : undefined,
+                        }}
                     />
                 }
                 isOpen={dropdownOpen}
-                isPlain={!dropdownHasBulk || (selectedItems && selectedItems.length > 0)}
+                isPlain
                 dropdownItems={toolbarDropdownActions.map((action, index) => {
                     switch (action.type) {
                         case ToolbarActionType.button:
