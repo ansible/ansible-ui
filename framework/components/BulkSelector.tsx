@@ -3,10 +3,12 @@ import { useCallback, useMemo, useState } from 'react'
 import { useWindowSizeOrLarger, WindowSize } from './useBreakPoint'
 
 export interface BulkSelectorProps<T> {
+    itemCount: number
     pageItems?: T[]
     selectedItems?: T[]
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
+    keyFn: (item: T) => string | number
 }
 
 export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
@@ -15,10 +17,15 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
 
     const { pageItems, selectedItems, selectItems, unselectAll } = props
 
-    const onToggleCheckbox = useCallback(
-        () => (selectedItems?.length ?? 0 > 0 ? unselectAll() : selectItems(pageItems ?? [])),
-        [selectedItems, selectItems, unselectAll, pageItems]
-    )
+    const allPageItemsSelected = (pageItems ?? []).every((item) => selectedItems?.includes(item))
+
+    const onToggleCheckbox = useCallback(() => {
+        if (allPageItemsSelected) {
+            unselectAll?.()
+        } else {
+            selectItems?.(pageItems ?? [])
+        }
+    }, [allPageItemsSelected, unselectAll, selectItems, pageItems])
 
     const toggleText = useMemo(() => {
         if (isSmallOrLarger) {
@@ -35,6 +42,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     }, [isSmallOrLarger, selectedItems])
 
     const toggle = useMemo(() => {
+        const selectedCount = selectedItems ? selectedItems.length : 0
         return (
             <DropdownToggle
                 splitButtonItems={[
@@ -42,7 +50,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
                         id="select-all"
                         key="select-all"
                         aria-label="Select all"
-                        isChecked={selectedItems ? selectedItems.length > 0 : false}
+                        isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
                         onChange={onToggleCheckbox}
                     >
                         {toggleText}
@@ -51,7 +59,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
                 onToggle={(isOpen) => setIsOpen(isOpen)}
             />
         )
-    }, [selectedItems, toggleText, onToggleCheckbox])
+    }, [selectedItems, allPageItemsSelected, onToggleCheckbox, toggleText])
 
     const selectNoneDropdownItem = useMemo(() => {
         return (
@@ -59,7 +67,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
                 id="select-none"
                 key="select-none"
                 onClick={() => {
-                    unselectAll()
+                    unselectAll?.()
                     setIsOpen(false)
                 }}
             >
@@ -74,7 +82,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
                 id="select-page"
                 key="select-page"
                 onClick={() => {
-                    selectItems(pageItems)
+                    selectItems?.(pageItems ?? [])
                     setIsOpen(false)
                 }}
             >
