@@ -20,8 +20,9 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "skipLibCheck": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
         // "isolatedModules": true
+        "strictNullChecks": true
     },
     "include": ["frontend", "framework", "backend", "rollup.config.ts"]
 }

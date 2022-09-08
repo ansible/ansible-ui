@@ -37,7 +37,7 @@ export function proxyHandler(
     const headers: OutgoingHttpHeaders = {}
 
     const cookieHeader = req.headers[HTTP2_HEADER_COOKIE]
-    if (cookieHeader) {
+    if (typeof cookieHeader === 'string') {
         const cookies = cookie.parse(cookieHeader)
         if (cookies['csrftoken']) {
             headers['X-CSRFToken'] = cookies['csrftoken']
@@ -94,23 +94,27 @@ export function proxyHandler(
     )
 }
 
-function handleRequestError(err: NodeJS.ErrnoException, res: Http2ServerResponse) {
-    switch (err.code) {
-        case 'ECONNREFUSED':
-            res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
-            break
-        default:
-            logger.error(err)
-            res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
-            break
+function handleRequestError(err: NodeJS.ErrnoException | null, res: Http2ServerResponse) {
+    if (err) {
+        switch (err.code) {
+            case 'ECONNREFUSED':
+                res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
+                break
+            default:
+                logger.error(err)
+                res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
+                break
+        }
     }
 }
 
-function handlePipelineError(err: NodeJS.ErrnoException, res: Http2ServerResponse) {
-    switch (err.code) {
-        default:
-            logger.error(err)
-            res.writeHead(HTTP_STATUS_BAD_GATEWAY).end()
-            break
+function handlePipelineError(err: NodeJS.ErrnoException | null, res: Http2ServerResponse) {
+    if (err) {
+        switch (err.code) {
+            default:
+                logger.error(err)
+                res.writeHead(HTTP_STATUS_BAD_GATEWAY).end()
+                break
+        }
     }
 }

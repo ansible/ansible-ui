@@ -22,7 +22,7 @@ export function useCreateToolbarAction(route: RouteE) {
     return toolbarAction
 }
 
-export function useDeleteToolbarAction<T>(onClick: (items: T[]) => void) {
+export function useDeleteToolbarAction<T extends object>(onClick: (items: T[]) => void) {
     const { t } = useTranslation()
     const toolbarAction: IToolbarAction<T> = useMemo(
         () => ({

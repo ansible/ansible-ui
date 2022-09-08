@@ -19,7 +19,7 @@ import {
     TextInputGroup,
     TextInputGroupMain,
     TextInputGroupUtilities,
-    Tooltip
+    Tooltip,
 } from '@patternfly/react-core'
 import { CaretDownIcon, SearchIcon } from '@patternfly/react-icons'
 import { JSONSchema6 } from 'json-schema'
@@ -33,7 +33,7 @@ import {
     useForm,
     useFormContext,
     UseFormReturn,
-    useFormState
+    useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../../framework'
@@ -567,11 +567,7 @@ export function PageForm<T>(props: {
                     <Alert variant="danger" title={error ?? ''} isInline style={{ paddingLeft: sm && props.onCancel ? 190 : undefined }} />
                 </Collapse>
                 {props.onCancel ? (
-                    <PageSection
-                        isFilled={false}
-                        style={{ borderTop: !props.isLight ? 'thin solid var(--pf-global--BorderColor--100)' : undefined }}
-                        variant="light"
-                    >
+                    <PageSection isFilled={false} style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }} variant="light">
                         <ActionGroup style={{ marginTop: 0 }}>
                             <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
                             {props.onCancel && <PageFormCancelButton onCancel={props.onCancel}>{props.cancelText}</PageFormCancelButton>}
