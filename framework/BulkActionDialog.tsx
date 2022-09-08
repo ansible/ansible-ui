@@ -156,6 +156,7 @@ export function BulkActionDialog<T extends object>(props: {
                         setPage={setPage}
                         setPerPage={setPerPage}
                         compact
+                        autoHidePagination
                     />
                 ) : (
                     <>
@@ -197,6 +198,7 @@ export function BulkActionDialog<T extends object>(props: {
                             setPage={setPage}
                             setPerPage={setPerPage}
                             compact
+                            autoHidePagination
                         />
                     </>
                 )}

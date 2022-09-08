@@ -99,38 +99,48 @@ export enum ToolbarActionType {
 }
 
 export type PageTableProps<T extends object> = {
-    pageItems?: T[]
-    toolbarActions?: IToolbarAction<T>[]
-    rowActions?: IItemAction<T>[]
     keyFn: (item: T) => string | number
-    tableColumns: ITableColumn<T>[]
-    selectItem?: (item: T) => void
-    unselectItem?: (item: T) => void
-    isSelected?: (item: T) => boolean
-    sort: string
-    setSort: (sort: string) => void
-    sortDirection: 'asc' | 'desc'
-    setSortDirection: (sortDirection: 'asc' | 'desc') => void
+
     itemCount?: number
-    perPage: number
-    compact?: boolean
-    clearAllFilters: () => void
+    pageItems: T[] | undefined
+
+    toolbarActions?: IToolbarAction<T>[]
+
+    tableColumns: ITableColumn<T>[]
+
+    rowActions?: IItemAction<T>[]
+
     toolbarFilters?: IToolbarFilter[]
+    filters?: Record<string, string[]>
+    setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>
+    clearAllFilters?: () => void
+
+    sort?: string
+    setSort?: (sort: string) => void
+    sortDirection?: 'asc' | 'desc'
+    setSortDirection?: (sortDirection: 'asc' | 'desc') => void
+    compact?: boolean
+
     page: number
+    perPage: number
     setPage: (page: number) => void
     setPerPage: (perPage: number) => void
+    autoHidePagination?: boolean
+
+    isSelected?: (item: T) => boolean
     selectedItems?: T[]
+    selectItem?: (item: T) => void
+    unselectItem?: (item: T) => void
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
-    filters: Record<string, string[]>
-    setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
+
     errorStateTitle: string
+    error?: Error
+
     emptyStateTitle: string
     emptyStateDescription: string
     emptyStateButtonText?: string
     emptyStateButtonClick?: () => void
-    error?: Error
-    autoHidePagination?: boolean
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -189,7 +199,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         )
     }
 
-    if (itemCount === 0 && Object.keys(filters).length === 0) {
+    if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
         return (
             <Bullseye>
                 <EmptyState variant={EmptyStateVariant.large}>
@@ -302,10 +312,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 function TableHead<T extends object>(props: {
     tableColumns: ITableColumn<T>[]
     rowActions?: IItemAction<T>[]
-    sort: string
-    setSort: (sort: string) => void
-    sortDirection: 'asc' | 'desc'
-    setSortDirection: (sortDirection: 'asc' | 'desc') => void
+    sort?: string
+    setSort?: (sort: string) => void
+    sortDirection?: 'asc' | 'desc'
+    setSortDirection?: (sortDirection: 'asc' | 'desc') => void
     showSelect?: boolean
     scrollLeft?: boolean
     scrollRight?: boolean
@@ -318,8 +328,8 @@ function TableHead<T extends object>(props: {
             return {
                 onSort: (_event: MouseEvent, _columnIndex: number, sortByDirection: SortByDirection) => {
                     if (column.sort) {
-                        setSort(column.sort)
-                        setSortDirection(sortByDirection)
+                        setSort?.(column.sort)
+                        setSortDirection?.(sortByDirection)
                     }
                 },
                 sortBy: {
@@ -645,21 +655,22 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         if (collapseButtons) {
             return []
         } else {
-            return toolbarActions.filter(
+            const actions = toolbarActions?.filter(
                 (action) =>
                     (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
                     (action.variant === ButtonVariant.primary ||
                         action.variant === ButtonVariant.secondary ||
                         action.variant === ButtonVariant.danger)
             )
+            return actions ?? []
         }
     }, [collapseButtons, toolbarActions])
 
     const toolbarDropdownActions: IToolbarAction<T>[] = useMemo(() => {
         if (collapseButtons) {
-            return toolbarActions
+            return toolbarActions ?? []
         } else {
-            const actions = toolbarActions.filter(
+            let actions = toolbarActions?.filter(
                 (action) =>
                     !(
                         (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
@@ -668,6 +679,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             action.variant === ButtonVariant.danger)
                     )
             )
+            actions = actions ?? []
             while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
             while (actions.length && actions[actions.length - 1].type === ToolbarActionType.seperator) actions.pop()
             return actions
@@ -708,13 +720,13 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                                         variant={
                                                             filterValue
                                                                 ? ButtonVariant.secondary
-                                                                : selectedItems.length
+                                                                : selectedItems?.length
                                                                 ? action.variant === ButtonVariant.primary
                                                                     ? ButtonVariant.secondary
                                                                     : action.variant
                                                                 : action.variant
                                                         }
-                                                        onClick={() => action.onClick(selectedItems)}
+                                                        onClick={() => action.onClick(selectedItems ?? [])}
                                                     >
                                                         {action.label}
                                                     </Button>
@@ -741,11 +753,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                     <KebabToggle
                         id="toggle-kebab"
                         onToggle={() => setDropdownOpen(!dropdownOpen)}
-                        toggleVariant={dropdownHasBulk && selectedItems.length ? 'primary' : undefined}
+                        toggleVariant={dropdownHasBulk && selectedItems?.length ? 'primary' : undefined}
                     />
                 }
                 isOpen={dropdownOpen}
-                isPlain={!dropdownHasBulk || selectedItems.length === 0}
+                isPlain={!dropdownHasBulk || (selectedItems && selectedItems.length > 0)}
                 dropdownItems={toolbarDropdownActions.map((action, index) => {
                     switch (action.type) {
                         case ToolbarActionType.button:
@@ -754,7 +766,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             return (
                                 <DropdownItem
                                     key={action.label}
-                                    onClick={() => action.onClick(selectedItems)}
+                                    onClick={() => action.onClick(selectedItems ?? [])}
                                     isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
                                     icon={Icon ? <Icon /> : undefined}
                                 >
@@ -836,22 +848,22 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                     value={filterValue}
                                     setValue={setFilterValue}
                                     addFilter={(value: string) => {
-                                        let values = filters[selectedFilter]
+                                        let values = filters?.[selectedFilter]
                                         if (!values) values = []
                                         if (!values.includes(value)) values.push(value)
-                                        setFilters({ ...filters, [selectedFilter]: values })
+                                        setFilters?.({ ...filters, [selectedFilter]: values })
                                     }}
                                 />
                             </ToolbarItem>
                             {toolbarFilters.map((filter) => {
-                                const values = filters[filter.key] ?? []
+                                const values = filters?.[filter.key] ?? []
                                 return (
                                     <ToolbarFilter
                                         key={filter.label}
                                         categoryName={filter.label}
                                         chips={values}
                                         deleteChip={(_group, value) => {
-                                            setFilters((filters) => {
+                                            setFilters?.((filters) => {
                                                 const newState = { ...filters }
                                                 value = typeof value === 'string' ? value : value.key
                                                 let values = filters[filter.key]
@@ -867,7 +879,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                             })
                                         }}
                                         deleteChipGroup={() => {
-                                            setFilters((filters) => {
+                                            setFilters?.((filters) => {
                                                 const newState = { ...filters }
                                                 delete newState[filter.key]
                                                 return newState
