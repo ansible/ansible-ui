@@ -60,11 +60,35 @@ export interface PageHeaderProps {
     titleHelp?: ReactNode
     description?: string
     controls?: ReactNode
-    pageActions?: ReactNode
+    headerActions?: ReactNode
 }
 
+/**
+ * PageHeader enables the responsive layout of the header.
+ *
+ * @param {Breadcrumb[]} breadcrumbs - The breadcrumbs for the page.
+ * @param {string} title - The title of the page.
+ * @param {string} titleHelpTitle - The title of help popover.
+ * @param {ReactNode} titleHelp - The content for the help popover.
+ * @param {string} description - The description of the page.
+ * @param {ReactNode} controls - Support for extra page controls.
+ * @param {ReactNode} headerActions - The actions for the page.
+ *
+ * @example
+ * <Page>
+ *   <PageLayout>
+ *     <PageHeader
+ *       breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
+ *       title='Page title'
+ *       description='Page description'
+ *       headerActions={<PageActions actions={actions} />}
+ *     />
+ *     <PageBody />...</PageBody>
+ *   </PageLayout>
+ * <Page>
+ */
 export function PageHeader(props: PageHeaderProps) {
-    const { breadcrumbs, title, description, controls, pageActions } = props
+    const { breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
     const isSmOrLarger = useWindowSizeOrLarger(WindowSize.sm)
     const settings = useSettings()

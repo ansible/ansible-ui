@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
  * <Page>
  *   <PageLayout>
  *     <PageHeader />
- *     <PageBody />
+ *     <PageBody />...</PageBody>
  *   </PageLayout>
  * <Page>
  */
