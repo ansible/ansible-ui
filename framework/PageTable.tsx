@@ -1,4 +1,5 @@
 import {
+    Bullseye,
     Button,
     ButtonVariant,
     ClipboardCopy,
@@ -9,6 +10,7 @@ import {
     EmptyStateBody,
     EmptyStateIcon,
     EmptyStateSecondaryActions,
+    EmptyStateVariant,
     Flex,
     FlexItem,
     InputGroup,
@@ -36,7 +38,15 @@ import {
     Tooltip,
     Truncate,
 } from '@patternfly/react-core'
-import { ArrowRightIcon, ColumnsIcon, FilterIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons'
+import {
+    ArrowRightIcon,
+    ColumnsIcon,
+    ExclamationCircleIcon,
+    FilterIcon,
+    PlusCircleIcon,
+    SearchIcon,
+    TimesIcon,
+} from '@patternfly/react-icons'
 import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
@@ -82,6 +92,12 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
     )
 }
 
+export enum ToolbarActionType {
+    seperator = 'seperator',
+    button = 'button',
+    bulk = 'bulk',
+}
+
 export type PageTableProps<T extends object> = {
     pageItems?: T[]
     toolbarActions?: IToolbarAction<T>[]
@@ -108,6 +124,12 @@ export type PageTableProps<T extends object> = {
     unselectAll?: () => void
     filters: Record<string, string[]>
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
+    errorStateTitle: string
+    emptyStateTitle: string
+    emptyStateDescription: string
+    emptyStateButtonText?: string
+    emptyStateButtonClick?: () => void
+    error?: Error
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -123,6 +145,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         itemCount,
         perPage,
         clearAllFilters,
+        filters,
+        error,
     } = props
     const showSelect = toolbarActions?.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
@@ -147,6 +171,41 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     const settings = useSettings()
     const { openColumnModal, columnModal, managedColumns } = useColumnModal(tableColumns)
+
+    if (error) {
+        return (
+            <Bullseye>
+                <EmptyState variant={EmptyStateVariant.small}>
+                    <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
+                    <Title headingLevel="h2" size="lg">
+                        {/* Unable to connect */}
+                        {props.errorStateTitle}
+                    </Title>
+                    {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
+                    <EmptyStateBody>{error.message}</EmptyStateBody>
+                </EmptyState>
+            </Bullseye>
+        )
+    }
+
+    if (itemCount === 0 && Object.keys(filters).length === 0) {
+        return (
+            <Bullseye>
+                <EmptyState variant={EmptyStateVariant.large}>
+                    <EmptyStateIcon icon={PlusCircleIcon} />
+                    <Title headingLevel="h4" size="lg">
+                        {props.emptyStateTitle}
+                    </Title>
+                    <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+                    {props.emptyStateButtonClick && (
+                        <Button variant="primary" onClick={props.emptyStateButtonClick}>
+                            {props.emptyStateButtonText}
+                        </Button>
+                    )}
+                </EmptyState>
+            </Bullseye>
+        )
+    }
 
     return (
         <Fragment>
@@ -512,12 +571,6 @@ export function PagePagination(props: PagePaginationProps) {
             }}
         />
     )
-}
-
-export enum ToolbarActionType {
-    seperator = 'seperator',
-    button = 'button',
-    bulk = 'bulk',
 }
 
 export interface IToolbarActionSeperator {

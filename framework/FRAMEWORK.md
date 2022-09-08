@@ -41,7 +41,7 @@ The PageLayout is used at the start of each page. It provides a consistent layou
 <Page>
   <PageLayout>
     <PageHeader {...}/>
-    <PageBody {...}/>
+    <PageBody> ... </PageBody>
   </PageLayout>
 </Page>
 )
@@ -59,7 +59,7 @@ The PageHeader is used at the start of each page. It provides a consistent layou
     title="Page title"
     titleHelp="Page title popover description."
     description="Page description"
-    actions={actions}
+    headerActions={actions}
   />
 </Page>
 )
