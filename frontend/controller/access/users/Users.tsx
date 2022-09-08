@@ -76,7 +76,7 @@ export default function Users() {
     const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)
 
     return (
-        <TablePage
+        <TablePage<User>
             title={t('Users')}
             titleHelpTitle={t('User')}
             description={t('A user is someone who has access to Tower with associated permissions and credentials.')}
@@ -84,6 +84,11 @@ export default function Users() {
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
             rowActions={rowActions}
+            errorStateTitle={t('Error loading users')}
+            emptyStateTitle={t('No users yet')}
+            emptyStateDescription={t('To get started, create a user.')}
+            emptyStateButtonText={t('Create user')}
+            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
             {...view}
         />
     )

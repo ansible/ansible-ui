@@ -58,24 +58,27 @@ export function BulkActionDialog<T extends object>(props: {
                 let progress = 0
                 let hasError = false
                 await Promise.all(
-                    props.items.map((item) =>
-                        limit(() =>
-                            props
-                                .action(item)
-                                .then(() => setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null })))
-                                .catch((err) => {
-                                    if (err instanceof Error) {
-                                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: err.message }))
-                                    } else {
-                                        setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: `Unknown error` }))
-                                    }
-                                    setError(props.error)
-                                    hasError = true
-                                })
-                                .finally(() => {
-                                    setProgress(++progress)
-                                })
-                        )
+                    props.items.map((item: T) =>
+                        limit(async () => {
+                            await new Promise((resolve) => setTimeout(resolve, 1500))
+
+                            const key = props.keyFn(item)
+                            try {
+                                await props.action(item)
+                                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }))
+                            } catch (err) {
+                                if (err instanceof Error) {
+                                    const message = err.message
+                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: message }))
+                                } else {
+                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: `Unknown error` }))
+                                }
+                                setError(props.error)
+                                hasError = true
+                            } finally {
+                                setProgress(++progress)
+                            }
+                        })
                     )
                 )
 
@@ -157,50 +160,53 @@ export function BulkActionDialog<T extends object>(props: {
                         setPerPage={setPerPage}
                         compact
                         autoHidePagination
+                        errorStateTitle="Error"
+                        emptyStateTitle="No items"
                     />
                 ) : (
-                    <>
-                        <PageTable<T>
-                            key="submitting"
-                            pageItems={paged}
-                            itemCount={props.items.length}
-                            tableColumns={[
-                                ...props.errorColumns,
-                                {
-                                    header: 'Status',
-                                    cell: (item) => {
-                                        const status = statuses?.[props.keyFn(item)]
-                                        if (status === undefined) {
-                                            return (
-                                                <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                                    {<PendingIcon />}&nbsp; Pending
-                                                </span>
-                                            )
-                                        }
-                                        if (status === null) {
-                                            return (
-                                                <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                                    {<CheckCircleIcon />}&nbsp; Success
-                                                </span>
-                                            )
-                                        }
+                    <PageTable<T>
+                        key={'status'}
+                        pageItems={[...paged]}
+                        itemCount={props.items.length}
+                        tableColumns={[
+                            ...props.errorColumns,
+                            {
+                                header: 'Status',
+                                cell: (item) => {
+                                    const key = props.keyFn(item)
+                                    const status = statuses?.[key]
+                                    if (status === undefined) {
                                         return (
-                                            <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
-                                                {<ExclamationCircleIcon />}&nbsp; {statuses?.[props.keyFn(item)]}
+                                            <span style={{ color: 'var(--pf-global--info-color--100)' }}>
+                                                {<PendingIcon />}&nbsp; Pending {JSON.stringify(status)}
                                             </span>
                                         )
-                                    },
+                                    }
+                                    if (status === null) {
+                                        return (
+                                            <span style={{ color: 'var(--pf-global--success-color--100)' }}>
+                                                {<CheckCircleIcon />}&nbsp; Success
+                                            </span>
+                                        )
+                                    }
+                                    return (
+                                        <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
+                                            {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
+                                        </span>
+                                    )
                                 },
-                            ]}
-                            keyFn={props.keyFn}
-                            page={page}
-                            perPage={perPage}
-                            setPage={setPage}
-                            setPerPage={setPerPage}
-                            compact
-                            autoHidePagination
-                        />
-                    </>
+                            },
+                        ]}
+                        keyFn={props.keyFn}
+                        page={page}
+                        perPage={perPage}
+                        setPage={setPage}
+                        setPerPage={setPerPage}
+                        compact
+                        autoHidePagination
+                        errorStateTitle="Error"
+                        emptyStateTitle="No items"
+                    />
                 )}
             </div>
             {props.confirm && (

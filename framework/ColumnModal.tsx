@@ -11,15 +11,22 @@ import {
     Modal,
     ModalVariant,
 } from '@patternfly/react-core'
-import { FormEvent, useCallback, useState } from 'react'
-import { ITableColumn } from './TableColumn'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { ITableColumn } from './PageTable'
 
 export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
     const [columnModalOpen, setColumnModalOpen] = useState(false)
     const openColumnModal = useCallback(() => {
         setColumnModalOpen(true)
     }, [])
-    const [managedColumns, setManagedColumns] = useState(() => columns)
+    const [managedColumns, setManagedColumns] = useState<ITableColumn<T>[]>(() => columns)
+
+    useEffect(() => {
+        setManagedColumns((managedColumns) =>
+            managedColumns.map((managedColumn) => columns.find((column) => column.header === managedColumn.header) ?? managedColumn)
+        )
+    }, [columns])
+
     const onClose = useCallback(() => {
         setColumnModalOpen(false)
     }, [])

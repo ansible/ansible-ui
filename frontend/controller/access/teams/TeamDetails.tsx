@@ -35,7 +35,7 @@ export function TeamDetails() {
             <PageHeader
                 title={team?.name}
                 breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
-                headerActions={<DetailActions item={team} actions={itemActions} />}
+                headerActions={<DetailActions<Team> item={team} actions={itemActions} />}
             />
             <PageBody>
                 {team ? (

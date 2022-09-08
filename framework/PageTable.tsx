@@ -79,6 +79,12 @@ import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { useSettings } from './Settings'
 
+export enum ToolbarActionType {
+    seperator = 'seperator',
+    button = 'button',
+    bulk = 'bulk',
+}
+
 export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<T> & { error?: Error }
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
@@ -90,12 +96,6 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
             </PageBody>
         </PageLayout>
     )
-}
-
-export enum ToolbarActionType {
-    seperator = 'seperator',
-    button = 'button',
-    bulk = 'bulk',
 }
 
 export type PageTableProps<T extends object> = {
@@ -138,7 +138,7 @@ export type PageTableProps<T extends object> = {
     error?: Error
 
     emptyStateTitle: string
-    emptyStateDescription: string
+    emptyStateDescription?: string
     emptyStateButtonText?: string
     emptyStateButtonClick?: () => void
 }
@@ -207,7 +207,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                     <Title headingLevel="h4" size="lg">
                         {props.emptyStateTitle}
                     </Title>
-                    <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+                    {props.emptyStateDescription && <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>}
                     {props.emptyStateButtonClick && (
                         <Button variant="primary" onClick={props.emptyStateButtonClick}>
                             {props.emptyStateButtonText}
@@ -390,9 +390,9 @@ function TableHead<T extends object>(props: {
 function TableRow<T extends object>(props: {
     columns: ITableColumn<T>[]
     item: T
-    isItemSelected: boolean
-    selectItem: (item: T) => void
-    unselectItem: (item: T) => void
+    isItemSelected?: boolean
+    selectItem?: (item: T) => void
+    unselectItem?: (item: T) => void
     rowActions?: IItemAction<T>[]
     rowIndex: number
     showSelect: boolean
@@ -409,16 +409,20 @@ function TableRow<T extends object>(props: {
         >
             {showSelect && (
                 <Th
-                    select={{
-                        onSelect: (_event, isSelecting) => {
-                            if (isSelecting) {
-                                selectItem(item)
-                            } else {
-                                unselectItem(item)
-                            }
-                        },
-                        isSelected: isItemSelected,
-                    }}
+                    select={
+                        isItemSelected !== undefined
+                            ? {
+                                  onSelect: (_event, isSelecting) => {
+                                      if (isSelecting) {
+                                          selectItem?.(item)
+                                      } else {
+                                          unselectItem?.(item)
+                                      }
+                                  },
+                                  isSelected: isItemSelected,
+                              }
+                            : undefined
+                    }
                     style={{ width: '0%', paddingLeft: md ? undefined : 20 }}
                     isStickyColumn
                     stickyMinWidth="0px"
@@ -473,44 +477,41 @@ function TableCells<T extends object>(props: {
             }),
         [item, rowActions]
     )
-    return useMemo(
-        () => (
-            <Fragment>
-                {columns
-                    .filter((column) => column.enabled !== false)
-                    .map((column) => {
-                        return (
-                            <Td key={column.header} dataLabel={column.header} modifier="nowrap">
-                                {column.cell(item)}
-                            </Td>
-                        )
-                    })}
-                {actions !== undefined && (
-                    <Th
-                        // isActionCell
-                        style={{
-                            zIndex: 100 - rowIndex,
-                            paddingRight: 8,
-                            paddingLeft: 0,
-                            width: '0%',
-                            right: 0,
-                            // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
-                        }}
-                        isStickyColumn
-                        stickyMinWidth="0px"
-                        className={props.scrollRight ? 'pf-m-border-left' : undefined}
-                    >
-                        <ActionsColumn
-                            // dropdownDirection="up" // TODO handle....
-                            items={actions}
-                            // isDisabled={repo.name === '4'} // Also arbitrary for the example
-                            // actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
-                        />
-                    </Th>
-                )}
-            </Fragment>
-        ),
-        [actions, columns, item, props.scrollRight, rowIndex]
+    return (
+        <Fragment>
+            {columns
+                .filter((column) => column.enabled !== false)
+                .map((column) => {
+                    return (
+                        <Td key={column.header} dataLabel={column.header} modifier="nowrap">
+                            {column.cell(item)}
+                        </Td>
+                    )
+                })}
+            {actions !== undefined && (
+                <Th
+                    // isActionCell
+                    style={{
+                        zIndex: 100 - rowIndex,
+                        paddingRight: 8,
+                        paddingLeft: 0,
+                        width: '0%',
+                        right: 0,
+                        // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
+                    }}
+                    isStickyColumn
+                    stickyMinWidth="0px"
+                    className={props.scrollRight ? 'pf-m-border-left' : undefined}
+                >
+                    <ActionsColumn
+                        // dropdownDirection="up" // TODO handle....
+                        items={actions}
+                        // isDisabled={repo.name === '4'} // Also arbitrary for the example
+                        // actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
+                    />
+                </Th>
+            )}
+        </Fragment>
     )
 }
 
@@ -708,7 +709,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                     case ButtonVariant.secondary:
                                     case ButtonVariant.danger:
                                         return (
-                                            <ToolbarItem>
+                                            <ToolbarItem key={action.label}>
                                                 {action.type === ToolbarActionType.bulk && selectedItems?.length === 0 ? (
                                                     <Tooltip content="No items selected">
                                                         <Button variant={ButtonVariant.secondary} isAriaDisabled>

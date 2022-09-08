@@ -41,7 +41,7 @@ import { Scrollable } from '../../framework/components/Scrollable'
 import { Organization } from '../controller/access/organizations/Organization'
 import { SelectDialog } from '../controller/SelectDialog'
 
-export type FormPageProps = PageHeaderProps & {
+export type FormPageProps<T extends object> = PageHeaderProps & {
     children?: ReactNode
     defaultValues?: PartialDeep<T>
     onSubmit: SubmitHandler<PartialDeep<T>>
@@ -53,7 +53,7 @@ export type FormPageProps = PageHeaderProps & {
     noPadding?: boolean
     form: UseFormReturn
 }
-export function FormPage<T>(props: FormPageProps) {
+export function FormPage<T extends object>(props: FormPageProps<T>) {
     // const methods = useForm<PartialDeep<T>>({
     //     defaultValues: props.defaultValues,
     //     resolver: ajvResolver(props.schema, { strict: false }),
@@ -320,7 +320,8 @@ export function FormSelect(props: {
                 footer={props.footer}
                 isCreatable={props.isCreatable}
             >
-                {props.children}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {props.children as unknown as any}
             </Select>
         </FormGroup>
     )
