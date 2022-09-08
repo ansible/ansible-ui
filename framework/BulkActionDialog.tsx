@@ -60,8 +60,6 @@ export function BulkActionDialog<T extends object>(props: {
                 await Promise.all(
                     props.items.map((item: T) =>
                         limit(async () => {
-                            await new Promise((resolve) => setTimeout(resolve, 1500))
-
                             const key = props.keyFn(item)
                             try {
                                 await props.action(item)
@@ -165,7 +163,7 @@ export function BulkActionDialog<T extends object>(props: {
                     />
                 ) : (
                     <PageTable<T>
-                        key={'status'}
+                        key="status"
                         pageItems={[...paged]}
                         itemCount={props.items.length}
                         tableColumns={[
