@@ -1,8 +1,6 @@
 import { useMemo } from 'react'
-import { IItemAction, ITableColumn, IToolbarAction, TextCell } from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarAction, IToolbarFilter, TablePage, TextCell } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { IToolbarFilter } from '../../../../framework/PageToolbar'
-import { TablePage } from '../../../../framework/TablePage'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import {
     useEmailToolbarFilter,
@@ -32,7 +30,9 @@ export default function Users() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateUser)
-    const deleteToolbarAction = useDeleteToolbarAction()
+    const deleteToolbarAction = useDeleteToolbarAction(() => {
+        // TODO
+    })
     const toolbarActions = useMemo<IToolbarAction<User>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
@@ -65,8 +65,12 @@ export default function Users() {
     )
 
     // Row Actions
-    const editItemAction = useEditItemAction()
-    const deleteItemAction = useDeleteItemAction()
+    const editItemAction = useEditItemAction(() => {
+        // TODO
+    })
+    const deleteItemAction = useDeleteItemAction(() => {
+        // TODO
+    })
     const rowActions = useMemo<IItemAction<User>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)

@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import useSWR from 'swr'
-import { ITableColumn } from '../../framework'
-import { IToolbarFilter } from '../../framework/PageToolbar'
+import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
 import { usePagedView } from '../common/useView'
 import { ItemsResponse, useFetcher } from '../Data'

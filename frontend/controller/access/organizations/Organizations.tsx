@@ -62,7 +62,9 @@ export function Organizations() {
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateOrganization)
-    const deleteToolbarAction = useDeleteToolbarAction()
+    const deleteToolbarAction = useDeleteToolbarAction(() => {
+        // TODO
+    })
     const toolbarActions = useMemo<IToolbarAction<Organization>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
@@ -72,8 +74,12 @@ export function Organizations() {
     const tableColumns = useOrganizationsColumns()
 
     // Row Actions
-    const editItemAction = useEditItemAction()
-    const deleteItemAction = useDeleteItemAction()
+    const editItemAction = useEditItemAction(() => {
+        // TODO
+    })
+    const deleteItemAction = useDeleteItemAction(() => {
+        // TODO
+    })
     const rowActions = useMemo<IItemAction<Organization>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     const view = useControllerView<Organization>('/api/v2/organizations/', getItemKey, toolbarFilters)

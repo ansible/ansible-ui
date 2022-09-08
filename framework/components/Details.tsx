@@ -123,14 +123,16 @@ export function DetailsList(props: { children?: ReactNode }) {
         <DescriptionList
             orientation={{ sm: orientation, md: orientation, lg: orientation, xl: orientation, '2xl': orientation }}
             columnModifier={
-                columns === 'multiple' && {
-                    default: '1Col',
-                    sm: '1Col',
-                    md: '2Col',
-                    lg: '2Col',
-                    xl: '3Col',
-                    '2xl': '3Col',
-                }
+                columns === 'multiple'
+                    ? {
+                          default: '1Col',
+                          sm: '1Col',
+                          md: '2Col',
+                          lg: '2Col',
+                          xl: '3Col',
+                          '2xl': '3Col',
+                      }
+                    : undefined
             }
             style={{ maxWidth: 1200 }}
         >

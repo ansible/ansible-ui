@@ -5,9 +5,9 @@ import { useHistory, useParams } from 'react-router-dom'
 import { Detail, DetailsList, IItemAction, PageHeader, SinceCell, TextCell } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useTranslation } from '../../../../framework/components/useTranslation'
+import { PageBody } from '../../../../framework/PageBody'
 import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
-import { PageBody, PageCard } from '../../../../framework/TablePage'
 import { DetailActions } from '../../../common/DetailActions'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
@@ -39,30 +39,26 @@ export function TeamDetails() {
             />
             <PageBody>
                 {team ? (
-                    <PageCard>
-                        <PageTabs>
-                            <PageTab title={t('Details')}>
-                                <TeamDetailsTab team={team} />
-                            </PageTab>
-                            <PageTab title={t('Access')}>TODO</PageTab>
-                            <PageTab title={t('Roles')}>TODO</PageTab>
-                        </PageTabs>
-                    </PageCard>
+                    <PageTabs>
+                        <PageTab title={t('Details')}>
+                            <TeamDetailsTab team={team} />
+                        </PageTab>
+                        <PageTab title={t('Access')}>TODO</PageTab>
+                        <PageTab title={t('Roles')}>TODO</PageTab>
+                    </PageTabs>
                 ) : (
-                    <PageCard>
-                        <PageTabs>
-                            <PageTab>
-                                <PageSection variant="light">
-                                    <Stack hasGutter>
-                                        <Skeleton />
-                                        <Skeleton />
-                                        <Skeleton />
-                                        <Skeleton />
-                                    </Stack>
-                                </PageSection>
-                            </PageTab>
-                        </PageTabs>
-                    </PageCard>
+                    <PageTabs>
+                        <PageTab>
+                            <PageSection variant="light">
+                                <Stack hasGutter>
+                                    <Skeleton />
+                                    <Skeleton />
+                                    <Skeleton />
+                                    <Skeleton />
+                                </Stack>
+                            </PageSection>
+                        </PageTab>
+                    </PageTabs>
                 )}
             </PageBody>
         </PageLayout>
