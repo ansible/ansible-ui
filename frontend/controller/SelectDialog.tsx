@@ -37,7 +37,13 @@ export function SelectDialog(props: { open: boolean; setOpen: (open: boolean) =>
                         overflow: 'hidden',
                     }}
                 >
-                    <PageTable tableColumns={tableColumns} toolbarFilters={toolbarFilters} {...view} />
+                    <PageTable<Organization>
+                        tableColumns={tableColumns}
+                        toolbarFilters={toolbarFilters}
+                        emptyStateTitle="No organizations found"
+                        errorStateTitle="Error loading organizations"
+                        {...view}
+                    />
                 </div>
             </Collapse>
         </Modal>
@@ -50,7 +56,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     disableSort?: boolean
 }) {
     const { t } = useTranslation()
-    const column: ITableColumn<{ name: string; id: number }> = {
+    const column: ITableColumn<T> = {
         header: t('Organization'),
         cell: (item: T) => (
             <Button onClick={options.onClick ? () => options.onClick?.(item) : undefined} style={{ width: '100%' }}>

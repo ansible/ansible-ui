@@ -85,13 +85,18 @@ export function Organizations() {
     const view = useControllerView<Organization>('/api/v2/organizations/', getItemKey, toolbarFilters)
 
     return (
-        <TablePage
+        <TablePage<Organization>
             title={t('Organizations')}
             description="An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy."
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
             rowActions={rowActions}
+            errorStateTitle={t('Error loading organizations')}
+            emptyStateTitle={t('No organizations yet')}
+            emptyStateDescription={t('To get started, create an organization.')}
+            emptyStateButtonText={t('Create organization')}
+            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
             {...view}
         />
     )

@@ -51,9 +51,9 @@ async function requestCommon<ResponseBody>(url: string, options: Options, method
             credentials: 'include',
             headers: { ...headers, ...(options.headers ?? {}) },
         }).json<ResponseBody>()
-        if (process.env.NODE_ENV === 'development') {
-            console.debug(result)
-        }
+        // if (process.env.NODE_ENV === 'development') {
+        //     console.debug(result)
+        // }
         return result
     } catch (err) {
         if (process.env.NODE_ENV === 'development') {
