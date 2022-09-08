@@ -130,6 +130,7 @@ export type PageTableProps<T extends object> = {
     emptyStateButtonText?: string
     emptyStateButtonClick?: () => void
     error?: Error
+    autoHidePagination?: boolean
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -293,7 +294,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                     </div>
                 )}
             </div>
-            {itemCount > perPage && <PagePagination {...props} />}
+            {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
         </Fragment>
     )
 }

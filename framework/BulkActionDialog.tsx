@@ -62,9 +62,7 @@ export function BulkActionDialog<T extends object>(props: {
                         limit(() =>
                             props
                                 .action(item)
-                                .then(() => {
-                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null }))
-                                })
+                                .then(() => setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: null })))
                                 .catch((err) => {
                                     if (err instanceof Error) {
                                         setStatuses((statuses) => ({ ...(statuses ?? {}), [props.keyFn(item)]: err.message }))
@@ -138,37 +136,31 @@ export function BulkActionDialog<T extends object>(props: {
                     measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
                 />
             </Collapse>
-            {!isSubmitting && !isSubmited ? (
-                <>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            maxHeight: 480,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <PageTable
-                            pageItems={paged}
-                            itemCount={props.items.length}
-                            tableColumns={props.columns}
-                            keyFn={props.keyFn}
-                            perPage={perPage}
-                            compact
-                        />
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            maxHeight: 425,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <PageTable
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxHeight: 480,
+                    overflow: 'hidden',
+                }}
+            >
+                {!isSubmitting && !isSubmited ? (
+                    <PageTable<T>
+                        key="items"
+                        pageItems={paged}
+                        itemCount={props.items.length}
+                        tableColumns={props.columns}
+                        keyFn={props.keyFn}
+                        page={page}
+                        perPage={perPage}
+                        setPage={setPage}
+                        setPerPage={setPerPage}
+                        compact
+                    />
+                ) : (
+                    <>
+                        <PageTable<T>
+                            key="submitting"
                             pageItems={paged}
                             itemCount={props.items.length}
                             tableColumns={[
@@ -200,12 +192,15 @@ export function BulkActionDialog<T extends object>(props: {
                                 },
                             ]}
                             keyFn={props.keyFn}
+                            page={page}
                             perPage={perPage}
+                            setPage={setPage}
+                            setPerPage={setPerPage}
                             compact
                         />
-                    </div>
-                </>
-            )}
+                    </>
+                )}
+            </div>
             {props.confirm && (
                 <Collapse open={!isSubmitting && !isSubmited}>
                     <div style={{ marginLeft: 16, marginTop: 32, marginBottom: 8 }}>
