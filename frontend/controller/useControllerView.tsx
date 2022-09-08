@@ -1,3 +1,4 @@
+import { HTTPError } from 'ky'
 import { useRef } from 'react'
 import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
@@ -59,7 +60,13 @@ export function useControllerView<T extends object>(
     useSWR<ItemsResponse<T>>(data?.next, fetcher)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const error: Error | undefined = response.error
+    let error: Error | undefined = response.error
+    if (error instanceof HTTPError) {
+        if (error.response.status === 404 && view.page > 1) {
+            view.setPage(1)
+            error = undefined
+        }
+    }
 
     const selection = useSelected(data?.results ?? [], getItemKey)
 

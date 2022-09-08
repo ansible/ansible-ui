@@ -67,6 +67,99 @@ export function useSelected<T extends object>(items: T[], keyFn: (item: T) => st
     useEffect(() => {
         setSelectedMap((selectedMap) => {
             let changed = false
+            items.forEach((item) => {
+                const key = keyFn(item)
+                if (selectedMap[key] && selectedMap[key] !== item) {
+                    changed = true
+                    selectedMap[key] = item
+                }
+            })
+            return changed ? { ...selectedMap } : selectedMap
+        })
+    }, [items, keyFn])
+
+    const selectItem = useCallback(
+        (item: T) => {
+            setSelectedMap((selectedMap) => {
+                const itemKey = keyFn(item)
+                const existing = selectedMap[itemKey]
+                if (existing !== item) {
+                    selectedMap = { ...selectedMap }
+                    selectedMap[itemKey] = item
+                }
+                return selectedMap
+            })
+        },
+        [keyFn]
+    )
+
+    const unselectItem = useCallback(
+        (item: T) => {
+            setSelectedMap((selectedMap) => {
+                const itemKey = keyFn(item)
+                const existing = selectedMap[itemKey]
+                if (existing) {
+                    selectedMap = { ...selectedMap }
+                    delete selectedMap[itemKey]
+                }
+                return selectedMap
+            })
+        },
+        [keyFn]
+    )
+
+    const isSelected = useCallback(
+        (item: T) => {
+            const itemKey = keyFn(item)
+            return selectedMap[itemKey] !== undefined
+        },
+        [keyFn, selectedMap]
+    )
+
+    const selectItems = useCallback(
+        (items: T[]) => {
+            setSelectedMap((selectedMap) => {
+                selectedMap = { ...selectedMap }
+                for (const item of items) {
+                    const itemKey = keyFn(item)
+                    selectedMap[itemKey] = item
+                }
+                return selectedMap
+            })
+        },
+        [keyFn]
+    )
+
+    const selectAll = useCallback(() => {
+        selectItems(items)
+    }, [items, selectItems])
+
+    const unselectAll = useCallback(() => setSelectedMap({}), [])
+
+    const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
+    const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])
+    return useMemo(
+        () => ({
+            selectedItems,
+            selectItem,
+            unselectItem,
+            isSelected,
+            selectItems,
+            selectAll,
+            unselectAll,
+            allSelected,
+            keyFn,
+        }),
+        [allSelected, isSelected, keyFn, selectAll, selectItem, selectItems, selectedItems, unselectAll, unselectItem]
+    )
+}
+
+export function useSelectedInMemory<T extends object>(items: T[], keyFn: (item: T) => string | number) {
+    const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
+
+    useEffect(() => {
+        setSelectedMap((selectedMap) => {
+            let changed = false
 
             const itemsKeys = items.reduce((itemsKeys, item) => {
                 const key = keyFn(item)
