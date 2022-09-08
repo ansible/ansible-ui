@@ -1,14 +1,21 @@
+/* eslint-disable no-console */
 import ky, { HTTPError, ResponsePromise } from 'ky'
 import { Input, Options } from 'ky/distribution/types/options'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
-export const headers: Record<string, string> = {
-    'x-server': localStorage.getItem('server'),
-}
+export const headers: Record<string, string> = {}
 
-export async function headUrl<ResponseBody>(url: string): Promise<ResponseBody> {
+function initHeaders() {
+    const server = localStorage.getItem('server')
+    if (typeof server === 'string') {
+        headers['x-server'] = server
+    }
+}
+initHeaders()
+
+export async function requestHead<ResponseBody>(url: string): Promise<ResponseBody> {
     return requestCommon<ResponseBody>(url, {}, ky.head)
 }
 

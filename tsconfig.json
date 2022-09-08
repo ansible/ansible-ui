@@ -8,21 +8,21 @@
         "allowJs": false,
         "sourceMap": true,
         "declaration": false,
-        "alwaysStrict": false,
+        "strict": true,
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "./build",
-        "noImplicitUseStrict": true,
+        // "noImplicitUseStrict": true,
         "removeComments": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "skipLibCheck": true,
-        "esModuleInterop": true,
+        "esModuleInterop": true
         // "isolatedModules": true
-        "strictNullChecks": true
+        // "strictNullChecks": true
     },
     "include": ["frontend", "framework", "backend", "rollup.config.ts"]
 }

@@ -95,7 +95,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Theme"
                     value={settings.theme ?? 'system'}
-                    onChange={(theme: 'system' | 'light' | 'dark') => setSettings({ ...settings, theme })}
+                    onChange={(theme) => setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })}
                 >
                     <SelectOption value="system">System default</SelectOption>
                     <SelectOption value="light">Light</SelectOption>
@@ -104,7 +104,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Table Layout"
                     value={settings.tableLayout ?? 'comfortable'}
-                    onChange={(tableLayout: 'compact' | 'comfortable') => setSettings({ ...settings, tableLayout })}
+                    onChange={(tableLayout) => setSettings({ ...settings, tableLayout: tableLayout as 'compact' | 'comfortable' })}
                 >
                     <SelectOption value="comfortable">Comfortable</SelectOption>
                     <SelectOption value="compact">Compact</SelectOption>
@@ -112,7 +112,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Form Columns"
                     value={settings.formColumns ?? 'multiple'}
-                    onChange={(formColumns: 'multiple' | 'single') => setSettings({ ...settings, formColumns })}
+                    onChange={(formColumns) => setSettings({ ...settings, formColumns: formColumns as 'multiple' | 'single' })}
                 >
                     <SelectOption value="multiple">Multiple columns</SelectOption>
                     <SelectOption value="single">Single column</SelectOption>
@@ -120,7 +120,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Form Layout"
                     value={settings.formLayout ?? 'vertical'}
-                    onChange={(formLayout: 'vertical' | 'horizontal') => setSettings({ ...settings, formLayout })}
+                    onChange={(formLayout) => setSettings({ ...settings, formLayout: formLayout as 'vertical' | 'horizontal' })}
                 >
                     <SelectOption value="vertical">Vertical labels</SelectOption>
                     <SelectOption value="horizontal">Horizontal labels</SelectOption>
@@ -128,7 +128,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Borders"
                     value={settings.borders ? 'true' : 'false'}
-                    onChange={(value: 'true' | 'false') => setSettings({ ...settings, borders: value === 'true' })}
+                    onChange={(value) => setSettings({ ...settings, borders: value === 'true' })}
                     style={{ paddingBottom: 120 }}
                 >
                     <SelectOption value="true">Yes</SelectOption>

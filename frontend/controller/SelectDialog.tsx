@@ -53,7 +53,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     const column: ITableColumn<{ name: string; id: number }> = {
         header: t('Organization'),
         cell: (item: T) => (
-            <Button onClick={options.onClick ? () => options.onClick(item) : undefined} style={{ width: '100%' }}>
+            <Button onClick={options.onClick ? () => options.onClick?.(item) : undefined} style={{ width: '100%' }}>
                 {item.name}
             </Button>
             // <TextCell
