@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useWindowSizeOrLarger, WindowSize } from './useBreakPoint'
 
 export interface BulkSelectorProps<T> {
-    itemCount: number
+    itemCount: number | undefined
     pageItems?: T[]
     selectedItems?: T[]
     selectItems?: (items: T[]) => void
@@ -17,7 +17,12 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
 
     const { pageItems, selectedItems, selectItems, unselectAll } = props
 
-    const allPageItemsSelected = (pageItems ?? []).every((item) => selectedItems?.includes(item))
+    const allPageItemsSelected =
+        props.itemCount !== undefined &&
+        props.itemCount > 0 &&
+        pageItems &&
+        pageItems.length > 0 &&
+        (pageItems ?? []).every((item) => selectedItems?.includes(item))
 
     const onToggleCheckbox = useCallback(() => {
         if (allPageItemsSelected) {
