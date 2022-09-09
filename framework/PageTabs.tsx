@@ -18,10 +18,14 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
     return (
         <Fragment>
             <PageSection type={PageSectionTypes.tabs}>
-                <Flex>
+                <Flex spaceItems={{ default: 'spaceItemsNone' }}>
                     {props.preComponents && (
                         <Fragment>
-                            <FlexItem style={{ paddingLeft: 16 }}>{props.preComponents}</FlexItem>
+                            <FlexItem
+                            // style={{ paddingLeft: 16 }}
+                            >
+                                {props.preComponents}
+                            </FlexItem>
                             <Divider orientation={{ default: 'vertical' }} component="div" />
                         </Fragment>
                     )}

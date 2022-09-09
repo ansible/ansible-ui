@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useWindowSizeOrLarger, WindowSize } from './useBreakPoint'
 
 export interface BulkSelectorProps<T> {
-    itemCount: number | undefined
+    itemCount?: number
     pageItems?: T[]
     selectedItems?: T[]
     selectItems?: (items: T[]) => void
