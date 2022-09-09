@@ -1,5 +1,5 @@
-import { Button, PageSection, Skeleton, Stack } from '@patternfly/react-core'
-import { CaretLeftIcon, EditIcon, TrashIcon } from '@patternfly/react-icons'
+import { PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Detail, DetailsList, IItemAction, PageHeader, SinceCell, TextCell } from '../../../../framework'
@@ -11,6 +11,7 @@ import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { DetailActions } from '../../../common/DetailActions'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
+import { AccessTable } from '../users/Users'
 import { Team } from './Team'
 
 export function TeamDetails() {
@@ -40,21 +41,23 @@ export function TeamDetails() {
             <PageBody>
                 {team ? (
                     <PageTabs
-                        preComponents={
-                            <Button variant="plain">
-                                <CaretLeftIcon /> &nbsp;Back to teams
-                            </Button>
-                        }
-                        // postComponents={
-                        //     <Button variant="plain">
-                        //         <CaretLeftIcon /> &nbsp;Back to teams
-                        //     </Button>
-                        // }
+                    // preComponents={
+                    //     <Button variant="plain">
+                    //         <CaretLeftIcon /> &nbsp;Back to teams
+                    //     </Button>
+                    // }
+                    // postComponents={
+                    //     <Button variant="plain">
+                    //         <CaretLeftIcon /> &nbsp;Back to teams
+                    //     </Button>
+                    // }
                     >
                         <PageTab title={t('Details')}>
                             <TeamDetailsTab team={team} />
                         </PageTab>
-                        <PageTab title={t('Access')}>TODO</PageTab>
+                        <PageTab title={t('Access')}>
+                            <TeamAccessTab team={team} />
+                        </PageTab>
                         <PageTab title={t('Roles')}>TODO</PageTab>
                     </PageTabs>
                 ) : (
@@ -80,24 +83,31 @@ function TeamDetailsTab(props: { team: Team }) {
     const { t } = useTranslation()
     const { team } = props
     return (
-        <Scrollable>
-            <PageSection variant="light">
-                <DetailsList>
-                    <Detail label={t('Name')}>{team.name}</Detail>
-                    <Detail label={t('Organization')}>
-                        <TextCell
-                            text={team.summary_fields.organization.name}
-                            to={RouteE.OrganizationDetails.replace(':id', team.summary_fields.organization.id.toString())}
-                        />
-                    </Detail>
-                    <Detail label={t('Created')}>
-                        <SinceCell value={team.created} />
-                    </Detail>
-                    <Detail label={t('Last modified')}>
-                        <SinceCell value={team.modified} />
-                    </Detail>
-                </DetailsList>
-            </PageSection>
-        </Scrollable>
+        <>
+            <Scrollable>
+                <PageSection variant="light">
+                    <DetailsList>
+                        <Detail label={t('Name')}>{team.name}</Detail>
+                        <Detail label={t('Organization')}>
+                            <TextCell
+                                text={team.summary_fields.organization.name}
+                                to={RouteE.OrganizationDetails.replace(':id', team.summary_fields.organization.id.toString())}
+                            />
+                        </Detail>
+                        <Detail label={t('Created')}>
+                            <SinceCell value={team.created} />
+                        </Detail>
+                        <Detail label={t('Last modified')}>
+                            <SinceCell value={team.modified} />
+                        </Detail>
+                    </DetailsList>
+                </PageSection>
+            </Scrollable>
+        </>
     )
+}
+
+function TeamAccessTab(props: { team: Team }) {
+    const { team } = props
+    return <AccessTable url={`/api/v2/teams/${team.id}/access_list/`} />
 }

@@ -14,7 +14,8 @@ export function useCreateToolbarAction(route: RouteE) {
             type: ToolbarActionType.button,
             variant: ButtonVariant.primary,
             icon: PlusIcon,
-            label: t('Create'),
+            label: t('Create team'),
+            shortLabel: t('Create'),
             onClick: () => history.push(route),
         }),
         [history, route, t]
@@ -27,9 +28,10 @@ export function useDeleteToolbarAction<T extends object>(onClick: (items: T[]) =
     const toolbarAction: IToolbarAction<T> = useMemo(
         () => ({
             type: ToolbarActionType.bulk,
-            // variant: ButtonVariant.danger,
+            variant: ButtonVariant.primary,
             icon: TrashIcon,
-            label: t('Delete'),
+            label: t('Delete selected teams'),
+            shortLabel: t('Delete'),
             onClick,
         }),
         [onClick, t]

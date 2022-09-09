@@ -1,5 +1,16 @@
+import { ButtonVariant, Chip, ChipGroup } from '@patternfly/react-core'
+import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
-import { IItemAction, ITableColumn, IToolbarAction, IToolbarFilter, TablePage, TextCell } from '../../../../framework'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarAction,
+    IToolbarFilter,
+    PageTable,
+    TablePage,
+    TextCell,
+    ToolbarActionType,
+} from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import {
@@ -19,14 +30,7 @@ export default function Users() {
     const { t } = useTranslation()
 
     // Toolbar Filters
-    const emailToolbarFilter = useEmailToolbarFilter()
-    const usernameToolbarFilter = useUsernameToolbarFilter()
-    const firstnameByToolbarFilter = useFirstNameToolbarFilter()
-    const lastnameToolbarFilter = useLastNameToolbarFilter()
-    const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter],
-        [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter]
-    )
+    const toolbarFilters = useUsersFilters()
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateUser)
@@ -39,30 +43,7 @@ export default function Users() {
     )
 
     // Table Columns
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
-    const tableColumns = useMemo<ITableColumn<User>[]>(
-        () => [
-            {
-                header: t('Username'),
-                cell: (user) => <TextCell text={user.username} to={RouteE.UserDetails.replace(':id', user.id.toString())} />,
-                sort: 'username',
-            },
-            {
-                header: t('First Name'),
-                cell: (user) => <TextCell text={user.first_name} />,
-                sort: 'first_name',
-            },
-            {
-                header: t('Last Name'),
-                cell: (user) => <TextCell text={user.last_name} />,
-                sort: 'last_name',
-            },
-            createdColumn,
-            modifiedColumn,
-        ],
-        [createdColumn, modifiedColumn, t]
-    )
+    const tableColumns = useUsersColumns()
 
     // Row Actions
     const editItemAction = useEditItemAction(() => {
@@ -92,4 +73,120 @@ export default function Users() {
             {...view}
         />
     )
+}
+
+export function AccessTable(props: { url: string }) {
+    const { t } = useTranslation()
+
+    // Toolbar Filters
+    const toolbarFilters = useUsersFilters()
+
+    // Toolbar Actions
+    const toolbarActions = useMemo<IToolbarAction<User>[]>(
+        () => [
+            {
+                type: ToolbarActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Add'),
+                onClick: () => null,
+            },
+            {
+                type: ToolbarActionType.bulk,
+                variant: ButtonVariant.secondary,
+                icon: MinusCircleIcon,
+                label: t('Remove'),
+                onClick: () => null,
+            },
+        ],
+        [t]
+    )
+
+    // Table Columns
+    const tableColumns = useUsersColumns()
+
+    // Row Actions
+    const rowActions = useMemo<IItemAction<User>[]>(
+        () => [
+            {
+                icon: MinusCircleIcon,
+                label: t('Remove user'),
+                onClick: () => {},
+            },
+        ],
+        [t]
+    )
+
+    const view = useControllerView<User>(props.url, getItemKey, toolbarFilters, tableColumns)
+
+    return (
+        <PageTable<User>
+            toolbarFilters={toolbarFilters}
+            toolbarActions={toolbarActions}
+            tableColumns={tableColumns}
+            rowActions={rowActions}
+            errorStateTitle={t('Error loading users')}
+            emptyStateTitle={t('No users yet')}
+            emptyStateDescription={t('To get started, create a user.')}
+            emptyStateButtonText={t('Create user')}
+            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            {...view}
+        />
+    )
+}
+
+export function useUsersFilters() {
+    const emailToolbarFilter = useEmailToolbarFilter()
+    const usernameToolbarFilter = useUsernameToolbarFilter()
+    const firstnameByToolbarFilter = useFirstNameToolbarFilter()
+    const lastnameToolbarFilter = useLastNameToolbarFilter()
+    const toolbarFilters = useMemo<IToolbarFilter[]>(
+        () => [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter],
+        [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter]
+    )
+    return toolbarFilters
+}
+
+export function useUsersColumns() {
+    const { t } = useTranslation()
+
+    const createdColumn = useCreatedColumn()
+    const modifiedColumn = useModifiedColumn()
+    const tableColumns = useMemo<ITableColumn<User>[]>(
+        () => [
+            {
+                header: t('Username'),
+                cell: (user) => <TextCell text={user.username} to={RouteE.UserDetails.replace(':id', user.id.toString())} />,
+                sort: 'username',
+            },
+            {
+                header: t('First Name'),
+                cell: (user) => <TextCell text={user.first_name} />,
+                sort: 'first_name',
+            },
+            {
+                header: t('Last Name'),
+                cell: (user) => <TextCell text={user.last_name} />,
+                sort: 'last_name',
+            },
+            {
+                header: t('Email'),
+                cell: (user) => <TextCell text={user.email} />,
+                sort: 'email',
+            },
+            {
+                header: t('Roles'),
+                cell: (user) => (
+                    <ChipGroup>
+                        {user.is_superuser && <Chip isReadOnly>System Administraitor</Chip>}
+                        {!user.is_superuser && <Chip isReadOnly>Normal User</Chip>}
+                    </ChipGroup>
+                ),
+            },
+            createdColumn,
+            modifiedColumn,
+        ],
+        [createdColumn, modifiedColumn, t]
+    )
+    return tableColumns
 }

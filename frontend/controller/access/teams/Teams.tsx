@@ -1,4 +1,4 @@
-import { PlusIcon } from '@patternfly/react-icons'
+import { TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
@@ -22,7 +22,7 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
+import { useCreateToolbarAction } from '../../../common/toolbar-actions'
 import { getItemKey, requestDelete, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -131,7 +131,6 @@ export function useCreate100TeamsToolbarAction(callback: () => void) {
     const toolbarAction: IToolbarAction<object> = useMemo(
         () => ({
             type: ToolbarActionType.button,
-            icon: PlusIcon,
             label: t('Create 100 teams'),
             onClick: () => {
                 const promises: Promise<unknown>[] = []
@@ -153,9 +152,16 @@ export function useCreate100TeamsToolbarAction(callback: () => void) {
     return toolbarAction
 }
 
-export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void) {
+export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): IToolbarAction<Team> {
     const deleteTeams = useDeleteTeams(callback)
-    return useDeleteToolbarAction(deleteTeams)
+    const { t } = useTranslation()
+    return {
+        type: ToolbarActionType.bulk,
+        icon: TrashIcon,
+        label: t('Delete selected teams'),
+        shortLabel: t('Delete'),
+        onClick: deleteTeams,
+    }
 }
 
 export function useDeleteTeamRowAction(callback: () => void) {
