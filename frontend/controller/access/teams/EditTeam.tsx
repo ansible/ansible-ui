@@ -2,7 +2,7 @@ import { Static, Type } from '@sinclair/typebox'
 import { HTTPError } from 'ky'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR from 'swr'
-import { PageHeader } from '../../../../framework'
+import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
 import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data'
@@ -104,14 +104,16 @@ export function EditTeam() {
             return (
                 <>
                     <PageHeader title={t('Edit Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
-                    <PageForm
-                        schema={EditTeamSchema}
-                        submitText={t('Save')}
-                        onSubmit={onSubmit}
-                        cancelText={t('Cancel')}
-                        onCancel={onCancel}
-                        defaultValue={team}
-                    />
+                    <PageBody>
+                        <PageForm
+                            schema={EditTeamSchema}
+                            submitText={t('Save')}
+                            onSubmit={onSubmit}
+                            cancelText={t('Cancel')}
+                            onCancel={onCancel}
+                            defaultValue={team}
+                        />
+                    </PageBody>
                 </>
             )
         }
@@ -119,13 +121,15 @@ export function EditTeam() {
         return (
             <>
                 <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
-                <PageForm
-                    schema={EditTeamSchema}
-                    submitText={t('Create')}
-                    onSubmit={onSubmit}
-                    cancelText={t('Cancel')}
-                    onCancel={onCancel}
-                />
+                <PageBody>
+                    <PageForm
+                        schema={EditTeamSchema}
+                        submitText={t('Create')}
+                        onSubmit={onSubmit}
+                        cancelText={t('Cancel')}
+                        onCancel={onCancel}
+                    />
+                </PageBody>
             </>
         )
     }

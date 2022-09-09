@@ -1,5 +1,5 @@
-import { PageSection, Skeleton, Stack } from '@patternfly/react-core'
-import { EditIcon, TrashIcon } from '@patternfly/react-icons'
+import { Button, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { CaretLeftIcon, EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Detail, DetailsList, IItemAction, PageHeader, SinceCell, TextCell } from '../../../../framework'
@@ -39,7 +39,18 @@ export function TeamDetails() {
             />
             <PageBody>
                 {team ? (
-                    <PageTabs>
+                    <PageTabs
+                        preComponents={
+                            <Button variant="plain">
+                                <CaretLeftIcon /> &nbsp;Back to teams
+                            </Button>
+                        }
+                        // postComponents={
+                        //     <Button variant="plain">
+                        //         <CaretLeftIcon /> &nbsp;Back to teams
+                        //     </Button>
+                        // }
+                    >
                         <PageTab title={t('Details')}>
                             <TeamDetailsTab team={team} />
                         </PageTab>

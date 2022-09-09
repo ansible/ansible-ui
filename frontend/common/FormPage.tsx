@@ -23,7 +23,7 @@ import {
 } from '@patternfly/react-core'
 import { CaretDownIcon, SearchIcon } from '@patternfly/react-icons'
 import { JSONSchema6 } from 'json-schema'
-import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useState } from 'react'
+import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useContext, useState } from 'react'
 import {
     DeepPartial,
     ErrorOption,
@@ -38,6 +38,7 @@ import {
 import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../../framework'
 import { Scrollable } from '../../framework/components/Scrollable'
+import { SettingsContext } from '../../framework/Settings'
 import { Organization } from '../controller/access/organizations/Organization'
 import { SelectDialog } from '../controller/SelectDialog'
 
@@ -74,13 +75,15 @@ export function FormPage<T extends object>(props: FormPageProps<T>) {
         return false
     })
 
+    const [settings] = useContext(SettingsContext)
+
     return (
         <>
             {!props.hideHeader && <PageHeader {...props} />}
             {/* <FormProvider {...methods}> */}
             <Form
                 onSubmit={props.form.handleSubmit(props.onSubmit)}
-                isHorizontal={props.isVertical ? false : true}
+                isHorizontal={props.isVertical ? false : settings.formLayout === 'horizontal'}
                 style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
             >
                 <Scrollable style={{ height: '100%', flexGrow: 1 }}>
@@ -545,7 +548,10 @@ export function PageForm<T extends object>(props: {
     const { handleSubmit, setError: setFieldError } = form
     const [error, setError] = useState('')
     const sm = useWindowSizeOrLarger(WindowSize.md)
+    const [settings] = useContext(SettingsContext)
+
     return (
+        // <PageBody>
         <FormProvider {...form}>
             <Form
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -553,11 +559,11 @@ export function PageForm<T extends object>(props: {
                     setError('')
                     return props.onSubmit(data, setError, setFieldError)
                 })}
-                isHorizontal={!props.isVertical}
+                isHorizontal={props.isVertical ? false : settings.formLayout === 'horizontal'}
                 style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
             >
                 <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-                    <PageSection isFilled padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}>
+                    <PageSection isFilled padding={{ default: props.onCancel ? 'padding' : 'noPadding' }} variant="light">
                         <FormSection style={{ maxWidth: 800 }}>
                             {props.schema && <FormSchema schema={props.schema} />}
                             {props.children}
@@ -579,6 +585,7 @@ export function PageForm<T extends object>(props: {
                 )}
             </Form>
         </FormProvider>
+        // </PageBody>
     )
 }
 
