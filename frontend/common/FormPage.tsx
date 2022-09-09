@@ -7,6 +7,8 @@ import {
     Form,
     FormGroup,
     FormSection,
+    Grid,
+    gridItemSpanValueShape,
     InputGroup,
     Menu,
     MenuItem,
@@ -547,8 +549,17 @@ export function PageForm<T extends object>(props: {
 
     const { handleSubmit, setError: setFieldError } = form
     const [error, setError] = useState('')
-    const sm = useWindowSizeOrLarger(WindowSize.md)
+    const isSm = useWindowSizeOrLarger(WindowSize.md)
     const [settings] = useContext(SettingsContext)
+    const horizontalLabels = props.isVertical ? false : settings.formLayout === 'horizontal'
+    const multipleColumns = settings.formColumns === 'multiple'
+
+    const sm: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 12 : 12) : 12
+    const md: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 12 : 6) : 12
+    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 6 : 6) : 12
+    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 6 : 6) : 12
+    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 4 : 4) : 12
+    const maxWidth: number | undefined = multipleColumns ? undefined : horizontalLabels ? 960 : 800
 
     return (
         // <PageBody>
@@ -559,19 +570,29 @@ export function PageForm<T extends object>(props: {
                     setError('')
                     return props.onSubmit(data, setError, setFieldError)
                 })}
-                isHorizontal={props.isVertical ? false : settings.formLayout === 'horizontal'}
+                isHorizontal={horizontalLabels}
                 style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
             >
                 <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-                    <PageSection isFilled padding={{ default: props.onCancel ? 'padding' : 'noPadding' }} variant="light">
-                        <FormSection style={{ maxWidth: 800 }}>
+                    <PageSection
+                        isFilled
+                        padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
+                        variant="light"
+                        style={{ maxWidth }}
+                    >
+                        <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
                             {props.schema && <FormSchema schema={props.schema} />}
                             {props.children}
-                        </FormSection>
+                        </Grid>
                     </PageSection>
                 </Scrollable>
                 <Collapse open={!!error}>
-                    <Alert variant="danger" title={error ?? ''} isInline style={{ paddingLeft: sm && props.onCancel ? 190 : undefined }} />
+                    <Alert
+                        variant="danger"
+                        title={error ?? ''}
+                        isInline
+                        style={{ paddingLeft: isSm && props.onCancel ? 190 : undefined }}
+                    />
                 </Collapse>
                 {props.onCancel ? (
                     <PageSection isFilled={false} style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }} variant="light">

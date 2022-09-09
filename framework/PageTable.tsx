@@ -1,11 +1,7 @@
 import {
     Bullseye,
     Button,
-    ButtonVariant,
     ClipboardCopy,
-    Dropdown,
-    DropdownItem,
-    DropdownSeparator,
     EmptyState,
     EmptyStateBody,
     EmptyStateIcon,
@@ -14,7 +10,6 @@ import {
     Flex,
     FlexItem,
     InputGroup,
-    KebabToggle,
     Label,
     LabelGroup,
     OnPerPageSelect,
@@ -52,7 +47,6 @@ import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/ba
 import useResizeObserver from '@react-hook/resize-observer'
 import { DateTime } from 'luxon'
 import {
-    ComponentClass,
     CSSProperties,
     Dispatch,
     Fragment,
@@ -72,18 +66,12 @@ import { BulkSelector } from './components/BulkSelector'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
 import { SingleSelect2 } from './components/SingleSelect'
-import { useWindowSizeOrLarger, useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
-import { IItemAction, isItemActionClick } from './ItemActions'
+import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
+import { IItemAction, isItemActionClick, IToolbarAction, ToolbarActionType, TypedActions } from './ItemActions'
 import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { useSettings } from './Settings'
-
-export enum ToolbarActionType {
-    seperator = 'seperator',
-    button = 'button',
-    bulk = 'bulk',
-}
 
 export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<T> & { error?: Error }
 
@@ -585,28 +573,6 @@ export function PagePagination(props: PagePaginationProps) {
     )
 }
 
-export interface IToolbarActionSeperator {
-    type: ToolbarActionType.seperator
-}
-
-export interface IToolbarActionButton {
-    type: ToolbarActionType.button
-    variant?: ButtonVariant
-    icon?: ComponentClass
-    label: string
-    onClick: () => void
-}
-
-export interface IToolbarBulkAction<T extends object> {
-    type: ToolbarActionType.bulk
-    variant?: ButtonVariant
-    icon?: ComponentClass
-    label: string
-    onClick: (selectedItems: T[]) => void
-}
-
-export type IToolbarAction<T extends object> = IToolbarActionSeperator | IToolbarActionButton | IToolbarBulkAction<T>
-
 export function toolbarActionsHaveBulkActions<T extends object>(actions?: IToolbarAction<T>[]) {
     if (!actions) return false
     for (const action of actions) {
@@ -648,144 +614,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
 
     const [filterValue, setFilterValue] = useState('')
-    const [dropdownOpen, setDropdownOpen] = useState(false)
-
-    const collapseButtons = useWindowSizeOrSmaller(WindowSize.md)
-
-    const toolbarButtonActions: IToolbarAction<T>[] = useMemo(() => {
-        if (collapseButtons) {
-            return []
-        } else {
-            const actions = toolbarActions?.filter(
-                (action) =>
-                    (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
-                    (action.variant === ButtonVariant.primary ||
-                        action.variant === ButtonVariant.secondary ||
-                        action.variant === ButtonVariant.danger)
-            )
-            return actions ?? []
-        }
-    }, [collapseButtons, toolbarActions])
-
-    const toolbarDropdownActions: IToolbarAction<T>[] = useMemo(() => {
-        if (collapseButtons) {
-            return toolbarActions ?? []
-        } else {
-            let actions = toolbarActions?.filter(
-                (action) =>
-                    !(
-                        (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
-                        (action.variant === ButtonVariant.primary ||
-                            action.variant === ButtonVariant.secondary ||
-                            action.variant === ButtonVariant.danger)
-                    )
-            )
-            actions = actions ?? []
-            while (actions.length && actions[0].type === ToolbarActionType.seperator) actions.shift()
-            while (actions.length && actions[actions.length - 1].type === ToolbarActionType.seperator) actions.pop()
-            return actions
-        }
-    }, [collapseButtons, toolbarActions])
-
-    const dropdownHasBulk = useMemo(() => {
-        if (collapseButtons) {
-            return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
-        } else {
-            return toolbarDropdownActions.find((action) => action.type === ToolbarActionType.bulk) !== undefined
-        }
-    }, [collapseButtons, toolbarDropdownActions])
-
-    const toolbarActionButtons = useMemo(() => {
-        if (!toolbarButtonActions.length) return <></>
-        return (
-            <>
-                {toolbarButtonActions
-                    ?.map((action) => {
-                        switch (action.type) {
-                            case ToolbarActionType.button:
-                            case ToolbarActionType.bulk: {
-                                switch (action.variant) {
-                                    case ButtonVariant.primary:
-                                    case ButtonVariant.secondary:
-                                    case ButtonVariant.danger:
-                                        return (
-                                            <ToolbarItem key={action.label}>
-                                                {action.type === ToolbarActionType.bulk && selectedItems?.length === 0 ? (
-                                                    <Tooltip content="No items selected">
-                                                        <Button variant={ButtonVariant.secondary} isAriaDisabled>
-                                                            {action.label}
-                                                        </Button>
-                                                    </Tooltip>
-                                                ) : (
-                                                    <Button
-                                                        variant={
-                                                            filterValue
-                                                                ? ButtonVariant.secondary
-                                                                : selectedItems?.length
-                                                                ? action.variant === ButtonVariant.primary
-                                                                    ? ButtonVariant.secondary
-                                                                    : action.variant
-                                                                : action.variant
-                                                        }
-                                                        onClick={() => action.onClick(selectedItems ?? [])}
-                                                    >
-                                                        {action.label}
-                                                    </Button>
-                                                )}
-                                            </ToolbarItem>
-                                        )
-                                }
-                                break
-                            }
-                        }
-                        return undefined
-                    })
-                    .filter((e) => !!e)}
-            </>
-        )
-    }, [toolbarButtonActions, filterValue, selectedItems])
-
-    const toolbarActionDropDownItems = useMemo(() => {
-        if (!toolbarDropdownActions.length) return <></>
-        return (
-            <Dropdown
-                onSelect={() => setDropdownOpen(false)}
-                toggle={
-                    <KebabToggle
-                        id="toggle-kebab"
-                        onToggle={() => setDropdownOpen(!dropdownOpen)}
-                        toggleVariant={dropdownHasBulk && selectedItems?.length ? 'primary' : undefined}
-                        style={{
-                            color: dropdownHasBulk && selectedItems?.length ? 'var(--pf-global--Color--light-100)' : undefined,
-                            backgroundColor: dropdownHasBulk && selectedItems?.length ? 'var(--pf-global--primary-color--100)' : undefined,
-                        }}
-                    />
-                }
-                isOpen={dropdownOpen}
-                isPlain
-                dropdownItems={toolbarDropdownActions.map((action, index) => {
-                    switch (action.type) {
-                        case ToolbarActionType.button:
-                        case ToolbarActionType.bulk: {
-                            const Icon = action.icon
-                            return (
-                                <DropdownItem
-                                    key={action.label}
-                                    onClick={() => action.onClick(selectedItems ?? [])}
-                                    isDisabled={action.type === ToolbarActionType.bulk && selectedItems?.length === 0}
-                                    icon={Icon ? <Icon /> : undefined}
-                                >
-                                    {action.label}
-                                </DropdownItem>
-                            )
-                        }
-                        case ToolbarActionType.seperator:
-                            return <DropdownSeparator key={`separator-${index}`} />
-                    }
-                })}
-            />
-        )
-    }, [dropdownHasBulk, dropdownOpen, selectedItems, toolbarDropdownActions])
 
     const showSearchAndFilters = toolbarFilters !== undefined
     const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
@@ -901,13 +729,17 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 )}
 
                 {/* Action Buttons */}
-                {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>}
                 <ToolbarGroup variant="button-group">
-                    {toolbarActionDropDownItems}
+                    <TypedActions actions={toolbarActions} selectedItems={selectedItems} wrapper={ToolbarItem} />
                     <ToolbarItem>
-                        <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
+                        <Tooltip content={'Manage columns'}>
+                            <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
+                        </Tooltip>
                     </ToolbarItem>
                 </ToolbarGroup>
+
+                {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}
+                {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
 
                 {/* Pagination */}
                 <ToolbarItem variant="pagination" visibility={{ default: 'hidden', lg: 'visible' }}>
