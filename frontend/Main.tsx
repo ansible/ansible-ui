@@ -223,7 +223,7 @@ function Sidebar() {
                                 location
                             )}
                         > */}
-                        <NavExpandable
+                        {/* <NavExpandable
                             key="views"
                             title="Views"
                             isExpanded
@@ -235,7 +235,7 @@ function Sidebar() {
                             <NavItem isActive={isRouteActive(RouteE.Dashboard, location)}>
                                 <Link to={RouteE.Dashboard}>Dashboard</Link>
                             </NavItem>
-                            {/* <NavItem isActive={isRouteActive(RouteE.Jobs, location)}>
+                            <NavItem isActive={isRouteActive(RouteE.Jobs, location)}>
                                 <Link to={RouteE.Jobs}>Jobs</Link>
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Schedules, location)}>
@@ -243,11 +243,11 @@ function Sidebar() {
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.ActivityStream, location)}>
                                 <Link to={RouteE.ActivityStream}>Activity stream</Link>
-                            </NavItem> */}
+                            </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.WorkflowApprovals, location)}>
                                 <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
                             </NavItem>
-                        </NavExpandable>
+                        </NavExpandable> */}
                         {/* <NavExpandable
                             key="resources"
                             title="Resources"
