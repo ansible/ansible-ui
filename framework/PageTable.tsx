@@ -67,11 +67,11 @@ import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
-import { IItemAction, isItemActionClick, IToolbarAction, ToolbarActionType, TypedActions } from './ItemActions'
 import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { useSettings } from './Settings'
+import { IItemAction, isItemActionClick, ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
 export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<T> & { error?: Error }
 
@@ -92,7 +92,7 @@ export type PageTableProps<T extends object> = {
     itemCount?: number
     pageItems: T[] | undefined
 
-    toolbarActions?: IToolbarAction<T>[]
+    toolbarActions?: ITypedAction<T>[]
 
     tableColumns: ITableColumn<T>[]
 
@@ -147,7 +147,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         filters,
         error,
     } = props
-    const showSelect = toolbarActions?.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type) !== undefined
+    const showSelect = toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
         left: 0,
@@ -573,7 +573,7 @@ export function PagePagination(props: PagePaginationProps) {
     )
 }
 
-export function toolbarActionsHaveBulkActions<T extends object>(actions?: IToolbarAction<T>[]) {
+export function toolbarActionsHaveBulkActions<T extends object>(actions?: ITypedAction<T>[]) {
     if (!actions) return false
     for (const action of actions) {
         if (action.type === 'bulk') return true
@@ -619,9 +619,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
 
     const showSelect =
-        selectedItems !== undefined &&
-        toolbarActions &&
-        toolbarActions.find((toolbarAction) => ToolbarActionType.bulk === toolbarAction.type)
+        selectedItems !== undefined && toolbarActions && toolbarActions.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type)
 
     const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
 

@@ -2,16 +2,16 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { IToolbarAction, ToolbarActionType } from '../../framework'
+import { ITypedAction, TypedActionType } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
 
 export function useCreateToolbarAction(route: RouteE) {
     const { t } = useTranslation()
     const history = useHistory()
-    const toolbarAction: IToolbarAction<{ id: number }> = useMemo(
+    const toolbarAction: ITypedAction<{ id: number }> = useMemo(
         () => ({
-            type: ToolbarActionType.button,
+            type: TypedActionType.button,
             variant: ButtonVariant.primary,
             icon: PlusIcon,
             label: t('Create team'),
@@ -25,9 +25,9 @@ export function useCreateToolbarAction(route: RouteE) {
 
 export function useDeleteToolbarAction<T extends object>(onClick: (items: T[]) => void) {
     const { t } = useTranslation()
-    const toolbarAction: IToolbarAction<T> = useMemo(
+    const toolbarAction: ITypedAction<T> = useMemo(
         () => ({
-            type: ToolbarActionType.bulk,
+            type: TypedActionType.bulk,
             variant: ButtonVariant.primary,
             icon: TrashIcon,
             label: t('Delete selected teams'),
@@ -41,9 +41,9 @@ export function useDeleteToolbarAction<T extends object>(onClick: (items: T[]) =
 
 export function useSyncToolbarAction() {
     const { t } = useTranslation()
-    const toolbarAction: IToolbarAction<{ id: number }> = useMemo(
+    const toolbarAction: ITypedAction<{ id: number }> = useMemo(
         () => ({
-            type: ToolbarActionType.bulk,
+            type: TypedActionType.bulk,
             icon: SyncIcon,
             label: t('Sync'),
             onClick: () => null,

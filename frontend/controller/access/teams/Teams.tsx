@@ -5,10 +5,10 @@ import {
     BulkActionDialog,
     IItemAction,
     ITableColumn,
-    IToolbarAction,
     IToolbarFilter,
+    ITypedAction,
     TablePage,
-    ToolbarActionType,
+    TypedActionType,
     useDialog,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
@@ -63,7 +63,7 @@ export function Teams() {
         void view.refresh()
     })
     const create100TeamsToolbarAction = useCreate100TeamsToolbarAction(() => void view.refresh())
-    const toolbarActions = useMemo<IToolbarAction<Team>[]>(
+    const toolbarActions = useMemo<ITypedAction<Team>[]>(
         () => [createToolbarAction, deleteToolbarAction, create100TeamsToolbarAction],
         [create100TeamsToolbarAction, createToolbarAction, deleteToolbarAction]
     )
@@ -128,9 +128,9 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
 
 export function useCreate100TeamsToolbarAction(callback: () => void) {
     const { t } = useTranslation()
-    const toolbarAction: IToolbarAction<object> = useMemo(
+    const toolbarAction: ITypedAction<object> = useMemo(
         () => ({
-            type: ToolbarActionType.button,
+            type: TypedActionType.button,
             label: t('Create 100 teams'),
             onClick: () => {
                 const promises: Promise<unknown>[] = []
@@ -152,11 +152,11 @@ export function useCreate100TeamsToolbarAction(callback: () => void) {
     return toolbarAction
 }
 
-export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): IToolbarAction<Team> {
+export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): ITypedAction<Team> {
     const deleteTeams = useDeleteTeams(callback)
     const { t } = useTranslation()
     return {
-        type: ToolbarActionType.bulk,
+        type: TypedActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected teams'),
         shortLabel: t('Delete'),

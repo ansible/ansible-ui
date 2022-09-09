@@ -36,7 +36,7 @@ import { Fragment, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Grid } from './components/Grid'
 import { IconWrapper } from './components/IconWrapper'
 import { Scrollable } from './components/Scrollable'
-import { IItemAction, isItemActionClick } from './ItemActions'
+import { IItemAction, isItemActionClick } from './TypedActions'
 
 type CatalogFilterValue = string
 

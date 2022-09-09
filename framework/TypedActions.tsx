@@ -1,4 +1,13 @@
-import { Button, ButtonVariant, Dropdown, DropdownItem, DropdownSeparator, KebabToggle, Tooltip } from '@patternfly/react-core'
+import {
+    Button,
+    ButtonVariant,
+    Dropdown,
+    DropdownItem,
+    DropdownPosition,
+    DropdownSeparator,
+    KebabToggle,
+    Tooltip,
+} from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
 import { ComponentClass, Fragment, FunctionComponent, useMemo, useState } from 'react'
 import { useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
@@ -21,7 +30,7 @@ export function isItemActionSeperator<T>(itemAction: IItemAction<T>): itemAction
     return 'isSeparator' in itemAction
 }
 
-export enum ToolbarActionType {
+export enum TypedActionType {
     seperator = 'seperator',
     button = 'button',
     bulk = 'bulk',
@@ -30,7 +39,7 @@ export enum ToolbarActionType {
 export type IItemAction<T> = IItemActionClick<T> | IItemActionSeperator
 
 export interface ITypedActionSeperator {
-    type: ToolbarActionType.seperator
+    type: TypedActionType.seperator
 }
 
 interface ITypedActionCommon {
@@ -42,25 +51,29 @@ interface ITypedActionCommon {
 }
 
 export type ITypedActionButton = ITypedActionCommon & {
-    type: ToolbarActionType.button
+    type: TypedActionType.button
     variant?: ButtonVariant
     onClick: () => void
 }
 
 export type ITypedBulkAction<T extends object> = ITypedActionCommon & {
-    type: ToolbarActionType.bulk
+    type: TypedActionType.bulk
     variant?: ButtonVariant
     onClick: (selectedItems: T[]) => void
 }
 
-export type IToolbarAction<T extends object> = ITypedActionSeperator | ITypedActionButton | ITypedBulkAction<T>
+export type ITypedAction<T extends object> = ITypedActionSeperator | ITypedActionButton | ITypedBulkAction<T>
 
-export function TypedActionsDropdown<T extends object>(props: { actions: IToolbarAction<T>[]; selectedItems?: T[] }) {
+export function TypedActionsDropdown<T extends object>(props: {
+    actions: ITypedAction<T>[]
+    selectedItems?: T[]
+    position?: DropdownPosition
+}) {
     const { actions, selectedItems } = props
     const [dropdownOpen, setDropdownOpen] = useState(false)
-    const hasItemActions = useMemo(() => !actions.every((action) => action.type !== ToolbarActionType.bulk), [actions])
+    const hasItemActions = useMemo(() => !actions.every((action) => action.type !== TypedActionType.bulk), [actions])
     const hasIcons = useMemo(
-        () => actions.find((action) => action.type !== ToolbarActionType.seperator && action.icon !== undefined) !== undefined,
+        () => actions.find((action) => action.type !== TypedActionType.seperator && action.icon !== undefined) !== undefined,
         [actions]
     )
     if (actions.length === 0) return <></>
@@ -82,13 +95,13 @@ export function TypedActionsDropdown<T extends object>(props: { actions: IToolba
             isPlain
             dropdownItems={actions.map((action, index) => {
                 switch (action.type) {
-                    case ToolbarActionType.button:
-                    case ToolbarActionType.bulk: {
-                        let Icon = action.icon
+                    case TypedActionType.button:
+                    case TypedActionType.bulk: {
+                        let Icon: ComponentClass | FunctionComponent | undefined = action.icon
                         if (!Icon && hasIcons) Icon = TransparentIcon
                         let tooltip = action.tooltip
                         let isDisabled = false
-                        if (action.type === ToolbarActionType.bulk && (!selectedItems || !selectedItems.length)) {
+                        if (action.type === TypedActionType.bulk && (!selectedItems || !selectedItems.length)) {
                             tooltip = 'No items selected'
                             isDisabled = true
                         }
@@ -100,23 +113,24 @@ export function TypedActionsDropdown<T extends object>(props: { actions: IToolba
                                     isAriaDisabled={isDisabled}
                                     icon={Icon ? <Icon /> : undefined}
                                     // style={{ color: 'var(--pf-global--primary-color--100)' }}
-                                    // style={{ color: 'var(--pf-global--danger-color--100)' }}
+                                    style={{ color: action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined }}
                                 >
                                     {action.label}
                                 </DropdownItem>
                             </Tooltip>
                         )
                     }
-                    case ToolbarActionType.seperator:
+                    case TypedActionType.seperator:
                         return <DropdownSeparator key={`separator-${index}`} />
                 }
             })}
+            position={props.position}
         />
     )
 }
 
 export function TypedActionsButtons<T extends object>(props: {
-    actions: IToolbarAction<T>[]
+    actions: ITypedAction<T>[]
     selectedItems?: T[]
     wrapper?: ComponentClass | FunctionComponent
     noPrimary?: boolean
@@ -133,7 +147,7 @@ export function TypedActionsButtons<T extends object>(props: {
 }
 
 export function TypedActionButton<T extends object>(props: {
-    action: IToolbarAction<T>
+    action: ITypedAction<T>
     selectedItems?: T[]
     wrapper?: ComponentClass | FunctionComponent
     noPrimary?: boolean
@@ -141,24 +155,19 @@ export function TypedActionButton<T extends object>(props: {
     const { action, selectedItems, wrapper, noPrimary } = props
     const Wrapper = wrapper ?? Fragment
     switch (action.type) {
-        case ToolbarActionType.seperator: {
+        case TypedActionType.seperator: {
             return <></>
         }
-        case ToolbarActionType.bulk: {
+        case TypedActionType.bulk: {
             const Icon = action.icon
             let tooltip = action.tooltip
             let isDisabled = false
             let variant = action.variant ?? ButtonVariant.secondary
-            if (selectedItems && selectedItems.length) {
-                switch (variant) {
-                    case ButtonVariant.danger:
-                    case ButtonVariant.primary:
-                        variant = ButtonVariant.secondary
-                        break
-                }
-            }
             if (variant === ButtonVariant.primary && noPrimary) {
                 variant = ButtonVariant.secondary
+            }
+            if (variant === ButtonVariant.primary && action.isDanger) {
+                variant = ButtonVariant.danger
             }
             if (!selectedItems || !selectedItems.length) {
                 tooltip = 'No items selected'
@@ -181,7 +190,7 @@ export function TypedActionButton<T extends object>(props: {
                 </Wrapper>
             )
         }
-        case ToolbarActionType.button: {
+        case TypedActionType.button: {
             const Icon = action.icon
             const tooltip = action.tooltip
             const isDisabled = false
@@ -196,6 +205,9 @@ export function TypedActionButton<T extends object>(props: {
             }
             if (variant === ButtonVariant.primary && noPrimary) {
                 variant = ButtonVariant.secondary
+            }
+            if (variant === ButtonVariant.primary && action.isDanger) {
+                variant = ButtonVariant.danger
             }
             return (
                 <Wrapper>
@@ -218,22 +230,23 @@ export function TypedActionButton<T extends object>(props: {
 }
 
 export function TypedActions<T extends object>(props: {
-    actions: IToolbarAction<T>[]
+    actions: ITypedAction<T>[]
     selectedItems?: T[]
     wrapper?: ComponentClass | FunctionComponent
     collapse?: WindowSize
     noPrimary?: boolean
+    dropdownPosition?: DropdownPosition
 }) {
     const { actions } = props
     const collapseButtons = useWindowSizeOrSmaller(props.collapse ?? WindowSize.md)
 
-    const buttonActions: IToolbarAction<T>[] = useMemo(() => {
+    const buttonActions: ITypedAction<T>[] = useMemo(() => {
         if (collapseButtons) {
             return []
         } else {
             const buttonActions = actions?.filter(
                 (action) =>
-                    (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                    (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
                     (action.variant === ButtonVariant.primary ||
                         action.variant === ButtonVariant.secondary ||
                         action.variant === ButtonVariant.danger)
@@ -242,22 +255,22 @@ export function TypedActions<T extends object>(props: {
         }
     }, [collapseButtons, actions])
 
-    const dropdownActions: IToolbarAction<T>[] = useMemo(() => {
+    const dropdownActions: ITypedAction<T>[] = useMemo(() => {
         if (collapseButtons) {
             return actions ?? []
         } else {
             let dropdownActions = actions?.filter(
                 (action) =>
                     !(
-                        (action.type === ToolbarActionType.button || action.type === ToolbarActionType.bulk) &&
+                        (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
                         (action.variant === ButtonVariant.primary ||
                             action.variant === ButtonVariant.secondary ||
                             action.variant === ButtonVariant.danger)
                     )
             )
             dropdownActions = dropdownActions ?? []
-            while (dropdownActions.length && dropdownActions[0].type === ToolbarActionType.seperator) dropdownActions.shift()
-            while (dropdownActions.length && dropdownActions[dropdownActions.length - 1].type === ToolbarActionType.seperator)
+            while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator) dropdownActions.shift()
+            while (dropdownActions.length && dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator)
                 dropdownActions.pop()
             return dropdownActions
         }
@@ -266,7 +279,7 @@ export function TypedActions<T extends object>(props: {
     return (
         <>
             <TypedActionsButtons {...props} actions={buttonActions} />
-            <TypedActionsDropdown {...props} actions={dropdownActions} />
+            <TypedActionsDropdown {...props} actions={dropdownActions} position={props.dropdownPosition} />
         </>
     )
 }
