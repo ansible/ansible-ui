@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { IItemAction, ITableColumn, IToolbarAction, IToolbarFilter, TablePage, TextCell } from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareNumbers } from '../../../../framework/utils/compare'
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
@@ -65,7 +65,7 @@ export function Organizations() {
     const deleteToolbarAction = useDeleteToolbarAction(() => {
         // TODO
     })
-    const toolbarActions = useMemo<IToolbarAction<Organization>[]>(
+    const toolbarActions = useMemo<ITypedAction<Organization>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
     )

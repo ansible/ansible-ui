@@ -91,7 +91,9 @@ export function EditTeam() {
             }
         }
     }
-    const onCancel = () => history.push(RouteE.Teams)
+    const onCancel = () => {
+        Number.isInteger(id) ? history.push(RouteE.TeamDetails.replace(':id', id.toString())) : history.push(RouteE.Teams)
+    }
 
     if (Number.isInteger(id)) {
         if (!team) {

@@ -4,12 +4,12 @@ import { useMemo } from 'react'
 import {
     IItemAction,
     ITableColumn,
-    IToolbarAction,
     IToolbarFilter,
+    ITypedAction,
     PageTable,
     TablePage,
     TextCell,
-    ToolbarActionType,
+    TypedActionType,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
@@ -37,7 +37,7 @@ export default function Users() {
     const deleteToolbarAction = useDeleteToolbarAction(() => {
         // TODO
     })
-    const toolbarActions = useMemo<IToolbarAction<User>[]>(
+    const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [createToolbarAction, deleteToolbarAction],
         [createToolbarAction, deleteToolbarAction]
     )
@@ -82,21 +82,24 @@ export function AccessTable(props: { url: string }) {
     const toolbarFilters = useUsersFilters()
 
     // Toolbar Actions
-    const toolbarActions = useMemo<IToolbarAction<User>[]>(
+    const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
             {
-                type: ToolbarActionType.button,
+                type: TypedActionType.button,
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
-                label: t('Add'),
+                label: t('Add userss'),
+                shortLabel: t('Add'),
                 onClick: () => null,
             },
             {
-                type: ToolbarActionType.bulk,
-                variant: ButtonVariant.secondary,
+                type: TypedActionType.bulk,
+                variant: ButtonVariant.primary,
                 icon: MinusCircleIcon,
-                label: t('Remove'),
+                label: t('Remove selected users'),
+                shortLabel: t('Remove'),
                 onClick: () => null,
+                isDanger: true,
             },
         ],
         [t]

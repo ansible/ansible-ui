@@ -1,14 +1,13 @@
-import { PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
 import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { Detail, DetailsList, IItemAction, PageHeader, SinceCell, TextCell } from '../../../../framework'
+import { Detail, DetailsList, ITypedAction, PageHeader, SinceCell, TextCell, TypedActions, TypedActionType } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { PageBody } from '../../../../framework/PageBody'
 import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
-import { DetailActions } from '../../../common/DetailActions'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { AccessTable } from '../users/Users'
@@ -19,24 +18,27 @@ export function TeamDetails() {
     const params = useParams<{ id: string }>()
     const team = useItem<Team>('/api/v2/teams', params.id)
     const history = useHistory()
-    const itemActions: IItemAction<Team>[] = useMemo(
-        () => [
+    const itemActions: ITypedAction<Team>[] = useMemo(() => {
+        const itemActions: ITypedAction<Team>[] = [
             {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
                 icon: EditIcon,
-                label: t('Edit'),
+                label: t('Edit team'),
+                shortLabel: t('Edit'),
                 onClick: () => history.push(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
             },
-            { icon: TrashIcon, label: t('Delete'), onClick: () => null },
-        ],
-        [history, team, t]
-    )
+            { type: TypedActionType.button, icon: TrashIcon, label: t('Delete team'), onClick: () => null },
+        ]
+        return itemActions
+    }, [history, team, t])
 
     return (
         <PageLayout>
             <PageHeader
                 title={team?.name}
                 breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
-                headerActions={<DetailActions<Team> item={team} actions={itemActions} />}
+                headerActions={<TypedActions<Team> actions={itemActions} dropdownPosition={DropdownPosition.right} />}
             />
             <PageBody>
                 {team ? (
