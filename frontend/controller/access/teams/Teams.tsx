@@ -7,7 +7,9 @@ import {
     ITableColumn,
     IToolbarFilter,
     ITypedAction,
-    TablePage,
+    PageBody,
+    PageHeader,
+    PageTable,
     TypedActionType,
     useDialog,
 } from '../../../../framework'
@@ -28,7 +30,24 @@ import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
 
-export function Teams() {
+export function TeamsPage() {
+    const { t } = useTranslation()
+    return (
+        <>
+            <PageHeader
+                title={t('Teams')}
+                titleHelpTitle={t('Team')}
+                titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."
+                description="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions."
+            />
+            <PageBody>
+                <Teams url="/api/v2/teams/" />
+            </PageBody>
+        </>
+    )
+}
+
+export function Teams(props: { url: string }) {
     const { t } = useTranslation()
     const history = useHistory()
 
@@ -52,7 +71,7 @@ export function Teams() {
         [createdColumn, modifiedColumn, nameColumn, organizationColumn]
     )
 
-    const view = useControllerView<Team>('/api/v2/teams/', getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView<Team>(props.url, getItemKey, toolbarFilters, tableColumns)
 
     // Toolbar Actions
     const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
@@ -74,11 +93,7 @@ export function Teams() {
     const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
 
     return (
-        <TablePage<Team>
-            title={t('Teams')}
-            titleHelpTitle={t('Team')}
-            titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."
-            description="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions."
+        <PageTable<Team>
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
