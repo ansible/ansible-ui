@@ -6,7 +6,7 @@
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
         "frontend": "webpack serve --mode development",
         "backend": "NODE_ENV=development PORT=3001 nodemon --watch './backend/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' backend/main.ts | pino-zen",
-        "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
+        "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:cypress --prefix-colors cyan,green,blue,magenta,gray",
         "build": "concurrently --kill-others-on-fail npm:frontend:build npm:backend:build --prefix-colors cyan,green,blue,magenta,gray",
         "frontend:build": "webpack --mode production",
         "backend:build": "npm run clean && rollup --config rollup.config.ts --configPlugin typescript",
@@ -20,7 +20,12 @@
         "certs": "mkdir -p certs && openssl req -subj '/C=US' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout certs/tls.key -out certs/tls.crt",
         "docker:build": "docker build --tag ansible/console .",
         "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
-        "deploy": "scripts/deploy.sh"
+        "deploy": "scripts/deploy.sh",
+        "cypress": "rm -rf coverage && concurrently npm:cypress:frontend npm:backend npm:cypress:run --prefix-colors cyan,green,blue --kill-others --success first",
+        "cypress:run": "wait-on -d 3000 -i 1000 https-get://localhost:3002 && cypress run --env mock=true --config video=false",
+        "cypress:open": "cypress open --env mock=true",
+        "cypress:frontend": "webpack serve --mode development --no-open",
+        "coverage": "open coverage/lcov-report/index.html "
     },
     "dependencies": {
         "@hookform/resolvers": "2.9.8",
@@ -56,6 +61,7 @@
         "@babel/core": "7.19.0",
         "@babel/preset-react": "7.18.6",
         "@babel/preset-typescript": "7.18.6",
+        "@cypress/code-coverage": "^3.10.0",
         "@pmmmwh/react-refresh-webpack-plugin": "0.5.7",
         "@rollup/plugin-commonjs": "22.0.2",
         "@rollup/plugin-node-resolve": "13.3.0",
@@ -75,8 +81,10 @@
         "babel-plugin-transform-class-properties": "6.24.1",
         "concurrently": "7.4.0",
         "copy-webpack-plugin": "11.0.0",
+        "coverage-istanbul-loader": "^3.0.5",
         "css-loader": "6.7.1",
         "css-minimizer-webpack-plugin": "4.1.0",
+        "cypress": "^10.8.0",
         "eslint": "8.23.1",
         "eslint-config-prettier": "8.5.0",
         "eslint-plugin-i18next": "5.2.1",
@@ -95,9 +103,17 @@
         "style-loader": "3.3.1",
         "ts-node": "10.9.1",
         "typescript": "4.8.3",
+        "wait-on": "^6.0.1",
         "webpack": "5.74.0",
         "webpack-cli": "4.10.0",
         "webpack-dev-server": "4.11.0",
         "workbox-webpack-plugin": "6.5.4"
+    },
+    "nyc": {
+        "all": true,
+        "include": [
+            "../frontend/src/**/*.ts",
+            "../frontend/src/**/*.tsx"
+        ]
     }
 }
