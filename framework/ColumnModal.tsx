@@ -40,9 +40,8 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
     // }, [])
     const onDragFinish = useCallback((itemOrder: string[]) => {
         setManagedColumns((managedColumns) => {
-            return itemOrder.map((header) => managedColumns.find((column) => column.header === header))
+            return itemOrder.map((header) => managedColumns.find((column) => column.header === header)) as ITableColumn<T>[]
         })
-        //
     }, [])
     const handleChange = useCallback((checked: boolean, event: FormEvent<HTMLInputElement>) => {
         const columnHeader = (event.target as unknown as { name?: string }).name

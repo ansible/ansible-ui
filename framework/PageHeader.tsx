@@ -38,7 +38,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
                         id={breadcrumb.id}
                         key={breadcrumb.id ?? breadcrumb.label}
                         component={breadcrumb.component}
-                        onClick={breadcrumb.to ? () => history.push(breadcrumb.to) : undefined}
+                        onClick={breadcrumb.to ? () => breadcrumb.to && history.push(breadcrumb.to) : undefined}
                         style={{
                             color: breadcrumb.to ? 'var(--pf-c-breadcrumb__link--Color)' : undefined,
                             cursor: breadcrumb.to ? 'pointer' : undefined,
