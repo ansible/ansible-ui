@@ -11,7 +11,7 @@ export interface Settings {
     borders?: boolean
 }
 
-export const SettingsContext = createContext<[Settings, (settings?: Settings) => void]>([{}, () => null])
+export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([{}, () => null])
 
 export function useSettings() {
     const [settings] = useContext(SettingsContext)

@@ -7,7 +7,7 @@ export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBread
     const { t } = useTranslation()
     return (
         <Fragment>
-            <PageHeader breadcrumbs={props.breadcrumbs} title={props.title ?? <Skeleton width="200px" />} />
+            <PageHeader breadcrumbs={props.breadcrumbs} title={props.title ?? ((<Skeleton width="200px" />) as unknown as string)} />
             <PageSection
             // variant={theme === ThemeE.Dark ? undefined : 'light'}
             >

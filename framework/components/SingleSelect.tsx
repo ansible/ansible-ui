@@ -1,4 +1,4 @@
-import { FormGroup, Select } from '@patternfly/react-core'
+import { FormGroup, Select, SelectOptionObject } from '@patternfly/react-core'
 import { CSSProperties, ReactNode, useCallback, useState } from 'react'
 
 export function SingleSelect(props: {
@@ -14,8 +14,12 @@ export function SingleSelect(props: {
         setOpen((open) => !open)
     }, [])
     const onSelect = useCallback(
-        (_e, v: string) => {
-            props.onChange(v)
+        (_e, v: string | SelectOptionObject) => {
+            if (typeof v === 'string') {
+                props.onChange(v)
+            } else {
+                props.onChange(v.toString())
+            }
             setOpen(false)
         },
         [props]
@@ -24,7 +28,7 @@ export function SingleSelect(props: {
     return (
         <FormGroup label={props.label} fieldId={id} style={props.style}>
             <Select id={id} selections={props.value} isOpen={open} onToggle={onToggle} onSelect={onSelect}>
-                {props.children as any}
+                {props.children as React.ReactElement[]}
             </Select>
         </FormGroup>
     )
