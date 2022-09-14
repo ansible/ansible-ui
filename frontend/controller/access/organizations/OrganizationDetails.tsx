@@ -10,6 +10,7 @@ import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
+import { Teams } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
 import { Organization } from './Organization'
 
@@ -60,9 +61,15 @@ export function OrganizationDetails() {
                         <PageTab title={t('Access')}>
                             <OrganizationAccessTab organization={organization} />
                         </PageTab>
-                        <PageTab title={t('Teams')}>TODO</PageTab>
-                        <PageTab title={t('Execution Environments')}>TODO</PageTab>
-                        <PageTab title={t('Notifications')}>TODO</PageTab>
+                        <PageTab title={t('Teams')}>
+                            <OrganizationTeamsTab organization={organization} />
+                        </PageTab>
+                        <PageTab title={t('Execution Environments')}>
+                            <Todo />
+                        </PageTab>
+                        <PageTab title={t('Notifications')}>
+                            <Todo />
+                        </PageTab>
                     </PageTabs>
                 ) : (
                     <PageTabs>
@@ -108,4 +115,13 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
 function OrganizationAccessTab(props: { organization: Organization }) {
     const { organization } = props
     return <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
+}
+
+function OrganizationTeamsTab(props: { organization: Organization }) {
+    const { organization } = props
+    return <Teams url={`/api/v2/organizations/${organization.id}/teams/`} />
+}
+
+function Todo() {
+    return <PageSection variant="light">TODO</PageSection>
 }
