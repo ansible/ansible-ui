@@ -8,7 +8,6 @@
     "extends": [
         "eslint:recommended",
         "plugin:jsx-a11y/recommended",
-        "plugin:i18n-json/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:@typescript-eslint/eslint-recommended",
