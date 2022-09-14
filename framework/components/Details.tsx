@@ -8,7 +8,7 @@ import {
     Stack,
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { CopyCell, SinceCell } from '../PageTable'
 import { useSettings } from '../Settings'
 import { Help } from './Help'
@@ -142,7 +142,6 @@ export function DetailsList(props: { children?: ReactNode }) {
 }
 
 export function Detail(props: { label: string; children?: ReactNode }) {
-    const history = useHistory()
     if (!props.children) return <></>
     return (
         <DescriptionListGroup>
