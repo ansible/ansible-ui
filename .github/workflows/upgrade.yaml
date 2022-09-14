@@ -2,7 +2,7 @@ name: Upgrade
 on:
     workflow_dispatch:
     schedule:
-        - cron: '0 12 * * 0'
+        - cron: '40 2 * * *'
 jobs:
     npm-check-updates:
         if: (github.event_name == 'schedule' && github.repository == 'jamestalton/ansible') || (github.event_name != 'schedule')
