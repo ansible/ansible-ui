@@ -1,18 +1,19 @@
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { OrganizationDetails } from './controller/access/organizations/OrganizationDetails'
 import { Organizations } from './controller/access/organizations/Organizations'
 import { EditTeam } from './controller/access/teams/EditTeam'
 import { TeamDetails } from './controller/access/teams/TeamDetails'
 import { Teams } from './controller/access/teams/Teams'
 import Users from './controller/access/users/Users'
 import Settings from './controller/settings/Settings'
-// import Dashboard from './controller/views/Dashboard/Dashboard.old'
+import Dashboard from './controller/views/Dashboard'
 // import WorkflowApprovalsPage from './controller/views/WorkflowApprovals'
 import { RouteE } from './route'
 
 export function DemoRouter(): JSX.Element {
     return (
         <Switch>
-            {/* <Route exact path={RouteE.Dashboard} component={Dashboard} /> */}
+            <Route exact path={RouteE.Dashboard} component={Dashboard} />
             {/* <Route exact path={RouteE.Jobs} component={JobsPage} /> */}
             {/* <Route exact path={RouteE.Schedules} component={SchedulesPage} /> */}
             {/* <Route exact path={RouteE.ActivityStream} component={ActivityStreeam} /> */}
@@ -27,6 +28,8 @@ export function DemoRouter(): JSX.Element {
             <Route exact path={RouteE.Hosts} component={HostsPage} /> */}
 
             <Route exact path={RouteE.Organizations} component={Organizations} />
+            <Route exact path={RouteE.OrganizationDetails} component={OrganizationDetails} />
+
             <Route exact path={RouteE.Users} component={Users} />
             {/* <Route exact path={RouteE.UserDetails} component={UserDetails} /> */}
 
