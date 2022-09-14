@@ -25,8 +25,13 @@ module.exports = function (_env, argv) {
                 {
                     test: /\.(ts|tsx|js|jsx)$/,
                     exclude: /node_modules/,
-                    loader: require.resolve('babel-loader'),
-                    options: { plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean) },
+                    use: [
+                        'coverage-istanbul-loader',
+                        {
+                            loader: 'babel-loader',
+                            options: { plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean) },
+                        },
+                    ],
                     type: 'javascript/auto',
                 },
             ],

@@ -1,5 +1,5 @@
 import { FormGroup, Select, SelectOptionObject } from '@patternfly/react-core'
-import { CSSProperties, ReactNode, useCallback, useState } from 'react'
+import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
 
 export function SingleSelect(props: {
     id?: string
@@ -8,22 +8,40 @@ export function SingleSelect(props: {
     onChange: (value: string) => void
     children: ReactNode
     style?: CSSProperties
+    open?: boolean
+    setOpen?: (open: boolean) => void
 }) {
-    const [open, setOpen] = useState(false)
-    const onToggle = useCallback(() => {
-        setOpen((open) => !open)
-    }, [])
-    const onSelect = useCallback(
-        (_e, v: string | SelectOptionObject) => {
-            if (typeof v === 'string') {
-                props.onChange(v)
-            } else {
-                props.onChange(v.toString())
-            }
-            setOpen(false)
+    const { onChange } = props
+    const [open, setOpenState] = useState(() => props.open)
+    useEffect(() => {
+        if (props.open !== undefined) {
+            setOpenState(props.open)
+        }
+    }, [props.open, setOpenState])
+
+    const setOpen = useCallback(
+        (open: boolean) => {
+            props.setOpen ? props.setOpen(open) : setOpenState(open)
         },
         [props]
     )
+
+    const onToggle = useCallback(() => {
+        setOpen(!open)
+    }, [open, setOpen])
+
+    const onSelect = useCallback(
+        (_e, v: string | SelectOptionObject) => {
+            if (typeof v === 'string') {
+                onChange(v)
+            } else {
+                onChange(v.toString())
+            }
+            setOpen(false)
+        },
+        [onChange, setOpen]
+    )
+
     const id = props.id ?? props.label.toLocaleLowerCase().split(' ').join('-')
     return (
         <FormGroup label={props.label} fieldId={id} style={props.style}>
