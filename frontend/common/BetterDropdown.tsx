@@ -7,7 +7,7 @@ export function BetterDropdown(props: { label?: string; children?: ReactNode; po
 
     const items = useMemo(() => {
         if (!open) return []
-        return props.children as any[]
+        return props.children
     }, [open, props.children])
 
     const toggle = props.label ? (
@@ -18,5 +18,5 @@ export function BetterDropdown(props: { label?: string; children?: ReactNode; po
         <KebabToggle onToggle={onToggle} />
     )
 
-    return <Dropdown toggle={toggle} isOpen={open} isPlain dropdownItems={items} position={props.position} />
+    return <Dropdown toggle={toggle} isOpen={open} isPlain dropdownItems={items as unknown[]} position={props.position} />
 }

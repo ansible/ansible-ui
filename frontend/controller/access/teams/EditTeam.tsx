@@ -75,7 +75,7 @@ export function EditTeam() {
         } catch (err) {
             if (err instanceof HTTPError) {
                 try {
-                    const response = await err.response.json()
+                    const response = (await err.response.json()) as { __all__?: string[] }
                     if ('__all__' in response && Array.isArray(response.__all__)) {
                         setError(JSON.stringify(response.__all__[0]))
                     } else {

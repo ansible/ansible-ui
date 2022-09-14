@@ -1,8 +1,8 @@
 import { Switch } from '@patternfly/react-core'
 import { CopyCell, ITableColumn, SinceCell, TextCell } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
-import { RouteE } from '../route'
 import { compareStrings, compareUnknowns } from '../../framework/utils/compare'
+import { RouteE } from '../route'
 import { getScmType } from './scm'
 import { getStatus } from './status'
 
@@ -12,27 +12,19 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     disableSort?: boolean
 }) {
     const { t } = useTranslation()
-    const column: ITableColumn<{ name: string; id: number }> = {
+    const column: ITableColumn<T> = {
         header: t('Name'),
         cell: (item: T) => (
             <TextCell
                 text={item.name}
                 iconSize="sm"
                 to={options.url?.replace(':id', item.id.toString())}
-                onClick={options.onClick ? () => options.onClick(item) : undefined}
+                onClick={options.onClick ? () => options.onClick?.(item) : undefined}
             />
         ),
         sort: options.disableSort ? undefined : 'name',
     }
     return column
-}
-
-export const nameColumn: ITableColumn<{ name: string; url?: string }> = {
-    header: 'Name',
-    cell: (item) => {
-        return <TextCell text={item.name} iconSize="sm" to={item.url?.replace('/api/v2', '')} />
-    },
-    sort: 'name',
 }
 
 export function useStatusColumn() {
@@ -189,24 +181,6 @@ export const enabledColumn: ITableColumn<{ enabled?: boolean }> = {
         return <></>
     },
     sortFn: (l, r) => compareUnknowns(l.enabled, r.enabled),
-}
-
-export const summaryOrganizationColumn: ITableColumn<{
-    summary_fields: {
-        organization: ISummaryOrganization
-    }
-}> = {
-    header: 'Organization',
-    cell: (item) => {
-        if (!item.summary_fields?.organization?.name) return <></>
-        return (
-            <TextCell
-                text={item.summary_fields.organization.name}
-                to={`/organizations/${item.summary_fields.organization.id.toString()}`}
-            />
-        )
-    },
-    sortFn: (l, r) => compareStrings(l.summary_fields.organization.name, r.summary_fields.organization.name),
 }
 
 export function useOrganizationNameColumn(options?: { disableLink?: boolean; disableSort?: boolean }) {
