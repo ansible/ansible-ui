@@ -1,5 +1,4 @@
-import cc from '@cypress/code-coverage/task'
-// import cc from '@cypress/code-coverage/task'
+import codeCoverage from '@cypress/code-coverage/task'
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
@@ -11,7 +10,7 @@ export default defineConfig({
         setupNodeEvents(on, config) {
             // implement node event listeners here
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-            cc(on, config)
+            codeCoverage(on, config)
             return config
         },
         baseUrl: 'https://localhost:3002/',

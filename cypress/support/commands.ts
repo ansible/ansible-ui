@@ -39,6 +39,21 @@ declare global {
 before(() => {
     window.localStorage.setItem('access', 'true')
 
+    if (Cypress.env('mock')) {
+        cy.intercept('GET', '/api/login/', { statusCode: 200 })
+        cy.intercept('POST', '/api/login/', { statusCode: 200 })
+        cy.fixture('me.json').then((json) => cy.intercept('GET', '/api/v2/me/', json))
+        cy.fixture('teams.json').then((json) => cy.intercept('GET', '/api/v2/teams/?*', (req) => req.reply(200, json)))
+    }
+
+    cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
+    cy.get('#server').type('https://localhost:8043')
+    cy.get('#username').type('test')
+    cy.get('#password').type('test')
+    cy.get('button[type=submit]').click()
+
+    // Cypress.Cookies.preserveOnce(names...)
+
     // Cypress.Cookies.defaults({
     //     preserve: ['_csrf', '_oauth_proxy', 'acm-access-token-cookie'],
     // })
