@@ -13,7 +13,6 @@
 
 describe('teams', () => {
     it('loads', () => {
-        cy.visit(`/teams`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
-        cy.contains('Welcome')
+        cy.get('.pf-c-title').contains(/^Teams$/)
     })
 })
