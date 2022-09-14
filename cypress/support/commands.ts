@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
@@ -30,9 +31,9 @@ import '@cypress/code-coverage/support'
 
 declare global {
     namespace Cypress {
-        interface Chainable {
-            // login(): Chainable<void>
-        }
+        // interface Chainable {
+        //     // login(): Chainable<void>
+        // }
     }
 }
 
@@ -42,8 +43,8 @@ before(() => {
     if (Cypress.env('mock')) {
         cy.intercept('GET', '/api/login/', { statusCode: 200 })
         cy.intercept('POST', '/api/login/', { statusCode: 200 })
-        cy.fixture('me.json').then((json) => cy.intercept('GET', '/api/v2/me/', json))
-        cy.fixture('teams.json').then((json) => cy.intercept('GET', '/api/v2/teams/?*', (req) => req.reply(200, json)))
+        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+        cy.fixture('teams.json').then((json: string) => cy.intercept('GET', '/api/v2/teams/?*', (req) => req.reply(200, json)))
     }
 
     cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })

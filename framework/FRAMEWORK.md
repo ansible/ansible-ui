@@ -1,4 +1,3 @@
-
 # Framework
 
 A framework for creating performant, consistent, and responsive web applications using [PatternFly](https://www.patternfly.org).
@@ -7,30 +6,30 @@ The framework is made up of high level components using PatternFly components un
 This allows the framework to adjust the web application for responsive layout.
 Basic structure of the framework can be seen in the tree below.
 
-- [PageLayout](#pagelayout)
-  - [PageHeader](#pageheader)
-  - [PageBody](#pagebody)
-    - [PageTable](#pagetable)
-    - [PageTabs](#pagetabs)
-      - [PageTab](#pagetab)
-    - [PageDetails](#pagedetails)
-      - [PageDetail](#pagedetail)
-    - [PageCatalog](#pagecatalog)
-      - [PageCatalogCard](#pagecatalogcard)
-    - [PageDashboard](#pagedashboard)
-      - [PageDashboardCard](#pagedashboardcard)
-      - [PageDashboardDonut](#pagedashboarddonut)
-      - [PageDashboardChart](#pagedashboardchart)
-    - [PageWizard](#pagewizard)
-      - [PageWizardStep](#pagewizardstep)
-    - [PageForm](#pageform)
-      - [PageFormSection](#pageformsection)
-        - [PageFormTextInput](#pageformtextinput)
-        - [PageFormTextArea](#pageformtextarea)
-        - [PageFormSelect](#pageformselect)
-        - [PageFormMultiSelect](#pageformmultiselect)
-        - [PageFormCheckbox](#pageformcheckbox)
-        - [PageFormRadioGroup](#pageformradiogroup)
+-   [PageLayout](#pagelayout)
+    -   [PageHeader](#pageheader)
+    -   [PageBody](#pagebody)
+        -   [PageTable](#pagetable)
+        -   [PageTabs](#pagetabs)
+            -   [PageTab](#pagetab)
+        -   [PageDetails](#pagedetails)
+            -   [PageDetail](#pagedetail)
+        -   [PageCatalog](#pagecatalog)
+            -   [PageCatalogCard](#pagecatalogcard)
+        -   [PageDashboard](#pagedashboard)
+            -   [PageDashboardCard](#pagedashboardcard)
+            -   [PageDashboardDonut](#pagedashboarddonut)
+            -   [PageDashboardChart](#pagedashboardchart)
+        -   [PageWizard](#pagewizard)
+            -   [PageWizardStep](#pagewizardstep)
+        -   [PageForm](#pageform)
+            -   [PageFormSection](#pageformsection)
+                -   [PageFormTextInput](#pageformtextinput)
+                -   [PageFormTextArea](#pageformtextarea)
+                -   [PageFormSelect](#pageformselect)
+                -   [PageFormMultiSelect](#pageformmultiselect)
+                -   [PageFormCheckbox](#pageformcheckbox)
+                -   [PageFormRadioGroup](#pageformradiogroup)
 
 ## PageLayout
 
@@ -52,17 +51,15 @@ The PageLayout is used at the start of each page. It provides a consistent layou
 The PageHeader is used at the start of each page. It provides a consistent layout of header elements. It supports responsive layout based on the size of the window.
 
 ```tsx
-(
 <Page>
-  <PageHeader 
-    breadcrumbs={breadcrumbs}
-    title="Page title"
-    titleHelp="Page title popover description."
-    description="Page description"
-    headerActions={actions}
-  />
+    <PageHeader
+        breadcrumbs={breadcrumbs}
+        title="Page title"
+        titleHelp="Page title popover description."
+        description="Page description"
+        headerActions={actions}
+    />
 </Page>
-)
 ```
 
 |       Property | Description                                                                |
