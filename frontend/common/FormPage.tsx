@@ -29,6 +29,8 @@ import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useContex
 import {
     DeepPartial,
     ErrorOption,
+    FieldPath,
+    FieldValues,
     FormProvider,
     SubmitHandler,
     useController,
@@ -84,7 +86,8 @@ export function FormPage<T extends object>(props: FormPageProps<T>) {
             {!props.hideHeader && <PageHeader {...props} />}
             {/* <FormProvider {...methods}> */}
             <Form
-                onSubmit={props.form.handleSubmit(props.onSubmit)}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onSubmit={props.form.handleSubmit(props.onSubmit as SubmitHandler<FieldValues>)}
                 isHorizontal={props.isVertical ? false : settings.formLayout === 'horizontal'}
                 style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
             >
@@ -174,7 +177,7 @@ export function FormInputCheckbox(props: {
             description={props.description}
             body={field.value ? props.body : undefined}
             {...field}
-            isChecked={field.value}
+            isChecked={!!field.value}
         />
     )
 }
@@ -317,7 +320,7 @@ export function FormSelect(props: {
                 {...field}
                 isOpen={open}
                 onToggle={() => setOpen(!open)}
-                selections={field.value}
+                selections={field.value as string}
                 onSelect={(_e, v) => {
                     field.onChange(v)
                     setOpen(false)
@@ -350,7 +353,9 @@ export function FormSelectInput(props: {
         .filter((child) => isValidElement(child) && child.type === SelectOption)
         .map((child) => {
             if (isValidElement(child) && child.type === SelectOption) {
-                return <MenuItem>{child.props.children}</MenuItem>
+                return (
+                    <MenuItem key={(child.props as { value: string }).value}>{(child.props as { children: ReactNode }).children}</MenuItem>
+                )
             }
             return <></>
         })
@@ -531,6 +536,8 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
     return <>{p}</>
 }
 
+import * as Ajv from 'ajv'
+
 export function PageForm<T extends object>(props: {
     schema?: JSONSchema6
     children?: ReactNode
@@ -544,7 +551,7 @@ export function PageForm<T extends object>(props: {
     const { schema, defaultValue } = props
     const form = useForm<T>({
         defaultValues: defaultValue ?? ({} as DeepPartial<T>),
-        resolver: schema ? ajvResolver(schema, { strict: false } as unknown) : undefined,
+        resolver: schema ? ajvResolver(schema as Ajv.JSONSchemaType<T>, { strict: false } as Ajv.Options) : undefined,
     })
 
     const { handleSubmit, setError: setFieldError } = form
@@ -610,10 +617,10 @@ export function PageForm<T extends object>(props: {
     )
 }
 
-export type FormPageSubmitHandler<T> = (
+export type FormPageSubmitHandler<T extends FieldValues> = (
     data: T,
     setError: (error: string) => void,
-    setFieldError: (fieldName: string, error: ErrorOption) => void
+    setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
 ) => Promise<unknown>
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {

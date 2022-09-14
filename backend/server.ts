@@ -189,12 +189,3 @@ export async function stopServer(): Promise<void> {
         // }
     }
 }
-
-function startTiming() {
-    return process.hrtime()
-}
-
-function endTiming(start: [number, number]) {
-    const diff = process.hrtime(start)
-    return Math.round((diff[0] * 1e9 + diff[1]) / 10000) / 100
-}

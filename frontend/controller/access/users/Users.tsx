@@ -114,7 +114,9 @@ export function AccessTable(props: { url: string }) {
             {
                 icon: MinusCircleIcon,
                 label: t('Remove user'),
-                onClick: () => {},
+                onClick: () => {
+                    // TODO
+                },
             },
         ],
         [t]
