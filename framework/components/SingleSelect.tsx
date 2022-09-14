@@ -1,5 +1,6 @@
 import { FormGroup, Select, SelectOptionObject } from '@patternfly/react-core'
-import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, ReactNode, useCallback, useState } from 'react'
+import { useOpen } from './useOpen'
 
 export function SingleSelect(props: {
     id?: string
@@ -12,23 +13,7 @@ export function SingleSelect(props: {
     setOpen?: (open: boolean) => void
 }) {
     const { onChange } = props
-    const [open, setOpenState] = useState(() => props.open)
-    useEffect(() => {
-        if (props.open !== undefined) {
-            setOpenState(props.open)
-        }
-    }, [props.open, setOpenState])
-
-    const setOpen = useCallback(
-        (open: boolean) => {
-            props.setOpen ? props.setOpen(open) : setOpenState(open)
-        },
-        [props]
-    )
-
-    const onToggle = useCallback(() => {
-        setOpen(!open)
-    }, [open, setOpen])
+    const [open, setOpen, onToggle] = useOpen(props)
 
     const onSelect = useCallback(
         (_e, v: string | SelectOptionObject) => {
