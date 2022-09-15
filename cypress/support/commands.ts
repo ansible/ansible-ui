@@ -28,6 +28,8 @@
 //
 
 import '@cypress/code-coverage/support'
+import { Team } from '../../frontend/controller/access/teams/Team'
+import { ItemsResponse } from '../../frontend/Data'
 
 declare global {
     namespace Cypress {
@@ -37,6 +39,24 @@ declare global {
     }
 }
 
+function handleControllerCollection(fixture: string) {
+    cy.fixture(fixture).then((json: string) => {
+        const i: ItemsResponse<Team> = (typeof json === 'string' ? JSON.parse(json) : json) as ItemsResponse<Team>
+        const teams: Team[] = i.results
+        cy.intercept('GET', '/api/v2/teams/?*', (req) => req.reply(200, teams))
+        cy.intercept('DELETE', '/api/v2/teams/*/', (req) => {
+            // const parts = req.url.split('/')
+            const teamIndex = teams.findIndex((team) => team.id === 1)
+            if (teamIndex === -1) {
+                req.reply(404)
+                return
+            }
+            teams.splice(teamIndex, 1)
+            req.reply(200)
+        })
+    })
+}
+
 before(() => {
     window.localStorage.setItem('access', 'true')
 
@@ -44,7 +64,7 @@ before(() => {
         cy.intercept('GET', '/api/login/', { statusCode: 200 })
         cy.intercept('POST', '/api/login/', { statusCode: 200 })
         cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
-        cy.fixture('teams.json').then((json: string) => cy.intercept('GET', '/api/v2/teams/?*', (req) => req.reply(200, json)))
+        handleControllerCollection('teams.json')
     }
 
     cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
