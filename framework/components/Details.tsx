@@ -119,6 +119,7 @@ export function DetailsList(props: { children?: ReactNode }) {
     const settings = useSettings()
     const orientation = settings.formLayout
     const columns = settings.formColumns
+    const isCompact = false
     return (
         <DescriptionList
             orientation={{ sm: orientation, md: orientation, lg: orientation, xl: orientation, '2xl': orientation }}
@@ -134,7 +135,8 @@ export function DetailsList(props: { children?: ReactNode }) {
                       }
                     : undefined
             }
-            style={{ maxWidth: 1200 }}
+            style={{ maxWidth: 1200, padding: isCompact ? undefined : 8 }}
+            isCompact={isCompact}
         >
             {props.children}
         </DescriptionList>

@@ -20,10 +20,11 @@ export enum RouteE {
     OrganizationDetails = '/organizations/details/:id',
     CreateOrganization = '/organizations/create',
     EditOrganization = '/organizations/edit/:id',
+
     Users = '/users',
-    UserDetails = '/users/:id/details',
+    UserDetails = '/users/details/:id',
     CreateUser = '/users/create',
-    EditUser = '/users/:id/edit',
+    EditUser = '/users/edit/:id',
 
     Teams = '/teams',
     TeamDetails = '/teams/details/:id',

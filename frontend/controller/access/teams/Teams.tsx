@@ -52,24 +52,10 @@ export function Teams(props: { url: string }) {
     const history = useHistory()
 
     // Toolbar Filters
-    const nameToolbarFilter = useNameToolbarFilter()
-    const organizationToolbarFilter = useOrganizationToolbarFilter()
-    const createdByToolbarFilter = useCreatedByToolbarFilter()
-    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
-    const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-    )
+    const toolbarFilters = useTeamsFilters()
 
     // Table Columns
-    const nameColumn = useNameColumn({ url: RouteE.TeamDetails })
-    const organizationColumn = useOrganizationNameColumn()
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
-    const tableColumns = useMemo<ITableColumn<Team>[]>(
-        () => [nameColumn, organizationColumn, createdColumn, modifiedColumn],
-        [createdColumn, modifiedColumn, nameColumn, organizationColumn]
-    )
+    const tableColumns = useTeamsColumns()
 
     const view = useControllerView<Team>(props.url, getItemKey, toolbarFilters, tableColumns)
 
@@ -182,4 +168,28 @@ export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): I
 export function useDeleteTeamRowAction(callback: () => void) {
     const deleteTeams = useDeleteTeams(callback)
     return useDeleteItemAction((item: Team) => deleteTeams([item]))
+}
+
+export function useTeamsFilters() {
+    const nameToolbarFilter = useNameToolbarFilter()
+    const organizationToolbarFilter = useOrganizationToolbarFilter()
+    const createdByToolbarFilter = useCreatedByToolbarFilter()
+    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+    const toolbarFilters = useMemo<IToolbarFilter[]>(
+        () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
+        [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+    )
+    return toolbarFilters
+}
+
+export function useTeamsColumns(onClick?: (team: Team) => void) {
+    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.TeamDetails })
+    const organizationColumn = useOrganizationNameColumn()
+    const createdColumn = useCreatedColumn()
+    const modifiedColumn = useModifiedColumn()
+    const tableColumns = useMemo<ITableColumn<Team>[]>(
+        () => [nameColumn, organizationColumn, createdColumn, modifiedColumn],
+        [createdColumn, modifiedColumn, nameColumn, organizationColumn]
+    )
+    return tableColumns
 }

@@ -16,44 +16,6 @@ import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
 
-export function useOrganizationsFilters() {
-    const nameToolbarFilter = useNameToolbarFilter()
-    const descriptionToolbarFilter = useDescriptionToolbarFilter()
-    const createdByToolbarFilter = useCreatedByToolbarFilter()
-    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
-    const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-    )
-    return toolbarFilters
-}
-
-export function useOrganizationsColumns(onClick?: (organization: Organization) => void) {
-    const { t } = useTranslation()
-    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.OrganizationDetails })
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
-    const tableColumns = useMemo<ITableColumn<Organization>[]>(
-        () => [
-            nameColumn,
-            {
-                header: t('Members'),
-                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.users.toString()} />,
-                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.users, r.summary_fields.related_field_counts.users),
-            },
-            {
-                header: t('Teams'),
-                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.teams.toString()} />,
-                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.teams, r.summary_fields.related_field_counts.teams),
-            },
-            createdColumn,
-            modifiedColumn,
-        ],
-        [createdColumn, modifiedColumn, nameColumn, t]
-    )
-    return tableColumns
-}
-
 export function Organizations() {
     const { t } = useTranslation()
 
@@ -100,4 +62,42 @@ export function Organizations() {
             {...view}
         />
     )
+}
+
+export function useOrganizationsFilters() {
+    const nameToolbarFilter = useNameToolbarFilter()
+    const descriptionToolbarFilter = useDescriptionToolbarFilter()
+    const createdByToolbarFilter = useCreatedByToolbarFilter()
+    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+    const toolbarFilters = useMemo<IToolbarFilter[]>(
+        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
+        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+    )
+    return toolbarFilters
+}
+
+export function useOrganizationsColumns(onClick?: (organization: Organization) => void) {
+    const { t } = useTranslation()
+    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.OrganizationDetails })
+    const createdColumn = useCreatedColumn()
+    const modifiedColumn = useModifiedColumn()
+    const tableColumns = useMemo<ITableColumn<Organization>[]>(
+        () => [
+            nameColumn,
+            {
+                header: t('Members'),
+                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.users.toString()} />,
+                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.users, r.summary_fields.related_field_counts.users),
+            },
+            {
+                header: t('Teams'),
+                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.teams.toString()} />,
+                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.teams, r.summary_fields.related_field_counts.teams),
+            },
+            createdColumn,
+            modifiedColumn,
+        ],
+        [createdColumn, modifiedColumn, nameColumn, t]
+    )
+    return tableColumns
 }
