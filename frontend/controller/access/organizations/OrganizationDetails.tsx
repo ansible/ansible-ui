@@ -99,6 +99,7 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                 <PageSection variant="light">
                     <DetailsList>
                         <Detail label={t('Name')}>{organization.name}</Detail>
+                        <Detail label={t('Description')}>{organization.description}</Detail>
                         <Detail label={t('Created')}>
                             <SinceCell value={organization.created} />
                         </Detail>

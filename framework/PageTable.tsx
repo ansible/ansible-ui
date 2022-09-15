@@ -1,5 +1,4 @@
 import {
-    Bullseye,
     Button,
     ClipboardCopy,
     EmptyState,
@@ -173,36 +172,32 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     if (error) {
         return (
-            <Bullseye>
-                <EmptyState variant={EmptyStateVariant.small}>
-                    <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
-                    <Title headingLevel="h2" size="lg">
-                        {/* Unable to connect */}
-                        {props.errorStateTitle}
-                    </Title>
-                    {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
-                    <EmptyStateBody>{error.message}</EmptyStateBody>
-                </EmptyState>
-            </Bullseye>
+            <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 64 }}>
+                <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
+                <Title headingLevel="h2" size="lg">
+                    {/* Unable to connect */}
+                    {props.errorStateTitle}
+                </Title>
+                {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
+                <EmptyStateBody>{error.message}</EmptyStateBody>
+            </EmptyState>
         )
     }
 
     if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
         return (
-            <Bullseye>
-                <EmptyState variant={EmptyStateVariant.large}>
-                    <EmptyStateIcon icon={PlusCircleIcon} />
-                    <Title headingLevel="h4" size="lg">
-                        {props.emptyStateTitle}
-                    </Title>
-                    {props.emptyStateDescription && <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>}
-                    {props.emptyStateButtonClick && (
-                        <Button variant="primary" onClick={props.emptyStateButtonClick}>
-                            {props.emptyStateButtonText}
-                        </Button>
-                    )}
-                </EmptyState>
-            </Bullseye>
+            <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 64 }}>
+                <EmptyStateIcon icon={PlusCircleIcon} />
+                <Title headingLevel="h4" size="lg">
+                    {props.emptyStateTitle}
+                </Title>
+                {props.emptyStateDescription && <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>}
+                {props.emptyStateButtonClick && (
+                    <Button variant="primary" onClick={props.emptyStateButtonClick}>
+                        {props.emptyStateButtonText}
+                    </Button>
+                )}
+            </EmptyState>
         )
     }
 
@@ -346,7 +341,7 @@ function TableHead<T extends object>(props: {
                             <Th
                                 modifier="fitContent"
                                 key={column.header}
-                                style={{ minWidth: column.minWidth }}
+                                style={{ minWidth: column.minWidth, maxWidth: column.maxWidth }}
                                 sort={getColumnSort(index, column)}
                             >
                                 {column.header}
@@ -394,6 +389,7 @@ function TableRow<T extends object>(props: {
             className={isItemSelected ? 'selected' : undefined}
             // style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}
             isRowSelected={isItemSelected}
+            style={{ boxShadow: 'unset' }}
         >
             {showSelect && (
                 <Th
@@ -522,6 +518,7 @@ export interface ITableColumn<T extends object> {
     header: string
     cell: CellFn<T>
     minWidth?: number
+    maxWidth?: number
     enabled?: boolean
 
     sort?: string
@@ -740,7 +737,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
 
                 {/* Pagination */}
-                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', lg: 'visible' }}>
+                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', xl: 'visible' }}>
                     <Pagination
                         variant={PaginationVariant.top}
                         isCompact
@@ -850,14 +847,41 @@ export function TextCell(props: {
             )}
             {props.to ? (
                 <SplitItem>
-                    <Link to={props.to}>{props.text}</Link>
+                    {/* <Link to={props.to}>
+                        <Truncate position="middle" content={props.text ?? ''} />
+                    </Link> */}
+                    <Tooltip content={props.text ?? ''}>
+                        <div
+                            style={{
+                                maxWidth: 300,
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            <Link to={props.to}>{props.text ?? ''}</Link>
+                        </div>
+                    </Tooltip>
                 </SplitItem>
             ) : props.onClick !== undefined ? (
                 <SplitItem onClick={props.onClick}>
                     <Button variant="link">{props.text}</Button>
                 </SplitItem>
             ) : (
-                <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>{props.text}</SplitItem>
+                <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>
+                    <Tooltip content={props.text ?? ''}>
+                        <div
+                            style={{
+                                maxWidth: 300,
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            {props.text ?? ''}
+                        </div>
+                    </Tooltip>
+                </SplitItem>
             )}
         </Split>
     )

@@ -1,58 +1,72 @@
-import { ButtonVariant, Chip, ChipGroup } from '@patternfly/react-core'
-import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons'
+import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
+import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import {
     IItemAction,
     ITableColumn,
     IToolbarFilter,
     ITypedAction,
     PageTable,
+    SinceCell,
     TablePage,
     TextCell,
     TypedActionType,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import {
     useEmailToolbarFilter,
     useFirstNameToolbarFilter,
     useLastNameToolbarFilter,
     useUsernameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
 import { getItemKey } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { User } from './User'
 
-export default function Users() {
+export function Users() {
     const { t } = useTranslation()
+    const history = useHistory()
 
-    // Toolbar Filters
     const toolbarFilters = useUsersFilters()
 
-    // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.CreateUser)
-    const deleteToolbarAction = useDeleteToolbarAction(() => {
-        // TODO
-    })
     const toolbarActions = useMemo<ITypedAction<User>[]>(
-        () => [createToolbarAction, deleteToolbarAction],
-        [createToolbarAction, deleteToolbarAction]
+        () => [
+            {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Create user'),
+                onClick: () => history.push(RouteE.CreateUser),
+            },
+            {
+                type: TypedActionType.bulk,
+                icon: TrashIcon,
+                label: t('Delete selected users'),
+                onClick: () => alert('TODO'),
+            },
+        ],
+        [history, t]
     )
 
-    // Table Columns
     const tableColumns = useUsersColumns()
 
-    // Row Actions
-    const editItemAction = useEditItemAction(() => {
-        // TODO
-    })
-    const deleteItemAction = useDeleteItemAction(() => {
-        // TODO
-    })
-    const rowActions = useMemo<IItemAction<User>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+    const rowActions = useMemo<IItemAction<User>[]>(
+        () => [
+            {
+                icon: EditIcon,
+                label: t('Edit user'),
+                onClick: () => alert('TODO'),
+            },
+            {
+                icon: TrashIcon,
+                label: t('Delete user'),
+                onClick: () => alert('TODO'),
+            },
+        ],
+        [t]
+    )
 
     const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)
 
@@ -69,7 +83,7 @@ export default function Users() {
             emptyStateTitle={t('No users yet')}
             emptyStateDescription={t('To get started, create a user.')}
             emptyStateButtonText={t('Create user')}
-            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
             {...view}
         />
     )
@@ -114,9 +128,7 @@ export function AccessTable(props: { url: string }) {
             {
                 icon: MinusCircleIcon,
                 label: t('Remove user'),
-                onClick: () => {
-                    // TODO
-                },
+                onClick: () => alert('TODO'),
             },
         ],
         [t]
@@ -141,12 +153,12 @@ export function AccessTable(props: { url: string }) {
 }
 
 export function useUsersFilters() {
-    const emailToolbarFilter = useEmailToolbarFilter()
     const usernameToolbarFilter = useUsernameToolbarFilter()
     const firstnameByToolbarFilter = useFirstNameToolbarFilter()
     const lastnameToolbarFilter = useLastNameToolbarFilter()
+    const emailToolbarFilter = useEmailToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter],
+        () => [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, emailToolbarFilter],
         [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter]
     )
     return toolbarFilters
@@ -154,23 +166,21 @@ export function useUsersFilters() {
 
 export function useUsersColumns() {
     const { t } = useTranslation()
-
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
     const tableColumns = useMemo<ITableColumn<User>[]>(
         () => [
             {
                 header: t('Username'),
                 cell: (user) => <TextCell text={user.username} to={RouteE.UserDetails.replace(':id', user.id.toString())} />,
                 sort: 'username',
+                maxWidth: 200,
             },
             {
-                header: t('First Name'),
+                header: t('First name'),
                 cell: (user) => <TextCell text={user.first_name} />,
                 sort: 'first_name',
             },
             {
-                header: t('Last Name'),
+                header: t('Last name'),
                 cell: (user) => <TextCell text={user.last_name} />,
                 sort: 'last_name',
             },
@@ -180,18 +190,35 @@ export function useUsersColumns() {
                 sort: 'email',
             },
             {
-                header: t('Roles'),
-                cell: (user) => (
-                    <ChipGroup>
-                        {user.is_superuser && <Chip isReadOnly>System Administraitor</Chip>}
-                        {!user.is_superuser && <Chip isReadOnly>Normal User</Chip>}
-                    </ChipGroup>
-                ),
+                header: t('User type'),
+                cell: (user) => <UserType user={user} />,
             },
-            createdColumn,
-            modifiedColumn,
+            {
+                header: t('Created'),
+                cell: (item) => <SinceCell value={item.created} />,
+            },
+            {
+                header: t('Last modified'),
+                cell: (item) => <SinceCell value={item.modified} />,
+            },
         ],
-        [createdColumn, modifiedColumn, t]
+        [t]
     )
     return tableColumns
+}
+
+export function UserType(props: { user: User }) {
+    const { user } = props
+    if (user.is_superuser) return <Text>System Administraitor</Text>
+    return <Text>Normal User</Text>
+}
+
+export function UserRoles(props: { user: User }) {
+    const { user } = props
+    return (
+        <ChipGroup>
+            {user.is_superuser && <Chip isReadOnly>System Administraitor</Chip>}
+            {!user.is_superuser && <Chip isReadOnly>Normal User</Chip>}
+        </ChipGroup>
+    )
 }

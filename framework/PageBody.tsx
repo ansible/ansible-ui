@@ -4,7 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import { useSettings } from './Settings'
 
 export function PageBody(props: { children: ReactNode }) {
-    const lg = useWindowSizeOrLarger(WindowSize.xl)
+    const lg = useWindowSizeOrLarger(WindowSize.lg)
     const settings = useSettings()
     return (
         <ErrorBoundary>
