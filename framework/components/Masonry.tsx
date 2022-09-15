@@ -41,7 +41,7 @@ export function Masonry(props: { minSize: number; maxColumns?: number; children?
 
     const itemColumns = useMemo(() => {
         const itemColumns: ReactNode[][] = new Array(realColumns).fill(0).map(() => [])
-        const columnHeights: number[] = new Array(realColumns).fill(0)
+        const columnHeights: number[] = new Array(realColumns).fill(0) as number[]
         Children.forEach(props.children, (child, index) => {
             const smallest = Math.min(...columnHeights)
             const columnIndex = columnHeights.findIndex((column) => column === smallest)

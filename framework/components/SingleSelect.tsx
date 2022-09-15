@@ -44,21 +44,26 @@ export function SingleSelect2(props: {
     onChange: (value: string) => void
     label?: string
 }) {
+    const { onChange } = props
     const { id } = props
     const [open, setOpen] = useState(false)
     const onToggle = useCallback(() => {
         setOpen((open) => !open)
     }, [])
     const onSelect = useCallback(
-        (_e, v) => {
-            props.onChange(v)
+        (_e, v: string | SelectOptionObject) => {
+            if (typeof v === 'string') {
+                onChange(v)
+            } else {
+                onChange(v.toString())
+            }
             setOpen(false)
         },
-        [props]
+        [onChange]
     )
     return (
         <Select id={id} selections={props.value} isOpen={open} onToggle={onToggle} onSelect={onSelect}>
-            {props.children as any}
+            {props.children as React.ReactElement[]}
         </Select>
     )
 }

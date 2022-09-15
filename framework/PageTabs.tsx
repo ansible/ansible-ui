@@ -8,8 +8,8 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
     const tabs = children.map((child, index) => {
         if (isValidElement(child)) {
             if (child.type === PageTab) {
-                const title = child.props.title
-                return <Tab title={title ? title : <Skeleton width="60px" />} eventKey={index} />
+                const title = (child.props as { title: string }).title
+                return <Tab key={title ?? index} title={title ? title : <Skeleton width="60px" />} eventKey={index} />
             }
         }
         return child

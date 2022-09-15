@@ -1,5 +1,5 @@
-import { Dropdown, DropdownPosition, DropdownToggle, KebabToggle } from '@patternfly/react-core'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { Dropdown, KebabToggle } from '@patternfly/react-core'
+import { ReactNode, useCallback, useState } from 'react'
 
 export function DropdownControlled(props: { items: ReactNode[] }) {
     const [open, setOpen] = useState(false)
