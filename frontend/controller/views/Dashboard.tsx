@@ -1,4 +1,5 @@
 import {
+    Bullseye,
     Button,
     Card,
     CardBody,
@@ -11,11 +12,13 @@ import {
     ProgressStep,
     ProgressStepper,
     Split,
+    SplitItem,
     Stack,
+    StackItem,
     Text,
 } from '@patternfly/react-core'
 import { Fragment } from 'react'
-import { PageHeader } from '../../../framework'
+import { Help, PageHeader } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 
 export default function Dashboard() {
@@ -28,8 +31,8 @@ export default function Dashboard() {
             />
             <Scrollable>
                 <PageSection>
-                    <Grid hasGutter>
-                        <GridItem>
+                    <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>
+                        <GridItem span={12}>
                             <Card isRounded>
                                 <CardTitle>Getting Started</CardTitle>
                                 <CardBody>
@@ -72,18 +75,28 @@ export default function Dashboard() {
                                 </CardBody>
                             </Card>
                         </GridItem>
-                        <GridItem>
+                        <GridItem span={12}>
                             <Card isRounded>
-                                <CardTitle>Execution Environments</CardTitle>
-                                <CardBody>
-                                    <Text>
-                                        The ability to build and deploy Python virtual environments for automation has been replaced by
+                                <CardTitle>
+                                    <Split>
+                                        <SplitItem>Execution Environments</SplitItem>
+                                        <SplitItem isFilled>
+                                            <Help
+                                                title="Execution Environments"
+                                                help="The ability to build and deploy Python virtual environments for automation has been replaced by
                                         Ansible execution environments. Unlike legacy virtual environments, execution environments are
                                         container images that make it possible to incorporate system-level dependencies and collection-based
                                         content. Each execution environment allows you to have a customized image to run jobs, and each of
-                                        them contain only what you need when running the job, nothing more.
-                                    </Text>
-                                </CardBody>
+                                        them contain only what you need when running the job, nothing more."
+                                            />
+                                        </SplitItem>
+                                        <SplitItem>
+                                            <Button variant="link" isInline>
+                                                Browse all available execution environemnts
+                                            </Button>
+                                        </SplitItem>
+                                    </Split>
+                                </CardTitle>
                                 <CardBody>
                                     <Stack hasGutter>
                                         <Text>Sync from the available execution environments below or create your own.</Text>
@@ -92,7 +105,20 @@ export default function Dashboard() {
                                         </Split>
                                         <Gallery hasGutter>
                                             <Card isFlat>
-                                                <CardTitle>Execution environment 1</CardTitle>
+                                                <CardTitle>
+                                                    <Stack>
+                                                        <StackItem>
+                                                            <Button variant="link" isInline>
+                                                                Execution environment 1
+                                                            </Button>
+                                                        </StackItem>
+                                                        <StackItem>
+                                                            <Text component="small" style={{ fontWeight: 'normal', opacity: 0.7 }}>
+                                                                Provided by Red Hat
+                                                            </Text>
+                                                        </StackItem>
+                                                    </Stack>
+                                                </CardTitle>
                                                 <CardBody>
                                                     <Stack hasGutter>
                                                         <Text>This is the description.</Text>
@@ -103,32 +129,26 @@ export default function Dashboard() {
                                                 </CardFooter>
                                             </Card>
                                             <Card isFlat>
-                                                <CardTitle>Execution environment 2</CardTitle>
-                                                <CardBody>
-                                                    <Stack hasGutter>
-                                                        <Text>This is the description. This ia a very long long long description.</Text>
+                                                <CardTitle>
+                                                    <Stack>
+                                                        <StackItem>
+                                                            <Button variant="link" isInline>
+                                                                Execution environment 2
+                                                            </Button>
+                                                        </StackItem>
+                                                        <StackItem>
+                                                            <Text component="small" style={{ fontWeight: 'normal', opacity: 0.7 }}>
+                                                                Provided by Red Hat
+                                                            </Text>
+                                                        </StackItem>
                                                     </Stack>
-                                                </CardBody>
-                                                <CardFooter>
-                                                    <Button variant="secondary">Sync</Button>
-                                                </CardFooter>
-                                            </Card>
-                                            <Card isFlat>
-                                                <CardTitle>Execution environment 3</CardTitle>
+                                                </CardTitle>
                                                 <CardBody>
                                                     <Stack hasGutter>
-                                                        <Text>This is the description.</Text>
-                                                    </Stack>
-                                                </CardBody>
-                                                <CardFooter>
-                                                    <Button variant="secondary">Sync</Button>
-                                                </CardFooter>
-                                            </Card>
-                                            <Card isFlat>
-                                                <CardTitle>Execution environment 4</CardTitle>
-                                                <CardBody>
-                                                    <Stack hasGutter>
-                                                        <Text>This is the description.</Text>
+                                                        <Text>
+                                                            This is the description. This ia a very long long long description. This ia a
+                                                            very long long long description.
+                                                        </Text>
                                                     </Stack>
                                                 </CardBody>
                                                 <CardFooter>
@@ -138,6 +158,78 @@ export default function Dashboard() {
                                         </Gallery>
                                     </Stack>
                                 </CardBody>
+                            </Card>
+                        </GridItem>
+                        <GridItem>
+                            <Card>
+                                <CardTitle>
+                                    <Split>
+                                        <SplitItem>Inventory</SplitItem>
+                                        <SplitItem isFilled>
+                                            <Help help="TODO" />
+                                        </SplitItem>
+                                        <SplitItem>
+                                            <Button variant="link" isInline>
+                                                Go to Inventory List
+                                            </Button>
+                                        </SplitItem>
+                                    </Split>
+                                </CardTitle>
+                                <CardBody>&nbsp;</CardBody>
+                                <CardFooter>
+                                    <Bullseye>
+                                        <Button>Create inventory</Button>
+                                    </Bullseye>
+                                </CardFooter>
+                            </Card>
+                        </GridItem>
+                        <GridItem>
+                            <Card>
+                                <CardTitle>
+                                    <Split>
+                                        <SplitItem>Topology</SplitItem>
+                                        <SplitItem isFilled>
+                                            <Help help="TODO" />
+                                        </SplitItem>
+                                        <SplitItem>
+                                            <Button variant="link" isInline>
+                                                Go to Topology View
+                                            </Button>
+                                        </SplitItem>
+                                    </Split>
+                                </CardTitle>
+                                <CardBody>&nbsp;</CardBody>
+                            </Card>
+                        </GridItem>
+                        <GridItem>
+                            <Card>
+                                <CardTitle>
+                                    <Split>
+                                        <SplitItem>Job Status</SplitItem>
+                                        <SplitItem isFilled>
+                                            <Help help="TODO" />
+                                        </SplitItem>
+                                        <SplitItem>
+                                            <Button variant="link" isInline>
+                                                Go to Jobs List
+                                            </Button>
+                                        </SplitItem>
+                                    </Split>
+                                </CardTitle>
+                                <CardBody>&nbsp;</CardBody>
+                            </Card>
+                        </GridItem>
+                        <GridItem>
+                            <Card>
+                                <CardTitle>
+                                    <Split>
+                                        <SplitItem>Top Job Templates</SplitItem>
+                                        <SplitItem isFilled>
+                                            <Help help="TODO" />
+                                        </SplitItem>
+                                    </Split>
+                                </CardTitle>
+                                <CardBody>&nbsp;</CardBody>
                             </Card>
                         </GridItem>
                     </Grid>

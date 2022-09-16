@@ -566,6 +566,7 @@ export function PagePagination(props: PagePaginationProps) {
                 paddingTop: sm ? 6 : undefined,
                 paddingBottom: sm ? 6 : undefined,
             }}
+            // titles={{ items: 'users' }}
         />
     )
 }
