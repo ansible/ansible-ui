@@ -18,3 +18,4 @@ jobs:
                   github-token: ${{ secrets.GH_TOKEN }}
                   filter-changed-files: true
                   delete-old-comments: true
+            - run: npm run coverage:check
