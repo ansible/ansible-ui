@@ -212,7 +212,7 @@ function UserRoles(props: { user: User }) {
         ],
         [t]
     )
-    const view = useControllerView<Role>(`/api/v2/users/${user.id}/roles/`, getItemKey, toolbarFilters, toolbarActions)
+    const view = useControllerView<Role>(`/api/v2/users/${user.id}/roles/`, getItemKey, toolbarFilters, tableColumns)
     return (
         <PageTable<Role>
             toolbarFilters={toolbarFilters}

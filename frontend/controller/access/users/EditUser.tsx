@@ -1,13 +1,12 @@
 import { Static, Type } from '@sinclair/typebox'
-import { HTTPError } from 'ky'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data'
+import { requestGet, requestPatch } from '../../../Data'
 import { RouteE } from '../../../route'
-import { Organization } from '../organizations/Organization'
+import { getControllerError } from '../../useControllerView'
 import { User } from './User'
 
 export function EditUser() {
@@ -82,66 +81,24 @@ export function EditUser() {
     })
     type EditUser = Static<typeof EditUserSchema>
 
-    const CreateUserSchema = Type.Intersect([
-        Type.Omit(EditUserSchema, ['password', 'confirmPassword']),
-        Type.Object({
-            password: Type.String({
-                title: t('Password'),
-                placeholder: t('Enter password'),
-                variant: 'secret',
-            }),
-            confirmPassword: Type.String({
-                title: t('Confirm password'),
-                placeholder: t('Confirm password'),
-                variant: 'secret',
-            }),
-        }),
-    ])
-
-    // const { cache } = useSWRConfig()
-
-    const onSubmit: FormPageSubmitHandler<EditUser> = async (editedUser, setError, setFieldError) => {
+    const onSubmit: FormPageSubmitHandler<EditUser> = async (userData, setError) => {
         try {
-            if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-            const result = await requestGet<ItemsResponse<Organization>>(
-                `/api/v2/organizations/?name=${editedUser.summary_fields.organization.name}`
-            )
-            if (result.results.length === 0) {
-                setFieldError('summary_fields.organization.name', { message: t('Organization not found') })
-                return false
+            if (user) {
+                user.username = userData.username
+                user.first_name = userData.firstName
+                user.last_name = userData.lastName
+                user.email = userData.email
+                user.is_superuser = userData.userType === t('System administrator')
+                user.is_system_auditor = userData.userType === t('System auditor')
+                const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, userData)
+                history.push(RouteE.UserDetails.replace(':id', newUser.id.toString()))
             }
-            const organization = result.results[0]
-            editedUser.organization = organization.id
-            let user: User
-            if (Number.isInteger(id)) {
-                user = await requestPatch<User>(`/api/v2/users/${id}/`, editedUser)
-            } else {
-                user = await requestPost<User>('/api/v2/users/', editedUser)
-            }
-            // ;(cache as unknown as { clear: () => void }).clear()
-            history.push(RouteE.UserDetails.replace(':id', user.id.toString()))
         } catch (err) {
-            if (err instanceof HTTPError) {
-                try {
-                    const response = (await err.response.json()) as { __all__?: string[] }
-                    if ('__all__' in response && Array.isArray(response.__all__)) {
-                        setError(JSON.stringify(response.__all__[0]))
-                    } else {
-                        setError(JSON.stringify(response))
-                    }
-                } catch {
-                    setError(err.message)
-                }
-            } else if (err instanceof Error) {
-                setError(err.message)
-            } else {
-                setError('unknown error')
-            }
+            setError(await getControllerError(err))
         }
     }
-    const onCancel = () => {
-        history.goBack()
-    }
+
+    const onCancel = () => history.goBack()
 
     if (!user) {
         return (
@@ -155,6 +112,7 @@ export function EditUser() {
             lastName: user.last_name,
             firstName: user.first_name,
             email: user.email,
+            userType: user.is_superuser ? t('System administraitor') : user.is_system_auditor ? t('System auditor') : t('Normal user'),
         }
         return (
             <>
