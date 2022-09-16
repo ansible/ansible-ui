@@ -1,11 +1,11 @@
 import { Static, Type } from '@sinclair/typebox'
-import { HTTPError } from 'ky'
 import { useHistory } from 'react-router-dom'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
+import { getControllerError } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
 import { User } from './User'
 
@@ -104,27 +104,11 @@ export function CreateUser() {
             const user = await requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, newUser)
             history.push(RouteE.UserDetails.replace(':id', user.id.toString()))
         } catch (err) {
-            if (err instanceof HTTPError) {
-                try {
-                    const response = (await err.response.json()) as { __all__?: string[] }
-                    if ('__all__' in response && Array.isArray(response.__all__)) {
-                        setError(JSON.stringify(response.__all__[0]))
-                    } else {
-                        setError(JSON.stringify(response))
-                    }
-                } catch {
-                    setError(err.message)
-                }
-            } else if (err instanceof Error) {
-                setError(err.message)
-            } else {
-                setError('unknown error')
-            }
+            setError(await getControllerError(err))
         }
     }
-    const onCancel = () => {
-        history.goBack()
-    }
+
+    const onCancel = () => history.goBack()
 
     return (
         <>
