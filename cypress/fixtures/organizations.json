@@ -9,7 +9,7 @@
             "url": "/api/v2/organizations/1/",
             "related": {
                 "created_by": "/api/v2/users/1/",
-                "modified_by": "/api/v2/users/4/",
+                "modified_by": "/api/v2/users/1/",
                 "execution_environments": "/api/v2/organizations/1/execution_environments/",
                 "projects": "/api/v2/organizations/1/projects/",
                 "inventories": "/api/v2/organizations/1/inventories/",

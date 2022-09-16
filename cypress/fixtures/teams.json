@@ -2,19 +2,19 @@
     "count": 1,
     "results": [
         {
-            "id": 2,
+            "id": 1,
             "type": "team",
-            "url": "/api/v2/teams/2/",
+            "url": "/api/v2/teams/1/",
             "related": {
                 "created_by": "/api/v2/users/1/",
                 "modified_by": "/api/v2/users/1/",
-                "projects": "/api/v2/teams/2/projects/",
-                "users": "/api/v2/teams/2/users/",
-                "credentials": "/api/v2/teams/2/credentials/",
-                "roles": "/api/v2/teams/2/roles/",
-                "object_roles": "/api/v2/teams/2/object_roles/",
-                "activity_stream": "/api/v2/teams/2/activity_stream/",
-                "access_list": "/api/v2/teams/2/access_list/",
+                "projects": "/api/v2/teams/1/projects/",
+                "users": "/api/v2/teams/1/users/",
+                "credentials": "/api/v2/teams/1/credentials/",
+                "roles": "/api/v2/teams/1/roles/",
+                "object_roles": "/api/v2/teams/1/object_roles/",
+                "activity_stream": "/api/v2/teams/1/activity_stream/",
+                "access_list": "/api/v2/teams/1/access_list/",
                 "organization": "/api/v2/organizations/1/"
             },
             "summary_fields": {
@@ -30,7 +30,7 @@
             },
             "created": "2022-09-09T17:08:49.621169Z",
             "modified": "2022-09-09T17:08:49.621193Z",
-            "name": "Team 002",
+            "name": "Team 001",
             "description": "",
             "organization": 1
         }
