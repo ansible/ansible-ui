@@ -1,8 +1,10 @@
+import { Button, Split } from '@patternfly/react-core'
 import { useMemo } from 'react'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell } from '../../../../framework'
+import { useHistory } from 'react-router-dom'
+import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, SinceCell, TablePage, TextCell } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareNumbers } from '../../../../framework/utils/compare'
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import { useNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,
@@ -79,8 +81,7 @@ export function useOrganizationsFilters() {
 export function useOrganizationsColumns(onClick?: (organization: Organization) => void) {
     const { t } = useTranslation()
     const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.OrganizationDetails })
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
+    const history = useHistory()
     const tableColumns = useMemo<ITableColumn<Organization>[]>(
         () => [
             nameColumn,
@@ -96,10 +97,50 @@ export function useOrganizationsColumns(onClick?: (organization: Organization) =
                 sortFn: (l, r) =>
                     compareNumbers(l.summary_fields?.related_field_counts?.teams, r.summary_fields?.related_field_counts?.teams),
             },
-            createdColumn,
-            modifiedColumn,
+            {
+                header: t('Created'),
+                cell: (organization: Organization) => (
+                    <Split>
+                        <SinceCell value={organization.created} /> by&nbsp;
+                        <Button
+                            variant="link"
+                            isInline
+                            onClick={() =>
+                                history.push(
+                                    RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
+                                )
+                            }
+                        >
+                            {organization.summary_fields?.created_by?.username}
+                        </Button>
+                    </Split>
+                ),
+                sort: 'created',
+                defaultSortDirection: 'desc',
+            },
+            {
+                header: t('Modified'),
+                cell: (organization: Organization) => (
+                    <Split>
+                        <SinceCell value={organization.modified} /> by&nbsp;
+                        <Button
+                            variant="link"
+                            isInline
+                            onClick={() =>
+                                history.push(
+                                    RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
+                                )
+                            }
+                        >
+                            {organization.summary_fields?.modified_by?.username}
+                        </Button>
+                    </Split>
+                ),
+                sort: 'modified',
+                defaultSortDirection: 'desc',
+            },
         ],
-        [createdColumn, modifiedColumn, nameColumn, t]
+        [nameColumn, t]
     )
     return tableColumns
 }

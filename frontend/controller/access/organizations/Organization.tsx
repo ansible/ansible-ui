@@ -21,6 +21,22 @@ export const OrganizationType = Type.Intersect([
                         teams: Type.Number(),
                     })
                 ),
+                created_by: Type.Optional(
+                    Type.Object({
+                        id: Type.Number(),
+                        username: Type.String(),
+                        first_name: Type.String(),
+                        last_name: Type.String(),
+                    })
+                ),
+                modified_by: Type.Optional(
+                    Type.Object({
+                        id: Type.Number(),
+                        username: Type.String(),
+                        first_name: Type.String(),
+                        last_name: Type.String(),
+                    })
+                ),
             })
         ),
     }),
