@@ -52,7 +52,7 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-    cy.get('button').contains(label).click()
+    cy.get('button:not(:disabled)').contains(label).click()
 })
 
 interface IControllerItem {
@@ -142,14 +142,30 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
         }
     })
     cy.intercept('DELETE', `${baseUrl}/*/`, (req) => {
-        // const parts = req.url.split('/')
-        const teamIndex = items.findIndex((item) => item.id === 1)
-        if (teamIndex === -1) {
-            req.reply(404)
-            return
+        const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
+        const parts = url.split('/')
+        switch (parts.length) {
+            case 2:
+                {
+                    const id = Number(parts[0])
+                    if (Number.isInteger(id)) {
+                        const itemIndex = items.findIndex((item) => item.id === id)
+                        if (itemIndex !== -1) {
+                            const item = items[itemIndex]
+                            req.reply(200, item)
+                            items.splice(itemIndex, 1)
+                        } else {
+                            req.reply(404)
+                        }
+                    } else {
+                        req.reply(500)
+                    }
+                }
+                break
+            default:
+                req.reply(500)
+                break
         }
-        items.splice(teamIndex, 1)
-        req.reply(200)
     })
 }
 
