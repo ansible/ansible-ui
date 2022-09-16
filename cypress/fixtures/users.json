@@ -5,8 +5,8 @@
     "results": [
         {
             "id": 1,
-            "type": "team",
-            "name": "Team 001",
+            "type": "user",
+            "username": "user001",
             "organization": 1
         }
     ]
