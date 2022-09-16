@@ -52,7 +52,7 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-    cy.get('button').contains(label).click()
+    cy.wait(1).get('button:not(:disabled)').contains(label).click()
 })
 
 interface IControllerItem {
@@ -101,9 +101,9 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
     })
     cy.intercept('POST', `${baseUrl}/`, (req) => {
         // const parts = req.url.split('/')
-        const id = 1
+        let id = 1
         while (items.find((item) => item.id === id)) {
-            /**/
+            id++
         }
         const item = req.body as T
         item.id = id
@@ -142,29 +142,51 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
         }
     })
     cy.intercept('DELETE', `${baseUrl}/*/`, (req) => {
-        // const parts = req.url.split('/')
-        const teamIndex = items.findIndex((item) => item.id === 1)
-        if (teamIndex === -1) {
-            req.reply(404)
-            return
+        const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
+        const parts = url.split('/')
+        switch (parts.length) {
+            case 2:
+                {
+                    const id = Number(parts[0])
+                    if (Number.isInteger(id)) {
+                        const itemIndex = items.findIndex((item) => item.id === id)
+                        if (itemIndex !== -1) {
+                            const item = items[itemIndex]
+                            req.reply(200, item)
+                            items.splice(itemIndex, 1)
+                        } else {
+                            req.reply(404)
+                        }
+                    } else {
+                        req.reply(500)
+                    }
+                }
+                break
+            default:
+                req.reply(500)
+                break
         }
-        items.splice(teamIndex, 1)
-        req.reply(200)
     })
 }
 
-const teams: IControllerItem[] = []
 const organizations: IControllerItem[] = []
+const teams: IControllerItem[] = []
+const users: IControllerItem[] = []
 
 before(() => {
+    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+        for (const item of json.results) {
+            organizations.push(item)
+        }
+    })
     cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
             teams.push(item)
         }
     })
-    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+    cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
-            organizations.push(item)
+            users.push(item)
         }
     })
 })
@@ -176,8 +198,10 @@ beforeEach(() => {
         cy.intercept('GET', '/api/login/', { statusCode: 200 })
         cy.intercept('POST', '/api/login/', { statusCode: 200 })
         cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
-        handleControllerCollection('/api/v2/teams', teams)
+        handleControllerCollection('/api/v2/organizations/*/users', users)
         handleControllerCollection('/api/v2/organizations', organizations)
+        handleControllerCollection('/api/v2/teams', teams)
+        handleControllerCollection('/api/v2/users', users)
     }
 
     // cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })

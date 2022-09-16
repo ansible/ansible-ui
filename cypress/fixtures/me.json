@@ -6,33 +6,12 @@
         {
             "id": 4,
             "type": "user",
-            "url": "/api/v2/users/4/",
-            "related": {
-                "teams": "/api/v2/users/4/teams/",
-                "organizations": "/api/v2/users/4/organizations/",
-                "admin_of_organizations": "/api/v2/users/4/admin_of_organizations/",
-                "projects": "/api/v2/users/4/projects/",
-                "credentials": "/api/v2/users/4/credentials/",
-                "roles": "/api/v2/users/4/roles/",
-                "activity_stream": "/api/v2/users/4/activity_stream/",
-                "access_list": "/api/v2/users/4/access_list/",
-                "tokens": "/api/v2/users/4/tokens/",
-                "authorized_tokens": "/api/v2/users/4/authorized_tokens/",
-                "personal_tokens": "/api/v2/users/4/personal_tokens/"
-            },
-            "summary_fields": { "user_capabilities": { "edit": true, "delete": false } },
-            "created": "2022-09-14T16:18:17.678602Z",
-            "modified": "2022-09-14T16:18:23.999930Z",
             "username": "test",
             "first_name": "",
             "last_name": "",
             "email": "test@test.com",
             "is_superuser": true,
-            "is_system_auditor": false,
-            "ldap_dn": "",
-            "last_login": "2022-09-14T16:18:23.999930Z",
-            "external_account": null,
-            "auth": []
+            "is_system_auditor": false
         }
     ]
 }
