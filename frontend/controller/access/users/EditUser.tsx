@@ -32,7 +32,7 @@ export function EditUser() {
         userType: Type.String({
             title: t('User type'),
             placeholder: t('Select user type'),
-            enum: [t('Admin'), t('two'), t('three')],
+            enum: [t('System administrator'), t('System auditor'), t('Normal user')],
         }),
         password: Type.Optional(
             Type.String({
@@ -81,7 +81,7 @@ export function EditUser() {
     })
     type EditUser = Static<typeof EditUserSchema>
 
-    const onSubmit: FormPageSubmitHandler<EditUser> = async (userData, setError) => {
+    const onSubmit: FormPageSubmitHandler<EditUser> = async (userData, setError, setFieldError) => {
         try {
             if (user) {
                 user.username = userData.username
@@ -90,7 +90,14 @@ export function EditUser() {
                 user.email = userData.email
                 user.is_superuser = userData.userType === t('System administrator')
                 user.is_system_auditor = userData.userType === t('System auditor')
-                const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, userData)
+                if (userData.password) {
+                    if (userData.confirmPassword !== userData.password) {
+                        setFieldError('confirmPassword', { message: t('Password does not match.') })
+                        return false
+                    }
+                    user.password = userData.password
+                }
+                const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user)
                 history.push(RouteE.UserDetails.replace(':id', newUser.id.toString()))
             }
         } catch (err) {

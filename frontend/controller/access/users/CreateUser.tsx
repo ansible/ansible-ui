@@ -92,6 +92,10 @@ export function CreateUser() {
                 return false
             }
             const organization = result.results[0]
+            if (userData.confirmPassword !== userData.password) {
+                setFieldError('confirmPassword', { message: t('Password does not match.') })
+                return false
+            }
             const newUser: Partial<User> = {
                 username: userData.username,
                 last_name: userData.lastName,
