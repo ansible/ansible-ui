@@ -169,18 +169,24 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
     })
 }
 
-const teams: IControllerItem[] = []
 const organizations: IControllerItem[] = []
+const teams: IControllerItem[] = []
+const users: IControllerItem[] = []
 
 before(() => {
+    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+        for (const item of json.results) {
+            organizations.push(item)
+        }
+    })
     cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
             teams.push(item)
         }
     })
-    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+    cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
-            organizations.push(item)
+            users.push(item)
         }
     })
 })
@@ -192,8 +198,10 @@ beforeEach(() => {
         cy.intercept('GET', '/api/login/', { statusCode: 200 })
         cy.intercept('POST', '/api/login/', { statusCode: 200 })
         cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
-        handleControllerCollection('/api/v2/teams', teams)
+        handleControllerCollection('/api/v2/organizations/*/users', users)
         handleControllerCollection('/api/v2/organizations', organizations)
+        handleControllerCollection('/api/v2/teams', teams)
+        handleControllerCollection('/api/v2/users', users)
     }
 
     // cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
