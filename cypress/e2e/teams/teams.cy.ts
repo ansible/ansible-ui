@@ -7,14 +7,14 @@ describe('teams', () => {
 
     it('create team', () => {
         cy.clickButton(/^ Create$/)
-        cy.getByLabel(/^Name$/).type('Team 001')
+        cy.getByLabel(/^Name$/).type('Team 002')
         cy.getByLabel(/^Organization/).type('Default')
         cy.clickButton(/^Create$/)
     })
 
     it('created team details', () => {
-        cy.get('.pf-c-title').contains(/^Team 001$/)
-        cy.get('#name').contains(/^Team 001$/)
+        cy.get('.pf-c-title').contains(/^Team 002$/)
+        cy.get('#name').contains(/^Team 002$/)
     })
 
     it('edit team', () => {
@@ -24,8 +24,8 @@ describe('teams', () => {
     })
 
     it('edited team details', () => {
-        cy.get('.pf-c-title').contains(/^Team 001a$/)
-        cy.get('#name').contains(/^Team 001a$/)
+        cy.get('.pf-c-title').contains(/^Team 002a$/)
+        cy.get('#name').contains(/^Team 002a$/)
     })
 
     it('delete teams', () => {
