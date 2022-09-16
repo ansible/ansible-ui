@@ -15,4 +15,6 @@ jobs:
             - run: npm test
             - uses: romeovs/lcov-reporter-action@v0.2.16
               with:
-                  lcov-file: ./coverage/lcov.info
+                  github-token: ${{ secrets.GH_TOKEN }}
+                  filter-changed-files: true
+                  delete-old-comments: true
