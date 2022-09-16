@@ -8,12 +8,16 @@ export const TeamType = Type.Object({
     id: Type.Number(),
     created: Type.String(),
     modified: Type.String(),
-    summary_fields: Type.Object({
-        organization: Type.Object({
-            id: Type.Number(),
-            name: Type.String(),
-        }),
-    }),
+    summary_fields: Type.Optional(
+        Type.Object({
+            organization: Type.Optional(
+                Type.Object({
+                    id: Type.Number(),
+                    name: Type.String(),
+                })
+            ),
+        })
+    ),
 })
 
 export type Team = Static<typeof TeamType>

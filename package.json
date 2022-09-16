@@ -22,8 +22,8 @@
         "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
         "deploy": "scripts/deploy.sh",
         "cypress": "npm run clean && concurrently npm:cypress:frontend npm:cypress:run --prefix-colors cyan,green,blue --kill-others --success first",
-        "cypress:run": "wait-on -d 3000 -i 1000 https-get://localhost:3002 && cypress run --env mock=true --config video=false",
-        "cypress:open": "cypress open --env mock=true",
+        "cypress:run": "wait-on -d 3000 -i 1000 https-get://localhost:3002 && cypress run --env mock=true --config video=false && npx nyc report --check-coverage --lines 80",
+        "cypress:open": "cypress open --env mock=true --e2e --browser chrome",
         "cypress:frontend": "webpack serve --mode development --no-open",
         "coverage": "open coverage/lcov-report/index.html "
     },

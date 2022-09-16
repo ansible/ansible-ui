@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { requestGet, requestPatch } from '../../../Data'
+import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
 import { getControllerError } from '../../useControllerView'
 import { User } from './User'
@@ -16,7 +16,7 @@ export function EditUser() {
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
-    const { data: user } = useSWR<User>(Number.isInteger(id) ? `/api/v2/users/${id.toString()}/` : undefined, requestGet)
+    const { data: user } = useSWR<User>(Number.isInteger(id) ? `/api/v2/users/${id.toString()}/` : undefined, requestGet, swrOptions)
 
     const EditUserSchema = Type.Object({
         username: Type.String({

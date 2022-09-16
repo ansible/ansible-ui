@@ -41,7 +41,7 @@ import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
 // import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
-import { useFetcher } from './Data'
+import { swrOptions, useFetcher } from './Data'
 import AnsiblePng from './icons/ansible.png'
 import SparkleSvg from './icons/sparkle.svg'
 import { RouteE } from './route'
@@ -388,7 +388,7 @@ function AccountDropdown() {
 function AccountDropdownInternal() {
     const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
     const fetcher = useFetcher()
-    const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher)
+    const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
     const history = useHistory()
     const [open, setOpen] = useState(false)
     const onSelect = useCallback(() => {

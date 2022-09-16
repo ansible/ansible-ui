@@ -92,8 +92,8 @@ function TeamDetailsTab(props: { team: Team }) {
                         <Detail label={t('Name')}>{team.name}</Detail>
                         <Detail label={t('Organization')}>
                             <TextCell
-                                text={team.summary_fields.organization.name}
-                                to={RouteE.OrganizationDetails.replace(':id', team.summary_fields.organization.id.toString())}
+                                text={team.summary_fields?.organization?.name}
+                                to={RouteE.OrganizationDetails.replace(':id', (team.summary_fields?.organization?.id ?? '').toString())}
                             />
                         </Detail>
                         <Detail label={t('Created')}>

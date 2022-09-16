@@ -428,7 +428,8 @@ export function FormTextSelect(props: {
     const registration = register(props.name)
     const { fieldState } = useController({ name: props.name })
     const error = fieldState.error
-    const id = props.id ?? props.name
+    let id = props.id ?? props.name
+    id = id.split('.').join('-')
     const [open, setOpen] = useState(false)
     return (
         <Fragment>
@@ -511,7 +512,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                         break
                     case 'textarea':
                         p.push(
-                            <FormTextSelect
+                            <FormTextArea
                                 key={base + propertyName}
                                 name={base + propertyName}
                                 label={title}

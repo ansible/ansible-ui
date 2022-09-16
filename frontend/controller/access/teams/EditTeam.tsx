@@ -1,10 +1,10 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useHistory, useParams } from 'react-router-dom'
-import useSWR from 'swr'
+import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../common/FormPage'
-import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data'
+import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
 import { getControllerError } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
@@ -17,7 +17,7 @@ export function EditTeam() {
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
-    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet)
+    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet, swrOptions)
 
     const EditTeamSchema = Type.Object({
         name: Type.String({
@@ -49,9 +49,10 @@ export function EditTeam() {
 
     type CreateTeam = Static<typeof EditTeamSchema>
 
+    const { cache } = useSWRConfig()
+
     const onSubmit: FormPageSubmitHandler<CreateTeam> = async (editedTeam, setError, setFieldError) => {
         try {
-            if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
             const result = await requestGet<ItemsResponse<Organization>>(
                 `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
             )
@@ -67,7 +68,7 @@ export function EditTeam() {
             } else {
                 team = await requestPost<Team>('/api/v2/teams/', editedTeam)
             }
-            // ;(cache as unknown as { clear: () => void }).clear()
+            ;(cache as unknown as { clear: () => void }).clear?.()
             history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))
         } catch (err) {
             setError(await getControllerError(err))
