@@ -27,4 +27,21 @@ describe('teams', () => {
         cy.get('.pf-c-title').contains(/^Team 001a$/)
         cy.get('#name').contains(/^Team 001a$/)
     })
+
+    it('delete teams', () => {
+        cy.get('.pf-c-breadcrumb__item')
+            .contains(/^Teams$/)
+            .click()
+        cy.get('#select-all').click()
+        cy.get('#toggle-kebab').click()
+        cy.get('.pf-c-dropdown__menu-item').contains('Delete selected teams').click()
+        cy.get('#confirm').click()
+        cy.clickButton('Delete')
+        cy.contains('Success')
+        cy.clickButton('Close')
+    })
+
+    it('teams empty state', () => {
+        cy.contains('No teams yet')
+    })
 })
