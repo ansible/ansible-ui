@@ -13,8 +13,6 @@ jobs:
                   cache: 'npm'
             - run: npm ci
             - run: npm test
-            - uses: actions/upload-artifact@v3
+            - uses: romeovs/lcov-reporter-action@v0.2.16
               with:
-                  name: coverage
-                  path: |
-                      coverage/lcov-report
+                  lcov-file: ./coverage/lcov.info
