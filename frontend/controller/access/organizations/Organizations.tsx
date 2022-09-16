@@ -86,13 +86,15 @@ export function useOrganizationsColumns(onClick?: (organization: Organization) =
             nameColumn,
             {
                 header: t('Members'),
-                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.users.toString()} />,
-                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.users, r.summary_fields.related_field_counts.users),
+                cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />,
+                sortFn: (l, r) =>
+                    compareNumbers(l.summary_fields?.related_field_counts?.users, r.summary_fields?.related_field_counts?.users),
             },
             {
                 header: t('Teams'),
-                cell: (organization) => <TextCell text={organization.summary_fields.related_field_counts.teams.toString()} />,
-                sortFn: (l, r) => compareNumbers(l.summary_fields.related_field_counts.teams, r.summary_fields.related_field_counts.teams),
+                cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.teams.toString()} />,
+                sortFn: (l, r) =>
+                    compareNumbers(l.summary_fields?.related_field_counts?.teams, r.summary_fields?.related_field_counts?.teams),
             },
             createdColumn,
             modifiedColumn,

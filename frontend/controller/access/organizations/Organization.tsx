@@ -13,12 +13,16 @@ export const OrganizationType = Type.Intersect([
         id: Type.Number(),
         created: Type.String(),
         modified: Type.String(),
-        summary_fields: Type.Object({
-            related_field_counts: Type.Object({
-                users: Type.Number(),
-                teams: Type.Number(),
-            }),
-        }),
+        summary_fields: Type.Optional(
+            Type.Object({
+                related_field_counts: Type.Optional(
+                    Type.Object({
+                        users: Type.Number(),
+                        teams: Type.Number(),
+                    })
+                ),
+            })
+        ),
     }),
 ])
 
