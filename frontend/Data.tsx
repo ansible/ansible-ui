@@ -2,7 +2,7 @@
 import ky, { HTTPError, ResponsePromise } from 'ky'
 import { Input, Options } from 'ky/distribution/types/options'
 import { useEffect, useState } from 'react'
-import useSWR from 'swr'
+import useSWR, { SWRConfiguration } from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
 export const headers: Record<string, string> = {}
@@ -104,7 +104,7 @@ export interface IOptions {
 }
 
 export function useOptions(url: string) {
-    const { data } = useSWR<IOptions>(url, requestOptions)
+    const { data } = useSWR<IOptions>(url, requestOptions, swrOptions)
     return data
 }
 
@@ -114,7 +114,7 @@ export function useItems<T extends IItem>(api: string) {
         if (previousPageData && !previousPageData.next) return null
         return `/api/v2/${api}/?page=${pageIndex + 1}&page_size=100`
     }
-    const { data } = useSWRInfinite<ItemsResponse<T>>(getKey, fetcher, { initialSize: 9999, suspense: true })
+    const { data } = useSWRInfinite<ItemsResponse<T>>(getKey, fetcher, { initialSize: 9999, suspense: true, dedupingInterval: 0 })
     return {
         items:
             data?.reduce((items, page) => {
@@ -159,4 +159,8 @@ export interface IItem {
 
 export function getItemKey(item: { id: number }) {
     return item.id.toString()
+}
+
+export const swrOptions: SWRConfiguration = {
+    dedupingInterval: 0,
 }

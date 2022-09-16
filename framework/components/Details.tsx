@@ -62,7 +62,7 @@ export function Details(props: { details: IDetail[] }) {
                     return (
                         <DescriptionListGroup key={index}>
                             <DescriptionListTerm>{detail.label}</DescriptionListTerm>
-                            <DescriptionListDescription>
+                            <DescriptionListDescription id={detail.label.toLowerCase().split(' ').join('-')}>
                                 <Split key={index}>
                                     {Icon && (
                                         <IconWrapper size="sm">
@@ -93,7 +93,7 @@ export function Details(props: { details: IDetail[] }) {
                     return (
                         <DescriptionListGroup key={index}>
                             <DescriptionListTerm>{detail.label}</DescriptionListTerm>
-                            <DescriptionListDescription>
+                            <DescriptionListDescription id={detail.label.toLowerCase().split(' ').join('-')}>
                                 <Stack hasGutter>
                                     {detail.items.map((item, index) => {
                                         const Icon = item.icon
@@ -148,7 +148,7 @@ export function Detail(props: { label: string; children?: ReactNode }) {
     return (
         <DescriptionListGroup>
             <DescriptionListTerm>{props.label}</DescriptionListTerm>
-            <DescriptionListDescription>{props.children}</DescriptionListDescription>
+            <DescriptionListDescription id={props.label.toLowerCase().split(' ').join('-')}>{props.children}</DescriptionListDescription>
         </DescriptionListGroup>
     )
 }

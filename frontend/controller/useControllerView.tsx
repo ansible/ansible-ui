@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
 import { usePagedView } from '../common/useView'
-import { ItemsResponse, useFetcher } from '../Data'
+import { ItemsResponse, swrOptions, useFetcher } from '../Data'
 
 export function useControllerView<T extends object>(
     url: string,
@@ -57,7 +57,7 @@ export function useControllerView<T extends object>(
     const { data, mutate } = response
     const refresh = () => mutate()
 
-    useSWR<ItemsResponse<T>>(data?.next, fetcher)
+    useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     let error: Error | undefined = response.error

@@ -186,8 +186,8 @@ export const enabledColumn: ITableColumn<{ enabled?: boolean }> = {
 export function useOrganizationNameColumn(options?: { disableLink?: boolean; disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{
-        summary_fields: {
-            organization: {
+        summary_fields?: {
+            organization?: {
                 id: number
                 name: string
             }
@@ -196,11 +196,11 @@ export function useOrganizationNameColumn(options?: { disableLink?: boolean; dis
         header: t('Organization'),
         cell: (item) => (
             <TextCell
-                text={item.summary_fields.organization.name}
+                text={item.summary_fields?.organization?.name}
                 to={
                     options?.disableLink
                         ? undefined
-                        : RouteE.OrganizationDetails.replace(':id', item.summary_fields.organization.id.toString())
+                        : RouteE.OrganizationDetails.replace(':id', (item.summary_fields?.organization?.id ?? '').toString())
                 }
             />
         ),
