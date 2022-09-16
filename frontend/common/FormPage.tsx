@@ -23,7 +23,8 @@ import {
     TextInputGroupUtilities,
     Tooltip,
 } from '@patternfly/react-core'
-import { CaretDownIcon, SearchIcon } from '@patternfly/react-icons'
+import { CaretDownIcon, EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons'
+import * as Ajv from 'ajv'
 import { JSONSchema6 } from 'json-schema'
 import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useContext, useState } from 'react'
 import {
@@ -200,6 +201,7 @@ export function FormTextInput(props: {
     const { fieldState } = useController({ name: props.name })
     const error = fieldState.error
     const id = props.id ?? props.name
+    const [showSecret, setShowSecret] = useState(false)
     return (
         <FormGroup
             id={`${id}-form-group`}
@@ -210,21 +212,33 @@ export function FormTextInput(props: {
             validated={error?.message ? 'error' : undefined}
             helperTextInvalid={error?.message}
         >
-            <TextInput
-                id={id}
-                type={props.secret ? 'password' : 'text'}
-                aria-describedby={`${id}-form-group`}
-                isRequired={props.required}
-                validated={error?.message ? 'error' : undefined}
-                autoFocus={props.autoFocus}
-                placeholder={props.placeholder}
-                {...registration}
-                onChange={(v, e) => {
-                    void registration.onChange(e)
-                }}
-                // innerRef={registration.ref}
-                isReadOnly={isSubmitting}
-            />
+            <InputGroup>
+                <TextInput
+                    id={id}
+                    type={props.secret && !showSecret ? 'password' : 'text'}
+                    aria-describedby={`${id}-form-group`}
+                    isRequired={props.required}
+                    validated={error?.message ? 'error' : undefined}
+                    autoFocus={props.autoFocus}
+                    placeholder={props.placeholder}
+                    {...registration}
+                    onChange={(v, e) => {
+                        void registration.onChange(e)
+                    }}
+                    // innerRef={registration.ref}
+                    isReadOnly={isSubmitting}
+                />
+                {props.secret && (
+                    <Button
+                        variant="control"
+                        onClick={() => setShowSecret(!showSecret)}
+                        aria-label="Options menu"
+                        isDisabled={isSubmitting}
+                    >
+                        {showSecret ? <EyeIcon /> : <EyeSlashIcon />}
+                    </Button>
+                )}
+            </InputGroup>
         </FormGroup>
     )
 }
@@ -483,47 +497,52 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
 
         switch (property.type) {
             case 'string': {
-                if ((property as { variant?: string }).variant === 'select') {
-                    p.push(
-                        <FormTextSelect
-                            key={base + propertyName}
-                            name={base + propertyName}
-                            label={title}
-                            placeholder={placeholder}
-                            required={required}
-                        />
-                    )
-                } else if ((property as { variant?: string }).variant === 'textarea') {
-                    p.push(
-                        <FormTextArea
-                            key={base + propertyName}
-                            name={base + propertyName}
-                            label={title}
-                            placeholder={placeholder}
-                            required={required}
-                        />
-                    )
-                } else if ((property as { variant?: string }).variant === 'password') {
-                    p.push(
-                        <FormTextInput
-                            key={base + propertyName}
-                            name={base + propertyName}
-                            label={title}
-                            placeholder={placeholder}
-                            required={required}
-                            secret
-                        />
-                    )
-                } else {
-                    p.push(
-                        <FormTextInput
-                            key={base + propertyName}
-                            name={base + propertyName}
-                            label={title}
-                            placeholder={placeholder}
-                            required={required}
-                        />
-                    )
+                switch ((property as { variant?: string }).variant) {
+                    case 'select':
+                        p.push(
+                            <FormTextSelect
+                                key={base + propertyName}
+                                name={base + propertyName}
+                                label={title}
+                                placeholder={placeholder}
+                                required={required}
+                            />
+                        )
+                        break
+                    case 'textarea':
+                        p.push(
+                            <FormTextSelect
+                                key={base + propertyName}
+                                name={base + propertyName}
+                                label={title}
+                                placeholder={placeholder}
+                                required={required}
+                            />
+                        )
+                        break
+                    case 'secret':
+                        p.push(
+                            <FormTextInput
+                                key={base + propertyName}
+                                name={base + propertyName}
+                                label={title}
+                                placeholder={placeholder}
+                                required={required}
+                                secret
+                            />
+                        )
+                        break
+                    default:
+                        p.push(
+                            <FormTextInput
+                                key={base + propertyName}
+                                name={base + propertyName}
+                                label={title}
+                                placeholder={placeholder}
+                                required={required}
+                            />
+                        )
+                        break
                 }
                 break
             }
@@ -535,8 +554,6 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
 
     return <>{p}</>
 }
-
-import * as Ajv from 'ajv'
 
 export function PageForm<T extends object>(props: {
     schema?: JSONSchema6
@@ -558,15 +575,15 @@ export function PageForm<T extends object>(props: {
     const [error, setError] = useState('')
     const isSm = useWindowSizeOrLarger(WindowSize.md)
     const [settings] = useContext(SettingsContext)
-    const horizontalLabels = props.isVertical ? false : settings.formLayout === 'horizontal'
+    const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal'
     const multipleColumns = settings.formColumns === 'multiple'
 
-    const sm: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 12 : 12) : 12
-    const md: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 12 : 6) : 12
-    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 6 : 6) : 12
-    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 6 : 6) : 12
-    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (horizontalLabels ? 4 : 4) : 12
-    const maxWidth: number | undefined = multipleColumns ? undefined : horizontalLabels ? 960 : 800
+    const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
+    const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12
+    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
+    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
+    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12
+    const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800
 
     return (
         // <PageBody>
@@ -577,7 +594,7 @@ export function PageForm<T extends object>(props: {
                     setError('')
                     return props.onSubmit(data, setError, setFieldError)
                 })}
-                isHorizontal={horizontalLabels}
+                isHorizontal={isHorizontal}
                 style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
             >
                 <Scrollable style={{ height: '100%', flexGrow: 1 }}>

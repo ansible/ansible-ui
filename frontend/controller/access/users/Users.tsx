@@ -14,12 +14,7 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import {
-    useEmailToolbarFilter,
-    useFirstNameToolbarFilter,
-    useLastNameToolbarFilter,
-    useUsernameToolbarFilter,
-} from '../../../common/controller-toolbar-filters'
+import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../../common/controller-toolbar-filters'
 import { getItemKey } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -57,7 +52,7 @@ export function Users() {
             {
                 icon: EditIcon,
                 label: t('Edit user'),
-                onClick: () => alert('TODO'),
+                onClick: (user: User) => history.push(RouteE.EditUser.replace(':id', user.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -65,7 +60,7 @@ export function Users() {
                 onClick: () => alert('TODO'),
             },
         ],
-        [t]
+        [history, t]
     )
 
     const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)
@@ -102,7 +97,7 @@ export function AccessTable(props: { url: string }) {
                 type: TypedActionType.button,
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
-                label: t('Add userss'),
+                label: t('Add users'),
                 shortLabel: t('Add'),
                 onClick: () => null,
             },
@@ -136,6 +131,8 @@ export function AccessTable(props: { url: string }) {
 
     const view = useControllerView<User>(props.url, getItemKey, toolbarFilters, tableColumns)
 
+    const history = useHistory()
+
     return (
         <PageTable<User>
             toolbarFilters={toolbarFilters}
@@ -146,20 +143,30 @@ export function AccessTable(props: { url: string }) {
             emptyStateTitle={t('No users yet')}
             emptyStateDescription={t('To get started, create a user.')}
             emptyStateButtonText={t('Create user')}
-            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
             {...view}
         />
     )
 }
 
 export function useUsersFilters() {
+    const { t } = useTranslation()
     const usernameToolbarFilter = useUsernameToolbarFilter()
     const firstnameByToolbarFilter = useFirstNameToolbarFilter()
     const lastnameToolbarFilter = useLastNameToolbarFilter()
-    const emailToolbarFilter = useEmailToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, emailToolbarFilter],
-        [emailToolbarFilter, usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter]
+        () => [
+            usernameToolbarFilter,
+            firstnameByToolbarFilter,
+            lastnameToolbarFilter,
+            {
+                key: 'email',
+                label: t('Email'),
+                type: 'string',
+                query: 'email__icontains',
+            },
+        ],
+        [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, t]
     )
     return toolbarFilters
 }
@@ -209,16 +216,17 @@ export function useUsersColumns() {
 
 export function UserType(props: { user: User }) {
     const { user } = props
-    if (user.is_superuser) return <Text>System Administraitor</Text>
-    return <Text>Normal User</Text>
+    if (user.is_superuser) return <Text>System administraitor</Text>
+    if (user.is_system_auditor) return <Text>System auditor</Text>
+    return <Text>Normal user</Text>
 }
 
 export function UserRoles(props: { user: User }) {
     const { user } = props
     return (
         <ChipGroup>
-            {user.is_superuser && <Chip isReadOnly>System Administraitor</Chip>}
-            {!user.is_superuser && <Chip isReadOnly>Normal User</Chip>}
+            {user.is_superuser && <Chip isReadOnly>System administraitor</Chip>}
+            {!user.is_superuser && <Chip isReadOnly>Normal user</Chip>}
         </ChipGroup>
     )
 }

@@ -4,11 +4,12 @@ import { Organizations } from './controller/access/organizations/Organizations'
 import { EditTeam } from './controller/access/teams/EditTeam'
 import { TeamDetails } from './controller/access/teams/TeamDetails'
 import { TeamsPage } from './controller/access/teams/Teams'
+import { CreateUser } from './controller/access/users/CreateUser'
+import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
-// import WorkflowApprovalsPage from './controller/views/WorkflowApprovals'
 import { RouteE } from './route'
 
 export function DemoRouter(): JSX.Element {
@@ -33,6 +34,8 @@ export function DemoRouter(): JSX.Element {
 
             <Route exact path={RouteE.Users} component={Users} />
             <Route exact path={RouteE.UserDetails} component={UserDetailsPage} />
+            <Route exact path={RouteE.CreateUser} component={CreateUser} />
+            <Route exact path={RouteE.EditUser} component={EditUser} />
 
             <Route exact path={RouteE.Teams} component={TeamsPage} />
             <Route exact path={RouteE.TeamDetails} component={TeamDetails} />
