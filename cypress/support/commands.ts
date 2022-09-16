@@ -52,7 +52,7 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-    cy.get('button:not(:disabled)').contains(label).click()
+    cy.wait(1).get('button:not(:disabled)').contains(label).click()
 })
 
 interface IControllerItem {
@@ -101,9 +101,9 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
     })
     cy.intercept('POST', `${baseUrl}/`, (req) => {
         // const parts = req.url.split('/')
-        const id = 1
+        let id = 1
         while (items.find((item) => item.id === id)) {
-            /**/
+            id++
         }
         const item = req.body as T
         item.id = id

@@ -1,37 +1,12 @@
 {
     "count": 1,
+    "next": null,
+    "previous": null,
     "results": [
         {
             "id": 1,
             "type": "team",
-            "url": "/api/v2/teams/1/",
-            "related": {
-                "created_by": "/api/v2/users/1/",
-                "modified_by": "/api/v2/users/1/",
-                "projects": "/api/v2/teams/1/projects/",
-                "users": "/api/v2/teams/1/users/",
-                "credentials": "/api/v2/teams/1/credentials/",
-                "roles": "/api/v2/teams/1/roles/",
-                "object_roles": "/api/v2/teams/1/object_roles/",
-                "activity_stream": "/api/v2/teams/1/activity_stream/",
-                "access_list": "/api/v2/teams/1/access_list/",
-                "organization": "/api/v2/organizations/1/"
-            },
-            "summary_fields": {
-                "organization": { "id": 1, "name": "Default", "description": "" },
-                "created_by": { "id": 2, "username": "awx", "first_name": "", "last_name": "" },
-                "modified_by": { "id": 2, "username": "awx", "first_name": "", "last_name": "" },
-                "object_roles": {
-                    "admin_role": { "description": "Can manage all aspects of the team", "name": "Admin", "id": 7797 },
-                    "member_role": { "description": "User is a member of the team", "name": "Member", "id": 7798 },
-                    "read_role": { "description": "May view settings for the team", "name": "Read", "id": 7799 }
-                },
-                "user_capabilities": { "edit": true, "delete": true }
-            },
-            "created": "2022-09-09T17:08:49.621169Z",
-            "modified": "2022-09-09T17:08:49.621193Z",
             "name": "Team 001",
-            "description": "",
             "organization": 1
         }
     ]
