@@ -1,6 +1,6 @@
 {
     "name": "@ansible/console",
-    "version": "0.0.29",
+    "version": "0.0.31",
     "type": "module",
     "scripts": {
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
@@ -58,7 +58,7 @@
         "type-fest": "2.19.0"
     },
     "devDependencies": {
-        "@babel/core": "7.19.0",
+        "@babel/core": "7.19.1",
         "@babel/preset-react": "7.18.6",
         "@babel/preset-typescript": "7.18.6",
         "@cypress/code-coverage": "^3.10.0",
