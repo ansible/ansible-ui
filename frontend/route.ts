@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 export enum RouteE {
     // Views
     Dashboard = '/dashboard',
