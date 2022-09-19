@@ -21,7 +21,7 @@ render(
 )
 
 /* istanbul ignore next */
-if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+if (process.env.PWA === 'true' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker
             .register('/service-worker.js')
