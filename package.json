@@ -1,6 +1,6 @@
 {
     "name": "@ansible/console",
-    "version": "0.0.43",
+    "version": "0.0.44",
     "type": "module",
     "scripts": {
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
