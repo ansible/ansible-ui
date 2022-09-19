@@ -174,6 +174,8 @@ const teams: IControllerItem[] = []
 const users: IControllerItem[] = []
 
 before(() => {
+    // cy.injectAxe()
+
     cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
             organizations.push(item)
@@ -193,6 +195,7 @@ before(() => {
 
 beforeEach(() => {
     window.localStorage.setItem('access', 'true')
+    window.localStorage.setItem('theme', 'light')
 
     if (Cypress.env('mock')) {
         cy.intercept('GET', '/api/login/', { statusCode: 200 })
@@ -218,4 +221,8 @@ beforeEach(() => {
     // cy.login()
     // cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
     // cy.get('.pf-c-page__main').contains('Red Hat', { timeout: 5 * 60 * 1000 })
+})
+
+afterEach(() => {
+    // cy.checkA11y()
 })
