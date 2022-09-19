@@ -25,7 +25,6 @@ export function TeamDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit team'),
-                shortLabel: t('Edit'),
                 onClick: () => history.push(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
             },
             { type: TypedActionType.button, icon: TrashIcon, label: t('Delete team'), onClick: () => null },
