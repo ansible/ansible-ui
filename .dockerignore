@@ -1,5 +1,7 @@
+/.nyc_output
 /build
 /certs
+/coverage
 /docs
 /scripts
 /node_modules
