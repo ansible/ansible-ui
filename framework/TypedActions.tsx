@@ -102,7 +102,7 @@ export function TypedActionsDropdown<T extends object>(props: {
                         let tooltip = action.tooltip
                         let isDisabled = false
                         if (action.type === TypedActionType.bulk && (!selectedItems || !selectedItems.length)) {
-                            tooltip = 'No items selected'
+                            tooltip = 'No selections'
                             isDisabled = true
                         }
                         return (
@@ -111,7 +111,13 @@ export function TypedActionsDropdown<T extends object>(props: {
                                     key={action.label}
                                     onClick={() => action.onClick(selectedItems ?? [])}
                                     isAriaDisabled={isDisabled}
-                                    icon={Icon ? <Icon /> : undefined}
+                                    icon={
+                                        Icon ? (
+                                            <span style={{ paddingRight: 4 }}>
+                                                <Icon />
+                                            </span>
+                                        ) : undefined
+                                    }
                                     // style={{ color: 'var(--pf-global--primary-color--100)' }}
                                     style={{ color: action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined }}
                                 >
@@ -170,7 +176,7 @@ export function TypedActionButton<T extends object>(props: {
                 variant = ButtonVariant.danger
             }
             if (!selectedItems || !selectedItems.length) {
-                tooltip = 'No items selected'
+                tooltip = 'No selections'
                 isDisabled = true
             }
             return (
@@ -178,12 +184,17 @@ export function TypedActionButton<T extends object>(props: {
                     <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
                         <Button
                             variant={variant}
-                            icon={Icon ? <Icon /> : undefined}
+                            icon={
+                                Icon ? (
+                                    <span style={{ paddingRight: 4 }}>
+                                        <Icon />
+                                    </span>
+                                ) : undefined
+                            }
                             isAriaDisabled={isDisabled}
                             onClick={() => action.onClick(selectedItems ?? [])}
                             isDanger={action.isDanger}
                         >
-                            {Icon ? ` ` : ``}
                             {action.shortLabel ? action.shortLabel : action.label}
                         </Button>
                     </Tooltip>
@@ -215,11 +226,16 @@ export function TypedActionButton<T extends object>(props: {
                         <Button
                             variant={variant}
                             isDanger={action.isDanger}
-                            icon={Icon ? <Icon /> : undefined}
+                            icon={
+                                Icon ? (
+                                    <span style={{ paddingRight: 4 }}>
+                                        <Icon />
+                                    </span>
+                                ) : undefined
+                            }
                             isAriaDisabled={isDisabled}
                             onClick={action.onClick}
                         >
-                            {Icon ? ` ` : ``}
                             {action.shortLabel ? action.shortLabel : action.label}
                         </Button>
                     </Tooltip>

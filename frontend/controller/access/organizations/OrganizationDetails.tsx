@@ -115,7 +115,17 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
 
 function OrganizationAccessTab(props: { organization: Organization }) {
     const { organization } = props
-    return <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
+    const { t } = useTranslation()
+    return (
+        <PageTabs>
+            <PageTab title={t('Users')}>
+                <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
+            </PageTab>
+            <PageTab title={t('Teams')}>
+                <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
+            </PageTab>
+        </PageTabs>
+    )
 }
 
 function OrganizationTeamsTab(props: { organization: Organization }) {
