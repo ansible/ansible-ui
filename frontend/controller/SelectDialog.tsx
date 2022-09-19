@@ -5,7 +5,6 @@ import { useTranslation } from '../../framework/components/useTranslation'
 import { ITableColumn, PageTable, TextCell } from '../../framework/PageTable'
 import { compareNumbers } from '../../framework/utils/compare'
 import { useCreatedColumn, useModifiedColumn } from '../common/columns'
-import { getItemKey } from '../Data'
 import { RouteE } from '../route'
 import { Organization } from './access/organizations/Organization'
 import { useOrganizationsFilters } from './access/organizations/Organizations'
@@ -19,7 +18,7 @@ export function SelectDialog(props: { open: boolean; setOpen: (open: boolean) =>
         setOpen(false)
         onClick(organization)
     })
-    const view = useControllerView('/api/v2/organizations/', getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView('/api/v2/organizations/', toolbarFilters, tableColumns)
     return (
         <Modal title="Select an organization" isOpen={open} onClose={onClose} variant={ModalVariant.medium} tabIndex={0}>
             <Collapse open={view.itemCount === undefined}>

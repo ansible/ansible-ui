@@ -15,7 +15,6 @@ import {
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../../common/controller-toolbar-filters'
-import { getItemKey } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { User } from './User'
@@ -63,7 +62,7 @@ export function Users() {
         [history, t]
     )
 
-    const view = useControllerView<User>('/api/v2/users/', getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView<User>('/api/v2/users/', toolbarFilters, tableColumns)
 
     return (
         <TablePage<User>
@@ -129,7 +128,7 @@ export function AccessTable(props: { url: string }) {
         [t]
     )
 
-    const view = useControllerView<User>(props.url, getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView<User>(props.url, toolbarFilters, tableColumns)
 
     const history = useHistory()
 

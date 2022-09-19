@@ -1,8 +1,19 @@
-import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
-import { EditIcon, TrashIcon } from '@patternfly/react-icons'
+import { Button, ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { Detail, DetailsList, ITypedAction, PageHeader, SinceCell, TextCell, TypedActions, TypedActionType } from '../../../../framework'
+import {
+    Detail,
+    DetailsList,
+    IItemAction,
+    ITypedAction,
+    PageHeader,
+    PageTable,
+    SinceCell,
+    TextCell,
+    TypedActions,
+    TypedActionType,
+} from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { PageBody } from '../../../../framework/PageBody'
@@ -10,14 +21,22 @@ import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
-import { AccessTable } from '../users/Users'
+import { useControllerView } from '../../useControllerView'
+import { User } from '../users/User'
+import { useUsersColumns, useUsersFilters } from '../users/Users'
 import { Team } from './Team'
+import { useDeleteTeams } from './Teams'
 
 export function TeamDetails() {
     const { t } = useTranslation()
     const params = useParams<{ id: string }>()
     const team = useItem<Team>('/api/v2/teams', params.id)
     const history = useHistory()
+    const deleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
+        if (deletedTeams.length > 0) {
+            history.push(RouteE.Teams)
+        }
+    })
     const itemActions: ITypedAction<Team>[] = useMemo(() => {
         const itemActions: ITypedAction<Team>[] = [
             {
@@ -27,10 +46,18 @@ export function TeamDetails() {
                 label: t('Edit team'),
                 onClick: () => history.push(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
             },
-            { type: TypedActionType.button, icon: TrashIcon, label: t('Delete team'), onClick: () => null },
+            {
+                type: TypedActionType.button,
+                icon: TrashIcon,
+                label: t('Delete team'),
+                onClick: () => {
+                    if (!team) return
+                    deleteTeams([team])
+                },
+            },
         ]
         return itemActions
-    }, [history, team, t])
+    }, [t, history, team, deleteTeams])
 
     return (
         <PageLayout>
@@ -83,6 +110,7 @@ export function TeamDetails() {
 function TeamDetailsTab(props: { team: Team }) {
     const { t } = useTranslation()
     const { team } = props
+    const history = useHistory()
     return (
         <>
             <Scrollable>
@@ -97,10 +125,28 @@ function TeamDetailsTab(props: { team: Team }) {
                             />
                         </Detail>
                         <Detail label={t('Created')}>
-                            <SinceCell value={team.created} />
+                            <SinceCell value={team.created} /> by&nbsp;
+                            <Button
+                                variant="link"
+                                isInline
+                                onClick={() =>
+                                    history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
+                                }
+                            >
+                                {team.summary_fields?.created_by?.username}
+                            </Button>
                         </Detail>
                         <Detail label={t('Last modified')}>
-                            <SinceCell value={team.modified} />
+                            <SinceCell value={team.modified} /> by&nbsp;
+                            <Button
+                                variant="link"
+                                isInline
+                                onClick={() =>
+                                    history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
+                                }
+                            >
+                                {team.summary_fields?.modified_by?.username}
+                            </Button>
                         </Detail>
                     </DetailsList>
                 </PageSection>
@@ -111,5 +157,75 @@ function TeamDetailsTab(props: { team: Team }) {
 
 function TeamAccessTab(props: { team: Team }) {
     const { team } = props
-    return <AccessTable url={`/api/v2/teams/${team.id}/access_list/`} />
+    const { t } = useTranslation()
+
+    const toolbarFilters = useUsersFilters()
+
+    const toolbarActions = useMemo<ITypedAction<User>[]>(
+        () => [
+            {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Add users'),
+                shortLabel: t('Add'),
+                onClick: () => null,
+            },
+            {
+                type: TypedActionType.bulk,
+                variant: ButtonVariant.primary,
+                icon: MinusCircleIcon,
+                label: t('Remove selected users'),
+                shortLabel: t('Remove'),
+                onClick: () => null,
+            },
+        ],
+        [t]
+    )
+
+    // Table Columns
+    const tableColumns = useUsersColumns()
+    tableColumns.splice(1, 0, {
+        header: t('Roles'),
+        cell: (user) => (
+            <ChipGroup>
+                {user.summary_fields.indirect_access?.map((access) => (
+                    <Chip key={access.role.id} isReadOnly>
+                        {access.role.name}
+                    </Chip>
+                ))}
+            </ChipGroup>
+        ),
+    })
+
+    // Row Actions
+    const rowActions = useMemo<IItemAction<User>[]>(
+        () => [
+            {
+                icon: MinusCircleIcon,
+                label: t('Remove user'),
+                onClick: () => alert('TODO'),
+            },
+        ],
+        [t]
+    )
+
+    const view = useControllerView<User>(`/api/v2/teams/${team.id}/access_list/`, toolbarFilters, tableColumns)
+
+    const history = useHistory()
+
+    return (
+        <PageTable<User>
+            toolbarFilters={toolbarFilters}
+            toolbarActions={toolbarActions}
+            tableColumns={tableColumns}
+            rowActions={rowActions}
+            errorStateTitle={t('Error loading users')}
+            emptyStateTitle={t('No users yet')}
+            emptyStateDescription={t('To get started, create a user.')}
+            emptyStateButtonText={t('Create user')}
+            emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            {...view}
+        />
+    )
 }

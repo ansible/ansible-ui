@@ -23,6 +23,24 @@ export const UserType = Type.Object({
             delete: Type.Number(),
             edit: Type.String(),
         }),
+        direct_access: Type.Array(Type.Object({})),
+        indirect_access: Type.Optional(
+            Type.Array(
+                Type.Object({
+                    descendant_roles: Type.Array(Type.String()),
+                    role: Type.Array(
+                        Type.Object({
+                            id: Type.String(),
+                            name: Type.String(),
+                            description: Type.String(),
+                            user_capabilities: Type.Object({
+                                unattach: Type.Boolean(),
+                            }),
+                        })
+                    ),
+                })
+            )
+        ),
     }),
 })
 
