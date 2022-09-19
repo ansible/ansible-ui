@@ -16,7 +16,7 @@
         "eslint:fix": "eslint --fix frontend backend framework cypress",
         "prettier": "prettier --check frontend backend framework cypress",
         "prettier:fix": "prettier --write frontend backend framework cypress",
-        "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix",
+        "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix && npm dedup",
         "certs": "mkdir -p certs && openssl req -subj '/C=US' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout certs/tls.key -out certs/tls.crt",
         "docker:build": "docker build --tag ansible/console .",
         "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
