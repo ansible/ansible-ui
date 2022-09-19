@@ -41,11 +41,11 @@ import {
     useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '../../framework'
-import { Scrollable } from '../../framework/components/Scrollable'
-import { SettingsContext } from '../../framework/Settings'
-import { Organization } from '../controller/access/organizations/Organization'
-import { SelectDialog } from '../controller/SelectDialog'
+import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
+import { Scrollable } from './components/Scrollable'
+import { SettingsContext } from './Settings'
+import { Organization } from '../frontend/controller/access/organizations/Organization'
+import { SelectDialog } from '../frontend/controller/SelectDialog'
 
 export type FormPageProps<T extends object> = PageHeaderProps & {
     children?: ReactNode

@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useWindowSizeOrLarger, WindowSize } from '../../../framework'
 import { useTranslation } from '../../../framework/components/useTranslation'
-import { FormPageSubmitHandler, PageForm } from '../../common/FormPage'
+import { FormPageSubmitHandler, PageForm } from '../../../framework/FormPage'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 
