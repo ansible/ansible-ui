@@ -57,7 +57,7 @@ export function Teams(props: { url: string }) {
     // Table Columns
     const tableColumns = useTeamsColumns()
 
-    const view = useControllerView<Team>(props.url, getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView<Team>(props.url, toolbarFilters, tableColumns)
 
     // Toolbar Actions
     const deleteToolbarAction = useDeleteTeamToolbarAction((teams: Team[]) => {

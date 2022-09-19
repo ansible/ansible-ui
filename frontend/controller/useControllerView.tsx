@@ -4,11 +4,10 @@ import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
 import { usePagedView } from '../common/useView'
-import { ItemsResponse, swrOptions, useFetcher } from '../Data'
+import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
 
-export function useControllerView<T extends object>(
+export function useControllerView<T extends { id: number }>(
     url: string,
-    getItemKey: (item: T) => string | number,
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[]
 ) {

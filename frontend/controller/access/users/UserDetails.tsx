@@ -134,7 +134,7 @@ function UserOrganizations(props: { user: User }) {
     const { t } = useTranslation()
     const toolbarFilters = useOrganizationsFilters()
     const tableColumns = useOrganizationsColumns()
-    const view = useControllerView<Organization>(`/api/v2/users/${user.id}/organizations/`, getItemKey, toolbarFilters)
+    const view = useControllerView<Organization>(`/api/v2/users/${user.id}/organizations/`, toolbarFilters)
     return (
         <PageTable<Organization>
             toolbarFilters={toolbarFilters}
@@ -158,7 +158,7 @@ function UserTeams(props: { user: User }) {
     const { t } = useTranslation()
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns()
-    const view = useControllerView<Team>(`/api/v2/users/${user.id}/teams/`, getItemKey, toolbarFilters)
+    const view = useControllerView<Team>(`/api/v2/users/${user.id}/teams/`, toolbarFilters)
     return (
         <PageTable<Team>
             toolbarFilters={toolbarFilters}
@@ -212,7 +212,7 @@ function UserRoles(props: { user: User }) {
         ],
         [t]
     )
-    const view = useControllerView<Role>(`/api/v2/users/${user.id}/roles/`, getItemKey, toolbarFilters, tableColumns)
+    const view = useControllerView<Role>(`/api/v2/users/${user.id}/roles/`, toolbarFilters, tableColumns)
     return (
         <PageTable<Role>
             toolbarFilters={toolbarFilters}
