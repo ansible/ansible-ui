@@ -89,6 +89,7 @@ function TeamDetailsTab(props: { team: Team }) {
                 <PageSection variant="light">
                     <DetailsList>
                         <Detail label={t('Name')}>{team.name}</Detail>
+                        <Detail label={t('Description')}>{team.description}</Detail>
                         <Detail label={t('Organization')}>
                             <TextCell
                                 text={team.summary_fields?.organization?.name}

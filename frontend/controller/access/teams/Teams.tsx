@@ -17,7 +17,6 @@ import {
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareStrings } from '../../../../framework/utils/compare'
-import { randomString } from '../../../../framework/utils/random-string'
 import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
@@ -26,7 +25,7 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { getItemKey, requestDelete, requestPost } from '../../../Data'
+import { getItemKey, requestDelete } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
@@ -67,7 +66,6 @@ export function Teams(props: { url: string }) {
         }
         void view.refresh()
     })
-    const create100TeamsToolbarAction = useCreate100TeamsToolbarAction(() => void view.refresh())
     const toolbarActions = useMemo<ITypedAction<Team>[]>(
         () => [
             {
@@ -78,9 +76,8 @@ export function Teams(props: { url: string }) {
                 onClick: () => history.push(RouteE.CreateTeam),
             },
             deleteToolbarAction,
-            create100TeamsToolbarAction,
         ],
-        [create100TeamsToolbarAction, deleteToolbarAction, history, t]
+        [deleteToolbarAction, history, t]
     )
 
     // Row Actions
@@ -135,32 +132,6 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
         )
     }
     return deleteTeams
-}
-
-export function useCreate100TeamsToolbarAction(callback: () => void) {
-    const { t } = useTranslation()
-    const toolbarAction: ITypedAction<object> = useMemo(
-        () => ({
-            type: TypedActionType.button,
-            label: t('Create 100 teams'),
-            onClick: () => {
-                const promises: Promise<unknown>[] = []
-                for (let i = 0; i < 100; i++) {
-                    promises.push(
-                        requestPost<Team, Partial<Team>>('/api/v2/teams/', {
-                            name: randomString(8),
-                            organization: 1,
-                        }).catch(() => {
-                            // do nothing
-                        })
-                    )
-                }
-                void Promise.allSettled(promises).then(callback)
-            },
-        }),
-        [callback, t]
-    )
-    return toolbarAction
 }
 
 export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): ITypedAction<Team> {

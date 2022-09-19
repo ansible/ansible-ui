@@ -32,15 +32,7 @@ import {
     Tooltip,
     Truncate,
 } from '@patternfly/react-core'
-import {
-    ArrowRightIcon,
-    ColumnsIcon,
-    ExclamationCircleIcon,
-    FilterIcon,
-    PlusCircleIcon,
-    SearchIcon,
-    TimesIcon,
-} from '@patternfly/react-icons'
+import { ArrowRightIcon, ExclamationCircleIcon, FilterIcon, PlusCircleIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons'
 import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
@@ -602,7 +594,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         filters,
         setFilters,
         clearAllFilters,
-        openColumnModal,
+        // openColumnModal,
     } = props
 
     let { toolbarActions } = props
@@ -727,11 +719,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 {/* Action Buttons */}
                 <ToolbarGroup variant="button-group">
                     <TypedActions actions={toolbarActions} selectedItems={selectedItems} wrapper={ToolbarItem} />
-                    <ToolbarItem>
+                    {/* <ToolbarItem>
                         <Tooltip content={'Manage columns'}>
                             <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
                         </Tooltip>
-                    </ToolbarItem>
+                    </ToolbarItem> */}
                 </ToolbarGroup>
 
                 {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}
