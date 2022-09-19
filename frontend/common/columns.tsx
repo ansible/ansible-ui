@@ -1,10 +1,6 @@
-import { Switch } from '@patternfly/react-core'
-import { CopyCell, ITableColumn, SinceCell, TextCell } from '../../framework'
+import { ITableColumn, SinceCell, TextCell } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
-import { compareStrings, compareUnknowns } from '../../framework/utils/compare'
 import { RouteE } from '../route'
-import { getScmType } from './scm'
-import { getStatus } from './status'
 
 export function useNameColumn<T extends { name: string; id: number }>(options: {
     url?: string
@@ -27,83 +23,6 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     return column
 }
 
-export function useStatusColumn() {
-    const { t } = useTranslation()
-    const column: ITableColumn<{ status?: string }> = {
-        header: t('Status'),
-        cell: (item) => {
-            const status = getStatus(item)
-            if (!status) return <></>
-            return <TextCell icon={status.icon} text={status.text} iconSize="sm" />
-        },
-        sortFn: (l, r) => compareStrings(l.status, r.status),
-    }
-    return column
-}
-
-export const statusColumn: ITableColumn<{ status?: string }> = {
-    header: 'Status',
-    cell: (item) => {
-        const status = getStatus(item)
-        if (!status) return <></>
-        return (
-            <TextCell
-                icon={status.icon}
-                text={status.text}
-                iconSize="sm"
-                // textColor={PatternFlyColor.Green}
-            />
-        )
-    },
-    sortFn: (l, r) => compareStrings(l.status, r.status),
-}
-
-export function useScmTypeColumn() {
-    const { t } = useTranslation()
-    const column: ITableColumn<{ scm_type: string }> = {
-        header: t('Type'),
-        cell: (item) => {
-            const scmType = getScmType(item)
-            if (!scmType) return <></>
-            return <TextCell icon={scmType.icon} text={scmType.text} iconSize="md" />
-        },
-        sortFn: (l, r) => compareStrings(l.scm_type, r.scm_type),
-    }
-    return column
-}
-
-export const scmTypeColumn: ITableColumn<{ scm_type: string }> = {
-    header: 'Type',
-    cell: (item) => {
-        const scmType = getScmType(item)
-        if (!scmType) return <></>
-        return <TextCell icon={scmType.icon} text={scmType.text} iconSize="md" />
-    },
-    sortFn: (l, r) => compareStrings(l.scm_type, r.scm_type),
-}
-
-export function useScmRevisionColumn() {
-    const { t } = useTranslation()
-    const column: ITableColumn<{ scm_revision?: string }> = {
-        header: t('Revision'),
-        cell: (item) => {
-            if (!item.scm_revision) return <></>
-            return <CopyCell text={item.scm_revision} minWidth={60} />
-        },
-        sortFn: (l, r) => compareStrings(l.scm_revision, r.scm_revision),
-    }
-    return column
-}
-
-export const scmRevisionColumn: ITableColumn<{ scm_revision?: string }> = {
-    header: 'Revision',
-    cell: (item) => {
-        if (!item.scm_revision) return <></>
-        return <CopyCell text={item.scm_revision} minWidth={60} />
-    },
-    sortFn: (l, r) => compareStrings(l.scm_revision, r.scm_revision),
-}
-
 export function useCreatedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{ created?: string }> = {
@@ -118,15 +37,6 @@ export function useCreatedColumn(options?: { disableSort?: boolean }) {
     return column
 }
 
-export const createdColumn: ITableColumn<{ created?: string }> = {
-    header: 'Created',
-    cell: (item) => {
-        if (!item.created) return <></>
-        return <SinceCell value={item.created} />
-    },
-    sortFn: (l, r) => compareStrings(l.created, r.created),
-}
-
 export function useModifiedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
     const column: ITableColumn<{ modified?: string }> = {
@@ -139,48 +49,6 @@ export function useModifiedColumn(options?: { disableSort?: boolean }) {
         defaultSortDirection: 'desc',
     }
     return column
-}
-
-export const modifiedColumn: ITableColumn<{ modified?: string }> = {
-    header: 'Last Modified',
-    cell: (item) => {
-        if (!item.modified) return <></>
-        return <SinceCell value={item.modified} />
-    },
-    sortFn: (l, r) => compareStrings(l.modified, r.modified),
-}
-
-export const nextRunColumn: ITableColumn<{ next_run?: string }> = {
-    header: 'Next Run',
-    cell: (item) => {
-        if (!item.next_run) return <></>
-        return <SinceCell value={item.next_run} />
-    },
-    sortFn: (l, r) => compareStrings(l.next_run, r.next_run),
-}
-
-export function useEnabledColumn() {
-    const { t } = useTranslation()
-    const column: ITableColumn<{ enabled?: boolean }> = {
-        header: t('Enabled'),
-        cell: (item) => {
-            if (item.enabled === false) return <Switch labelOff={t('Disabled')} />
-            if (item.enabled === true) return <Switch isChecked label={t('Enabled')} />
-            return <></>
-        },
-        sortFn: (l, r) => compareUnknowns(l.enabled, r.enabled),
-    }
-    return column
-}
-
-export const enabledColumn: ITableColumn<{ enabled?: boolean }> = {
-    header: 'Enabled',
-    cell: (item) => {
-        if (item.enabled === false) return <Switch labelOff="Off" />
-        if (item.enabled === true) return <Switch isChecked label="On" />
-        return <></>
-    },
-    sortFn: (l, r) => compareUnknowns(l.enabled, r.enabled),
 }
 
 export function useOrganizationNameColumn(options?: { disableLink?: boolean; disableSort?: boolean }) {

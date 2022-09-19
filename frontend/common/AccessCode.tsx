@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { Bullseye, FormGroup, Page, PageSection, TextInput } from '@patternfly/react-core'
 import { Fragment, ReactNode, useEffect, useState } from 'react'
 

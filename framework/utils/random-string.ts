@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const randomCharacters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
 export function randomString(length: number, base = randomCharacters.length): string {

@@ -1,6 +1,5 @@
 // import '@patternfly/react-core/dist/styles/base.css'
 import '@patternfly/patternfly/patternfly-base.css'
-
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css'
 
 import { render } from 'react-dom'
@@ -21,6 +20,7 @@ render(
     container
 )
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker
