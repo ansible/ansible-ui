@@ -90,7 +90,7 @@ export function EditTeam() {
                     <PageBody>
                         <PageForm
                             schema={EditTeamSchema}
-                            submitText={t('Save')}
+                            submitText={t('Save team')}
                             onSubmit={onSubmit}
                             cancelText={t('Cancel')}
                             onCancel={onCancel}
@@ -107,7 +107,7 @@ export function EditTeam() {
                 <PageBody>
                     <PageForm
                         schema={EditTeamSchema}
-                        submitText={t('Create')}
+                        submitText={t('Create team')}
                         onSubmit={onSubmit}
                         cancelText={t('Cancel')}
                         onCancel={onCancel}
