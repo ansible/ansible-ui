@@ -140,7 +140,7 @@ export function useOrganizationsColumns(onClick?: (organization: Organization) =
                 defaultSortDirection: 'desc',
             },
         ],
-        [nameColumn, t]
+        [history, nameColumn, t]
     )
     return tableColumns
 }

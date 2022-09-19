@@ -1,5 +1,5 @@
-import { Button, Split } from '@patternfly/react-core'
-import { TrashIcon } from '@patternfly/react-icons'
+import { Button, ButtonVariant, Split } from '@patternfly/react-core'
+import { PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
@@ -26,7 +26,6 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { useCreateToolbarAction } from '../../../common/toolbar-actions'
 import { getItemKey, requestDelete, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -62,7 +61,6 @@ export function Teams(props: { url: string }) {
     const view = useControllerView<Team>(props.url, getItemKey, toolbarFilters, tableColumns)
 
     // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.CreateTeam)
     const deleteToolbarAction = useDeleteTeamToolbarAction((teams: Team[]) => {
         for (const team of teams) {
             view.unselectItem(team)
@@ -71,8 +69,18 @@ export function Teams(props: { url: string }) {
     })
     const create100TeamsToolbarAction = useCreate100TeamsToolbarAction(() => void view.refresh())
     const toolbarActions = useMemo<ITypedAction<Team>[]>(
-        () => [createToolbarAction, deleteToolbarAction, create100TeamsToolbarAction],
-        [create100TeamsToolbarAction, createToolbarAction, deleteToolbarAction]
+        () => [
+            {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Create team'),
+                onClick: () => history.push(RouteE.CreateTeam),
+            },
+            deleteToolbarAction,
+            create100TeamsToolbarAction,
+        ],
+        [create100TeamsToolbarAction, deleteToolbarAction, history, t]
     )
 
     // Row Actions
@@ -162,7 +170,6 @@ export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): I
         type: TypedActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected teams'),
-        shortLabel: t('Delete'),
         onClick: deleteTeams,
     }
 }

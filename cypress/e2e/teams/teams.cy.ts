@@ -6,10 +6,10 @@ describe('teams', () => {
     })
 
     it('create team', () => {
-        cy.clickButton(/^ Create$/)
+        cy.clickButton(/^Create team$/)
         cy.getByLabel(/^Name$/).type('Team 002')
         cy.getByLabel(/^Organization/).type('Default')
-        cy.clickButton(/^Create$/)
+        cy.clickButton(/^Create team$/)
     })
 
     it('created team details', () => {
@@ -18,9 +18,9 @@ describe('teams', () => {
     })
 
     it('edit team', () => {
-        cy.clickButton(/^ Edit$/)
+        cy.clickButton(/^Edit team$/)
         cy.getByLabel(/^Name$/).type('a')
-        cy.clickButton(/^Save$/)
+        cy.clickButton(/^Save team$/)
     })
 
     it('edited team details', () => {

@@ -6,7 +6,7 @@ describe('users', () => {
     })
 
     it('create user', () => {
-        cy.clickButton(/^ Create user$/)
+        cy.clickButton(/^Create user$/)
         cy.getByLabel(/^Username$/).type('User002')
         cy.getByLabel(/^Organization/).type('Default')
         cy.getByLabel(/^Password/).type('123')
@@ -20,7 +20,7 @@ describe('users', () => {
     })
 
     it('edit user', () => {
-        cy.clickButton(/^ Edit user$/)
+        cy.clickButton(/^Edit user$/)
         cy.getByLabel(/^Username$/).type('a')
         cy.clickButton(/^Save user$/)
     })
