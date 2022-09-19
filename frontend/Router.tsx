@@ -8,6 +8,7 @@ import { CreateUser } from './controller/access/users/CreateUser'
 import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
+import Debug from './controller/settings/Debug'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
 import { RouteE } from './route'
@@ -52,6 +53,8 @@ export function DemoRouter(): JSX.Element {
             <Route exact path={RouteE.TopologyView} component={TopologyView} /> */}
 
             <Route exact path={RouteE.Settings} component={Settings} />
+
+            {process.env.NODE_ENV === 'development' && <Route exact path={RouteE.Debug} component={Debug} />}
 
             <Route path="*">
                 <Redirect to={RouteE.Login} />

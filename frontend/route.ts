@@ -45,5 +45,7 @@ export enum RouteE {
 
     // Settings
     Settings = '/settings',
+
+    Debug = '/debug',
     Login = '/login',
 }
