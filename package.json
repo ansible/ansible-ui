@@ -8,7 +8,7 @@
         "backend": "NODE_ENV=development PORT=3001 nodemon --watch './backend/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' backend/main.ts | pino-zen",
         "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:cypress --prefix-colors cyan,green,blue,magenta,gray",
         "build": "concurrently --kill-others-on-fail npm:frontend:build npm:backend:build --prefix-colors cyan,green,blue,magenta,gray",
-        "frontend:build": "webpack --mode production",
+        "frontend:build": "webpack --mode production --env pwa",
         "backend:build": "npm run clean && rollup --config rollup.config.ts --configPlugin typescript",
         "clean": "rm -rf build coverage .nyc_output",
         "tsc": "tsc --noEmit",
@@ -24,7 +24,7 @@
         "cypress": "npm run clean && concurrently npm:cypress:frontend npm:cypress:run --prefix-colors cyan,green,blue --kill-others --success first",
         "cypress:run": "wait-on -d 3000 -i 1000 https-get://localhost:3002 && cypress run --env mock=true --config video=false",
         "cypress:open": "cypress open --env mock=true --e2e --browser chrome",
-        "cypress:frontend": "webpack serve --mode development --no-open",
+        "cypress:frontend": "webpack serve --mode production --env pwa --no-open --no-client-overlay",
         "coverage": "open coverage/lcov-report/index.html",
         "coverage:check": "npx nyc report --check-coverage --statements 38 --branches 32 --functions 32 --lines 40 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false"
     },

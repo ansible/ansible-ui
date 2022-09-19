@@ -40,6 +40,7 @@ module.exports = function (_env, argv) {
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isProduction ? JSON.stringify('production') : JSON.stringify('development'),
                 'process.env.DELAY': isProduction ? JSON.stringify('') : JSON.stringify(''),
+                'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
             }),
             isDevelopment && new ReactRefreshWebpackPlugin(),
             new HtmlWebpackPlugin({ title: 'AnsibleDev', favicon: 'frontend/icons/favicon.png', template: 'frontend/index.html' }),
@@ -48,7 +49,7 @@ module.exports = function (_env, argv) {
                 chunkFilename: '[id].[contenthash:8].css',
                 ignoreOrder: false,
             }),
-            isProduction && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
+            _env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
             new CopyPlugin({ patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }] }),
         ].filter(Boolean),
         output: {
