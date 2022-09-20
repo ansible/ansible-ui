@@ -77,9 +77,9 @@ export function useOrganizationsFilters() {
     return toolbarFilters
 }
 
-export function useOrganizationsColumns(onClick?: (organization: Organization) => void) {
+export function useOrganizationsColumns(disableLinks?: boolean) {
     const { t } = useTranslation()
-    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.OrganizationDetails })
+    const nameColumn = useNameColumn({ url: disableLinks ? undefined : RouteE.OrganizationDetails })
     const history = useHistory()
     const tableColumns = useMemo<ITableColumn<Organization>[]>(
         () => [
@@ -101,17 +101,21 @@ export function useOrganizationsColumns(onClick?: (organization: Organization) =
                 cell: (organization: Organization) => (
                     <Split>
                         <SinceCell value={organization.created} /> by&nbsp;
-                        <Button
-                            variant="link"
-                            isInline
-                            onClick={() =>
-                                history.push(
-                                    RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
-                                )
-                            }
-                        >
-                            {organization.summary_fields?.created_by?.username}
-                        </Button>
+                        {disableLinks ? (
+                            organization.summary_fields?.created_by?.username
+                        ) : (
+                            <Button
+                                variant="link"
+                                isInline
+                                onClick={() =>
+                                    history.push(
+                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
+                                    )
+                                }
+                            >
+                                {organization.summary_fields?.created_by?.username}
+                            </Button>
+                        )}
                     </Split>
                 ),
                 sort: 'created',
@@ -122,17 +126,21 @@ export function useOrganizationsColumns(onClick?: (organization: Organization) =
                 cell: (organization: Organization) => (
                     <Split>
                         <SinceCell value={organization.modified} /> by&nbsp;
-                        <Button
-                            variant="link"
-                            isInline
-                            onClick={() =>
-                                history.push(
-                                    RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
-                                )
-                            }
-                        >
-                            {organization.summary_fields?.modified_by?.username}
-                        </Button>
+                        {disableLinks ? (
+                            organization.summary_fields?.modified_by?.username
+                        ) : (
+                            <Button
+                                variant={disableLinks ? 'plain' : 'link'}
+                                isInline
+                                onClick={() =>
+                                    history.push(
+                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
+                                    )
+                                }
+                            >
+                                {organization.summary_fields?.modified_by?.username}
+                            </Button>
+                        )}
                     </Split>
                 ),
                 sort: 'modified',

@@ -44,8 +44,6 @@ import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
 import { Scrollable } from './components/Scrollable'
 import { SettingsContext } from './Settings'
-import { Organization } from '../frontend/controller/access/organizations/Organization'
-import { SelectDialog } from '../frontend/controller/SelectDialog'
 
 export type FormPageProps<T extends object> = PageHeaderProps & {
     children?: ReactNode
@@ -410,7 +408,7 @@ export function FormSelectInput(props: {
     )
 }
 
-export function FormTextSelect(props: {
+export function FormTextSelect<T>(props: {
     id?: string
     label: string
     name: string
@@ -419,6 +417,9 @@ export function FormTextSelect(props: {
     secret?: boolean
     autoFocus?: boolean
     placeholder?: string
+    selectTitle?: string
+    selectValue?: (item: T) => string | number
+    selectOpen?: (callback: (item: T) => void, title: string) => void
 }) {
     const {
         register,
@@ -430,7 +431,6 @@ export function FormTextSelect(props: {
     const error = fieldState.error
     let id = props.id ?? props.name
     id = id.split('.').join('-')
-    const [open, setOpen] = useState(false)
     return (
         <Fragment>
             <FormGroup
@@ -458,18 +458,30 @@ export function FormTextSelect(props: {
                         // innerRef={registration.ref}
                         isReadOnly={isSubmitting}
                     />
-                    <Button variant="control" onClick={() => setOpen(!open)} aria-label="Options menu" isDisabled={isSubmitting}>
+                    <Button
+                        variant="control"
+                        onClick={() =>
+                            props.selectOpen?.((item: T) => {
+                                if (props.selectValue) {
+                                    const value = props.selectValue(item)
+                                    setValue(props.name, value, { shouldValidate: true })
+                                }
+                            }, props.selectTitle as string)
+                        }
+                        aria-label="Options menu"
+                        isDisabled={isSubmitting}
+                    >
                         <SearchIcon />
                     </Button>
                 </InputGroup>
             </FormGroup>
-            <SelectDialog
+            {/* <SelectDialog
                 open={open}
                 setOpen={setOpen}
                 onClick={(organization: Organization) => {
                     setValue(props.name, organization.name, { shouldValidate: true })
                 }}
-            />
+            /> */}
         </Fragment>
     )
 }
@@ -507,6 +519,9 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                                 label={title}
                                 placeholder={placeholder}
                                 required={required}
+                                selectTitle={property.selectTitle}
+                                selectValue={property.selectValue as (organization: unknown) => string | number}
+                                selectOpen={property.selectOpen}
                             />
                         )
                         break

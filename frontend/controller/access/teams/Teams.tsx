@@ -13,7 +13,7 @@ import {
     PageTable,
     SinceCell,
     TypedActionType,
-    useDialog,
+    useSetDialog,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareStrings } from '../../../../framework/utils/compare'
@@ -103,7 +103,7 @@ export function Teams(props: { url: string }) {
 
 export function useDeleteTeams(callback: (teams: Team[]) => void) {
     const { t } = useTranslation()
-    const [_, setDialog] = useDialog()
+    const setDialog = useSetDialog()
     const deleteActionNameColumn = useNameColumn({ disableSort: true })
     const deleteActionOrganizationColumn = useOrganizationNameColumn({ disableLink: true, disableSort: true })
     const deleteActionCreatedColumn = useCreatedColumn({ disableSort: true })

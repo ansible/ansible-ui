@@ -1,7 +1,7 @@
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { SingleSelect } from './components/SingleSelect'
-import { useDialog } from './DialogContext'
+import { useSetDialog } from './DialogContext'
 
 export interface Settings {
     theme?: 'system' | 'light' | 'dark'
@@ -63,7 +63,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
 export function useSettingsDialog() {
     const [open, setOpen] = useState(false)
     const openSetting = useCallback(() => setOpen(true), [])
-    const [_, setDialog] = useDialog()
+    const setDialog = useSetDialog()
     useEffect(() => {
         if (open) {
             setDialog(<SettingsDialog open={open} setOpen={setOpen} />)
