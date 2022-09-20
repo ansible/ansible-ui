@@ -106,7 +106,10 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
             {
                 header: t('Name'),
                 cell: (organization) => (
-                    <TextCell text={organization.name} to={RouteE.OrganizationDetails.replace(':id', organization.id.toString())} />
+                    <TextCell
+                        text={organization.name}
+                        to={disableLinks ? undefined : RouteE.OrganizationDetails.replace(':id', organization.id.toString())}
+                    />
                 ),
                 sort: 'name',
             },
@@ -128,8 +131,13 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
                     <SinceCell
                         value={organization.created}
                         author={organization.summary_fields?.created_by?.username}
-                        onClick={() =>
-                            history.push(RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString()))
+                        onClick={
+                            disableLinks
+                                ? undefined
+                                : () =>
+                                      history.push(
+                                          RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
+                                      )
                         }
                     />
                 ),
@@ -142,8 +150,13 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
                     <SinceCell
                         value={organization.modified}
                         author={organization.summary_fields?.modified_by?.username}
-                        onClick={() =>
-                            history.push(RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString()))
+                        onClick={
+                            disableLinks
+                                ? undefined
+                                : () =>
+                                      history.push(
+                                          RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
+                                      )
                         }
                     />
                 ),

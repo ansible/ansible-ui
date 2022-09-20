@@ -144,14 +144,6 @@ export function useSelected<T extends object>(items: T[], keyFn: (item: T) => st
     const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
     const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])
 
-    useEffect(() => {
-        console.log('selectedItems')
-    }, [selectedItems])
-
-    useEffect(() => {
-        console.log('allSelected')
-    }, [allSelected])
-
     return useMemo(
         () => ({
             selectedItems,
