@@ -1,4 +1,5 @@
 import { ajvResolver } from '@hookform/resolvers/ajv'
+
 import {
     ActionGroup,
     Alert,
@@ -588,7 +589,7 @@ export function PageForm<T extends object>(props: {
     const { schema, defaultValue } = props
     const form = useForm<T>({
         defaultValues: defaultValue ?? ({} as DeepPartial<T>),
-        resolver: schema ? ajvResolver(schema as Ajv.JSONSchemaType<T>, { strict: false } as Ajv.Options) : undefined,
+        resolver: schema ? ajvResolver(schema as Ajv.JSONSchemaType<T>, { strict: false, addFormats: true } as Ajv.Options) : undefined,
     })
 
     const { handleSubmit, setError: setFieldError } = form
