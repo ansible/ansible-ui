@@ -28,10 +28,10 @@ export function Organizations() {
     const { t } = useTranslation()
     const history = useHistory()
 
-    // Toolbar Filters
     const toolbarFilters = useOrganizationsFilters()
 
-    // Toolbar Actions
+    const tableColumns = useOrganizationsColumns()
+
     const toolbarActions = useMemo<ITypedAction<Organization>[]>(
         () => [
             {
@@ -51,9 +51,6 @@ export function Organizations() {
         [history, t]
     )
 
-    // Table Columns
-    const tableColumns = useOrganizationsColumns()
-
     const rowActions = useMemo<IItemAction<Organization>[]>(
         () => [
             {
@@ -70,7 +67,7 @@ export function Organizations() {
         [history, t]
     )
 
-    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters)
+    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns)
 
     return (
         <TablePage<Organization>
@@ -84,7 +81,7 @@ export function Organizations() {
             emptyStateTitle={t('No organizations yet')}
             emptyStateDescription={t('To get started, create an organization.')}
             emptyStateButtonText={t('Create organization')}
-            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            emptyStateButtonClick={() => history.push(RouteE.CreateOrganization)}
             {...view}
         />
     )

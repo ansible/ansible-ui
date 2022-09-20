@@ -42,6 +42,7 @@ import {
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
+import { Organization } from '../frontend/controller/access/organizations/Organization'
 import { Scrollable } from './components/Scrollable'
 import { SettingsContext } from './Settings'
 
@@ -519,9 +520,12 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                                 label={title}
                                 placeholder={placeholder}
                                 required={required}
-                                selectTitle={property.selectTitle}
-                                selectValue={property.selectValue as (organization: unknown) => string | number}
-                                selectOpen={property.selectOpen}
+                                selectTitle={(property as { selectTitle?: string }).selectTitle}
+                                selectValue={(property as { selectValue?: (organization: unknown) => string | number }).selectValue}
+                                selectOpen={
+                                    (property as { selectOpen?: (callback: (organization: Organization) => void, title: string) => void })
+                                        .selectOpen
+                                }
                             />
                         )
                         break
