@@ -1,5 +1,5 @@
 import { HTTPError } from 'ky'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
@@ -82,10 +82,6 @@ export function useControllerView<T extends { id: number }>(
     if (data?.count !== undefined) {
         itemCountRef.current.itemCount = data?.count
     }
-
-    useEffect(() => {
-        console.log('selection')
-    }, [selection])
 
     return useMemo(() => {
         return {
