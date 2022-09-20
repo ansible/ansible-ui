@@ -1,9 +1,7 @@
 /// <reference types="cypress" />
 describe('teams', () => {
     it('loads', () => {
-        cy.visit(`/teams`)
-        // cy.injectAxe()
-        cy.get('.pf-c-title').contains(/^Teams$/)
+        cy.navigateTo(/^Teams$/)
     })
 
     it('create team', () => {

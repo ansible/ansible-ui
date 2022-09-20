@@ -1,8 +1,7 @@
 /// <reference types="cypress" />
 describe('users', () => {
     it('loads', () => {
-        cy.visit(`/users`)
-        cy.get('.pf-c-title').contains(/^Users$/)
+        cy.navigateTo(/^Users$/)
     })
 
     it('create user', () => {

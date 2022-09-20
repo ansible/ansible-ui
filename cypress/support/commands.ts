@@ -35,6 +35,7 @@ declare global {
         interface Chainable {
             getByLabel(label: string | RegExp): Chainable<void>
             clickButton(label: string | RegExp): Chainable<void>
+            navigateTo(label: string | RegExp): Chainable<void>
         }
     }
 }
@@ -53,6 +54,21 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
     cy.wait(1).get('button:not(:disabled)').contains(label).click()
+})
+
+Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
+    cy.get('#page-sidebar').then((c) => {
+        if (c.hasClass('pf-m-collapsed')) {
+            cy.get('#nav-toggle').click()
+        }
+    })
+    cy.get('.pf-c-nav__link').contains(label).click()
+    cy.get('#page-sidebar').then((c) => {
+        if (!c.hasClass('pf-m-collapsed')) {
+            cy.get('#nav-toggle').click()
+        }
+    })
+    cy.get('.pf-c-title').contains(label)
 })
 
 interface IControllerItem {
@@ -174,7 +190,8 @@ const teams: IControllerItem[] = []
 const users: IControllerItem[] = []
 
 before(() => {
-    // cy.injectAxe()
+    window.localStorage.setItem('access', 'true')
+    window.localStorage.setItem('theme', 'light')
 
     cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
         for (const item of json.results) {
@@ -191,16 +208,17 @@ before(() => {
             users.push(item)
         }
     })
+
+    cy.intercept('GET', '/api/login/', { statusCode: 200 })
+    cy.intercept('POST', '/api/login/', { statusCode: 200 })
+    cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+
+    cy.visit(`/dashboard`)
+    // cy.injectAxe()
 })
 
 beforeEach(() => {
-    window.localStorage.setItem('access', 'true')
-    window.localStorage.setItem('theme', 'light')
-
     if (Cypress.env('mock')) {
-        cy.intercept('GET', '/api/login/', { statusCode: 200 })
-        cy.intercept('POST', '/api/login/', { statusCode: 200 })
-        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
         handleControllerCollection('/api/v2/organizations/*/users', users)
         handleControllerCollection('/api/v2/organizations', organizations)
         handleControllerCollection('/api/v2/teams', teams)
