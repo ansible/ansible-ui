@@ -12,7 +12,7 @@ import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly
 import pLimit from 'p-limit'
 import { useCallback, useState } from 'react'
 import { Collapse } from './Collapse'
-import { useDialog } from './DialogContext'
+import { useSetDialog } from './DialogContext'
 import { ITableColumn, PageTable } from './PageTable'
 import { usePaged } from './useTableItems'
 
@@ -39,7 +39,7 @@ export function BulkActionDialog<T extends object>(props: {
     action: (item: T) => Promise<void>
     onClose?: (items: T[]) => void
 }) {
-    const [_, setDialog] = useDialog()
+    const setDialog = useSetDialog()
     const [isSubmitting, setSubmitting] = useState(false)
     const [isSubmited, setSubmited] = useState(false)
     const [progress, setProgress] = useState(0)
