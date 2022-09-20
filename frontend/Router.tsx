@@ -54,7 +54,7 @@ export function DemoRouter(): JSX.Element {
 
             <Route exact path={RouteE.Settings} component={Settings} />
 
-            {process.env.NODE_ENV === 'development' && <Route exact path={RouteE.Debug} component={Debug} />}
+            <Route exact path={RouteE.Debug} component={Debug} />
 
             <Route path="*">
                 <Redirect to={RouteE.Login} />
