@@ -1,4 +1,5 @@
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { EditOrganization } from './controller/access/organizations/EditOrganization'
 import { OrganizationDetails } from './controller/access/organizations/OrganizationDetails'
 import { Organizations } from './controller/access/organizations/Organizations'
 import { EditTeam } from './controller/access/teams/EditTeam'
@@ -32,6 +33,8 @@ export function DemoRouter(): JSX.Element {
 
             <Route exact path={RouteE.Organizations} component={Organizations} />
             <Route exact path={RouteE.OrganizationDetails} component={OrganizationDetails} />
+            <Route exact path={RouteE.CreateOrganization} component={EditOrganization} />
+            <Route exact path={RouteE.EditOrganization} component={EditOrganization} />
 
             <Route exact path={RouteE.Users} component={Users} />
             <Route exact path={RouteE.UserDetails} component={UserDetailsPage} />

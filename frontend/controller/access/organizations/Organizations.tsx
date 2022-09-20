@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { PlusIcon } from '@patternfly/react-icons'
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
@@ -20,7 +20,6 @@ import {
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
@@ -42,6 +41,12 @@ export function Organizations() {
                 label: t('Create organization'),
                 onClick: () => history.push(RouteE.CreateOrganization),
             },
+            {
+                type: TypedActionType.bulk,
+                icon: TrashIcon,
+                label: t('Delete selected organizations'),
+                onClick: () => alert('TODO'),
+            },
         ],
         [history, t]
     )
@@ -49,14 +54,21 @@ export function Organizations() {
     // Table Columns
     const tableColumns = useOrganizationsColumns()
 
-    // Row Actions
-    const editItemAction = useEditItemAction(() => {
-        // TODO
-    })
-    const deleteItemAction = useDeleteItemAction(() => {
-        // TODO
-    })
-    const rowActions = useMemo<IItemAction<Organization>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+    const rowActions = useMemo<IItemAction<Organization>[]>(
+        () => [
+            {
+                icon: EditIcon,
+                label: t('Edit organization'),
+                onClick: (organization) => history.push(RouteE.EditOrganization.replace(':id', organization.id.toString())),
+            },
+            {
+                icon: TrashIcon,
+                label: t('Delete organization'),
+                onClick: () => alert('TODO'),
+            },
+        ],
+        [history, t]
+    )
 
     const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters)
 
