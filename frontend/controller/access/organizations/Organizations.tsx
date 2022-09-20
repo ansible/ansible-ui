@@ -164,7 +164,7 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
                 defaultSortDirection: 'desc',
             },
         ],
-        [history, t]
+        [disableLinks, history, t]
     )
     return tableColumns
 }
