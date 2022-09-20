@@ -27,6 +27,66 @@ export function CreateUser() {
                 maxLength: t('Username cannot contain more than 150 characters.'),
             },
         }),
+        organization: Type.String({
+            title: t('Organization'),
+            placeholder: t('Enter the organization'),
+            minLength: 1,
+            errorMessage: { minLength: t('Organization is required') },
+            variant: 'select',
+            selectTitle: 'Select an organization',
+            selectValue: (organization: Organization) => organization.name,
+            selectOpen: selectOrganization,
+        }),
+        userType: Type.String({
+            title: t('User type'),
+            placeholder: t('Select user type'),
+            enum: [t('System administrator'), t('System auditor'), t('Normal user')],
+        }),
+        password: Type.String({
+            title: t('Password'),
+            placeholder: t('Enter password'),
+            variant: 'secret',
+            minLength: 1,
+            errorMessage: {
+                minLength: t('Password is required'),
+            },
+        }),
+        confirmPassword: Type.String({
+            title: t('Confirm password'),
+            placeholder: t('Confirm password'),
+            variant: 'secret',
+            minLength: 1,
+            errorMessage: {
+                minLength: t('Comfirmation is required'),
+            },
+        }),
+        firstName: Type.Optional(
+            Type.String({
+                title: t('First name'),
+                placeholder: t('Enter first name'),
+                maxLength: 150,
+                errorMessage: {
+                    maxLength: t('First name cannot contain more than 150 characters.'),
+                },
+            })
+        ),
+        lastName: Type.Optional(
+            Type.String({
+                title: t('Last name'),
+                placeholder: t('Enter last name'),
+                maxLength: 150,
+                errorMessage: {
+                    maxLength: t('Last name cannot contain more than 150 characters.'),
+                },
+            })
+        ),
+        email: Type.Optional(
+            Type.String({
+                title: t('Email'),
+                placeholder: t('Enter email'),
+                format: 'email',
+            })
+        ),
     })
     type CreateUser = Static<typeof CreateUserSchema>
 
