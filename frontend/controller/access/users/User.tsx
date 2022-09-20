@@ -28,16 +28,14 @@ export const UserType = Type.Object({
             Type.Array(
                 Type.Object({
                     descendant_roles: Type.Array(Type.String()),
-                    role: Type.Array(
-                        Type.Object({
-                            id: Type.String(),
-                            name: Type.String(),
-                            description: Type.String(),
-                            user_capabilities: Type.Object({
-                                unattach: Type.Boolean(),
-                            }),
-                        })
-                    ),
+                    role: Type.Object({
+                        id: Type.Number(),
+                        name: Type.String(),
+                        description: Type.String(),
+                        user_capabilities: Type.Object({
+                            unattach: Type.Boolean(),
+                        }),
+                    }),
                 })
             )
         ),
