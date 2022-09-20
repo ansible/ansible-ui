@@ -106,9 +106,8 @@ export function TypedActionsDropdown<T extends object>(props: {
                             isDisabled = true
                         }
                         return (
-                            <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+                            <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
                                 <DropdownItem
-                                    key={action.label}
                                     onClick={() => action.onClick(selectedItems ?? [])}
                                     isAriaDisabled={isDisabled}
                                     icon={

@@ -120,6 +120,8 @@ export type PageTableProps<T extends object> = {
     emptyStateDescription?: string
     emptyStateButtonText?: string
     emptyStateButtonClick?: () => void
+
+    onSelect?: (item: T) => void
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -137,6 +139,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         clearAllFilters,
         filters,
         error,
+        onSelect,
+        unselectAll,
     } = props
     const showSelect = toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
@@ -219,6 +223,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                             scrollLeft={scroll.left > 0}
                             scrollRight={scroll.right > 1}
                             tableColumns={managedColumns}
+                            onSelect={onSelect}
                         />
                     )}
                     <Tbody>
@@ -256,6 +261,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                                       showSelect={showSelect}
                                       scrollLeft={scroll.left > 0}
                                       scrollRight={scroll.right > 1}
+                                      unselectAll={unselectAll}
+                                      onSelect={onSelect}
                                   />
                               ))}
                     </Tbody>
@@ -294,8 +301,9 @@ function TableHead<T extends object>(props: {
     showSelect?: boolean
     scrollLeft?: boolean
     scrollRight?: boolean
+    onSelect?: (item: T) => void
 }) {
-    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect } = props
+    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect, onSelect } = props
 
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
@@ -321,7 +329,7 @@ function TableHead<T extends object>(props: {
     return (
         <Thead>
             <Tr>
-                {showSelect && (
+                {(showSelect || onSelect) && (
                     <Th isStickyColumn style={{ width: '0%' }} stickyMinWidth="45px" hasRightBorder={props.scrollLeft}>
                         &nbsp;
                     </Th>
@@ -373,8 +381,10 @@ function TableRow<T extends object>(props: {
     showSelect: boolean
     scrollLeft?: boolean
     scrollRight?: boolean
+    onSelect?: (item: T) => void
+    unselectAll?: () => void
 }) {
-    const { columns, selectItem, unselectItem, isItemSelected, item, rowActions, rowIndex, showSelect } = props
+    const { columns, selectItem, unselectItem, unselectAll, isItemSelected, item, rowActions, rowIndex, showSelect, onSelect } = props
     const md = useWindowSizeOrLarger(WindowSize.xl)
     return (
         <Tr
@@ -382,6 +392,7 @@ function TableRow<T extends object>(props: {
             // style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}
             isRowSelected={isItemSelected}
             style={{ boxShadow: 'unset' }}
+            // isStriped={rowIndex % 2 === 0}
         >
             {showSelect && (
                 <Th
@@ -403,6 +414,29 @@ function TableRow<T extends object>(props: {
                     isStickyColumn
                     stickyMinWidth="0px"
                     hasRightBorder={props.scrollLeft}
+                />
+            )}
+            {onSelect && (
+                <Td
+                    select={{
+                        rowIndex,
+                        onSelect: () => {
+                            unselectAll?.()
+                            selectItem?.(item)
+                            onSelect?.(item)
+                        },
+                        isSelected: isItemSelected ?? false,
+                        // disable: !isRepoSelectable(repo),
+                        variant: 'radio',
+                    }}
+                    style={{
+                        width: '0%',
+                        paddingLeft: md ? undefined : 20,
+                        position: 'sticky',
+                        left: 0,
+                        background: 'var(--pf-c-table__sticky-column--BackgroundColor)',
+                        zIndex: 1,
+                    }}
                 />
             )}
             <TableCells

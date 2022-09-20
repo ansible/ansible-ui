@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 
-export interface IPagedView {
+export interface IView {
     page: number
     perPage: number
     sort: string
@@ -9,7 +9,7 @@ export interface IPagedView {
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
 }
 
-export function usePagedView(view?: Partial<IPagedView>) {
+export function useView(view?: Partial<IView>) {
     const [page, setPage] = useState(() => view?.page ?? 1)
     const [perPage, setPerPage] = useState(() => view?.perPage ?? 10)
     const [sort, setSort] = useState(() => view?.sort ?? '')

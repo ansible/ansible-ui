@@ -1,17 +1,27 @@
 import { HTTPError } from 'ky'
-import { useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
-import { usePagedView } from '../common/useView'
+import { IView, useView } from '../common/useView'
 import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
+
+export type IControllerView<T extends { id: number }> = IView & {
+    itemCount: number | undefined
+    keyFn: (item: T) => string | number
+    pageItems: T[]
+    setPage: (page: number) => void
+    setPerPage: (perPage: number) => void
+    selectedItems: T[]
+    unselectAll: () => void
+}
 
 export function useControllerView<T extends { id: number }>(
     url: string,
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[]
 ) {
-    const view = usePagedView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined })
+    const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined })
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view
@@ -54,7 +64,7 @@ export function useControllerView<T extends { id: number }>(
     const fetcher = useFetcher()
     const response = useSWR<ItemsResponse<T>>(url, fetcher)
     const { data, mutate } = response
-    const refresh = () => mutate()
+    const refresh = useCallback(() => mutate(), [mutate])
 
     useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions)
 
@@ -73,14 +83,17 @@ export function useControllerView<T extends { id: number }>(
         itemCountRef.current.itemCount = data?.count
     }
 
-    return {
-        refresh,
-        itemCount: itemCountRef.current.itemCount,
-        pageItems: data ? data.results : undefined,
-        error,
-        ...view,
-        ...selection,
-    }
+    return useMemo(
+        () => ({
+            refresh,
+            itemCount: itemCountRef.current.itemCount,
+            pageItems: data ? data.results : undefined,
+            error,
+            ...view,
+            ...selection,
+        }),
+        [data, error, refresh, selection, view]
+    )
 }
 
 export async function getControllerError(err: unknown) {

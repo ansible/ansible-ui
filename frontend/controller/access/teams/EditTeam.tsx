@@ -1,13 +1,16 @@
 import { Static, Type } from '@sinclair/typebox'
+import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
+import { useSelectDialog } from '../../../../framework/useSelectDialog'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
-import { getControllerError } from '../../useControllerView'
+import { getControllerError, useControllerView } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
+import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
 import { Team } from './Team'
 
 export function EditTeam() {
@@ -19,33 +22,45 @@ export function EditTeam() {
 
     const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet, swrOptions)
 
-    const EditTeamSchema = Type.Object({
-        name: Type.String({
-            title: t('Name'),
-            placeholder: t('Enter the name'),
-            minLength: 1,
-            errorMessage: { minLength: t('Name is required') },
-        }),
-        description: Type.Optional(
-            Type.String({
-                title: t('Description'),
-                placeholder: t('Enter the description'),
-                variant: 'textarea',
-            })
-        ),
-        organization: Type.Optional(Type.Number()),
-        summary_fields: Type.Object({
-            organization: Type.Object({
+    const toolbarFilters = useOrganizationsFilters()
+    const tableColumns = useOrganizationsColumns(true)
+    const view = useControllerView('/api/v2/organizations/', toolbarFilters, tableColumns)
+    const openSelectDialog = useSelectDialog({ onSelect: () => null, toolbarFilters, tableColumns, view })
+
+    const EditTeamSchema = useMemo(
+        () =>
+            Type.Object({
                 name: Type.String({
-                    title: t('Organization'),
-                    placeholder: t('Enter the organization'),
+                    title: t('Name'),
+                    placeholder: t('Enter the name'),
                     minLength: 1,
-                    errorMessage: { minLength: t('Organization is required') },
-                    variant: 'select',
+                    errorMessage: { minLength: t('Name is required') },
+                }),
+                description: Type.Optional(
+                    Type.String({
+                        title: t('Description'),
+                        placeholder: t('Enter the description'),
+                        variant: 'textarea',
+                    })
+                ),
+                organization: Type.Optional(Type.Number()),
+                summary_fields: Type.Object({
+                    organization: Type.Object({
+                        name: Type.String({
+                            title: t('Organization'),
+                            placeholder: t('Enter the organization'),
+                            minLength: 1,
+                            errorMessage: { minLength: t('Organization is required') },
+                            variant: 'select',
+                            selectTitle: 'Select an organization',
+                            selectValue: (organization: Organization) => organization.name,
+                            selectOpen: openSelectDialog,
+                        }),
+                    }),
                 }),
             }),
-        }),
-    })
+        [openSelectDialog, t]
+    )
 
     type CreateTeam = Static<typeof EditTeamSchema>
 
