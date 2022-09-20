@@ -27,10 +27,17 @@ describe('teams', () => {
         cy.get('#name').contains(/^Team 002a$/)
     })
 
+    it('delete team', () => {
+        cy.navigateTo(/^Teams$/)
+        cy.clickRowAction(/^Team 001$/, /^Delete team$/)
+        cy.get('#confirm').click()
+        cy.clickButton('Delete')
+        cy.contains('Success')
+        cy.clickButton('Close')
+    })
+
     it('delete teams', () => {
-        cy.get('.pf-c-breadcrumb__item')
-            .contains(/^Teams$/)
-            .click()
+        cy.navigateTo(/^Teams$/)
         cy.get('#select-all').click()
         cy.get('#toggle-kebab').click()
         cy.get('.pf-c-dropdown__menu-item').contains('Delete selected teams').click()

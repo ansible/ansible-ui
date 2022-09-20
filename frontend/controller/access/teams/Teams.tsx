@@ -25,7 +25,7 @@ import {
     useNameToolbarFilter,
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
+import { useEditItemAction } from '../../../common/item-actions'
 import { getItemKey, requestDelete } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -147,8 +147,13 @@ export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): I
 }
 
 export function useDeleteTeamRowAction(callback: () => void) {
+    const { t } = useTranslation()
     const deleteTeams = useDeleteTeams(callback)
-    return useDeleteItemAction((item: Team) => deleteTeams([item]))
+    return {
+        icon: TrashIcon,
+        label: t('Delete team'),
+        onClick: (item: Team) => deleteTeams([item]),
+    }
 }
 
 export function useTeamsFilters() {
