@@ -13,7 +13,6 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { useNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,
@@ -101,11 +100,16 @@ export function useOrganizationsFilters() {
 
 export function useOrganizationsColumns(disableLinks?: boolean) {
     const { t } = useTranslation()
-    const nameColumn = useNameColumn({ url: disableLinks ? undefined : RouteE.OrganizationDetails })
     const history = useHistory()
     const tableColumns = useMemo<ITableColumn<Organization>[]>(
         () => [
-            nameColumn,
+            {
+                header: t('Name'),
+                cell: (organization) => (
+                    <TextCell text={organization.name} to={RouteE.OrganizationDetails.replace(':id', organization.id.toString())} />
+                ),
+                sort: 'name',
+            },
             {
                 header: t('Description'),
                 cell: (organization) => <TextCell text={organization.description} />,
@@ -147,7 +151,7 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
                 defaultSortDirection: 'desc',
             },
         ],
-        [history, nameColumn, t]
+        [history, t]
     )
     return tableColumns
 }

@@ -130,14 +130,28 @@ export function useSelected<T extends object>(items: T[], keyFn: (item: T) => st
         [keyFn]
     )
 
-    const selectAll = useCallback(() => {
-        selectItems(items)
-    }, [items, selectItems])
+    const selectAll = useCallback(() => selectItems(items), [items, selectItems])
 
-    const unselectAll = useCallback(() => setSelectedMap({}), [])
+    const unselectAll = useCallback(() => {
+        setSelectedMap((selectedMap) => {
+            if (Object.keys(selectedMap).length > 0) {
+                return {}
+            }
+            return selectedMap
+        })
+    }, [])
 
     const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
     const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])
+
+    useEffect(() => {
+        console.log('selectedItems')
+    }, [selectedItems])
+
+    useEffect(() => {
+        console.log('allSelected')
+    }, [allSelected])
+
     return useMemo(
         () => ({
             selectedItems,
@@ -246,7 +260,14 @@ export function useSelectedInMemory<T extends object>(items: T[], keyFn: (item: 
         selectItems(items)
     }, [items, selectItems])
 
-    const unselectAll = useCallback(() => setSelectedMap({}), [])
+    const unselectAll = useCallback(() => {
+        setSelectedMap((selectedMap) => {
+            if (Object.keys(selectedMap).length > 0) {
+                return {}
+            }
+            return selectedMap
+        })
+    }, [])
 
     const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
     const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])

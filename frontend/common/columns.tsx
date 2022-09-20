@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
@@ -8,18 +9,21 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     disableSort?: boolean
 }) {
     const { t } = useTranslation()
-    const column: ITableColumn<T> = {
-        header: t('Name'),
-        cell: (item: T) => (
-            <TextCell
-                text={item.name}
-                iconSize="sm"
-                to={options.url?.replace(':id', item.id.toString())}
-                onClick={options.onClick ? () => options.onClick?.(item) : undefined}
-            />
-        ),
-        sort: options.disableSort ? undefined : 'name',
-    }
+    const column = useMemo<ITableColumn<T>>(
+        () => ({
+            header: t('Name'),
+            cell: (item: T) => (
+                <TextCell
+                    text={item.name}
+                    iconSize="sm"
+                    to={options.url?.replace(':id', item.id.toString())}
+                    onClick={options.onClick ? () => options.onClick?.(item) : undefined}
+                />
+            ),
+            sort: options.disableSort ? undefined : 'name',
+        }),
+        [options, t]
+    )
     return column
 }
 
