@@ -9,7 +9,7 @@ import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
 export type IControllerView<T extends { id: number }> = IView & {
     itemCount: number | undefined
     keyFn: (item: T) => string | number
-    pageItems: T[]
+    pageItems: T[] | undefined
     setPage: (page: number) => void
     setPerPage: (perPage: number) => void
     selectedItems: T[]

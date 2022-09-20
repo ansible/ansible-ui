@@ -68,7 +68,7 @@ export function EditOrganization() {
 
     const { cache } = useSWRConfig()
 
-    const onSubmit: FormPageSubmitHandler<CreateOrganization> = async (editedOrganization, setError, setFieldError) => {
+    const onSubmit: FormPageSubmitHandler<CreateOrganization> = async (editedOrganization, setError) => {
         try {
             let organization: Organization
             if (Number.isInteger(id)) {
