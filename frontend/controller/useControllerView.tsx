@@ -1,5 +1,5 @@
 import { HTTPError } from 'ky'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter } from '../../framework'
 import { useSelected } from '../../framework/useTableItems'
@@ -83,17 +83,20 @@ export function useControllerView<T extends { id: number }>(
         itemCountRef.current.itemCount = data?.count
     }
 
-    return useMemo(
-        () => ({
+    useEffect(() => {
+        console.log('selection')
+    }, [selection])
+
+    return useMemo(() => {
+        return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
             pageItems: data ? data.results : undefined,
             error,
             ...view,
             ...selection,
-        }),
-        [data, error, refresh, selection, view]
-    )
+        }
+    }, [data, error, refresh, selection, view])
 }
 
 export async function getControllerError(err: unknown) {

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 
 export interface IView {
     page: number
@@ -16,5 +16,20 @@ export function useView(view?: Partial<IView>) {
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => view?.sortDirection ?? 'asc')
     const [filters, setFilters] = useState<Record<string, string[]>>(() => view?.filters ?? {})
     const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
-    return { page, setPage, perPage, setPerPage, sort, setSort, sortDirection, setSortDirection, filters, setFilters, clearAllFilters }
+    return useMemo(
+        () => ({
+            page,
+            setPage,
+            perPage,
+            setPerPage,
+            sort,
+            setSort,
+            sortDirection,
+            setSortDirection,
+            filters,
+            setFilters,
+            clearAllFilters,
+        }),
+        [clearAllFilters, filters, page, perPage, sort, sortDirection]
+    )
 }
