@@ -3,15 +3,22 @@ import { useHistory } from 'react-router-dom'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
+import { useSelectDialog } from '../../../../framework/useSelectDialog'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
-import { getControllerError } from '../../useControllerView'
+import { getControllerError, useControllerView } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
+import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
 import { User } from './User'
 
 export function CreateUser() {
     const { t } = useTranslation()
     const history = useHistory()
+
+    const toolbarFilters = useOrganizationsFilters()
+    const tableColumns = useOrganizationsColumns(true)
+    const view = useControllerView('/api/v2/organizations/', toolbarFilters, tableColumns)
+    const openSelectDialog = useSelectDialog({ onSelect: () => null, toolbarFilters, tableColumns, view })
 
     const CreateUserSchema = Type.Object({
         username: Type.String({
@@ -30,6 +37,9 @@ export function CreateUser() {
             minLength: 1,
             errorMessage: { minLength: t('Organization is required') },
             variant: 'select',
+            selectTitle: 'Select an organization',
+            selectValue: (organization: Organization) => organization.name,
+            selectOpen: openSelectDialog,
         }),
         userType: Type.String({
             title: t('User type'),

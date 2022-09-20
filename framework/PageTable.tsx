@@ -931,8 +931,32 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
     )
 }
 
-export function SinceCell(props: { value?: string }) {
+export function SinceCell(props: { value?: string; author?: string; onClick?: () => void }) {
+    const { author, onClick } = props
+    const [dateTime, setDateTime] = useState<string | null>(null)
+    useEffect(() => {
+        if (props.value) {
+            setDateTime(DateTime.fromISO(props.value).toRelative())
+        }
+        const timeout = setInterval(() => {
+            if (props.value) {
+                setDateTime(DateTime.fromISO(props.value).toRelative())
+            }
+        }, 1000)
+        return () => clearTimeout(timeout)
+    }, [props.value])
     if (props.value === undefined) return <></>
-    const dateTime = DateTime.fromISO(props.value)
-    return <Fragment>{dateTime.toRelative()}</Fragment>
+    return (
+        <span style={{ whiteSpace: 'nowrap' }}>
+            {dateTime}
+            {author && <span>&nbsp;by&nbsp;</span>}
+            {onClick ? (
+                <Button variant="link" isInline onClick={onClick}>
+                    {author}
+                </Button>
+            ) : (
+                <span>{author}</span>
+            )}
+        </span>
+    )
 }

@@ -1,4 +1,4 @@
-import { Button, ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -125,28 +125,22 @@ function TeamDetailsTab(props: { team: Team }) {
                             />
                         </Detail>
                         <Detail label={t('Created')}>
-                            <SinceCell value={team.created} /> by&nbsp;
-                            <Button
-                                variant="link"
-                                isInline
+                            <SinceCell
+                                value={team.created}
+                                author={team.summary_fields?.created_by?.username}
                                 onClick={() =>
                                     history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
                                 }
-                            >
-                                {team.summary_fields?.created_by?.username}
-                            </Button>
+                            />
                         </Detail>
                         <Detail label={t('Last modified')}>
-                            <SinceCell value={team.modified} /> by&nbsp;
-                            <Button
-                                variant="link"
-                                isInline
+                            <SinceCell
+                                value={team.modified}
+                                author={team.summary_fields?.modified_by?.username}
                                 onClick={() =>
                                     history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
                                 }
-                            >
-                                {team.summary_fields?.modified_by?.username}
-                            </Button>
+                            />
                         </Detail>
                     </DetailsList>
                 </PageSection>
