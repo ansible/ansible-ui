@@ -1,8 +1,18 @@
+import { ButtonVariant } from '@patternfly/react-core'
+import { PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, SinceCell, TablePage, TextCell } from '../../../../framework'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    SinceCell,
+    TablePage,
+    TextCell,
+    TypedActionType,
+} from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
-import { compareNumbers } from '../../../../framework/utils/compare'
 import { useNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
@@ -11,25 +21,29 @@ import {
     useNameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { useDeleteItemAction, useEditItemAction } from '../../../common/item-actions'
-import { useCreateToolbarAction, useDeleteToolbarAction } from '../../../common/toolbar-actions'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
 
 export function Organizations() {
     const { t } = useTranslation()
+    const history = useHistory()
 
     // Toolbar Filters
     const toolbarFilters = useOrganizationsFilters()
 
     // Toolbar Actions
-    const createToolbarAction = useCreateToolbarAction(RouteE.CreateOrganization)
-    const deleteToolbarAction = useDeleteToolbarAction(() => {
-        // TODO
-    })
     const toolbarActions = useMemo<ITypedAction<Organization>[]>(
-        () => [createToolbarAction, deleteToolbarAction],
-        [createToolbarAction, deleteToolbarAction]
+        () => [
+            {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Create organization'),
+                onClick: () => history.push(RouteE.CreateOrganization),
+            },
+        ],
+        [history, t]
     )
 
     // Table Columns
@@ -90,14 +104,10 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
             {
                 header: t('Members'),
                 cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />,
-                sortFn: (l, r) =>
-                    compareNumbers(l.summary_fields?.related_field_counts?.users, r.summary_fields?.related_field_counts?.users),
             },
             {
                 header: t('Teams'),
                 cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.teams.toString()} />,
-                sortFn: (l, r) =>
-                    compareNumbers(l.summary_fields?.related_field_counts?.teams, r.summary_fields?.related_field_counts?.teams),
             },
             {
                 header: t('Created'),
