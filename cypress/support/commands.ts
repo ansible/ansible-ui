@@ -36,6 +36,7 @@ declare global {
             getByLabel(label: string | RegExp): Chainable<void>
             clickButton(label: string | RegExp): Chainable<void>
             navigateTo(label: string | RegExp): Chainable<void>
+            clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
         }
     }
 }
@@ -69,6 +70,15 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
         }
     })
     cy.get('.pf-c-title').contains(label)
+})
+
+Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | RegExp) => {
+    cy.contains('td', name)
+        .parent()
+        .within(() => {
+            cy.get('button[type="button"]').click()
+            cy.get('.pf-c-dropdown__menu-item').contains(label).click()
+        })
 })
 
 interface IControllerItem {
@@ -213,11 +223,14 @@ before(() => {
     cy.intercept('POST', '/api/login/', { statusCode: 200 })
     cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
 
-    cy.visit(`/dashboard`)
+    cy.visit(`/debug`)
     // cy.injectAxe()
 })
 
 beforeEach(() => {
+    window.localStorage.setItem('access', 'true')
+    window.localStorage.setItem('theme', 'light')
+
     if (Cypress.env('mock')) {
         handleControllerCollection('/api/v2/organizations/*/users', users)
         handleControllerCollection('/api/v2/organizations', organizations)
