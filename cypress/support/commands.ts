@@ -81,6 +81,16 @@ Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | R
         })
 })
 
+Cypress.Commands.overwrite('type', (originalFn, subject, text, options: Partial<Cypress.TypeOptions> = {}) => {
+    options.delay = options.delay || 100
+
+    return (originalFn as (subject: string, text: unknown, options: Partial<Cypress.TypeOptions>) => Cypress.Chainable<unknown>)(
+        subject,
+        text,
+        options
+    )
+})
+
 interface IControllerItem {
     id: number
     organization?: number
