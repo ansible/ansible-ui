@@ -1,4 +1,3 @@
-import { Button, Split } from '@patternfly/react-core'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, SinceCell, TablePage, TextCell } from '../../../../framework'
@@ -85,6 +84,10 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
         () => [
             nameColumn,
             {
+                header: t('Description'),
+                cell: (organization) => <TextCell text={organization.description} />,
+            },
+            {
                 header: t('Members'),
                 cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />,
                 sortFn: (l, r) =>
@@ -99,24 +102,13 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
             {
                 header: t('Created'),
                 cell: (organization: Organization) => (
-                    <Split>
-                        <SinceCell value={organization.created} /> by&nbsp;
-                        {disableLinks ? (
-                            organization.summary_fields?.created_by?.username
-                        ) : (
-                            <Button
-                                variant="link"
-                                isInline
-                                onClick={() =>
-                                    history.push(
-                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
-                                    )
-                                }
-                            >
-                                {organization.summary_fields?.created_by?.username}
-                            </Button>
-                        )}
-                    </Split>
+                    <SinceCell
+                        value={organization.created}
+                        author={organization.summary_fields?.created_by?.username}
+                        onClick={() =>
+                            history.push(RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString()))
+                        }
+                    />
                 ),
                 sort: 'created',
                 defaultSortDirection: 'desc',
@@ -124,24 +116,13 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
             {
                 header: t('Modified'),
                 cell: (organization: Organization) => (
-                    <Split>
-                        <SinceCell value={organization.modified} /> by&nbsp;
-                        {disableLinks ? (
-                            organization.summary_fields?.modified_by?.username
-                        ) : (
-                            <Button
-                                variant={disableLinks ? 'plain' : 'link'}
-                                isInline
-                                onClick={() =>
-                                    history.push(
-                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
-                                    )
-                                }
-                            >
-                                {organization.summary_fields?.modified_by?.username}
-                            </Button>
-                        )}
-                    </Split>
+                    <SinceCell
+                        value={organization.modified}
+                        author={organization.summary_fields?.modified_by?.username}
+                        onClick={() =>
+                            history.push(RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString()))
+                        }
+                    />
                 ),
                 sort: 'modified',
                 defaultSortDirection: 'desc',

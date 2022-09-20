@@ -1,4 +1,4 @@
-import { Button, ButtonVariant, Split } from '@patternfly/react-core'
+import { ButtonVariant } from '@patternfly/react-core'
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -12,6 +12,7 @@ import {
     PageHeader,
     PageTable,
     SinceCell,
+    TextCell,
     TypedActionType,
     useSetDialog,
 } from '../../../../framework'
@@ -170,22 +171,21 @@ export function useTeamsColumns(onClick?: (team: Team) => void) {
     const tableColumns = useMemo<ITableColumn<Team>[]>(
         () => [
             nameColumn,
+            {
+                header: t('Description'),
+                cell: (organization) => <TextCell text={organization.description} />,
+            },
             organizationColumn,
             {
                 header: t('Created'),
                 cell: (team: Team) => (
-                    <Split>
-                        <SinceCell value={team.created} /> by&nbsp;
-                        <Button
-                            variant="link"
-                            isInline
-                            onClick={() =>
-                                history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
-                            }
-                        >
-                            {team.summary_fields?.created_by?.username}
-                        </Button>
-                    </Split>
+                    <SinceCell
+                        value={team.created}
+                        author={team.summary_fields?.created_by?.username}
+                        onClick={() =>
+                            history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
+                        }
+                    />
                 ),
                 sort: 'created',
                 defaultSortDirection: 'desc',
@@ -193,18 +193,13 @@ export function useTeamsColumns(onClick?: (team: Team) => void) {
             {
                 header: t('Modified'),
                 cell: (team: Team) => (
-                    <Split>
-                        <SinceCell value={team.modified} /> by&nbsp;
-                        <Button
-                            variant="link"
-                            isInline
-                            onClick={() =>
-                                history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
-                            }
-                        >
-                            {team.summary_fields?.modified_by?.username}
-                        </Button>
-                    </Split>
+                    <SinceCell
+                        value={team.modified}
+                        author={team.summary_fields?.modified_by?.username}
+                        onClick={() =>
+                            history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
+                        }
+                    />
                 ),
                 sort: 'modified',
                 defaultSortDirection: 'desc',
