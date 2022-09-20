@@ -5,12 +5,11 @@ import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
-import { useSelectDialog } from '../../../../framework/useSelectDialog'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
-import { getControllerError, useControllerView } from '../../useControllerView'
+import { getControllerError } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
-import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
+import { useSelectOrganization } from '../organizations/useSelectOrganization'
 import { Team } from './Team'
 
 export function EditTeam() {
@@ -22,10 +21,7 @@ export function EditTeam() {
 
     const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet, swrOptions)
 
-    const toolbarFilters = useOrganizationsFilters()
-    const tableColumns = useOrganizationsColumns(true)
-    const view = useControllerView('/api/v2/organizations/', toolbarFilters, tableColumns)
-    const openSelectDialog = useSelectDialog({ onSelect: () => null, toolbarFilters, tableColumns, view })
+    const selectOrganization = useSelectOrganization()
 
     const EditTeamSchema = useMemo(
         () =>
@@ -54,12 +50,12 @@ export function EditTeam() {
                             variant: 'select',
                             selectTitle: 'Select an organization',
                             selectValue: (organization: Organization) => organization.name,
-                            selectOpen: openSelectDialog,
+                            selectOpen: selectOrganization,
                         }),
                     }),
                 }),
             }),
-        [openSelectDialog, t]
+        [selectOrganization, t]
     )
 
     type CreateTeam = Static<typeof EditTeamSchema>
