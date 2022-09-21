@@ -2,7 +2,7 @@ import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@
 import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { Detail, DetailsList, ITypedAction, PageHeader, SinceCell, TypedActions, TypedActionType } from '../../../../framework'
+import { Detail, DetailsList, ITypedAction, PageHeader, PageTable, SinceCell, TypedActions, TypedActionType } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { PageBody } from '../../../../framework/PageBody'
@@ -10,7 +10,9 @@ import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
-import { Teams } from '../teams/Teams'
+import { useControllerView } from '../../useControllerView'
+import { Team } from '../teams/Team'
+import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
 import { Organization } from './Organization'
 
@@ -130,7 +132,23 @@ function OrganizationAccessTab(props: { organization: Organization }) {
 
 function OrganizationTeamsTab(props: { organization: Organization }) {
     const { organization } = props
-    return <Teams url={`/api/v2/organizations/${organization.id}/teams/`} />
+    const { t } = useTranslation()
+    const history = useHistory()
+    const toolbarFilters = useTeamsFilters()
+    const tableColumns = useTeamsColumns()
+    const view = useControllerView<Team>(`/api/v2/organizations/${organization.id}/teams/`, toolbarFilters, tableColumns)
+    return (
+        <PageTable<Team>
+            toolbarFilters={toolbarFilters}
+            tableColumns={tableColumns}
+            errorStateTitle={t('Error loading teams')}
+            emptyStateTitle={t('No teams yet')}
+            emptyStateDescription={t('To get started, create a team.')}
+            emptyStateButtonText={t('Create team')}
+            emptyStateButtonClick={() => history.push(RouteE.CreateTeam)}
+            {...view}
+        />
+    )
 }
 
 function Todo() {

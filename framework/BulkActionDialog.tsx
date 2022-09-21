@@ -2,6 +2,7 @@ import {
     Button,
     Checkbox,
     Modal,
+    ModalBoxBody,
     ModalVariant,
     Progress,
     ProgressMeasureLocation,
@@ -116,16 +117,18 @@ export function BulkActionDialog<T extends object>(props: {
                       ]
             }
             description={<Collapse open={!isSubmitting && !isSubmited}>{props.prompt}</Collapse>}
+            hasNoBodyWrapper
         >
             <Collapse open={isSubmitting || isSubmited}>
-                <Progress
-                    value={(progress / props.items.length) * 100}
-                    title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
-                    size={ProgressSize.lg}
-                    variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
-                    style={{ marginBottom: 16 }}
-                    measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
-                />
+                <ModalBoxBody>
+                    <Progress
+                        value={(progress / props.items.length) * 100}
+                        title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
+                        size={ProgressSize.lg}
+                        variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
+                        measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
+                    />
+                </ModalBoxBody>
             </Collapse>
             <div
                 style={{
@@ -199,7 +202,7 @@ export function BulkActionDialog<T extends object>(props: {
             </div>
             {props.confirm && (
                 <Collapse open={!isSubmitting && !isSubmited}>
-                    <div style={{ marginLeft: 16, marginTop: 32, marginBottom: 8 }}>
+                    <div style={{ marginLeft: 32, marginTop: 16, marginBottom: 8 }}>
                         <Checkbox id="confirm" label={props.confirm} isChecked={confirmed} onChange={setConfirmed} />
                     </div>
                 </Collapse>

@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import {
@@ -11,62 +11,46 @@ import {
     PageBody,
     PageHeader,
     PageTable,
-    SinceCell,
-    TextCell,
     TypedActionType,
     useSetDialog,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareStrings } from '../../../../framework/utils/compare'
-import { useCreatedColumn, useModifiedColumn, useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+    useOrganizationNameColumn,
+} from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { useEditItemAction } from '../../../common/item-actions'
 import { getItemKey, requestDelete } from '../../../Data'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
 
-export function TeamsPage() {
-    const { t } = useTranslation()
-    return (
-        <>
-            <PageHeader
-                title={t('Teams')}
-                titleHelpTitle={t('Team')}
-                titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."
-                description="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions."
-            />
-            <PageBody>
-                <Teams url="/api/v2/teams/" />
-            </PageBody>
-        </>
-    )
-}
-
-export function Teams(props: { url: string }) {
+export function Teams() {
     const { t } = useTranslation()
     const history = useHistory()
 
-    // Toolbar Filters
     const toolbarFilters = useTeamsFilters()
 
-    // Table Columns
     const tableColumns = useTeamsColumns()
 
-    const view = useControllerView<Team>(props.url, toolbarFilters, tableColumns)
+    const view = useControllerView<Team>('/api/v2/teams/', toolbarFilters, tableColumns)
 
-    // Toolbar Actions
-    const deleteToolbarAction = useDeleteTeamToolbarAction((teams: Team[]) => {
-        for (const team of teams) {
+    const postDeleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
+        for (const team of deletedTeams) {
             view.unselectItem(team)
         }
         void view.refresh()
     })
+
     const toolbarActions = useMemo<ITypedAction<Team>[]>(
         () => [
             {
@@ -76,29 +60,55 @@ export function Teams(props: { url: string }) {
                 label: t('Create team'),
                 onClick: () => history.push(RouteE.CreateTeam),
             },
-            deleteToolbarAction,
+            {
+                type: TypedActionType.bulk,
+                icon: TrashIcon,
+                label: t('Delete selected teams'),
+                onClick: postDeleteTeams,
+            },
         ],
-        [deleteToolbarAction, history, t]
+        [postDeleteTeams, history, t]
     )
 
-    // Row Actions
-    const editItemAction = useEditItemAction((team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())))
-    const deleteItemAction = useDeleteTeamRowAction(() => void view.refresh())
-    const rowActions = useMemo<IItemAction<Team>[]>(() => [editItemAction, deleteItemAction], [deleteItemAction, editItemAction])
+    const rowActions = useMemo<IItemAction<Team>[]>(
+        () => [
+            {
+                icon: EditIcon,
+                label: t('Edit team'),
+                onClick: (team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())),
+            },
+            {
+                icon: TrashIcon,
+                label: t('Delete team'),
+                onClick: (item: Team) => postDeleteTeams([item]),
+            },
+        ],
+        [postDeleteTeams, history, t]
+    )
 
     return (
-        <PageTable<Team>
-            toolbarFilters={toolbarFilters}
-            toolbarActions={toolbarActions}
-            tableColumns={tableColumns}
-            rowActions={rowActions}
-            errorStateTitle={t('Error loading teams')}
-            emptyStateTitle={t('No teams yet')}
-            emptyStateDescription={t('To get started, create a team.')}
-            emptyStateButtonText={t('Create team')}
-            emptyStateButtonClick={() => history.push(RouteE.CreateTeam)}
-            {...view}
-        />
+        <>
+            <PageHeader
+                title={t('Teams')}
+                titleHelpTitle={t('Team')}
+                titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."
+                description="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions."
+            />
+            <PageBody>
+                <PageTable<Team>
+                    toolbarFilters={toolbarFilters}
+                    toolbarActions={toolbarActions}
+                    tableColumns={tableColumns}
+                    rowActions={rowActions}
+                    errorStateTitle={t('Error loading teams')}
+                    emptyStateTitle={t('No teams yet')}
+                    emptyStateDescription={t('To get started, create a team.')}
+                    emptyStateButtonText={t('Create team')}
+                    emptyStateButtonClick={() => history.push(RouteE.CreateTeam)}
+                    {...view}
+                />
+            </PageBody>
+        </>
     )
 }
 
@@ -109,6 +119,14 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
     const deleteActionOrganizationColumn = useOrganizationNameColumn({ disableLink: true, disableSort: true })
     const deleteActionCreatedColumn = useCreatedColumn({ disableSort: true })
     const deleteActionModifiedColumn = useModifiedColumn({ disableSort: true })
+    const columns = useMemo(
+        () => [deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn],
+        [deleteActionCreatedColumn, deleteActionModifiedColumn, deleteActionNameColumn, deleteActionOrganizationColumn]
+    )
+    const errorColumns = useMemo(
+        () => [deleteActionNameColumn, deleteActionOrganizationColumn],
+        [deleteActionNameColumn, deleteActionOrganizationColumn]
+    )
     const deleteTeams = (items: Team[]) => {
         setDialog(
             <BulkActionDialog<Team>
@@ -125,35 +143,14 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
                 items={items.sort((l, r) => compareStrings(l.name, r.name))}
                 keyFn={getItemKey}
                 isDanger
-                columns={[deleteActionNameColumn, deleteActionOrganizationColumn, deleteActionCreatedColumn, deleteActionModifiedColumn]}
-                errorColumns={[deleteActionNameColumn, deleteActionOrganizationColumn]}
+                columns={columns}
+                errorColumns={errorColumns}
                 onClose={callback}
                 action={(team: Team) => requestDelete(`/api/v2/teams/${team.id}/`)}
             />
         )
     }
     return deleteTeams
-}
-
-export function useDeleteTeamToolbarAction(callback: (teams: Team[]) => void): ITypedAction<Team> {
-    const deleteTeams = useDeleteTeams(callback)
-    const { t } = useTranslation()
-    return {
-        type: TypedActionType.bulk,
-        icon: TrashIcon,
-        label: t('Delete selected teams'),
-        onClick: deleteTeams,
-    }
-}
-
-export function useDeleteTeamRowAction(callback: () => void) {
-    const { t } = useTranslation()
-    const deleteTeams = useDeleteTeams(callback)
-    return {
-        icon: TrashIcon,
-        label: t('Delete team'),
-        onClick: (item: Team) => deleteTeams([item]),
-    }
 }
 
 export function useTeamsFilters() {
@@ -169,48 +166,14 @@ export function useTeamsFilters() {
 }
 
 export function useTeamsColumns(onClick?: (team: Team) => void) {
-    const { t } = useTranslation()
     const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.TeamDetails })
+    const descriptionColumn = useDescriptionColumn()
     const organizationColumn = useOrganizationNameColumn()
-    const history = useHistory()
+    const createdColumn = useCreatedColumn()
+    const modifiedColumn = useModifiedColumn()
     const tableColumns = useMemo<ITableColumn<Team>[]>(
-        () => [
-            nameColumn,
-            {
-                header: t('Description'),
-                cell: (organization) => <TextCell text={organization.description} />,
-            },
-            organizationColumn,
-            {
-                header: t('Created'),
-                cell: (team: Team) => (
-                    <SinceCell
-                        value={team.created}
-                        author={team.summary_fields?.created_by?.username}
-                        onClick={() =>
-                            history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
-                        }
-                    />
-                ),
-                sort: 'created',
-                defaultSortDirection: 'desc',
-            },
-            {
-                header: t('Modified'),
-                cell: (team: Team) => (
-                    <SinceCell
-                        value={team.modified}
-                        author={team.summary_fields?.modified_by?.username}
-                        onClick={() =>
-                            history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
-                        }
-                    />
-                ),
-                sort: 'modified',
-                defaultSortDirection: 'desc',
-            },
-        ],
-        [history, nameColumn, organizationColumn, t]
+        () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
+        [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationColumn]
     )
     return tableColumns
 }
