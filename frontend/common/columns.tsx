@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
 import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
@@ -27,13 +28,32 @@ export function useNameColumn<T extends { name: string; id: number }>(options: {
     return column
 }
 
+export function useDescriptionColumn<T extends { description?: string | undefined }>() {
+    const { t } = useTranslation()
+    const column = useMemo<ITableColumn<T>>(
+        () => ({
+            header: t('Description'),
+            cell: (item) => <TextCell text={item.description} />,
+        }),
+        [t]
+    )
+    return column
+}
+
 export function useCreatedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
-    const column: ITableColumn<{ created?: string }> = {
+    const history = useHistory()
+    const column: ITableColumn<{ created?: string; summary_fields?: { created_by?: { id: number; username: string } } }> = {
         header: t('Created'),
         cell: (item) => {
             if (!item.created) return <></>
-            return <SinceCell value={item.created} />
+            return (
+                <SinceCell
+                    value={item.created}
+                    author={item.summary_fields?.created_by?.username}
+                    onClick={() => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))}
+                />
+            )
         },
         sort: options?.disableSort ? undefined : 'created',
         defaultSortDirection: 'desc',
@@ -43,11 +63,18 @@ export function useCreatedColumn(options?: { disableSort?: boolean }) {
 
 export function useModifiedColumn(options?: { disableSort?: boolean }) {
     const { t } = useTranslation()
-    const column: ITableColumn<{ modified?: string }> = {
+    const history = useHistory()
+    const column: ITableColumn<{ modified?: string; summary_fields?: { modified_by?: { id: number; username: string } } }> = {
         header: t('Modified'),
         cell: (item) => {
             if (!item.modified) return <></>
-            return <SinceCell value={item.modified} />
+            return (
+                <SinceCell
+                    value={item.modified}
+                    author={item.summary_fields?.modified_by?.username}
+                    onClick={() => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))}
+                />
+            )
         },
         sort: options?.disableSort ? undefined : 'modified',
         defaultSortDirection: 'desc',
