@@ -32,7 +32,7 @@ import {
 } from '@patternfly/react-core'
 import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
-import { BrowserRouter, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
@@ -41,6 +41,7 @@ import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
 // import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
+import { useTranslation } from '../framework/components/useTranslation'
 import { swrOptions, useFetcher } from './Data'
 import AnsiblePng from './icons/ansible.png'
 import SparkleSvg from './icons/sparkle.svg'
@@ -67,9 +68,13 @@ export default function Demo() {
 }
 
 export function Main() {
+    const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
     return (
         <DialogProvider>
-            <Page header={<DemoHeader />} sidebar={<Sidebar />} isManagedSidebar defaultManagedSidebarIsOpen={false}>
+            <Page
+                header={<DemoHeader isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+                sidebar={<Sidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+            >
                 <DemoRouter />
             </Page>
         </DialogProvider>
@@ -97,12 +102,12 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     )
 }
 
-function DemoHeader() {
+function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
     const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
     const openSettings = useSettingsDialog()
     return (
         <Masthead display={{ default: 'inline' }}>
-            <MastheadToggle>
+            <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
                 <PageToggleButton variant="plain" aria-label="Global navigation">
                     <BarsIcon />
                 </PageToggleButton>
@@ -207,10 +212,24 @@ function isRouteActive(route: RouteE | RouteE[], location: { pathname: string })
     }
     return location.pathname.includes(route)
 }
-function Sidebar() {
+function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
+    const { t } = useTranslation()
     const location = useLocation()
+    const history = useHistory()
+    const md = useWindowSizeOrLarger(WindowSize.xl)
+    const { isNavOpen, setNavOpen } = props
+    const onClick = useCallback(
+        (route: RouteE) => {
+            history.push(route)
+            if (!md) {
+                setNavOpen(false)
+            }
+        },
+        [history, md, setNavOpen]
+    )
     return (
         <PageSidebar
+            isNavOpen={isNavOpen}
             nav={
                 <Nav>
                     <NavList>
@@ -279,14 +298,14 @@ function Sidebar() {
                             isExpanded
                             isActive={isRouteActive([RouteE.Organizations, RouteE.Users, RouteE.Teams], location)}
                         >
-                            <NavItem isActive={isRouteActive(RouteE.Organizations, location)}>
-                                <Link to={RouteE.Organizations}>Organizations</Link>
+                            <NavItem isActive={isRouteActive(RouteE.Organizations, location)} onClick={() => onClick(RouteE.Organizations)}>
+                                {t('Organizations')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Teams, location)}>
-                                <Link to={RouteE.Teams}>Teams</Link>
+                            <NavItem isActive={isRouteActive(RouteE.Teams, location)} onClick={() => onClick(RouteE.Teams)}>
+                                {t('Teams')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Users, location)}>
-                                <Link to={RouteE.Users}>Users</Link>
+                            <NavItem isActive={isRouteActive(RouteE.Users, location)} onClick={() => onClick(RouteE.Users)}>
+                                {t('Users')}
                             </NavItem>
                         </NavExpandable>
                         {/* <NavExpandable
