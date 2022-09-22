@@ -42,7 +42,7 @@ export function Teams() {
 
     const view = useControllerView<Team>('/api/v2/teams/', toolbarFilters, tableColumns)
 
-    const postDeleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
+    const deleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
         for (const team of deletedTeams) {
             view.unselectItem(team)
         }
@@ -62,10 +62,10 @@ export function Teams() {
                 type: TypedActionType.bulk,
                 icon: TrashIcon,
                 label: t('Delete selected teams'),
-                onClick: postDeleteTeams,
+                onClick: deleteTeams,
             },
         ],
-        [postDeleteTeams, history, t]
+        [deleteTeams, history, t]
     )
 
     const rowActions = useMemo<IItemAction<Team>[]>(
@@ -73,15 +73,15 @@ export function Teams() {
             {
                 icon: EditIcon,
                 label: t('Edit team'),
-                onClick: (team: Team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())),
+                onClick: (team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())),
             },
             {
                 icon: TrashIcon,
                 label: t('Delete team'),
-                onClick: (item: Team) => postDeleteTeams([item]),
+                onClick: (team) => deleteTeams([team]),
             },
         ],
-        [postDeleteTeams, history, t]
+        [deleteTeams, history, t]
     )
 
     return (
