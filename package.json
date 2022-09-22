@@ -6,6 +6,7 @@
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
         "frontend": "webpack serve --mode development",
         "backend": "NODE_ENV=development PORT=3001 nodemon --watch './backend/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' backend/main.ts | pino-zen",
+        "precommit": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
         "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:cypress --prefix-colors cyan,green,blue,magenta,gray",
         "build": "concurrently --kill-others-on-fail npm:frontend:build npm:backend:build --prefix-colors cyan,green,blue,magenta,gray",
         "frontend:build": "webpack --mode production --env pwa",
@@ -26,7 +27,8 @@
         "cypress:open": "cypress open --env mock=true --e2e --browser chrome",
         "cypress:frontend": "webpack serve --mode production --no-open --no-client-overlay",
         "coverage": "open coverage/lcov-report/index.html",
-        "coverage:check": "npx nyc report --check-coverage --statements 38 --branches 32 --functions 32 --lines 40 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false"
+        "coverage:check": "npx nyc report --check-coverage --statements 38 --branches 32 --functions 32 --lines 40 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@hookform/resolvers": "2.9.8",
@@ -97,6 +99,7 @@
         "eslint-plugin-react": "7.31.8",
         "eslint-plugin-react-hooks": "4.6.0",
         "html-webpack-plugin": "5.5.0",
+        "husky": "^8.0.1",
         "mini-css-extract-plugin": "2.6.1",
         "nodemon": "2.0.20",
         "pino-zen": "2.0.7",
