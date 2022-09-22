@@ -76,19 +76,19 @@ Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | R
     cy.contains('td', name)
         .parent()
         .within(() => {
-            cy.get('button[type="button"]').click()
+            cy.get('.pf-c-dropdown__toggle').click()
             cy.get('.pf-c-dropdown__menu-item').contains(label).click()
         })
 })
 
-Cypress.Commands.overwrite('type', (originalFn, subject, text, options: Partial<Cypress.TypeOptions> = {}) => {
-    options.delay = options.delay || 100
-    return (originalFn as (subject: string, text: unknown, options: Partial<Cypress.TypeOptions>) => Cypress.Chainable<unknown>)(
-        subject,
-        text,
-        options
-    )
-})
+// Cypress.Commands.overwrite('type', (originalFn, subject, text, options: Partial<Cypress.TypeOptions> = {}) => {
+//     options.delay = options.delay || 100
+//     return (originalFn as (subject: string, text: unknown, options: Partial<Cypress.TypeOptions>) => Cypress.Chainable<unknown>)(
+//         subject,
+//         text,
+//         options
+//     )
+// })
 
 interface IControllerItem {
     id: number
