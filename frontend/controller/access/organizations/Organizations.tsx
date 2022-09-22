@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@patternfly/react-core'
+import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -72,6 +72,17 @@ export function Organizations() {
         <TablePage<Organization>
             title={t('Organizations')}
             description="An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy."
+            navigation={
+                <Nav aria-label="Group section navigation" variant="tertiary">
+                    <NavList>
+                        <NavItem onClick={() => history.push(RouteE.Organizations)} isActive>
+                            Organizations
+                        </NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Teams)}>Teams</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Users)}>Users</NavItem>
+                    </NavList>
+                </Nav>
+            }
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}

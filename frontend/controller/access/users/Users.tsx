@@ -1,4 +1,4 @@
-import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
+import { ButtonVariant, Chip, ChipGroup, Nav, NavItem, NavList, Text } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -69,6 +69,17 @@ export function Users() {
             title={t('Users')}
             titleHelpTitle={t('User')}
             description={t('A user is someone who has access to Tower with associated permissions and credentials.')}
+            navigation={
+                <Nav aria-label="Group section navigation" variant="tertiary">
+                    <NavList>
+                        <NavItem onClick={() => history.push(RouteE.Organizations)}>Organizations</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Teams)}>Teams</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Users)} isActive>
+                            Users
+                        </NavItem>
+                    </NavList>
+                </Nav>
+            }
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
