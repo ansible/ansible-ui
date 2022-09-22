@@ -134,7 +134,7 @@ export function useTeamsFilters() {
     return toolbarFilters
 }
 
-export function useTeamsColumns(options: { disableLinks: true; disableSort: true }) {
+export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
     const history = useHistory()
     const nameColumn = useNameColumn({
         ...options,
