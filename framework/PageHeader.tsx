@@ -96,7 +96,8 @@ export interface PageHeaderProps {
 export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
-    const isSmOrLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const isLgOrLarger = useWindowSizeOrLarger(WindowSize.lg)
+    const isMdOrLarger = useWindowSizeOrLarger(WindowSize.md)
     const settings = useSettings()
     return (
         <>
@@ -106,18 +107,18 @@ export function PageHeader(props: PageHeaderProps) {
                     <Divider />
                 </>
             )}
-            <PageSection
-                variant={PageSectionVariants.light}
-                style={{
-                    paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 8,
-                    paddingBottom: xl ? 20 : 16,
-                    borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
-                }}
-            >
-                <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
-                    <FlexItem grow={{ default: 'grow' }}>
-                        {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
-                        <Fragment>
+            {(isMdOrLarger || !navigation) && (
+                <PageSection
+                    variant={PageSectionVariants.light}
+                    style={{
+                        paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 8,
+                        paddingBottom: xl ? 20 : 12,
+                        borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                    }}
+                >
+                    <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
+                        <FlexItem grow={{ default: 'grow' }}>
+                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
                             {title ? (
                                 props.titleHelp ? (
                                     <Popover
@@ -130,9 +131,7 @@ export function PageHeader(props: PageHeaderProps) {
                                                         <Button
                                                             icon={<ExternalLinkAltIcon />}
                                                             variant="link"
-                                                            onClick={() => {
-                                                                window.open(props.titleDocLink, '_blank')
-                                                            }}
+                                                            onClick={() => window.open(props.titleDocLink, '_blank')}
                                                             isInline
                                                         >
                                                             Documentation
@@ -158,21 +157,21 @@ export function PageHeader(props: PageHeaderProps) {
                                     <Skeleton width="160px" />
                                 </Title>
                             )}
-                            {isSmOrLarger && description && (
+                            {isMdOrLarger && description && (
                                 <Text component="p" style={{ paddingTop: xl ? 4 : 2 }}>
                                     <Truncate content={description} />
                                 </Text>
                             )}
-                        </Fragment>
-                    </FlexItem>
-                    {title && (pageActions || controls) && (
-                        <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}>
-                            <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
-                            {pageActions && <FlexItem>{pageActions}</FlexItem>}
-                        </Flex>
-                    )}
-                </Flex>
-            </PageSection>
+                        </FlexItem>
+                        {title && (pageActions || controls) && (
+                            <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}>
+                                <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
+                                {pageActions && <FlexItem>{pageActions}</FlexItem>}
+                            </Flex>
+                        )}
+                    </Flex>
+                </PageSection>
+            )}
         </>
     )
 }
