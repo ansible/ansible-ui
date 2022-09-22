@@ -412,7 +412,7 @@ function TableRow<T extends object>(props: {
                               }
                             : undefined
                     }
-                    style={{ width: '0%', paddingLeft: md ? undefined : 20 }}
+                    style={{ width: '0%', paddingLeft: md ? undefined : 20, paddingRight: md ? undefined : 16 }}
                     isStickyColumn
                     stickyMinWidth="0px"
                     hasRightBorder={props.scrollLeft}
@@ -506,7 +506,7 @@ function TableCells<T extends object>(props: {
                     style={{
                         zIndex: 100 - rowIndex,
                         paddingRight: 8,
-                        paddingLeft: 0,
+                        paddingLeft: 8,
                         width: '0%',
                         right: 0,
                         // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
