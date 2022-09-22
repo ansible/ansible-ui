@@ -5,6 +5,7 @@ import { useSettings } from './Settings'
 
 export function PageBody(props: { children: ReactNode }) {
     const lg = useWindowSizeOrLarger(WindowSize.lg)
+    const xl = useWindowSizeOrLarger(WindowSize.xl)
     const settings = useSettings()
     return (
         <ErrorBoundary>
@@ -24,7 +25,7 @@ export function PageBody(props: { children: ReactNode }) {
                         flexDirection: 'column',
                         height: '100%',
                         maxHeight: '100%',
-                        margin: lg ? 24 : 0,
+                        margin: xl ? 24 : lg ? 16 : 0,
                         overflow: 'hidden',
                         border: settings.borders && lg ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                         backgroundColor: 'var(--pf-global--BackgroundColor--100)',
