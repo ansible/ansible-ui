@@ -144,7 +144,7 @@ export function PageHeader(props: PageHeaderProps) {
                 >
                     <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
                         <FlexItem grow={{ default: 'grow' }}>
-                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 8 : 6 }} />}
+                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 4 : 2 }} />}
                             {title ? (
                                 props.titleHelp ? (
                                     <Popover
@@ -190,8 +190,12 @@ export function PageHeader(props: PageHeaderProps) {
                             )}
                         </FlexItem>
                         {title && (pageActions || controls) && (
-                            <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}>
-                                <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
+                            <Flex
+                                direction={{ default: 'column' }}
+                                spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
+                                justifyContent={{ default: 'justifyContentCenter' }}
+                            >
+                                {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
                                 {pageActions && <FlexItem>{pageActions}</FlexItem>}
                             </Flex>
                         )}
