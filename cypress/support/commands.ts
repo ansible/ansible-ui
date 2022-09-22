@@ -117,7 +117,7 @@ interface IControllerItem {
 
 function handleControllerCollection<T extends IControllerItem>(baseUrl: string, items: T[]) {
     cy.intercept('GET', `${baseUrl}/*`, (req) => {
-        const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
+        const url = req.url.slice(req.url.indexOf(baseUrl.split('*')[0]) + baseUrl.length + 1)
         const parts = url.split('/')
         switch (parts.length) {
             case 1:
@@ -142,7 +142,11 @@ function handleControllerCollection<T extends IControllerItem>(baseUrl: string, 
                 }
                 break
             default:
-                req.reply(500)
+                req.reply(500, {
+                    a: req.url,
+                    b: baseUrl,
+                    u: url,
+                })
                 break
         }
     })
@@ -260,7 +264,9 @@ beforeEach(() => {
         cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
 
         handleControllerCollection('/api/v2/organizations/*/users', users)
+        handleControllerCollection('/api/v2/organizations/*/teams', teams)
         handleControllerCollection('/api/v2/organizations', organizations)
+        handleControllerCollection('/api/v2/teams/*/access_list', users)
         handleControllerCollection('/api/v2/teams', teams)
         handleControllerCollection('/api/v2/users', users)
     }
