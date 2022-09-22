@@ -2,7 +2,7 @@ import { Static, Type } from '@sinclair/typebox'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
-import { PageBody, PageHeader } from '../../../../framework'
+import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
@@ -15,7 +15,6 @@ import { Team } from './Team'
 export function EditTeam() {
     const { t } = useTranslation()
     const history = useHistory()
-
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
@@ -48,7 +47,7 @@ export function EditTeam() {
                             minLength: 1,
                             errorMessage: { minLength: t('Organization is required') },
                             variant: 'select',
-                            selectTitle: 'Select an organization',
+                            selectTitle: t('Select an organization'),
                             selectValue: (organization: Organization) => organization.name,
                             selectOpen: selectOrganization,
                         }),
@@ -90,13 +89,13 @@ export function EditTeam() {
     if (Number.isInteger(id)) {
         if (!team) {
             return (
-                <>
+                <PageLayout>
                     <PageHeader breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
-                </>
+                </PageLayout>
             )
         } else {
             return (
-                <>
+                <PageLayout>
                     <PageHeader title={t('Edit Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
                     <PageBody>
                         <PageForm
@@ -108,12 +107,12 @@ export function EditTeam() {
                             defaultValue={team}
                         />
                     </PageBody>
-                </>
+                </PageLayout>
             )
         }
     } else {
         return (
-            <>
+            <PageLayout>
                 <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
                 <PageBody>
                     <PageForm
@@ -124,7 +123,7 @@ export function EditTeam() {
                         onCancel={onCancel}
                     />
                 </PageBody>
-            </>
+            </PageLayout>
         )
     }
 }

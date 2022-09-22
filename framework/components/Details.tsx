@@ -3,6 +3,7 @@ import {
     DescriptionListDescription,
     DescriptionListGroup,
     DescriptionListTerm,
+    Skeleton,
     Split,
     SplitItem,
     Stack,
@@ -150,5 +151,16 @@ export function Detail(props: { label: string; children?: ReactNode }) {
             <DescriptionListTerm>{props.label}</DescriptionListTerm>
             <DescriptionListDescription id={props.label.toLowerCase().split(' ').join('-')}>{props.children}</DescriptionListDescription>
         </DescriptionListGroup>
+    )
+}
+
+export function DetailsSkeleton() {
+    return (
+        <Stack hasGutter>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+        </Stack>
     )
 }
