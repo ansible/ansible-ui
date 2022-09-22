@@ -170,7 +170,10 @@ export function PageHeader(props: PageHeaderProps) {
                                     >
                                         <Title headingLevel="h1">
                                             {title}
-                                            <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'top' }}>
+                                            <Button
+                                                variant="link"
+                                                style={{ padding: 0, marginTop: 1, marginLeft: 8, verticalAlign: 'top' }}
+                                            >
                                                 <OutlinedQuestionCircleIcon />
                                             </Button>
                                         </Title>
