@@ -412,7 +412,7 @@ function TableRow<T extends object>(props: {
                               }
                             : undefined
                     }
-                    style={{ width: '0%', paddingLeft: md ? undefined : 20, paddingRight: md ? undefined : 16 }}
+                    style={{ width: '0%', paddingLeft: md ? undefined : 20, paddingRight: 16 }}
                     isStickyColumn
                     stickyMinWidth="0px"
                     hasRightBorder={props.scrollLeft}
