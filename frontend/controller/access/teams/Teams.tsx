@@ -134,12 +134,16 @@ export function useTeamsFilters() {
     return toolbarFilters
 }
 
-export function useTeamsColumns(onClick?: (team: Team) => void) {
-    const nameColumn = useNameColumn(onClick ? { onClick } : { url: RouteE.TeamDetails })
+export function useTeamsColumns(options: { disableLinks: true; disableSort: true }) {
+    const history = useHistory()
+    const nameColumn = useNameColumn({
+        ...options,
+        onClick: (team) => history.push(RouteE.TeamDetails.replace(':id', team.id.toString())),
+    })
     const descriptionColumn = useDescriptionColumn()
-    const organizationColumn = useOrganizationNameColumn()
-    const createdColumn = useCreatedColumn()
-    const modifiedColumn = useModifiedColumn()
+    const organizationColumn = useOrganizationNameColumn(options)
+    const createdColumn = useCreatedColumn(options)
+    const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<Team>[]>(
         () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
         [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationColumn]

@@ -2,20 +2,16 @@ import { useMemo } from 'react'
 import { BulkActionDialog, useSetDialog } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareStrings } from '../../../../framework/utils/compare'
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Organization } from './Organization'
+import { useOrganizationsColumns } from './Organizations'
 
 export function useDeleteOrganizations(callback: (organizations: Organization[]) => void) {
     const { t } = useTranslation()
     const setDialog = useSetDialog()
-    const deleteActionNameColumn = useNameColumn({ disableSort: true })
-    const deleteActionCreatedColumn = useCreatedColumn({ disableSort: true })
-    const deleteActionModifiedColumn = useModifiedColumn({ disableSort: true })
-    const columns = useMemo(
-        () => [deleteActionNameColumn, deleteActionCreatedColumn, deleteActionModifiedColumn],
-        [deleteActionCreatedColumn, deleteActionModifiedColumn, deleteActionNameColumn]
-    )
+    const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
+    const columns = useOrganizationsColumns({ disableLinks: true, disableSort: true })
     const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
     const deleteOrganizations = (items: Organization[]) => {
         setDialog(

@@ -119,94 +119,95 @@ export function BulkActionDialog<T extends object>(props: {
             description={<Collapse open={!isSubmitting && !isSubmited}>{props.prompt}</Collapse>}
             hasNoBodyWrapper
         >
-            <Collapse open={isSubmitting || isSubmited}>
-                <ModalBoxBody>
-                    <Progress
-                        value={(progress / props.items.length) * 100}
-                        title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
-                        size={ProgressSize.lg}
-                        variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
-                        measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
-                    />
-                </ModalBoxBody>
-            </Collapse>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    maxHeight: 480,
-                    overflow: 'hidden',
-                }}
-            >
-                {!isSubmitting && !isSubmited ? (
-                    <PageTable<T>
-                        key="items"
-                        pageItems={paged}
-                        itemCount={props.items.length}
-                        tableColumns={props.columns}
-                        keyFn={props.keyFn}
-                        page={page}
-                        perPage={perPage}
-                        setPage={setPage}
-                        setPerPage={setPerPage}
-                        compact
-                        autoHidePagination
-                        errorStateTitle="Error"
-                        emptyStateTitle="No items"
-                    />
-                ) : (
-                    <PageTable<T>
-                        key="status"
-                        pageItems={[...paged]}
-                        itemCount={props.items.length}
-                        tableColumns={[
-                            ...props.errorColumns,
-                            {
-                                header: 'Status',
-                                cell: (item) => {
-                                    const key = props.keyFn(item)
-                                    const status = statuses?.[key]
-                                    if (status === undefined) {
-                                        return (
-                                            <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                                {<PendingIcon />}&nbsp; Pending {JSON.stringify(status)}
-                                            </span>
-                                        )
-                                    }
-                                    if (status === null) {
-                                        return (
-                                            <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                                {<CheckCircleIcon />}&nbsp; Success
-                                            </span>
-                                        )
-                                    }
-                                    return (
-                                        <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
-                                            {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
-                                        </span>
-                                    )
-                                },
-                            },
-                        ]}
-                        keyFn={props.keyFn}
-                        page={page}
-                        perPage={perPage}
-                        setPage={setPage}
-                        setPerPage={setPerPage}
-                        compact
-                        autoHidePagination
-                        errorStateTitle="Error"
-                        emptyStateTitle="No items"
-                    />
-                )}
-            </div>
-            {props.confirm && (
-                <Collapse open={!isSubmitting && !isSubmited}>
-                    <div style={{ marginLeft: 32, marginTop: 16, marginBottom: 8 }}>
-                        <Checkbox id="confirm" label={props.confirm} isChecked={confirmed} onChange={setConfirmed} />
-                    </div>
+            <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
+                <Collapse open={isSubmitting || isSubmited}>
+                    <ModalBoxBody style={{ paddingTop: 0 }}>
+                        <Progress
+                            value={(progress / props.items.length) * 100}
+                            title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
+                            size={ProgressSize.lg}
+                            variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
+                            measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
+                        />
+                    </ModalBoxBody>
                 </Collapse>
-            )}
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        maxHeight: 480,
+                        overflow: 'hidden',
+                        borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+                    }}
+                >
+                    {!isSubmitting && !isSubmited ? (
+                        <PageTable<T>
+                            key="items"
+                            pageItems={paged}
+                            itemCount={props.items.length}
+                            tableColumns={props.columns}
+                            keyFn={props.keyFn}
+                            page={page}
+                            perPage={perPage}
+                            setPage={setPage}
+                            setPerPage={setPerPage}
+                            compact
+                            errorStateTitle="Error"
+                            emptyStateTitle="No items"
+                        />
+                    ) : (
+                        <PageTable<T>
+                            key="status"
+                            pageItems={[...paged]}
+                            itemCount={props.items.length}
+                            tableColumns={[
+                                ...props.errorColumns,
+                                {
+                                    header: 'Status',
+                                    cell: (item) => {
+                                        const key = props.keyFn(item)
+                                        const status = statuses?.[key]
+                                        if (status === undefined) {
+                                            return (
+                                                <span style={{ color: 'var(--pf-global--info-color--100)' }}>
+                                                    {<PendingIcon />}&nbsp; Pending {JSON.stringify(status)}
+                                                </span>
+                                            )
+                                        }
+                                        if (status === null) {
+                                            return (
+                                                <span style={{ color: 'var(--pf-global--success-color--100)' }}>
+                                                    {<CheckCircleIcon />}&nbsp; Success
+                                                </span>
+                                            )
+                                        }
+                                        return (
+                                            <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
+                                                {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
+                                            </span>
+                                        )
+                                    },
+                                },
+                            ]}
+                            keyFn={props.keyFn}
+                            page={page}
+                            perPage={perPage}
+                            setPage={setPage}
+                            setPerPage={setPerPage}
+                            compact
+                            errorStateTitle="Error"
+                            emptyStateTitle="No items"
+                        />
+                    )}
+                </div>
+                {props.confirm && (
+                    <Collapse open={!isSubmitting && !isSubmited}>
+                        <div style={{ marginLeft: 32, marginTop: 0, marginBottom: 8 }}>
+                            <Checkbox id="confirm" label={props.confirm} isChecked={confirmed} onChange={setConfirmed} />
+                        </div>
+                    </Collapse>
+                )}
+            </ModalBoxBody>
         </Modal>
     )
 }
