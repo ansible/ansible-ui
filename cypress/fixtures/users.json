@@ -8,6 +8,12 @@
             "type": "user",
             "username": "user001",
             "organization": 1
+        },
+        {
+            "id": 2,
+            "type": "user",
+            "username": "user002",
+            "organization": 1
         }
     ]
 }

@@ -113,7 +113,7 @@ export function EditTeam() {
     } else {
         return (
             <PageLayout>
-                <PageHeader title={t('Create Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create Team') }]} />
+                <PageHeader title={t('Create team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]} />
                 <PageBody>
                     <PageForm
                         schema={EditTeamSchema}
