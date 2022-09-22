@@ -1,10 +1,11 @@
-import { ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import {
     Detail,
     DetailsList,
+    DetailsSkeleton,
     IItemAction,
     ITypedAction,
     PageHeader,
@@ -25,7 +26,7 @@ import { useControllerView } from '../../useControllerView'
 import { User } from '../users/User'
 import { useUsersColumns, useUsersFilters } from '../users/Users'
 import { Team } from './Team'
-import { useDeleteTeams } from './Teams'
+import { useDeleteTeams } from './useDeleteTeams'
 
 export function TeamDetails() {
     const { t } = useTranslation()
@@ -74,11 +75,6 @@ export function TeamDetails() {
                     //         <CaretLeftIcon /> &nbsp;Back to teams
                     //     </Button>
                     // }
-                    // postComponents={
-                    //     <Button variant="plain">
-                    //         <CaretLeftIcon /> &nbsp;Back to teams
-                    //     </Button>
-                    // }
                     >
                         <PageTab title={t('Details')}>
                             <TeamDetailsTab team={team} />
@@ -92,12 +88,7 @@ export function TeamDetails() {
                     <PageTabs>
                         <PageTab>
                             <PageSection variant="light">
-                                <Stack hasGutter>
-                                    <Skeleton />
-                                    <Skeleton />
-                                    <Skeleton />
-                                    <Skeleton />
-                                </Stack>
+                                <DetailsSkeleton />
                             </PageSection>
                         </PageTab>
                     </PageTabs>
