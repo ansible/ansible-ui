@@ -36,7 +36,6 @@ export function OrganizationDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit organization'),
-                shortLabel: t('Edit'),
                 onClick: () => history.push(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
             },
             {
