@@ -73,8 +73,7 @@ describe('teams', () => {
     it('teams toolbar delete teams', () => {
         cy.navigateTo(/^Teams$/)
         cy.get('#select-all').click()
-        cy.get('#toggle-kebab').click()
-        cy.get('.pf-c-dropdown__menu-item').contains('Delete selected teams').click()
+        cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains('Delete selected teams').click()
         cy.get('.pf-c-modal-box__title-text').contains(/^Permanently delete teams$/)
         cy.get('#confirm').click()
         cy.clickButton(/^Delete teams$/)
