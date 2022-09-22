@@ -7,6 +7,16 @@
             "id": 1,
             "type": "organization",
             "name": "Default"
+        },
+        {
+            "id": 2,
+            "type": "organization",
+            "name": "Organization 002"
+        }
+        {
+            "id": 3,
+            "type": "organization",
+            "name": "Organization 003"
         }
     ]
 }

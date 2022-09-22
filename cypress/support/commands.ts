@@ -36,7 +36,9 @@ declare global {
             getByLabel(label: string | RegExp): Chainable<void>
             clickButton(label: string | RegExp): Chainable<void>
             navigateTo(label: string | RegExp): Chainable<void>
+            clickRow(name: string | RegExp): Chainable<void>
             clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
+            clickPageAction(label: string | RegExp): Chainable<void>
         }
     }
 }
@@ -72,6 +74,12 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
     cy.get('.pf-c-title').contains(label)
 })
 
+Cypress.Commands.add('clickRow', (name: string | RegExp) => {
+    cy.contains('td', name).within(() => {
+        cy.get('button:not(:disabled)').click()
+    })
+})
+
 Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | RegExp) => {
     cy.contains('td', name)
         .parent()
@@ -79,6 +87,10 @@ Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | R
             cy.get('.pf-c-dropdown__toggle').click()
             cy.get('.pf-c-dropdown__menu-item').contains(label).click()
         })
+})
+
+Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
+    cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click()
 })
 
 // Cypress.Commands.overwrite('type', (originalFn, subject, text, options: Partial<Cypress.TypeOptions> = {}) => {
@@ -212,25 +224,27 @@ before(() => {
     window.localStorage.setItem('access', 'true')
     window.localStorage.setItem('theme', 'light')
 
-    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
-        for (const item of json.results) {
-            organizations.push(item)
-        }
-    })
-    cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
-        for (const item of json.results) {
-            teams.push(item)
-        }
-    })
-    cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
-        for (const item of json.results) {
-            users.push(item)
-        }
-    })
+    if (Cypress.env('mock')) {
+        cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+            for (const item of json.results) {
+                organizations.push(item)
+            }
+        })
+        cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
+            for (const item of json.results) {
+                teams.push(item)
+            }
+        })
+        cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
+            for (const item of json.results) {
+                users.push(item)
+            }
+        })
 
-    cy.intercept('GET', '/api/login/', { statusCode: 200 })
-    cy.intercept('POST', '/api/login/', { statusCode: 200 })
-    cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+        cy.intercept('GET', '/api/login/', { statusCode: 200 })
+        cy.intercept('POST', '/api/login/', { statusCode: 200 })
+        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+    }
 
     cy.visit(`/debug`)
     // cy.injectAxe()
@@ -241,6 +255,10 @@ beforeEach(() => {
     window.localStorage.setItem('theme', 'light')
 
     if (Cypress.env('mock')) {
+        cy.intercept('GET', '/api/login/', { statusCode: 200 })
+        cy.intercept('POST', '/api/login/', { statusCode: 200 })
+        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+
         handleControllerCollection('/api/v2/organizations/*/users', users)
         handleControllerCollection('/api/v2/organizations', organizations)
         handleControllerCollection('/api/v2/teams', teams)
