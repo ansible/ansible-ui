@@ -8,6 +8,12 @@
             "type": "team",
             "name": "Team 001",
             "organization": 1
+        },
+        {
+            "id": 2,
+            "type": "team",
+            "name": "Team 002",
+            "organization": 2
         }
     ]
 }

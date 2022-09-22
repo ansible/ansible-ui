@@ -6,30 +6,30 @@ describe('teams', () => {
 
     it('create team', () => {
         cy.clickButton(/^Create team$/)
-        cy.getByLabel(/^Name$/).type('Team 002')
-        cy.getByLabel(/^Organization/).type('Default')
+        cy.getByLabel(/^Name$/).type('My team', { delay: 0 })
+        cy.getByLabel(/^Organization/).type('Default', { delay: 0 })
         cy.clickButton(/^Create team$/)
     })
 
     it('created team details', () => {
-        cy.get('.pf-c-title').contains(/^Team 002$/)
-        cy.get('#name').contains(/^Team 002$/)
+        cy.get('.pf-c-title').contains(/^My team$/)
+        cy.get('#name').contains(/^My team$/)
     })
 
     it('edit team', () => {
         cy.clickButton(/^Edit team$/)
-        cy.getByLabel(/^Name$/).type('a')
+        cy.getByLabel(/^Name$/).type(' 003', { delay: 0 })
         cy.clickButton(/^Save team$/)
     })
 
     it('edited team details', () => {
-        cy.get('.pf-c-title').contains(/^Team 002a$/)
-        cy.get('#name').contains(/^Team 002a$/)
+        cy.get('.pf-c-title').contains(/^My team 003$/)
+        cy.get('#name').contains(/^My team 003$/)
     })
 
     it('delete team', () => {
         cy.navigateTo(/^Teams$/)
-        cy.clickRowAction(/^Team 001$/, /^Delete team$/)
+        cy.clickRowAction(/^My team 003$/, /^Delete team$/)
         cy.get('#confirm').click()
         cy.clickButton('Delete')
         cy.contains('Success')
