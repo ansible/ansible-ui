@@ -1,8 +1,8 @@
 import {
     Breadcrumb,
     BreadcrumbItem,
+    Bullseye,
     Button,
-    Divider,
     Flex,
     FlexItem,
     PageNavigation,
@@ -10,6 +10,8 @@ import {
     PageSectionVariants,
     Popover,
     Skeleton,
+    Split,
+    SplitItem,
     Stack,
     StackItem,
     Text,
@@ -96,16 +98,41 @@ export interface PageHeaderProps {
 export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
-    const isLgOrLarger = useWindowSizeOrLarger(WindowSize.lg)
     const isMdOrLarger = useWindowSizeOrLarger(WindowSize.md)
+    const isXsLarger = useWindowSizeOrLarger(WindowSize.xs)
     const settings = useSettings()
     return (
         <>
             {navigation && (
-                <>
-                    <PageNavigation style={{ paddingTop: 0 }}>{navigation}</PageNavigation>
-                    <Divider />
-                </>
+                <PageSection
+                    variant={PageSectionVariants.light}
+                    style={{
+                        paddingLeft: 0,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                    }}
+                >
+                    <Split>
+                        <SplitItem isFilled>
+                            <PageNavigation style={{ paddingTop: 0 }}>{navigation}</PageNavigation>
+                        </SplitItem>
+                        {!isMdOrLarger && props.titleDocLink && (
+                            <SplitItem>
+                                <Bullseye>
+                                    <Button
+                                        icon={<ExternalLinkAltIcon />}
+                                        variant="link"
+                                        onClick={() => window.open(props.titleDocLink, '_blank')}
+                                        isInline
+                                    >
+                                        {isXsLarger ? <span>Documentation</span> : <span>Docs</span>}
+                                    </Button>
+                                </Bullseye>
+                            </SplitItem>
+                        )}
+                    </Split>
+                </PageSection>
             )}
             {(isMdOrLarger || !navigation) && (
                 <PageSection
