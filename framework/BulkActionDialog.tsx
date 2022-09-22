@@ -135,7 +135,7 @@ export function BulkActionDialog<T extends object>(props: {
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        maxHeight: 480,
+                        maxHeight: 500,
                         overflow: 'hidden',
                         borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                     }}

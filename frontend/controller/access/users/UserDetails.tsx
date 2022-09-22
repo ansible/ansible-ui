@@ -27,6 +27,7 @@ import { Role } from '../roles/Role'
 import { useRolesColumns, useRolesFilters } from '../roles/Roles'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
+import { useDeleteUsers } from './useDeleteUsers'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -35,6 +36,13 @@ export function UserDetailsPage() {
     const params = useParams<{ id: string }>()
     const user = useItem<User>('/api/v2/users', params.id)
     const history = useHistory()
+
+    const deleteUsers = useDeleteUsers((deleted: User[]) => {
+        if (deleted.length > 0) {
+            history.push(RouteE.Users)
+        }
+    })
+
     const itemActions: ITypedAction<User>[] = useMemo(() => {
         const itemActions: ITypedAction<User>[] = [
             {
@@ -44,10 +52,18 @@ export function UserDetailsPage() {
                 label: t('Edit user'),
                 onClick: () => history.push(RouteE.EditUser.replace(':id', user?.id.toString() ?? '')),
             },
-            { type: TypedActionType.button, icon: TrashIcon, label: t('Delete user'), onClick: () => alert('TODO') },
+            {
+                type: TypedActionType.button,
+                icon: TrashIcon,
+                label: t('Delete user'),
+                onClick: () => {
+                    if (!user) return
+                    deleteUsers([user])
+                },
+            },
         ]
         return itemActions
-    }, [history, user, t])
+    }, [t, history, user, deleteUsers])
 
     return (
         <PageLayout>

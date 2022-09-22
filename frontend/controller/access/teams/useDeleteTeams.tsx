@@ -28,7 +28,7 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
                 success={t('Success')}
                 cancel={t('Cancel')}
                 close={t('Close')}
-                error={t('There were errors deleting teams', { count: items.length })}
+                error={t('There were errors deleting teams')}
                 items={items.sort((l, r) => compareStrings(l.name, r.name))}
                 keyFn={getItemKey}
                 isDanger

@@ -10,8 +10,8 @@ import { useOrganizationsColumns } from './Organizations'
 export function useDeleteOrganizations(callback: (organizations: Organization[]) => void) {
     const { t } = useTranslation()
     const setDialog = useSetDialog()
-    const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
     const columns = useOrganizationsColumns({ disableLinks: true, disableSort: true })
+    const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
     const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
     const deleteOrganizations = (items: Organization[]) => {
         setDialog(
@@ -24,7 +24,7 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
                 success={t('Success')}
                 cancel={t('Cancel')}
                 close={t('Close')}
-                error={t('There were errors deleting organizations', { count: items.length })}
+                error={t('There were errors deleting organizations')}
                 items={items.sort((l, r) => compareStrings(l.name, r.name))}
                 keyFn={getItemKey}
                 isDanger

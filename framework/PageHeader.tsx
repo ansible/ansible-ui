@@ -144,7 +144,7 @@ export function PageHeader(props: PageHeaderProps) {
                 >
                     <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
                         <FlexItem grow={{ default: 'grow' }}>
-                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
+                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 8 : 6 }} />}
                             {title ? (
                                 props.titleHelp ? (
                                     <Popover
