@@ -2,17 +2,9 @@ import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import {
-    IItemAction,
-    ITableColumn,
-    IToolbarFilter,
-    ITypedAction,
-    SinceCell,
-    TablePage,
-    TextCell,
-    TypedActionType,
-} from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
+import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,
@@ -22,7 +14,7 @@ import {
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
-import { useDeleteOrganizations } from './useDeleteTeams'
+import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function Organizations() {
     const { t } = useTranslation()
@@ -124,25 +116,20 @@ export function useOrganizationsFilters() {
     return toolbarFilters
 }
 
-export function useOrganizationsColumns(disableLinks?: boolean) {
+export function useOrganizationsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const history = useHistory()
+    const nameColumn = useNameColumn({
+        ...options,
+        onClick: (organization) => history.push(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+    })
+    const descriptionColumn = useDescriptionColumn()
+    const createdColumn = useCreatedColumn(options)
+    const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<Organization>[]>(
         () => [
-            {
-                header: t('Name'),
-                cell: (organization) => (
-                    <TextCell
-                        text={organization.name}
-                        to={disableLinks ? undefined : RouteE.OrganizationDetails.replace(':id', organization.id.toString())}
-                    />
-                ),
-                sort: 'name',
-            },
-            {
-                header: t('Description'),
-                cell: (organization) => <TextCell text={organization.description} />,
-            },
+            nameColumn,
+            descriptionColumn,
             {
                 header: t('Members'),
                 cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />,
@@ -151,46 +138,10 @@ export function useOrganizationsColumns(disableLinks?: boolean) {
                 header: t('Teams'),
                 cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.teams.toString()} />,
             },
-            {
-                header: t('Created'),
-                cell: (organization: Organization) => (
-                    <SinceCell
-                        value={organization.created}
-                        author={organization.summary_fields?.created_by?.username}
-                        onClick={
-                            disableLinks
-                                ? undefined
-                                : () =>
-                                      history.push(
-                                          RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
-                                      )
-                        }
-                    />
-                ),
-                sort: 'created',
-                defaultSortDirection: 'desc',
-            },
-            {
-                header: t('Modified'),
-                cell: (organization: Organization) => (
-                    <SinceCell
-                        value={organization.modified}
-                        author={organization.summary_fields?.modified_by?.username}
-                        onClick={
-                            disableLinks
-                                ? undefined
-                                : () =>
-                                      history.push(
-                                          RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
-                                      )
-                        }
-                    />
-                ),
-                sort: 'modified',
-                defaultSortDirection: 'desc',
-            },
+            createdColumn,
+            modifiedColumn,
         ],
-        [disableLinks, history, t]
+        [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
     )
     return tableColumns
 }

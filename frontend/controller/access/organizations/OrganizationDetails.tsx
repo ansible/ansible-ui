@@ -15,7 +15,7 @@ import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
 import { Organization } from './Organization'
-import { useDeleteOrganizations } from './useDeleteTeams'
+import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function OrganizationDetails() {
     const { t } = useTranslation()

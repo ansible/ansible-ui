@@ -909,7 +909,9 @@ export function TextCell(props: {
                 </SplitItem>
             ) : props.onClick !== undefined ? (
                 <SplitItem onClick={props.onClick}>
-                    <Button variant="link">{props.text}</Button>
+                    <Button variant="link" isInline>
+                        {props.text}
+                    </Button>
                 </SplitItem>
             ) : (
                 <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>
