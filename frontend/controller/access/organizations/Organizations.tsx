@@ -22,6 +22,7 @@ import {
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
+import { useDeleteOrganizations } from './useDeleteTeams'
 
 export function Organizations() {
     const { t } = useTranslation()
@@ -30,6 +31,15 @@ export function Organizations() {
     const toolbarFilters = useOrganizationsFilters()
 
     const tableColumns = useOrganizationsColumns()
+
+    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns)
+
+    const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
+        for (const organization of deleted) {
+            view.unselectItem(organization)
+        }
+        void view.refresh()
+    })
 
     const toolbarActions = useMemo<ITypedAction<Organization>[]>(
         () => [
@@ -44,10 +54,10 @@ export function Organizations() {
                 type: TypedActionType.bulk,
                 icon: TrashIcon,
                 label: t('Delete selected organizations'),
-                onClick: () => alert('TODO'),
+                onClick: deleteOrganizations,
             },
         ],
-        [history, t]
+        [history, deleteOrganizations, t]
     )
 
     const rowActions = useMemo<IItemAction<Organization>[]>(
@@ -60,13 +70,11 @@ export function Organizations() {
             {
                 icon: TrashIcon,
                 label: t('Delete organization'),
-                onClick: () => alert('TODO'),
+                onClick: (organization) => deleteOrganizations([organization]),
             },
         ],
-        [history, t]
+        [history, deleteOrganizations, t]
     )
-
-    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns)
 
     return (
         <TablePage<Organization>
