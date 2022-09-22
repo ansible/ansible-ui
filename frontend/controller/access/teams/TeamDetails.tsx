@@ -175,7 +175,7 @@ function TeamAccessTab(props: { team: Team }) {
         header: t('Roles'),
         cell: (user) => (
             <ChipGroup>
-                {user.summary_fields.indirect_access?.map((access) => (
+                {user.summary_fields?.indirect_access?.map((access) => (
                     <Chip key={access.role.id} isReadOnly>
                         {access.role.name}
                     </Chip>

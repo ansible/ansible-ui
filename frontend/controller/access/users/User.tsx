@@ -12,34 +12,36 @@ export const UserType = Type.Object({
     email: Type.Optional(Type.String()),
     is_superuser: Type.Boolean(),
     is_system_auditor: Type.Boolean(),
-    summary_fields: Type.Object({
-        organization: Type.Optional(
-            Type.Object({
-                id: Type.Number(),
-                name: Type.String(),
-            })
-        ),
-        user_capabilities: Type.Object({
-            delete: Type.Number(),
-            edit: Type.String(),
-        }),
-        direct_access: Type.Array(Type.Object({})),
-        indirect_access: Type.Optional(
-            Type.Array(
+    summary_fields: Type.Optional(
+        Type.Object({
+            organization: Type.Optional(
                 Type.Object({
-                    descendant_roles: Type.Array(Type.String()),
-                    role: Type.Object({
-                        id: Type.Number(),
-                        name: Type.String(),
-                        description: Type.String(),
-                        user_capabilities: Type.Object({
-                            unattach: Type.Boolean(),
-                        }),
-                    }),
+                    id: Type.Number(),
+                    name: Type.String(),
                 })
-            )
-        ),
-    }),
+            ),
+            user_capabilities: Type.Object({
+                delete: Type.Number(),
+                edit: Type.String(),
+            }),
+            direct_access: Type.Array(Type.Object({})),
+            indirect_access: Type.Optional(
+                Type.Array(
+                    Type.Object({
+                        descendant_roles: Type.Array(Type.String()),
+                        role: Type.Object({
+                            id: Type.Number(),
+                            name: Type.String(),
+                            description: Type.String(),
+                            user_capabilities: Type.Object({
+                                unattach: Type.Boolean(),
+                            }),
+                        }),
+                    })
+                )
+            ),
+        })
+    ),
 })
 
 export type User = Static<typeof UserType>

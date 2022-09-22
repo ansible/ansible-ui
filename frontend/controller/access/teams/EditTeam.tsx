@@ -90,13 +90,13 @@ export function EditTeam() {
         if (!team) {
             return (
                 <PageLayout>
-                    <PageHeader breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
+                    <PageHeader breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]} />
                 </PageLayout>
             )
         } else {
             return (
                 <PageLayout>
-                    <PageHeader title={t('Edit Team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit Team') }]} />
+                    <PageHeader title={t('Edit team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]} />
                     <PageBody>
                         <PageForm
                             schema={EditTeamSchema}
