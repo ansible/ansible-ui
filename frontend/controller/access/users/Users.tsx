@@ -68,6 +68,8 @@ export function Users() {
         <TablePage<User>
             title={t('Users')}
             titleHelpTitle={t('User')}
+            titleHelp={t('A user is someone who has access to Tower with associated permissions and credentials.')}
+            titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
             description={t('A user is someone who has access to Tower with associated permissions and credentials.')}
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
