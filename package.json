@@ -28,7 +28,8 @@
         "coverage": "open coverage/lcov-report/index.html",
         "coverage:check": "npx nyc report --check-coverage --statements 38 --branches 32 --functions 32 --lines 40 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
         "prepare": "husky install",
-        "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray"
+        "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
+        "i18n": "i18next"
     },
     "dependencies": {
         "@hookform/resolvers": "2.9.8",
@@ -49,6 +50,8 @@
         "@types/react-router-dom": "5.3.3",
         "cookie": "0.5.0",
         "debounce": "1.2.1",
+        "i18next-browser-languagedetector": "^6.1.5",
+        "i18next-http-backend": "^1.4.4",
         "ky": "0.31.3",
         "luxon": "3.0.3",
         "p-limit": "4.0.0",
@@ -56,6 +59,7 @@
         "react": "17.0.2",
         "react-dom": "17.0.2",
         "react-hook-form": "7.36.0",
+        "react-i18next": "^11.18.6",
         "react-router-dom": "5.3.3",
         "swr": "1.3.0",
         "type-fest": "2.19.0"
