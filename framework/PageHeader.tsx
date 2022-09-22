@@ -10,11 +10,13 @@ import {
     PageSectionVariants,
     Popover,
     Skeleton,
+    Stack,
+    StackItem,
     Text,
     Title,
     Truncate,
 } from '@patternfly/react-core'
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
+import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
 import { CSSProperties, Fragment, ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
@@ -61,6 +63,7 @@ export interface PageHeaderProps {
     title?: string
     titleHelpTitle?: string
     titleHelp?: ReactNode
+    titleDocLink?: string
     description?: string
     controls?: ReactNode
     headerActions?: ReactNode
@@ -117,7 +120,29 @@ export function PageHeader(props: PageHeaderProps) {
                         <Fragment>
                             {title ? (
                                 props.titleHelp ? (
-                                    <Popover headerContent={props.titleHelpTitle} bodyContent={props.titleHelp} position="bottom-start">
+                                    <Popover
+                                        headerContent={props.titleHelpTitle}
+                                        bodyContent={
+                                            <Stack hasGutter>
+                                                <StackItem>{props.titleHelp}</StackItem>
+                                                {props.titleDocLink && (
+                                                    <StackItem>
+                                                        <Button
+                                                            icon={<ExternalLinkAltIcon />}
+                                                            variant="link"
+                                                            onClick={() => {
+                                                                window.open(props.titleDocLink, '_blank')
+                                                            }}
+                                                            isInline
+                                                        >
+                                                            Documentation
+                                                        </Button>
+                                                    </StackItem>
+                                                )}
+                                            </Stack>
+                                        }
+                                        position="bottom-start"
+                                    >
                                         <Title headingLevel="h1">
                                             {title}
                                             <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'top' }}>

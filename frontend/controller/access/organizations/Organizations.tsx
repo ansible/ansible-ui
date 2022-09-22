@@ -71,7 +71,14 @@ export function Organizations() {
     return (
         <TablePage<Organization>
             title={t('Organizations')}
-            description="An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy."
+            titleHelpTitle={t('Organizations')}
+            titleHelp={t(
+                'An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy.'
+            )}
+            titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
+            description={t(
+                'An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy.'
+            )}
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
