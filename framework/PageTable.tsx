@@ -633,6 +633,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         // openColumnModal,
     } = props
 
+    const sm = useWindowSizeOrLarger(WindowSize.sm)
+
     let { toolbarActions } = props
     toolbarActions = toolbarActions ?? []
 
@@ -659,7 +661,13 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
     if (itemCount === undefined) {
         return (
-            <Toolbar style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+            <Toolbar
+                style={{
+                    borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+                    paddingBottom: sm ? undefined : 8,
+                    paddingTop: sm ? undefined : 8,
+                }}
+            >
                 <ToolbarContent>
                     <ToolbarItem style={{ width: '100%' }}>
                         <Skeleton height="36px" />
@@ -670,7 +678,14 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     }
 
     return (
-        <Toolbar clearAllFilters={clearAllFilters} style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}>
+        <Toolbar
+            clearAllFilters={clearAllFilters}
+            style={{
+                borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+                paddingBottom: sm ? undefined : 8,
+                paddingTop: sm ? undefined : 8,
+            }}
+        >
             <ToolbarContent>
                 {showSelect && (
                     <ToolbarGroup>

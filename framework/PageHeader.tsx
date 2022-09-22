@@ -10,8 +10,6 @@ import {
     PageSectionVariants,
     Popover,
     Skeleton,
-    Split,
-    SplitItem,
     Stack,
     StackItem,
     Text,
@@ -99,7 +97,7 @@ export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
     const isMdOrLarger = useWindowSizeOrLarger(WindowSize.md)
-    const isXsLarger = useWindowSizeOrLarger(WindowSize.xs)
+    const isSmLarger = useWindowSizeOrLarger(WindowSize.sm)
     const settings = useSettings()
     return (
         <>
@@ -113,25 +111,26 @@ export function PageHeader(props: PageHeaderProps) {
                         borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                     }}
                 >
-                    <Split>
-                        <SplitItem isFilled>
-                            <PageNavigation style={{ paddingTop: 0 }}>{navigation}</PageNavigation>
-                        </SplitItem>
+                    <Flex direction={{ default: 'row' }} flexWrap={{ default: 'nowrap' }} style={{ maxWidth: '100%' }}>
+                        <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }} hasOverflowScroll>
+                            {navigation}
+                        </PageNavigation>
                         {!isMdOrLarger && props.titleDocLink && (
-                            <SplitItem>
+                            <FlexItem>
                                 <Bullseye>
                                     <Button
-                                        icon={<ExternalLinkAltIcon />}
+                                        icon={<ExternalLinkAltIcon style={{ paddingRight: 4, paddingTop: 4 }} />}
                                         variant="link"
                                         onClick={() => window.open(props.titleDocLink, '_blank')}
                                         isInline
+                                        style={{ whiteSpace: 'nowrap' }}
                                     >
-                                        {isXsLarger ? <span>Documentation</span> : <span>Docs</span>}
+                                        {isSmLarger ? <span>Documentation</span> : <span>Docs</span>}
                                     </Button>
                                 </Bullseye>
-                            </SplitItem>
+                            </FlexItem>
                         )}
-                    </Split>
+                    </Flex>
                 </PageSection>
             )}
             {(isMdOrLarger || !navigation) && (
