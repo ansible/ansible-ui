@@ -22,6 +22,7 @@ export function OrganizationDetails() {
     const params = useParams<{ id: string }>()
     const organization = useItem<Organization>('/api/v2/organizations', params.id)
     const history = useHistory()
+
     const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
         if (deleted.length > 0) {
             history.push(RouteE.Organizations)

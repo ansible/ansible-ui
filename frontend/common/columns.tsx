@@ -44,16 +44,18 @@ export function useDescriptionColumn<T extends { description?: string | undefine
 export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const history = useHistory()
-    const column: ITableColumn<{ created?: string; summary_fields?: { created_by?: { id: number; username: string } } }> = {
+    const column: ITableColumn<
+        { created?: string } | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
+    > = {
         header: t('Created'),
         cell: (item) => {
             if (!item.created) return <></>
             return (
                 <SinceCell
                     value={item.created}
-                    author={item.summary_fields?.created_by?.username}
+                    author={'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined}
                     onClick={
-                        options?.disableLinks
+                        options?.disableLinks || !('summary_fields' in item)
                             ? undefined
                             : () => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
                     }
@@ -69,16 +71,18 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
 export function useModifiedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const history = useHistory()
-    const column: ITableColumn<{ modified?: string; summary_fields?: { modified_by?: { id: number; username: string } } }> = {
+    const column: ITableColumn<
+        { modified?: string } | { modified?: string; summary_fields?: { modified_by?: { id?: number; username?: string } } }
+    > = {
         header: t('Modified'),
         cell: (item) => {
             if (!item.modified) return <></>
             return (
                 <SinceCell
                     value={item.modified}
-                    author={item.summary_fields?.modified_by?.username}
+                    author={'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined}
                     onClick={
-                        options?.disableLinks
+                        options?.disableLinks || !('summary_fields' in item)
                             ? undefined
                             : () => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
                     }

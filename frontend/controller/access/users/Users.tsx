@@ -8,15 +8,16 @@ import {
     IToolbarFilter,
     ITypedAction,
     PageTable,
-    SinceCell,
     TablePage,
     TextCell,
     TypedActionType,
 } from '../../../../framework'
 import { useTranslation } from '../../../../framework/components/useTranslation'
+import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../../common/controller-toolbar-filters'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
+import { useDeleteUsers } from './useDeleteUsers'
 import { User } from './User'
 
 export function Users() {
@@ -24,6 +25,17 @@ export function Users() {
     const history = useHistory()
 
     const toolbarFilters = useUsersFilters()
+
+    const tableColumns = useUsersColumns()
+
+    const view = useControllerView<User>('/api/v2/users/', toolbarFilters, tableColumns)
+
+    const deleteUsers = useDeleteUsers((deleted: User[]) => {
+        for (const user of deleted) {
+            view.unselectItem(user)
+        }
+        void view.refresh()
+    })
 
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
@@ -38,13 +50,11 @@ export function Users() {
                 type: TypedActionType.bulk,
                 icon: TrashIcon,
                 label: t('Delete selected users'),
-                onClick: () => alert('TODO'),
+                onClick: deleteUsers,
             },
         ],
-        [history, t]
+        [deleteUsers, history, t]
     )
-
-    const tableColumns = useUsersColumns()
 
     const rowActions = useMemo<IItemAction<User>[]>(
         () => [
@@ -56,13 +66,11 @@ export function Users() {
             {
                 icon: TrashIcon,
                 label: t('Delete user'),
-                onClick: () => alert('TODO'),
+                onClick: (user) => deleteUsers([user]),
             },
         ],
-        [history, t]
+        [deleteUsers, history, t]
     )
-
-    const view = useControllerView<User>('/api/v2/users/', toolbarFilters, tableColumns)
 
     return (
         <TablePage<User>
@@ -99,10 +107,12 @@ export function Users() {
 export function AccessTable(props: { url: string }) {
     const { t } = useTranslation()
 
-    // Toolbar Filters
     const toolbarFilters = useUsersFilters()
 
-    // Toolbar Actions
+    const tableColumns = useUsersColumns()
+
+    const view = useControllerView<User>(props.url, toolbarFilters, tableColumns)
+
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
             {
@@ -126,10 +136,6 @@ export function AccessTable(props: { url: string }) {
         [t]
     )
 
-    // Table Columns
-    const tableColumns = useUsersColumns()
-
-    // Row Actions
     const rowActions = useMemo<IItemAction<User>[]>(
         () => [
             {
@@ -140,8 +146,6 @@ export function AccessTable(props: { url: string }) {
         ],
         [t]
     )
-
-    const view = useControllerView<User>(props.url, toolbarFilters, tableColumns)
 
     const history = useHistory()
 
@@ -183,8 +187,10 @@ export function useUsersFilters() {
     return toolbarFilters
 }
 
-export function useUsersColumns() {
+export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
     const { t } = useTranslation()
+    const createdColumn = useCreatedColumn(options)
+    const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<User>[]>(
         () => [
             {
@@ -212,16 +218,10 @@ export function useUsersColumns() {
                 header: t('User type'),
                 cell: (user) => <UserType user={user} />,
             },
-            {
-                header: t('Created'),
-                cell: (item) => <SinceCell value={item.created} />,
-            },
-            {
-                header: t('Last modified'),
-                cell: (item) => <SinceCell value={item.modified} />,
-            },
+            createdColumn,
+            modifiedColumn,
         ],
-        [t]
+        [t, createdColumn, modifiedColumn]
     )
     return tableColumns
 }
