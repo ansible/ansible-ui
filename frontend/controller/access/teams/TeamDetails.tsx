@@ -38,6 +38,7 @@ export function TeamDetails() {
             history.push(RouteE.Teams)
         }
     })
+
     const itemActions: ITypedAction<Team>[] = useMemo(() => {
         const itemActions: ITypedAction<Team>[] = [
             {

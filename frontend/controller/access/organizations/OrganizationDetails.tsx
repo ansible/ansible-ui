@@ -15,12 +15,19 @@ import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
 import { Organization } from './Organization'
+import { useDeleteOrganizations } from './useDeleteTeams'
 
 export function OrganizationDetails() {
     const { t } = useTranslation()
     const params = useParams<{ id: string }>()
     const organization = useItem<Organization>('/api/v2/organizations', params.id)
     const history = useHistory()
+    const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
+        if (deleted.length > 0) {
+            history.push(RouteE.Organizations)
+        }
+    })
+
     const itemActions: ITypedAction<Organization>[] = useMemo(() => {
         const itemActions: ITypedAction<Organization>[] = [
             {
@@ -31,10 +38,18 @@ export function OrganizationDetails() {
                 shortLabel: t('Edit'),
                 onClick: () => history.push(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
             },
-            { type: TypedActionType.button, icon: TrashIcon, label: t('Delete organization'), onClick: () => null },
+            {
+                type: TypedActionType.button,
+                icon: TrashIcon,
+                label: t('Delete organization'),
+                onClick: () => {
+                    if (!organization) return
+                    deleteOrganizations([organization])
+                },
+            },
         ]
         return itemActions
-    }, [history, organization, t])
+    }, [deleteOrganizations, history, organization, t])
 
     return (
         <PageLayout>
@@ -45,18 +60,7 @@ export function OrganizationDetails() {
             />
             <PageBody>
                 {organization ? (
-                    <PageTabs
-                    // preComponents={
-                    //     <Button variant="plain">
-                    //         <CaretLeftIcon /> &nbsp;Back to organizations
-                    //     </Button>
-                    // }
-                    // postComponents={
-                    //     <Button variant="plain">
-                    //         <CaretLeftIcon /> &nbsp;Back to organizations
-                    //     </Button>
-                    // }
-                    >
+                    <PageTabs>
                         <PageTab title={t('Details')}>
                             <OrganizationDetailsTab organization={organization} />
                         </PageTab>
