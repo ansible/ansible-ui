@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@patternfly/react-core'
+import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -91,6 +91,17 @@ export function Teams() {
                 titleHelpTitle={t('Team')}
                 titleHelp="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions. Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole Team rather than each user on the Team."
                 description="A Team is a subdivision of an organization with associated users, projects, credentials, and permissions."
+                navigation={
+                    <Nav aria-label="Group section navigation" variant="tertiary">
+                        <NavList>
+                            <NavItem onClick={() => history.push(RouteE.Organizations)}>Organizations</NavItem>
+                            <NavItem onClick={() => history.push(RouteE.Teams)} isActive>
+                                Teams
+                            </NavItem>
+                            <NavItem onClick={() => history.push(RouteE.Users)}>Users</NavItem>
+                        </NavList>
+                    </Nav>
+                }
             />
             <PageBody>
                 <PageTable<Team>

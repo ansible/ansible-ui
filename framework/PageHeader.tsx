@@ -2,8 +2,10 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     Button,
+    Divider,
     Flex,
     FlexItem,
+    PageNavigation,
     PageSection,
     PageSectionVariants,
     Popover,
@@ -54,6 +56,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
 }
 
 export interface PageHeaderProps {
+    navigation?: ReactNode
     breadcrumbs?: ICatalogBreadcrumb[]
     title?: string
     titleHelpTitle?: string
@@ -88,55 +91,63 @@ export interface PageHeaderProps {
  * <Page>
  */
 export function PageHeader(props: PageHeaderProps) {
-    const { breadcrumbs, title, description, controls, headerActions: pageActions } = props
+    const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useWindowSizeOrLarger(WindowSize.xl)
     const isSmOrLarger = useWindowSizeOrLarger(WindowSize.sm)
     const settings = useSettings()
     return (
-        <PageSection
-            variant={PageSectionVariants.light}
-            style={{
-                paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 24 : 16,
-                paddingBottom: xl ? 24 : 16,
-                borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
-            }}
-        >
-            <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
-                <FlexItem grow={{ default: 'grow' }}>
-                    {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
-                    <Fragment>
-                        {title ? (
-                            props.titleHelp ? (
-                                <Popover headerContent={props.titleHelpTitle} bodyContent={props.titleHelp} position="bottom-start">
-                                    <Title headingLevel="h1">
-                                        {title}
-                                        <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'top' }}>
-                                            <OutlinedQuestionCircleIcon />
-                                        </Button>
-                                    </Title>
-                                </Popover>
+        <>
+            {navigation && (
+                <>
+                    <PageNavigation style={{ paddingTop: 0 }}>{navigation}</PageNavigation>
+                    <Divider />
+                </>
+            )}
+            <PageSection
+                variant={PageSectionVariants.light}
+                style={{
+                    paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 8,
+                    paddingBottom: xl ? 20 : 16,
+                    borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                }}
+            >
+                <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
+                    <FlexItem grow={{ default: 'grow' }}>
+                        {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 12 : 8 }} />}
+                        <Fragment>
+                            {title ? (
+                                props.titleHelp ? (
+                                    <Popover headerContent={props.titleHelpTitle} bodyContent={props.titleHelp} position="bottom-start">
+                                        <Title headingLevel="h1">
+                                            {title}
+                                            <Button variant="link" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'top' }}>
+                                                <OutlinedQuestionCircleIcon />
+                                            </Button>
+                                        </Title>
+                                    </Popover>
+                                ) : (
+                                    <Title headingLevel="h1">{title}</Title>
+                                )
                             ) : (
-                                <Title headingLevel="h1">{title}</Title>
-                            )
-                        ) : (
-                            <Title headingLevel="h1">
-                                <Skeleton width="160px" />
-                            </Title>
-                        )}
-                        {isSmOrLarger && description && (
-                            <Text component="p" style={{ paddingTop: xl ? 4 : 2 }}>
-                                <Truncate content={description} />
-                            </Text>
-                        )}
-                    </Fragment>
-                </FlexItem>
-                {title && (pageActions || controls) && (
-                    <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}>
-                        <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
-                        {pageActions && <FlexItem>{pageActions}</FlexItem>}
-                    </Flex>
-                )}
-            </Flex>
-        </PageSection>
+                                <Title headingLevel="h1">
+                                    <Skeleton width="160px" />
+                                </Title>
+                            )}
+                            {isSmOrLarger && description && (
+                                <Text component="p" style={{ paddingTop: xl ? 4 : 2 }}>
+                                    <Truncate content={description} />
+                                </Text>
+                            )}
+                        </Fragment>
+                    </FlexItem>
+                    {title && (pageActions || controls) && (
+                        <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}>
+                            <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
+                            {pageActions && <FlexItem>{pageActions}</FlexItem>}
+                        </Flex>
+                    )}
+                </Flex>
+            </PageSection>
+        </>
     )
 }

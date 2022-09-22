@@ -68,12 +68,14 @@ export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
     return (
-        <PageLayout>
-            <PageHeader {...props} />
-            <PageBody>
-                <PageTable {...props} />
-            </PageBody>
-        </PageLayout>
+        <>
+            <PageLayout>
+                <PageHeader {...props} />
+                <PageBody>
+                    <PageTable {...props} />
+                </PageBody>
+            </PageLayout>
+        </>
     )
 }
 
