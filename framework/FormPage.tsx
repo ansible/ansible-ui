@@ -600,10 +600,10 @@ export function PageForm<T extends object>(props: {
     const multipleColumns = settings.formColumns === 'multiple'
 
     const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
-    const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12
-    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
-    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
-    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12
+    const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
+    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 12) : 12
+    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 12) : 12
+    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 12) : 12
     const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800
 
     return (
