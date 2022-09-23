@@ -1,6 +1,7 @@
 import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
 import {
     Detail,
@@ -14,7 +15,6 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { PageBody } from '../../../../framework/PageBody'
 import { PageLayout } from '../../../../framework/PageLayout'
 import { PageTab, PageTabs } from '../../../../framework/PageTabs'

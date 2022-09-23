@@ -1,6 +1,7 @@
 import { ButtonVariant, Chip, ChipGroup, Nav, NavItem, NavList, Text } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import {
     IItemAction,
@@ -12,7 +13,6 @@ import {
     TextCell,
     TypedActionType,
 } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../../common/controller-toolbar-filters'
 import { RouteE } from '../../../route'

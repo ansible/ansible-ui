@@ -1,5 +1,5 @@
+import { useTranslation } from 'react-i18next'
 import { IItemFilter } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 
 export function useEnabledFilter() {
     const { t } = useTranslation()

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { IToolbarFilter } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 
 export function useNameToolbarFilter() {
     const { t } = useTranslation()

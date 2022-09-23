@@ -1,6 +1,7 @@
 import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import {
     IItemAction,
@@ -13,7 +14,6 @@ import {
     PageTable,
     TypedActionType,
 } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import {
     useCreatedColumn,
     useDescriptionColumn,

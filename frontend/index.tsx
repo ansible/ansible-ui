@@ -8,7 +8,6 @@ import Backend from 'i18next-http-backend'
 import { Suspense } from 'react'
 import { render } from 'react-dom'
 import { initReactI18next } from 'react-i18next'
-import { TranslationProvider } from '../framework/components/useTranslation'
 import Demo from './Main'
 
 const container = document.createElement('div')
@@ -32,9 +31,7 @@ void i18n
 
 render(
     <Suspense fallback="div">
-        <TranslationProvider>
-            <Demo />
-        </TranslationProvider>
+        <Demo />
     </Suspense>,
     container
 )
