@@ -29,7 +29,7 @@
         "coverage:check": "npx nyc report --check-coverage --statements 38 --branches 32 --functions 32 --lines 40 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
         "prepare": "husky install",
         "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
-        "i18n": "i18next"
+        "i18n": "npx i18next-parser --config i18next-parser.config.cjs"
     },
     "dependencies": {
         "@hookform/resolvers": "2.9.8",
@@ -104,6 +104,7 @@
         "eslint-plugin-react-hooks": "4.6.0",
         "html-webpack-plugin": "5.5.0",
         "husky": "^8.0.1",
+        "merge-jsons-webpack-plugin": "^2.0.1",
         "mini-css-extract-plugin": "2.6.1",
         "nodemon": "2.0.20",
         "pino-zen": "2.0.7",
