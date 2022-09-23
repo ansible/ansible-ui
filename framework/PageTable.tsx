@@ -114,6 +114,8 @@ export type PageTableProps<T extends object> = {
     unselectItem?: (item: T) => void
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
+    onSelect?: (item: T) => void
+    selectNoneText?: string
 
     errorStateTitle: string
     error?: Error
@@ -123,7 +125,7 @@ export type PageTableProps<T extends object> = {
     emptyStateButtonText?: string
     emptyStateButtonClick?: () => void
 
-    onSelect?: (item: T) => void
+    t?: (t: string) => string
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -144,6 +146,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         onSelect,
         unselectAll,
     } = props
+    let { t } = props
+    t = t ? t : (t: string) => t
     const showSelect = toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
@@ -274,13 +278,15 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                         <EmptyState>
                             <EmptyStateIcon icon={SearchIcon} />
                             <Title headingLevel="h2" size="lg">
-                                No results found
+                                {t('No results found')}
                             </Title>
-                            <EmptyStateBody>No results match this filter criteria. Adjust your filters and try again.</EmptyStateBody>
+                            <EmptyStateBody>
+                                {t('No results match this filter criteria. Adjust your filters and try again.')}
+                            </EmptyStateBody>
                             {clearAllFilters && (
                                 <EmptyStateSecondaryActions>
                                     <Button variant="link" onClick={clearAllFilters}>
-                                        Clear all filters
+                                        {t('Clear all filters')}
                                     </Button>
                                 </EmptyStateSecondaryActions>
                             )}
@@ -950,7 +956,9 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
     )
 }
 
-export function SinceCell(props: { value?: string; author?: string; onClick?: () => void }) {
+export function SinceCell(props: { value?: string; author?: string; onClick?: () => void; t?: (t: string) => string }) {
+    let { t } = props
+    t = t ? t : (t: string) => t
     const { author, onClick } = props
     const [dateTime, setDateTime] = useState<string | null>(null)
     useEffect(() => {
@@ -968,7 +976,7 @@ export function SinceCell(props: { value?: string; author?: string; onClick?: ()
     return (
         <span style={{ whiteSpace: 'nowrap' }}>
             {dateTime}
-            {author && <span>&nbsp;by&nbsp;</span>}
+            {author && <span>&nbsp;{t('by')}&nbsp;</span>}
             {onClick ? (
                 <Button variant="link" isInline onClick={onClick}>
                     {author}

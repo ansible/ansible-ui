@@ -70,7 +70,7 @@ export function OrganizationDetails() {
                         <PageTab title={t('Teams')}>
                             <OrganizationTeamsTab organization={organization} />
                         </PageTab>
-                        <PageTab title={t('Execution Environments')}>
+                        <PageTab title={t('Execution environments')}>
                             <Todo />
                         </PageTab>
                         <PageTab title={t('Notifications')}>

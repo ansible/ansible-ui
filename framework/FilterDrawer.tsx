@@ -8,7 +8,10 @@ export function FilterDrawer<T extends object>(props: {
     filters?: IItemFilter<T>[]
     filterState: IFilterState
     setFilterValues: SetFilterValues<T>
+    t?: (t: string) => string
 }) {
+    let { t } = props
+    t = t ? t : (t: string) => t
     const { filters, filterState, setFilterValues } = props
     const toggleFilterValue = useCallback(
         (filter: IItemFilter<T>, filterValues: string[] | undefined, option: string) => {
@@ -30,7 +33,7 @@ export function FilterDrawer<T extends object>(props: {
         <DrawerPanelContent minSize="250px" defaultSize="250px" maxSize="250px">
             <DrawerPanelBody>
                 <Title headingLevel="h2" style={{ paddingBottom: 24 }}>
-                    Filters
+                    {t('Filters')}
                 </Title>
                 {filters?.map((filter) => {
                     const filterValues = filterState[filter.label]

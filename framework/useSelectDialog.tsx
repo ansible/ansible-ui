@@ -10,8 +10,11 @@ export function useSelectDialog<T extends { id: number }>(options: {
     view: IControllerView<T>
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
+    confirm: string
+    cancel: string
+    selected: string
 }) {
-    const { view, tableColumns, toolbarFilters } = options
+    const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options
     const [title, setTitle] = useState('')
     const [onSelect, setOnSelect] = useState<(item: T) => void>()
     const openSetting = useCallback((onSelect?: (item: T) => void, title?: string) => {
@@ -30,13 +33,16 @@ export function useSelectDialog<T extends { id: number }>(options: {
                     view={view}
                     tableColumns={tableColumns}
                     toolbarFilters={toolbarFilters}
+                    confirm={confirm}
+                    cancel={cancel}
+                    selected={selected}
                 />
             )
         } else {
             setDialog(undefined)
             view.unselectAll()
         }
-    }, [onSelect, setDialog, tableColumns, title, toolbarFilters, view])
+    }, [cancel, confirm, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view])
     return openSetting
 }
 
@@ -48,8 +54,11 @@ export function SelectDialog<T extends { id: number }>(props: {
     view: IControllerView<T>
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
+    confirm: string
+    cancel: string
+    selected: string
 }) {
-    const { title, open, setOpen, onSelect, view, tableColumns, toolbarFilters } = props
+    const { title, open, setOpen, onSelect, view, tableColumns, toolbarFilters, confirm, cancel, selected } = props
     const onClose = () => setOpen(false)
     return (
         <Modal
@@ -70,17 +79,17 @@ export function SelectDialog<T extends { id: number }>(props: {
                     }}
                     isAriaDisabled={view.selectedItems.length === 0}
                 >
-                    Confirm
+                    {confirm}
                 </Button>,
                 <Button key="cancel" variant="link" onClick={onClose}>
-                    Cancel
+                    {cancel}
                 </Button>,
             ]}
             hasNoBodyWrapper
         >
             <ModalBoxBody style={{ overflow: 'hidden' }}>
                 <Split hasGutter>
-                    {view.selectedItems.length > 0 && <SplitItem>Selected:</SplitItem>}
+                    <SplitItem style={{ opacity: view.selectedItems.length === 0 ? 0 : undefined }}>{selected}</SplitItem>
                     <b>
                         {view.selectedItems.map((item) => {
                             if (tableColumns && tableColumns.length > 0) {

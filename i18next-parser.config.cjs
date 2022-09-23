@@ -9,7 +9,7 @@ module.exports = {
     // Default namespace used in your i18next config
 
     defaultValue: (locale, namespace, key) => {
-        if (locale === 'fr') return key.toUpperCase().split('').join('_').split('_ _').join(' ')
+        if (locale === 'fr') return key.toUpperCase().split('').join('_').split('_ _').join('_ _').replace('{_{_C_O_U_N_T_}_}', '{{count}}')
         return key
     },
     // Default value to give to empty keys
@@ -18,7 +18,7 @@ module.exports = {
     indentation: 2,
     // Indentation of the catalog files
 
-    keepRemoved: true,
+    keepRemoved: false,
     // Keep keys from the catalog that are no longer in code
 
     keySeparator: '.',
@@ -65,7 +65,7 @@ module.exports = {
     // An array of globs that describe where to look for source files
     // relative to the location of the configuration file
 
-    sort: false,
+    sort: true,
     // Whether or not to sort the catalog. Can also be a [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters)
 
     skipDefaultValues: false,

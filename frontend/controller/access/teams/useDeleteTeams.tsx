@@ -25,6 +25,7 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
                 submit={t('Delete teams', { count: items.length })}
                 submitting={t('Deleting teams', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} teams', { count: items.length })}
+                pending={t('Pending')}
                 success={t('Success')}
                 cancel={t('Cancel')}
                 close={t('Close')}

@@ -89,17 +89,17 @@ export function Teams() {
             <PageHeader
                 title={t('Teams')}
                 titleHelpTitle={t('Team')}
-                titleHelp={t('team.title.help')}
+                titleHelp={t('teams.title.help')}
                 titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
-                description={t('team.title.description')}
+                description={t('teams.title.description')}
                 navigation={
                     <Nav aria-label="Group section navigation" variant="tertiary">
                         <NavList>
-                            <NavItem onClick={() => history.push(RouteE.Organizations)}>Organizations</NavItem>
+                            <NavItem onClick={() => history.push(RouteE.Organizations)}>{t('Organizations')}</NavItem>
                             <NavItem onClick={() => history.push(RouteE.Teams)} isActive>
-                                Teams
+                                {t('Teams')}
                             </NavItem>
-                            <NavItem onClick={() => history.push(RouteE.Users)}>Users</NavItem>
+                            <NavItem onClick={() => history.push(RouteE.Users)}>{t('Users')}</NavItem>
                         </NavList>
                     </Nav>
                 }

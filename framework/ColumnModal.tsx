@@ -14,7 +14,9 @@ import {
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { ITableColumn } from './PageTable'
 
-export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
+export function useColumnModal<T extends object>(columns: ITableColumn<T>[], t?: (t: string) => string) {
+    t = t ? t : (t: string) => t
+
     const [columnModalOpen, setColumnModalOpen] = useState(false)
     const openColumnModal = useCallback(() => {
         setColumnModalOpen(true)
@@ -71,7 +73,7 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
             onClose={onClose}
             actions={[
                 <Button key="save" variant="primary" onClick={onClose}>
-                    Close
+                    {t('Close')}
                 </Button>,
                 // <Button key="cancel" variant="link" onClick={onClose}>
                 //     Cancel
