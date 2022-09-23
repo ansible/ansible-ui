@@ -1,6 +1,6 @@
 {
     "name": "@ansible/console",
-    "version": "0.0.76",
+    "version": "0.0.77",
     "type": "module",
     "scripts": {
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
@@ -17,10 +17,10 @@
         "prettier": "prettier --check frontend backend framework cypress",
         "prettier:fix": "prettier --write frontend backend framework cypress",
         "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix && npm dedup",
+        "postinstall": "npm run certs",
         "certs": "mkdir -p certs && openssl req -subj '/C=US' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout certs/tls.key -out certs/tls.crt",
         "docker:build": "docker build --tag ansible/console .",
         "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
-        "deploy": "scripts/deploy.sh",
         "cypress": "npm run clean && concurrently npm:cypress:frontend npm:cypress:run --prefix-colors cyan,green,blue --kill-others --success first",
         "cypress:run": "wait-on -d 5000 -i 1000 https-get://localhost:3002 && cypress run --env mock=true --config video=false",
         "cypress:open": "cypress open --env mock=true --e2e --browser chrome",
