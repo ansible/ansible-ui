@@ -89,7 +89,7 @@ export function EditOrganization() {
             return (
                 <>
                     <PageHeader
-                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit Organization') }]}
+                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit organization') }]}
                     />
                 </>
             )
@@ -97,8 +97,8 @@ export function EditOrganization() {
             return (
                 <>
                     <PageHeader
-                        title={t('Edit Organization')}
-                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit Organization') }]}
+                        title={t('Edit organization')}
+                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit organization') }]}
                     />
                     <PageBody>
                         <PageForm
@@ -117,8 +117,8 @@ export function EditOrganization() {
         return (
             <>
                 <PageHeader
-                    title={t('Create Organization')}
-                    breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Create Organization') }]}
+                    title={t('Create organization')}
+                    breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Create organization') }]}
                 />
                 <PageBody>
                     <PageForm

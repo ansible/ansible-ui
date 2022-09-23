@@ -123,7 +123,7 @@ export function FormPageAlerts() {
     )
 }
 
-export function FormPageButtons(props: { submitText: string; onCancel: () => void }) {
+export function FormPageButtons(props: { submitText: string; cancelText: string; onCancel: () => void }) {
     const { errors } = useFormState()
 
     return (
@@ -151,7 +151,7 @@ export function FormPageButtons(props: { submitText: string; onCancel: () => voi
                     )}
 
                     <Button type="button" variant="link" onClick={props.onCancel}>
-                        Cancel
+                        {props.cancelText}
                     </Button>
                 </ActionGroup>
             </PageSection>
@@ -585,6 +585,7 @@ export function PageForm<T extends object>(props: {
     onCancel?: () => void
     defaultValue?: DeepPartial<T>
     isVertical?: boolean
+    singleColumn?: boolean
 }) {
     const { schema, defaultValue } = props
     const form = useForm<T>({
@@ -597,13 +598,13 @@ export function PageForm<T extends object>(props: {
     const isSm = useWindowSizeOrLarger(WindowSize.md)
     const [settings] = useContext(SettingsContext)
     const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal'
-    const multipleColumns = settings.formColumns === 'multiple'
+    const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple'
 
     const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
-    const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
-    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 12) : 12
-    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 12) : 12
-    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 12) : 12
+    const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12
+    const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
+    const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
+    const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12
     const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800
 
     return (

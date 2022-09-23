@@ -110,7 +110,7 @@ export function EditUser() {
     if (!user) {
         return (
             <>
-                <PageHeader breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit User') }]} />
+                <PageHeader breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]} />
             </>
         )
     } else {
@@ -119,11 +119,11 @@ export function EditUser() {
             lastName: user.last_name,
             firstName: user.first_name,
             email: user.email,
-            userType: user.is_superuser ? t('System administraitor') : user.is_system_auditor ? t('System auditor') : t('Normal user'),
+            userType: user.is_superuser ? t('System administrator') : user.is_system_auditor ? t('System auditor') : t('Normal user'),
         }
         return (
             <>
-                <PageHeader title={t('Edit User')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit User') }]} />
+                <PageHeader title={t('Edit user')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]} />
                 <PageBody>
                     <PageForm
                         schema={EditUserSchema}

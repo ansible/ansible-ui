@@ -32,6 +32,7 @@ export function BulkActionDialog<T extends object>(props: {
     error: string
     close: string
     success: string
+    pending: string
     isDanger?: boolean
     items: T[]
     columns: ITableColumn<T>[]
@@ -170,14 +171,14 @@ export function BulkActionDialog<T extends object>(props: {
                                         if (status === undefined) {
                                             return (
                                                 <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                                    {<PendingIcon />}&nbsp; Pending {JSON.stringify(status)}
+                                                    {<PendingIcon />}&nbsp; {props.pending} {JSON.stringify(status)}
                                                 </span>
                                             )
                                         }
                                         if (status === null) {
                                             return (
                                                 <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                                    {<CheckCircleIcon />}&nbsp; Success
+                                                    {<CheckCircleIcon />}&nbsp; {props.success}
                                                 </span>
                                             )
                                         }
@@ -195,7 +196,7 @@ export function BulkActionDialog<T extends object>(props: {
                             setPage={setPage}
                             setPerPage={setPerPage}
                             compact
-                            errorStateTitle="Error"
+                            errorStateTitle=""
                             emptyStateTitle="No items"
                         />
                     )}

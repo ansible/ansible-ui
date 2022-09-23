@@ -49,8 +49,9 @@ import { RouteE } from './route'
 import { DemoRouter } from './Router'
 
 export default function Demo() {
+    const { t } = useTranslation()
     return (
-        <ErrorBoundary>
+        <ErrorBoundary message={t('An eror occured')}>
             <AccessCode>
                 <SettingsProvider>
                     <BrowserRouter>
@@ -91,9 +92,11 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
             onToggle={onToggle}
             isOpen={isOpen}
             items={[
+                // eslint-disable-next-line i18next/no-literal-string
                 <ApplicationLauncherItem key="application_1a" href="#">
                     Application 1
                 </ApplicationLauncherItem>,
+                // eslint-disable-next-line i18next/no-literal-string
                 <ApplicationLauncherItem key="application_2a" component="button" onClick={() => alert('Clicked item 2')}>
                     Application 2
                 </ApplicationLauncherItem>,
@@ -104,7 +107,8 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
 
 function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
     const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
-    const openSettings = useSettingsDialog()
+    const { t } = useTranslation()
+    const openSettings = useSettingsDialog(t)
     return (
         <Masthead display={{ default: 'inline' }}>
             <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
@@ -122,10 +126,10 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                             </div>
                             <div style={{ color: 'white', textDecoration: 'none' }}>
                                 <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
-                                    Red Hat
+                                    {t('Red Hat')}
                                 </Title>
                                 <Title headingLevel="h3" style={{ fontWeight: 'lighter', lineHeight: 1.2 }}>
-                                    <Truncate content="Ansible Automation Platform" style={{ minWidth: 0 }} />
+                                    <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
                                 </Title>
                             </div>
                         </div>
@@ -135,7 +139,7 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                 <MastheadMain style={{ marginRight: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
                     <MastheadBrand>
                         <Title headingLevel="h3" style={{ color: 'white' }}>
-                            <Truncate content="Ansible Automation Platform" style={{ minWidth: 0, marginLeft: -8 }} />
+                            <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0, marginLeft: -8 }} />
                         </Title>
                     </MastheadBrand>
                 </MastheadMain>
@@ -186,9 +190,9 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                                                 )
                                             }}
                                         >
-                                            Help
+                                            {t('Help')}
                                         </DropdownItem>
-                                        <DropdownItem>About</DropdownItem>
+                                        <DropdownItem>{t('About')}</DropdownItem>
                                     </AppBarDropdown>
                                 </ToolbarItem>
                             </ToolbarGroup>
@@ -294,7 +298,7 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                         </NavExpandable> */}
                         <NavExpandable
                             key="access"
-                            title="Access"
+                            title={t('Access')}
                             isExpanded
                             isActive={isRouteActive([RouteE.Organizations, RouteE.Users, RouteE.Teams], location)}
                         >
@@ -416,6 +420,7 @@ function AccountDropdownInternal() {
     const onToggle = useCallback(() => {
         setOpen((open) => !open)
     }, [])
+    const { t } = useTranslation()
     return (
         <Dropdown
             onSelect={onSelect}
@@ -438,7 +443,7 @@ function AccountDropdownInternal() {
                         history.push(RouteE.Users)
                     }}
                 >
-                    User Details
+                    {t('User details')}
                 </DropdownItem>,
                 <DropdownItem
                     key="logout"
@@ -450,7 +455,7 @@ function AccountDropdownInternal() {
                         void logout()
                     }}
                 >
-                    Logout
+                    {t('Logout')}
                 </DropdownItem>,
             ]}
             position="right"

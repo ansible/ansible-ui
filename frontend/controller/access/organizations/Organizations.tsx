@@ -72,21 +72,17 @@ export function Organizations() {
         <TablePage<Organization>
             title={t('Organizations')}
             titleHelpTitle={t('Organizations')}
-            titleHelp={t(
-                'An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy.'
-            )}
+            titleHelp={t('organizations.title.help')}
             titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
-            description={t(
-                'An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the Tower object hierarchy.'
-            )}
+            description={t('organizations.title.description')}
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
                         <NavItem onClick={() => history.push(RouteE.Organizations)} isActive>
-                            Organizations
+                            {t('Organizations')}
                         </NavItem>
-                        <NavItem onClick={() => history.push(RouteE.Teams)}>Teams</NavItem>
-                        <NavItem onClick={() => history.push(RouteE.Users)}>Users</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Teams)}>{t('Teams')}</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Users)}>{t('Users')}</NavItem>
                     </NavList>
                 </Nav>
             }

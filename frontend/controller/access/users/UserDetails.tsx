@@ -155,7 +155,7 @@ function UserOrganizations(props: { user: User }) {
             toolbarFilters={toolbarFilters}
             tableColumns={tableColumns}
             errorStateTitle={t('Error loading organizations')}
-            emptyStateTitle={user.is_superuser ? t('System Administrator') : t('No organizations yet')}
+            emptyStateTitle={user.is_superuser ? t('System administrator') : t('No organizations yet')}
             emptyStateDescription={
                 user.is_superuser
                     ? t('System administrators have unrestricted access to all resources.')
@@ -179,7 +179,7 @@ function UserTeams(props: { user: User }) {
             toolbarFilters={toolbarFilters}
             tableColumns={tableColumns}
             errorStateTitle={t('Error loading teams')}
-            emptyStateTitle={user.is_superuser ? t('System Administrator') : t('User is not in any teams.')}
+            emptyStateTitle={user.is_superuser ? t('System administrator') : t('User is not in any teams.')}
             emptyStateDescription={
                 user.is_superuser
                     ? t('System administrators have unrestricted access to all resources.')
@@ -235,7 +235,7 @@ function UserRoles(props: { user: User }) {
             toolbarActions={toolbarActions}
             rowActions={rowActions}
             errorStateTitle={t('Error loading roles')}
-            emptyStateTitle={user.is_superuser ? t('System Administrator') : t('User does not have any roles.')}
+            emptyStateTitle={user.is_superuser ? t('System administrator') : t('User does not have any roles.')}
             emptyStateDescription={
                 user.is_superuser
                     ? t('System administrators have unrestricted access to all resources.')

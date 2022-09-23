@@ -25,6 +25,7 @@ export default function Debug() {
                                     })
                                 }
                             }}
+                            // eslint-disable-next-line i18next/no-literal-string
                         >
                             Create 100 teams
                         </Button>

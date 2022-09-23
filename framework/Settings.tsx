@@ -60,24 +60,24 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     return <SettingsContext.Provider value={[settings, setSettings]}>{props.children}</SettingsContext.Provider>
 }
 
-export function useSettingsDialog() {
+export function useSettingsDialog(t: (t: string) => string) {
     const [open, setOpen] = useState(false)
     const openSetting = useCallback(() => setOpen(true), [])
     const setDialog = useSetDialog()
     useEffect(() => {
         if (open) {
-            setDialog(<SettingsDialog open={open} setOpen={setOpen} />)
+            setDialog(<SettingsDialog open={open} setOpen={setOpen} t={t} />)
         } else {
             setDialog(undefined)
         }
-    }, [open, setDialog])
-
+    }, [open, setDialog, t])
     return openSetting
 }
 
-export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void }) {
+export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void; t: (t: string) => string }) {
     const onClose = () => props.setOpen(false)
     const [settings, setSettings] = useContext(SettingsContext)
+    const { t } = props
     return (
         <Modal
             title="Settings"
@@ -87,7 +87,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
             tabIndex={0}
             actions={[
                 <Button key="close" variant="primary" onClick={onClose}>
-                    Close
+                    {t('Close')}
                 </Button>,
             ]}
         >
@@ -97,33 +97,33 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                     value={settings.theme ?? 'system'}
                     onChange={(theme) => setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })}
                 >
-                    <SelectOption value="system">System default</SelectOption>
-                    <SelectOption value="light">Light</SelectOption>
-                    <SelectOption value="dark">Dark</SelectOption>
+                    <SelectOption value="system">{t('System default')}</SelectOption>
+                    <SelectOption value="light">{t('Light')}</SelectOption>
+                    <SelectOption value="dark">{t('Dark')}</SelectOption>
                 </SingleSelect>
                 <SingleSelect
                     label="Table Layout"
                     value={settings.tableLayout ?? 'comfortable'}
                     onChange={(tableLayout) => setSettings({ ...settings, tableLayout: tableLayout as 'compact' | 'comfortable' })}
                 >
-                    <SelectOption value="comfortable">Comfortable</SelectOption>
-                    <SelectOption value="compact">Compact</SelectOption>
+                    <SelectOption value="comfortable">{t('Comfortable')}</SelectOption>
+                    <SelectOption value="compact">{t('Compact')}</SelectOption>
                 </SingleSelect>
                 <SingleSelect
                     label="Form Columns"
                     value={settings.formColumns ?? 'multiple'}
                     onChange={(formColumns) => setSettings({ ...settings, formColumns: formColumns as 'multiple' | 'single' })}
                 >
-                    <SelectOption value="multiple">Multiple columns</SelectOption>
-                    <SelectOption value="single">Single column</SelectOption>
+                    <SelectOption value="multiple">{t('Multiple columns')}</SelectOption>
+                    <SelectOption value="single">{t('Single column')}</SelectOption>
                 </SingleSelect>
                 <SingleSelect
                     label="Form Layout"
                     value={settings.formLayout ?? 'vertical'}
                     onChange={(formLayout) => setSettings({ ...settings, formLayout: formLayout as 'vertical' | 'horizontal' })}
                 >
-                    <SelectOption value="vertical">Vertical labels</SelectOption>
-                    <SelectOption value="horizontal">Horizontal labels</SelectOption>
+                    <SelectOption value="vertical">{t('Vertical labels')}</SelectOption>
+                    <SelectOption value="horizontal">{t('Horizontal labels')}</SelectOption>
                 </SingleSelect>
                 <SingleSelect
                     label="Borders"
@@ -131,8 +131,8 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                     onChange={(value) => setSettings({ ...settings, borders: value === 'true' })}
                     style={{ paddingBottom: 120 }}
                 >
-                    <SelectOption value="true">Yes</SelectOption>
-                    <SelectOption value="false">No</SelectOption>
+                    <SelectOption value="true">{t('Yes')}</SelectOption>
+                    <SelectOption value="false">{t('No')}</SelectOption>
                 </SingleSelect>
             </Form>
         </Modal>

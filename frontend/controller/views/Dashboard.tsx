@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import {
     Bullseye,
     Button,
@@ -79,10 +80,10 @@ export default function Dashboard() {
                             <Card isRounded>
                                 <CardTitle>
                                     <Split>
-                                        <SplitItem>Execution Environments</SplitItem>
+                                        <SplitItem>Execution environments</SplitItem>
                                         <SplitItem isFilled>
                                             <Help
-                                                title="Execution Environments"
+                                                title="Execution environments"
                                                 help="The ability to build and deploy Python virtual environments for automation has been replaced by
                                         Ansible execution environments. Unlike legacy virtual environments, execution environments are
                                         container images that make it possible to incorporate system-level dependencies and collection-based

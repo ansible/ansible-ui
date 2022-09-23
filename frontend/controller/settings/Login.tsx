@@ -109,9 +109,9 @@ export default function Login() {
                 }}
                 isFilled={!sm}
             >
-                <Title headingLevel="h2">Welcome to the</Title>
+                <Title headingLevel="h2">{t('Welcome to the')}</Title>
                 <Title className="pt-8 pb-24" headingLevel="h1">
-                    Ansible Automation Platform
+                    {t('Ansible Automation Platform')}
                 </Title>
                 <PageForm
                     schema={DataType}
@@ -119,6 +119,7 @@ export default function Login() {
                     onSubmit={onSubmit}
                     cancelText={t('Cancel')}
                     isVertical
+                    singleColumn
                     defaultValue={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
                 />
             </PageSection>

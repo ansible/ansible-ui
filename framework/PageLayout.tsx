@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import ErrorBoundary from './components/ErrorBoundary'
 
 /**
@@ -13,8 +14,9 @@ import ErrorBoundary from './components/ErrorBoundary'
  * <Page>
  */
 export function PageLayout(props: { children: ReactNode }) {
+    const { t } = useTranslation()
     return (
-        <ErrorBoundary>
+        <ErrorBoundary message={t('Error')}>
             <div
                 style={{
                     display: 'flex',

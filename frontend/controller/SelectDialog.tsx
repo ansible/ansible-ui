@@ -18,6 +18,7 @@ export function SelectDialog(props: { open: boolean; setOpen: (open: boolean) =>
         setOpen(false)
         onClick(organization)
     })
+    const { t } = useTranslation()
     const view = useControllerView('/api/v2/organizations/', toolbarFilters, tableColumns)
     return (
         <Modal title="Select an organization" isOpen={open} onClose={onClose} variant={ModalVariant.medium} tabIndex={0}>
@@ -39,9 +40,10 @@ export function SelectDialog(props: { open: boolean; setOpen: (open: boolean) =>
                     <PageTable<Organization>
                         tableColumns={tableColumns}
                         toolbarFilters={toolbarFilters}
-                        emptyStateTitle="No organizations found"
-                        errorStateTitle="Error loading organizations"
+                        emptyStateTitle={t('No organizations found')}
+                        errorStateTitle={t('Error loading organizations')}
                         {...view}
+                        selectNoneText={t('Select none')}
                     />
                 </div>
             </Collapse>

@@ -18,13 +18,14 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
             <BulkActionDialog<Organization>
                 title={t('Permanently delete organizations', { count: items.length })}
                 confirm={t('Yes, I confirm that I want to delete these {{count}} organizations.', { count: items.length })}
-                submit={t('Delete')}
-                submitting={t('Deleting')}
+                submit={t('Delete organizations', { count: items.length })}
+                submitting={t('Deleting organizations', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} organizations', { count: items.length })}
+                pending={t('Pending')}
                 success={t('Success')}
                 cancel={t('Cancel')}
                 close={t('Close')}
-                error={t('There were errors deleting organizations')}
+                error={t('There were errors deleting organizations', { count: items.length })}
                 items={items.sort((l, r) => compareStrings(l.name, r.name))}
                 keyFn={getItemKey}
                 isDanger

@@ -188,7 +188,11 @@ export function CatalogCard<T extends object>(props: {
     unselectItem: (item: T) => void
     itemActions?: IItemAction<T>[]
     showSelect: boolean
+    t?: (t: string) => string
 }) {
+    let { t } = props
+    t = t ? t : (t: string) => t
+
     const { item, itemToCardFn, isSelected, selectItem, unselectItem, itemActions, showSelect } = props
 
     const card = useMemo(() => itemToCardFn(item), [item, itemToCardFn])
@@ -364,7 +368,7 @@ export function CatalogCard<T extends object>(props: {
                                 isInline
                                 onClick={() => window.open(card.learnMore, '_blank')}
                             >
-                                &nbsp;Learn more
+                                &nbsp;{t('Learn more')}
                             </Button>
                         )}
                     </div>

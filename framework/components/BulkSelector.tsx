@@ -9,6 +9,7 @@ export interface BulkSelectorProps<T> {
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
     keyFn: (item: T) => string | number
+    selectNoneText?: string
 }
 
 export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
@@ -76,10 +77,10 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
                     setIsOpen(false)
                 }}
             >
-                Select none
+                {props.selectNoneText ?? 'Select none'}
             </DropdownItem>
         )
-    }, [unselectAll])
+    }, [props.selectNoneText, unselectAll])
 
     const selectPageDropdownItem = useMemo(() => {
         return (

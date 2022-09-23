@@ -76,16 +76,16 @@ export function Users() {
         <TablePage<User>
             title={t('Users')}
             titleHelpTitle={t('User')}
-            titleHelp={t('A user is someone who has access to Tower with associated permissions and credentials.')}
+            titleHelp={t('users.title.help')}
             titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
-            description={t('A user is someone who has access to Tower with associated permissions and credentials.')}
+            description={t('users.title.description')}
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
-                        <NavItem onClick={() => history.push(RouteE.Organizations)}>Organizations</NavItem>
-                        <NavItem onClick={() => history.push(RouteE.Teams)}>Teams</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Organizations)}>{t('Organizations')}</NavItem>
+                        <NavItem onClick={() => history.push(RouteE.Teams)}>{t('Teams')}</NavItem>
                         <NavItem onClick={() => history.push(RouteE.Users)} isActive>
-                            Users
+                            {t('Users')}
                         </NavItem>
                     </NavList>
                 </Nav>
@@ -228,17 +228,19 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
 
 export function UserType(props: { user: User }) {
     const { user } = props
-    if (user.is_superuser) return <Text>System administraitor</Text>
-    if (user.is_system_auditor) return <Text>System auditor</Text>
-    return <Text>Normal user</Text>
+    const { t } = useTranslation()
+    if (user.is_superuser) return <Text> {t('System administrator')}</Text>
+    if (user.is_system_auditor) return <Text>{t('System auditor')}</Text>
+    return <Text>{t('Normal user')}</Text>
 }
 
 export function UserRoles(props: { user: User }) {
     const { user } = props
+    const { t } = useTranslation()
     return (
         <ChipGroup>
-            {user.is_superuser && <Chip isReadOnly>System administraitor</Chip>}
-            {!user.is_superuser && <Chip isReadOnly>Normal user</Chip>}
+            {user.is_superuser && <Chip isReadOnly>{t('System administrator')}</Chip>}
+            {!user.is_superuser && <Chip isReadOnly>{t('Normal user')}</Chip>}
         </ChipGroup>
     )
 }

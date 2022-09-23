@@ -46,7 +46,7 @@ export function useCreatedByToolbarFilter() {
     return useMemo<IToolbarFilter>(
         () => ({
             key: 'created-by',
-            label: t('Created By'),
+            label: t('Created by'),
             type: 'string',
             query: 'created_by__username__icontains',
         }),
@@ -59,7 +59,7 @@ export function useModifiedByToolbarFilter() {
     return useMemo<IToolbarFilter>(
         () => ({
             key: 'modified-by',
-            label: t('Modified By'),
+            label: t('Modified by'),
             type: 'string',
             query: 'modified_by__username__icontains',
         }),
@@ -85,7 +85,7 @@ export function useFirstNameToolbarFilter() {
     return useMemo<IToolbarFilter>(
         () => ({
             key: 'firstname',
-            label: t('First Name'),
+            label: t('First name'),
             type: 'string',
             query: 'first_name__icontains',
         }),
@@ -98,7 +98,7 @@ export function useLastNameToolbarFilter() {
     return useMemo<IToolbarFilter>(
         () => ({
             key: 'lastname',
-            label: t('Last Name'),
+            label: t('Last name'),
             type: 'string',
             query: 'last_name__icontains',
         }),

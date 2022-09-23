@@ -108,8 +108,8 @@ export function CreateUser() {
                 first_name: userData.firstName,
                 email: userData.email,
                 password: userData.password,
-                is_superuser: userData.userType === t('System Administrator'),
-                is_system_auditor: userData.userType === t('System Auditor'),
+                is_superuser: userData.userType === t('System administrator'),
+                is_system_auditor: userData.userType === t('System auditor'),
             }
             const user = await requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, newUser)
             history.push(RouteE.UserDetails.replace(':id', user.id.toString()))
@@ -122,7 +122,7 @@ export function CreateUser() {
 
     return (
         <>
-            <PageHeader title={t('Create User')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create User') }]} />
+            <PageHeader title={t('Create user')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create user') }]} />
             <PageBody>
                 <PageForm
                     schema={CreateUserSchema}

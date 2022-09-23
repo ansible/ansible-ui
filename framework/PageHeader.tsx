@@ -67,6 +67,7 @@ export interface PageHeaderProps {
     description?: string
     controls?: ReactNode
     headerActions?: ReactNode
+    t?: (t: string) => string
 }
 
 /**
@@ -99,6 +100,8 @@ export function PageHeader(props: PageHeaderProps) {
     const isMdOrLarger = useWindowSizeOrLarger(WindowSize.md)
     const isSmLarger = useWindowSizeOrLarger(WindowSize.sm)
     const settings = useSettings()
+    let { t } = props
+    t = t ? t : (t: string) => t
     return (
         <>
             {navigation && (
@@ -125,7 +128,7 @@ export function PageHeader(props: PageHeaderProps) {
                                         isInline
                                         style={{ whiteSpace: 'nowrap' }}
                                     >
-                                        {isSmLarger ? <span>Documentation</span> : <span>Docs</span>}
+                                        {isSmLarger ? <span>{t('Documentation')}</span> : <span>{'Docs'}</span>}
                                     </Button>
                                 </Bullseye>
                             </FlexItem>
@@ -160,7 +163,7 @@ export function PageHeader(props: PageHeaderProps) {
                                                             onClick={() => window.open(props.titleDocLink, '_blank')}
                                                             isInline
                                                         >
-                                                            Documentation
+                                                            {t('Documentation')}
                                                         </Button>
                                                     </StackItem>
                                                 )}
