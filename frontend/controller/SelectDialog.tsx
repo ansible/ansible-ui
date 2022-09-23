@@ -1,7 +1,7 @@
 import { Button, Modal, ModalVariant, Skeleton } from '@patternfly/react-core'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Collapse } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 import { ITableColumn, PageTable, TextCell } from '../../framework/PageTable'
 import { compareNumbers } from '../../framework/utils/compare'
 import { useCreatedColumn, useModifiedColumn } from '../common/columns'

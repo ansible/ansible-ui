@@ -1,9 +1,9 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
@@ -27,14 +27,14 @@ export function EditTeam() {
             Type.Object({
                 name: Type.String({
                     title: t('Name'),
-                    placeholder: t('Enter the name'),
+                    placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                     minLength: 1,
                     errorMessage: { minLength: t('Name is required') },
                 }),
                 description: Type.Optional(
                     Type.String({
                         title: t('Description'),
-                        placeholder: t('Enter the description'),
+                        placeholder: t('Enter the description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                         variant: 'textarea',
                     })
                 ),
@@ -43,11 +43,11 @@ export function EditTeam() {
                     organization: Type.Object({
                         name: Type.String({
                             title: t('Organization'),
-                            placeholder: t('Enter the organization'),
+                            placeholder: t('Enter the organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                             minLength: 1,
                             errorMessage: { minLength: t('Organization is required') },
                             variant: 'select',
-                            selectTitle: t('Select an organization'),
+                            selectTitle: t('Select an organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                             selectValue: (organization: Organization) => organization.name,
                             selectOpen: selectOrganization,
                         }),

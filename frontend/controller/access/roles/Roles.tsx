@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { RouteE } from '../../../route'
 import { Role } from './Role'
 

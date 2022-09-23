@@ -1,8 +1,8 @@
 import { Static, Type } from '@sinclair/typebox'
+import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { PageBody, PageHeader } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/FormPage'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../route'
@@ -21,7 +21,7 @@ export function EditUser() {
     const EditUserSchema = Type.Object({
         username: Type.String({
             title: t('Username'),
-            placeholder: t('Enter username'),
+            placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             maxLength: 150,
             errorMessage: {
@@ -31,27 +31,27 @@ export function EditUser() {
         }),
         userType: Type.String({
             title: t('User type'),
-            placeholder: t('Select user type'),
+            placeholder: t('Select user type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             enum: [t('System administrator'), t('System auditor'), t('Normal user')],
         }),
         password: Type.Optional(
             Type.String({
                 title: t('Password'),
-                placeholder: t('Enter password'),
+                placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                 variant: 'secret',
             })
         ),
         confirmPassword: Type.Optional(
             Type.String({
                 title: t('Confirm password'),
-                placeholder: t('Confirm password'),
+                placeholder: t('Confirm password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                 variant: 'secret',
             })
         ),
         firstName: Type.Optional(
             Type.String({
                 title: t('First name'),
-                placeholder: t('Enter first name'),
+                placeholder: t('Enter first name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                 maxLength: 150,
                 errorMessage: {
                     maxLength: t('First name cannot contain more than 150 characters.'),
@@ -62,7 +62,7 @@ export function EditUser() {
         lastName: Type.Optional(
             Type.String({
                 title: t('Last name'),
-                placeholder: t('Enter last name'),
+                placeholder: t('Enter last name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                 maxLength: 150,
                 errorMessage: {
                     maxLength: t('Last name cannot contain more than 150 characters.'),
@@ -73,7 +73,7 @@ export function EditUser() {
         email: Type.Optional(
             Type.String({
                 title: t('Email'),
-                placeholder: t('Enter email'),
+                placeholder: t('Enter email'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
                 format: 'email',
                 section: 'Details',
             })

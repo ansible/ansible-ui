@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, useSetDialog } from '../../../../framework'
-import { useTranslation } from '../../../../framework/components/useTranslation'
 import { compareStrings } from '../../../../framework/utils/compare'
 import { useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'

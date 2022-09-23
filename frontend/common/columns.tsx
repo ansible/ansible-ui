@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
-import { useTranslation } from '../../framework/components/useTranslation'
 import { RouteE } from '../route'
 
 export function useNameColumn<T extends { name: string; id: number }>(options?: {

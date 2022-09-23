@@ -2,9 +2,9 @@ import { Page, PageSection, Title } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import ky from 'ky'
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import { useWindowSizeOrLarger, WindowSize } from '../../../framework'
-import { useTranslation } from '../../../framework/components/useTranslation'
 import { FormPageSubmitHandler, PageForm } from '../../../framework/FormPage'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
@@ -17,19 +17,19 @@ export default function Login() {
     const DataType = Type.Object({
         server: Type.String({
             title: t('Server'),
-            placeholder: t('Enter server'),
+            placeholder: t('Enter server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: 'Server is required', minLength: 'Server is required' },
         }),
         username: Type.String({
             title: t('Username'),
-            placeholder: t('Enter username'),
+            placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: 'Username is required', minLength: 'Username is required' },
         }),
         password: Type.String({
             title: t('Password'),
-            placeholder: t('Enter password'),
+            placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: 'Password is required', minLength: 'Password is required' },
             variant: 'secret',
