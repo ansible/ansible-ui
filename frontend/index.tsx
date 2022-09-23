@@ -28,13 +28,14 @@ void i18n
             escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
         },
     })
-
-render(
-    <Suspense fallback="div">
-        <Demo />
-    </Suspense>,
-    container
-)
+    .then(() => {
+        render(
+            <Suspense fallback={<div />}>
+                <Demo />
+            </Suspense>,
+            container
+        )
+    })
 
 /* istanbul ignore next */
 if (process.env.PWA === 'true' && 'serviceWorker' in navigator) {
