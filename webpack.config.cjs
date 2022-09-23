@@ -6,6 +6,7 @@ const path = require('path')
 const webpack = require('webpack')
 const { GenerateSW } = require('workbox-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin')
 
 module.exports = function (_env, argv) {
     var isProduction = argv.mode === 'production' || argv.mode === undefined
@@ -43,6 +44,15 @@ module.exports = function (_env, argv) {
                 'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
             }),
             isDevelopment && new ReactRefreshWebpackPlugin(),
+            ...['en', 'fr'].map((locale) => {
+                return new MergeJsonWebpackPlugin({
+                    files: [`./locales/${locale}/translation.json`],
+                    output: {
+                        fileName: `/locales/${locale}/translation.json`,
+                    },
+                    space: 4,
+                })
+            }),
             new HtmlWebpackPlugin({ title: 'AnsibleDev', favicon: 'frontend/icons/favicon.png', template: 'frontend/index.html' }),
             new MiniCssExtractPlugin({
                 filename: '[contenthash].css',

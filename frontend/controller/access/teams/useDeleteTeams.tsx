@@ -22,13 +22,13 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
             <BulkActionDialog<Team>
                 title={t('Permanently delete teams', { count: items.length })}
                 confirm={t('Yes, I confirm that I want to delete these {{count}} teams.', { count: items.length })}
-                submit={t('Delete teams')}
-                submitting={t('Deleting teams')}
+                submit={t('Delete teams', { count: items.length })}
+                submitting={t('Deleting teams', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} teams', { count: items.length })}
                 success={t('Success')}
                 cancel={t('Cancel')}
                 close={t('Close')}
-                error={t('There were errors deleting teams')}
+                error={t('There were errors deleting teams', { count: items.length })}
                 items={items.sort((l, r) => compareStrings(l.name, r.name))}
                 keyFn={getItemKey}
                 isDanger

@@ -25,5 +25,14 @@
         // "isolatedModules": true
         // "strictNullChecks": true
     },
-    "include": ["frontend", "framework", "backend", "cypress", "rollup.config.ts", "cypress.config.ts", "cypress.d.ts"]
+    "include": [
+        "frontend",
+        "framework",
+        "backend",
+        "cypress",
+        "rollup.config.ts",
+        "cypress.config.ts",
+        "cypress.d.ts",
+        "i18next-parser.config.cjs"
+    ]
 }
