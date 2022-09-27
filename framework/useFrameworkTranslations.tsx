@@ -1,11 +1,23 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 export interface IFrameworkTranslations {
+    cancelText: string
+    closeText: string
     confirmText: string
+    pendingText: string
+    submitText: string
+    submittingText: string
+    successText: string
 }
 
 const defaultTranslations: IFrameworkTranslations = {
+    cancelText: 'Cancel',
+    closeText: 'Close',
     confirmText: 'Confirm',
+    pendingText: 'Pending',
+    submitText: 'Submit',
+    submittingText: 'Submitting',
+    successText: 'Success',
 }
 
 const FrameworkTranslationsContext = createContext<

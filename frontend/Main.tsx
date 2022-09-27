@@ -4,6 +4,7 @@ import {
     ApplicationLauncher,
     ApplicationLauncherGroup,
     ApplicationLauncherItem,
+    ApplicationLauncherSeparator,
     Button,
     ButtonVariant,
     Dropdown,
@@ -39,11 +40,12 @@ import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
 import { DialogProvider } from '../framework/DialogContext'
-import { SettingsProvider, useSettingsDialog } from '../framework/Settings'
+import { useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
 // import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
 import { useTranslation } from 'react-i18next'
+import { PageFrameworkProvider } from '../framework/PageFrameworkProvider'
 import { swrOptions, useFetcher } from './Data'
 import AnsiblePng from './icons/ansible.png'
 import SparkleSvg from './icons/sparkle.svg'
@@ -55,7 +57,7 @@ export default function Demo() {
     return (
         <ErrorBoundary message={t('An eror occured')}>
             <AccessCode>
-                <SettingsProvider>
+                <PageFrameworkProvider>
                     <BrowserRouter>
                         <Switch>
                             <Route exact path={RouteE.Login} component={Login} />
@@ -64,7 +66,7 @@ export default function Demo() {
                             </Route>
                         </Switch>
                     </BrowserRouter>
-                </SettingsProvider>
+                </PageFrameworkProvider>
             </AccessCode>
         </ErrorBoundary>
     )
@@ -88,8 +90,8 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onToggle = (isOpen: boolean) => setIsOpen(isOpen)
     const onSelect = () => setIsOpen((prevIsOpen) => !prevIsOpen)
-    const controllers = ['Controller 1', 'Controller 2']
-    const hubs = ['Hub 1', 'Hub 2']
+    const controllers = ['Controller 1', 'Controller 2', 'Controller 3']
+    const hubs = ['Hub 1', 'Hub 2', 'Hub 3']
     return (
         <ApplicationLauncher
             onSelect={onSelect}
@@ -103,6 +105,7 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                         </ApplicationLauncherItem>
                     ))}
                 </ApplicationLauncherGroup>,
+                <ApplicationLauncherSeparator key="1" />,
                 <ApplicationLauncherGroup label="Hubs" key="hubs">
                     {hubs.map((hub) => (
                         <ApplicationLauncherItem key={hub} icon={<></>}>
@@ -110,6 +113,13 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                         </ApplicationLauncherItem>
                     ))}
                 </ApplicationLauncherGroup>,
+                // <ApplicationLauncherSeparator key="2" />,
+                // <ApplicationLauncherItem key="add controller" icon={<PlusIcon />}>
+                //     Add Controller
+                // </ApplicationLauncherItem>,
+                // <ApplicationLauncherItem key="add hub" icon={<PlusIcon />}>
+                //     Add Hub
+                // </ApplicationLauncherItem>,
             ]}
             position="right"
         />

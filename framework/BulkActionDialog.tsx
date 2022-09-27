@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react'
 import { Collapse } from './Collapse'
 import { useSetDialog } from './DialogContext'
 import { ITableColumn, PageTable } from './PageTable'
+import { useFrameworkTranslations } from './useFrameworkTranslations'
 import { usePaged } from './useTableItems'
 
 export interface BulkActionDialogProps {
@@ -26,13 +27,13 @@ export function BulkActionDialog<T extends object>(props: {
     prompt?: string
     submitting: string
     submittingTitle: string
-    submit: string
-    confirm: string
-    cancel: string
+    submitText: string
+    confirmText: string
+    cancelText?: string
     error: string
-    close: string
-    success: string
-    pending: string
+    closeText?: string
+    successText?: string
+    pendingText?: string
     isDanger?: boolean
     items: T[]
     columns: ITableColumn<T>[]
@@ -42,6 +43,7 @@ export function BulkActionDialog<T extends object>(props: {
     onClose?: (items: T[]) => void
 }) {
     const setDialog = useSetDialog()
+    const [translations] = useFrameworkTranslations()
     const [isSubmitting, setSubmitting] = useState(false)
     const [isSubmited, setSubmited] = useState(false)
     const [progress, setProgress] = useState(0)
@@ -86,7 +88,7 @@ export function BulkActionDialog<T extends object>(props: {
     }
 
     const { paged, page, perPage, setPage, setPerPage } = usePaged(props.items)
-    const [confirmed, setConfirmed] = useState(!props.confirm)
+    const [confirmed, setConfirmed] = useState(!props.confirmText)
 
     return (
         <Modal
@@ -105,15 +107,15 @@ export function BulkActionDialog<T extends object>(props: {
                               isDisabled={!confirmed || isSubmitting || isSubmited}
                               isLoading={isSubmitting}
                           >
-                              {isSubmitting ? props.submitting : props.submit}
+                              {isSubmitting ? props.submitting ?? translations.submittingText : props.submitText ?? translations.submitText}
                           </Button>,
                           <Button key="cancel" variant="link" onClick={onClose}>
-                              {props.cancel}
+                              {props.cancelText ?? translations.cancelText}
                           </Button>,
                       ]
                     : [
                           <Button key="close" variant="secondary" onClick={onClose}>
-                              {props.close}
+                              {props.closeText ?? translations.closeText}
                           </Button>,
                       ]
             }
@@ -125,7 +127,13 @@ export function BulkActionDialog<T extends object>(props: {
                     <ModalBoxBody style={{ paddingTop: 0 }}>
                         <Progress
                             value={(progress / props.items.length) * 100}
-                            title={error ? props.error : progress === props.items.length ? props.success : props.submittingTitle}
+                            title={
+                                error
+                                    ? props.error
+                                    : progress === props.items.length
+                                    ? props.successText ?? translations.successText
+                                    : props.submittingTitle
+                            }
                             size={ProgressSize.lg}
                             variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
                             measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
@@ -171,14 +179,15 @@ export function BulkActionDialog<T extends object>(props: {
                                         if (status === undefined) {
                                             return (
                                                 <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                                    {<PendingIcon />}&nbsp; {props.pending} {JSON.stringify(status)}
+                                                    {<PendingIcon />}&nbsp; {props.pendingText ?? translations.pendingText}{' '}
+                                                    {JSON.stringify(status)}
                                                 </span>
                                             )
                                         }
                                         if (status === null) {
                                             return (
                                                 <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                                    {<CheckCircleIcon />}&nbsp; {props.success}
+                                                    {<CheckCircleIcon />}&nbsp; {props.successText ?? translations.successText}
                                                 </span>
                                             )
                                         }
@@ -201,10 +210,10 @@ export function BulkActionDialog<T extends object>(props: {
                         />
                     )}
                 </div>
-                {props.confirm && (
+                {props.confirmText && (
                     <Collapse open={!isSubmitting && !isSubmited}>
                         <div style={{ marginLeft: 32, marginTop: 0, marginBottom: 8 }}>
-                            <Checkbox id="confirm" label={props.confirm} isChecked={confirmed} onChange={setConfirmed} />
+                            <Checkbox id="confirm" label={props.confirmText} isChecked={confirmed} onChange={setConfirmed} />
                         </div>
                     </Collapse>
                 )}

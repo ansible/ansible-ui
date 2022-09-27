@@ -24,14 +24,10 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
         setDialog(
             <BulkActionDialog<User>
                 title={t('Permanently delete users', { count: items.length })}
-                confirm={t('Yes, I confirm that I want to delete these {{count}} users.', { count: items.length })}
-                submit={t('Delete user', { count: items.length })}
+                confirmText={t('Yes, I confirm that I want to delete these {{count}} users.', { count: items.length })}
+                submitText={t('Delete user', { count: items.length })}
                 submitting={t('Deleting users', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} users', { count: items.length })}
-                pending={t('Pending')}
-                success={t('Success')}
-                cancel={t('Cancel')}
-                close={t('Close')}
                 error={t('There were errors deleting users', { count: items.length })}
                 items={items.sort((l, r) => compareStrings(l.username, r.username))}
                 keyFn={getItemKey}
