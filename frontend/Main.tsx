@@ -2,6 +2,7 @@ import './styles.css'
 
 import {
     ApplicationLauncher,
+    ApplicationLauncherGroup,
     ApplicationLauncherItem,
     Button,
     ButtonVariant,
@@ -19,6 +20,7 @@ import {
     NavExpandable,
     NavItem,
     NavList,
+    NotificationBadge,
     Page,
     PageSidebar,
     PageToggleButton,
@@ -86,21 +88,30 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onToggle = (isOpen: boolean) => setIsOpen(isOpen)
     const onSelect = () => setIsOpen((prevIsOpen) => !prevIsOpen)
+    const controllers = ['Controller 1', 'Controller 2']
+    const hubs = ['Hub 1', 'Hub 2']
     return (
         <ApplicationLauncher
             onSelect={onSelect}
             onToggle={onToggle}
             isOpen={isOpen}
             items={[
-                // eslint-disable-next-line i18next/no-literal-string
-                <ApplicationLauncherItem key="application_1a" href="#">
-                    Application 1
-                </ApplicationLauncherItem>,
-                // eslint-disable-next-line i18next/no-literal-string
-                <ApplicationLauncherItem key="application_2a" component="button" onClick={() => alert('Clicked item 2')}>
-                    Application 2
-                </ApplicationLauncherItem>,
+                <ApplicationLauncherGroup label="Controllers" key="controllers">
+                    {controllers.map((controller) => (
+                        <ApplicationLauncherItem key={controller} icon={<></>}>
+                            {controller}
+                        </ApplicationLauncherItem>
+                    ))}
+                </ApplicationLauncherGroup>,
+                <ApplicationLauncherGroup label="Hubs" key="hubs">
+                    {hubs.map((hub) => (
+                        <ApplicationLauncherItem key={hub} icon={<></>}>
+                            {hub}
+                        </ApplicationLauncherItem>
+                    ))}
+                </ApplicationLauncherGroup>,
             ]}
+            position="right"
         />
     )
 }
@@ -156,6 +167,10 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                         >
                             <ToolbarItem>
                                 <Notifications />
+                            </ToolbarItem>
+
+                            <ToolbarItem>
+                                <ApplicationLauncherBasic />
                             </ToolbarItem>
 
                             <ToolbarGroup variant="icon-button-group" visibility={{ default: 'hidden', lg: 'visible' }}>
@@ -474,14 +489,14 @@ function Notifications() {
 
 function NotificationsInternal() {
     // const workflowApprovals = useWorkflowApprovals()
+    const workflowApprovals = []
     // const history = useHistory()
-    // return (
-    //     <NotificationBadge
-    //         variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
-    //         count={workflowApprovals.length}
-    //         style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-    //         onClick={() => history.push(RouteE.WorkflowApprovals)}
-    //     />
-    // )
-    return <></>
+    return (
+        <NotificationBadge
+            variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
+            count={workflowApprovals.length}
+            style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
+            // onClick={() => history.push(RouteE.WorkflowApprovals)}
+        />
+    )
 }
