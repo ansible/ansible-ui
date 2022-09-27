@@ -99,6 +99,7 @@ export function OrganizationDetails() {
 function OrganizationDetailsTab(props: { organization: Organization }) {
     const { t } = useTranslation()
     const { organization } = props
+    const history = useHistory()
     return (
         <>
             <Scrollable>
@@ -107,10 +108,26 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                         <Detail label={t('Name')}>{organization.name}</Detail>
                         <Detail label={t('Description')}>{organization.description}</Detail>
                         <Detail label={t('Created')}>
-                            <SinceCell value={organization.created} />
+                            <SinceCell
+                                value={organization.created}
+                                author={organization.summary_fields?.created_by?.username}
+                                onClick={() =>
+                                    history.push(
+                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
+                                    )
+                                }
+                            />
                         </Detail>
                         <Detail label={t('Last modified')}>
-                            <SinceCell value={organization.modified} />
+                            <SinceCell
+                                value={organization.modified}
+                                author={organization.summary_fields?.modified_by?.username}
+                                onClick={() =>
+                                    history.push(
+                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
+                                    )
+                                }
+                            />
                         </Detail>
                     </DetailsList>
                 </PageSection>
