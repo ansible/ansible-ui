@@ -1,5 +1,5 @@
 import { Divider, Flex, FlexItem, PageSection, PageSectionTypes, Skeleton, Tab, Tabs } from '@patternfly/react-core'
-import { Children, Dispatch, Fragment, isValidElement, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import { Children, Dispatch, isValidElement, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
 export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode; postComponents?: ReactNode }) {
     const [activeKey, setActiveKey] = useState<number>(0)
@@ -16,18 +16,18 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
     })
     const content = children[activeKey]
     return (
-        <Fragment>
+        <>
             <PageSection type={PageSectionTypes.tabs}>
                 <Flex spaceItems={{ default: 'spaceItemsNone' }}>
                     {props.preComponents && (
-                        <Fragment>
+                        <>
                             <FlexItem
                             // style={{ paddingLeft: 16 }}
                             >
                                 {props.preComponents}
                             </FlexItem>
                             <Divider orientation={{ default: 'vertical' }} component="div" />
-                        </Fragment>
+                        </>
                     )}
                     <FlexItem grow={{ default: 'grow' }}>
                         <Tabs
@@ -51,21 +51,21 @@ export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode
                         </Tabs>
                     </FlexItem>
                     {props.postComponents && (
-                        <Fragment>
+                        <>
                             <Divider orientation={{ default: 'vertical' }} />
                             <FlexItem style={{ paddingRight: 16 }}>{props.postComponents}</FlexItem>
-                        </Fragment>
+                        </>
                     )}
                 </Flex>
             </PageSection>
             <Divider />
             {content}
-        </Fragment>
+        </>
     )
 }
 
 export function PageTab(props: { title?: string; children: ReactNode }) {
-    return <Fragment>{props.children}</Fragment>
+    return <>{props.children}</>
 }
 
 export function PageTabsOld(props: {

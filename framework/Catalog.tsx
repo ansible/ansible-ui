@@ -274,7 +274,7 @@ export function CatalogCard<T extends object>(props: {
                         <SplitItem>
                             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                             <div onClick={(e) => e.stopPropagation()}>
-                                <Popover headerContent={card.badgeTooltipTitle} bodyContent={card.badgeTooltip}>
+                                <Popover headerContent={card.badgeTooltipTitle} bodyContent={card.badgeTooltip} removeFindDomNode>
                                     <Label color={card.badgeColor}>{card.badge}</Label>
                                 </Popover>
                             </div>
@@ -423,7 +423,7 @@ export function CardList(props: { icon?: ReactNode; items: ICatalogCardListItem[
                         {listItem.help && (
                             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                             <div onClick={(e) => e.stopPropagation()}>
-                                <Popover headerContent={listItem.helpTitle} bodyContent={listItem.help}>
+                                <Popover headerContent={listItem.helpTitle} bodyContent={listItem.help} removeFindDomNode>
                                     <Button
                                         variant="link"
                                         style={{
