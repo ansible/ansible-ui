@@ -34,7 +34,7 @@ import {
     Truncate,
 } from '@patternfly/react-core'
 import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
-import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
+import { Children, ReactNode, StrictMode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
@@ -55,20 +55,22 @@ import { DemoRouter } from './Router'
 export default function Demo() {
     const { t } = useTranslation()
     return (
-        <ErrorBoundary message={t('An eror occured')}>
-            <AccessCode>
-                <PageFrameworkProvider>
-                    <BrowserRouter>
-                        <Switch>
-                            <Route exact path={RouteE.Login} component={Login} />
-                            <Route path="*">
-                                <Main />
-                            </Route>
-                        </Switch>
-                    </BrowserRouter>
-                </PageFrameworkProvider>
-            </AccessCode>
-        </ErrorBoundary>
+        <StrictMode>
+            <ErrorBoundary message={t('An eror occured')}>
+                <AccessCode>
+                    <PageFrameworkProvider>
+                        <BrowserRouter>
+                            <Switch>
+                                <Route exact path={RouteE.Login} component={Login} />
+                                <Route path="*">
+                                    <Main />
+                                </Route>
+                            </Switch>
+                        </BrowserRouter>
+                    </PageFrameworkProvider>
+                </AccessCode>
+            </ErrorBoundary>
+        </StrictMode>
     )
 }
 
