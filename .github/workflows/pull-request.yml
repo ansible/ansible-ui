@@ -11,7 +11,7 @@ jobs:
               with:
                   node-version: '18'
                   cache: 'npm'
-            - run: npm ci
+            - run: npm ci --force
             - run: npm test
             - uses: romeovs/lcov-reporter-action@v0.2.16
               with:
