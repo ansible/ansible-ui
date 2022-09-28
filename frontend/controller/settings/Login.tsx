@@ -4,7 +4,7 @@ import ky from 'ky'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
-import { useWindowSizeOrLarger, WindowSize } from '../../../framework'
+import { useBreakpoint } from '../../../framework'
 import { FormPageSubmitHandler, PageForm } from '../../../framework/FormPage'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
@@ -88,8 +88,8 @@ export default function Login() {
         [history, servers, t]
     )
 
-    const sm = useWindowSizeOrLarger(WindowSize.sm)
-    const md = useWindowSizeOrLarger(WindowSize.md)
+    const sm = useBreakpoint('sm')
+    const md = useBreakpoint('md')
 
     const padding = md ? 48 : sm ? 32 : 16
 

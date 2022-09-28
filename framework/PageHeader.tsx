@@ -19,7 +19,7 @@ import {
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
 import { CSSProperties, Fragment, ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
+import { useBreakpoint } from './components/useBreakPoint'
 import { useSettings } from './Settings'
 
 export interface ICatalogBreadcrumb {
@@ -96,9 +96,9 @@ export interface PageHeaderProps {
  */
 export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
-    const xl = useWindowSizeOrLarger(WindowSize.xl)
-    const isMdOrLarger = useWindowSizeOrLarger(WindowSize.md)
-    const isSmLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const xl = useBreakpoint('xl')
+    const isMdOrLarger = useBreakpoint('md')
+    const isSmLarger = useBreakpoint('sm')
     const settings = useSettings()
     let { t } = props
     t = t ? t : (t: string) => t

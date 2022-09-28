@@ -42,7 +42,7 @@ import {
     useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { Collapse, PageHeader, PageHeaderProps, useWindowSizeOrLarger, WindowSize } from '.'
+import { Collapse, PageHeader, PageHeaderProps, useBreakpoint } from '.'
 import { Organization } from '../frontend/controller/access/organizations/Organization'
 import { Scrollable } from './components/Scrollable'
 import { SettingsContext } from './Settings'
@@ -106,14 +106,14 @@ export function FormPage<T extends object>(props: FormPageProps<T>) {
 
 export function FormPageAlerts() {
     const { errors } = useFormState()
-    const sm = useWindowSizeOrLarger(WindowSize.md)
+    const isMd = useBreakpoint('md')
     return (
         <Fragment>
             {errors && Object.keys(errors).length > 0 && (
                 <Alert
                     title="Please fix validation errors."
                     isInline
-                    style={{ width: '100%', paddingLeft: sm ? 190 : undefined }}
+                    style={{ width: '100%', paddingLeft: isMd ? 190 : undefined }}
                     variant="danger"
                 >
                     {/* {process.env.NODE_ENV === 'development' && errors[Object.keys(errors)[0]].message} */}
@@ -595,7 +595,7 @@ export function PageForm<T extends object>(props: {
 
     const { handleSubmit, setError: setFieldError } = form
     const [error, setError] = useState('')
-    const isSm = useWindowSizeOrLarger(WindowSize.md)
+    const isMd = useBreakpoint('md')
     const [settings] = useContext(SettingsContext)
     const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal'
     const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple'
@@ -637,7 +637,7 @@ export function PageForm<T extends object>(props: {
                         variant="danger"
                         title={error ?? ''}
                         isInline
-                        style={{ paddingLeft: isSm && props.onCancel ? 190 : undefined }}
+                        style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
                     />
                 </Collapse>
                 {props.onCancel ? (

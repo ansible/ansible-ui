@@ -1,6 +1,6 @@
 import useResizeObserver from '@react-hook/resize-observer'
 import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { useWindowSizeOrLarger, WindowSize } from './useBreakPoint'
+import { useBreakpoint } from './useBreakPoint'
 
 export function Grid(props: { size?: number; maxColumns?: number; children?: ReactNode }) {
     const size = props.size ?? 350
@@ -18,8 +18,8 @@ export function Grid(props: { size?: number; maxColumns?: number; children?: Rea
     useLayoutEffect(() => {
         resize(target.current?.clientWidth ?? 0)
     }, [resize])
-    const isMd = !useWindowSizeOrLarger(WindowSize.lg)
-    const isXS = !useWindowSizeOrLarger(WindowSize.xs)
+    const isMd = !useBreakpoint('lg')
+    const isXS = !useBreakpoint('xs')
     let gap = 24
     if (isMd) gap = 16
     if (isXS) gap = 8

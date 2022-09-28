@@ -1,12 +1,12 @@
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useWindowSizeOrLarger, WindowSize } from '.'
+import { useBreakpoint } from '.'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useSettings } from './Settings'
 
 export function PageBody(props: { children: ReactNode }) {
-    const lg = useWindowSizeOrLarger(WindowSize.lg)
-    const xl = useWindowSizeOrLarger(WindowSize.xl)
+    const lg = useBreakpoint('lg')
+    const xl = useBreakpoint('xl')
     const settings = useSettings()
     const { t } = useTranslation()
     return (
