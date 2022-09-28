@@ -592,7 +592,7 @@ export function PagePagination(props: PagePaginationProps) {
                 ...props.style,
                 borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                 boxShadow: 'none',
-                // zIndex: 301,
+                zIndex: 301,
                 marginTop: -1,
                 paddingTop: sm ? 6 : undefined,
                 paddingBottom: sm ? 6 : undefined,
