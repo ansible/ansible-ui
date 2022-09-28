@@ -125,6 +125,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
     }, [disableQueryString, filters, setSearchParams])
 
     useEffect(() => {
+        if (disableQueryString) return
         const sort = searchParams.get('sort')
         if (sort?.startsWith('-')) {
             setSort(sort.substring(1) ?? '')
@@ -133,7 +134,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
             setSort(sort ?? '')
             setSortDirection('asc')
         }
-    }, [searchParams])
+    }, [disableQueryString, searchParams])
 
     return useMemo(
         () => ({
