@@ -175,10 +175,8 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                             alignment={{ default: 'alignRight' }}
                             spacer={{ default: 'spacerNone', md: 'spacerMd' }}
                         >
-                            {process.env.NODE_ENV === 'development' && (
-                                <ToolbarItem style={{ paddingRight: 8 }} visibility={{ default: 'hidden', sm: 'visible' }}>
-                                    {windowSize.toUpperCase()}
-                                </ToolbarItem>
+                            {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
+                                <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
                             )}
                             <ToolbarItem>
                                 <Notifications />

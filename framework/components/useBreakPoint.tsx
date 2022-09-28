@@ -15,7 +15,7 @@ const breakpoints: Record<string, number> = {
     xxl: Number(xl2Breakpoint.value.replace('px', '')),
 }
 
-type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
+export type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 
 export function useWindowSize(): WindowSize {
     const [windowSize, setWindowSize] = useState<WindowSize>(() => {
