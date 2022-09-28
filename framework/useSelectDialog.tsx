@@ -2,7 +2,7 @@ import { Button, Modal, ModalBoxBody, ModalVariant, Skeleton, Split, SplitItem }
 import { useCallback, useEffect, useState } from 'react'
 import { IControllerView } from '../frontend/controller/useControllerView'
 import { getItemKey } from '../frontend/Data'
-import { Collapse } from './Collapse'
+import { Collapse } from './components/Collapse'
 import { useSetDialog } from './DialogContext'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
 

@@ -19,19 +19,19 @@ export default function Login() {
             title: t('Server'),
             placeholder: t('Enter server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: 'Server is required', minLength: 'Server is required' },
+            errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
         }),
         username: Type.String({
             title: t('Username'),
             placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: 'Username is required', minLength: 'Username is required' },
+            errorMessage: { required: t('Username is required'), minLength: t('Username is required') },
         }),
         password: Type.String({
             title: t('Password'),
             placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: 'Password is required', minLength: 'Password is required' },
+            errorMessage: { required: t('Password is required'), minLength: t('Password is required') },
             variant: 'secret',
         }),
     })
@@ -81,11 +81,11 @@ export default function Login() {
                 if (err instanceof Error) {
                     setError(err.message)
                 } else {
-                    setError('Invalid username or password. Please try again.')
+                    setError(t('Invalid username or password. Please try again.'))
                 }
             }
         },
-        [history, servers]
+        [history, servers, t]
     )
 
     const sm = useWindowSizeOrLarger(WindowSize.sm)
@@ -110,7 +110,7 @@ export default function Login() {
                 isFilled={!sm}
             >
                 <Title headingLevel="h2">{t('Welcome to the')}</Title>
-                <Title className="pt-8 pb-24" headingLevel="h1">
+                <Title headingLevel="h1" style={{ paddingTop: 8, paddingBottom: 24 }}>
                     {t('Ansible Automation Platform')}
                 </Title>
                 <PageForm
