@@ -8,16 +8,17 @@ import {
     DetailsList,
     IItemAction,
     ITypedAction,
+    PageBody,
     PageHeader,
+    PageLayout,
+    PageTab,
     PageTable,
+    PageTabs,
     SinceCell,
     TypedActions,
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
-import { PageBody } from '../../../../framework/PageBody'
-import { PageLayout } from '../../../../framework/PageLayout'
-import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'

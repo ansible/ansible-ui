@@ -1,9 +1,8 @@
 import { HTTPError } from 'ky'
 import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
-import { ITableColumn, IToolbarFilter } from '../../framework'
-import { useSelected } from '../../framework/useTableItems'
-import { IView, useView } from '../common/useView'
+import { ITableColumn, IToolbarFilter, useSelected } from '../../framework'
+import { IView, useView } from '../../framework/useView'
 import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
 
 export type IControllerView<T extends { id: number }> = IView & {

@@ -16,6 +16,7 @@ export function useView(view?: Partial<IView>) {
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => view?.sortDirection ?? 'asc')
     const [filters, setFilters] = useState<Record<string, string[]>>(() => view?.filters ?? {})
     const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
+
     return useMemo(
         () => ({
             page,

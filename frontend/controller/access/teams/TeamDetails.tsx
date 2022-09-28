@@ -17,9 +17,9 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
-import { PageBody } from '../../../../framework/PageBody'
-import { PageLayout } from '../../../../framework/PageLayout'
-import { PageTab, PageTabs } from '../../../../framework/PageTabs'
+import { PageBody } from '../../../../framework'
+import { PageLayout } from '../../../../framework'
+import { PageTab, PageTabs } from '../../../../framework'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'

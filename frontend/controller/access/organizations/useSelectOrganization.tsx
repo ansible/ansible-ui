@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useSelectDialog } from '../../../../framework/useSelectDialog'
+import { useSelectDialog } from '../../../../framework'
 import { useControllerView } from '../../useControllerView'
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
 import { Organization } from './Organization'

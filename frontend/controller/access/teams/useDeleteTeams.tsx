@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, usePageDialog } from '../../../../framework'
-import { compareStrings } from '../../../../framework/utils/compare'
+import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Team } from './Team'
