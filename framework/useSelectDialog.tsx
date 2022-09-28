@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { IControllerView } from '../frontend/controller/useControllerView'
 import { getItemKey } from '../frontend/Data'
 import { Collapse } from './components/Collapse'
-import { usePageDialog } from './DialogContext'
+import { usePageDialog } from './PageDialog'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
 
 export function useSelectDialog<T extends { id: number }>(options: {

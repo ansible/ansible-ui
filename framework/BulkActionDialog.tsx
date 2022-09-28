@@ -13,7 +13,7 @@ import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly
 import pLimit from 'p-limit'
 import { useCallback, useState } from 'react'
 import { Collapse } from './components/Collapse'
-import { usePageDialog } from './DialogContext'
+import { usePageDialog } from './PageDialog'
 import { ITableColumn, PageTable } from './PageTable'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 import { usePaged } from './useTableItems'

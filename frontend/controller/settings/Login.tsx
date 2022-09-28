@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import { useBreakpoint } from '../../../framework'
-import { FormPageSubmitHandler, PageForm } from '../../../framework/FormPage'
+import { FormPageSubmitHandler, PageForm } from '../../../framework/PageForm'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 

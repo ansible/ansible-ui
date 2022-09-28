@@ -1,7 +1,7 @@
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { SingleSelect } from './components/SingleSelect'
-import { usePageDialog } from './DialogContext'
+import { usePageDialog } from './PageDialog'
 
 export interface Settings {
     theme?: 'system' | 'light' | 'dark'
