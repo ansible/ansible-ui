@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
 import { ComponentClass, Fragment, FunctionComponent, useMemo, useState } from 'react'
-import { useWindowSizeOrSmaller, WindowSize } from './components/useBreakPoint'
+import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
 
 export interface IItemActionClick<T> {
     icon?: ComponentClass
@@ -253,7 +253,7 @@ export function TypedActions<T extends object>(props: {
     dropdownPosition?: DropdownPosition
 }) {
     const { actions } = props
-    const collapseButtons = useWindowSizeOrSmaller(props.collapse ?? WindowSize.md)
+    const collapseButtons = !useWindowSizeOrLarger(props.collapse ?? WindowSize.lg)
 
     const buttonActions: ITypedAction<T>[] = useMemo(() => {
         if (collapseButtons) {

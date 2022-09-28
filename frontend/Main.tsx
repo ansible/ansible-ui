@@ -39,7 +39,6 @@ import { BrowserRouter, Route, Switch, useHistory, useLocation } from 'react-rou
 import useSWR from 'swr'
 import { useWindowSizeOrLarger, WindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
-import { DialogProvider } from '../framework/DialogContext'
 import { useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 import Login from './controller/settings/Login'
@@ -77,14 +76,12 @@ export default function Demo() {
 export function Main() {
     const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
     return (
-        <DialogProvider>
-            <Page
-                header={<DemoHeader isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-                sidebar={<Sidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-            >
-                <DemoRouter />
-            </Page>
-        </DialogProvider>
+        <Page
+            header={<DemoHeader isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+            sidebar={<Sidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+        >
+            <DemoRouter />
+        </Page>
     )
 }
 
