@@ -52,7 +52,7 @@ export function BulkActionDialog<T extends object>(props: {
     const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>()
     const onClose = useCallback(() => {
         props.onClose?.(props.items.filter((item) => statuses?.[props.keyFn(item)] === null))
-        setDialog()
+        setDialog(undefined)
     }, [props, setDialog, statuses])
 
     const onConfirm = () => {
