@@ -2,7 +2,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as builder
 RUN apk upgrade --no-cache -U && apk add --no-cache openssl
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --no-optional --force
+RUN npm ci --no-optional
 COPY . .
 RUN npm run build
 
