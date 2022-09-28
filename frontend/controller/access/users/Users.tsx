@@ -22,7 +22,7 @@ import { User } from './User'
 
 export function Users() {
     const { t } = useTranslation()
-    const history = useNavigate()
+    const navigate = useNavigate()
 
     const toolbarFilters = useUsersFilters()
 
@@ -44,7 +44,7 @@ export function Users() {
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
                 label: t('Create user'),
-                onClick: () => history(RouteE.CreateUser),
+                onClick: () => navigate(RouteE.CreateUser),
             },
             {
                 type: TypedActionType.bulk,
@@ -53,7 +53,7 @@ export function Users() {
                 onClick: deleteUsers,
             },
         ],
-        [deleteUsers, history, t]
+        [deleteUsers, navigate, t]
     )
 
     const rowActions = useMemo<IItemAction<User>[]>(
@@ -61,7 +61,7 @@ export function Users() {
             {
                 icon: EditIcon,
                 label: t('Edit user'),
-                onClick: (user: User) => history(RouteE.EditUser.replace(':id', user.id.toString())),
+                onClick: (user: User) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -69,7 +69,7 @@ export function Users() {
                 onClick: (user) => deleteUsers([user]),
             },
         ],
-        [deleteUsers, history, t]
+        [deleteUsers, navigate, t]
     )
 
     return (
@@ -82,9 +82,9 @@ export function Users() {
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
-                        <NavItem onClick={() => history(RouteE.Organizations)}>{t('Organizations')}</NavItem>
-                        <NavItem onClick={() => history(RouteE.Teams)}>{t('Teams')}</NavItem>
-                        <NavItem onClick={() => history(RouteE.Users)} isActive>
+                        <NavItem onClick={() => navigate(RouteE.Organizations)}>{t('Organizations')}</NavItem>
+                        <NavItem onClick={() => navigate(RouteE.Teams)}>{t('Teams')}</NavItem>
+                        <NavItem onClick={() => navigate(RouteE.Users)} isActive>
                             {t('Users')}
                         </NavItem>
                     </NavList>
@@ -98,7 +98,7 @@ export function Users() {
             emptyStateTitle={t('No users yet')}
             emptyStateDescription={t('To get started, create a user.')}
             emptyStateButtonText={t('Create user')}
-            emptyStateButtonClick={() => history(RouteE.CreateUser)}
+            emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
             {...view}
         />
     )
@@ -147,7 +147,7 @@ export function AccessTable(props: { url: string }) {
         [t]
     )
 
-    const history = useNavigate()
+    const navigate = useNavigate()
 
     return (
         <PageTable<User>
@@ -159,7 +159,7 @@ export function AccessTable(props: { url: string }) {
             emptyStateTitle={t('No users yet')}
             emptyStateDescription={t('To get started, create a user.')}
             emptyStateButtonText={t('Create user')}
-            emptyStateButtonClick={() => history(RouteE.CreateUser)}
+            emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
             {...view}
         />
     )

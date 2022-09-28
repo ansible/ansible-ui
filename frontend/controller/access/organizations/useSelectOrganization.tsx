@@ -8,7 +8,7 @@ export function useSelectOrganization() {
     const { t } = useTranslation()
     const toolbarFilters = useOrganizationsFilters()
     const tableColumns = useOrganizationsColumns({ disableLinks: true })
-    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns)
+    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns, true)
     return useSelectDialog<Organization>({
         toolbarFilters,
         tableColumns,

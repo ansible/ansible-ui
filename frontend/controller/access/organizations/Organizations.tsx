@@ -18,7 +18,7 @@ import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function Organizations() {
     const { t } = useTranslation()
-    const history = useNavigate()
+    const navigate = useNavigate()
 
     const toolbarFilters = useOrganizationsFilters()
 
@@ -40,7 +40,7 @@ export function Organizations() {
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
                 label: t('Create organization'),
-                onClick: () => history(RouteE.CreateOrganization),
+                onClick: () => navigate(RouteE.CreateOrganization),
             },
             {
                 type: TypedActionType.bulk,
@@ -49,7 +49,7 @@ export function Organizations() {
                 onClick: deleteOrganizations,
             },
         ],
-        [history, deleteOrganizations, t]
+        [navigate, deleteOrganizations, t]
     )
 
     const rowActions = useMemo<IItemAction<Organization>[]>(
@@ -57,7 +57,7 @@ export function Organizations() {
             {
                 icon: EditIcon,
                 label: t('Edit organization'),
-                onClick: (organization) => history(RouteE.EditOrganization.replace(':id', organization.id.toString())),
+                onClick: (organization) => navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -65,7 +65,7 @@ export function Organizations() {
                 onClick: (organization) => deleteOrganizations([organization]),
             },
         ],
-        [history, deleteOrganizations, t]
+        [navigate, deleteOrganizations, t]
     )
 
     return (
@@ -78,11 +78,11 @@ export function Organizations() {
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
-                        <NavItem onClick={() => history(RouteE.Organizations)} isActive>
+                        <NavItem onClick={() => navigate(RouteE.Organizations)} isActive>
                             {t('Organizations')}
                         </NavItem>
-                        <NavItem onClick={() => history(RouteE.Teams)}>{t('Teams')}</NavItem>
-                        <NavItem onClick={() => history(RouteE.Users)}>{t('Users')}</NavItem>
+                        <NavItem onClick={() => navigate(RouteE.Teams)}>{t('Teams')}</NavItem>
+                        <NavItem onClick={() => navigate(RouteE.Users)}>{t('Users')}</NavItem>
                     </NavList>
                 </Nav>
             }
@@ -94,7 +94,7 @@ export function Organizations() {
             emptyStateTitle={t('No organizations yet')}
             emptyStateDescription={t('To get started, create an organization.')}
             emptyStateButtonText={t('Create organization')}
-            emptyStateButtonClick={() => history(RouteE.CreateOrganization)}
+            emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
             {...view}
         />
     )
@@ -114,10 +114,10 @@ export function useOrganizationsFilters() {
 
 export function useOrganizationsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    const history = useNavigate()
+    const navigate = useNavigate()
     const nameColumn = useNameColumn({
         ...options,
-        onClick: (organization) => history(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+        onClick: (organization) => navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
     })
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn(options)
