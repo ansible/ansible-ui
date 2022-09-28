@@ -10,7 +10,12 @@ const PageDialogContext = createContext<[dialog: ReactNode | undefined, setDialo
 
 export function PageDialogProvider(props: { children: ReactNode }) {
     const state = useState<ReactNode | undefined>()
-    return <PageDialogContext.Provider value={state}>{props.children}</PageDialogContext.Provider>
+    return (
+        <PageDialogContext.Provider value={state}>
+            {state[0] !== undefined && state[0]}
+            {props.children}
+        </PageDialogContext.Provider>
+    )
 }
 
 export function usePageDialog(): [dialog: ReactNode | undefined, setDialog: Dispatch<SetStateAction<ReactNode | undefined>>] {

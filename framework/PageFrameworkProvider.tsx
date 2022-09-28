@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { PageDialogProvider } from './DialogContext'
+import { PageDialogProvider } from './PageDialog'
 import { SettingsProvider } from './Settings'
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations'
 
