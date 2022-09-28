@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, useSetDialog } from '../../../../framework'
+import { BulkActionDialog, usePageDialog } from '../../../../framework'
 import { compareStrings } from '../../../../framework/utils/compare'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
@@ -9,7 +9,7 @@ import { useOrganizationsColumns } from './Organizations'
 
 export function useDeleteOrganizations(callback: (organizations: Organization[]) => void) {
     const { t } = useTranslation()
-    const setDialog = useSetDialog()
+    const [_, setDialog] = usePageDialog()
     const columns = useOrganizationsColumns({ disableLinks: true, disableSort: true })
     const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
     const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])

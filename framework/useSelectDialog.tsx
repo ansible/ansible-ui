@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { IControllerView } from '../frontend/controller/useControllerView'
 import { getItemKey } from '../frontend/Data'
 import { Collapse } from './components/Collapse'
-import { useSetDialog } from './DialogContext'
+import { usePageDialog } from './DialogContext'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
 
 export function useSelectDialog<T extends { id: number }>(options: {
@@ -21,7 +21,7 @@ export function useSelectDialog<T extends { id: number }>(options: {
         setTitle(title ?? '')
         setOnSelect(() => onSelect)
     }, [])
-    const setDialog = useSetDialog()
+    const [_, setDialog] = usePageDialog()
     useEffect(() => {
         if (onSelect !== undefined) {
             setDialog(

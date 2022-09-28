@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, TextCell, useSetDialog } from '../../../../framework'
+import { BulkActionDialog, TextCell, usePageDialog } from '../../../../framework'
 import { compareStrings } from '../../../../framework/utils/compare'
 import { getItemKey, requestDelete } from '../../../Data'
 import { User } from '../users/User'
@@ -8,7 +8,7 @@ import { useUsersColumns } from '../users/Users'
 
 export function useDeleteUsers(callback: (users: User[]) => void) {
     const { t } = useTranslation()
-    const setDialog = useSetDialog()
+    const [_, setDialog] = usePageDialog()
     const columns = useUsersColumns({ disableLinks: true, disableSort: true })
     const deleteActionNameColumn = useMemo(
         () => ({
