@@ -6,14 +6,16 @@ import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
 
-export function useSelectDialog<T extends { id: number }>(options: {
+interface ISelectDialogOptions<T extends { id: number }> {
     view: IControllerView<T>
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
     confirm: string
     cancel: string
     selected: string
-}) {
+}
+
+export function useSelectDialog<T extends { id: number }>(options: ISelectDialogOptions<T>) {
     const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options
     const [title, setTitle] = useState('')
     const [onSelect, setOnSelect] = useState<(item: T) => void>()
@@ -46,18 +48,14 @@ export function useSelectDialog<T extends { id: number }>(options: {
     return openSetting
 }
 
-export function SelectDialog<T extends { id: number }>(props: {
+export type SelectDialogProps<T extends { id: number }> = {
     title: string
     open: boolean
     setOpen: (open: boolean) => void
     onSelect: (item: T) => void
-    view: IControllerView<T>
-    tableColumns: ITableColumn<T>[]
-    toolbarFilters: IToolbarFilter[]
-    confirm: string
-    cancel: string
-    selected: string
-}) {
+} & ISelectDialogOptions<T>
+
+export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {
     const { title, open, setOpen, onSelect, view, tableColumns, toolbarFilters, confirm, cancel, selected } = props
     const onClose = () => setOpen(false)
     return (
