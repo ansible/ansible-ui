@@ -57,7 +57,7 @@ import { BulkSelector } from './components/BulkSelector'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
 import { SingleSelect2 } from './components/SingleSelect'
-import { useWindowSizeOrLarger, WindowSize } from './components/useBreakPoint'
+import { useBreakpoint } from './components/useBreakPoint'
 import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
@@ -393,7 +393,7 @@ function TableRow<T extends object>(props: {
     unselectAll?: () => void
 }) {
     const { columns, selectItem, unselectItem, unselectAll, isItemSelected, item, rowActions, rowIndex, showSelect, onSelect } = props
-    const md = useWindowSizeOrLarger(WindowSize.xl)
+    const md = useBreakpoint('xl')
     return (
         <Tr
             className={isItemSelected ? 'selected' : undefined}
@@ -467,7 +467,7 @@ function TableCells<T extends object>(props: {
     scrollLeft?: boolean
     scrollRight?: boolean
 }) {
-    // const md = useWindowSizeOrLarger(WindowSize.xl)
+    // const md = useBreakpoint('xl')
 
     const { columns, item, rowActions, rowIndex } = props
     const actions: IAction[] | undefined = useMemo(
@@ -582,7 +582,7 @@ export function PagePagination(props: PagePaginationProps) {
     const { setPage, setPerPage } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
-    const sm = useWindowSizeOrLarger(WindowSize.md)
+    const sm = useBreakpoint('md')
     return (
         <Pagination
             variant={PaginationVariant.bottom}
@@ -639,7 +639,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         // openColumnModal,
     } = props
 
-    const sm = useWindowSizeOrLarger(WindowSize.sm)
+    const sm = useBreakpoint('sm')
 
     let { toolbarActions } = props
     toolbarActions = toolbarActions ?? []

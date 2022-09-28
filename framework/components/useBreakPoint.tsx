@@ -6,35 +6,33 @@ import xlBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_xl
 import xsBreakpoint from '@patternfly/react-tokens/dist/esm/global_breakpoint_xs'
 import { useCallback, useEffect, useState } from 'react'
 
-export enum WindowSize {
-    xs,
-    sm,
-    'md',
-    'lg',
-    'xl',
-    '2xl',
+const breakpoints: Record<string, number> = {
+    xs: Number(xsBreakpoint.value.replace('px', '')),
+    sm: Number(smBreakpoint.value.replace('px', '')),
+    md: Number(mdBreakpoint.value.replace('px', '')),
+    lg: Number(lgBreakpoint.value.replace('px', '')),
+    xl: Number(xlBreakpoint.value.replace('px', '')),
+    xxl: Number(xl2Breakpoint.value.replace('px', '')),
 }
 
-const breakpoints: Record<WindowSize, number> = {
-    [WindowSize.xs]: Number(xsBreakpoint.value.replace('px', '')),
-    [WindowSize.sm]: Number(smBreakpoint.value.replace('px', '')),
-    [WindowSize.md]: Number(mdBreakpoint.value.replace('px', '')),
-    [WindowSize.lg]: Number(lgBreakpoint.value.replace('px', '')),
-    [WindowSize.xl]: Number(xlBreakpoint.value.replace('px', '')),
-    [WindowSize['2xl']]: Number(xl2Breakpoint.value.replace('px', '')),
-}
+type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 
-export function useWindowSize() {
-    const [windowSize, setWindowSize] = useState<WindowSize>(WindowSize['2xl'])
+export function useWindowSize(): WindowSize {
+    const [windowSize, setWindowSize] = useState<WindowSize>(() => {
+        if (window.innerWidth <= breakpoints.sm) return 'xs'
+        else if (window.innerWidth <= breakpoints.md) return 'sm'
+        else if (window.innerWidth <= breakpoints.lg) return 'md'
+        else if (window.innerWidth <= breakpoints.xl) return 'lg'
+        else if (window.innerWidth <= breakpoints.xxl) return 'xl'
+        else return 'xxl'
+    })
     const handleResize = useCallback(() => {
-        let size = WindowSize['2xl']
-        for (; size >= WindowSize.sm; size--) {
-            const breakpoint = breakpoints[size]
-            if (window.innerWidth >= breakpoint) {
-                break
-            }
-        }
-        setWindowSize(size)
+        if (window.innerWidth <= breakpoints.sm) setWindowSize('xs')
+        else if (window.innerWidth <= breakpoints.md) setWindowSize('sm')
+        else if (window.innerWidth <= breakpoints.lg) setWindowSize('md')
+        else if (window.innerWidth <= breakpoints.xl) setWindowSize('lg')
+        else if (window.innerWidth <= breakpoints.xxl) setWindowSize('xl')
+        else setWindowSize('xxl')
     }, [])
 
     useEffect(() => {
@@ -48,12 +46,75 @@ export function useWindowSize() {
     return windowSize
 }
 
-export function useWindowSizeOrLarger(size: WindowSize) {
+/** Returns true if the window size is equal to or larger than the indicated size. */
+export function useBreakpoint(size: WindowSize): boolean {
     const windowSize = useWindowSize()
-    return windowSize >= size
+    switch (size) {
+        case 'xs':
+            return true
+        case 'sm':
+            switch (windowSize) {
+                case 'sm':
+                case 'md':
+                case 'lg':
+                case 'xl':
+                case 'xxl':
+                    return true
+                default:
+                    return false
+            }
+        case 'md':
+            switch (windowSize) {
+                case 'md':
+                case 'lg':
+                case 'xl':
+                case 'xxl':
+                    return true
+                default:
+                    return false
+            }
+        case 'lg':
+            switch (windowSize) {
+                case 'lg':
+                case 'xl':
+                case 'xxl':
+                    return true
+                default:
+                    return false
+            }
+        case 'xl':
+            switch (windowSize) {
+                case 'xl':
+                case 'xxl':
+                    return true
+                default:
+                    return false
+            }
+        case 'xxl':
+            switch (windowSize) {
+                case 'xxl':
+                    return true
+                default:
+                    return false
+            }
+    }
 }
 
-export function useWindowSizeOrSmaller(size: WindowSize) {
-    const windowSize = useWindowSize()
-    return windowSize <= size
+export function useOrientation(): 'landscape' | 'portrait' {
+    const [orientation, setOrientation] = useState<'landscape' | 'portrait'>(() =>
+        window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
+    )
+    const handleResize = useCallback(() => {
+        setOrientation(window.innerWidth > window.innerHeight ? 'landscape' : 'portrait')
+    }, [])
+
+    useEffect(() => {
+        const handler = handleResize
+        window.addEventListener('resize', handler)
+        return () => window.removeEventListener('resize', handler)
+    }, [handleResize])
+
+    useEffect(() => handleResize(), [handleResize])
+
+    return orientation
 }

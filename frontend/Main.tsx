@@ -37,7 +37,7 @@ import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternf
 import { Children, ReactNode, StrictMode, Suspense, useCallback, useState } from 'react'
 import { BrowserRouter, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import useSWR from 'swr'
-import { useWindowSizeOrLarger, WindowSize } from '../framework'
+import { useBreakpoint, useWindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
 import { useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
@@ -126,9 +126,10 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
 }
 
 function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
-    const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const isSmallOrLarger = useBreakpoint('sm')
     const { t } = useTranslation()
     const openSettings = useSettingsDialog(t)
+    const windowSize = useWindowSize()
     return (
         <Masthead display={{ default: 'inline' }}>
             <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
@@ -174,6 +175,11 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                             alignment={{ default: 'alignRight' }}
                             spacer={{ default: 'spacerNone', md: 'spacerMd' }}
                         >
+                            {process.env.NODE_ENV === 'development' && (
+                                <ToolbarItem style={{ paddingRight: 8 }} visibility={{ default: 'hidden', sm: 'visible' }}>
+                                    {windowSize.toUpperCase()}
+                                </ToolbarItem>
+                            )}
                             <ToolbarItem>
                                 <Notifications />
                             </ToolbarItem>
@@ -244,7 +250,7 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
     const { t } = useTranslation()
     const location = useLocation()
     const history = useHistory()
-    const md = useWindowSizeOrLarger(WindowSize.xl)
+    const md = useBreakpoint('xl')
     const { isNavOpen, setNavOpen } = props
     const onClick = useCallback(
         (route: RouteE) => {
@@ -433,7 +439,7 @@ function AccountDropdown() {
 }
 
 function AccountDropdownInternal() {
-    const isSmallOrLarger = useWindowSizeOrLarger(WindowSize.sm)
+    const isSmallOrLarger = useBreakpoint('sm')
     const fetcher = useFetcher()
     const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
     const history = useHistory()
