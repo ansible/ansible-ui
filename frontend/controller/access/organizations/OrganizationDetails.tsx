@@ -2,7 +2,7 @@ import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@
 import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
     Detail,
     DetailsList,
@@ -30,12 +30,12 @@ import { useDeleteOrganizations } from './useDeleteOrganizations'
 export function OrganizationDetails() {
     const { t } = useTranslation()
     const params = useParams<{ id: string }>()
-    const organization = useItem<Organization>('/api/v2/organizations', params.id)
-    const history = useHistory()
+    const organization = useItem<Organization>('/api/v2/organizations', params.id ?? '0')
+    const history = useNavigate()
 
     const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
         if (deleted.length > 0) {
-            history.push(RouteE.Organizations)
+            history(RouteE.Organizations)
         }
     })
 
@@ -46,7 +46,7 @@ export function OrganizationDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit organization'),
-                onClick: () => history.push(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+                onClick: () => history(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
             },
             {
                 type: TypedActionType.button,
@@ -109,7 +109,7 @@ export function OrganizationDetails() {
 function OrganizationDetailsTab(props: { organization: Organization }) {
     const { t } = useTranslation()
     const { organization } = props
-    const history = useHistory()
+    const history = useNavigate()
     return (
         <>
             <Scrollable>
@@ -122,7 +122,7 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                                 value={organization.created}
                                 author={organization.summary_fields?.created_by?.username}
                                 onClick={() =>
-                                    history.push(
+                                    history(
                                         RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
                                     )
                                 }
@@ -133,7 +133,7 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                                 value={organization.modified}
                                 author={organization.summary_fields?.modified_by?.username}
                                 onClick={() =>
-                                    history.push(
+                                    history(
                                         RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
                                     )
                                 }
@@ -164,7 +164,7 @@ function OrganizationAccessTab(props: { organization: Organization }) {
 function OrganizationTeamsTab(props: { organization: Organization }) {
     const { organization } = props
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns()
     const view = useControllerView<Team>(`/api/v2/organizations/${organization.id}/teams/`, toolbarFilters, tableColumns)
@@ -176,7 +176,7 @@ function OrganizationTeamsTab(props: { organization: Organization }) {
             emptyStateTitle={t('No teams yet')}
             emptyStateDescription={t('To get started, create a team.')}
             emptyStateButtonText={t('Create team')}
-            emptyStateButtonClick={() => history.push(RouteE.CreateTeam)}
+            emptyStateButtonClick={() => history(RouteE.CreateTeam)}
             {...view}
         />
     )

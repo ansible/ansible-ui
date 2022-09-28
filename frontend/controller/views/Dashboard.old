@@ -16,7 +16,7 @@ import {
 import useResizeObserver from '@react-hook/resize-observer'
 import { DateTime } from 'luxon'
 import { Fragment, Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { getPatternflyColor, PageHeader, PatternFlyColor } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { RouteE } from '../../route'
@@ -255,7 +255,7 @@ function JobsCardContent() {
 function SkeletonDonutCard(props: { title: string; count: number; to: string }) {
     const { title, count, to } = props
     return (
-        <Card isFlat isSelectable isRounded style={{ transition: 'box-shadow 0.25s' }} onClick={() => history.push(to)}>
+        <Card isFlat isSelectable isRounded style={{ transition: 'box-shadow 0.25s' }} onClick={() => history(to)}>
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
             </CardHeader>
@@ -296,9 +296,9 @@ function DashboardDonutCard(props: {
 }) {
     const { title, items, loading } = props
     const total = items.reduce((total, item) => total + item.count, 0)
-    const history = useHistory()
+    const history = useNavigate()
     return (
-        <Card isFlat isSelectable isRounded style={{ transition: 'box-shadow 0.25s' }} onClick={() => history.push(props.to)}>
+        <Card isFlat isSelectable isRounded style={{ transition: 'box-shadow 0.25s' }} onClick={() => history(props.to)}>
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
             </CardHeader>

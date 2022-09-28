@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
 import { RouteE } from '../route'
 
@@ -43,7 +43,7 @@ export function useDescriptionColumn<T extends { description?: string | undefine
 
 export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    const history = useHistory()
+    const navigate = useNavigate()
     const column: ITableColumn<
         { created?: string } | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
     > = {
@@ -57,7 +57,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
                     onClick={
                         options?.disableLinks || !('summary_fields' in item)
                             ? undefined
-                            : () => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
+                            : () => navigate(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
                     }
                 />
             )
@@ -70,7 +70,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
 
 export function useModifiedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
     const column: ITableColumn<
         { modified?: string } | { modified?: string; summary_fields?: { modified_by?: { id?: number; username?: string } } }
     > = {
@@ -84,7 +84,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
                     onClick={
                         options?.disableLinks || !('summary_fields' in item)
                             ? undefined
-                            : () => history.push(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
+                            : () => history(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
                     }
                 />
             )

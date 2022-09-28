@@ -2,7 +2,7 @@ import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
     IItemAction,
     ITableColumn,
@@ -34,7 +34,7 @@ import { useDeleteTeams } from './useDeleteTeams'
 
 export function Teams() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
 
     const toolbarFilters = useTeamsFilters()
 
@@ -56,7 +56,7 @@ export function Teams() {
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
                 label: t('Create team'),
-                onClick: () => history.push(RouteE.CreateTeam),
+                onClick: () => history(RouteE.CreateTeam),
             },
             {
                 type: TypedActionType.bulk,
@@ -73,7 +73,7 @@ export function Teams() {
             {
                 icon: EditIcon,
                 label: t('Edit team'),
-                onClick: (team) => history.push(RouteE.EditTeam.replace(':id', team.id.toString())),
+                onClick: (team) => history(RouteE.EditTeam.replace(':id', team.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -95,11 +95,11 @@ export function Teams() {
                 navigation={
                     <Nav aria-label="Group section navigation" variant="tertiary">
                         <NavList>
-                            <NavItem onClick={() => history.push(RouteE.Organizations)}>{t('Organizations')}</NavItem>
-                            <NavItem onClick={() => history.push(RouteE.Teams)} isActive>
+                            <NavItem onClick={() => history(RouteE.Organizations)}>{t('Organizations')}</NavItem>
+                            <NavItem onClick={() => history(RouteE.Teams)} isActive>
                                 {t('Teams')}
                             </NavItem>
-                            <NavItem onClick={() => history.push(RouteE.Users)}>{t('Users')}</NavItem>
+                            <NavItem onClick={() => history(RouteE.Users)}>{t('Users')}</NavItem>
                         </NavList>
                     </Nav>
                 }
@@ -114,7 +114,7 @@ export function Teams() {
                     emptyStateTitle={t('No teams yet')}
                     emptyStateDescription={t('To get started, create a team.')}
                     emptyStateButtonText={t('Create team')}
-                    emptyStateButtonClick={() => history.push(RouteE.CreateTeam)}
+                    emptyStateButtonClick={() => history(RouteE.CreateTeam)}
                     {...view}
                 />
             </PageBody>
@@ -135,10 +135,10 @@ export function useTeamsFilters() {
 }
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
-    const history = useHistory()
+    const history = useNavigate()
     const nameColumn = useNameColumn({
         ...options,
-        onClick: (team) => history.push(RouteE.TeamDetails.replace(':id', team.id.toString())),
+        onClick: (team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
     })
     const descriptionColumn = useDescriptionColumn()
     const organizationColumn = useOrganizationNameColumn(options)

@@ -2,7 +2,7 @@ import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
 import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
 import {
@@ -18,7 +18,7 @@ import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function Organizations() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
 
     const toolbarFilters = useOrganizationsFilters()
 
@@ -40,7 +40,7 @@ export function Organizations() {
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
                 label: t('Create organization'),
-                onClick: () => history.push(RouteE.CreateOrganization),
+                onClick: () => history(RouteE.CreateOrganization),
             },
             {
                 type: TypedActionType.bulk,
@@ -57,7 +57,7 @@ export function Organizations() {
             {
                 icon: EditIcon,
                 label: t('Edit organization'),
-                onClick: (organization) => history.push(RouteE.EditOrganization.replace(':id', organization.id.toString())),
+                onClick: (organization) => history(RouteE.EditOrganization.replace(':id', organization.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -78,11 +78,11 @@ export function Organizations() {
             navigation={
                 <Nav aria-label="Group section navigation" variant="tertiary">
                     <NavList>
-                        <NavItem onClick={() => history.push(RouteE.Organizations)} isActive>
+                        <NavItem onClick={() => history(RouteE.Organizations)} isActive>
                             {t('Organizations')}
                         </NavItem>
-                        <NavItem onClick={() => history.push(RouteE.Teams)}>{t('Teams')}</NavItem>
-                        <NavItem onClick={() => history.push(RouteE.Users)}>{t('Users')}</NavItem>
+                        <NavItem onClick={() => history(RouteE.Teams)}>{t('Teams')}</NavItem>
+                        <NavItem onClick={() => history(RouteE.Users)}>{t('Users')}</NavItem>
                     </NavList>
                 </Nav>
             }
@@ -94,7 +94,7 @@ export function Organizations() {
             emptyStateTitle={t('No organizations yet')}
             emptyStateDescription={t('To get started, create an organization.')}
             emptyStateButtonText={t('Create organization')}
-            emptyStateButtonClick={() => history.push(RouteE.CreateOrganization)}
+            emptyStateButtonClick={() => history(RouteE.CreateOrganization)}
             {...view}
         />
     )
@@ -114,10 +114,10 @@ export function useOrganizationsFilters() {
 
 export function useOrganizationsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
     const nameColumn = useNameColumn({
         ...options,
-        onClick: (organization) => history.push(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+        onClick: (organization) => history(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
     })
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn(options)

@@ -2,13 +2,13 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ITypedAction, TypedActionType } from '../../framework'
 import { RouteE } from '../route'
 
 export function useCreateToolbarAction(route: RouteE) {
     const { t } = useTranslation()
-    const history = useHistory()
+    const history = useNavigate()
     const toolbarAction: ITypedAction<{ id: number }> = useMemo(
         () => ({
             type: TypedActionType.button,
@@ -16,7 +16,7 @@ export function useCreateToolbarAction(route: RouteE) {
             icon: PlusIcon,
             label: t('Create team'),
             shortLabel: t('Create'),
-            onClick: () => history.push(route),
+            onClick: () => history(route),
         }),
         [history, route, t]
     )

@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core'
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
 import { CSSProperties, Fragment, ReactNode } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useBreakpoint } from './components/useBreakPoint'
 import { useSettings } from './Settings'
 
@@ -31,7 +31,7 @@ export interface ICatalogBreadcrumb {
 }
 
 function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
-    const history = useHistory()
+    const history = useNavigate()
     if (!props.breadcrumbs) return <Fragment />
     return (
         <Breadcrumb style={props.style}>
@@ -42,7 +42,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
                         id={breadcrumb.id}
                         key={breadcrumb.id ?? breadcrumb.label}
                         component={breadcrumb.component}
-                        onClick={breadcrumb.to ? () => breadcrumb.to && history.push(breadcrumb.to) : undefined}
+                        onClick={breadcrumb.to ? () => breadcrumb.to && history(breadcrumb.to) : undefined}
                         style={{
                             color: breadcrumb.to ? 'var(--pf-c-breadcrumb__link--Color)' : undefined,
                             cursor: breadcrumb.to ? 'pointer' : undefined,

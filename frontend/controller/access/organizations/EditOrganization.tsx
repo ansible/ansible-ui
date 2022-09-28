@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
@@ -11,7 +11,7 @@ import { Organization } from './Organization'
 
 export function EditOrganization() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
@@ -76,12 +76,12 @@ export function EditOrganization() {
                 organization = await requestPost<Organization>('/api/v2/organizations/', editedOrganization)
             }
             ;(cache as unknown as { clear: () => void }).clear?.()
-            history.push(RouteE.OrganizationDetails.replace(':id', organization.id.toString()))
+            navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()))
         } catch (err) {
             setError(await getControllerError(err))
         }
     }
-    const onCancel = () => history.goBack()
+    const onCancel = () => navigate(-1)
 
     if (Number.isInteger(id)) {
         if (!organization) {

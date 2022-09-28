@@ -2,7 +2,7 @@ import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
     Detail,
     DetailsList,
@@ -35,12 +35,12 @@ import { UserType } from './Users'
 export function UserDetailsPage() {
     const { t } = useTranslation()
     const params = useParams<{ id: string }>()
-    const user = useItem<User>('/api/v2/users', params.id)
-    const history = useHistory()
+    const user = useItem<User>('/api/v2/users', params.id ?? '0')
+    const history = useNavigate()
 
     const deleteUsers = useDeleteUsers((deleted: User[]) => {
         if (deleted.length > 0) {
-            history.push(RouteE.Users)
+            history(RouteE.Users)
         }
     })
 
@@ -51,7 +51,7 @@ export function UserDetailsPage() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit user'),
-                onClick: () => history.push(RouteE.EditUser.replace(':id', user?.id.toString() ?? '')),
+                onClick: () => history(RouteE.EditUser.replace(':id', user?.id.toString() ?? '')),
             },
             {
                 type: TypedActionType.button,
@@ -163,7 +163,7 @@ function UserOrganizations(props: { user: User }) {
                     : t('To get started, create an organization.')
             }
             emptyStateButtonText={t('Create organization')}
-            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            // emptyStateButtonClick={() => history(RouteE.CreateUser)}
             {...view}
         />
     )
@@ -243,7 +243,7 @@ function UserRoles(props: { user: User }) {
                     : t('To get started, add roles to the user.')
             }
             emptyStateButtonText={t('Add role to user')}
-            // emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            // emptyStateButtonClick={() => history(RouteE.CreateUser)}
             {...view}
         />
     )

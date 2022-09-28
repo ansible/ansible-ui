@@ -3,7 +3,7 @@ import { Static, Type } from '@sinclair/typebox'
 import ky from 'ky'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
@@ -11,7 +11,7 @@ import { RouteE } from '../../route'
 export default function Login() {
     const { t } = useTranslation()
 
-    const history = useHistory()
+    const history = useNavigate()
 
     const DataType = Type.Object({
         server: Type.String({
@@ -75,7 +75,7 @@ export default function Login() {
                     JSON.stringify([...new Set([{ server: data.server, username: data.username }, ...servers])])
                 )
 
-                history.push(RouteE.Organizations)
+                history(RouteE.Organizations)
             } catch (err) {
                 if (err instanceof Error) {
                     setError(err.message)

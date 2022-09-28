@@ -1,4 +1,4 @@
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { EditOrganization } from './controller/access/organizations/EditOrganization'
 import { OrganizationDetails } from './controller/access/organizations/OrganizationDetails'
 import { Organizations } from './controller/access/organizations/Organizations'
@@ -10,58 +10,58 @@ import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
 import Debug from './controller/settings/Debug'
+import Login from './controller/settings/Login'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
 import { RouteE } from './route'
 
 export function DemoRouter(): JSX.Element {
     return (
-        <Switch>
-            <Route exact path={RouteE.Dashboard} component={Dashboard} />
-            {/* <Route exact path={RouteE.Jobs} component={JobsPage} /> */}
-            {/* <Route exact path={RouteE.Schedules} component={SchedulesPage} /> */}
-            {/* <Route exact path={RouteE.ActivityStream} component={ActivityStreeam} /> */}
-            {/* <Route exact path={RouteE.WorkflowApprovals} component={WorkflowApprovalsPage} /> */}
+        <Routes>
+            <Route path={RouteE.Login} element={<Login />} />
 
-            {/* <Route exact path={RouteE.Templates} component={TemplatesPage} /> */}
-            {/* <Route exact path={RouteE.Credentials} component={CredentialsPage} />
-            <Route exact path={RouteE.Projects} component={ProjectsPage} />
-            <Route exact path={RouteE.ProjectDetails} component={ProjectsDetailsPage} />
-            <Route exact path={RouteE.ProjectEdit} component={ProjectEditPage} />
-            <Route exact path={RouteE.Inventories} component={InventoriesPage} />
-            <Route exact path={RouteE.Hosts} component={HostsPage} /> */}
+            <Route path={RouteE.Dashboard} element={Dashboard} />
+            {/* <Route path={RouteE.Jobs} component={JobsPage} /> */}
+            {/* <Route path={RouteE.Schedules} component={SchedulesPage} /> */}
+            {/* <Route path={RouteE.ActivityStream} component={ActivityStreeam} /> */}
+            {/* <Route path={RouteE.WorkflowApprovals} component={WorkflowApprovalsPage} /> */}
 
-            <Route exact path={RouteE.Organizations} component={Organizations} />
-            <Route exact path={RouteE.OrganizationDetails} component={OrganizationDetails} />
-            <Route exact path={RouteE.CreateOrganization} component={EditOrganization} />
-            <Route exact path={RouteE.EditOrganization} component={EditOrganization} />
+            {/* <Route path={RouteE.Templates} component={TemplatesPage} /> */}
+            {/* <Route path={RouteE.Credentials} component={CredentialsPage} />
+            <Route path={RouteE.Projects} component={ProjectsPage} />
+            <Route path={RouteE.ProjectDetails} component={ProjectsDetailsPage} />
+            <Route path={RouteE.ProjectEdit} component={ProjectEditPage} />
+            <Route path={RouteE.Inventories} component={InventoriesPage} />
+            <Route path={RouteE.Hosts} component={HostsPage} /> */}
 
-            <Route exact path={RouteE.Users} component={Users} />
-            <Route exact path={RouteE.UserDetails} component={UserDetailsPage} />
-            <Route exact path={RouteE.CreateUser} component={CreateUser} />
-            <Route exact path={RouteE.EditUser} component={EditUser} />
+            <Route path={RouteE.Organizations} element={<Organizations />} />
+            <Route path={RouteE.OrganizationDetails} element={<OrganizationDetails />} />
+            <Route path={RouteE.CreateOrganization} element={<EditOrganization />} />
+            <Route path={RouteE.EditOrganization} element={<EditOrganization />} />
 
-            <Route exact path={RouteE.Teams} component={Teams} />
-            <Route exact path={RouteE.TeamDetails} component={TeamDetails} />
-            <Route exact path={RouteE.CreateTeam} component={EditTeam} />
-            <Route exact path={RouteE.EditTeam} component={EditTeam} />
+            <Route path={RouteE.Users} element={<Users />} />
+            <Route path={RouteE.UserDetails} element={<UserDetailsPage />} />
+            <Route path={RouteE.CreateUser} element={<CreateUser />} />
+            <Route path={RouteE.EditUser} element={<EditUser />} />
 
-            {/* <Route exact path={RouteE.CredentialTypes} component={CredentialTypesPage} />
-            <Route exact path={RouteE.Notifications} component={NotificationsPage} />
-            <Route exact path={RouteE.ManagementJobs} component={ManagementJobsPage} />
-            <Route exact path={RouteE.InstanceGroups} component={InstanceGroupsPage} />
-            <Route exact path={RouteE.Instances} component={InstancesPage} />
-            <Route exact path={RouteE.Applications} component={ApplicationsPage} />
-            <Route exact path={RouteE.ExecutionEnvironments} component={ExecutionEnvironmentsPage} />
-            <Route exact path={RouteE.TopologyView} component={TopologyView} /> */}
+            <Route path={RouteE.Teams} element={<Teams />} />
+            <Route path={RouteE.TeamDetails} element={<TeamDetails />} />
+            <Route path={RouteE.CreateTeam} element={<EditTeam />} />
+            <Route path={RouteE.EditTeam} element={<EditTeam />} />
 
-            <Route exact path={RouteE.Settings} component={Settings} />
+            {/* <Route path={RouteE.CredentialTypes} component={CredentialTypesPage} />
+            <Route path={RouteE.Notifications} component={NotificationsPage} />
+            <Route path={RouteE.ManagementJobs} component={ManagementJobsPage} />
+            <Route path={RouteE.InstanceGroups} component={InstanceGroupsPage} />
+            <Route path={RouteE.Instances} component={InstancesPage} />
+            <Route path={RouteE.Applications} component={ApplicationsPage} />
+            <Route path={RouteE.ExecutionEnvironments} component={ExecutionEnvironmentsPage} />
+            <Route path={RouteE.TopologyView} component={TopologyView} /> */}
 
-            <Route exact path={RouteE.Debug} component={Debug} />
+            <Route path={RouteE.Settings} element={Settings} />
 
-            <Route path="*">
-                <Redirect to={RouteE.Login} />
-            </Route>
-        </Switch>
+            <Route path={RouteE.Debug} element={Debug} />
+            <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
+        </Routes>
     )
 }
