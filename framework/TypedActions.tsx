@@ -130,6 +130,7 @@ export function TypedActionsDropdown<T extends object>(props: {
                 }
             })}
             position={props.position}
+            style={{ zIndex: 201 }}
         />
     )
 }

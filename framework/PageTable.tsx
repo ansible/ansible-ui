@@ -52,13 +52,13 @@ import {
     useState,
 } from 'react'
 import { Link } from 'react-router-dom'
-import { useColumnModal } from './PageColumnModal'
 import { BulkSelector } from './components/BulkSelector'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageBody } from './PageBody'
+import { useColumnModal } from './PageColumnModal'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { useSettings } from './Settings'
@@ -359,12 +359,10 @@ function TableHead<T extends object>(props: {
                 {itemActions !== undefined && (
                     <Th
                         style={{
-                            // zIndex: 100 - rowIndex,
                             paddingRight: 8,
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
-                            // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
                         }}
                         isStickyColumn
                         stickyMinWidth="45px"
@@ -515,7 +513,6 @@ function TableCells<T extends object>(props: {
                         paddingLeft: 8,
                         width: '0%',
                         right: 0,
-                        // borderLeft: '1px solid var(--pf-global--BorderColor--dark-100)',
                     }}
                     isStickyColumn
                     stickyMinWidth="0px"
@@ -595,7 +592,7 @@ export function PagePagination(props: PagePaginationProps) {
                 ...props.style,
                 borderTop: 'thin solid var(--pf-global--BorderColor--100)',
                 boxShadow: 'none',
-                zIndex: 301,
+                // zIndex: 301,
                 marginTop: -1,
                 paddingTop: sm ? 6 : undefined,
                 paddingBottom: sm ? 6 : undefined,
@@ -774,7 +771,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 )}
 
                 {/* Action Buttons */}
-                <ToolbarGroup variant="button-group">
+                <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
                     <TypedActions actions={toolbarActions} selectedItems={selectedItems} wrapper={ToolbarItem} />
                     {/* <ToolbarItem>
                         <Tooltip content={'Manage columns'}>
