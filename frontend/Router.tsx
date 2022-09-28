@@ -10,7 +10,6 @@ import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
 import Debug from './controller/settings/Debug'
-import Login from './controller/settings/Login'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
 import { RouteE } from './route'
@@ -18,8 +17,6 @@ import { RouteE } from './route'
 export function DemoRouter(): JSX.Element {
     return (
         <Routes>
-            <Route path={RouteE.Login} element={<Login />} />
-
             <Route path={RouteE.Dashboard} element={Dashboard} />
             {/* <Route path={RouteE.Jobs} component={JobsPage} /> */}
             {/* <Route path={RouteE.Schedules} component={SchedulesPage} /> */}

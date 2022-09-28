@@ -312,6 +312,7 @@ function TableHead<T extends object>(props: {
     onSelect?: (item: T) => void
 }) {
     const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect, onSelect } = props
+    const settings = useSettings()
 
     const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
         (columnIndex: number, column: ITableColumn<T>) => {
@@ -338,7 +339,15 @@ function TableHead<T extends object>(props: {
         <Thead>
             <Tr>
                 {(showSelect || onSelect) && (
-                    <Th isStickyColumn style={{ width: '0%' }} stickyMinWidth="45px" hasRightBorder={props.scrollLeft}>
+                    <Th
+                        isStickyColumn
+                        style={{
+                            width: '0%',
+                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                        }}
+                        stickyMinWidth="45px"
+                        hasRightBorder={props.scrollLeft}
+                    >
                         &nbsp;
                     </Th>
                 )}
@@ -349,7 +358,11 @@ function TableHead<T extends object>(props: {
                             <Th
                                 modifier="fitContent"
                                 key={column.header}
-                                style={{ minWidth: column.minWidth, maxWidth: column.maxWidth }}
+                                style={{
+                                    minWidth: column.minWidth,
+                                    maxWidth: column.maxWidth,
+                                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                                }}
                                 sort={getColumnSort(index, column)}
                             >
                                 {column.header}
@@ -363,6 +376,7 @@ function TableHead<T extends object>(props: {
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
+                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
                         }}
                         isStickyColumn
                         stickyMinWidth="45px"
@@ -580,6 +594,7 @@ export function PagePagination(props: PagePaginationProps) {
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
     const sm = useBreakpoint('md')
+    const settings = useSettings()
     return (
         <Pagination
             variant={PaginationVariant.bottom}
@@ -596,6 +611,7 @@ export function PagePagination(props: PagePaginationProps) {
                 marginTop: -1,
                 paddingTop: sm ? 6 : undefined,
                 paddingBottom: sm ? 6 : undefined,
+                backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
             }}
             // titles={{ items: 'users' }}
         />
@@ -658,6 +674,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
     )
 
+    const settings = useSettings()
+
     if (!showToolbar) {
         return <Fragment />
     }
@@ -669,6 +687,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                     borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
                     paddingBottom: sm ? undefined : 8,
                     paddingTop: sm ? undefined : 8,
+                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
                 }}
             >
                 <ToolbarContent>
@@ -687,6 +706,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
                 paddingBottom: sm ? undefined : 8,
                 paddingTop: sm ? undefined : 8,
+                backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
             }}
         >
             <ToolbarContent>
