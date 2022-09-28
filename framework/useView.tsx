@@ -73,6 +73,8 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
         for (const key of searchParams.keys()) {
             switch (key) {
                 case 'sort':
+                case 'page':
+                case 'perPage':
                     break
                 default: {
                     const value = searchParams.get(key)
