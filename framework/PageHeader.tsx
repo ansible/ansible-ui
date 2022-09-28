@@ -112,6 +112,7 @@ export function PageHeader(props: PageHeaderProps) {
                         paddingTop: 0,
                         paddingBottom: 0,
                         borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        backgroundColor: 'var(--pf-global--BackgroundColor--100)',
                     }}
                 >
                     <Flex direction={{ default: 'row' }} flexWrap={{ default: 'nowrap' }} style={{ maxWidth: '100%' }}>
@@ -143,6 +144,7 @@ export function PageHeader(props: PageHeaderProps) {
                         paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 8,
                         paddingBottom: xl ? 20 : 12,
                         borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
                     }}
                 >
                     <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>

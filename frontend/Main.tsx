@@ -33,20 +33,19 @@ import {
     ToolbarItem,
     Truncate,
 } from '@patternfly/react-core'
-import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
+import { BarsIcon, CogIcon, QuestionCircleIcon, RedhatIcon, UserCircleIcon } from '@patternfly/react-icons'
 import { Children, ReactNode, StrictMode, Suspense, useCallback, useState } from 'react'
-import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint, useWindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
-import { useSettingsDialog } from '../framework/Settings'
+import { useSettings, useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
 // import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
 import { useTranslation } from 'react-i18next'
 import { PageFrameworkProvider } from '../framework'
+import Login from './controller/settings/Login'
 import { swrOptions, useFetcher } from './Data'
-import AnsiblePng from './icons/ansible.png'
-import SparkleSvg from './icons/sparkle.svg'
 import { RouteE } from './route'
 import { DemoRouter } from './Router'
 
@@ -58,7 +57,10 @@ export default function Demo() {
                 <AccessCode>
                     <PageFrameworkProvider>
                         <BrowserRouter>
-                            <Main />
+                            <Routes>
+                                <Route path={RouteE.Login} element={<Login />} />
+                                <Route path="*" element={<Main />} />\{' '}
+                            </Routes>
                         </BrowserRouter>
                     </PageFrameworkProvider>
                 </AccessCode>
@@ -136,8 +138,9 @@ function DemoHeader(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => 
                     <MastheadBrand>
                         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                             <div style={{ marginTop: 6 }}>
-                                <SparkleSvg style={{ width: 48, height: 48, position: 'absolute' }} />
-                                <img src={AnsiblePng} width="192" height="192" style={{ width: 48 }} alt="ansible logo" />
+                                {/* <SparkleSvg style={{ width: 48, height: 48, position: 'absolute' }} /> */}
+                                {/* <img src={AnsiblePng} width="192" height="192" style={{ width: 48 }} alt="ansible logo" /> */}
+                                <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
                             </div>
                             <div style={{ color: 'white', textDecoration: 'none' }}>
                                 <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
@@ -243,21 +246,23 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
     const { t } = useTranslation()
     const location = useLocation()
     const navigate = useNavigate()
+    const settings = useSettings()
 
-    const md = useBreakpoint('xl')
+    const isXl = useBreakpoint('xl')
     const { isNavOpen, setNavOpen } = props
     const onClick = useCallback(
         (route: RouteE) => {
             navigate(route)
-            if (!md) {
+            if (!isXl) {
                 setNavOpen(false)
             }
         },
-        [navigate, md, setNavOpen]
+        [navigate, isXl, setNavOpen]
     )
     return (
         <PageSidebar
             isNavOpen={isNavOpen}
+            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
             nav={
                 <Nav>
                     <NavList>
