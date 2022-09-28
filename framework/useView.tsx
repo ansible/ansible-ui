@@ -10,45 +10,53 @@ export interface IView {
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
 }
 
-export function useView(view?: Partial<IView>) {
+export function useView(view?: Partial<IView> | undefined, disableQueryString?: boolean) {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const [page, setPage] = useState(() => {
-        const queryPage = searchParams.get('page')
-        if (queryPage) {
-            const page = Number(queryPage)
-            if (Number.isInteger(page)) {
-                return page
+        if (!disableQueryString) {
+            const queryPage = searchParams.get('page')
+            if (queryPage) {
+                const page = Number(queryPage)
+                if (Number.isInteger(page)) {
+                    return page
+                }
             }
         }
         return view?.page ?? 1
     })
 
     const [perPage, setPerPage] = useState(() => {
-        const queryPerPage = searchParams.get('perPage')
-        if (queryPerPage) {
-            const perPage = Number(queryPerPage)
-            if (Number.isInteger(perPage)) {
-                return perPage
+        if (!disableQueryString) {
+            const queryPerPage = searchParams.get('perPage')
+            if (queryPerPage) {
+                const perPage = Number(queryPerPage)
+                if (Number.isInteger(perPage)) {
+                    return perPage
+                }
             }
         }
         return view?.perPage ?? 10
     })
 
     const [sort, setSort] = useState(() => {
-        const querySort = searchParams.get('sort')
-        if (querySort) {
-            if (querySort.startsWith('-')) return querySort.slice(1)
-            return querySort
+        if (!disableQueryString) {
+            const querySort = searchParams.get('sort')
+            if (querySort) {
+                if (querySort.startsWith('-')) return querySort.slice(1)
+                return querySort
+            }
         }
         return view?.sort ?? ''
     })
 
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
-        const querySort = searchParams.get('sort')
-        if (querySort) {
-            if (querySort.startsWith('-')) return 'desc'
-            return 'asc'
+        if (!disableQueryString) {
+            const querySort = searchParams.get('sort')
+            if (querySort) {
+                if (querySort.startsWith('-')) return 'desc'
+                return 'asc'
+            }
         }
         return view?.sortDirection ?? 'asc'
     })
@@ -75,34 +83,38 @@ export function useView(view?: Partial<IView>) {
     const clearAllFilters = useCallback(() => setFilters({}), [setFilters])
 
     useEffect(() => {
+        if (disableQueryString) return
         setSearchParams((searchParams) => {
             sortDirection === 'asc' ? searchParams.set('sort', sort) : searchParams.set('sort', `-${sort}`)
             return searchParams
         })
-    }, [sort, sortDirection, setSearchParams])
+    }, [sort, sortDirection, setSearchParams, disableQueryString])
 
     useEffect(() => {
+        if (disableQueryString) return
         setSearchParams((searchParams) => {
             searchParams.set('page', page.toString())
             return searchParams
         })
-    }, [page, setSearchParams])
+    }, [disableQueryString, page, setSearchParams])
 
     useEffect(() => {
+        if (disableQueryString) return
         setSearchParams((searchParams) => {
             searchParams.set('perPage', perPage.toString())
             return searchParams
         })
-    }, [perPage, setSearchParams])
+    }, [disableQueryString, perPage, setSearchParams])
 
     useEffect(() => {
+        if (disableQueryString) return
         setSearchParams((searchParams) => {
             for (const filter in filters) {
                 searchParams.set(filter, filters[filter].join(','))
             }
             return searchParams
         })
-    }, [filters, setSearchParams])
+    }, [disableQueryString, filters, setSearchParams])
 
     useEffect(() => {
         const sort = searchParams.get('sort')

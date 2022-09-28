@@ -34,7 +34,7 @@ import { useDeleteTeams } from './useDeleteTeams'
 
 export function Teams() {
     const { t } = useTranslation()
-    const history = useNavigate()
+    const navigate = useNavigate()
 
     const toolbarFilters = useTeamsFilters()
 
@@ -56,7 +56,7 @@ export function Teams() {
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
                 label: t('Create team'),
-                onClick: () => history(RouteE.CreateTeam),
+                onClick: () => navigate(RouteE.CreateTeam),
             },
             {
                 type: TypedActionType.bulk,
@@ -65,7 +65,7 @@ export function Teams() {
                 onClick: deleteTeams,
             },
         ],
-        [deleteTeams, history, t]
+        [deleteTeams, navigate, t]
     )
 
     const rowActions = useMemo<IItemAction<Team>[]>(
@@ -73,7 +73,7 @@ export function Teams() {
             {
                 icon: EditIcon,
                 label: t('Edit team'),
-                onClick: (team) => history(RouteE.EditTeam.replace(':id', team.id.toString())),
+                onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -81,7 +81,7 @@ export function Teams() {
                 onClick: (team) => deleteTeams([team]),
             },
         ],
-        [deleteTeams, history, t]
+        [deleteTeams, navigate, t]
     )
 
     return (
@@ -95,11 +95,11 @@ export function Teams() {
                 navigation={
                     <Nav aria-label="Group section navigation" variant="tertiary">
                         <NavList>
-                            <NavItem onClick={() => history(RouteE.Organizations)}>{t('Organizations')}</NavItem>
-                            <NavItem onClick={() => history(RouteE.Teams)} isActive>
+                            <NavItem onClick={() => navigate(RouteE.Organizations)}>{t('Organizations')}</NavItem>
+                            <NavItem onClick={() => navigate(RouteE.Teams)} isActive>
                                 {t('Teams')}
                             </NavItem>
-                            <NavItem onClick={() => history(RouteE.Users)}>{t('Users')}</NavItem>
+                            <NavItem onClick={() => navigate(RouteE.Users)}>{t('Users')}</NavItem>
                         </NavList>
                     </Nav>
                 }
@@ -114,7 +114,7 @@ export function Teams() {
                     emptyStateTitle={t('No teams yet')}
                     emptyStateDescription={t('To get started, create a team.')}
                     emptyStateButtonText={t('Create team')}
-                    emptyStateButtonClick={() => history(RouteE.CreateTeam)}
+                    emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
                     {...view}
                 />
             </PageBody>

@@ -18,9 +18,10 @@ export type IControllerView<T extends { id: number }> = IView & {
 export function useControllerView<T extends { id: number }>(
     url: string,
     toolbarFilters?: IToolbarFilter[],
-    tableColumns?: ITableColumn<T>[]
+    tableColumns?: ITableColumn<T>[],
+    disableQueryString?: boolean
 ) {
-    const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined })
+    const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined }, disableQueryString)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view
