@@ -2,24 +2,25 @@ import { ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection } from '@
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
     Detail,
     DetailsList,
     DetailsSkeleton,
     IItemAction,
     ITypedAction,
+    PageBody,
     PageHeader,
+    PageLayout,
+    PageTab,
     PageTable,
+    PageTabs,
     SinceCell,
     TextCell,
     TypedActions,
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
-import { PageBody } from '../../../../framework'
-import { PageLayout } from '../../../../framework'
-import { PageTab, PageTabs } from '../../../../framework'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -31,11 +32,11 @@ import { useDeleteTeams } from './useDeleteTeams'
 export function TeamDetails() {
     const { t } = useTranslation()
     const params = useParams<{ id: string }>()
-    const team = useItem<Team>('/api/v2/teams', params.id)
-    const history = useHistory()
+    const team = useItem<Team>('/api/v2/teams', params.id ?? '0')
+    const history = useNavigate()
     const deleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
         if (deletedTeams.length > 0) {
-            history.push(RouteE.Teams)
+            history(RouteE.Teams)
         }
     })
 
@@ -46,7 +47,7 @@ export function TeamDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit team'),
-                onClick: () => history.push(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
+                onClick: () => history(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
             },
             {
                 type: TypedActionType.button,
@@ -102,7 +103,7 @@ export function TeamDetails() {
 function TeamDetailsTab(props: { team: Team }) {
     const { t } = useTranslation()
     const { team } = props
-    const history = useHistory()
+    const history = useNavigate()
     return (
         <>
             <Scrollable>
@@ -121,7 +122,7 @@ function TeamDetailsTab(props: { team: Team }) {
                                 value={team.created}
                                 author={team.summary_fields?.created_by?.username}
                                 onClick={() =>
-                                    history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
+                                    history(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
                                 }
                             />
                         </Detail>
@@ -130,7 +131,7 @@ function TeamDetailsTab(props: { team: Team }) {
                                 value={team.modified}
                                 author={team.summary_fields?.modified_by?.username}
                                 onClick={() =>
-                                    history.push(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
+                                    history(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
                                 }
                             />
                         </Detail>
@@ -198,7 +199,7 @@ function TeamAccessTab(props: { team: Team }) {
 
     const view = useControllerView<User>(`/api/v2/teams/${team.id}/access_list/`, toolbarFilters, tableColumns)
 
-    const history = useHistory()
+    const history = useNavigate()
 
     return (
         <PageTable<User>
@@ -210,7 +211,7 @@ function TeamAccessTab(props: { team: Team }) {
             emptyStateTitle={t('No users yet')}
             emptyStateDescription={t('To get started, create a user.')}
             emptyStateButtonText={t('Create user')}
-            emptyStateButtonClick={() => history.push(RouteE.CreateUser)}
+            emptyStateButtonClick={() => history(RouteE.CreateUser)}
             {...view}
         />
     )

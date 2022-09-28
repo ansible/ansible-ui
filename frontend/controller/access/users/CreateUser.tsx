@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../route'
@@ -11,7 +11,7 @@ import { User } from './User'
 
 export function CreateUser() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const selectOrganization = useSelectOrganization()
 
@@ -111,13 +111,13 @@ export function CreateUser() {
                 is_system_auditor: userData.userType === t('System auditor'),
             }
             const user = await requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, newUser)
-            history.push(RouteE.UserDetails.replace(':id', user.id.toString()))
+            navigate(RouteE.UserDetails.replace(':id', user.id.toString()))
         } catch (err) {
             setError(await getControllerError(err))
         }
     }
 
-    const onCancel = () => history.goBack()
+    const onCancel = () => navigate(-1)
 
     return (
         <>

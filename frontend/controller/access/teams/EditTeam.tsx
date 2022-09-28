@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm'
@@ -14,7 +14,7 @@ import { Team } from './Team'
 
 export function EditTeam() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const navigate = useNavigate()
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
@@ -79,12 +79,12 @@ export function EditTeam() {
                 team = await requestPost<Team>('/api/v2/teams/', editedTeam)
             }
             ;(cache as unknown as { clear: () => void }).clear?.()
-            history.push(RouteE.TeamDetails.replace(':id', team.id.toString()))
+            navigate(RouteE.TeamDetails.replace(':id', team.id.toString()))
         } catch (err) {
             setError(await getControllerError(err))
         }
     }
-    const onCancel = () => history.goBack()
+    const onCancel = () => navigate(-1)
 
     if (Number.isInteger(id)) {
         if (!team) {

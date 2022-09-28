@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
@@ -10,7 +10,7 @@ import { User } from './User'
 
 export function EditUser() {
     const { t } = useTranslation()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
@@ -97,14 +97,14 @@ export function EditUser() {
                     user.password = userData.password
                 }
                 const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user)
-                history.push(RouteE.UserDetails.replace(':id', newUser.id.toString()))
+                navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()))
             }
         } catch (err) {
             setError(await getControllerError(err))
         }
     }
 
-    const onCancel = () => history.goBack()
+    const onCancel = () => navigate(-1)
 
     if (!user) {
         return (

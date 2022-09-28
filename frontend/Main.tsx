@@ -35,13 +35,12 @@ import {
 } from '@patternfly/react-core'
 import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
 import { Children, ReactNode, StrictMode, Suspense, useCallback, useState } from 'react'
-import { BrowserRouter, Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint, useWindowSize } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
 import { useSettingsDialog } from '../framework/Settings'
 import { AccessCode } from './common/AccessCode'
-import Login from './controller/settings/Login'
 // import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
 import { useTranslation } from 'react-i18next'
 import { PageFrameworkProvider } from '../framework'
@@ -59,12 +58,7 @@ export default function Demo() {
                 <AccessCode>
                     <PageFrameworkProvider>
                         <BrowserRouter>
-                            <Switch>
-                                <Route exact path={RouteE.Login} component={Login} />
-                                <Route path="*">
-                                    <Main />
-                                </Route>
-                            </Switch>
+                            <Main />
                         </BrowserRouter>
                     </PageFrameworkProvider>
                 </AccessCode>
@@ -244,20 +238,22 @@ function isRouteActive(route: RouteE | RouteE[], location: { pathname: string })
     }
     return location.pathname.includes(route)
 }
+
 function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
     const { t } = useTranslation()
     const location = useLocation()
-    const history = useHistory()
+    const navigate = useNavigate()
+
     const md = useBreakpoint('xl')
     const { isNavOpen, setNavOpen } = props
     const onClick = useCallback(
         (route: RouteE) => {
-            history.push(route)
+            navigate(route)
             if (!md) {
                 setNavOpen(false)
             }
         },
-        [history, md, setNavOpen]
+        [navigate, md, setNavOpen]
     )
     return (
         <PageSidebar
@@ -440,7 +436,7 @@ function AccountDropdownInternal() {
     const isSmallOrLarger = useBreakpoint('sm')
     const fetcher = useFetcher()
     const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
-    const history = useHistory()
+    const history = useNavigate()
     const [open, setOpen] = useState(false)
     const onSelect = useCallback(() => {
         setOpen((open) => !open)
@@ -468,7 +464,7 @@ function AccountDropdownInternal() {
                 <DropdownItem
                     key="user-details"
                     onClick={() => {
-                        history.push(RouteE.Users)
+                        history(RouteE.Users)
                     }}
                 >
                     {t('User details')}
@@ -478,7 +474,7 @@ function AccountDropdownInternal() {
                     onClick={() => {
                         async function logout() {
                             await fetch('/api/logout')
-                            history.push(RouteE.Login)
+                            history(RouteE.Login)
                         }
                         void logout()
                     }}
@@ -503,13 +499,13 @@ function Notifications() {
 function NotificationsInternal() {
     // const workflowApprovals = useWorkflowApprovals()
     const workflowApprovals = []
-    // const history = useHistory()
+    // const history = useNavigate()
     return (
         <NotificationBadge
             variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
             count={workflowApprovals.length}
             style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-            // onClick={() => history.push(RouteE.WorkflowApprovals)}
+            // onClick={() => history(RouteE.WorkflowApprovals)}
         />
     )
 }
