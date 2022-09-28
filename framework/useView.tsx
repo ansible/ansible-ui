@@ -36,6 +36,13 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
                 }
             }
         }
+        const localPerPage = localStorage.getItem('perPage')
+        if (localPerPage) {
+            const perPage = Number(localPerPage)
+            if (Number.isInteger(perPage)) {
+                return perPage
+            }
+        }
         return view?.perPage ?? 10
     })
 
@@ -104,6 +111,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
             searchParams.set('perPage', perPage.toString())
             return searchParams
         })
+        localStorage.setItem('perPage', perPage.toString())
     }, [disableQueryString, perPage, setSearchParams])
 
     useEffect(() => {
