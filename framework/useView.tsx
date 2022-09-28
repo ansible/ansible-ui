@@ -91,50 +91,62 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
 
     useEffect(() => {
         if (disableQueryString) return
-        setSearchParams((searchParams) => {
-            sortDirection === 'asc' ? searchParams.set('sort', sort) : searchParams.set('sort', `-${sort}`)
-            return searchParams
-        })
+        setSearchParams(
+            (searchParams) => {
+                sortDirection === 'asc' ? searchParams.set('sort', sort) : searchParams.set('sort', `-${sort}`)
+                return searchParams
+            },
+            { replace: true }
+        )
     }, [sort, sortDirection, setSearchParams, disableQueryString])
 
     useEffect(() => {
         if (disableQueryString) return
-        setSearchParams((searchParams) => {
-            searchParams.set('page', page.toString())
-            return searchParams
-        })
+        setSearchParams(
+            (searchParams) => {
+                searchParams.set('page', page.toString())
+                return searchParams
+            },
+            { replace: true }
+        )
     }, [disableQueryString, page, setSearchParams])
 
     useEffect(() => {
         if (disableQueryString) return
-        setSearchParams((searchParams) => {
-            searchParams.set('perPage', perPage.toString())
-            return searchParams
-        })
+        setSearchParams(
+            (searchParams) => {
+                searchParams.set('perPage', perPage.toString())
+                return searchParams
+            },
+            { replace: true }
+        )
         localStorage.setItem('perPage', perPage.toString())
     }, [disableQueryString, perPage, setSearchParams])
 
     useEffect(() => {
         if (disableQueryString) return
-        setSearchParams((searchParams) => {
-            for (const filter in filters) {
-                searchParams.set(filter, filters[filter].join(','))
-            }
-            return searchParams
-        })
+        setSearchParams(
+            (searchParams) => {
+                for (const filter in filters) {
+                    searchParams.set(filter, filters[filter].join(','))
+                }
+                return searchParams
+            },
+            { replace: true }
+        )
     }, [disableQueryString, filters, setSearchParams])
 
-    useEffect(() => {
-        if (disableQueryString) return
-        const sort = searchParams.get('sort')
-        if (sort?.startsWith('-')) {
-            setSort(sort.substring(1) ?? '')
-            setSortDirection('desc')
-        } else {
-            setSort(sort ?? '')
-            setSortDirection('asc')
-        }
-    }, [disableQueryString, searchParams])
+    // useEffect(() => {
+    //     if (disableQueryString) return
+    //     const sort = searchParams.get('sort')
+    //     if (sort?.startsWith('-')) {
+    //         setSort(sort.substring(1) ?? '')
+    //         setSortDirection('desc')
+    //     } else {
+    //         setSort(sort ?? '')
+    //         setSortDirection('asc')
+    //     }
+    // }, [disableQueryString, searchParams])
 
     return useMemo(
         () => ({
