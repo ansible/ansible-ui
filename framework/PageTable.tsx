@@ -52,7 +52,7 @@ import {
     useState,
 } from 'react'
 import { Link } from 'react-router-dom'
-import { useColumnModal } from './ColumnModal'
+import { useColumnModal } from './PageColumnModal'
 import { BulkSelector } from './components/BulkSelector'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'

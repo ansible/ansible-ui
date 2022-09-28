@@ -3,11 +3,21 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
-import { Detail, DetailsList, ITypedAction, PageHeader, PageTable, SinceCell, TypedActions, TypedActionType } from '../../../../framework'
+import {
+    Detail,
+    DetailsList,
+    ITypedAction,
+    PageBody,
+    PageHeader,
+    PageLayout,
+    PageTab,
+    PageTable,
+    PageTabs,
+    SinceCell,
+    TypedActions,
+    TypedActionType,
+} from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
-import { PageBody } from '../../../../framework/PageBody'
-import { PageLayout } from '../../../../framework/PageLayout'
-import { PageTab, PageTabs } from '../../../../framework/PageTabs'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
