@@ -39,7 +39,7 @@
         "@patternfly/react-icons": "4.90.0",
         "@patternfly/react-table": "4.108.0",
         "@react-hook/resize-observer": "1.2.6",
-        "@sinclair/typebox": "0.24.43",
+        "@sinclair/typebox": "0.24.44",
         "@types/cookie": "0.5.1",
         "@types/debounce": "1.2.1",
         "@types/json-schema": "7.0.11",
