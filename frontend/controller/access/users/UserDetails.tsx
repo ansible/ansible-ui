@@ -19,6 +19,7 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
+import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -122,10 +123,14 @@ export function UserDetailsPage() {
 function UserDetails(props: { user: User }) {
     const { t } = useTranslation()
     const { user } = props
+    const settings = useSettings()
     return (
         <>
             <Scrollable>
-                <PageSection variant="light">
+                <PageSection
+                    variant="light"
+                    style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+                >
                     <DetailsList>
                         <Detail label={t('Username')}>{user.username}</Detail>
                         <Detail label={t('First name')}>{user.first_name}</Detail>

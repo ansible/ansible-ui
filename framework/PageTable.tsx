@@ -174,15 +174,27 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     if (error) {
         return (
-            <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 64 }}>
-                <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
-                <Title headingLevel="h2" size="lg">
-                    {/* Unable to connect */}
-                    {props.errorStateTitle}
-                </Title>
-                {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
-                <EmptyStateBody>{error.message}</EmptyStateBody>
-            </EmptyState>
+            <div
+                style={{
+                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                    height: '100%',
+                }}
+            >
+                <EmptyState
+                    variant={EmptyStateVariant.small}
+                    style={{
+                        paddingTop: 64,
+                    }}
+                >
+                    <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
+                    <Title headingLevel="h2" size="lg">
+                        {/* Unable to connect */}
+                        {props.errorStateTitle}
+                    </Title>
+                    {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
+                    <EmptyStateBody>{error.message}</EmptyStateBody>
+                </EmptyState>
+            </div>
         )
     }
 
@@ -652,7 +664,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         // openColumnModal,
     } = props
 
-    const sm = useBreakpoint('sm')
+    const sm = useBreakpoint('md')
 
     let { toolbarActions } = props
     toolbarActions = toolbarActions ?? []
