@@ -97,7 +97,7 @@ export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useBreakpoint('xl')
     const isMdOrLarger = useBreakpoint('md')
-    const isSmLarger = useBreakpoint('sm')
+    // const isSmLarger = useBreakpoint('sm')
     const settings = useSettings()
     let { t } = props
     t = t ? t : (t: string) => t
