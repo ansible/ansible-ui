@@ -5,7 +5,6 @@ import ErrorBoundary from './components/ErrorBoundary'
 import { useSettings } from './Settings'
 
 export function PageBody(props: { children: ReactNode }) {
-    const lg = useBreakpoint('lg')
     const xl = useBreakpoint('xl')
     const settings = useSettings()
     const { t } = useTranslation()
@@ -27,9 +26,9 @@ export function PageBody(props: { children: ReactNode }) {
                         flexDirection: 'column',
                         height: '100%',
                         maxHeight: '100%',
-                        margin: xl ? 24 : lg ? 16 : 0,
+                        margin: xl ? 24 : 0,
                         overflow: 'hidden',
-                        border: settings.borders && lg ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        border: settings.borders && xl ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                         backgroundColor: 'var(--pf-global--BackgroundColor--100)',
                     }}
                 >

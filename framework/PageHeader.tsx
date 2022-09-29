@@ -1,7 +1,6 @@
 import {
     Breadcrumb,
     BreadcrumbItem,
-    Bullseye,
     Button,
     Flex,
     FlexItem,
@@ -119,7 +118,7 @@ export function PageHeader(props: PageHeaderProps) {
                         <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }} hasOverflowScroll>
                             {navigation}
                         </PageNavigation>
-                        {!isMdOrLarger && props.titleDocLink && (
+                        {/* {!isMdOrLarger && props.titleDocLink && (
                             <FlexItem>
                                 <Bullseye>
                                     <Button
@@ -133,7 +132,7 @@ export function PageHeader(props: PageHeaderProps) {
                                     </Button>
                                 </Bullseye>
                             </FlexItem>
-                        )}
+                        )} */}
                     </Flex>
                 </PageSection>
             )}
@@ -193,7 +192,7 @@ export function PageHeader(props: PageHeaderProps) {
                                 </Title>
                             )}
                             {isMdOrLarger && description && (
-                                <Text component="p" style={{ paddingTop: xl ? 4 : 2 }}>
+                                <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
                                     <Truncate content={description} />
                                 </Text>
                             )}

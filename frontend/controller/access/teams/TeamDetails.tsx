@@ -21,6 +21,7 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
+import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
@@ -104,10 +105,14 @@ function TeamDetailsTab(props: { team: Team }) {
     const { t } = useTranslation()
     const { team } = props
     const history = useNavigate()
+    const settings = useSettings()
     return (
         <>
             <Scrollable>
-                <PageSection variant="light">
+                <PageSection
+                    variant="light"
+                    style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+                >
                     <DetailsList>
                         <Detail label={t('Name')}>{team.name}</Detail>
                         <Detail label={t('Description')}>{team.description}</Detail>
