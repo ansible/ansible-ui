@@ -91,7 +91,7 @@
         "copy-webpack-plugin": "11.0.0",
         "coverage-istanbul-loader": "3.0.5",
         "css-loader": "6.7.1",
-        "css-minimizer-webpack-plugin": "4.1.0",
+        "css-minimizer-webpack-plugin": "4.2.0",
         "cypress": "10.9.0",
         "cypress-axe": "1.0.0",
         "eslint": "8.24.0",
