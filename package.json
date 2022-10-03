@@ -44,7 +44,7 @@
         "@types/debounce": "1.2.1",
         "@types/json-schema": "7.0.11",
         "@types/luxon": "3.0.1",
-        "@types/node": "18.7.23",
+        "@types/node": "18.8.0",
         "@types/react": "17.0.50",
         "@types/react-dom": "17.0.17",
         "@types/react-router-dom": "5.3.3",
