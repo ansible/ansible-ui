@@ -1,6 +1,6 @@
 import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
@@ -115,9 +115,13 @@ export function useOrganizationsFilters() {
 export function useOrganizationsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const navigate = useNavigate()
+    const nameClick = useCallback(
+        (organization: Organization) => navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+        [navigate]
+    )
     const nameColumn = useNameColumn({
         ...options,
-        onClick: (organization) => navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+        onClick: nameClick,
     })
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn(options)

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
@@ -10,6 +10,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
     disableSort?: boolean
     disableLinks?: boolean
 }) {
+    const { url, onClick, disableSort, disableLinks } = options ?? {}
     const { t } = useTranslation()
     const column = useMemo<ITableColumn<T>>(
         () => ({
@@ -18,13 +19,13 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
                 <TextCell
                     text={item.name}
                     iconSize="sm"
-                    to={options?.disableLinks ? undefined : options?.url?.replace(':id', item.id.toString())}
-                    onClick={!options?.disableLinks && options?.onClick ? () => options?.onClick?.(item) : undefined}
+                    to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
+                    onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
                 />
             ),
-            sort: options?.disableSort ? undefined : 'name',
+            sort: disableSort ? undefined : 'name',
         }),
-        [options, t]
+        [disableLinks, disableSort, onClick, t, url]
     )
     return column
 }
@@ -46,25 +47,28 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
     const navigate = useNavigate()
     const column: ITableColumn<
         { created?: string } | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
-    > = {
-        header: t('Created'),
-        cell: (item) => {
-            if (!item.created) return <></>
-            return (
-                <SinceCell
-                    value={item.created}
-                    author={'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined}
-                    onClick={
-                        options?.disableLinks || !('summary_fields' in item)
-                            ? undefined
-                            : () => navigate(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
-                    }
-                />
-            )
-        },
-        sort: options?.disableSort ? undefined : 'created',
-        defaultSortDirection: 'desc',
-    }
+    > = useMemo(
+        () => ({
+            header: t('Created'),
+            cell: (item) => {
+                if (!item.created) return <></>
+                return (
+                    <SinceCell
+                        value={item.created}
+                        author={'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined}
+                        onClick={
+                            options?.disableLinks || !('summary_fields' in item)
+                                ? undefined
+                                : () => navigate(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
+                        }
+                    />
+                )
+            },
+            sort: options?.disableSort ? undefined : 'created',
+            defaultSortDirection: 'desc',
+        }),
+        [navigate, options?.disableLinks, options?.disableSort, t]
+    )
     return column
 }
 
@@ -73,25 +77,28 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
     const history = useNavigate()
     const column: ITableColumn<
         { modified?: string } | { modified?: string; summary_fields?: { modified_by?: { id?: number; username?: string } } }
-    > = {
-        header: t('Modified'),
-        cell: (item) => {
-            if (!item.modified) return <></>
-            return (
-                <SinceCell
-                    value={item.modified}
-                    author={'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined}
-                    onClick={
-                        options?.disableLinks || !('summary_fields' in item)
-                            ? undefined
-                            : () => history(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
-                    }
-                />
-            )
-        },
-        sort: options?.disableSort ? undefined : 'modified',
-        defaultSortDirection: 'desc',
-    }
+    > = useMemo(
+        () => ({
+            header: t('Modified'),
+            cell: (item) => {
+                if (!item.modified) return <></>
+                return (
+                    <SinceCell
+                        value={item.modified}
+                        author={'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined}
+                        onClick={
+                            options?.disableLinks || !('summary_fields' in item)
+                                ? undefined
+                                : () => history(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
+                        }
+                    />
+                )
+            },
+            sort: options?.disableSort ? undefined : 'modified',
+            defaultSortDirection: 'desc',
+        }),
+        [history, options?.disableLinks, options?.disableSort, t]
+    )
     return column
 }
 
