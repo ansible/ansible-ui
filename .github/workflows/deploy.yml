@@ -29,7 +29,7 @@ jobs:
               uses: EndBug/add-and-commit@v7
               with:
                   default_author: github_actions
-                  message: Release v${{ env.VERSION }}
+                  message: Release v${{ env.VERSION }} [skip ci]
                   tag: v${{ env.VERSION }}
 
             - name: Setup Docker QEMU
