@@ -89,3 +89,4 @@ jobs:
                       docker load --input ansible-ui.tar
                       docker rm --force ansible-ui || true
                       docker run --name ansible-ui -d --restart unless-stopped -e PORT=443 -p 443:443 -v /root/certs:/home/node/certs ansible-ui
+                      docker image prune -a -f
