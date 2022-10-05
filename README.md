@@ -20,7 +20,7 @@ A live instance of the latest development version is running at [AnsibleDev.com]
 2. Clone Repository
   
     ```
-    git clone https://github.com/jamestalton/ansible
+    git clone git@github.com:ansible/ansible-ui.git
     ```
 
 3. Install Package Dependencies
