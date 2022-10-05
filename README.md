@@ -4,20 +4,14 @@ The UI for the [Ansible Automation Platform](https://www.ansible.com).
 
 A live instance of the latest development version is running at [AnsibleDev.com](https://ansibledev.com).
 
-test
-
-## Documentation
-
-- [Development guide](./docs/DEVELOPMENT.md)
-- [Framework](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
-
 ## Getting Started
 
 1. Prerequisites
 
-   Node 18 and NPM 8 are recommended.
+   - Node 18.x (recommended)
+   - NPM 8.x (recommended)
 
-   See [prerequsites](./docs/PREREQUSITES.md) for more information.
+    Note: The project should with older versions of node and npm but may require regenerating the package-lock.json.
 
 2. Clone Repository
   
@@ -40,3 +34,8 @@ test
     This will start the frontend and the backend in parallel.
 
     The UI will open and load after a few seconds.
+
+5. View the development documentation
+
+   - [Development guide](./docs/DEVELOPMENT.md)
+   - [Framework guide](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
