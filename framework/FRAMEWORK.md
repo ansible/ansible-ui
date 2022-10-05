@@ -6,30 +6,12 @@ The framework is made up of high level components using PatternFly components un
 This allows the framework to adjust the web application for responsive layout.
 Basic structure of the framework can be seen in the tree below.
 
--   [PageLayout](#pagelayout)
-    -   [PageHeader](#pageheader)
-    -   [PageBody](#pagebody)
-        -   [PageTable](#pagetable)
-        -   [PageTabs](#pagetabs)
-            -   [PageTab](#pagetab)
-        -   [PageDetails](#pagedetails)
-            -   [PageDetail](#pagedetail)
-        -   [PageCatalog](#pagecatalog)
-            -   [PageCatalogCard](#pagecatalogcard)
-        -   [PageDashboard](#pagedashboard)
-            -   [PageDashboardCard](#pagedashboardcard)
-            -   [PageDashboardDonut](#pagedashboarddonut)
-            -   [PageDashboardChart](#pagedashboardchart)
-        -   [PageWizard](#pagewizard)
-            -   [PageWizardStep](#pagewizardstep)
-        -   [PageForm](#pageform)
-            -   [PageFormSection](#pageformsection)
-                -   [PageFormTextInput](#pageformtextinput)
-                -   [PageFormTextArea](#pageformtextarea)
-                -   [PageFormSelect](#pageformselect)
-                -   [PageFormMultiSelect](#pageformmultiselect)
-                -   [PageFormCheckbox](#pageformcheckbox)
-                -   [PageFormRadioGroup](#pageformradiogroup)
+- [PageLayout](#pagelayout)
+  - [PageHeader](#pageheader)
+  - [PageBody](#pagebody)
+    - [PageTable](#pagetable)
+    - [PageTabs](#pagetabs)
+    - [PageForm](#pageform)
 
 ## PageLayout
 
@@ -51,6 +33,7 @@ The PageLayout is used at the start of each page. It provides a consistent layou
 The PageHeader is used at the start of each page. It provides a consistent layout of header elements. It supports responsive layout based on the size of the window.
 
 ```tsx
+(
 <Page>
     <PageHeader
         breadcrumbs={breadcrumbs}
@@ -60,6 +43,7 @@ The PageHeader is used at the start of each page. It provides a consistent layou
         headerActions={actions}
     />
 </Page>
+)
 ```
 
 |       Property | Description                                                                |
@@ -74,19 +58,37 @@ The PageHeader is used at the start of each page. It provides a consistent layou
 
 ### PageBody
 
+The page table handles the responsive layout of the body section of the page.
+
 #### PageTable
 
+The page table handles the logic for tables on a page.
+
+```tsx
+(
+<PageTable<User>
+    toolbarFilters={toolbarFilters}
+    toolbarActions={toolbarActions}
+    tableColumns={tableColumns}
+    rowActions={rowActions}
+    {...view}
+/>
+)
+```
+
 #### PageTabs
+
+The page tabs are used for details pages in the application.
 
 ```tsx
 (
 <Page>
   <PageHeader ... />
-  <PageTabs alerts={alerts} loading={loading}>
-    <PageTab title="Tab title" alerts={alerts}>
+  <PageTabs >
+    <PageTab title="Tab title" >
       ...
     </PageTab>
-    <PageTab title="Tab title" alerts={alerts}>
+    <PageTab title="Tab title" >
       ...
     </PageTab>
   </PageTabs>
@@ -94,40 +96,6 @@ The PageHeader is used at the start of each page. It provides a consistent layou
 )
 ```
 
-##### PageTab
-
-#### PageDetails
-
-##### PageDetail
-
-#### PageCatalog
-
-##### PageCatalogCard
-
-#### PageDashboard
-
-##### PageDashboardCard
-
-##### PageDashboardDonut
-
-##### PageDashboardChart
-
-#### PageWizard
-
-##### PageWizardStep
-
 #### PageForm
 
-##### PageFormSection
-
-###### PageFormTextInput
-
-###### PageFormTextArea
-
-###### PageFormSelect
-
-###### PageFormMultiSelect
-
-###### PageFormCheckbox
-
-###### PageFormRadioGroup
+The page form handles form input on a page. It uses [react-hook-form](https://react-hook-form.com/) for performance.
