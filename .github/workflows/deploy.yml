@@ -10,6 +10,8 @@ jobs:
         concurrency: ansible-ui
         steps:
             - uses: actions/checkout@v2
+              with:
+                  token: ${{ secrets.GH_TOKEN }}
 
             - uses: actions/setup-node@v2
               with:
