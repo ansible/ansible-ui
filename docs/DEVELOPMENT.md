@@ -27,17 +27,19 @@ graph LR
     browser(Web Browser)
     end
 
-    subgraph Ansible UI Host
-    browser-->backend
+    subgraph Ansible UI
+    browser-->backend(Backend Proxy)
     end
 
-    
-    subgraph Ansible Hub Host
+    subgraph Controller 2
+    backend-->controller2(Controller API)
+    end
+
+    subgraph Controller 1
+    backend-->controller1(Controller API)
+    end
+
+    subgraph Hub
     backend-->hub(Hub API)
     end
-
-    subgraph Ansible Controller Host
-    backend(Ansible UI Backend Proxy)-->controller(Controller API)
-    end
-    
 ```
