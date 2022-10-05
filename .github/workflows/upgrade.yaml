@@ -5,7 +5,7 @@ on:
         - cron: '40 2 * * *'
 jobs:
     npm-check-updates:
-        if: (github.event_name == 'schedule' && github.repository == 'jamestalton/ansible') || (github.event_name != 'schedule')
+        if: (github.event_name == 'schedule' && github.repository == 'ansible/ansible-ui') || (github.event_name != 'schedule')
         runs-on: ubuntu-latest
         concurrency: ansible-ui
         steps:

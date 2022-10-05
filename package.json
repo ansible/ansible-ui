@@ -1,5 +1,5 @@
 {
-    "name": "@ansible/console",
+    "name": "@ansible/ansible-ui",
     "version": "0.0.105",
     "type": "module",
     "scripts": {
