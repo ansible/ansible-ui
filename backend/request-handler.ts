@@ -7,11 +7,7 @@ import { serve } from './serve'
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
     try {
         if (req.url.startsWith('/api')) {
-            proxyHandler(req, res, {
-                changeHost: process.env.NODE_ENV === 'production',
-                changeOrigin: process.env.NODE_ENV === 'production',
-                changeReferrer: process.env.NODE_ENV === 'production',
-            })
+            proxyHandler(req, res)
         } else {
             void serve(req, res)
         }
