@@ -21,11 +21,7 @@ import {
 } from './constants'
 import { logger } from './logger'
 
-export function proxyHandler(
-    req: Http2ServerRequest,
-    res: Http2ServerResponse,
-    options?: { changeHost?: boolean; changeOrigin?: boolean; changeReferrer?: boolean }
-): void {
+export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
     const target = req.headers['x-server']
     if (!target || typeof target !== 'string') {
         res.writeHead(HTTP_STATUS_UNAUTHORIZED).end()
@@ -51,9 +47,11 @@ export function proxyHandler(
 
     const proxyUrl = new URL(target)
 
-    if (options?.changeHost) headers[HTTP2_HEADER_HOST] = proxyUrl.hostname
-    if (options?.changeOrigin) headers['origin'] = proxyUrl.toString()
-    if (options?.changeReferrer) headers[HTTP2_HEADER_REFERER] = proxyUrl.toString()
+    if (proxyUrl.hostname !== 'localhost') {
+        headers[HTTP2_HEADER_HOST] = proxyUrl.hostname
+        headers['origin'] = proxyUrl.toString()
+        headers[HTTP2_HEADER_REFERER] = proxyUrl.toString()
+    }
 
     const requestOptions: RequestOptions = {
         protocol: proxyUrl.protocol,
