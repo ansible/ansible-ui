@@ -99,13 +99,19 @@ function handleRequestError(err: NodeJS.ErrnoException | null, res: Http2ServerR
         switch (err.code) {
             case 'ECONNREFUSED':
                 if (!res.headersSent) {
-                    res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
+                    res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE)
+                }
+                if (!res.closed) {
+                    res.end()
                 }
                 break
             default:
                 logger.error(err)
                 if (!res.headersSent) {
-                    res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE).end()
+                    res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE)
+                }
+                if (!res.closed) {
+                    res.end()
                 }
                 break
         }
@@ -118,7 +124,10 @@ function handlePipelineError(err: NodeJS.ErrnoException | null, res: Http2Server
             default:
                 logger.error(err)
                 if (!res.headersSent) {
-                    res.writeHead(HTTP_STATUS_BAD_GATEWAY).end()
+                    res.writeHead(HTTP_STATUS_BAD_GATEWAY)
+                }
+                if (!res.closed) {
+                    res.end()
                 }
                 break
         }
