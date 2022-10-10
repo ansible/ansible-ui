@@ -9,6 +9,7 @@ import { CreateUser } from './controller/access/users/CreateUser'
 import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
+import { ExecutionEnvironments } from './controller/administration/execution-environments/ExecutionEnvironment'
 import { Credentials } from './controller/resources/credentials/Credentials'
 import Debug from './controller/settings/Debug'
 import Settings from './controller/settings/Settings'
@@ -47,14 +48,14 @@ export function DemoRouter(): JSX.Element {
             <Route path={RouteE.CreateTeam} element={<EditTeam />} />
             <Route path={RouteE.EditTeam} element={<EditTeam />} />
 
-            {/* <Route path={RouteE.CredentialTypes} element={CredentialTypesPage} />
-            <Route path={RouteE.Notifications} element={NotificationsPage} />
-            <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} />
-            <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} />
-            <Route path={RouteE.Instances} element={InstancesPage} />
-            <Route path={RouteE.Applications} element={ApplicationsPage} />
-            <Route path={RouteE.ExecutionEnvironments} element={ExecutionEnvironmentsPage} />
-            <Route path={RouteE.TopologyView} element={TopologyView} /> */}
+            {/* <Route path={RouteE.CredentialTypes} element={CredentialTypesPage} /> */}
+            {/* <Route path={RouteE.Notifications} element={NotificationsPage} /> */}
+            {/* <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} /> */}
+            {/* <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} /> */}
+            {/* <Route path={RouteE.Instances} element={InstancesPage} /> */}
+            {/* <Route path={RouteE.Applications} element={ApplicationsPage} /> */}
+            <Route path={RouteE.ExecutionEnvironments} element={<ExecutionEnvironments />} />
+            {/* <Route path={RouteE.TopologyView} element={TopologyView} /> */}
 
             <Route path={RouteE.Settings} element={Settings} />
 
