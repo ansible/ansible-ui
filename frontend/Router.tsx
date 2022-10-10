@@ -9,6 +9,7 @@ import { CreateUser } from './controller/access/users/CreateUser'
 import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
+import { Credentials } from './controller/resources/credentials/Credentials'
 import Debug from './controller/settings/Debug'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
@@ -17,19 +18,19 @@ import { RouteE } from './route'
 export function DemoRouter(): JSX.Element {
     return (
         <Routes>
-            <Route path={RouteE.Dashboard} element={Dashboard} />
-            {/* <Route path={RouteE.Jobs} component={JobsPage} /> */}
-            {/* <Route path={RouteE.Schedules} component={SchedulesPage} /> */}
-            {/* <Route path={RouteE.ActivityStream} component={ActivityStreeam} /> */}
-            {/* <Route path={RouteE.WorkflowApprovals} component={WorkflowApprovalsPage} /> */}
+            <Route path={RouteE.Dashboard} element={<Dashboard />} />
+            {/* <Route path={RouteE.Jobs} element={JobsPage} /> */}
+            {/* <Route path={RouteE.Schedules} element={SchedulesPage} /> */}
+            {/* <Route path={RouteE.ActivityStream} element={ActivityStreeam} /> */}
+            {/* <Route path={RouteE.WorkflowApprovals} element={WorkflowApprovalsPage} /> */}
 
-            {/* <Route path={RouteE.Templates} component={TemplatesPage} /> */}
-            {/* <Route path={RouteE.Credentials} component={CredentialsPage} />
-            <Route path={RouteE.Projects} component={ProjectsPage} />
-            <Route path={RouteE.ProjectDetails} component={ProjectsDetailsPage} />
-            <Route path={RouteE.ProjectEdit} component={ProjectEditPage} />
-            <Route path={RouteE.Inventories} component={InventoriesPage} />
-            <Route path={RouteE.Hosts} component={HostsPage} /> */}
+            {/* <Route path={RouteE.Templates} element={TemplatesPage} /> */}
+            <Route path={RouteE.Credentials} element={<Credentials />} />
+            {/* <Route path={RouteE.Projects} element={ProjectsPage} /> */}
+            {/* <Route path={RouteE.ProjectDetails} element={ProjectsDetailsPage} /> */}
+            {/* <Route path={RouteE.ProjectEdit} element={ProjectEditPage} /> */}
+            {/* <Route path={RouteE.Inventories} element={InventoriesPage} /> */}
+            {/* <Route path={RouteE.Hosts} element={HostsPage} /> */}
 
             <Route path={RouteE.Organizations} element={<Organizations />} />
             <Route path={RouteE.OrganizationDetails} element={<OrganizationDetails />} />
@@ -46,14 +47,14 @@ export function DemoRouter(): JSX.Element {
             <Route path={RouteE.CreateTeam} element={<EditTeam />} />
             <Route path={RouteE.EditTeam} element={<EditTeam />} />
 
-            {/* <Route path={RouteE.CredentialTypes} component={CredentialTypesPage} />
-            <Route path={RouteE.Notifications} component={NotificationsPage} />
-            <Route path={RouteE.ManagementJobs} component={ManagementJobsPage} />
-            <Route path={RouteE.InstanceGroups} component={InstanceGroupsPage} />
-            <Route path={RouteE.Instances} component={InstancesPage} />
-            <Route path={RouteE.Applications} component={ApplicationsPage} />
-            <Route path={RouteE.ExecutionEnvironments} component={ExecutionEnvironmentsPage} />
-            <Route path={RouteE.TopologyView} component={TopologyView} /> */}
+            {/* <Route path={RouteE.CredentialTypes} element={CredentialTypesPage} />
+            <Route path={RouteE.Notifications} element={NotificationsPage} />
+            <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} />
+            <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} />
+            <Route path={RouteE.Instances} element={InstancesPage} />
+            <Route path={RouteE.Applications} element={ApplicationsPage} />
+            <Route path={RouteE.ExecutionEnvironments} element={ExecutionEnvironmentsPage} />
+            <Route path={RouteE.TopologyView} element={TopologyView} /> */}
 
             <Route path={RouteE.Settings} element={Settings} />
 
