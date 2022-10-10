@@ -300,21 +300,25 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                                 <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
                             </NavItem>
                         </NavExpandable> */}
-                        {/* <NavExpandable
+                        <NavExpandable
                             key="resources"
-                            title="Resources"
+                            title={t('Resources')}
                             isExpanded
                             isActive={isRouteActive(
                                 [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
                                 location
                             )}
                         >
-                            <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
                                 <Link to={RouteE.Templates}>Templates</Link>
+                            </NavItem> */}
+                            <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                {t('Credentials')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Credentials, location)}>
-                                <Link to={RouteE.Credentials}>Credentials</Link>
-                            </NavItem>
+
+                            {/* <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
+                                <Link to={RouteE.Templates}>Templates</Link>
+                            </NavItem>                
                             <NavItem isActive={isRouteActive(RouteE.Projects, location)}>
                                 <Link to={RouteE.Projects}>Projects</Link>
                             </NavItem>
@@ -323,8 +327,8 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Hosts, location)}>
                                 <Link to={RouteE.Hosts}>Hosts</Link>
-                            </NavItem>
-                        </NavExpandable> */}
+                            </NavItem> */}
+                        </NavExpandable>
                         <NavExpandable
                             key="access"
                             title={t('Access')}

@@ -190,6 +190,13 @@
             "help": "A user is someone who has access to Tower with associated permissions and credentials."
         }
     },
+    "credentials": {
+        "title": {
+            "description": "Credentials are utilized by Tower for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.",
+            "help": "Credentials are utilized by Tower for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system. You can grant users and teams the ability to use these credentials, without actually exposing the credential to the user. If you have a user move to a different team or leave the organization, you don’t have to re-key all of your systems just because that credential was available in Tower."
+        }
+    },
+
     "Users": "Users",
     "Vertical labels": "Vertical labels",
     "Welcome to the": "Welcome to the",

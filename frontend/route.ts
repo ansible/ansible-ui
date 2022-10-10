@@ -10,7 +10,12 @@ export enum RouteE {
 
     // Resources
     Templates = '/controller/templates',
+
     Credentials = '/controller/credentials',
+    CredentialDetails = '/controller/credentials/details/:id',
+    CreateCredential = '/controller/credentials/create',
+    EditCredential = '/controller/credentials/edit/:id',
+
     Projects = '/controller/projects',
     ProjectDetails = '/controller/projects/:id/details',
     ProjectEdit = '/controller/projects/:id/edit',
