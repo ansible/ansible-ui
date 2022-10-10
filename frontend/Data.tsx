@@ -2,6 +2,7 @@
 import ky, { HTTPError, ResponsePromise } from 'ky'
 import { Input, Options } from 'ky/distribution/types/options'
 import { SWRConfiguration } from 'swr'
+import { RouteE } from './route'
 
 export const headers: Record<string, string> = {}
 
@@ -60,7 +61,7 @@ async function requestCommon<ResponseBody>(url: string, options: Options, method
         if (err instanceof HTTPError) {
             switch (err.response.status) {
                 case 401:
-                    location.replace('/login')
+                    location.replace(RouteE.Login)
                     break
             }
         }
