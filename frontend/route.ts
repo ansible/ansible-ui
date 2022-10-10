@@ -2,55 +2,55 @@
 
 export enum RouteE {
     // Views
-    Dashboard = '/dashboard',
-    Jobs = '/jobs',
-    Schedules = '/schedules',
-    ActivityStream = '/activity-stream',
-    WorkflowApprovals = '/workflow-approvals',
+    Dashboard = '/controller/dashboard',
+    Jobs = '/controller/jobs',
+    Schedules = '/controller/schedules',
+    ActivityStream = '/controller/activity-stream',
+    WorkflowApprovals = '/controller/workflow-approvals',
 
     // Resources
-    Templates = '/templates',
+    Templates = '/controller/templates',
 
-    Credentials = '/credentials',
-    CredentialDetails = '/credentials/details/:id',
-    CreateCredential = '/credentials/create',
-    EditCredential = '/credentials/edit/:id',
-
-    Projects = '/projects',
-    ProjectDetails = '/projects/:id/details',
-    ProjectEdit = '/projects/:id/edit',
-    Inventories = '/inventories',
-    Hosts = '/hosts',
+    Credentials = '/controller/credentials',
+    CredentialDetails = '/controller/credentials/details/:id',
+    CreateCredential = '/controller/credentials/create',
+    EditCredential = '/controller/credentials/edit/:id',
+    
+    Projects = '/controller/projects',
+    ProjectDetails = '/controller/projects/:id/details',
+    ProjectEdit = '/controller/projects/:id/edit',
+    Inventories = '/controller/inventories',
+    Hosts = '/controller/hosts',
 
     // Access
-    Organizations = '/organizations',
-    OrganizationDetails = '/organizations/details/:id',
-    CreateOrganization = '/organizations/create',
-    EditOrganization = '/organizations/edit/:id',
+    Organizations = '/controller/organizations',
+    OrganizationDetails = '/controller/organizations/details/:id',
+    CreateOrganization = '/controller/organizations/create',
+    EditOrganization = '/controller/organizations/edit/:id',
 
-    Users = '/users',
-    UserDetails = '/users/details/:id',
-    CreateUser = '/users/create',
-    EditUser = '/users/edit/:id',
+    Users = '/controller/users',
+    UserDetails = '/controller/users/details/:id',
+    CreateUser = '/controller/users/create',
+    EditUser = '/controller/users/edit/:id',
 
-    Teams = '/teams',
-    TeamDetails = '/teams/details/:id',
-    CreateTeam = '/teams/create',
-    EditTeam = '/teams/edit/:id',
+    Teams = '/controller/teams',
+    TeamDetails = '/controller/teams/details/:id',
+    CreateTeam = '/controller/teams/create',
+    EditTeam = '/controller/teams/edit/:id',
 
     // Administration
-    CredentialTypes = '/credential-types',
-    Notifications = '/notifications',
-    ManagementJobs = '/management-jobs',
-    InstanceGroups = '/instance-groups',
-    Instances = '/instances',
-    Applications = '/applications',
-    ExecutionEnvironments = '/execution-environments',
-    TopologyView = '/topology-view',
+    CredentialTypes = '/controller/credential-types',
+    Notifications = '/controller/notifications',
+    ManagementJobs = '/controller/management-jobs',
+    InstanceGroups = '/controller/instance-groups',
+    Instances = '/controller/instances',
+    Applications = '/controller/applications',
+    ExecutionEnvironments = '/controller/execution-environments',
+    TopologyView = '/controller/topology-view',
 
     // Settings
-    Settings = '/settings',
+    Settings = '/controller/settings',
 
     Debug = '/debug',
-    Login = '/login',
+    Login = '/controller/login',
 }
