@@ -11,6 +11,9 @@ import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
 import { ExecutionEnvironments } from './controller/administration/execution-environments/ExecutionEnvironment'
 import { Credentials } from './controller/resources/credentials/Credentials'
+import { Hosts } from './controller/resources/hosts/Hosts'
+import { Inventories } from './controller/resources/inventories/Inventories'
+import { Projects } from './controller/resources/projects/Projects'
 import Debug from './controller/settings/Debug'
 import Settings from './controller/settings/Settings'
 import Dashboard from './controller/views/Dashboard'
@@ -26,12 +29,16 @@ export function DemoRouter(): JSX.Element {
             {/* <Route path={RouteE.WorkflowApprovals} element={WorkflowApprovalsPage} /> */}
 
             {/* <Route path={RouteE.Templates} element={TemplatesPage} /> */}
+
             <Route path={RouteE.Credentials} element={<Credentials />} />
-            {/* <Route path={RouteE.Projects} element={ProjectsPage} /> */}
+
+            <Route path={RouteE.Projects} element={<Projects />} />
             {/* <Route path={RouteE.ProjectDetails} element={ProjectsDetailsPage} /> */}
             {/* <Route path={RouteE.ProjectEdit} element={ProjectEditPage} /> */}
-            {/* <Route path={RouteE.Inventories} element={InventoriesPage} /> */}
-            {/* <Route path={RouteE.Hosts} element={HostsPage} /> */}
+
+            <Route path={RouteE.Inventories} element={<Inventories />} />
+
+            <Route path={RouteE.Hosts} element={<Hosts />} />
 
             <Route path={RouteE.Organizations} element={<Organizations />} />
             <Route path={RouteE.OrganizationDetails} element={<OrganizationDetails />} />
