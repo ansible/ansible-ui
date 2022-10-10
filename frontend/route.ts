@@ -17,10 +17,19 @@ export enum RouteE {
     EditCredential = '/controller/credentials/edit/:id',
 
     Projects = '/controller/projects',
-    ProjectDetails = '/controller/projects/:id/details',
-    ProjectEdit = '/controller/projects/:id/edit',
+    ProjectDetails = '/controller/projects/details/:id',
+    CreateProject = '/controller/projects/create',
+    EditProject = '/controller/projects/edit/:id',
+
     Inventories = '/controller/inventories',
+    InventoryDetails = '/controller/inventories/details/:id',
+    CreateInventory = '/controller/inventories/create',
+    EditInventory = '/controller/inventories/edit/:id',
+
     Hosts = '/controller/hosts',
+    HostsDetails = '/controller/hosts/details/:id',
+    CreateHosts = '/controller/hosts/create',
+    EditHosts = '/controller/hosts/edit/:id',
 
     // Access
     Organizations = '/controller/organizations',
