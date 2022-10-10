@@ -27,9 +27,9 @@ export enum RouteE {
     EditInventory = '/controller/inventories/edit/:id',
 
     Hosts = '/controller/hosts',
-    HostsDetails = '/controller/hosts/details/:id',
-    CreateHosts = '/controller/hosts/create',
-    EditHosts = '/controller/hosts/edit/:id',
+    HostDetails = '/controller/hosts/details/:id',
+    CreateHost = '/controller/hosts/create',
+    EditHost = '/controller/hosts/edit/:id',
 
     // Access
     Organizations = '/controller/organizations',
