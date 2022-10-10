@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
-import { useExecutionEnvironmentsColumns } from './ExecutionEnvironment'
-import { ExecutionEnvironment } from './ExecutionEnvironments'
+import { ExecutionEnvironment } from './ExecutionEnvironment'
+import { useExecutionEnvironmentsColumns } from './ExecutionEnvironments'
 
 export function useDeleteExecutionEnvironments(callback: (executionEnvironments: ExecutionEnvironment[]) => void) {
     const { t } = useTranslation()

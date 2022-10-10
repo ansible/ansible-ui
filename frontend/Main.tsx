@@ -377,9 +377,6 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                             {/* <NavItem isActive={isRouteActive(RouteE.Applications, location)}>
                                 <Link to={RouteE.Applications}>Applications</Link>
                             </NavItem> */}
-                            {/* <NavItem isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}>
-                                <Link to={RouteE.ExecutionEnvironments}>Execution environments</Link>
-                            </NavItem> */}
                             <NavItem
                                 isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}
                                 onClick={() => onClick(RouteE.ExecutionEnvironments)}
