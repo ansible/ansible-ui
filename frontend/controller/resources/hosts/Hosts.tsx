@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
@@ -98,14 +98,11 @@ export function useHostsFilters() {
 }
 
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-    // const navigate = useNavigate()
-    // const nameClick = useCallback(
-    //     (host: Host) => navigate(RouteE.HostDetails.replace(':id', host.id.toString())),
-    //     [navigate]
-    // )
+    const navigate = useNavigate()
+    const nameClick = useCallback((host: Host) => navigate(RouteE.HostDetails.replace(':id', host.id.toString())), [navigate])
     const nameColumn = useNameColumn({
         ...options,
-        // onClick: nameClick,
+        onClick: nameClick,
     })
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn(options)

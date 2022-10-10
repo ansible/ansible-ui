@@ -9,7 +9,7 @@ import { CreateUser } from './controller/access/users/CreateUser'
 import { EditUser } from './controller/access/users/EditUser'
 import { UserDetailsPage } from './controller/access/users/UserDetails'
 import { Users } from './controller/access/users/Users'
-import { ExecutionEnvironments } from './controller/administration/execution-environments/ExecutionEnvironment'
+import { ExecutionEnvironments } from './controller/administration/execution-environments/ExecutionEnvironments'
 import { Credentials } from './controller/resources/credentials/Credentials'
 import { Hosts } from './controller/resources/hosts/Hosts'
 import { Inventories } from './controller/resources/inventories/Inventories'
@@ -64,9 +64,9 @@ export function DemoRouter(): JSX.Element {
             <Route path={RouteE.ExecutionEnvironments} element={<ExecutionEnvironments />} />
             {/* <Route path={RouteE.TopologyView} element={TopologyView} /> */}
 
-            <Route path={RouteE.Settings} element={Settings} />
+            <Route path={RouteE.Settings} element={<Settings />} />
 
-            <Route path={RouteE.Debug} element={Debug} />
+            <Route path={RouteE.Debug} element={<Debug />} />
             <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
         </Routes>
     )

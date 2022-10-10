@@ -952,7 +952,13 @@ export function TextCell(props: {
                 </SplitItem>
             ) : props.onClick !== undefined ? (
                 <SplitItem onClick={props.onClick}>
-                    <Button variant="link" isInline>
+                    <Button
+                        variant="link"
+                        isInline
+                        style={{
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
                         {props.text}
                     </Button>
                 </SplitItem>

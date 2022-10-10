@@ -1,16 +1,24 @@
 import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+    useOrganizationNameColumn,
+} from '../../../common/columns'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
+    useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
+import { getStatus } from '../../../common/status'
 import { RouteE } from '../../../route'
 import { useControllerView } from '../../useControllerView'
 import { Project } from './Project'
@@ -88,31 +96,49 @@ export function Projects() {
 export function useProjectsFilters() {
     const nameToolbarFilter = useNameToolbarFilter()
     const descriptionToolbarFilter = useDescriptionToolbarFilter()
+    const organizationToolbarFilter = useOrganizationToolbarFilter()
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
+        [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
     )
     return toolbarFilters
 }
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-    // const navigate = useNavigate()
-    // const nameClick = useCallback(
-    //     (project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())),
-    //     [navigate]
-    // )
-    const nameColumn = useNameColumn({
-        ...options,
-        // onClick: nameClick,
-    })
+    const { t } = useTranslation()
+    const navigate = useNavigate()
+    const nameClick = useCallback((project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())), [navigate])
+    const nameColumn = useNameColumn({ ...options, onClick: nameClick })
     const descriptionColumn = useDescriptionColumn()
+    const organizationColumn = useOrganizationNameColumn(options)
     const createdColumn = useCreatedColumn(options)
     const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<Project>[]>(
-        () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-        [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+        () => [
+            nameColumn,
+            descriptionColumn,
+            {
+                header: t('Status'),
+                cell: (project) => {
+                    const status = getStatus(project.status)
+                    return <TextCell icon={status?.icon} iconSize="sm" text={status?.text} />
+                },
+            },
+            {
+                header: t('Type'),
+                cell: (project) => project.scm_type,
+            },
+            {
+                header: t('Revision'),
+                cell: (project) => project.scm_revision,
+            },
+            organizationColumn,
+            createdColumn,
+            modifiedColumn,
+        ],
+        [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
     )
     return tableColumns
 }

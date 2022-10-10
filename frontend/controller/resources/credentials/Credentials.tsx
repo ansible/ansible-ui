@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
@@ -98,21 +98,39 @@ export function useCredentialsFilters() {
 }
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-    // const navigate = useNavigate()
-    // const nameClick = useCallback(
-    //     (credential: Credential) => navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
-    //     [navigate]
-    // )
+    const { t } = useTranslation()
+    const navigate = useNavigate()
+    const nameClick = useCallback(
+        (credential: Credential) => navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
+        [navigate]
+    )
     const nameColumn = useNameColumn({
         ...options,
-        // onClick: nameClick,
+        onClick: nameClick,
     })
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn(options)
     const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<Credential>[]>(
-        () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-        [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+        () => [
+            nameColumn,
+            descriptionColumn,
+            {
+                header: t('Credential type'),
+                cell: (credential) => {
+                    switch (credential.credential_type) {
+                        case 1:
+                            return t('Machine')
+                        case 18:
+                            return t('Ansible Galaxy/Automation Hub API Token')
+                    }
+                    return t('Unknown')
+                },
+            },
+            createdColumn,
+            modifiedColumn,
+        ],
+        [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
     )
     return tableColumns
 }
