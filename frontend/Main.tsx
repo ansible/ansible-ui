@@ -315,19 +315,15 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                             <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Credentials')}
                             </NavItem>
-
-                            {/* <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
-                                <Link to={RouteE.Templates}>Templates</Link>
-                            </NavItem>                
-                            <NavItem isActive={isRouteActive(RouteE.Projects, location)}>
-                                <Link to={RouteE.Projects}>Projects</Link>
+                            <NavItem isActive={isRouteActive(RouteE.Projects, location)} onClick={() => onClick(RouteE.Projects)}>
+                                {t('Projects')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Inventories, location)}>
-                                <Link to={RouteE.Inventories}>Inventories</Link>
+                            <NavItem isActive={isRouteActive(RouteE.Inventories, location)} onClick={() => onClick(RouteE.Inventories)}>
+                                {t('Inventories')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Hosts, location)}>
-                                <Link to={RouteE.Hosts}>Hosts</Link>
-                            </NavItem> */}
+                            <NavItem isActive={isRouteActive(RouteE.Hosts, location)} onClick={() => onClick(RouteE.Hosts)}>
+                                {t('Hosts')}
+                            </NavItem>
                         </NavExpandable>
                         <NavExpandable
                             key="access"
