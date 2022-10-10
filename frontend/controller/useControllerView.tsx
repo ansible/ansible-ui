@@ -13,6 +13,8 @@ export type IControllerView<T extends { id: number }> = IView & {
     setPerPage: (perPage: number) => void
     selectedItems: T[]
     unselectAll: () => void
+    unselectItem: (item: T) => void
+    refresh: () => Promise<ItemsResponse<T> | undefined>
 }
 
 export function useControllerView<T extends { id: number }>(
@@ -20,7 +22,7 @@ export function useControllerView<T extends { id: number }>(
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[],
     disableQueryString?: boolean
-) {
+): IControllerView<T> {
     const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined }, disableQueryString)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
