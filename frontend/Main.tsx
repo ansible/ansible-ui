@@ -262,7 +262,7 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
     return (
         <PageSidebar
             isNavOpen={isNavOpen}
-            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined }}
             nav={
                 <Nav>
                     <NavList>
@@ -345,7 +345,7 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                                 {t('Users')}
                             </NavItem>
                         </NavExpandable>
-                        {/* <NavExpandable
+                        <NavExpandable
                             key="administration"
                             title="Administration"
                             isExpanded
@@ -363,31 +363,37 @@ function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => voi
                                 location
                             )}
                         >
-                            <NavItem isActive={isRouteActive(RouteE.CredentialTypes, location)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.CredentialTypes, location)}>
                                 <Link to={RouteE.CredentialTypes}>Credential types</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Notifications, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.Notifications, location)}>
                                 <Link to={RouteE.Notifications}>Notifications</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.ManagementJobs, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.ManagementJobs, location)}>
                                 <Link to={RouteE.ManagementJobs}>Management jobs</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.InstanceGroups, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.InstanceGroups, location)}>
                                 <Link to={RouteE.InstanceGroups}>Instance groups</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Instances, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.Instances, location)}>
                                 <Link to={RouteE.Instances}>Instances</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Applications, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.Applications, location)}>
                                 <Link to={RouteE.Applications}>Applications</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}>
+                            </NavItem> */}
+                            {/* <NavItem isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}>
                                 <Link to={RouteE.ExecutionEnvironments}>Execution environments</Link>
+                            </NavItem> */}
+                            <NavItem
+                                isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}
+                                onClick={() => onClick(RouteE.ExecutionEnvironments)}
+                            >
+                                {t('Execution Environments')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.TopologyView, location)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.TopologyView, location)}>
                                 <Link to={RouteE.TopologyView}>Topology view</Link>
-                            </NavItem>
-                        </NavExpandable> */}
+                            </NavItem> */}
+                        </NavExpandable>
                         {/* <NavGroup>
                             <NavItem isActive={isRouteActive(RouteE.Settings, location)}>
                                 <Link to={RouteE.Settings}>Settings</Link>

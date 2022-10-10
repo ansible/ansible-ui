@@ -45,7 +45,12 @@ export enum RouteE {
     InstanceGroups = '/controller/instance-groups',
     Instances = '/controller/instances',
     Applications = '/controller/applications',
+
     ExecutionEnvironments = '/controller/execution-environments',
+    ExecutionEnvironmentDetails = '/controller/execution-environments/details/:id',
+    CreateExecutionEnvironment = '/controller/execution-environments/create',
+    EditExecutionEnvironment = '/controller/execution-environments/edit/:id',
+
     TopologyView = '/controller/topology-view',
 
     // Settings
