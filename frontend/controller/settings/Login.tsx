@@ -19,6 +19,8 @@ export default function Login() {
             placeholder: t('Enter server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
+            variant: 'select',
+            options: [{ label: 'Test', description: 'description', value: 'https://localhost:8043', type: 'controller' }],
         }),
         username: Type.String({
             title: t('Username'),

@@ -15,7 +15,9 @@ import {
     MenuItem,
     PageSection,
     Select,
+    SelectGroup,
     SelectOption,
+    SelectOptionObject,
     SelectVariant,
     TextArea,
     TextInput,
@@ -26,8 +28,9 @@ import {
 } from '@patternfly/react-core'
 import { CaretDownIcon, EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons'
 import * as Ajv from 'ajv'
+import deepEqual from 'fast-deep-equal'
 import { JSONSchema6 } from 'json-schema'
-import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useContext, useState } from 'react'
+import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useCallback, useContext, useState } from 'react'
 import {
     DeepPartial,
     ErrorOption,
@@ -291,59 +294,125 @@ export function FormTextArea(props: {
     )
 }
 
-export function FormSelect(props: {
+export interface FormInputPopover {
+    title?: string
+    body?: string[]
+    link?: { label: string; url: string }
+}
+
+export interface FormSelectOption<T> {
+    group?: string
     label: string
+    description?: string
+    value: T
+}
+
+export interface FormSelectProps<T> {
+    id?: string
     name: string
-    helperText?: string
+    label: string
+    popover?: FormInputPopover
+    placeholder?: string
+    help?: string
     required?: boolean
-    children?: ReactNode
     footer?: ReactNode
-    isCreatable?: boolean
-}) {
-    const { control } = useFormContext()
+    create?: boolean
+    options: FormSelectOption<T>[]
+}
+
+export function FormSelect<T>(props: FormSelectProps<T>) {
     const {
         field,
-        fieldState: { error },
-    } = useController({ control, name: props.name })
-
+        fieldState: { error: fieldError },
+    } = useController({ name: props.name })
     const [open, setOpen] = useState(false)
-    const id = props.name
-    let errorMessage: string | undefined
-    switch (error?.type) {
-        case 'required':
-            errorMessage = props.label + ' is required.'
-            break
-        default:
-            errorMessage = error?.type
-            break
-    }
+    const id = props.id ?? props.name
+    const error = fieldError !== undefined && fieldError.message
+
+    const { options } = props
+    options.sort((l, r) => {
+        if ((l.group ?? '') < (r.group ?? '')) return -1
+        if ((l.group ?? '') > (r.group ?? '')) return 1
+        if (l.label < r.label) return -1
+        if (l.label > r.label) return 1
+        return 0
+    })
+    const selectedIndex = options.findIndex((option) => deepEqual(option.value, field.value))
+    const groups = options.reduce<
+        Record<
+            string,
+            {
+                group?: string
+                label: string
+                description?: string
+                value: T
+            }[]
+        >
+    >((groups, option) => {
+        const group = option.group ?? ''
+        let optionsArray = groups[group]
+        if (!optionsArray) {
+            optionsArray = []
+            groups[group] = optionsArray
+        }
+        optionsArray.push(option)
+        return groups
+    }, {})
+    const isGrouped = Object.keys(groups).length > 1 || (Object.keys(groups).length === 1 && Object.keys(groups)[0] !== '')
+
+    const onSelect = useCallback(
+        (_event, value: string | SelectOptionObject) => {
+            if (typeof value !== 'string') {
+                value = value.toString()
+            }
+            const selectedIndex = Number(value)
+            const selected = options[selectedIndex].value
+            field.onChange(selected)
+            setOpen(false)
+        },
+        [field, options]
+    )
     return (
         <FormGroup
+            id={`${id}-form-group`}
             fieldId={id}
             label={props.label}
-            helperTextInvalid={errorMessage}
-            helperText={props.helperText}
+            helperTextInvalid={error}
+            helperText={props.help}
             isRequired={props.required}
-            validated={errorMessage ? 'error' : undefined}
+            validated={error ? 'error' : undefined}
         >
             <Select
                 id={id}
-                variant={SelectVariant.typeahead}
+                variant={SelectVariant.single}
                 aria-describedby={`${id}-helper`}
-                validated={errorMessage ? 'error' : undefined}
+                validated={error ? 'error' : undefined}
                 {...field}
                 isOpen={open}
                 onToggle={() => setOpen(!open)}
-                selections={field.value as string}
-                onSelect={(_e, v) => {
-                    field.onChange(v)
-                    setOpen(false)
-                }}
+                selections={selectedIndex === -1 ? '' : selectedIndex.toString()}
+                onSelect={onSelect}
+                isCreatable={props.create}
+                isInputFilterPersisted={props.create}
+                placeholderText={props.placeholder}
+                isGrouped={isGrouped}
                 footer={props.footer}
-                isCreatable={props.isCreatable}
             >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {props.children as unknown as any}
+                {!isGrouped
+                    ? options.map((option, index) => (
+                          <SelectOption key={index} value={index.toString()} label={option.label} description={option.description}>
+                              {option.label}
+                          </SelectOption>
+                      ))
+                    : Object.keys(groups).map((group) => (
+                          <SelectGroup key={group} label={group}>
+                              {groups[group].map((option, index) => (
+                                  <SelectOption key={index} value={index.toString()} label={option.label} description={option.description}>
+                                      {option.label}
+                                  </SelectOption>
+                              ))}
+                          </SelectGroup>
+                      ))}
             </Select>
         </FormGroup>
     )
@@ -513,23 +582,41 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
         switch (property.type) {
             case 'string': {
                 switch ((property as { variant?: string }).variant) {
-                    case 'select':
-                        p.push(
-                            <FormTextSelect
-                                key={base + propertyName}
-                                name={base + propertyName}
-                                label={title}
-                                placeholder={placeholder}
-                                required={required}
-                                selectTitle={(property as { selectTitle?: string }).selectTitle}
-                                selectValue={(property as { selectValue?: (organization: unknown) => string | number }).selectValue}
-                                selectOpen={
-                                    (property as { selectOpen?: (callback: (organization: Organization) => void, title: string) => void })
-                                        .selectOpen
-                                }
-                            />
-                        )
+                    case 'select': {
+                        if ('options' in property) {
+                            p.push(
+                                <FormSelect
+                                    key={base + propertyName}
+                                    name={base + propertyName}
+                                    label={title}
+                                    // placeholder={placeholder}
+                                    required={required}
+                                    options={property.options}
+                                    create
+                                />
+                            )
+                        } else {
+                            p.push(
+                                <FormTextSelect
+                                    key={base + propertyName}
+                                    name={base + propertyName}
+                                    label={title}
+                                    placeholder={placeholder}
+                                    required={required}
+                                    selectTitle={(property as { selectTitle?: string }).selectTitle}
+                                    selectValue={(property as { selectValue?: (organization: unknown) => string | number }).selectValue}
+                                    selectOpen={
+                                        (
+                                            property as {
+                                                selectOpen?: (callback: (organization: Organization) => void, title: string) => void
+                                            }
+                                        ).selectOpen
+                                    }
+                                />
+                            )
+                        }
                         break
+                    }
                     case 'textarea':
                         p.push(
                             <FormTextArea
