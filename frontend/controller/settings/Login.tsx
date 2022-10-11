@@ -1,10 +1,13 @@
 import { Page, PageSection, Title } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import ky from 'ky'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
+import { useAddAutomationServer } from '../../common/useAddAutomationServer'
+import { useAutomationServers } from '../../common/useAutomationServer'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 
@@ -13,12 +16,31 @@ export default function Login() {
 
     const history = useNavigate()
 
+    const { automationServers: productHosts } = useAutomationServers()
+
+    const [searchParams] = useSearchParams()
+
+    const addAutomationHost = useAddAutomationServer()
+
+    const { cache } = useSWRConfig()
+    useEffect(() => {
+        ;(cache as unknown as { clear: () => void }).clear?.()
+    }, [cache])
+
     const DataType = Type.Object({
         server: Type.String({
-            title: t('Server'),
-            placeholder: t('Enter server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            title: t('Automation server'),
+            placeholder: t('Select automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
+            variant: 'select',
+            options: productHosts.map((host) => ({
+                label: host.name,
+                description: host.url,
+                value: host.url,
+                group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+            })),
+            footer: { label: t('Add automation server'), click: addAutomationHost },
         }),
         username: Type.String({
             title: t('Username'),
@@ -37,23 +59,6 @@ export default function Login() {
 
     type Data = Static<typeof DataType>
 
-    const servers = useMemo<{ server: string; username: string }[]>(() => {
-        try {
-            const serversString = localStorage.getItem('servers')
-            if (typeof serversString === 'string') {
-                const servers = JSON.parse(serversString) as { server: string; username: string }[]
-                if (Array.isArray(servers)) {
-                    if (servers.every((server) => typeof server === 'object')) {
-                        return servers.filter((server) => 'server' in server && 'username' in server)
-                    }
-                }
-            }
-            return []
-        } catch {
-            return []
-        }
-    }, [])
-
     const onSubmit = useCallback<FormPageSubmitHandler<Data>>(
         async (data, setError) => {
             try {
@@ -70,11 +75,6 @@ export default function Login() {
 
                 headers['x-server'] = data.server
                 localStorage.setItem('server', data.server)
-                localStorage.setItem(
-                    'servers',
-                    JSON.stringify([...new Set([{ server: data.server, username: data.username }, ...servers])])
-                )
-
                 history(RouteE.Organizations)
             } catch (err) {
                 if (err instanceof Error) {
@@ -84,7 +84,7 @@ export default function Login() {
                 }
             }
         },
-        [history, servers, t]
+        [history, t]
     )
 
     const sm = useBreakpoint('sm')
@@ -114,12 +114,14 @@ export default function Login() {
                 </Title>
                 <PageForm
                     schema={DataType}
-                    submitText={t('Submit')}
+                    submitText={t('Log In')}
                     onSubmit={onSubmit}
                     cancelText={t('Cancel')}
                     isVertical
                     singleColumn
-                    defaultValue={servers.length ? { server: servers[0].server, username: servers[0].username } : {}}
+                    defaultValue={{
+                        server: searchParams.get('server') ?? localStorage.getItem('server') ?? '',
+                    }}
                 />
             </PageSection>
         </Page>
