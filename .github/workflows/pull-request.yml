@@ -16,9 +16,11 @@ jobs:
                   cache: 'npm'
             - run: npm ci
             - run: npm test
-            - uses: romeovs/lcov-reporter-action@v0.2.16
+            - name: Report code coverage
+              uses: zgosalvez/github-actions-report-lcov@v1
               with:
+                  coverage-files: coverage/lcov.*.info
+                  minimum-coverage: 90
+                  artifact-name: code-coverage-report
                   github-token: ${{ secrets.GH_TOKEN }}
-                  filter-changed-files: true
-                  delete-old-comments: true
             - run: npm run coverage:check
