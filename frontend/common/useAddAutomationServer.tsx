@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next'
 import { PageForm, usePageDialog } from '../../framework'
 import { AutomationServer, useAutomationServers } from './useAutomationServer'
 
-export function useAddAutomationHost() {
+export function useAddAutomationServer() {
     const [_, setDialog] = usePageDialog()
-    const addAutomationHost = useCallback(() => setDialog(<AddAutomationHostDialog />), [setDialog])
-    return addAutomationHost
+    const addAutomationServer = useCallback(() => setDialog(<AddAutomationServerDialog />), [setDialog])
+    return addAutomationServer
 }
 
-export function AddAutomationHostDialog() {
+export function AddAutomationServerDialog() {
     const { t } = useTranslation()
 
     const DataType = Type.Object({
@@ -23,7 +23,7 @@ export function AddAutomationHostDialog() {
         }),
         url: Type.String({
             title: t('Url'),
-            placeholder: t('Enter url of the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            placeholder: t('Enter the url of the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: t('Url is required'), minLength: t('Url is required') },
         }),
@@ -39,11 +39,11 @@ export function AddAutomationHostDialog() {
                     description: t('Define, operate, scale, and delegate automation across your enterprise.'),
                     value: 'controller',
                 },
-                // {
-                //     label: t('Automation hub'),
-                //     description: t('Discover, publish, and manage your Ansible Collections.'),
-                //     value: 'hub',
-                // },
+                {
+                    label: t('Automation hub'),
+                    description: t('Discover, publish, and manage your Ansible Collections.'),
+                    value: 'hub',
+                },
             ],
         }),
     })

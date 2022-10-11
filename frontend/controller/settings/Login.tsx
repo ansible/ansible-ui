@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
-import { useAddAutomationHost } from '../../common/useAddAutomationHostDialog'
+import { useAddAutomationServer } from '../../common/useAddAutomationServer'
 import { useAutomationServers } from '../../common/useAutomationServer'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
@@ -17,7 +17,7 @@ export default function Login() {
 
     const { automationServers: productHosts } = useAutomationServers()
 
-    const addAutomationHost = useAddAutomationHost()
+    const addAutomationHost = useAddAutomationServer()
 
     const DataType = Type.Object({
         server: Type.String({
@@ -32,7 +32,7 @@ export default function Login() {
                 value: host.url,
                 group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
             })),
-            footer: { label: t('Add server'), click: addAutomationHost },
+            footer: { label: t('Add automation server'), click: addAutomationHost },
         }),
         username: Type.String({
             title: t('Username'),
