@@ -1,5 +1,3 @@
-import './styles.css'
-
 import {
     ApplicationLauncher,
     ApplicationLauncherGroup,

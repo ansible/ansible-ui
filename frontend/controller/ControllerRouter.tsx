@@ -19,7 +19,7 @@ import Debug from './settings/Debug'
 import Settings from './settings/Settings'
 import Dashboard from './views/Dashboard'
 
-export function DemoRouter(): JSX.Element {
+export function ControllerRouter() {
     return (
         <Routes>
             <Route path={RouteE.Dashboard} element={<Dashboard />} />
