@@ -40,23 +40,23 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                 location
                             )}
                         >
-                            <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Collections')}
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Namespaces')}
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                            </NavItem> */}
+                            <NavItem isActive={isRouteActive(RouteE.Repositories, location)} onClick={() => onClick(RouteE.Repositories)}>
                                 {t('Repositories')}
                             </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('API Tokens')}
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Approvals')}
-                            </NavItem>
+                            </NavItem> */}
                         </NavExpandable>
-                        <NavExpandable
+                        {/* <NavExpandable
                             key="execution-environments"
                             title={t('Execution environments')}
                             isExpanded
@@ -96,7 +96,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Roles')}
                             </NavItem>
-                        </NavExpandable>
+                        </NavExpandable> */}
                     </NavList>
                 </Nav>
             }

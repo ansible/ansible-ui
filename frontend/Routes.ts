@@ -1,6 +1,10 @@
 /* istanbul ignore file */
 
 export enum RouteE {
+    Login = '/login',
+
+    Controller = '/controller',
+
     // Views
     Dashboard = '/controller/dashboard',
     Jobs = '/controller/jobs',
@@ -65,8 +69,12 @@ export enum RouteE {
     // Settings
     Settings = '/controller/settings',
 
-    Debug = '/debug',
-    Login = '/login',
-    Controller = '/controller',
     Hub = '/hub',
+
+    Repositories = '/hub/repositories',
+    RepositoryDetails = '/hub/repositories/details/:id',
+    CreateRepository = '/hub/repositories/create',
+    EditRepository = '/hub/repositories/edit/:id',
+
+    Debug = '/debug',
 }
