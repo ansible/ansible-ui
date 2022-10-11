@@ -76,7 +76,6 @@ export default function Login() {
                 headers['x-server'] = data.server
                 localStorage.setItem('server', data.server)
                 navigate(RouteE.Organizations)
-                console.log(RouteE.Organizations)
             } catch (err) {
                 if (err instanceof Error) {
                     setError(err.message)
