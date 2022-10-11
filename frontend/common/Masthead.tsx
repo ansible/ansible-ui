@@ -18,6 +18,9 @@ import {
     NotificationBadge,
     PageToggleButton,
     Spinner,
+    Stack,
+    StackItem,
+    Text,
     Title,
     Toolbar,
     ToolbarContent,
@@ -32,36 +35,62 @@ import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint, useWindowSize } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
+import { RouteE } from '../ControllerRoutes'
 import { swrOptions, useFetcher } from '../Data'
-import { RouteE } from '../route'
+import { useAutomationServers } from './useAutomationServer'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onToggle = (isOpen: boolean) => setIsOpen(isOpen)
-    const onSelect = () => setIsOpen((prevIsOpen) => !prevIsOpen)
-    const controllers = ['Controller 1', 'Controller 2', 'Controller 3']
-    const hubs = ['Hub 1', 'Hub 2', 'Hub 3']
+    const navigate = useNavigate()
+
+    const { automationServers } = useAutomationServers()
+    const controllers = automationServers.filter((server) => server.type === 'controller')
+    const hubs = automationServers.filter((server) => server.type === 'hub')
     return (
         <ApplicationLauncher
-            onSelect={onSelect}
             onToggle={onToggle}
             isOpen={isOpen}
             items={[
-                <ApplicationLauncherGroup label="Controllers" key="controllers">
-                    {controllers.map((controller) => (
-                        <ApplicationLauncherItem key={controller} icon={<></>}>
-                            {controller}
-                        </ApplicationLauncherItem>
-                    ))}
-                </ApplicationLauncherGroup>,
-                <ApplicationLauncherSeparator key="1" />,
-                <ApplicationLauncherGroup label="Hubs" key="hubs">
-                    {hubs.map((hub) => (
-                        <ApplicationLauncherItem key={hub} icon={<></>}>
-                            {hub}
-                        </ApplicationLauncherItem>
-                    ))}
-                </ApplicationLauncherGroup>,
+                controllers.length && (
+                    <ApplicationLauncherGroup label="Controllers" key="controllers">
+                        {controllers.map((server) => (
+                            <ApplicationLauncherItem
+                                key={server.name}
+                                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
+                            >
+                                <Stack>
+                                    {server.name}
+                                    <StackItem>
+                                        <Text component="small" style={{ opacity: 0.7 }}>
+                                            {server.url}
+                                        </Text>
+                                    </StackItem>
+                                </Stack>
+                            </ApplicationLauncherItem>
+                        ))}
+                    </ApplicationLauncherGroup>
+                ),
+                hubs.length && <ApplicationLauncherSeparator key="1" />,
+                hubs.length && (
+                    <ApplicationLauncherGroup label="Hubs" key="hubs">
+                        {hubs.map((server) => (
+                            <ApplicationLauncherItem
+                                key={server.name}
+                                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
+                            >
+                                <Stack>
+                                    {server.name}
+                                    <StackItem>
+                                        <Text component="small" style={{ opacity: 0.7 }}>
+                                            {server.url}
+                                        </Text>
+                                    </StackItem>
+                                </Stack>
+                            </ApplicationLauncherItem>
+                        ))}
+                    </ApplicationLauncherGroup>
+                ),
                 // <ApplicationLauncherSeparator key="2" />,
                 // <ApplicationLauncherItem key="add controller" icon={<PlusIcon />}>
                 //     Add Controller
@@ -69,7 +98,7 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                 // <ApplicationLauncherItem key="add hub" icon={<PlusIcon />}>
                 //     Add Hub
                 // </ApplicationLauncherItem>,
-            ]}
+            ].filter(Boolean)}
             position="right"
         />
     )

@@ -21,7 +21,7 @@ import {
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../ControllerRoutes'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from '../organizations/Organization'
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'

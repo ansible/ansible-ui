@@ -66,5 +66,7 @@ export enum RouteE {
     Settings = '/controller/settings',
 
     Debug = '/debug',
-    Login = '/controller/login',
+    Login = '/login',
+    Controller = '/controller',
+    Hub = '/hub',
 }

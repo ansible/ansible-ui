@@ -27,7 +27,7 @@ import {
     useNameToolbarFilter,
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../ControllerRoutes'
 import { useControllerView } from '../../useControllerView'
 import { Team } from './Team'
 import { useDeleteTeams } from './useDeleteTeams'

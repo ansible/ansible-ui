@@ -11,7 +11,7 @@ import {
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../ControllerRoutes'
 import { useControllerView } from '../../useControllerView'
 import { Credential } from './Credential'
 import { useDeleteCredentials } from './useDeleteCredentials'

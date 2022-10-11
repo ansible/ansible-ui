@@ -19,7 +19,7 @@ In addition the frontend is broken down into the structure needed for supporting
 
 ## Architecture
 
-One of the currrent thoughts about how to unify the Ansible Platform is to have an Ansible UI that can connect to either a hub or controller. This would enable the user to switch between their hub and contollers without having to switch their browser to a different host. This would also enable customers to have multiple controllers and to switch between them.
+One of the currrent thoughts about how to unify the Ansible Platform is to have an Ansible UI that can connect to either a hub or controller. This would enable the user to switch between their hub and controllers without having to switch their browser to a different host. This would also enable customers to have multiple controllers and to switch between them.
 
 ```mermaid
 graph LR
