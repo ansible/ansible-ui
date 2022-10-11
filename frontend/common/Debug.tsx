@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { PageHeader } from '../../framework'
 import { randomString } from '../../framework/utils/random-string'
 import { Team } from '../controller/access/teams/Team'
-import { RouteE } from '../ControllerRoutes'
 import { requestPost } from '../Data'
+import { RouteE } from '../Routes'
 
 export default function Debug() {
     const breadcrumbs = useMemo(() => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }], [])

@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITypedAction, TypedActionType } from '../../framework'
-import { RouteE } from '../ControllerRoutes'
+import { RouteE } from '../Routes'
 
 export function useCreateToolbarAction(route: RouteE) {
     const { t } = useTranslation()

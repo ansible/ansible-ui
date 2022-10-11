@@ -19,7 +19,7 @@ import {
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../ControllerRoutes'
+import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'

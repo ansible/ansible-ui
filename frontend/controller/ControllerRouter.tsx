@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Debug from '../common/Debug'
-import { RouteE } from '../ControllerRoutes'
+import { RouteE } from '../Routes'
 import { EditOrganization } from './access/organizations/EditOrganization'
 import { OrganizationDetails } from './access/organizations/OrganizationDetails'
 import { Organizations } from './access/organizations/Organizations'

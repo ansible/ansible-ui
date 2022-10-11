@@ -23,7 +23,7 @@ import {
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../ControllerRoutes'
+import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { User } from '../users/User'
 import { useUsersColumns, useUsersFilters } from '../users/Users'

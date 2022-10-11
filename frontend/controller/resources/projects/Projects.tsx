@@ -19,7 +19,7 @@ import {
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
 import { getStatus } from '../../../common/status'
-import { RouteE } from '../../../ControllerRoutes'
+import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { Project } from './Project'
 import { useDeleteProjects } from './useDeleteProjects'

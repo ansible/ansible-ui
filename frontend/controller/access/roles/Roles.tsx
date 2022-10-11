@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework'
-import { RouteE } from '../../../ControllerRoutes'
+import { RouteE } from '../../../Routes'
 import { Role } from './Role'
 
 export function useRolesFilters() {

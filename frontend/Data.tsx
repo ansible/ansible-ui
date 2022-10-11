@@ -2,7 +2,7 @@
 import ky, { HTTPError, ResponsePromise } from 'ky'
 import { Input, Options } from 'ky/distribution/types/options'
 import { SWRConfiguration } from 'swr'
-import { RouteE } from './ControllerRoutes'
+import { RouteE } from './Routes'
 
 export const headers: Record<string, string> = {}
 

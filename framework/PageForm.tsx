@@ -340,7 +340,9 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         if (l.label > r.label) return 1
         return 0
     })
+    console.log(options)
     const selectedIndex = options.findIndex((option) => deepEqual(option.value, field.value))
+    console.log(selectedIndex, field.value)
     const groups = options.reduce<
         Record<
             string,
@@ -375,6 +377,7 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         },
         [field, options]
     )
+    let index = 0
     return (
         <FormGroup
             id={`${id}-form-group`}
@@ -423,8 +426,13 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
                       ))
                     : Object.keys(groups).map((group) => (
                           <SelectGroup key={group} label={group}>
-                              {groups[group].map((option, index) => (
-                                  <SelectOption key={index} value={index.toString()} label={option.label} description={option.description}>
+                              {groups[group].map((option) => (
+                                  <SelectOption
+                                      key={index}
+                                      value={(index++).toString()}
+                                      label={option.label}
+                                      description={option.description}
+                                  >
                                       {option.label}
                                   </SelectOption>
                               ))}

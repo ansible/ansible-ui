@@ -35,8 +35,8 @@ import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint, useWindowSize } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
-import { RouteE } from '../ControllerRoutes'
 import { swrOptions, useFetcher } from '../Data'
+import { RouteE } from '../Routes'
 import { useAutomationServers } from './useAutomationServer'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
@@ -155,9 +155,9 @@ export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: 
                             alignment={{ default: 'alignRight' }}
                             spacer={{ default: 'spacerNone', md: 'spacerMd' }}
                         >
-                            {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
+                            {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
                                 <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
-                            )}
+                            )} */}
                             <ToolbarItem>
                                 <Notifications />
                             </ToolbarItem>

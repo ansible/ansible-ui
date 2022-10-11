@@ -11,7 +11,7 @@ import {
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { RouteE } from '../../../ControllerRoutes'
+import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { Host } from './Host'
 import { useDeleteHosts } from './useDeleteHosts'
