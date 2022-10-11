@@ -114,7 +114,7 @@ export default function Login() {
                 </Title>
                 <PageForm
                     schema={DataType}
-                    submitText={t('Submit')}
+                    submitText={t('Log In')}
                     onSubmit={onSubmit}
                     cancelText={t('Cancel')}
                     isVertical

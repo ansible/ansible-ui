@@ -26,7 +26,7 @@ export function loadAutomationServers(): AutomationServer[] {
         servers = []
     }
     if (process.env.NODE_ENV === 'development') {
-        servers.push({ name: 'Localhost Contoller', url: 'https://localhost:8043', type: 'controller' })
+        servers.push({ name: 'Localhost Automation Controller', url: 'https://localhost:8043', type: 'controller' })
     }
     servers = servers.filter((host, index, array) => array.findIndex((h) => h.url === host.url) === index)
     return servers
