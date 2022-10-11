@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
 import { useSettings } from '../../framework/Settings'
-import { isRouteActive } from '../Masthead'
+import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../route'
 
 export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {

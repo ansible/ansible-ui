@@ -1,6 +1,6 @@
 import { Page } from '@patternfly/react-core'
 import { useState } from 'react'
-import { AnsibleMasthead } from '../Masthead'
+import { AnsibleMasthead } from '../common/Masthead'
 import { ControllerRouter } from './ControllerRouter'
 import { ControllerSidebar } from './ControllerSidebar'
 

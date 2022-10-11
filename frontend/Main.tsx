@@ -10,7 +10,7 @@ import { Controller } from './controller/Controller'
 import Login from './controller/settings/Login'
 import { RouteE } from './route'
 
-export default function Demo() {
+export default function Main() {
     const { t } = useTranslation()
     return (
         <StrictMode>

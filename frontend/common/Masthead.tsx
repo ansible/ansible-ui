@@ -30,10 +30,10 @@ import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
-import { useBreakpoint, useWindowSize } from '../framework'
-import { useSettingsDialog } from '../framework/Settings'
-import { swrOptions, useFetcher } from './Data'
-import { RouteE } from './route'
+import { useBreakpoint, useWindowSize } from '../../framework'
+import { useSettingsDialog } from '../../framework/Settings'
+import { swrOptions, useFetcher } from '../Data'
+import { RouteE } from '../route'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false)
