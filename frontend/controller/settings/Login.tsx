@@ -30,7 +30,7 @@ export default function Login() {
                 label: host.name,
                 description: host.url,
                 value: host.url,
-                group: host.kind === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+                group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
             })),
             footer: { label: t('Add server'), click: addAutomationHost },
         }),
