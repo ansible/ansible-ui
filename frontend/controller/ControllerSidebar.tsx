@@ -1,53 +1,15 @@
 import './styles.css'
 
-import { Nav, NavExpandable, NavItem, NavList, Page, PageSidebar } from '@patternfly/react-core'
-import { StrictMode, useCallback, useState } from 'react'
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useBreakpoint } from '../framework'
-import ErrorBoundary from '../framework/components/ErrorBoundary'
-import { useSettings } from '../framework/Settings'
-import { AccessCode } from './common/AccessCode'
-// import { useWorkflowApprovals } from './controller/views/WorkflowApprovals'
+import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PageFrameworkProvider } from '../framework'
-import Login from './controller/settings/Login'
-import { AnsibleMasthead, isRouteActive } from './Masthead'
-import { RouteE } from './route'
-import { DemoRouter } from './Router'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useBreakpoint } from '../../framework'
+import { useSettings } from '../../framework/Settings'
+import { isRouteActive } from '../Masthead'
+import { RouteE } from '../route'
 
-export default function Demo() {
-    const { t } = useTranslation()
-    return (
-        <StrictMode>
-            <ErrorBoundary message={t('An eror occured')}>
-                <AccessCode>
-                    <PageFrameworkProvider>
-                        <BrowserRouter>
-                            <Routes>
-                                <Route path={RouteE.Login} element={<Login />} />
-                                <Route path="*" element={<Main />} />\{' '}
-                            </Routes>
-                        </BrowserRouter>
-                    </PageFrameworkProvider>
-                </AccessCode>
-            </ErrorBoundary>
-        </StrictMode>
-    )
-}
-
-export function Main() {
-    const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
-    return (
-        <Page
-            header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-            sidebar={<Sidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-        >
-            <DemoRouter />
-        </Page>
-    )
-}
-
-function Sidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
+export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
     const { t } = useTranslation()
     const location = useLocation()
     const navigate = useNavigate()
