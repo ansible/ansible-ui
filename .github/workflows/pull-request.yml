@@ -22,6 +22,6 @@ jobs:
                   coverage-files: coverage/lcov.info
                   minimum-coverage: 40
                   artifact-name: code-coverage-report
-                  github-token: ${{ secrets.GH_TOKEN }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
                   working-directory: './'
             - run: npm run coverage:check
