@@ -26,7 +26,7 @@ export function useDeleteRepositories(callback: (repositories: Repository[]) => 
                 columns={columns}
                 errorColumns={columns}
                 onClose={callback}
-                action={(repository: Repository) => requestDelete(`/api/v2/repositories/${repository.id}/`)}
+                action={(repository: Repository) => requestDelete(`/api/v2/repositories/${repository.pulp_id}/`)}
             />
         )
     }

@@ -340,9 +340,7 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         if (l.label > r.label) return 1
         return 0
     })
-    console.log(options)
     const selectedIndex = options.findIndex((option) => deepEqual(option.value, field.value))
-    console.log(selectedIndex, field.value)
     const groups = options.reduce<
         Record<
             string,

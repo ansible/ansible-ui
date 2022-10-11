@@ -43,13 +43,13 @@ export function Repositories() {
                 type: TypedActionType.button,
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
-                label: t('Create repository'),
+                label: t('Add repository'),
                 onClick: () => navigate(RouteE.CreateRepository),
             },
             {
                 type: TypedActionType.bulk,
                 icon: TrashIcon,
-                label: t('Delete selected repositories'),
+                label: t('Remove selected repositories'),
                 onClick: deleteRepositories,
             },
         ],
@@ -61,11 +61,11 @@ export function Repositories() {
             {
                 icon: EditIcon,
                 label: t('Edit repository'),
-                onClick: (repository) => navigate(RouteE.EditRepository.replace(':id', repository.id.toString())),
+                onClick: (repository) => navigate(RouteE.EditRepository.replace(':id', repository.pulp_id.toString())),
             },
             {
                 icon: TrashIcon,
-                label: t('Delete repository'),
+                label: t('Remove repository'),
                 onClick: (repository) => deleteRepositories([repository]),
             },
         ],
@@ -82,7 +82,7 @@ export function Repositories() {
             errorStateTitle={t('Error loading repositories')}
             emptyStateTitle={t('No repositories yet')}
             emptyStateDescription={t('To get started, create an repository.')}
-            emptyStateButtonText={t('Create repository')}
+            emptyStateButtonText={t('Add repository')}
             emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
             {...view}
         />
@@ -101,10 +101,10 @@ export function useRepositoriesFilters() {
     return toolbarFilters
 }
 
-export function useRepositoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useRepositoriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const tableColumns = useMemo<ITableColumn<Repository>[]>(
         () => [
-            { header: 'Name', cell: (repository) => <TextCell text={repository.name} />, sort: 'name' },
+            { header: 'Name', cell: (repository) => <TextCell text={repository.name} /> },
             { header: 'Repository', cell: (repository) => <TextCell text={repository.repository.name} /> },
             { header: 'Description', cell: (repository) => <TextCell text={repository.repository.description} /> },
             { header: 'Collections', cell: (repository) => <TextCell text={repository.repository.content_count.toString()} /> },

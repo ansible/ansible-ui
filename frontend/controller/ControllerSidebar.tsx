@@ -31,6 +31,7 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
             nav={
                 <Nav>
                     <NavList>
+                        {/* <NavItem>{t('Hoas Controller')}</NavItem> */}
                         {/* <NavExpandable
                             key="controller"
                             title="Controller"

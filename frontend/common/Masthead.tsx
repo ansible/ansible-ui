@@ -33,7 +33,7 @@ import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
-import { useBreakpoint, useWindowSize } from '../../framework'
+import { useBreakpoint } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
 import { swrOptions, useFetcher } from '../Data'
 import { RouteE } from '../Routes'
@@ -53,7 +53,7 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
             isOpen={isOpen}
             items={[
                 controllers.length && (
-                    <ApplicationLauncherGroup label="Controllers" key="controllers">
+                    <ApplicationLauncherGroup label="Automation Controllers" key="controllers">
                         {controllers.map((server) => (
                             <ApplicationLauncherItem
                                 key={server.name}
@@ -73,7 +73,7 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                 ),
                 hubs.length && <ApplicationLauncherSeparator key="1" />,
                 hubs.length && (
-                    <ApplicationLauncherGroup label="Hubs" key="hubs">
+                    <ApplicationLauncherGroup label="Automation Hubs" key="hubs">
                         {hubs.map((server) => (
                             <ApplicationLauncherItem
                                 key={server.name}
@@ -108,7 +108,6 @@ export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: 
     const isSmallOrLarger = useBreakpoint('sm')
     const { t } = useTranslation()
     const openSettings = useSettingsDialog(t)
-    const windowSize = useWindowSize()
     return (
         <Masthead display={{ default: 'inline' }}>
             <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
