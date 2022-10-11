@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
 import deepEqual from 'fast-deep-equal'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const AutomationServerType = Type.Object({
     name: Type.String(),
@@ -48,6 +48,7 @@ export function useAutomationServers() {
             }
         })
     }, [])
+    useEffect(() => () => clearInterval(setInterval(() => refreshAutomationServers(), 1000)), [refreshAutomationServers])
     const saveAutomationServer = useCallback((ansibleProductHost: AutomationServer) => {
         setAutomationServers((productHosts) => {
             productHosts = [...productHosts, ansibleProductHost]
