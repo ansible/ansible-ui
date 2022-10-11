@@ -413,6 +413,7 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
                         </Button>
                     )
                 }
+                maxHeight={280}
             >
                 {!isGrouped
                     ? options.map((option, index) => (
@@ -600,6 +601,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                 switch ((property as { variant?: string }).variant) {
                     case 'select': {
                         if ('options' in property) {
+                            const formSelectProps = property as unknown as FormSelectProps<unknown>
                             p.push(
                                 <FormSelect
                                     key={base + propertyName}
@@ -607,8 +609,8 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                                     label={title}
                                     placeholder={placeholder}
                                     required={required}
-                                    options={property.options}
-                                    footer={property.footer}
+                                    options={formSelectProps.options}
+                                    footer={formSelectProps.footer}
                                 />
                             )
                         } else {
@@ -720,21 +722,16 @@ export function PageForm<T extends object>(props: {
                     return props.onSubmit(data, setError, setFieldError)
                 })}
                 isHorizontal={isHorizontal}
-                style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
+                // style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
             >
-                <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-                    <PageSection
-                        isFilled
-                        padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
-                        variant="light"
-                        style={{ maxWidth }}
-                    >
-                        <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-                            {props.schema && <FormSchema schema={props.schema} />}
-                            {props.children}
-                        </Grid>
-                    </PageSection>
-                </Scrollable>
+                {/* <Scrollable style={{ height: '100%', flexGrow: 1 }}> */}
+                <PageSection isFilled padding={{ default: props.onCancel ? 'padding' : 'noPadding' }} variant="light" style={{ maxWidth }}>
+                    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+                        {props.schema && <FormSchema schema={props.schema} />}
+                        {props.children}
+                    </Grid>
+                </PageSection>
+                {/* </Scrollable> */}
                 <Collapse open={!!error}>
                     <Alert
                         variant="danger"

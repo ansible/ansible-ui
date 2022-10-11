@@ -3,7 +3,7 @@ import { Static, Type } from '@sinclair/typebox'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PageForm, usePageDialog } from '../../framework'
-import { ProductHost, useProductHosts } from './useProductHosts'
+import { AutomationServer, useAutomationServers } from './useAutomationServer'
 
 export function useAddAutomationHost() {
     const [_, setDialog] = usePageDialog()
@@ -50,12 +50,12 @@ export function AddAutomationHostDialog() {
 
     type Data = Static<typeof DataType>
 
-    const { saveProductHost } = useProductHosts()
+    const { saveAutomationServer: saveProductHost } = useAutomationServers()
 
     const [_, setDialog] = usePageDialog()
     const onClose = () => setDialog(undefined)
     const onSubmit = (data: Data) => {
-        saveProductHost(data as ProductHost)
+        saveProductHost(data as AutomationServer)
         onClose()
         return Promise.resolve()
     }

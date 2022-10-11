@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
 import { useAddAutomationHost } from '../../common/useAddAutomationHostDialog'
-import { useProductHosts } from '../../common/useProductHosts'
+import { useAutomationServers } from '../../common/useAutomationServer'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 
@@ -15,7 +15,7 @@ export default function Login() {
 
     const history = useNavigate()
 
-    const { productHosts } = useProductHosts()
+    const { automationServers: productHosts } = useAutomationServers()
 
     const addAutomationHost = useAddAutomationHost()
 
