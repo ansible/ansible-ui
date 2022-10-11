@@ -315,7 +315,10 @@ export interface FormSelectProps<T> {
     placeholder?: string
     help?: string
     required?: boolean
-    footer?: ReactNode
+    footer?: {
+        label?: string
+        click?: () => void
+    }
     create?: boolean
     options: FormSelectOption<T>[]
 }
@@ -396,7 +399,20 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
                 isInputFilterPersisted={props.create}
                 placeholderText={props.placeholder}
                 isGrouped={isGrouped}
-                footer={props.footer}
+                footer={
+                    props.footer?.label && (
+                        <Button
+                            variant="link"
+                            isInline
+                            onClick={() => {
+                                setOpen(false)
+                                props.footer?.click?.()
+                            }}
+                        >
+                            {props.footer.label}
+                        </Button>
+                    )
+                }
             >
                 {!isGrouped
                     ? options.map((option, index) => (
@@ -589,10 +605,10 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                                     key={base + propertyName}
                                     name={base + propertyName}
                                     label={title}
-                                    // placeholder={placeholder}
+                                    placeholder={placeholder}
                                     required={required}
                                     options={property.options}
-                                    create
+                                    footer={property.footer}
                                 />
                             )
                         } else {

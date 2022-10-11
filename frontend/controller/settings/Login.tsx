@@ -5,6 +5,8 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
+import { useAddAutomationHost } from '../../common/useAddAutomationHostDialog'
+import { useProductHosts } from '../../common/useProductHosts'
 import { headers } from '../../Data'
 import { RouteE } from '../../route'
 
@@ -13,14 +15,24 @@ export default function Login() {
 
     const history = useNavigate()
 
+    const { productHosts } = useProductHosts()
+
+    const addAutomationHost = useAddAutomationHost()
+
     const DataType = Type.Object({
         server: Type.String({
-            title: t('Server'),
-            placeholder: t('Enter server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            title: t('Automation server'),
+            placeholder: t('Select automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
             errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
             variant: 'select',
-            options: [{ label: 'Test', description: 'description', value: 'https://localhost:8043', type: 'controller' }],
+            options: productHosts.map((host) => ({
+                label: host.name,
+                description: host.url,
+                value: host.url,
+                group: host.kind === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+            })),
+            footer: { label: t('Add server'), click: addAutomationHost },
         }),
         username: Type.String({
             title: t('Username'),
