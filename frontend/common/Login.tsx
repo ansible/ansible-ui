@@ -1,6 +1,6 @@
 import { Page, PageSection, Title } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
-import ky from 'ky'
+import ky, { HTTPError } from 'ky'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -75,8 +75,23 @@ export default function Login() {
                 searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
                 searchParams.set('username', data.username)
                 searchParams.set('password', data.password)
-                await ky.post(loginPageUrl, { credentials: 'include', headers: { 'x-server': data.server }, body: searchParams })
+                try {
+                    await ky.post(loginPageUrl, {
+                        credentials: 'include',
+                        headers: { 'x-server': data.server },
+                        body: searchParams,
+                        redirect: 'manual',
+                    })
+                } catch (err) {
+                    console.log(err)
+                    if (err instanceof HTTPError && err.response.status === 0) {
+                        // Do nothing
+                    } else {
+                        throw err
+                    }
+                }
 
+                localStorage.setItem('server', data.server)
                 headers['x-server'] = data.server
                 navigate(RouteE.Organizations)
                 switch (automationServer.type) {
