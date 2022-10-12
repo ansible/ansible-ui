@@ -1,6 +1,6 @@
 {
     "name": "@ansible/ansible-ui",
-    "version": "0.0.126",
+    "version": "0.0.128",
     "type": "module",
     "scripts": {
         "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
@@ -92,7 +92,7 @@
         "coverage-istanbul-loader": "3.0.5",
         "css-loader": "6.7.1",
         "css-minimizer-webpack-plugin": "4.2.1",
-        "cypress": "10.9.0",
+        "cypress": "10.10.0",
         "cypress-axe": "1.0.0",
         "eslint": "8.25.0",
         "eslint-config-prettier": "8.5.0",
