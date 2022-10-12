@@ -4,7 +4,10 @@ import useSWR from 'swr'
 import { ITableColumn, IToolbarFilter, useSelected } from '../../framework'
 import { IView, useView } from '../../framework/useView'
 import { swrOptions, useFetcher } from '../Data'
-import { hubKeyFn } from './hubKeyFn'
+
+export function hubKeyFn(item: { pulp_id: string }) {
+    return item.pulp_id
+}
 
 interface HubItemsResponse<T extends object> {
     meta: {
@@ -28,7 +31,7 @@ export type IHubView<T extends object> = IView & {
     refresh: () => Promise<HubItemsResponse<T> | undefined>
 }
 
-export function useHubView<T extends object>(
+export function useHubView<T extends { pulp_id: string }>(
     url: string,
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[],

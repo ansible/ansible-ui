@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { requestDelete } from '../../../Data'
-import { hubKeyFn } from '../../hubKeyFn'
+import { hubKeyFn } from '../../useHubView'
 import { useRepositoriesColumns } from './Repositories'
 import { Repository } from './Repository'
 
