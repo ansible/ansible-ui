@@ -83,7 +83,6 @@ export default function Login() {
                         redirect: 'manual',
                     })
                 } catch (err) {
-                    console.log(err)
                     if (err instanceof HTTPError && err.response.status === 0) {
                         // Do nothing
                     } else {
