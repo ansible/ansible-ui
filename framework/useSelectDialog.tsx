@@ -1,22 +1,22 @@
 import { Button, Modal, ModalBoxBody, ModalVariant, Skeleton, Split, SplitItem } from '@patternfly/react-core'
 import { useCallback, useEffect, useState } from 'react'
-import { IControllerView } from '../frontend/controller/useControllerView'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
+import { ISelected } from './useTableItems'
+import { IView } from './useView'
 
 interface ISelectDialogOptions<T extends object> {
-    view: IControllerView<T>
+    view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] }
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
     confirm: string
     cancel: string
     selected: string
-    keyFn: (item: T) => string
 }
 
 export function useSelectDialog<T extends { id: number }>(options: ISelectDialogOptions<T>) {
-    const { view, tableColumns, toolbarFilters, confirm, cancel, selected, keyFn } = options
+    const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options
     const [title, setTitle] = useState('')
     const [onSelect, setOnSelect] = useState<(item: T) => void>()
     const openSetting = useCallback((onSelect?: (item: T) => void, title?: string) => {
@@ -38,14 +38,14 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
                     confirm={confirm}
                     cancel={cancel}
                     selected={selected}
-                    keyFn={keyFn}
+                    keyFn={view.keyFn}
                 />
             )
         } else {
             setDialog(undefined)
             view.unselectAll()
         }
-    }, [cancel, confirm, keyFn, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view])
+    }, [cancel, confirm, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view])
     return openSetting
 }
 
@@ -54,7 +54,7 @@ export type SelectDialogProps<T extends object> = {
     open: boolean
     setOpen: (open: boolean) => void
     onSelect: (item: T) => void
-    keyFn: (item: T) => string
+    keyFn: (item: T) => string | number
 } & ISelectDialogOptions<T>
 
 export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {

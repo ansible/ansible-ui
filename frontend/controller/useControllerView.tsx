@@ -1,21 +1,16 @@
 import { HTTPError } from 'ky'
 import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
-import { ITableColumn, IToolbarFilter, useSelected } from '../../framework'
+import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework'
 import { IView, useView } from '../../framework/useView'
 import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
 
-export type IControllerView<T extends { id: number }> = IView & {
-    itemCount: number | undefined
-    keyFn: (item: T) => string | number
-    pageItems: T[] | undefined
-    setPage: (page: number) => void
-    setPerPage: (perPage: number) => void
-    selectedItems: T[]
-    unselectAll: () => void
-    unselectItem: (item: T) => void
-    refresh: () => Promise<ItemsResponse<T> | undefined>
-}
+export type IControllerView<T extends { id: number }> = IView &
+    ISelected<T> & {
+        itemCount: number | undefined
+        pageItems: T[]
+        refresh: () => Promise<ItemsResponse<T> | undefined>
+    }
 
 export function useControllerView<T extends { id: number }>(
     url: string,
@@ -89,7 +84,7 @@ export function useControllerView<T extends { id: number }>(
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.results : undefined,
+            pageItems: data ? data.results : [],
             error,
             ...view,
             ...selection,

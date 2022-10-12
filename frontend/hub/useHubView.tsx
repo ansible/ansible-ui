@@ -1,7 +1,7 @@
 import { HTTPError } from 'ky'
 import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
-import { ITableColumn, IToolbarFilter, useSelected } from '../../framework'
+import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework'
 import { IView, useView } from '../../framework/useView'
 import { swrOptions, useFetcher } from '../Data'
 
@@ -19,17 +19,12 @@ interface HubItemsResponse<T extends object> {
     }
 }
 
-export type IHubView<T extends object> = IView & {
-    itemCount: number | undefined
-    keyFn: (item: T) => string | number
-    pageItems: T[] | undefined
-    setPage: (page: number) => void
-    setPerPage: (perPage: number) => void
-    selectedItems: T[]
-    unselectAll: () => void
-    unselectItem: (item: T) => void
-    refresh: () => Promise<HubItemsResponse<T> | undefined>
-}
+export type IHubView<T extends object> = IView &
+    ISelected<T> & {
+        itemCount: number | undefined
+        pageItems: T[]
+        refresh: () => Promise<HubItemsResponse<T> | undefined>
+    }
 
 export function useHubView<T extends { pulp_id: string }>(
     url: string,
@@ -103,7 +98,7 @@ export function useHubView<T extends { pulp_id: string }>(
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.data : undefined,
+            pageItems: data ? data.data : [],
             error,
             ...view,
             ...selection,
