@@ -3,14 +3,19 @@ import { useSearchParams } from 'react-router-dom'
 
 export interface IView {
     page: number
+    setPage: (page: number) => void
     perPage: number
+    setPerPage: (perPage: number) => void
     sort: string
+    setSort: (sort: string) => void
     sortDirection: 'asc' | 'desc'
+    setSortDirection: (sortDirection: 'asc' | 'desc') => void
     filters: Record<string, string[]>
     setFilters: Dispatch<SetStateAction<Record<string, string[]>>>
+    clearAllFilters: () => void
 }
 
-export function useView(view?: Partial<IView> | undefined, disableQueryString?: boolean) {
+export function useView(view?: Partial<IView> | undefined, disableQueryString?: boolean): IView {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const [page, setPage] = useState(() => {

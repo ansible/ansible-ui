@@ -375,6 +375,7 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         },
         [field, options]
     )
+    let index = 0
     return (
         <FormGroup
             id={`${id}-form-group`}
@@ -423,8 +424,13 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
                       ))
                     : Object.keys(groups).map((group) => (
                           <SelectGroup key={group} label={group}>
-                              {groups[group].map((option, index) => (
-                                  <SelectOption key={index} value={index.toString()} label={option.label} description={option.description}>
+                              {groups[group].map((option) => (
+                                  <SelectOption
+                                      key={index}
+                                      value={(index++).toString()}
+                                      label={option.label}
+                                      description={option.description}
+                                  >
                                       {option.label}
                                   </SelectOption>
                               ))}

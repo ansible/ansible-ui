@@ -1,5 +1,6 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import cookie from 'cookie'
+import http from 'http'
 import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2'
 import { request, RequestOptions } from 'https'
 import { pipeline } from 'stream'
@@ -64,9 +65,10 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
         rejectUnauthorized: false,
     }
 
+    const r = requestOptions.protocol === 'http:' ? http.request : request
     pipeline(
         req,
-        request(requestOptions, (response) => {
+        r(requestOptions, (response) => {
             if (!response) {
                 res.writeHead(HTTP_STATUS_NOT_FOUND).end()
                 return

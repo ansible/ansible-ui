@@ -61,7 +61,19 @@ export function useTableItems<T extends object>(items: T[], keyFn: (item: T) => 
     )
 }
 
-export function useSelected<T extends object>(items: T[], keyFn: (item: T) => string | number) {
+export interface ISelected<T extends object> {
+    selectedItems: T[]
+    selectItem: (item: T) => void
+    selectItems: (items: T[]) => void
+    unselectItem: (item: T) => void
+    isSelected: (item: T) => boolean
+    selectAll: () => void
+    unselectAll: () => void
+    allSelected: boolean
+    keyFn: (item: T) => string | number
+}
+
+export function useSelected<T extends object>(items: T[], keyFn: (item: T) => string | number): ISelected<T> {
     const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
 
     useEffect(() => {

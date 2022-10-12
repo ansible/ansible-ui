@@ -8,7 +8,7 @@ import Backend from 'i18next-http-backend'
 import { Suspense } from 'react'
 import { render } from 'react-dom'
 import { initReactI18next } from 'react-i18next'
-import Demo from './Main'
+import Main from './Main'
 
 const container = document.createElement('div')
 container.style.position = 'fixed'
@@ -31,7 +31,7 @@ void i18n
     .then(() => {
         render(
             <Suspense fallback={<div />}>
-                <Demo />
+                <Main />
             </Suspense>,
             container
         )

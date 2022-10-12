@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../Routes'
 import { getControllerError } from '../../useControllerView'
 import { Organization } from './Organization'
 

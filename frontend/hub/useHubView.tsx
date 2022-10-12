@@ -3,21 +3,35 @@ import { useCallback, useMemo, useRef } from 'react'
 import useSWR from 'swr'
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework'
 import { IView, useView } from '../../framework/useView'
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
+import { swrOptions, useFetcher } from '../Data'
 
-export type IControllerView<T extends { id: number }> = IView &
+export function hubKeyFn(item: { pulp_id: string }) {
+    return item.pulp_id
+}
+
+interface HubItemsResponse<T extends object> {
+    meta: {
+        count: number
+    }
+    data: T[]
+    links: {
+        next?: string
+    }
+}
+
+export type IHubView<T extends object> = IView &
     ISelected<T> & {
         itemCount: number | undefined
         pageItems: T[]
-        refresh: () => Promise<ItemsResponse<T> | undefined>
+        refresh: () => Promise<HubItemsResponse<T> | undefined>
     }
 
-export function useControllerView<T extends { id: number }>(
+export function useHubView<T extends { pulp_id: string }>(
     url: string,
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[],
     disableQueryString?: boolean
-): IControllerView<T> {
+): IHubView<T> {
     const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined }, disableQueryString)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
@@ -59,11 +73,11 @@ export function useControllerView<T extends { id: number }>(
 
     url += queryString
     const fetcher = useFetcher()
-    const response = useSWR<ItemsResponse<T>>(url, fetcher)
+    const response = useSWR<HubItemsResponse<T>>(url, fetcher)
     const { data, mutate } = response
     const refresh = useCallback(() => mutate(), [mutate])
 
-    useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions)
+    useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, swrOptions)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     let error: Error | undefined = response.error
@@ -74,17 +88,17 @@ export function useControllerView<T extends { id: number }>(
         }
     }
 
-    const selection = useSelected(data?.results ?? [], getItemKey)
+    const selection = useSelected(data?.data ?? [], hubKeyFn)
 
-    if (data?.count !== undefined) {
-        itemCountRef.current.itemCount = data?.count
+    if (data?.meta.count !== undefined) {
+        itemCountRef.current.itemCount = data?.meta.count
     }
 
     return useMemo(() => {
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.results : [],
+            pageItems: data ? data.data : [],
             error,
             ...view,
             ...selection,

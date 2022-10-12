@@ -5,18 +5,18 @@ import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
-import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../../framework'
-import { useAddAutomationServer } from '../../common/useAddAutomationServer'
-import { useAutomationServers } from '../../common/useAutomationServer'
-import { headers } from '../../Data'
-import { RouteE } from '../../route'
+import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../framework'
+import { headers } from '../Data'
+import { RouteE } from '../Routes'
+import { useAddAutomationServer } from './useAddAutomationServer'
+import { useAutomationServers } from './useAutomationServer'
 
 export default function Login() {
     const { t } = useTranslation()
 
-    const history = useNavigate()
+    const navigate = useNavigate()
 
-    const { automationServers: productHosts } = useAutomationServers()
+    const { automationServers } = useAutomationServers()
 
     const [searchParams] = useSearchParams()
 
@@ -34,7 +34,7 @@ export default function Login() {
             minLength: 1,
             errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
             variant: 'select',
-            options: productHosts.map((host) => ({
+            options: automationServers.map((host) => ({
                 label: host.name,
                 description: host.url,
                 value: host.url,
@@ -62,7 +62,11 @@ export default function Login() {
     const onSubmit = useCallback<FormPageSubmitHandler<Data>>(
         async (data, setError) => {
             try {
-                let loginPage = await ky.get('/api/login/', { credentials: 'include', headers: { 'x-server': data.server } }).text()
+                const automationServer = automationServers.find((server) => server.url === data.server)
+                if (!automationServer) return
+                const loginPageUrl = automationServer.type === 'controller' ? '/api/login/' : '/api/automation-hub/_ui/v1/auth/login/'
+
+                let loginPage = await ky.get(loginPageUrl, { credentials: 'include', headers: { 'x-server': data.server } }).text()
                 loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
                 loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
                 const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
@@ -71,11 +75,18 @@ export default function Login() {
                 searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
                 searchParams.set('username', data.username)
                 searchParams.set('password', data.password)
-                await ky.post('/api/login/', { credentials: 'include', headers: { 'x-server': data.server }, body: searchParams })
+                await ky.post(loginPageUrl, { credentials: 'include', headers: { 'x-server': data.server }, body: searchParams })
 
                 headers['x-server'] = data.server
-                localStorage.setItem('server', data.server)
-                history(RouteE.Organizations)
+                navigate(RouteE.Organizations)
+                switch (automationServer.type) {
+                    case 'hub':
+                        navigate(RouteE.Hub)
+                        break
+                    default:
+                        navigate(RouteE.Organizations)
+                        break
+                }
             } catch (err) {
                 if (err instanceof Error) {
                     setError(err.message)
@@ -84,7 +95,7 @@ export default function Login() {
                 }
             }
         },
-        [history, t]
+        [automationServers, navigate, t]
     )
 
     const sm = useBreakpoint('sm')
