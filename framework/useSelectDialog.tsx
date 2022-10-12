@@ -1,13 +1,13 @@
 import { Button, Modal, ModalBoxBody, ModalVariant, Skeleton, Split, SplitItem } from '@patternfly/react-core'
 import { useCallback, useEffect, useState } from 'react'
-import { IControllerView } from '../frontend/controller/useControllerView'
-import { getItemKey } from '../frontend/Data'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
 import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
+import { ISelected } from './useTableItems'
+import { IView } from './useView'
 
-interface ISelectDialogOptions<T extends { id: number }> {
-    view: IControllerView<T>
+interface ISelectDialogOptions<T extends object> {
+    view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] }
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
     confirm: string
@@ -38,6 +38,7 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
                     confirm={confirm}
                     cancel={cancel}
                     selected={selected}
+                    keyFn={view.keyFn}
                 />
             )
         } else {
@@ -48,11 +49,12 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
     return openSetting
 }
 
-export type SelectDialogProps<T extends { id: number }> = {
+export type SelectDialogProps<T extends object> = {
     title: string
     open: boolean
     setOpen: (open: boolean) => void
     onSelect: (item: T) => void
+    keyFn: (item: T) => string | number
 } & ISelectDialogOptions<T>
 
 export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {
@@ -91,7 +93,7 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
                     <b>
                         {view.selectedItems.map((item) => {
                             if (tableColumns && tableColumns.length > 0) {
-                                return <span key={getItemKey(item)}>{tableColumns[0].cell(item)}</span>
+                                return <span key={props.keyFn(item)}>{tableColumns[0].cell(item)}</span>
                             }
                             return <></>
                         })}

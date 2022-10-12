@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITableColumn, SinceCell, TextCell } from '../../framework'
-import { RouteE } from '../route'
+import { RouteE } from '../Routes'
 
 export function useNameColumn<T extends { name: string; id: number }>(options?: {
     url?: string

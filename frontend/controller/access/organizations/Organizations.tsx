@@ -11,7 +11,7 @@ import {
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
 import { useDeleteOrganizations } from './useDeleteOrganizations'

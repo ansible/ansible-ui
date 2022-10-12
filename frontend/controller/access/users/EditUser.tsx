@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
-import { RouteE } from '../../../route'
+import { RouteE } from '../../../Routes'
 import { getControllerError } from '../../useControllerView'
 import { User } from './User'
 
@@ -32,6 +32,26 @@ export function EditUser() {
             title: t('User type'),
             placeholder: t('Select user type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             enum: [t('System administrator'), t('System auditor'), t('Normal user')],
+            variant: 'select',
+            options: [
+                {
+                    label: t('System administrator'),
+                    description: t('can edit, change, and update any inventory or automation definition'),
+                    value: 'System administrator',
+                },
+                {
+                    label: t('System auditor'),
+                    description: t('can see all aspects of the systems automation, but has no permission to run or change automation'),
+                    value: 'System auditor',
+                },
+                {
+                    label: t('Normal user'),
+                    description: t(
+                        'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
+                    ),
+                    value: 'Normal user',
+                },
+            ],
         }),
         password: Type.Optional(
             Type.String({

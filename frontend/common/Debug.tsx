@@ -1,10 +1,10 @@
 import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core'
 import { useMemo } from 'react'
-import { PageHeader } from '../../../framework'
-import { randomString } from '../../../framework/utils/random-string'
-import { requestPost } from '../../Data'
-import { RouteE } from '../../route'
-import { Team } from '../access/teams/Team'
+import { PageHeader } from '../../framework'
+import { randomString } from '../../framework/utils/random-string'
+import { Team } from '../controller/access/teams/Team'
+import { requestPost } from '../Data'
+import { RouteE } from '../Routes'
 
 export default function Debug() {
     const breadcrumbs = useMemo(() => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }], [])

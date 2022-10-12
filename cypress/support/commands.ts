@@ -250,7 +250,7 @@ before(() => {
         cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
     }
 
-    cy.visit(`/debug`)
+    cy.visit(`/controller/teams`)
     // cy.injectAxe()
 })
 

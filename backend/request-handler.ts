@@ -6,7 +6,8 @@ import { serve } from './serve'
 
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
     try {
-        if (req.url.startsWith('/api')) {
+        const target = req.headers['x-server']
+        if (target) {
             proxyHandler(req, res)
         } else {
             void serve(req, res)
