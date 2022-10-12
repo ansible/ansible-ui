@@ -147,6 +147,7 @@ export default function Login() {
                     defaultValue={{
                         server: searchParams.get('server') ?? localStorage.getItem('server') ?? '',
                     }}
+                    disableScrolling
                 />
             </PageSection>
         </Page>

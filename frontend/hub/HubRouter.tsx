@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RouteE } from '../Routes'
-import { Repositories } from './resources/repositories/Repositories'
+import { Repositories } from './collections/repositories/Repositories'
 
 export function HubRouter() {
     return (

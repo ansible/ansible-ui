@@ -999,7 +999,7 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
     )
 }
 
-export function SinceCell(props: { value?: string; author?: string; onClick?: () => void; t?: (t: string) => string }) {
+export function SinceCell(props: { value: string | undefined | null; author?: string; onClick?: () => void; t?: (t: string) => string }) {
     let { t } = props
     t = t ? t : (t: string) => t
     const { author, onClick } = props
