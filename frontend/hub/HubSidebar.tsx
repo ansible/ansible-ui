@@ -27,7 +27,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
     return (
         <PageSidebar
             isNavOpen={isNavOpen}
-            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined }}
+            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
             nav={
                 <Nav>
                     <NavList>
