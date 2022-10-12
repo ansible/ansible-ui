@@ -697,6 +697,7 @@ export function PageForm<T extends object>(props: {
     defaultValue?: DeepPartial<T>
     isVertical?: boolean
     singleColumn?: boolean
+    disableScrolling?: boolean
 }) {
     const { schema, defaultValue } = props
     const form = useForm<T>({
@@ -728,16 +729,41 @@ export function PageForm<T extends object>(props: {
                     return props.onSubmit(data, setError, setFieldError)
                 })}
                 isHorizontal={isHorizontal}
-                // style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden', gap: 0 }}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexGrow: 1,
+                    overflow: props.disableScrolling ? undefined : 'hidden',
+                    gap: 0,
+                }}
             >
-                {/* <Scrollable style={{ height: '100%', flexGrow: 1 }}> */}
-                <PageSection isFilled padding={{ default: props.onCancel ? 'padding' : 'noPadding' }} variant="light" style={{ maxWidth }}>
-                    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-                        {props.schema && <FormSchema schema={props.schema} />}
-                        {props.children}
-                    </Grid>
-                </PageSection>
-                {/* </Scrollable> */}
+                {props.disableScrolling ? (
+                    <PageSection
+                        isFilled
+                        // padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
+                        variant="light"
+                        style={{ maxWidth }}
+                    >
+                        <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+                            {props.schema && <FormSchema schema={props.schema} />}
+                            {props.children}
+                        </Grid>
+                    </PageSection>
+                ) : (
+                    <Scrollable style={{ height: '100%', flexGrow: 1 }}>
+                        <PageSection
+                            isFilled
+                            // padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
+                            variant="light"
+                            style={{ maxWidth }}
+                        >
+                            <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+                                {props.schema && <FormSchema schema={props.schema} />}
+                                {props.children}
+                            </Grid>
+                        </PageSection>
+                    </Scrollable>
+                )}
                 <Collapse open={!!error}>
                     <Alert
                         variant="danger"
@@ -747,7 +773,14 @@ export function PageForm<T extends object>(props: {
                     />
                 </Collapse>
                 {props.onCancel ? (
-                    <PageSection isFilled={false} style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }} variant="light">
+                    <PageSection
+                        isFilled={false}
+                        style={{
+                            borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
+                        }}
+                        variant="light"
+                    >
                         <ActionGroup style={{ marginTop: 0 }}>
                             <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
                             {props.onCancel && <PageFormCancelButton onCancel={props.onCancel}>{props.cancelText}</PageFormCancelButton>}

@@ -9,6 +9,10 @@ export function hubKeyFn(item: { pulp_id: string }) {
     return item.pulp_id
 }
 
+export function nameKeyFn(item: { name: string }) {
+    return item.name
+}
+
 interface HubItemsResponse<T extends object> {
     meta: {
         count: number
@@ -26,8 +30,9 @@ export type IHubView<T extends object> = IView &
         refresh: () => Promise<HubItemsResponse<T> | undefined>
     }
 
-export function useHubView<T extends { pulp_id: string }>(
+export function useHubView<T extends object>(
     url: string,
+    keyFn: (item: T) => string | number,
     toolbarFilters?: IToolbarFilter[],
     tableColumns?: ITableColumn<T>[],
     disableQueryString?: boolean
@@ -88,7 +93,7 @@ export function useHubView<T extends { pulp_id: string }>(
         }
     }
 
-    const selection = useSelected(data?.data ?? [], hubKeyFn)
+    const selection = useSelected(data?.data ?? [], keyFn)
 
     if (data?.meta.count !== undefined) {
         itemCountRef.current.itemCount = data?.meta.count

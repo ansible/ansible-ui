@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { hubKeyFn } from '../../useHubView'
-import { useRepositoriesColumns } from './Repositories'
+import { useLocalRepositoriesColumns } from './Repositories'
 import { Repository } from './Repository'
 
 export function useDeleteRepositories(callback: (repositories: Repository[]) => void) {
     const { t } = useTranslation()
     const [_, setDialog] = usePageDialog()
-    const columns = useRepositoriesColumns({ disableLinks: true, disableSort: true })
+    const columns = useLocalRepositoriesColumns({ disableLinks: true, disableSort: true })
     // const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
     // const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
     const deleteRepositories = (items: Repository[]) => {
