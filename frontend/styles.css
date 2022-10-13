@@ -18,3 +18,7 @@
 .pf-c-toolbar__expandable-content.pf-m-expanded {
     z-index: 400;
 }
+
+.pf-c-page__sidebar-body {
+    padding-top: 0 !important;
+}
