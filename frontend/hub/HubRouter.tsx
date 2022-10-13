@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RouteE } from '../Routes'
+import { Approvals } from './collections/approvals/Approvals'
 import { Collections } from './collections/collections/Collections'
 import { Namespaces } from './collections/namespaces/Namespaces'
 import { Repositories } from './collections/repositories/Repositories'
@@ -11,6 +12,7 @@ export function HubRouter() {
             <Route path={RouteE.Collections.replace(RouteE.Hub, '')} element={<Collections />} />
             <Route path={RouteE.Namespaces.replace(RouteE.Hub, '')} element={<Namespaces />} />
             <Route path={RouteE.Repositories.replace(RouteE.Hub, '')} element={<Repositories />} />
+            <Route path={RouteE.Approvals.replace(RouteE.Hub, '')} element={<Approvals />} />
             <Route path={RouteE.Tasks.replace(RouteE.Hub, '')} element={<Tasks />} />
             <Route path="*" element={<Navigate to={RouteE.Repositories} replace />} />
         </Routes>
