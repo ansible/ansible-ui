@@ -5,8 +5,8 @@ import { Approvals } from './collections/approvals/Approvals'
 import { Collections } from './collections/collections/Collections'
 import { Namespaces } from './collections/namespaces/Namespaces'
 import { Repositories } from './collections/repositories/Repositories'
-import { SignatureKeys } from './collections/signature-keys/SignatureKeys'
-import { Tasks } from './collections/tasks/Tasks'
+import { SignatureKeys } from './signature-keys/SignatureKeys'
+import { Tasks } from './tasks/Tasks'
 
 export function HubRouter() {
     return (

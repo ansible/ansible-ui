@@ -10,9 +10,9 @@ import {
     PageTable,
     SinceCell,
     TextCell,
-} from '../../../../framework'
-import { pulpHRefKeyFn } from '../../useHubView'
-import { usePulpView } from '../../usePulpView'
+} from '../../../framework'
+import { pulpHRefKeyFn } from '../useHubView'
+import { usePulpView } from '../usePulpView'
 import { SignatureKey } from './SignatureKey'
 
 export function SignatureKeys() {
@@ -41,7 +41,7 @@ export function useSignatureKeysColumns(_options?: { disableSort?: boolean; disa
     const tableColumns = useMemo<ITableColumn<SignatureKey>[]>(
         () => [
             { header: t('Name'), cell: (signatureKey) => <TextCell text={signatureKey.name} /> },
-            { header: t('Fingerprint'), cell: (signatureKey) => <TextCell text={signatureKey.pubkey_fingerprint} /> },
+            { header: t('Fingerprint'), cell: (signatureKey) => <CopyCell text={signatureKey.pubkey_fingerprint} /> },
             { header: t('Created'), cell: (signatureKey) => <SinceCell value={signatureKey.pulp_created} /> },
             { header: t('Public key'), cell: (signatureKey) => <CopyCell text={signatureKey.public_key} /> },
         ],

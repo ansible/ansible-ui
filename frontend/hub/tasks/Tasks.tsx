@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ITableColumn, IToolbarFilter, PageBody, PageHeader, PageLayout, PageTable, SinceCell, TextCell } from '../../../../framework'
-import { StatusCell } from '../../../common/StatusCell'
-import { pulpHRefKeyFn } from '../../useHubView'
-import { usePulpView } from '../../usePulpView'
+import { ITableColumn, IToolbarFilter, PageBody, PageHeader, PageLayout, PageTable, SinceCell, TextCell } from '../../../framework'
+import { StatusCell } from '../../common/StatusCell'
+import { pulpHRefKeyFn } from '../useHubView'
+import { usePulpView } from '../usePulpView'
 import { Task } from './Task'
 
 export function Tasks() {
