@@ -39,7 +39,7 @@ export function Repositories() {
 
 export function LocalRepositories() {
     const { t } = useTranslation()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const tableColumns = useLocalRepositoriesColumns()
     const view = useHubView<Repository>('/api/automation-hub/_ui/v1/distributions/', hubKeyFn, undefined, tableColumns)
     return (
@@ -48,9 +48,9 @@ export function LocalRepositories() {
             tableColumns={tableColumns}
             errorStateTitle={t('Error loading repositories')}
             emptyStateTitle={t('No repositories yet')}
-            emptyStateDescription={t('To get started, create an repository.')}
-            emptyStateButtonText={t('Add repository')}
-            emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
+            // emptyStateDescription={t('To get started, create an repository.')}
+            // emptyStateButtonText={t('Add repository')}
+            // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
             {...view}
         />
     )
@@ -101,24 +101,25 @@ export function RemoteRepositories() {
             tableColumns={tableColumns}
             errorStateTitle={t('Error loading repositories')}
             emptyStateTitle={t('No repositories yet')}
-            emptyStateDescription={t('To get started, create an repository.')}
-            emptyStateButtonText={t('Add repository')}
-            emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
+            // emptyStateDescription={t('To get started, create an repository.')}
+            // emptyStateButtonText={t('Add repository')}
+            // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
             {...view}
         />
     )
 }
 
 export function useRemoteRepositoriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+    const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<RemoteRepository>[]>(
         () => [
-            { header: 'Name', cell: (repository) => <TextCell text={repository.name} /> },
-            { header: 'Sync status', cell: (repository) => <TextCell text={repository.last_sync_task.state} /> },
-            { header: 'Last sync', cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} /> },
-            { header: 'Last modified', cell: (repository) => <SinceCell value={repository.updated_at} /> },
-            { header: 'Created', cell: (repository) => <SinceCell value={repository.created_at} /> },
+            { header: t('Name'), cell: (repository) => <TextCell text={repository.name} /> },
+            { header: t('Sync status'), cell: (repository) => <TextCell text={repository.last_sync_task.state} /> },
+            { header: t('Last sync'), cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} /> },
+            { header: t('Last modified'), cell: (repository) => <SinceCell value={repository.updated_at} /> },
+            { header: t('Created'), cell: (repository) => <SinceCell value={repository.created_at} /> },
         ],
-        []
+        [t]
     )
     return tableColumns
 }

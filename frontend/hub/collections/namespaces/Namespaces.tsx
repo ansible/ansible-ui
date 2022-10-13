@@ -84,16 +84,16 @@ export function MyNamespaces() {
 }
 
 export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+    const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<Namespace>[]>(
-        () => [{ header: 'Name', cell: (namespace) => <TextCell text={namespace.name} />, sort: 'name' }],
-        []
+        () => [{ header: t('Name'), cell: (namespace) => <TextCell text={namespace.name} />, sort: 'name' }],
+        [t]
     )
     return tableColumns
 }
 
 export function useNamespaceFilters() {
     const { t } = useTranslation()
-
     const toolbarFilters = useMemo<IToolbarFilter[]>(
         () => [{ key: 'keywords', label: t('Keywords'), type: 'string', query: 'keywords' }],
         [t]
