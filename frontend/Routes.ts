@@ -83,6 +83,9 @@ export enum RouteE {
     CreateNamespace = '/hub/namespaces/create/:id',
     EditNamespace = '/hub/namespaces/edit/:id',
 
+    Approvals = '/hub/approvals',
+    ApprovalDetails = '/hub/approvals/details/:id',
+
     Tasks = '/hub/tasks',
     TaskDetails = '/hub/tasks/details/:id',
 
