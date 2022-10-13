@@ -897,11 +897,9 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
 
 export function Labels(props: { labels: string[] }) {
     return (
-        <LabelGroup numLabels={999} isCompact>
+        <LabelGroup numLabels={999} style={{ flexWrap: 'nowrap' }}>
             {props.labels.map((label) => (
-                <Label isCompact key={label}>
-                    {label}
-                </Label>
+                <Label key={label}>{label}</Label>
             ))}
         </LabelGroup>
     )
