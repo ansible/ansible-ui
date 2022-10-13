@@ -13,6 +13,10 @@ export function nameKeyFn(item: { name: string }) {
     return item.name
 }
 
+export function idKeyFn(item: { id: number }) {
+    return item.id
+}
+
 interface HubItemsResponse<T extends object> {
     meta: {
         count: number
@@ -64,17 +68,17 @@ export function useHubView<T extends object>(
     if (sort) {
         queryString ? (queryString += '&') : (queryString += '?')
         if (sortDirection === 'desc') {
-            queryString += `order_by=-${sort}`
+            queryString += `sort=-${sort}`
         } else {
-            queryString += `order_by=${sort}`
+            queryString += `sort=${sort}`
         }
     }
 
     queryString ? (queryString += '&') : (queryString += '?')
-    queryString += `page=${page}`
+    queryString += `offset=${(page - 1) * perPage}`
 
     queryString ? (queryString += '&') : (queryString += '?')
-    queryString += `page_size=${perPage}`
+    queryString += `limit=${perPage}`
 
     url += queryString
     const fetcher = useFetcher()
