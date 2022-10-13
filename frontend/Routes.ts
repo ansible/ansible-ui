@@ -73,8 +73,12 @@ export enum RouteE {
 
     Repositories = '/hub/repositories',
     RepositoryDetails = '/hub/repositories/details/:id',
-    CreateRepository = '/hub/repositories/create',
     EditRepository = '/hub/repositories/edit/:id',
+
+    Namespaces = '/hub/namespaces',
+    NamespaceDetails = '/hub/namespaces/details/:id',
+    CreateNamespace = '/hub/namespaces/create/:id',
+    EditNamespace = '/hub/namespaces/edit/:id',
 
     Debug = '/debug',
 }
