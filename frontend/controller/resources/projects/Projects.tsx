@@ -3,7 +3,7 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
+import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
 import {
     useCreatedColumn,
     useDescriptionColumn,
@@ -18,7 +18,7 @@ import {
     useNameToolbarFilter,
     useOrganizationToolbarFilter,
 } from '../../../common/controller-toolbar-filters'
-import { getStatus } from '../../../common/status'
+import { StatusCell } from '../../../common/StatusCell'
 import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { Project } from './Project'
@@ -121,10 +121,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
             descriptionColumn,
             {
                 header: t('Status'),
-                cell: (project) => {
-                    const status = getStatus(project.status)
-                    return <TextCell icon={status?.icon} iconSize="sm" text={status?.text} />
-                },
+                cell: (project) => <StatusCell status={project.status} />,
             },
             {
                 header: t('Type'),
