@@ -71,11 +71,11 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Remote registries')}
                             </NavItem>
-                        </NavExpandable>
-                        <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                        </NavExpandable> */}
+                        <NavItem isActive={isRouteActive(RouteE.Tasks, location)} onClick={() => onClick(RouteE.Tasks)}>
                             {t('Task management')}
                         </NavItem>
-                        <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                        {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                             {t('Signature keys')}
                         </NavItem>
                         <NavExpandable
