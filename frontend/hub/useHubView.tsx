@@ -9,6 +9,10 @@ export function hubKeyFn(item: { pulp_id: string }) {
     return item.pulp_id
 }
 
+export function pulpHRefKeyFn(item: { pulp_href: string }) {
+    return item.pulp_href
+}
+
 export function nameKeyFn(item: { name: string }) {
     return item.name
 }

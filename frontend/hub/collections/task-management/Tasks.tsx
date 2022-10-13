@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ITableColumn, IToolbarFilter, PageBody, PageHeader, PageLayout, PageTable, SinceCell, TextCell } from '../../../../framework'
 import { StatusCell } from '../../../common/StatusCell'
-import { nameKeyFn } from '../../useHubView'
+import { pulpHRefKeyFn } from '../../useHubView'
 import { usePulpView } from '../../usePulpView'
 import { Task } from './Task'
 
@@ -10,7 +10,7 @@ export function Tasks() {
     const { t } = useTranslation()
     const toolbarFilters = useTaskFilters()
     const tableColumns = useTasksColumns()
-    const view = usePulpView<Task>('/api/automation-hub/pulp/api/v3/tasks/', nameKeyFn, toolbarFilters, tableColumns)
+    const view = usePulpView<Task>('/api/automation-hub/pulp/api/v3/tasks/', pulpHRefKeyFn, toolbarFilters, tableColumns)
     return (
         <PageLayout>
             <PageHeader title={t('Tasks')} />

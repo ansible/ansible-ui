@@ -94,7 +94,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                 </NavItem>
                             </NavExpandable> */}
                             <NavItem isActive={isRouteActive(RouteE.Tasks, location)} onClick={() => onClick(RouteE.Tasks)}>
-                                {t('Task management')}
+                                {t('Tasks')}
                             </NavItem>
                             {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Signature keys')}

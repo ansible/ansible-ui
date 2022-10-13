@@ -15,7 +15,7 @@ import {
     TextCell,
 } from '../../../../framework'
 import { RouteE } from '../../../Routes'
-import { hubKeyFn, nameKeyFn, useHubView } from '../../useHubView'
+import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView'
 import { RemoteRepository, Repository } from './Repository'
 
 export function Repositories() {
@@ -74,7 +74,7 @@ export function RemoteRepositories() {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const tableColumns = useRemoteRepositoriesColumns()
-    const view = useHubView<RemoteRepository>('/api/automation-hub/_ui/v1/remotes/', nameKeyFn, undefined, tableColumns)
+    const view = useHubView<RemoteRepository>('/api/automation-hub/_ui/v1/remotes/', pulpHRefKeyFn, undefined, tableColumns)
     const rowActions = useMemo<IItemAction<RemoteRepository>[]>(
         () => [
             {
