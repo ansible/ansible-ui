@@ -27,7 +27,7 @@ export function Token() {
     }
     return (
         <PageLayout>
-            <PageHeader title={t('API Token')} description={t('An API token can be used to authenticate the ansible-galaxy client.')} />
+            <PageHeader title={t('API token')} description={t('An API token can be used to authenticate the ansible-galaxy client.')} />
             <PageBody>
                 <PageSection variant="light">
                     {token ? (
@@ -41,14 +41,14 @@ export function Token() {
                         </Stack>
                     ) : (
                         <Stack hasGutter>
-                            <Alert variant="warning" isInline title={t('Loading a new token will delete your old token.')} />
+                            <Alert variant="warning" isInline title={t('Generating a new token will delete your old token.')} />
                             <ActionGroup>
                                 <Button
                                     // eslint-disable-next-line @typescript-eslint/no-misused-promises
                                     onClick={onClick}
                                     isDisabled={working}
                                 >
-                                    {t('Load Token')}
+                                    {t('Generate token')}
                                 </Button>
                             </ActionGroup>
                             {error && <Alert variant="danger" isInline title={error} />}
