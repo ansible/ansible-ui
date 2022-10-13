@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RouteE } from '../Routes'
+import { Token } from './access/token/Token'
 import { Approvals } from './collections/approvals/Approvals'
 import { Collections } from './collections/collections/Collections'
 import { Namespaces } from './collections/namespaces/Namespaces'
@@ -16,6 +17,7 @@ export function HubRouter() {
             <Route path={RouteE.Approvals.replace(RouteE.Hub, '')} element={<Approvals />} />
             <Route path={RouteE.Tasks.replace(RouteE.Hub, '')} element={<Tasks />} />
             <Route path={RouteE.SignatureKeys.replace(RouteE.Hub, '')} element={<SignatureKeys />} />
+            <Route path={RouteE.APIToken.replace(RouteE.Hub, '')} element={<Token />} />
             <Route path="*" element={<Navigate to={RouteE.Repositories} replace />} />
         </Routes>
     )

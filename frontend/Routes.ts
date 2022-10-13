@@ -91,5 +91,7 @@ export enum RouteE {
 
     SignatureKeys = '/hub/signature-keys',
 
+    APIToken = '/hub/api-token',
+
     Debug = '/debug',
 }

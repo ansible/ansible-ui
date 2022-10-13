@@ -102,7 +102,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                 {t('Signature keys')}
                             </NavItem> */}
-                            {/* <NavExpandable
+                            <NavExpandable
                                 key="access"
                                 title={t('Access')}
                                 isExpanded
@@ -110,17 +110,20 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                     [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
                                     location
                                 )}
-                            > */}
-                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                            >
+                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                     {t('Users')}
                                 </NavItem> */}
-                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                     {t('Groups')}
                                 </NavItem> */}
-                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                     {t('Roles')}
                                 </NavItem> */}
-                            {/* </NavExpandable> */}
+                                <NavItem isActive={isRouteActive(RouteE.APIToken, location)} onClick={() => onClick(RouteE.APIToken)}>
+                                    {t('API token ')}
+                                </NavItem>
+                            </NavExpandable>
                         </NavList>
                     </Nav>
                 </>
