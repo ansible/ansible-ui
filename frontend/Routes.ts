@@ -89,6 +89,8 @@ export enum RouteE {
     Tasks = '/hub/tasks',
     TaskDetails = '/hub/tasks/details/:id',
 
+    SignatureKeys = '/hub/signature-keys',
+
     APIToken = '/hub/api-token',
 
     Debug = '/debug',
