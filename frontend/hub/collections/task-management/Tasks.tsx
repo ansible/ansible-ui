@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ITableColumn, IToolbarFilter, PageBody, PageHeader, PageLayout, PageTable, SinceCell, TextCell } from '../../../../framework'
-import { StatusCell } from '../../../common/status'
+import { StatusCell } from '../../../common/StatusCell'
 import { nameKeyFn } from '../../useHubView'
 import { usePulpView } from '../../usePulpView'
 import { Task } from './Task'
@@ -32,10 +32,10 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
     const tableColumns = useMemo<ITableColumn<Task>[]>(
         () => [
             { header: t('Name'), cell: (task) => <TextCell text={task.name} />, sort: 'name' },
-            { header: t('Created'), cell: (task) => <SinceCell value={task.pulp_created} /> },
-            { header: t('Started'), cell: (task) => <SinceCell value={task.started_at} /> },
-            { header: t('Finished'), cell: (task) => <SinceCell value={task.finished_at} /> },
-            { header: t('Status'), cell: (task) => <StatusCell status={task.state} /> },
+            { header: t('Created'), cell: (task) => <SinceCell value={task.pulp_created} />, sort: 'pulp_created' },
+            { header: t('Started'), cell: (task) => <SinceCell value={task.started_at} />, sort: 'started_at' },
+            { header: t('Finished'), cell: (task) => <SinceCell value={task.finished_at} />, sort: 'finished_at' },
+            { header: t('Status'), cell: (task) => <StatusCell status={task.state} />, sort: 'state' },
         ],
         [t]
     )
