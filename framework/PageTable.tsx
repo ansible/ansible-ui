@@ -529,18 +529,6 @@ function TableCells<T extends object>(props: {
     )
 }
 
-export interface IItemFilter<T extends object> {
-    label: string
-    type?: 'search' | 'filter'
-    options: {
-        label: string
-        value: string
-    }[]
-    filter: (item: T, values: string[]) => boolean
-}
-
-export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void
-
 type CellFn<T extends object> = (item: T) => ReactNode
 
 export interface ITableColumn<T extends object> {

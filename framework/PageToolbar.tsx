@@ -28,6 +28,18 @@ import { useBreakpoint } from './components/useBreakPoint'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
+export interface IItemFilter<T extends object> {
+    label: string
+    type?: 'search' | 'filter'
+    options: {
+        label: string
+        value: string
+    }[]
+    filter: (item: T, values: string[]) => boolean
+}
+
+export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void
+
 export function toolbarActionsHaveBulkActions<T extends object>(actions?: ITypedAction<T>[]) {
     if (!actions) return false
     for (const action of actions) {
@@ -46,7 +58,7 @@ export interface IToolbarFilter {
 export type IFilterState = Record<string, string[] | undefined>
 
 export type PagetableToolbarProps<T extends object> = {
-    openColumnModal: () => void
+    openColumnModal?: () => void
     keyFn: (item: T) => string | number
 
     itemCount?: number
@@ -70,6 +82,7 @@ export type PagetableToolbarProps<T extends object> = {
     selectItems?: (items: T[]) => void
     unselectAll?: () => void
     onSelect?: (item: T) => void
+    disableBorderBottom?: boolean
 }
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -85,6 +98,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         setFilters,
         clearAllFilters,
         openColumnModal,
+        disableBorderBottom,
     } = props
 
     const sm = useBreakpoint('md')
@@ -119,7 +133,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         return (
             <Toolbar
                 style={{
-                    borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+                    borderBottom: disableBorderBottom ? undefined : 'thin solid var(--pf-global--BorderColor--100)',
                     paddingBottom: sm ? undefined : 8,
                     paddingTop: sm ? undefined : 8,
                     backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
@@ -138,7 +152,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         <Toolbar
             clearAllFilters={clearAllFilters}
             style={{
-                borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+                borderBottom: disableBorderBottom ? undefined : 'thin solid var(--pf-global--BorderColor--100)',
                 paddingBottom: sm ? undefined : 8,
                 paddingTop: sm ? undefined : 8,
                 backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
@@ -228,11 +242,13 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 {/* Action Buttons */}
                 <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
                     <TypedActions actions={toolbarActions} selectedItems={selectedItems} wrapper={ToolbarItem} />
-                    <ToolbarItem>
-                        <Tooltip content={'Manage columns'}>
-                            <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
-                        </Tooltip>
-                    </ToolbarItem>
+                    {openColumnModal && (
+                        <ToolbarItem>
+                            <Tooltip content={'Manage columns'}>
+                                <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
+                            </Tooltip>
+                        </ToolbarItem>
+                    )}
                 </ToolbarGroup>
 
                 {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}

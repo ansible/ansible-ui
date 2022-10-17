@@ -68,7 +68,7 @@ export function TeamDetails() {
             <PageHeader
                 title={team?.name}
                 breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
-                headerActions={<TypedActions<Team> actions={itemActions} dropdownPosition={DropdownPosition.right} />}
+                headerActions={<TypedActions<Team> actions={itemActions} position={DropdownPosition.right} />}
             />
             <PageBody>
                 {team ? (

@@ -66,7 +66,7 @@ export function OrganizationDetails() {
             <PageHeader
                 title={organization?.name}
                 breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: organization?.name }]}
-                headerActions={<TypedActions<Organization> actions={itemActions} dropdownPosition={DropdownPosition.right} />}
+                headerActions={<TypedActions<Organization> actions={itemActions} position={DropdownPosition.right} />}
             />
             <PageBody>
                 {organization ? (
