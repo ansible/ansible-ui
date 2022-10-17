@@ -6,6 +6,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { PageFrameworkProvider } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
 import { AccessCode } from './common/AccessCode'
+import { AutomationServersProvider } from './common/automation-servers/AutomationServerProvider'
 import Login from './common/Login'
 import { Controller } from './controller/Controller'
 import { Hub } from './hub/Hub'
@@ -17,16 +18,18 @@ export default function Main() {
         <StrictMode>
             <ErrorBoundary message={t('An eror occured')}>
                 <AccessCode>
-                    <PageFrameworkProvider>
-                        <BrowserRouter>
-                            <Routes>
-                                <Route path={RouteE.Login} element={<Login />} />
-                                <Route path={RouteE.Controller + '/*'} element={<Controller />} />
-                                <Route path={RouteE.Hub + '/*'} element={<Hub />} />
-                                <Route path="*" element={<Navigate to={RouteE.Login} />} />
-                            </Routes>
-                        </BrowserRouter>
-                    </PageFrameworkProvider>
+                    <AutomationServersProvider>
+                        <PageFrameworkProvider>
+                            <BrowserRouter>
+                                <Routes>
+                                    <Route path={RouteE.Login} element={<Login />} />
+                                    <Route path={RouteE.Controller + '/*'} element={<Controller />} />
+                                    <Route path={RouteE.Hub + '/*'} element={<Hub />} />
+                                    <Route path="*" element={<Navigate to={RouteE.Login} />} />
+                                </Routes>
+                            </BrowserRouter>
+                        </PageFrameworkProvider>
+                    </AutomationServersProvider>
                 </AccessCode>
             </ErrorBoundary>
         </StrictMode>

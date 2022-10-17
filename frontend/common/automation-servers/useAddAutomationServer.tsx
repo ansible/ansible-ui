@@ -2,8 +2,8 @@ import { Modal, ModalVariant } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PageForm, usePageDialog } from '../../framework'
-import { AutomationServer, useAutomationServers } from './useAutomationServer'
+import { PageForm, usePageDialog } from '../../../framework'
+import { useAutomationServers } from './AutomationServerProvider'
 
 export function useAddAutomationServer() {
     const [_, setDialog] = usePageDialog()
@@ -50,12 +50,12 @@ export function AddAutomationServerDialog() {
 
     type Data = Static<typeof DataType>
 
-    const { saveAutomationServer: saveProductHost } = useAutomationServers()
+    const { setAutomationServers } = useAutomationServers()
 
     const [_, setDialog] = usePageDialog()
     const onClose = () => setDialog(undefined)
     const onSubmit = (data: Data) => {
-        saveProductHost(data as AutomationServer)
+        setAutomationServers((servers) => [...servers.filter((a) => a.url !== data.url), data])
         onClose()
         return Promise.resolve()
     }
@@ -69,6 +69,7 @@ export function AddAutomationServerDialog() {
                 onSubmit={onSubmit}
                 defaultValue={{ type: 'controller' }}
                 singleColumn
+                disableScrolling
             />
         </Modal>
     )

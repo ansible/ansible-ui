@@ -1,9 +1,10 @@
-import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSection, PageSidebar, Text, Title } from '@patternfly/react-core'
+import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
 import { useSettings } from '../../framework/Settings'
+import { AutomationServerSwitcher } from '../common/automation-servers/AutomationServerSwitcher'
 import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../Routes'
 
@@ -30,25 +31,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
             style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
             nav={
                 <>
-                    <Nav>
-                        <NavList>
-                            <NavItemSeparator style={{ margin: 0 }} />
-                        </NavList>
-                    </Nav>
-                    <PageSection
-                        variant="dark"
-                        style={{
-                            backgroundColor:
-                                settings.theme === 'light'
-                                    ? 'var(--pf-global--BackgroundColor--100)'
-                                    : 'var(--pf-global--BackgroundColor--400)',
-                        }}
-                    >
-                        <Title headingLevel="h2">{t('Server Name (TODO)')}</Title>
-                        <Text component="small" style={{ opacity: 0.7 }}>
-                            {t('Automation Hub')}
-                        </Text>
-                    </PageSection>
+                    <AutomationServerSwitcher />
                     <Nav>
                         <NavList>
                             <NavItemSeparator style={{ margin: 0 }} />
