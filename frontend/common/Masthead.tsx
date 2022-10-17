@@ -37,7 +37,7 @@ import { useBreakpoint } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
 import { swrOptions, useFetcher } from '../Data'
 import { RouteE } from '../Routes'
-import { useAutomationServers } from './useAutomationServer'
+import { useAutomationServers } from './automation-servers/AutomationServerProvider'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false)

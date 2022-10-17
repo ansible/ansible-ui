@@ -22,3 +22,19 @@
 .pf-c-page__sidebar-body {
     padding-top: 0 !important;
 }
+
+.pf-c-context-selector__toggle {
+    display: inline-flex !important;
+    flex-wrap: nowrap;
+    min-width: 270px;
+}
+
+.pf-c-context-selector__toggle-text {
+    color: var(--pf-global--Color--100);
+    flex-grow: 1;
+}
+
+.pf-c-context-selector__toggle-icon {
+    color: var(--pf-global--Color--100);
+    flex-shrink: 1;
+}
