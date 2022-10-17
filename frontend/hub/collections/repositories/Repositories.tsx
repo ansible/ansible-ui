@@ -22,7 +22,7 @@ export function Repositories() {
     const { t } = useTranslation()
     return (
         <PageLayout>
-            <PageHeader title={t('Repositories')} />
+            <PageHeader title={t('Repository management')} />
             <PageBody>
                 <PageTabs>
                     <PageTab title={t('Local')}>

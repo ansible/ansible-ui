@@ -1,4 +1,5 @@
-import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core'
+import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core'
+import { ExternalLinkAltIcon } from '@patternfly/react-icons'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -36,13 +37,10 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                         <NavList>
                             <NavItemSeparator style={{ margin: 0 }} />
                             <NavExpandable
-                                key="resources"
-                                title={t('Resources')}
+                                key="collections"
+                                title={t('Collections')}
                                 isExpanded
-                                isActive={isRouteActive(
-                                    [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
-                                    location
-                                )}
+                                isActive={isRouteActive([RouteE.Collections, RouteE.Namespaces, RouteE.Repositories], location)}
                             >
                                 <NavItem isActive={isRouteActive(RouteE.Collections, location)} onClick={() => onClick(RouteE.Collections)}>
                                     {t('Collections')}
@@ -54,46 +52,56 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                     isActive={isRouteActive(RouteE.Repositories, location)}
                                     onClick={() => onClick(RouteE.Repositories)}
                                 >
-                                    {t('Repositories')}
+                                    {t('Repository management')}
+                                </NavItem>
+                                <NavItem isActive={isRouteActive(RouteE.APIToken, location)} onClick={() => onClick(RouteE.APIToken)}>
+                                    {t('API token management')}
                                 </NavItem>
                                 <NavItem isActive={isRouteActive(RouteE.Approvals, location)} onClick={() => onClick(RouteE.Approvals)}>
-                                    {t('Collection approvals')}
+                                    {t('Approval')}
                                 </NavItem>
                             </NavExpandable>
-                            {/* <NavExpandable
+                            <NavExpandable
                                 key="execution-environments"
                                 title={t('Execution environments')}
                                 isExpanded
-                                isActive={isRouteActive(
-                                    [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
-                                    location
-                                )}
+                                isActive={isRouteActive([RouteE.HubExecutionEnvironments, RouteE.RemoteRegistries], location)}
                             >
-                                <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.HubExecutionEnvironments, location)}
+                                    onClick={() => onClick(RouteE.HubExecutionEnvironments)}
+                                >
                                     {t('Execution environments')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.RemoteRegistries, location)}
+                                    onClick={() => onClick(RouteE.RemoteRegistries)}
+                                >
                                     {t('Remote registries')}
                                 </NavItem>
-                            </NavExpandable> */}
+                            </NavExpandable>
                             <NavItem isActive={isRouteActive(RouteE.Tasks, location)} onClick={() => onClick(RouteE.Tasks)}>
-                                {t('Tasks')}
+                                {t('Task management')}
                             </NavItem>
                             <NavItem isActive={isRouteActive(RouteE.SignatureKeys, location)} onClick={() => onClick(RouteE.SignatureKeys)}>
                                 {t('Signature keys')}
                             </NavItem>
-                            {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
-                                {t('Signature keys')}
-                            </NavItem> */}
-                            <NavExpandable
-                                key="access"
-                                title={t('Access')}
-                                isExpanded
-                                isActive={isRouteActive(
-                                    [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
-                                    location
-                                )}
+                            <NavItem
+                                onClick={() =>
+                                    window.open(
+                                        'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
+                                        '_blank'
+                                    )
+                                }
                             >
+                                <Split>
+                                    <SplitItem isFilled>{t('Documentation')}</SplitItem>
+                                    <SplitItem>
+                                        <ExternalLinkAltIcon />
+                                    </SplitItem>
+                                </Split>
+                            </NavItem>
+                            <NavExpandable key="access" title={t('User access')} isExpanded isActive={isRouteActive([], location)}>
                                 {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                     {t('Users')}
                                 </NavItem> */}
@@ -103,9 +111,6 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                 {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
                                     {t('Roles')}
                                 </NavItem> */}
-                                <NavItem isActive={isRouteActive(RouteE.APIToken, location)} onClick={() => onClick(RouteE.APIToken)}>
-                                    {t('API token ')}
-                                </NavItem>
                             </NavExpandable>
                         </NavList>
                     </Nav>
