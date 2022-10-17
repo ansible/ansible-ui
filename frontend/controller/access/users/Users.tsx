@@ -1,4 +1,4 @@
-import { ButtonVariant, Chip, ChipGroup, Nav, NavItem, NavList, Text } from '@patternfly/react-core'
+import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,6 +17,7 @@ import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
+import { AccessNav } from '../common/AccessNav'
 import { useDeleteUsers } from './useDeleteUsers'
 import { User } from './User'
 
@@ -79,17 +80,7 @@ export function Users() {
             titleHelp={t('users.title.help')}
             titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
             description={t('users.title.description')}
-            navigation={
-                <Nav aria-label="Group section navigation" variant="tertiary">
-                    <NavList>
-                        <NavItem onClick={() => navigate(RouteE.Organizations)}>{t('Organizations')}</NavItem>
-                        <NavItem onClick={() => navigate(RouteE.Teams)}>{t('Teams')}</NavItem>
-                        <NavItem onClick={() => navigate(RouteE.Users)} isActive>
-                            {t('Users')}
-                        </NavItem>
-                    </NavList>
-                </Nav>
-            }
+            navigation={<AccessNav active="users" />}
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
