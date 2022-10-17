@@ -86,6 +86,11 @@ export enum RouteE {
     Approvals = '/hub/approvals',
     ApprovalDetails = '/hub/approvals/details/:id',
 
+    HubExecutionEnvironments = '/hub/execution-environments',
+    HubExecutionEnvironmentDetails = '/hub/execution-environments/details/:id',
+
+    RemoteRegistries = '/hub/remote-registries',
+
     Tasks = '/hub/tasks',
     TaskDetails = '/hub/tasks/details/:id',
 
