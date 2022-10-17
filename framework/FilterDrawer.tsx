@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Checkbox, DrawerPanelBody, DrawerPanelContent, DrawerSection, Stack, Title } from '@patternfly/react-core'
 import { Fragment, useCallback } from 'react'
-import { IFilterState, IItemFilter, SetFilterValues } from './PageTable'
+import { IItemFilter, SetFilterValues } from './PageTable'
+import { IFilterState } from './PageToolbar'
 
 export function FilterDrawer<T extends object>(props: {
     filters?: IItemFilter<T>[]
