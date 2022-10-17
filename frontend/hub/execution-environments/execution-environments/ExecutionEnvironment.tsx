@@ -1,4 +1,4 @@
-export interface RemoteRegistry {
+export interface ExecutionEnvironment {
     id: number
     name: string
     description?: string

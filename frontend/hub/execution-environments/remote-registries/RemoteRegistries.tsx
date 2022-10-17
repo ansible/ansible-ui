@@ -11,30 +11,30 @@ import {
     PageHeader,
     PageLayout,
     PageTable,
+    SinceCell,
     TextCell,
     TypedActionType,
-} from '../../../framework'
-import { useCreatedColumn, useDescriptionColumn } from '../../common/columns'
-import { idKeyFn, useHubView } from '../useHubView'
-import { ExecutionEnvironment } from './ExecutionEnvironment'
+} from '../../../../framework'
+import { pkKeyFn, useHubView } from '../../useHubView'
+import { RemoteRegistry } from './RemoteRegistry'
 
-export function ExecutionEnvironments() {
+export function RemoteRegistries() {
     const { t } = useTranslation()
-    const toolbarFilters = useExecutionEnvironmentFilters()
-    const tableColumns = useExecutionEnvironmentsColumns()
-    const view = useHubView<ExecutionEnvironment>(
-        '/api/automation-hub/_ui/v1/execution-environments/repositories/',
-        idKeyFn,
+    const toolbarFilters = useRemoteRegistryFilters()
+    const tableColumns = useRemoteRegistriesColumns()
+    const view = useHubView<RemoteRegistry>(
+        '/api/automation-hub/_ui/v1/execution-environments/registries/',
+        pkKeyFn,
         toolbarFilters,
         tableColumns
     )
-    const toolbarActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
+    const toolbarActions = useMemo<ITypedAction<RemoteRegistry>[]>(
         () => [
             {
                 type: TypedActionType.button,
                 variant: ButtonVariant.primary,
                 icon: PlusIcon,
-                label: t('Add execution environment'),
+                label: t('Add remote registry'),
                 onClick: () => {
                     /**/
                 },
@@ -42,7 +42,7 @@ export function ExecutionEnvironments() {
         ],
         [t]
     )
-    const rowActions = useMemo<IItemAction<ExecutionEnvironment>[]>(
+    const rowActions = useMemo<IItemAction<RemoteRegistry>[]>(
         () => [
             {
                 icon: EditIcon,
@@ -56,15 +56,15 @@ export function ExecutionEnvironments() {
     )
     return (
         <PageLayout>
-            <PageHeader title={t('Execution environments')} />
+            <PageHeader title={t('Remote registries')} />
             <PageBody>
-                <PageTable<ExecutionEnvironment>
+                <PageTable<RemoteRegistry>
                     toolbarFilters={toolbarFilters}
                     tableColumns={tableColumns}
                     toolbarActions={toolbarActions}
                     rowActions={rowActions}
-                    errorStateTitle={t('Error loading execution environments')}
-                    emptyStateTitle={t('No execution environments yet')}
+                    errorStateTitle={t('Error loading remote registries')}
+                    emptyStateTitle={t('No remote registries yet')}
                     {...view}
                 />
             </PageBody>
@@ -72,22 +72,20 @@ export function ExecutionEnvironments() {
     )
 }
 
-export function useExecutionEnvironmentsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useRemoteRegistriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    const descriptionColumn = useDescriptionColumn()
-    const createdColumn = useCreatedColumn()
-    const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
+    const tableColumns = useMemo<ITableColumn<RemoteRegistry>[]>(
         () => [
-            { header: t('Collection repository'), cell: (executionEnvironment) => <TextCell text={executionEnvironment.name} /> },
-            descriptionColumn,
-            createdColumn,
+            { header: t('Name'), cell: (remoteRegistry) => <TextCell text={remoteRegistry.name} /> },
+            { header: t('Created'), cell: (remoteRegistry) => <SinceCell value={remoteRegistry.created_at} /> },
+            { header: t('Registry URL'), cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} /> },
         ],
-        [createdColumn, descriptionColumn, t]
+        [t]
     )
     return tableColumns
 }
 
-export function useExecutionEnvironmentFilters() {
+export function useRemoteRegistryFilters() {
     const { t } = useTranslation()
     const toolbarFilters = useMemo<IToolbarFilter[]>(() => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }], [t])
     return toolbarFilters
