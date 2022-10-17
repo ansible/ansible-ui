@@ -143,9 +143,9 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                                 {/* <NavItem isActive={isRouteActive(RouteE.InstanceGroups, location)}>
                                 <Link to={RouteE.InstanceGroups}>Instance groups</Link>
                             </NavItem> */}
-                                {/* <NavItem isActive={isRouteActive(RouteE.Instances, location)}>
-                                <Link to={RouteE.Instances}>Instances</Link>
-                            </NavItem> */}
+                                <NavItem isActive={isRouteActive(RouteE.Instances, location)} onClick={() => onClick(RouteE.Instances)}>
+                                    {t('Instances')}
+                                </NavItem>
                                 {/* <NavItem isActive={isRouteActive(RouteE.Applications, location)}>
                                 <Link to={RouteE.Applications}>Applications</Link>
                             </NavItem> */}
