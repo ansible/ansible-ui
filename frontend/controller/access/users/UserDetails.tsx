@@ -72,7 +72,7 @@ export function UserDetailsPage() {
             <PageHeader
                 title={user?.username}
                 breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: user?.username }]}
-                headerActions={<TypedActions<User> actions={itemActions} dropdownPosition={DropdownPosition.right} />}
+                headerActions={<TypedActions<User> actions={itemActions} position={DropdownPosition.right} />}
             />
             <PageBody>
                 {user ? (
