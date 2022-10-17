@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { CopyCell, SinceCell } from '../PageTable'
+import { CopyCell, SinceCell } from '../PageCells'
 import { useSettings } from '../Settings'
 import { Help } from './Help'
 import { IconWrapper } from './IconWrapper'

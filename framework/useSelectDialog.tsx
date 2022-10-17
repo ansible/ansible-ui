@@ -2,7 +2,8 @@ import { Button, Modal, ModalBoxBody, ModalVariant, Skeleton, Split, SplitItem }
 import { useCallback, useEffect, useState } from 'react'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, IToolbarFilter, PageTable } from './PageTable'
+import { ITableColumn, PageTable } from './PageTable'
+import { IToolbarFilter } from './PageToolbar'
 import { ISelected } from './useTableItems'
 import { IView } from './useView'
 
