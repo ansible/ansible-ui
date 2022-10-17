@@ -18,7 +18,7 @@ export function AutomationServerSwitcher() {
             style={{
                 padding: 12,
                 backgroundColor:
-                    settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--100)' : 'var(--pf-global--BackgroundColor--400)',
+                    settings.theme === 'light' ? 'var(--pf-global--BackgroundColor--100)' : 'var(--pf-global--BackgroundColor--300)',
                 borderTop: 'thin solid #fff2',
                 borderBottom: 'thin solid #fff2',
             }}
