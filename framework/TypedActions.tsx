@@ -251,7 +251,7 @@ export function TypedActions<T extends object>(props: {
     wrapper?: ComponentClass | FunctionComponent
     collapse?: WindowSize
     noPrimary?: boolean
-    dropdownPosition?: DropdownPosition
+    position?: DropdownPosition
 }) {
     const { actions } = props
     const collapseButtons = !useBreakpoint(props.collapse ?? 'lg')
@@ -295,7 +295,7 @@ export function TypedActions<T extends object>(props: {
     return (
         <>
             <TypedActionsButtons {...props} actions={buttonActions} />
-            <TypedActionsDropdown {...props} actions={dropdownActions} position={props.dropdownPosition} />
+            <TypedActionsDropdown {...props} actions={dropdownActions} position={props.position} />
         </>
     )
 }
