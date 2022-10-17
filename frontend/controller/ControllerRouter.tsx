@@ -12,6 +12,7 @@ import { EditUser } from './access/users/EditUser'
 import { UserDetailsPage } from './access/users/UserDetails'
 import { Users } from './access/users/Users'
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments'
+import { Instances } from './administration/instances/Instances'
 import { Credentials } from './resources/credentials/Credentials'
 import { Hosts } from './resources/hosts/Hosts'
 import { Inventories } from './resources/inventories/Inventories'
@@ -59,7 +60,7 @@ export function ControllerRouter() {
             {/* <Route path={RouteE.Notifications} element={NotificationsPage} /> */}
             {/* <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} /> */}
             {/* <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} /> */}
-            {/* <Route path={RouteE.Instances} element={InstancesPage} /> */}
+            <Route path={RouteE.Instances.replace(RouteE.Controller, '')} element={<Instances />} />
             {/* <Route path={RouteE.Applications} element={ApplicationsPage} /> */}
             <Route path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')} element={<ExecutionEnvironments />} />
             {/* <Route path={RouteE.TopologyView} element={TopologyView} /> */}
