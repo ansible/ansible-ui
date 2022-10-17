@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
     ITableColumn,
     IToolbarFilter,
-    Labels,
+    LabelsCell,
     PageBody,
     PageHeader,
     PageLayout,
@@ -44,7 +44,7 @@ export function useCollectionsColumns(_options?: { disableSort?: boolean; disabl
             { header: t('Created'), cell: (collection) => <SinceCell value={collection.latest_version.created_at} /> },
             { header: t('Version'), cell: (collection) => <TextCell text={collection.latest_version.version} /> },
             { header: t('Signed state'), cell: (collection) => <TextCell text={collection.latest_version.sign_state} /> },
-            { header: t('Tags'), cell: (collection) => <Labels labels={collection.latest_version.metadata.tags.sort()} /> },
+            { header: t('Tags'), cell: (collection) => <LabelsCell labels={collection.latest_version.metadata.tags.sort()} /> },
         ],
         [t]
     )
