@@ -14,8 +14,8 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
-import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../../common/controller-toolbar-filters'
 import { RouteE } from '../../../Routes'
+import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { useDeleteUsers } from './useDeleteUsers'
 import { User } from './User'

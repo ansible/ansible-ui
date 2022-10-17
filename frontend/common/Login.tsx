@@ -8,15 +8,15 @@ import { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../framework'
 import { headers } from '../Data'
 import { RouteE } from '../Routes'
-import { useAddAutomationServer } from './useAddAutomationServer'
-import { useAutomationServers } from './useAutomationServer'
+import { useAutomationServers } from './automation-servers/AutomationServerProvider'
+import { useAddAutomationServer } from './automation-servers/useAddAutomationServer'
 
 export default function Login() {
     const { t } = useTranslation()
 
     const navigate = useNavigate()
 
-    const { automationServers } = useAutomationServers()
+    const { automationServers, setAutomationServer } = useAutomationServers()
 
     const [searchParams] = useSearchParams()
 
@@ -91,6 +91,7 @@ export default function Login() {
                 }
 
                 localStorage.setItem('server', data.server)
+                setAutomationServer(automationServer)
                 headers['x-server'] = data.server
                 navigate(RouteE.Organizations)
                 switch (automationServer.type) {
@@ -109,7 +110,7 @@ export default function Login() {
                 }
             }
         },
-        [automationServers, navigate, t]
+        [automationServers, navigate, setAutomationServer, t]
     )
 
     const sm = useBreakpoint('sm')

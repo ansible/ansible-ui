@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
 import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import { RouteE } from '../../../Routes'
 import {
     useCreatedByToolbarFilter,
     useDescriptionToolbarFilter,
     useModifiedByToolbarFilter,
     useNameToolbarFilter,
-} from '../../../common/controller-toolbar-filters'
-import { RouteE } from '../../../Routes'
+} from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { Organization } from './Organization'
 import { useDeleteOrganizations } from './useDeleteOrganizations'
