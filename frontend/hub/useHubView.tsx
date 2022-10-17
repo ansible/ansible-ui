@@ -21,6 +21,10 @@ export function idKeyFn(item: { id: number | string }) {
     return item.id
 }
 
+export function pkKeyFn(item: { pk: number | string }) {
+    return item.pk
+}
+
 interface HubItemsResponse<T extends object> {
     meta: {
         count: number

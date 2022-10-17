@@ -1,8 +1,8 @@
 import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/react-core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CopyCell, PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { requestPost } from '../../../Data'
+import { CopyCell, PageBody, PageHeader, PageLayout } from '../../../framework'
+import { requestPost } from '../../Data'
 
 export function Token() {
     const { t } = useTranslation()
