@@ -56,8 +56,12 @@ export enum RouteE {
     Notifications = '/controller/notifications',
     ManagementJobs = '/controller/management-jobs',
     InstanceGroups = '/controller/instance-groups',
-    Instances = '/controller/instances',
     Applications = '/controller/applications',
+
+    Instances = '/controller/instances',
+    InstanceDetails = '/controller/instances/details/:id',
+    CreateInstance = '/controller/instances/create',
+    EditInstance = '/controller/instances/edit/:id',
 
     ExecutionEnvironments = '/controller/execution-environments',
     ExecutionEnvironmentDetails = '/controller/execution-environments/details/:id',
