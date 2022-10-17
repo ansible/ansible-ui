@@ -101,17 +101,6 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                     </SplitItem>
                                 </Split>
                             </NavItem>
-                            <NavExpandable key="access" title={t('User access')} isExpanded isActive={isRouteActive([], location)}>
-                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
-                                    {t('Users')}
-                                </NavItem> */}
-                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
-                                    {t('Groups')}
-                                </NavItem> */}
-                                {/* <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
-                                    {t('Roles')}
-                                </NavItem> */}
-                            </NavExpandable>
                         </NavList>
                     </Nav>
                 </>

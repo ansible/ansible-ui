@@ -1,4 +1,4 @@
-import { ButtonVariant, Nav, NavItem, NavList } from '@patternfly/react-core'
+import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,6 +29,7 @@ import {
     useOrganizationToolbarFilter,
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
+import { AccessNav } from '../common/AccessNav'
 import { Team } from './Team'
 import { useDeleteTeams } from './useDeleteTeams'
 
@@ -92,17 +93,7 @@ export function Teams() {
                 titleHelp={t('teams.title.help')}
                 titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
                 description={t('teams.title.description')}
-                navigation={
-                    <Nav aria-label="Group section navigation" variant="tertiary">
-                        <NavList>
-                            <NavItem onClick={() => navigate(RouteE.Organizations)}>{t('Organizations')}</NavItem>
-                            <NavItem onClick={() => navigate(RouteE.Teams)} isActive>
-                                {t('Teams')}
-                            </NavItem>
-                            <NavItem onClick={() => navigate(RouteE.Users)}>{t('Users')}</NavItem>
-                        </NavList>
-                    </Nav>
-                }
+                navigation={<AccessNav active="teams" />}
             />
             <PageBody>
                 <PageTable<Team>
