@@ -1,9 +1,19 @@
-import { ButtonVariant, Progress, ProgressMeasureLocation } from '@patternfly/react-core'
+import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, SinceCell, TablePage, TypedActionType } from '../../../../framework'
+import {
+    BytesCell,
+    CapacityCell,
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    SinceCell,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { StatusCell } from '../../../common/StatusCell'
 import { RouteE } from '../../../Routes'
@@ -118,39 +128,6 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
                 cell: (instance) => instance.node_type,
                 sort: 'node_type',
             },
-            // {
-            //     header: t('CPU'),
-            //     cell: (instance) => (
-            //         <Progress
-            //             value={instance.cpu / instance.cpu_capacity}
-            //             measureLocation={ProgressMeasureLocation.none}
-            //             aria-label="Title"
-            //         />
-            //     ),
-            //     sort: 'node_type',
-            // },
-            // {
-            //     header: t('Memory'),
-            //     cell: (instance) => (
-            //         <Progress
-            //             value={instance.memory / instance.mem_capacity}
-            //             measureLocation={ProgressMeasureLocation.none}
-            //             aria-label="Title"
-            //         />
-            //     ),
-            //     sort: 'node_type',
-            // },
-            {
-                header: t('Used capacity'),
-                cell: (instance) => (
-                    <Progress
-                        value={instance.consumed_capacity / instance.capacity}
-                        measureLocation={ProgressMeasureLocation.none}
-                        aria-label="Title"
-                    />
-                ),
-                sort: 'node_type',
-            },
             {
                 header: t('Running jobs'),
                 cell: (instance) => instance.jobs_running,
@@ -158,6 +135,15 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             {
                 header: t('Total jobs'),
                 cell: (instance) => instance.jobs_total,
+            },
+            {
+                header: t('Used capacity'),
+                cell: (instance) => <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />,
+            },
+            {
+                header: t('Memory'),
+                cell: (instance) => <BytesCell bytes={instance.memory} />,
+                sort: 'memory',
             },
             {
                 header: t('Policy type'),

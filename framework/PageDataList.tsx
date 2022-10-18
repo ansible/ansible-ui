@@ -172,8 +172,8 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                                     />
                                 )}
                                 <DataListItemCells
-                                    dataListCells={dataCells.map((dataCell) => (
-                                        <DataListCell key="primary content">
+                                    dataListCells={dataCells.map((dataCell, index) => (
+                                        <DataListCell width={index === 0 ? 5 : 1} key="primary content">
                                             <span id="simple-item1">{dataCell(item)}</span>
                                         </DataListCell>
                                     ))}

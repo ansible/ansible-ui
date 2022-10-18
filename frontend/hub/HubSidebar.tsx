@@ -58,7 +58,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                                     {t('API token management')}
                                 </NavItem>
                                 <NavItem isActive={isRouteActive(RouteE.Approvals, location)} onClick={() => onClick(RouteE.Approvals)}>
-                                    {t('Approval')}
+                                    {t('Collection approvals')}
                                 </NavItem>
                             </NavExpandable>
                             <NavExpandable

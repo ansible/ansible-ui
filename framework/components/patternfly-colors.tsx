@@ -9,13 +9,21 @@ export enum PatternFlyColor {
 export function getPatternflyColor(color: PatternFlyColor) {
     switch (color) {
         case 'green':
-            return 'var(--pf-global--success-color--100)'
+            return pfSuccess
         case 'red':
-            return 'var(--pf-global--danger-color--100)'
+            return pfDanger
         case 'yellow':
-            return 'var(--pf-global--warning-color--100)'
+            return pfWarning
         case 'blue':
-            return 'var(--pf-global--info-color--100)'
+            return pfInfo
+        case 'grey':
+            return pfDisabled
     }
     return undefined
 }
+
+export const pfSuccess = 'var(--pf-global--success-color--100)'
+export const pfDanger = 'var(--pf-global--danger-color--100)'
+export const pfWarning = 'var(--pf-global--warning-color--100)'
+export const pfInfo = 'var(--pf-global--info-color--100)'
+export const pfDisabled = 'var(--pf-global--disabled-color--100)'

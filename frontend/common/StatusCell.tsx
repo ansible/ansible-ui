@@ -1,48 +1,55 @@
-import { CheckCircleIcon, ExclamationCircleIcon, QuestionCircleIcon, StopCircleIcon } from '@patternfly/react-icons'
+import { BanIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons'
 import { useTranslation } from 'react-i18next'
-import { getPatternflyColor, PatternFlyColor, TextCell } from '../../framework'
+import { PatternFlyColor, pfDanger, pfDisabled, pfInfo, pfSuccess, TextCell } from '../../framework'
 
 export function StatusCell(props: { status: string }) {
     const { t } = useTranslation()
     switch (props.status) {
         case 'disabled':
-            return (
-                <TextCell icon={<StopCircleIcon color={getPatternflyColor(PatternFlyColor.Grey)} />} iconSize="sm" text={t('Disabled')} />
-            )
+            return <TextCell icon={<BanIcon color={pfDisabled} />} iconSize="sm" text={t('Disabled')} textColor={PatternFlyColor.Grey} />
         case 'healthy':
             return (
-                <TextCell icon={<CheckCircleIcon color={getPatternflyColor(PatternFlyColor.Green)} />} iconSize="sm" text={t('Healthy')} />
+                <TextCell
+                    icon={<CheckCircleIcon color={pfSuccess} />}
+                    iconSize="sm"
+                    text={t('Healthy')}
+                    textColor={PatternFlyColor.Green}
+                />
             )
         case 'completed':
             return (
                 <TextCell
-                    icon={<CheckCircleIcon color={getPatternflyColor(PatternFlyColor.Green)} />}
+                    icon={<CheckCircleIcon color={pfSuccess} />}
                     iconSize="sm"
                     text={t('Completed')}
+                    textColor={PatternFlyColor.Green}
                 />
             )
         case 'successful':
             return (
                 <TextCell
-                    icon={<CheckCircleIcon color={getPatternflyColor(PatternFlyColor.Green)} />}
+                    icon={<CheckCircleIcon color={pfSuccess} />}
                     iconSize="sm"
                     text={t('Successful')}
+                    textColor={PatternFlyColor.Green}
                 />
             )
         case 'failed':
             return (
                 <TextCell
-                    icon={<ExclamationCircleIcon color={getPatternflyColor(PatternFlyColor.Red)} />}
+                    icon={<ExclamationCircleIcon color={pfDanger} />}
                     iconSize="sm"
                     text={t('Failed')}
+                    textColor={PatternFlyColor.Red}
                 />
             )
         default:
             return (
                 <TextCell
-                    icon={<QuestionCircleIcon color={getPatternflyColor(PatternFlyColor.Blue)} />}
+                    icon={<ExclamationTriangleIcon color={pfInfo} />}
                     iconSize="sm"
                     text={t('Unknown')}
+                    textColor={PatternFlyColor.Yellow}
                 />
             )
     }
