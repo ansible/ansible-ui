@@ -17,6 +17,13 @@ export function idKeyFn(item: { id: number }) {
     return item.id
 }
 
+export function getIdFromPulpHref(pulp_href?: string) {
+    if (!pulp_href) return ''
+    const parts = pulp_href.split('/')
+    parts.pop()
+    return parts.pop() ?? ''
+}
+
 interface PulpItemsResponse<T extends object> {
     count: number
     results: T[]
