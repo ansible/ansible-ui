@@ -66,7 +66,7 @@ export function Approvals() {
     )
     return (
         <PageLayout>
-            <PageHeader title={t('Approval dashboard')} />
+            <PageHeader title={t('Collection approvals')} />
             <PageBody>
                 <PageTable<Approval>
                     toolbarFilters={toolbarFilters}

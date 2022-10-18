@@ -20,7 +20,7 @@ import {
     ToolbarToggleGroup,
     Tooltip,
 } from '@patternfly/react-core'
-import { ArrowRightIcon, ColumnsIcon, FilterIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons'
+import { ArrowRightIcon, ColumnsIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
 import { SingleSelect2 } from './components/SingleSelect'
@@ -307,10 +307,11 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
             </TextInputGroup>
 
             {!value ? (
-                <Button variant={'control'} aria-label="add filter">
-                    <SearchIcon />
-                </Button>
+                <></>
             ) : (
+                // <Button variant={'control'} aria-label="add filter">
+                //     <SearchIcon />
+                // </Button>
                 <Button
                     variant={value ? 'primary' : 'control'}
                     aria-label="add filter"

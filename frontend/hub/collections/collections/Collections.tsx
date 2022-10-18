@@ -1,4 +1,4 @@
-import { Button, ButtonVariant, Label, LabelGroup, Split, SplitItem, Stack, StackItem, Text } from '@patternfly/react-core'
+import { Button, ButtonVariant, Label, LabelGroup, Stack, StackItem, Text } from '@patternfly/react-core'
 import { ExclamationTriangleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -52,48 +52,44 @@ export function Collections() {
     const dataCells = useMemo(
         () => [
             (item: Collection) => (
-                <Split>
-                    <SplitItem isFilled>
-                        <Stack hasGutter>
-                            <Stack>
-                                <StackItem>
-                                    <Button variant="link" isInline>
-                                        {item.name}
-                                    </Button>
-                                </StackItem>
-                                <StackItem>
-                                    <Text component="small" style={{ opacity: 0.7 }}>
-                                        {t('Provided by')} {item.namespace.name}
-                                    </Text>
-                                </StackItem>
-                            </Stack>
-                            <StackItem>{item.latest_version.metadata.description}</StackItem>
-                            <StackItem>
-                                <LabelGroup numLabels={999}>
-                                    {item.latest_version.metadata.tags.map((tag) => (
-                                        <Label key={tag}>{tag}</Label>
-                                    ))}
-                                </LabelGroup>
-                            </StackItem>
-                        </Stack>
-                    </SplitItem>
-                    <SplitItem>
-                        <Stack hasGutter>
-                            <StackItem style={{ whiteSpace: 'nowrap' }}>
-                                {t('Updated')} <SinceCell value={item.latest_version.created_at} />
-                            </StackItem>
-                            <StackItem>
-                                {t('v')}
-                                {item.latest_version.version}
-                            </StackItem>
-                            <StackItem>
-                                <Label variant="outline" color="orange" icon={<ExclamationTriangleIcon />}>
-                                    {item.sign_state === 'signed' ? 'Signed' : 'Unsigned'}
-                                </Label>
-                            </StackItem>
-                        </Stack>
-                    </SplitItem>
-                </Split>
+                <Stack hasGutter>
+                    <Stack>
+                        <StackItem>
+                            <Button variant="link" isInline>
+                                {item.name}
+                            </Button>
+                        </StackItem>
+                        <StackItem>
+                            <Text component="small" style={{ opacity: 0.7 }}>
+                                {t('Provided by')} {item.namespace.name}
+                            </Text>
+                        </StackItem>
+                    </Stack>
+                    <StackItem>{item.latest_version.metadata.description}</StackItem>
+                    <StackItem>
+                        <LabelGroup numLabels={999}>
+                            {item.latest_version.metadata.tags.map((tag) => (
+                                <Label key={tag}>{tag}</Label>
+                            ))}
+                        </LabelGroup>
+                    </StackItem>
+                </Stack>
+            ),
+            (item: Collection) => (
+                <Stack hasGutter>
+                    <StackItem style={{ whiteSpace: 'nowrap' }}>
+                        {t('Updated')} <SinceCell value={item.latest_version.created_at} />
+                    </StackItem>
+                    <StackItem>
+                        {t('v')}
+                        {item.latest_version.version}
+                    </StackItem>
+                    <StackItem>
+                        <Label variant="outline" color="orange" icon={<ExclamationTriangleIcon />}>
+                            {item.sign_state === 'signed' ? 'Signed' : 'Unsigned'}
+                        </Label>
+                    </StackItem>
+                </Stack>
             ),
         ],
         [t]
@@ -106,6 +102,11 @@ export function Collections() {
                 description={t(
                     'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
                 )}
+                titleHelpTitle={t('Collections')}
+                titleHelp={t(
+                    'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
+                )}
+                titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
             />
             <PageBody>
                 <PageDataList<Collection>

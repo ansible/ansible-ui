@@ -1,9 +1,11 @@
-import { Button, ClipboardCopy, Label, LabelGroup, Split, SplitItem, Tooltip, Truncate } from '@patternfly/react-core'
+import { Button, ClipboardCopy, Flex, FlexItem, Label, LabelGroup, Split, SplitItem, Tooltip, Truncate } from '@patternfly/react-core'
 import { DateTime } from 'luxon'
 import { ReactNode, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
+import { useSettings } from './Settings'
 
 export function LabelsCell(props: { labels: string[] }) {
     return (
@@ -137,4 +139,60 @@ export function SinceCell(props: { value: string | undefined | null; author?: st
             )}
         </span>
     )
+}
+
+export function CapacityCell(props: { format?: string; used: number; capacity: number }) {
+    const { t } = useTranslation()
+    const settings = useSettings()
+    const ratio = props.used / props.capacity
+    if (props.capacity === 0) return <></>
+    const base =
+        ratio >= 0.8 ? 'var(--pf-global--palette--red' : ratio >= 0.5 ? 'var(--pf-global--palette--gold' : 'var(--pf-global--palette--green'
+    const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`
+    const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`
+    return (
+        <Flex alignItems={{ default: 'alignItemsBaseline' }} spaceItems={{ default: 'spaceItemsSm' }}>
+            {props.capacity > 0 && (
+                <FlexItem>
+                    <div
+                        style={{
+                            width: 18,
+                            height: 25,
+                            background: color1,
+                            marginBottom: -7,
+                            paddingTop: Math.max(0, Math.min(25, (25 * (props.capacity - props.used)) / props.capacity)),
+                            borderRadius: 2,
+                        }}
+                    >
+                        <div style={{ width: '100%', height: '100%', background: color2, borderRadius: 2 }}></div>
+                    </div>
+                </FlexItem>
+            )}
+            {props.format ? (
+                <FlexItem>
+                    {props.format.replace('{used}', props.used.toString()).replace('{capacity}', props.capacity.toString())}
+                </FlexItem>
+            ) : (
+                <FlexItem>
+                    {props.used}
+                    {t(' of ')}
+                    {props.capacity}
+                </FlexItem>
+            )}
+        </Flex>
+    )
+}
+
+export function BytesCell(props: { bytes: number; decimals?: number }) {
+    const { bytes } = props
+    if (!+bytes) return <></>
+
+    const k = 1024
+    const decimals = props.decimals ? props.decimals : 0
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return <>{`${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`}</>
 }

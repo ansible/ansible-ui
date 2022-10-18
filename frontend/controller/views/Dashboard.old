@@ -68,7 +68,7 @@ function HostsCardContent() {
                 {
                     label: 'Ready',
                     count: successfulHosts.length,
-                    color: getPatternflyColor(PatternFlyColor.Green) ?? 'black',
+                    color: pf
                 },
                 {
                     label: 'Failures',
