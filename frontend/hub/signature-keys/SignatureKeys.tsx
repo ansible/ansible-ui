@@ -13,7 +13,7 @@ import {
     SinceCell,
     TextCell,
 } from '../../../framework'
-import { downloadTextFile } from '../../common/download-file'
+import { downloadTextFile } from '../../../framework/utils/download-file'
 import { pulpHRefKeyFn } from '../useHubView'
 import { usePulpView } from '../usePulpView'
 import { SignatureKey } from './SignatureKey'
