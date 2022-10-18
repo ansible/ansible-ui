@@ -95,6 +95,7 @@ export interface PageHeaderProps {
  */
 export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
+    const lg = useBreakpoint('lg')
     const xl = useBreakpoint('xl')
     const xxl = useBreakpoint('xxl')
     const isMdOrLarger = useBreakpoint('md')
@@ -141,7 +142,7 @@ export function PageHeader(props: PageHeaderProps) {
                 <PageSection
                     variant={PageSectionVariants.light}
                     style={{
-                        paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 8,
+                        paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
                         paddingBottom: xl ? 20 : 12,
                         borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                         backgroundColor:
@@ -154,7 +155,7 @@ export function PageHeader(props: PageHeaderProps) {
                 >
                     <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
                         <FlexItem grow={{ default: 'grow' }}>
-                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: xl ? 4 : 2 }} />}
+                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: lg ? 6 : 4 }} />}
                             {title ? (
                                 props.titleHelp ? (
                                     <Popover
