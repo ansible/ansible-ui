@@ -68,9 +68,11 @@ export function Hosts() {
         <TablePage<Host>
             title={t('Hosts')}
             titleHelpTitle={t('Hosts')}
-            titleHelp={t('hosts.title.help')}
+            titleHelp={t(
+                'A system managed by Tower, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.'
+            )}
             titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
-            description={t('hosts.title.description')}
+            description={t('A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.')}
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
