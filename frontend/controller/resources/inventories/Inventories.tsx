@@ -68,9 +68,13 @@ export function Inventories() {
         <TablePage<Inventory>
             title={t('Inventories')}
             titleHelpTitle={t('Inventories')}
-            titleHelp={t('inventories.title.help')}
+            titleHelp={t(
+                'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+            )}
             titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/inventories.html"
-            description={t('inventories.title.description')}
+            description={t(
+                'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+            )}
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
