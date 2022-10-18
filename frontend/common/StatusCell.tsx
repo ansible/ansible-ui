@@ -2,7 +2,7 @@ import { BanIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIco
 import { useTranslation } from 'react-i18next'
 import { PatternFlyColor, pfDanger, pfDisabled, pfInfo, pfSuccess, TextCell } from '../../framework'
 
-export function StatusCell(props: { status: string }) {
+export function StatusCell(props: { status?: string }) {
     const { t } = useTranslation()
     switch (props.status) {
         case 'disabled':
