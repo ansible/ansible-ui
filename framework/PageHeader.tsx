@@ -96,6 +96,7 @@ export interface PageHeaderProps {
 export function PageHeader(props: PageHeaderProps) {
     const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
     const xl = useBreakpoint('xl')
+    const xxl = useBreakpoint('xxl')
     const isMdOrLarger = useBreakpoint('md')
     // const isSmLarger = useBreakpoint('sm')
     const settings = useSettings()
@@ -145,7 +146,7 @@ export function PageHeader(props: PageHeaderProps) {
                         borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
                         backgroundColor:
                             settings.theme === 'dark'
-                                ? xl
+                                ? xxl
                                     ? 'var(--pf-global--BackgroundColor--300)'
                                     : 'var(--pf-global--BackgroundColor--400)'
                                 : undefined,

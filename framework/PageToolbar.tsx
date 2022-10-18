@@ -255,7 +255,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
 
                 {/* Pagination */}
-                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', xl: 'visible' }}>
+                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', '2xl': 'visible' }}>
                     <Pagination
                         variant={PaginationVariant.top}
                         isCompact
