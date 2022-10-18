@@ -125,7 +125,18 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             },
             {
                 header: t('Node type'),
-                cell: (instance) => instance.node_type,
+                cell: (instance) => {
+                    switch (instance.node_type) {
+                        case 'hybrid':
+                            return t('Hybrid')
+                        case 'execution':
+                            return t('Execution')
+                        case 'hop':
+                            return t('HOP')
+                        default:
+                            return instance.node_type
+                    }
+                },
                 sort: 'node_type',
             },
             {

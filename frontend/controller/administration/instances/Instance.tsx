@@ -20,7 +20,7 @@ export interface Instance {
     managed_by_policy: boolean
     mem_capacity: number
     memory: number
-    node_type: 'hybrid'
+    node_type: 'hybrid' | 'execution' | 'hop'
     percent_capacity_remaining: number
     uuid: string
     version: string

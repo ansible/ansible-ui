@@ -150,6 +150,7 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
         ratio >= 0.8 ? 'var(--pf-global--palette--red' : ratio >= 0.5 ? 'var(--pf-global--palette--gold' : 'var(--pf-global--palette--green'
     const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`
     const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`
+    const borderColor = settings.theme === 'light' ? `#0002` : `#fff2`
     return (
         <Flex alignItems={{ default: 'alignItemsBaseline' }} spaceItems={{ default: 'spaceItemsSm' }}>
             {props.capacity > 0 && (
@@ -162,6 +163,7 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
                             marginBottom: -7,
                             paddingTop: Math.max(0, Math.min(25, (25 * (props.capacity - props.used)) / props.capacity)),
                             borderRadius: 2,
+                            border: `thin solid ${borderColor}`,
                         }}
                     >
                         <div style={{ width: '100%', height: '100%', background: color2, borderRadius: 2 }}></div>
