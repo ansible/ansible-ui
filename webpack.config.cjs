@@ -40,7 +40,7 @@ module.exports = function (_env, argv) {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isProduction ? JSON.stringify('production') : JSON.stringify('development'),
-                'process.env.DELAY': isProduction ? JSON.stringify('') : JSON.stringify(''),
+                'process.env.DELAY': isProduction ? JSON.stringify('') : JSON.stringify(process.env.DELAY ?? ''),
                 'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
             }),
             isDevelopment && new ReactRefreshWebpackPlugin(),
