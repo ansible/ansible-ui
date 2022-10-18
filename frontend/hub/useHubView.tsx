@@ -38,7 +38,7 @@ interface HubItemsResponse<T extends object> {
 export type IHubView<T extends object> = IView &
     ISelected<T> & {
         itemCount: number | undefined
-        pageItems: T[]
+        pageItems: T[] | undefined
         refresh: () => Promise<HubItemsResponse<T> | undefined>
     }
 
@@ -115,7 +115,7 @@ export function useHubView<T extends object>(
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.data : [],
+            pageItems: data?.data,
             error,
             ...view,
             ...selection,

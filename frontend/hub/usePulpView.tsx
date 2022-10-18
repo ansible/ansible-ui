@@ -26,7 +26,7 @@ interface PulpItemsResponse<T extends object> {
 export type IHubView<T extends object> = IView &
     ISelected<T> & {
         itemCount: number | undefined
-        pageItems: T[]
+        pageItems: T[] | undefined
         refresh: () => Promise<PulpItemsResponse<T> | undefined>
     }
 
@@ -103,7 +103,7 @@ export function usePulpView<T extends object>(
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.results : [],
+            pageItems: data?.results,
             error,
             ...view,
             ...selection,

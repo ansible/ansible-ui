@@ -8,7 +8,7 @@ import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
 export type IControllerView<T extends { id: number }> = IView &
     ISelected<T> & {
         itemCount: number | undefined
-        pageItems: T[]
+        pageItems: T[] | undefined
         refresh: () => Promise<ItemsResponse<T> | undefined>
     }
 
@@ -84,7 +84,7 @@ export function useControllerView<T extends { id: number }>(
         return {
             refresh,
             itemCount: itemCountRef.current.itemCount,
-            pageItems: data ? data.results : [],
+            pageItems: data?.results,
             error,
             ...view,
             ...selection,

@@ -8,7 +8,7 @@ import { ISelected } from './useTableItems'
 import { IView } from './useView'
 
 interface ISelectDialogOptions<T extends object> {
-    view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] }
+    view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined }
     tableColumns: ITableColumn<T>[]
     toolbarFilters: IToolbarFilter[]
     confirm: string
@@ -103,7 +103,7 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
                 </Split>
             </ModalBoxBody>
             <Collapse open={view.itemCount === undefined}>
-                <Skeleton height="80px"></Skeleton>
+                <Skeleton height="80px" />
             </Collapse>
             <Collapse open={view.itemCount !== undefined}>
                 <div
