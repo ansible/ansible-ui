@@ -5,6 +5,8 @@ import {
     Alert,
     Button,
     Checkbox,
+    Flex,
+    FlexItem,
     Form,
     FormGroup,
     FormSection,
@@ -19,6 +21,8 @@ import {
     SelectOption,
     SelectOptionObject,
     SelectVariant,
+    Slider,
+    Switch,
     TextArea,
     TextInput,
     TextInputGroup,
@@ -283,12 +287,108 @@ export function FormTextArea(props: {
                 autoFocus={props.autoFocus}
                 placeholder={props.placeholder}
                 {...registration}
-                onChange={(v, e) => {
-                    void registration.onChange(e)
-                }}
+                onChange={(v, e) => void registration.onChange(e)}
                 resizeOrientation="vertical"
                 isReadOnly={isSubmitting}
                 // innerRef={registration.ref}
+            />
+        </FormGroup>
+    )
+}
+
+export function FormNumberInput(props: {
+    id?: string
+    label: string
+    name: string
+    helperText?: string
+    required?: boolean
+    autoFocus?: boolean
+    min?: number
+    max?: number
+    valueLabel?: string
+}) {
+    const {
+        formState: { isSubmitting },
+    } = useFormContext()
+    const { field, fieldState } = useController({ name: props.name })
+    const error = fieldState.error
+    const id = props.id ?? props.name
+    const max = props.max ?? 100
+    const min = props.min ?? 1
+    const value = Number(field.value)
+    return (
+        <FormGroup
+            id={`${id}-form-group`}
+            fieldId={id}
+            label={props.label}
+            helperText={props.helperText}
+            isRequired={props.required}
+            validated={error?.message ? 'error' : undefined}
+            helperTextInvalid={error?.message}
+        >
+            <Flex alignItems={{ default: 'alignItemsFlexStart' }}>
+                <Flex alignItems={{ default: 'alignItemsFlexStart' }} spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem style={{ paddingTop: 6, minWidth: 20, textAlign: 'right' }}>{Math.floor((max - min) * value + min)}</FlexItem>
+                    {props.valueLabel && <FlexItem style={{ paddingTop: 6, minWidth: 40 }}>{props.valueLabel}</FlexItem>}
+                </Flex>
+                <FlexItem grow={{ default: 'grow' }}>
+                    <Slider
+                        id={id}
+                        aria-describedby={`${id}-form-group`}
+                        // isRequired={props.required}
+                        // validated={error?.message ? 'error' : undefined}
+                        autoFocus={props.autoFocus}
+                        // {...registration}
+                        value={(max - min) * value + min}
+                        onChange={(v) => field.onChange((v - min) / (max - min))}
+                        max={max}
+                        min={min}
+                        // innerRef={registration.ref}
+                        isDisabled={isSubmitting}
+                        showBoundaries={false}
+                    />
+                </FlexItem>
+            </Flex>
+        </FormGroup>
+    )
+}
+
+export function FormBooleanInput(props: {
+    id?: string
+    label: string
+    name: string
+    helperText?: string
+    required?: boolean
+    autoFocus?: boolean
+}) {
+    const {
+        formState: { isSubmitting },
+    } = useFormContext()
+    const { field, fieldState } = useController({ name: props.name })
+    const error = fieldState.error
+    const id = props.id ?? props.name
+    return (
+        <FormGroup
+            id={`${id}-form-group`}
+            fieldId={id}
+            label={props.label}
+            helperText={props.helperText}
+            isRequired={props.required}
+            validated={error?.message ? 'error' : undefined}
+            helperTextInvalid={error?.message}
+        >
+            <Switch
+                id={id}
+                aria-describedby={`${id}-form-group`}
+                // isRequired={props.required}
+                // validated={error?.message ? 'error' : undefined}
+                autoFocus={props.autoFocus}
+                // placeholder={props.placeholder}
+                // {...registration}
+                isChecked={typeof field.value === 'boolean' ? field.value : false}
+                onChange={(e) => field.onChange(e)}
+                // innerRef={registration.ref}
+                isDisabled={isSubmitting}
             />
         </FormGroup>
     )
@@ -678,9 +778,28 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                 }
                 break
             }
-            case 'object':
+            case 'number': {
+                p.push(
+                    <FormNumberInput
+                        key={base + propertyName}
+                        name={base + propertyName}
+                        label={title}
+                        required={required}
+                        min={(property as { min?: number }).min}
+                        max={(property as { max?: number }).max}
+                        valueLabel={(property as { valueLabel?: string }).valueLabel}
+                    />
+                )
+                break
+            }
+            case 'boolean': {
+                p.push(<FormBooleanInput key={base + propertyName} name={base + propertyName} label={title} required={required} />)
+                break
+            }
+            case 'object': {
                 p.push(<FormSchema key={propertyName} schema={property} base={base + propertyName} />)
                 break
+            }
         }
     }
 

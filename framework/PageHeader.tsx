@@ -61,7 +61,7 @@ export interface PageHeaderProps {
     breadcrumbs?: ICatalogBreadcrumb[]
     title?: string
     titleHelpTitle?: string
-    titleHelp?: ReactNode
+    titleHelp?: string | string[]
     titleDocLink?: string
     description?: string
     controls?: ReactNode
@@ -162,7 +162,11 @@ export function PageHeader(props: PageHeaderProps) {
                                         headerContent={props.titleHelpTitle}
                                         bodyContent={
                                             <Stack hasGutter>
-                                                <StackItem>{props.titleHelp}</StackItem>
+                                                {typeof props.titleHelp === 'string' ? (
+                                                    <StackItem>{props.titleHelp}</StackItem>
+                                                ) : (
+                                                    props.titleHelp.map((help, index) => <StackItem key={index}>{help}</StackItem>)
+                                                )}
                                                 {props.titleDocLink && (
                                                     <StackItem>
                                                         <Button

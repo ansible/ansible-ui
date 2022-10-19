@@ -38,7 +38,6 @@ export function EditTeam() {
                         variant: 'textarea',
                     })
                 ),
-                organization: Type.Optional(Type.Number()),
                 summary_fields: Type.Object({
                     organization: Type.Object({
                         name: Type.String({
@@ -71,7 +70,7 @@ export function EditTeam() {
                 return false
             }
             const organization = result.results[0]
-            editedTeam.organization = organization.id
+            ;(editedTeam as unknown as { organization: number }).organization = organization.id
             let team: Team
             if (Number.isInteger(id)) {
                 team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam)
