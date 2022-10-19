@@ -1,5 +1,5 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import { ButtonVariant, Tooltip } from '@patternfly/react-core'
+import { EditIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -12,21 +12,16 @@ import {
     ITypedAction,
     SinceCell,
     TablePage,
+    TextCell,
     TypedActionType,
 } from '../../../../framework'
+import { Dotted } from '../../../../framework/components/Dotted'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { StatusCell } from '../../../common/StatusCell'
+import { requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
-import {
-    useCreatedByToolbarFilter,
-    useDescriptionToolbarFilter,
-    useModifiedByToolbarFilter,
-    useNameToolbarFilter,
-    useOrganizationToolbarFilter,
-} from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { Instance } from './Instance'
-import { useDeleteInstances } from './useInstances'
 
 export function Instances() {
     const { t } = useTranslation()
@@ -34,30 +29,22 @@ export function Instances() {
     const toolbarFilters = useInstancesFilters()
     const tableColumns = useInstancesColumns()
     const view = useControllerView<Instance>('/api/v2/instances/', toolbarFilters, tableColumns)
-    const deleteInstances = useDeleteInstances((deleted: Instance[]) => {
-        for (const instance of deleted) {
-            view.unselectItem(instance)
-        }
-        void view.refresh()
-    })
 
     const toolbarActions = useMemo<ITypedAction<Instance>[]>(
         () => [
             {
-                type: TypedActionType.button,
-                variant: ButtonVariant.primary,
-                icon: PlusIcon,
-                label: t('Create instance'),
-                onClick: () => navigate(RouteE.CreateInstance),
-            },
-            {
                 type: TypedActionType.bulk,
-                icon: TrashIcon,
-                label: t('Delete selected instances'),
-                onClick: deleteInstances,
+                variant: ButtonVariant.primary,
+                label: t('Run health check'),
+                onClick: (instances) => {
+                    for (const instance of instances) {
+                        // eslint-disable-next-line no-console
+                        requestPost(`/api/v2/instances/${instance.id}/health_check/`, {}).catch(console.error)
+                    }
+                },
             },
         ],
-        [navigate, deleteInstances, t]
+        [t]
     )
 
     const rowActions = useMemo<IItemAction<Instance>[]>(
@@ -67,18 +54,14 @@ export function Instances() {
                 label: t('Edit instance'),
                 onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
             },
-            {
-                icon: TrashIcon,
-                label: t('Delete instance'),
-                onClick: (instance) => deleteInstances([instance]),
-            },
         ],
-        [navigate, deleteInstances, t]
+        [navigate, t]
     )
 
     return (
         <TablePage<Instance>
-            title={t('Instances')}
+            title={t('Node instances')}
+            description={t('Ansible node instances dedicated for a particular purpose indicated by node type.')}
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
@@ -94,28 +77,32 @@ export function Instances() {
 }
 
 export function useInstancesFilters() {
-    const nameToolbarFilter = useNameToolbarFilter()
-    const descriptionToolbarFilter = useDescriptionToolbarFilter()
-    const organizationToolbarFilter = useOrganizationToolbarFilter()
-    const createdByToolbarFilter = useCreatedByToolbarFilter()
-    const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+    const { t } = useTranslation()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            { key: 'name', label: t('Name'), type: 'string', query: 'name__icontains' },
+            { key: 'type', label: t('Node type'), type: 'string', query: 'node_type' },
+        ],
+        [t]
     )
     return toolbarFilters
 }
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const createdColumn = useCreatedColumn(options)
     const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<Instance>[]>(
         () => [
             {
                 header: t('Name'),
-                cell: (instance) => instance.hostname,
+                cell: (instance) => (
+                    <TextCell
+                        onClick={() => navigate(RouteE.InstanceDetails.replace(':id', instance.id.toString()))}
+                        text={instance.hostname}
+                    />
+                ),
                 sort: 'hostname',
             },
             {
@@ -125,18 +112,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             },
             {
                 header: t('Node type'),
-                cell: (instance) => {
-                    switch (instance.node_type) {
-                        case 'hybrid':
-                            return t('Hybrid')
-                        case 'execution':
-                            return t('Execution')
-                        case 'hop':
-                            return t('HOP')
-                        default:
-                            return instance.node_type
-                    }
-                },
+                cell: (instance) => <NodeTypeCell node_type={instance.node_type} />,
                 sort: 'node_type',
             },
             {
@@ -167,7 +143,55 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             createdColumn,
             modifiedColumn,
         ],
-        [t, createdColumn, modifiedColumn]
+        [t, createdColumn, modifiedColumn, navigate]
     )
     return tableColumns
+}
+
+export function NodeTypeCell(props: { node_type: string }) {
+    const { t } = useTranslation()
+    switch (props.node_type) {
+        case 'hybrid':
+            return (
+                <Tooltip
+                    content={t(
+                        'Hybrid is the default node type for control plane nodes, responsible for automation controller runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
+                    )}
+                >
+                    <Dotted>{t('Hybrid')}</Dotted>
+                </Tooltip>
+            )
+        case 'control':
+            return (
+                <Tooltip
+                    content={t(
+                        'control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes.'
+                    )}
+                >
+                    <Dotted>{t('Hybrid')}</Dotted>
+                </Tooltip>
+            )
+        case 'execution':
+            return (
+                <Tooltip
+                    content={t(
+                        'Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes.'
+                    )}
+                >
+                    <Dotted>{t('Execution')}</Dotted>
+                </Tooltip>
+            )
+        case 'hop':
+            return (
+                <Tooltip
+                    content={t(
+                        'similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation.'
+                    )}
+                >
+                    <Dotted>{t('HOP')}</Dotted>
+                </Tooltip>
+            )
+        default:
+            return <>{props.node_type}</>
+    }
 }

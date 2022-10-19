@@ -12,6 +12,8 @@ import { EditUser } from './access/users/EditUser'
 import { UserDetailsPage } from './access/users/UserDetails'
 import { Users } from './access/users/Users'
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments'
+import { EditInstance } from './administration/instances/EditInstance'
+import { InstanceDetails } from './administration/instances/InstanceDetails'
 import { Instances } from './administration/instances/Instances'
 import { Credentials } from './resources/credentials/Credentials'
 import { Hosts } from './resources/hosts/Hosts'
@@ -60,7 +62,11 @@ export function ControllerRouter() {
             {/* <Route path={RouteE.Notifications} element={NotificationsPage} /> */}
             {/* <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} /> */}
             {/* <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} /> */}
+
             <Route path={RouteE.Instances.replace(RouteE.Controller, '')} element={<Instances />} />
+            <Route path={RouteE.InstanceDetails.replace(RouteE.Controller, '')} element={<InstanceDetails />} />
+            <Route path={RouteE.EditInstance.replace(RouteE.Controller, '')} element={<EditInstance />} />
+
             {/* <Route path={RouteE.Applications} element={ApplicationsPage} /> */}
             <Route path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')} element={<ExecutionEnvironments />} />
             {/* <Route path={RouteE.TopologyView} element={TopologyView} /> */}
