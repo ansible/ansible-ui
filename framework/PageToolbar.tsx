@@ -7,7 +7,10 @@ import {
     OnSetPage,
     Pagination,
     PaginationVariant,
+    Select,
     SelectOption,
+    SelectOptionObject,
+    SelectVariant,
     Skeleton,
     TextInputGroup,
     TextInputGroupMain,
@@ -22,6 +25,7 @@ import {
 } from '@patternfly/react-core'
 import { ArrowRightIcon, ColumnsIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BulkSelector } from './components/BulkSelector'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useBreakpoint } from './components/useBreakPoint'
@@ -48,12 +52,26 @@ export function toolbarActionsHaveBulkActions<T extends object>(actions?: ITyped
     return false
 }
 
-export interface IToolbarFilter {
+export interface IToolbarStringFilter {
     key: string
     label: string
-    type: string
+    type: 'string'
     query: string
 }
+
+export interface IToolbarSelectFilter {
+    key: string
+    label: string
+    type: 'select'
+    options: {
+        label: string
+        value: string
+    }[]
+    query: string
+    placeholder?: string
+}
+
+export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter
 
 export type IFilterState = Record<string, string[] | undefined>
 
@@ -108,8 +126,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
     const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
-
-    const [filterValue, setFilterValue] = useState('')
 
     const showSearchAndFilters = toolbarFilters !== undefined
     const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
@@ -167,7 +183,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                     </ToolbarGroup>
                 )}
                 {toolbarFilters && toolbarFilters.length > 0 && (
-                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
                         <ToolbarGroup variant="filter-group">
                             <ToolbarItem>
                                 <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
@@ -188,15 +204,21 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                 </SingleSelect2>
                             </ToolbarItem>
                             <ToolbarItem>
-                                <ToolbarTextFilter
-                                    value={filterValue}
-                                    setValue={setFilterValue}
+                                <ToolbarFilterInput
+                                    filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
                                     addFilter={(value: string) => {
                                         let values = filters?.[selectedFilter]
                                         if (!values) values = []
                                         if (!values.includes(value)) values.push(value)
                                         setFilters?.({ ...filters, [selectedFilter]: values })
                                     }}
+                                    removeFilter={(value: string) => {
+                                        let values = filters?.[selectedFilter]
+                                        if (!values) values = []
+                                        values = values.filter((v) => v !== value)
+                                        setFilters?.({ ...filters, [selectedFilter]: values })
+                                    }}
+                                    values={filters?.[selectedFilter] ?? []}
                                 />
                             </ToolbarItem>
                             {toolbarFilters.map((filter) => {
@@ -272,9 +294,24 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     )
 }
 
-function ToolbarTextFilter(props: { value: string; setValue: (value: string) => void; addFilter: (value: string) => void }) {
-    const { value, setValue } = props
-    // const ref = useRef<HTMLInputElement>()
+function ToolbarFilterInput(props: {
+    filter?: IToolbarFilter
+    addFilter: (value: string) => void
+    values: string[]
+    removeFilter: (value: string) => void
+}) {
+    const { filter } = props
+    switch (filter?.type) {
+        case 'string':
+            return <ToolbarTextFilter {...props} />
+        case 'select':
+            return <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
+    }
+    return <></>
+}
+
+function ToolbarTextFilter(props: { addFilter: (value: string) => void }) {
+    const [value, setValue] = useState('')
     return (
         <InputGroup>
             <TextInputGroup style={{ minWidth: 220 }}>
@@ -324,5 +361,46 @@ function ToolbarTextFilter(props: { value: string; setValue: (value: string) => 
                 </Button>
             )}
         </InputGroup>
+    )
+}
+
+function ToolbarSelectFilter(props: {
+    addFilter: (value: string) => void
+    removeFilter: (value: string) => void
+    options: { label: string; value: string }[]
+    values: string[]
+    placeholder?: string
+}) {
+    const { t } = useTranslation()
+    const { addFilter, removeFilter, options, values } = props
+    const [open, setOpen] = useState(false)
+    const onSelect = useCallback(
+        (e: unknown, value: string | SelectOptionObject) => {
+            if (values.includes(value.toString())) {
+                removeFilter(value.toString())
+            } else {
+                addFilter(value.toString())
+            }
+        },
+        [addFilter, removeFilter, values]
+    )
+    const selections = values
+    return (
+        <>
+            <Select
+                variant={SelectVariant.checkbox}
+                isOpen={open}
+                onToggle={setOpen}
+                selections={selections}
+                onSelect={onSelect}
+                placeholderText={values.length ? t('Selected') : props.placeholder}
+            >
+                {options.map((option) => (
+                    <SelectOption id={option.value} key={option.value} value={option.value}>
+                        {option.label}
+                    </SelectOption>
+                ))}
+            </Select>
+        </>
     )
 }
