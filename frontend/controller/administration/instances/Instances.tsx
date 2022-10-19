@@ -80,8 +80,20 @@ export function useInstancesFilters() {
     const { t } = useTranslation()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
         () => [
-            { key: 'name', label: t('Name'), type: 'string', query: 'name__icontains' },
-            { key: 'type', label: t('Node type'), type: 'string', query: 'node_type' },
+            { key: 'name', label: t('Name'), type: 'string', query: 'hostname__icontains' },
+            {
+                key: 'type',
+                label: t('Node type'),
+                type: 'select',
+                query: 'node_type',
+                options: [
+                    { label: t('Hybrid'), value: 'hybrid' },
+                    { label: t('Execution'), value: 'execution' },
+                    { label: t('Control'), value: 'control' },
+                    { label: t('Hop'), value: 'hop' },
+                ],
+                placeholder: t('Select types'),
+            },
         ],
         [t]
     )
