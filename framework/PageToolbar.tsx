@@ -57,6 +57,7 @@ export interface IToolbarStringFilter {
     label: string
     type: 'string'
     query: string
+    placeholder?: string
 }
 
 export interface IToolbarSelectFilter {
@@ -227,9 +228,14 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                     <ToolbarFilter
                                         key={filter.label}
                                         categoryName={filter.label}
-                                        chips={values}
+                                        chips={values.map((value) => {
+                                            return 'options' in filter
+                                                ? filter.options.find((o) => o.value === value)?.label ?? value
+                                                : value
+                                        })}
                                         deleteChip={(_group, value) => {
                                             setFilters?.((filters) => {
+                                                //TODO bug here where value is actually select filter option label... need to map
                                                 const newState = { ...filters }
                                                 value = typeof value === 'string' ? value : value.key
                                                 let values = filters[filter.key]
@@ -303,14 +309,14 @@ function ToolbarFilterInput(props: {
     const { filter } = props
     switch (filter?.type) {
         case 'string':
-            return <ToolbarTextFilter {...props} />
+            return <ToolbarTextFilter {...props} placeholder={filter.placeholder} />
         case 'select':
             return <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
     }
     return <></>
 }
 
-function ToolbarTextFilter(props: { addFilter: (value: string) => void }) {
+function ToolbarTextFilter(props: { addFilter: (value: string) => void; placeholder?: string }) {
     const [value, setValue] = useState('')
     return (
         <InputGroup>
@@ -326,6 +332,7 @@ function ToolbarTextFilter(props: { addFilter: (value: string) => void }) {
                             // ref.current?.focus() // Does not work because PF does not expose ref
                         }
                     }}
+                    placeholder={props.placeholder}
                 />
                 {value !== '' && (
                     <TextInputGroupUtilities>
@@ -393,7 +400,7 @@ function ToolbarSelectFilter(props: {
                 onToggle={setOpen}
                 selections={selections}
                 onSelect={onSelect}
-                placeholderText={values.length ? t('Selected') : props.placeholder}
+                placeholderText={values.length ? t('Selected') : <span style={{ opacity: 0.7 }}>{props.placeholder}</span>}
             >
                 {options.map((option) => (
                     <SelectOption id={option.value} key={option.value} value={option.value}>
