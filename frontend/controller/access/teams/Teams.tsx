@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core'
 import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -126,11 +126,10 @@ export function useTeamsFilters() {
 }
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
+    const { t } = useTranslation()
     const history = useNavigate()
-    const nameColumn = useNameColumn({
-        ...options,
-        onClick: (team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
-    })
+    const nameColumnClick = useCallback((team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())), [history])
+    const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick })
     const descriptionColumn = useDescriptionColumn()
     const organizationColumn = useOrganizationNameColumn(options)
     const createdColumn = useCreatedColumn(options)

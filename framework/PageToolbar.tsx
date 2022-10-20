@@ -102,6 +102,8 @@ export type PagetableToolbarProps<T extends object> = {
     unselectAll?: () => void
     onSelect?: (item: T) => void
     disableBorderBottom?: boolean
+
+    showSelect?: boolean
 }
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -132,7 +134,10 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
 
     const showSelect =
-        selectedItems !== undefined && toolbarActions && toolbarActions.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type)
+        props.showSelect === true ||
+        (selectedItems !== undefined &&
+            toolbarActions &&
+            toolbarActions.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type))
 
     const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
 

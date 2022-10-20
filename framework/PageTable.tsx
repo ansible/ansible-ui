@@ -99,6 +99,9 @@ export type PageTableProps<T extends object> = {
     emptyStateButtonClick?: () => void
 
     t?: (t: string) => string
+
+    showSelect?: boolean
+    ColumnManagement?: boolean
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -121,7 +124,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     } = props
     let { t } = props
     t = t ? t : (t: string) => t
-    const showSelect = toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
+    const showSelect =
+        props.showSelect || toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
     const containerRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
         left: 0,
@@ -191,7 +195,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     return (
         <Fragment>
             {columnModal}
-            <PageTableToolbar {...props} openColumnModal={openColumnModal} />
+            <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
             <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
                 <TableComposable
                     aria-label="Simple table"

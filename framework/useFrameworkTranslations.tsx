@@ -1,6 +1,7 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 export interface IFrameworkTranslations {
+    errorText: string
     cancelText: string
     closeText: string
     confirmText: string
@@ -8,9 +9,12 @@ export interface IFrameworkTranslations {
     submitText: string
     submittingText: string
     successText: string
+    processingText: string
+    noItemsFound: string
 }
 
 const defaultTranslations: IFrameworkTranslations = {
+    errorText: 'Error',
     cancelText: 'Cancel',
     closeText: 'Close',
     confirmText: 'Confirm',
@@ -18,6 +22,8 @@ const defaultTranslations: IFrameworkTranslations = {
     submitText: 'Submit',
     submittingText: 'Submitting',
     successText: 'Success',
+    processingText: 'Processing',
+    noItemsFound: 'No items found',
 }
 
 const FrameworkTranslationsContext = createContext<
