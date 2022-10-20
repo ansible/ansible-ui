@@ -5,6 +5,7 @@ import { ITableColumn, SinceCell, TextCell } from '../../framework'
 import { RouteE } from '../Routes'
 
 export function useNameColumn<T extends { name: string; id: number }>(options?: {
+    header?: string
     url?: string
     onClick?: (item: T) => void
     disableSort?: boolean
@@ -14,7 +15,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
     const { t } = useTranslation()
     const column = useMemo<ITableColumn<T>>(
         () => ({
-            header: t('Name'),
+            header: options?.header ?? t('Name'),
             cell: (item: T) => (
                 <TextCell
                     text={item.name}
@@ -25,20 +26,14 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
             ),
             sort: disableSort ? undefined : 'name',
         }),
-        [disableLinks, disableSort, onClick, t, url]
+        [disableLinks, disableSort, onClick, options?.header, t, url]
     )
     return column
 }
 
 export function useDescriptionColumn<T extends { description?: string | undefined }>() {
     const { t } = useTranslation()
-    const column = useMemo<ITableColumn<T>>(
-        () => ({
-            header: t('Description'),
-            cell: (item) => <TextCell text={item.description} />,
-        }),
-        [t]
-    )
+    const column = useMemo<ITableColumn<T>>(() => ({ header: t('Description'), cell: (item) => <TextCell text={item.description} /> }), [t])
     return column
 }
 
@@ -111,19 +106,22 @@ export function useOrganizationNameColumn(options?: { disableLinks?: boolean; di
                 name: string
             }
         }
-    }> = {
-        header: t('Organization'),
-        cell: (item) => (
-            <TextCell
-                text={item.summary_fields?.organization?.name}
-                to={
-                    options?.disableLinks
-                        ? undefined
-                        : RouteE.OrganizationDetails.replace(':id', (item.summary_fields?.organization?.id ?? '').toString())
-                }
-            />
-        ),
-        sort: options?.disableSort ? undefined : 'organization',
-    }
+    }> = useMemo(
+        () => ({
+            header: t('Organization'),
+            cell: (item) => (
+                <TextCell
+                    text={item.summary_fields?.organization?.name}
+                    to={
+                        options?.disableLinks
+                            ? undefined
+                            : RouteE.OrganizationDetails.replace(':id', (item.summary_fields?.organization?.id ?? '').toString())
+                    }
+                />
+            ),
+            sort: options?.disableSort ? undefined : 'organization',
+        }),
+        [options?.disableLinks, options?.disableSort, t]
+    )
     return column
 }

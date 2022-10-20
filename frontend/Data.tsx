@@ -30,8 +30,12 @@ export async function requestPut<ResponseBody, RequestBody = unknown>(url: strin
     return requestCommon<ResponseBody>(url, { json }, ky.put)
 }
 
-export async function requestPost<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { json }, ky.post)
+export async function requestPost<ResponseBody, RequestBody = unknown>(
+    url: string,
+    json: RequestBody,
+    signal?: AbortSignal
+): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
