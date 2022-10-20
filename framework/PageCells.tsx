@@ -160,7 +160,7 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
                             width: 18,
                             height: 25,
                             background: color1,
-                            marginBottom: -7,
+                            marginBottom: -9,
                             paddingTop: Math.max(0, Math.min(25, (25 * (props.capacity - props.used)) / props.capacity)),
                             borderRadius: 2,
                             border: `thin solid ${borderColor}`,

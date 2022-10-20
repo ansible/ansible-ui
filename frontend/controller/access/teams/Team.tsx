@@ -6,7 +6,7 @@ export interface Team {
     organization: number
     created: string
     modified: string
-    summary_fields?: {
+    summary_fields: {
         organization?: {
             id: number
             name: string
@@ -22,6 +22,23 @@ export interface Team {
             username: string
             first_name: string
             last_name: string
+        }
+        object_roles: {
+            admin_role: {
+                id: number
+                name: string
+                description: string
+            }
+            member_role: {
+                id: number
+                name: string
+                description: string
+            }
+            read_role: {
+                id: number
+                name: string
+                description: string
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ import { RouteE } from '../../../Routes'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useAddUsersToTeams } from './useAddUsersToTeams'
 import { useDeleteUsers } from './useDeleteUsers'
 import { User } from './User'
 
@@ -38,6 +39,8 @@ export function Users() {
         void view.refresh()
     })
 
+    const openAddUsersToTeams = useAddUsersToTeams()
+
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
             {
@@ -53,8 +56,14 @@ export function Users() {
                 label: t('Delete selected users'),
                 onClick: deleteUsers,
             },
+            {
+                type: TypedActionType.bulk,
+                icon: PlusIcon,
+                label: t('Add selected users to teams'),
+                onClick: () => openAddUsersToTeams(view.selectedItems),
+            },
         ],
-        [deleteUsers, navigate, t]
+        [deleteUsers, navigate, openAddUsersToTeams, t, view.selectedItems]
     )
 
     const rowActions = useMemo<IItemAction<User>[]>(

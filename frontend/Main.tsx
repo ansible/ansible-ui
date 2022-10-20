@@ -19,16 +19,16 @@ export default function Main() {
             <ErrorBoundary message={t('An eror occured')}>
                 <AccessCode>
                     <AutomationServersProvider>
-                        <PageFrameworkProvider>
-                            <BrowserRouter>
+                        <BrowserRouter>
+                            <PageFrameworkProvider>
                                 <Routes>
                                     <Route path={RouteE.Login} element={<Login />} />
                                     <Route path={RouteE.Controller + '/*'} element={<Controller />} />
                                     <Route path={RouteE.Hub + '/*'} element={<Hub />} />
                                     <Route path="*" element={<Navigate to={RouteE.Login} />} />
                                 </Routes>
-                            </BrowserRouter>
-                        </PageFrameworkProvider>
+                            </PageFrameworkProvider>
+                        </BrowserRouter>
                     </AutomationServersProvider>
                 </AccessCode>
             </ErrorBoundary>
