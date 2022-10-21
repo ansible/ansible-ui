@@ -1,4 +1,4 @@
 export interface Namespace {
-    id: number
-    name: string
+  id: number
+  name: string
 }

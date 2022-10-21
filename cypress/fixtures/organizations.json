@@ -1,22 +1,22 @@
 {
-    "count": 1,
-    "next": null,
-    "previous": null,
-    "results": [
-        {
-            "id": 1,
-            "type": "organization",
-            "name": "Default"
-        },
-        {
-            "id": 2,
-            "type": "organization",
-            "name": "Organization 002"
-        },
-        {
-            "id": 3,
-            "type": "organization",
-            "name": "Organization 003"
-        }
-    ]
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "organization",
+      "name": "Default"
+    },
+    {
+      "id": 2,
+      "type": "organization",
+      "name": "Organization 002"
+    },
+    {
+      "id": 3,
+      "type": "organization",
+      "name": "Organization 003"
+    }
+  ]
 }

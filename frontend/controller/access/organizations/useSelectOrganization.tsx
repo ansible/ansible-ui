@@ -5,21 +5,21 @@ import { useOrganizationsColumns, useOrganizationsFilters } from '../organizatio
 import { Organization } from './Organization'
 
 export function useSelectOrganization() {
-    const { t } = useTranslation()
-    const toolbarFilters = useOrganizationsFilters()
-    const tableColumns = useOrganizationsColumns({ disableLinks: true })
-    const view = useControllerView<Organization>({
-        url: '/api/v2/organizations/',
-        toolbarFilters,
-        tableColumns,
-        disableQueryString: true,
-    })
-    return useSelectDialog<Organization>({
-        toolbarFilters,
-        tableColumns,
-        view,
-        confirm: t('Confirm'),
-        cancel: t('Cancel'),
-        selected: t('Selected'),
-    })
+  const { t } = useTranslation()
+  const toolbarFilters = useOrganizationsFilters()
+  const tableColumns = useOrganizationsColumns({ disableLinks: true })
+  const view = useControllerView<Organization>({
+    url: '/api/v2/organizations/',
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+  })
+  return useSelectDialog<Organization>({
+    toolbarFilters,
+    tableColumns,
+    view,
+    confirm: t('Confirm'),
+    cancel: t('Cancel'),
+    selected: t('Selected'),
+  })
 }

@@ -14,19 +14,19 @@ import ErrorBoundary from './components/ErrorBoundary'
  * <Page>
  */
 export function PageLayout(props: { children: ReactNode }) {
-    const { t } = useTranslation()
-    return (
-        <ErrorBoundary message={t('Error')}>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                    maxHeight: '100%',
-                }}
-            >
-                {props.children}
-            </div>
-        </ErrorBoundary>
-    )
+  const { t } = useTranslation()
+  return (
+    <ErrorBoundary message={t('Error')}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          maxHeight: '100%',
+        }}
+      >
+        {props.children}
+      </div>
+    </ErrorBoundary>
+  )
 }

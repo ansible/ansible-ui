@@ -5,18 +5,18 @@ import { proxyHandler } from './proxy-handler'
 import { serve } from './serve'
 
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
-    try {
-        const target = req.headers['x-server']
-        if (target) {
-            proxyHandler(req, res)
-        } else {
-            void serve(req, res)
-        }
-    } catch (err) {
-        logger.error(err)
-        if (!res.headersSent) {
-            res.writeHead(HTTP_STATUS_INTERNAL_SERVER_ERROR).end()
-            return
-        }
+  try {
+    const target = req.headers['x-server']
+    if (target) {
+      proxyHandler(req, res)
+    } else {
+      void serve(req, res)
     }
+  } catch (err) {
+    logger.error(err)
+    if (!res.headersSent) {
+      res.writeHead(HTTP_STATUS_INTERNAL_SERVER_ERROR).end()
+      return
+    }
+  }
 }

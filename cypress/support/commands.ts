@@ -31,66 +31,66 @@ import '@cypress/code-coverage/support'
 import { ItemsResponse } from '../../frontend/Data'
 
 declare global {
-    namespace Cypress {
-        interface Chainable {
-            getByLabel(label: string | RegExp): Chainable<void>
-            clickButton(label: string | RegExp): Chainable<void>
-            navigateTo(label: string | RegExp): Chainable<void>
-            clickRow(name: string | RegExp): Chainable<void>
-            clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
-            clickPageAction(label: string | RegExp): Chainable<void>
-        }
+  namespace Cypress {
+    interface Chainable {
+      getByLabel(label: string | RegExp): Chainable<void>
+      clickButton(label: string | RegExp): Chainable<void>
+      navigateTo(label: string | RegExp): Chainable<void>
+      clickRow(name: string | RegExp): Chainable<void>
+      clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
+      clickPageAction(label: string | RegExp): Chainable<void>
     }
+  }
 }
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
-    cy.get('.pf-c-form__label-text')
-        .contains(label)
-        .parent()
-        .invoke('attr', 'for')
-        .then((id: string | undefined) => {
-            if (id) {
-                cy.get('#' + id)
-            }
-        })
+  cy.get('.pf-c-form__label-text')
+    .contains(label)
+    .parent()
+    .invoke('attr', 'for')
+    .then((id: string | undefined) => {
+      if (id) {
+        cy.get('#' + id)
+      }
+    })
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-    cy.wait(1).get('button:not(:disabled)').contains(label).click()
+  cy.wait(1).get('button:not(:disabled)').contains(label).click()
 })
 
 Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
-    cy.get('#page-sidebar').then((c) => {
-        if (c.hasClass('pf-m-collapsed')) {
-            cy.get('#nav-toggle').click()
-        }
-    })
-    cy.get('.pf-c-nav__link').contains(label).click()
-    cy.get('#page-sidebar').then((c) => {
-        if (!c.hasClass('pf-m-collapsed')) {
-            cy.get('#nav-toggle').click()
-        }
-    })
-    cy.get('.pf-c-title').contains(label)
+  cy.get('#page-sidebar').then((c) => {
+    if (c.hasClass('pf-m-collapsed')) {
+      cy.get('#nav-toggle').click()
+    }
+  })
+  cy.get('.pf-c-nav__link').contains(label).click()
+  cy.get('#page-sidebar').then((c) => {
+    if (!c.hasClass('pf-m-collapsed')) {
+      cy.get('#nav-toggle').click()
+    }
+  })
+  cy.get('.pf-c-title').contains(label)
 })
 
 Cypress.Commands.add('clickRow', (name: string | RegExp) => {
-    cy.contains('td', name).within(() => {
-        cy.get('button:not(:disabled)').click()
-    })
+  cy.contains('td', name).within(() => {
+    cy.get('button:not(:disabled)').click()
+  })
 })
 
 Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | RegExp) => {
-    cy.contains('td', name)
-        .parent()
-        .within(() => {
-            cy.get('.pf-c-dropdown__toggle').click()
-            cy.get('.pf-c-dropdown__menu-item').contains(label).click()
-        })
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('.pf-c-dropdown__toggle').click()
+      cy.get('.pf-c-dropdown__menu-item').contains(label).click()
+    })
 })
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-    cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click()
+  cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click()
 })
 
 // Cypress.Commands.overwrite('type', (originalFn, subject, text, options: Partial<Cypress.TypeOptions> = {}) => {
@@ -103,121 +103,121 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
 // })
 
 interface IControllerItem {
-    id: number
-    organization?: number
-    created?: string
-    modified?: string
-    summary_fields?: {
-        organization?: {
-            id: number
-            name: string
-        }
+  id: number
+  organization?: number
+  created?: string
+  modified?: string
+  summary_fields?: {
+    organization?: {
+      id: number
+      name: string
     }
+  }
 }
 
 function handleControllerCollection<T extends IControllerItem>(baseUrl: string, items: T[]) {
-    cy.intercept('GET', `${baseUrl}/*`, (req) => {
-        const url = req.url.slice(req.url.indexOf(baseUrl.split('*')[0]) + baseUrl.length + 1)
-        const parts = url.split('/')
-        switch (parts.length) {
-            case 1:
-                {
-                    const itemsResponse: ItemsResponse<T> = { count: items.length, results: items }
-                    req.reply(200, itemsResponse)
-                }
-                break
-            case 2:
-                {
-                    const id = Number(parts[0])
-                    if (Number.isInteger(id)) {
-                        const item = items.find((item) => item.id === id)
-                        if (item) {
-                            req.reply(200, item)
-                        } else {
-                            req.reply(404)
-                        }
-                    } else {
-                        req.reply(500)
-                    }
-                }
-                break
-            default:
-                req.reply(500, {
-                    a: req.url,
-                    b: baseUrl,
-                    u: url,
-                })
-                break
+  cy.intercept('GET', `${baseUrl}/*`, (req) => {
+    const url = req.url.slice(req.url.indexOf(baseUrl.split('*')[0]) + baseUrl.length + 1)
+    const parts = url.split('/')
+    switch (parts.length) {
+      case 1:
+        {
+          const itemsResponse: ItemsResponse<T> = { count: items.length, results: items }
+          req.reply(200, itemsResponse)
         }
-    })
-    cy.intercept('POST', `${baseUrl}/`, (req) => {
-        // const parts = req.url.split('/')
-        let id = 1
-        while (items.find((item) => item.id === id)) {
-            id++
+        break
+      case 2:
+        {
+          const id = Number(parts[0])
+          if (Number.isInteger(id)) {
+            const item = items.find((item) => item.id === id)
+            if (item) {
+              req.reply(200, item)
+            } else {
+              req.reply(404)
+            }
+          } else {
+            req.reply(500)
+          }
         }
-        const item = req.body as T
-        item.id = id
-        if (item.organization !== undefined) {
-            item.summary_fields = { organization: { id: 1, name: 'TODO' } }
+        break
+      default:
+        req.reply(500, {
+          a: req.url,
+          b: baseUrl,
+          u: url,
+        })
+        break
+    }
+  })
+  cy.intercept('POST', `${baseUrl}/`, (req) => {
+    // const parts = req.url.split('/')
+    let id = 1
+    while (items.find((item) => item.id === id)) {
+      id++
+    }
+    const item = req.body as T
+    item.id = id
+    if (item.organization !== undefined) {
+      item.summary_fields = { organization: { id: 1, name: 'TODO' } }
+    }
+    item.created = new Date(Date.now()).toISOString()
+    item.modified = new Date(Date.now()).toISOString()
+    items.push(item)
+    req.reply(201, item)
+  })
+  cy.intercept('PATCH', `${baseUrl}/*/`, (req) => {
+    const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
+    const parts = url.split('/')
+    switch (parts.length) {
+      case 2:
+        {
+          const id = Number(parts[0])
+          if (Number.isInteger(id)) {
+            const item = items.find((item) => item.id === id)
+            if (item) {
+              Object.assign(item, req.body)
+              item.modified = new Date(Date.now()).toISOString()
+              req.reply(200, item)
+            } else {
+              req.reply(404)
+            }
+          } else {
+            req.reply(500)
+          }
         }
-        item.created = new Date(Date.now()).toISOString()
-        item.modified = new Date(Date.now()).toISOString()
-        items.push(item)
-        req.reply(201, item)
-    })
-    cy.intercept('PATCH', `${baseUrl}/*/`, (req) => {
-        const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
-        const parts = url.split('/')
-        switch (parts.length) {
-            case 2:
-                {
-                    const id = Number(parts[0])
-                    if (Number.isInteger(id)) {
-                        const item = items.find((item) => item.id === id)
-                        if (item) {
-                            Object.assign(item, req.body)
-                            item.modified = new Date(Date.now()).toISOString()
-                            req.reply(200, item)
-                        } else {
-                            req.reply(404)
-                        }
-                    } else {
-                        req.reply(500)
-                    }
-                }
-                break
-            default:
-                req.reply(500)
-                break
+        break
+      default:
+        req.reply(500)
+        break
+    }
+  })
+  cy.intercept('DELETE', `${baseUrl}/*/`, (req) => {
+    const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
+    const parts = url.split('/')
+    switch (parts.length) {
+      case 2:
+        {
+          const id = Number(parts[0])
+          if (Number.isInteger(id)) {
+            const itemIndex = items.findIndex((item) => item.id === id)
+            if (itemIndex !== -1) {
+              const item = items[itemIndex]
+              req.reply(200, item)
+              items.splice(itemIndex, 1)
+            } else {
+              req.reply(404)
+            }
+          } else {
+            req.reply(500)
+          }
         }
-    })
-    cy.intercept('DELETE', `${baseUrl}/*/`, (req) => {
-        const url = req.url.slice(req.url.indexOf(baseUrl) + baseUrl.length + 1)
-        const parts = url.split('/')
-        switch (parts.length) {
-            case 2:
-                {
-                    const id = Number(parts[0])
-                    if (Number.isInteger(id)) {
-                        const itemIndex = items.findIndex((item) => item.id === id)
-                        if (itemIndex !== -1) {
-                            const item = items[itemIndex]
-                            req.reply(200, item)
-                            items.splice(itemIndex, 1)
-                        } else {
-                            req.reply(404)
-                        }
-                    } else {
-                        req.reply(500)
-                    }
-                }
-                break
-            default:
-                req.reply(500)
-                break
-        }
-    })
+        break
+      default:
+        req.reply(500)
+        break
+    }
+  })
 }
 
 const organizations: IControllerItem[] = []
@@ -225,68 +225,68 @@ const teams: IControllerItem[] = []
 const users: IControllerItem[] = []
 
 before(() => {
-    window.localStorage.setItem('access', 'true')
-    window.localStorage.setItem('theme', 'light')
+  window.localStorage.setItem('access', 'true')
+  window.localStorage.setItem('theme', 'light')
 
-    if (Cypress.env('mock')) {
-        cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
-            for (const item of json.results) {
-                organizations.push(item)
-            }
-        })
-        cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
-            for (const item of json.results) {
-                teams.push(item)
-            }
-        })
-        cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
-            for (const item of json.results) {
-                users.push(item)
-            }
-        })
+  if (Cypress.env('mock')) {
+    cy.fixture('organizations.json').then((json: ItemsResponse<IControllerItem>) => {
+      for (const item of json.results) {
+        organizations.push(item)
+      }
+    })
+    cy.fixture('teams.json').then((json: ItemsResponse<IControllerItem>) => {
+      for (const item of json.results) {
+        teams.push(item)
+      }
+    })
+    cy.fixture('users.json').then((json: ItemsResponse<IControllerItem>) => {
+      for (const item of json.results) {
+        users.push(item)
+      }
+    })
 
-        cy.intercept('GET', '/api/login/', { statusCode: 200 })
-        cy.intercept('POST', '/api/login/', { statusCode: 200 })
-        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
-    }
+    cy.intercept('GET', '/api/login/', { statusCode: 200 })
+    cy.intercept('POST', '/api/login/', { statusCode: 200 })
+    cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+  }
 
-    cy.visit(`/controller/teams`)
-    // cy.injectAxe()
+  cy.visit(`/controller/teams`)
+  // cy.injectAxe()
 })
 
 beforeEach(() => {
-    window.localStorage.setItem('access', 'true')
-    window.localStorage.setItem('theme', 'light')
+  window.localStorage.setItem('access', 'true')
+  window.localStorage.setItem('theme', 'light')
 
-    if (Cypress.env('mock')) {
-        cy.intercept('GET', '/api/login/', { statusCode: 200 })
-        cy.intercept('POST', '/api/login/', { statusCode: 200 })
-        cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
+  if (Cypress.env('mock')) {
+    cy.intercept('GET', '/api/login/', { statusCode: 200 })
+    cy.intercept('POST', '/api/login/', { statusCode: 200 })
+    cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
 
-        handleControllerCollection('/api/v2/organizations/*/users', users)
-        handleControllerCollection('/api/v2/organizations/*/teams', teams)
-        handleControllerCollection('/api/v2/organizations', organizations)
-        handleControllerCollection('/api/v2/teams/*/access_list', users)
-        handleControllerCollection('/api/v2/teams', teams)
-        handleControllerCollection('/api/v2/users', users)
-    }
+    handleControllerCollection('/api/v2/organizations/*/users', users)
+    handleControllerCollection('/api/v2/organizations/*/teams', teams)
+    handleControllerCollection('/api/v2/organizations', organizations)
+    handleControllerCollection('/api/v2/teams/*/access_list', users)
+    handleControllerCollection('/api/v2/teams', teams)
+    handleControllerCollection('/api/v2/users', users)
+  }
 
-    // cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
-    // cy.get('#server').type('https://localhost:8043')
-    // cy.get('#username').type('test')
-    // cy.get('#password').type('test')
-    // cy.get('button[type=submit]').click()
+  // cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
+  // cy.get('#server').type('https://localhost:8043')
+  // cy.get('#username').type('test')
+  // cy.get('#password').type('test')
+  // cy.get('button[type=submit]').click()
 
-    // Cypress.Cookies.preserveOnce(names...)
+  // Cypress.Cookies.preserveOnce(names...)
 
-    // Cypress.Cookies.defaults({
-    //     preserve: ['_csrf', '_oauth_proxy', 'acm-access-token-cookie'],
-    // })
-    // cy.login()
-    // cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
-    // cy.get('.pf-c-page__main').contains('Red Hat', { timeout: 5 * 60 * 1000 })
+  // Cypress.Cookies.defaults({
+  //     preserve: ['_csrf', '_oauth_proxy', 'acm-access-token-cookie'],
+  // })
+  // cy.login()
+  // cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
+  // cy.get('.pf-c-page__main').contains('Red Hat', { timeout: 5 * 60 * 1000 })
 })
 
 afterEach(() => {
-    // cy.checkA11y()
+  // cy.checkA11y()
 })
