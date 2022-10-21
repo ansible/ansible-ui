@@ -165,6 +165,14 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                             </NavItem>
                         </NavGroup> */}
                             {/* </NavExpandable> */}
+                            {process.env.NODE_ENV === 'development' && (
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.ControllerDebug, location)}
+                                    onClick={() => onClick(RouteE.ControllerDebug)}
+                                >
+                                    {t('Debug')}
+                                </NavItem>
+                            )}
                         </NavList>
                     </Nav>
                 </>

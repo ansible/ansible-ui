@@ -21,7 +21,7 @@ export function Inventories() {
     const navigate = useNavigate()
     const toolbarFilters = useInventoriesFilters()
     const tableColumns = useInventoriesColumns()
-    const view = useControllerView<Inventory>('/api/v2/inventories/', toolbarFilters, tableColumns)
+    const view = useControllerView<Inventory>({ url: '/api/v2/inventories/', toolbarFilters, tableColumns })
     const deleteInventories = useDeleteInventories((deleted: Inventory[]) => {
         for (const inventory of deleted) {
             view.unselectItem(inventory)

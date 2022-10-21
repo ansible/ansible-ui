@@ -25,7 +25,7 @@ export function Organizations() {
 
     const tableColumns = useOrganizationsColumns()
 
-    const view = useControllerView<Organization>('/api/v2/organizations/', toolbarFilters, tableColumns)
+    const view = useControllerView<Organization>({ url: '/api/v2/organizations/', toolbarFilters, tableColumns })
 
     const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
         for (const organization of deleted) {

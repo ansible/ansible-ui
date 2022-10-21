@@ -28,7 +28,7 @@ export function Projects() {
     const navigate = useNavigate()
     const toolbarFilters = useProjectsFilters()
     const tableColumns = useProjectsColumns()
-    const view = useControllerView<Project>('/api/v2/projects/', toolbarFilters, tableColumns)
+    const view = useControllerView<Project>({ url: '/api/v2/projects/', toolbarFilters, tableColumns })
     const deleteProjects = useDeleteProjects((deleted: Project[]) => {
         for (const project of deleted) {
             view.unselectItem(project)

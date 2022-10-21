@@ -28,7 +28,7 @@ export function Instances() {
     const navigate = useNavigate()
     const toolbarFilters = useInstancesFilters()
     const tableColumns = useInstancesColumns()
-    const view = useControllerView<Instance>('/api/v2/instances/', toolbarFilters, tableColumns)
+    const view = useControllerView<Instance>({ url: '/api/v2/instances/', toolbarFilters, tableColumns })
 
     const toolbarActions = useMemo<ITypedAction<Instance>[]>(
         () => [
