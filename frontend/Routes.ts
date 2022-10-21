@@ -102,5 +102,5 @@ export enum RouteE {
 
     APIToken = '/hub/api-token',
 
-    Debug = '/debug',
+    ControllerDebug = '/controller/debug',
 }

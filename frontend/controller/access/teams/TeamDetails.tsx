@@ -202,7 +202,12 @@ function TeamAccessTab(props: { team: Team }) {
         [t]
     )
 
-    const view = useControllerView<User>(`/api/v2/teams/${team.id}/access_list/`, toolbarFilters, tableColumns)
+    const view = useControllerView<User>({
+        url: `/api/v2/teams/${team.id}/access_list/`,
+        toolbarFilters,
+        tableColumns,
+        disableQueryString: true,
+    })
 
     const history = useNavigate()
 

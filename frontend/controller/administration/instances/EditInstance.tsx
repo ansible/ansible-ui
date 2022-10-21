@@ -41,9 +41,9 @@ export function EditInstance() {
     const onSubmit: FormPageSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
         try {
             editedInstance.capacity_adjustment = Math.round(editedInstance.capacity_adjustment * 100) / 100
-            const instance: Instance = await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance)
+            await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance)
             ;(cache as unknown as { clear: () => void }).clear?.()
-            navigate(RouteE.InstanceDetails.replace(':id', instance.id.toString()))
+            navigate(-1)
         } catch (err) {
             setError(await getControllerError(err))
         }

@@ -21,7 +21,7 @@ export function Hosts() {
     const navigate = useNavigate()
     const toolbarFilters = useHostsFilters()
     const tableColumns = useHostsColumns()
-    const view = useControllerView<Host>('/api/v2/hosts/', toolbarFilters, tableColumns)
+    const view = useControllerView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns })
     const deleteHosts = useDeleteHosts((deleted: Host[]) => {
         for (const host of deleted) {
             view.unselectItem(host)

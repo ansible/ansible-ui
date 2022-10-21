@@ -28,7 +28,7 @@ export function ExecutionEnvironments() {
     const navigate = useNavigate()
     const toolbarFilters = useExecutionEnvironmentsFilters()
     const tableColumns = useExecutionEnvironmentsColumns()
-    const view = useControllerView<ExecutionEnvironment>('/api/v2/execution_environments/', toolbarFilters, tableColumns)
+    const view = useControllerView<ExecutionEnvironment>({ url: '/api/v2/execution_environments/', toolbarFilters, tableColumns })
     const deleteExecutionEnvironments = useDeleteExecutionEnvironments((deleted: ExecutionEnvironment[]) => {
         for (const executionEnvironment of deleted) {
             view.unselectItem(executionEnvironment)

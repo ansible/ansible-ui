@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, TextCell, usePageDialog } from '../../../../framework'
-import { getItemKey, requestDelete } from '../../../Data'
-import { User } from '../users/User'
-import { useUsersColumns } from '../users/Users'
+import { BulkActionDialog, compareStrings, TextCell, usePageDialog } from '../../../../../framework'
+import { getItemKey, requestDelete } from '../../../../Data'
+import { User } from '../User'
+import { useUsersColumns } from '../Users'
 
 export function useDeleteUsers(callback: (users: User[]) => void) {
     const { t } = useTranslation()

@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBulkProgressDialog } from '../../../../framework/BulkProgressDialog'
-import { requestPost } from '../../../Data'
-import { Team } from '../teams/Team'
-import { useSelectTeams } from '../teams/useSelectTeams'
-import { User } from './User'
+import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
+import { requestPost } from '../../../../Data'
+import { Team } from '../../teams/Team'
+import { useSelectTeams } from '../../teams/useSelectTeams'
+import { User } from '../User'
 
-export function useAddUsersToTeams() {
+export function useAddUsersToTeams(onClose?: () => void) {
     const { t } = useTranslation()
     const openSelectTeams = useSelectTeams()
     const openBulkProgressDialog = useBulkProgressDialog<User>()
@@ -30,10 +30,11 @@ export function useAddUsersToTeams() {
                     processingText: t('Adding users to teams...'),
                     successText: t('All users added successfully.'),
                     errorText: t('There were errors adding users to teams.'),
+                    onClose: onClose,
                 })
             })
         },
-        [openBulkProgressDialog, openSelectTeams, t]
+        [onClose, openBulkProgressDialog, openSelectTeams, t]
     )
     return openAddUsersToTeams
 }

@@ -1,5 +1,5 @@
 import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
-import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import { EditIcon, MinusCircleIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -9,17 +9,20 @@ import {
     IToolbarFilter,
     ITypedAction,
     PageTable,
+    SinceCell,
     TablePage,
     TextCell,
     TypedActionType,
 } from '../../../../framework'
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
-import { useAddUsersToTeams } from './useAddUsersToTeams'
-import { useDeleteUsers } from './useDeleteUsers'
+import { useAddUsersToOrganizations } from './hooks/useAddUsersToOrganizations'
+import { useAddUsersToTeams } from './hooks/useAddUsersToTeams'
+import { useAddUserToOrganizations } from './hooks/useAddUserToOrganizations'
+import { useDeleteUsers } from './hooks/useDeleteUsers'
+import { useRemoveUsersFromOrganizations } from './hooks/useRemoveUsersFromOrganizations'
 import { User } from './User'
 
 export function Users() {
@@ -30,7 +33,7 @@ export function Users() {
 
     const tableColumns = useUsersColumns()
 
-    const view = useControllerView<User>('/api/v2/users/', toolbarFilters, tableColumns)
+    const view = useControllerView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns })
 
     const deleteUsers = useDeleteUsers((deleted: User[]) => {
         for (const user of deleted) {
@@ -39,7 +42,10 @@ export function Users() {
         void view.refresh()
     })
 
-    const openAddUsersToTeams = useAddUsersToTeams()
+    const addUsersToTeams = useAddUsersToTeams()
+    const addUserToOrganizations = useAddUserToOrganizations()
+    const addUsersToOrganizations = useAddUsersToOrganizations()
+    const removeUsersFromOrganizations = useRemoveUsersFromOrganizations()
 
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
@@ -50,20 +56,35 @@ export function Users() {
                 label: t('Create user'),
                 onClick: () => navigate(RouteE.CreateUser),
             },
+            { type: TypedActionType.seperator },
+            {
+                type: TypedActionType.bulk,
+                icon: PlusCircleIcon,
+                label: t('Add selected users to teams'),
+                onClick: () => addUsersToTeams(view.selectedItems),
+            },
+            { type: TypedActionType.seperator },
+            {
+                type: TypedActionType.bulk,
+                icon: PlusCircleIcon,
+                label: t('Add selected users to organizations'),
+                onClick: () => addUsersToOrganizations(view.selectedItems),
+            },
+            {
+                type: TypedActionType.bulk,
+                icon: MinusCircleIcon,
+                label: t('Remove selected users from organizations'),
+                onClick: () => removeUsersFromOrganizations(view.selectedItems),
+            },
+            { type: TypedActionType.seperator },
             {
                 type: TypedActionType.bulk,
                 icon: TrashIcon,
                 label: t('Delete selected users'),
                 onClick: deleteUsers,
             },
-            {
-                type: TypedActionType.bulk,
-                icon: PlusIcon,
-                label: t('Add selected users to teams'),
-                onClick: () => openAddUsersToTeams(view.selectedItems),
-            },
         ],
-        [deleteUsers, navigate, openAddUsersToTeams, t, view.selectedItems]
+        [t, deleteUsers, navigate, addUsersToTeams, view.selectedItems, addUsersToOrganizations, removeUsersFromOrganizations]
     )
 
     const rowActions = useMemo<IItemAction<User>[]>(
@@ -71,7 +92,12 @@ export function Users() {
             {
                 icon: EditIcon,
                 label: t('Edit user'),
-                onClick: (user: User) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
+                onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
+            },
+            {
+                icon: PlusCircleIcon,
+                label: t('Add user to organizations'),
+                onClick: (user) => addUserToOrganizations(user),
             },
             {
                 icon: TrashIcon,
@@ -79,7 +105,7 @@ export function Users() {
                 onClick: (user) => deleteUsers([user]),
             },
         ],
-        [deleteUsers, navigate, t]
+        [addUserToOrganizations, deleteUsers, navigate, t]
     )
 
     return (
@@ -111,7 +137,7 @@ export function AccessTable(props: { url: string }) {
 
     const tableColumns = useUsersColumns()
 
-    const view = useControllerView<User>(props.url, toolbarFilters, tableColumns)
+    const view = useControllerView<User>({ url: props.url, toolbarFilters, tableColumns, disableQueryString: true })
 
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
@@ -187,10 +213,8 @@ export function useUsersFilters() {
     return toolbarFilters
 }
 
-export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
+export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort?: boolean }) {
     const { t } = useTranslation()
-    const createdColumn = useCreatedColumn(options)
-    const modifiedColumn = useModifiedColumn(options)
     const tableColumns = useMemo<ITableColumn<User>[]>(
         () => [
             {
@@ -218,10 +242,12 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
                 header: t('User type'),
                 cell: (user) => <UserType user={user} />,
             },
-            createdColumn,
-            modifiedColumn,
+            {
+                header: t('Created'),
+                cell: (item) => <SinceCell value={item.created} />,
+            },
         ],
-        [t, createdColumn, modifiedColumn]
+        [t]
     )
     return tableColumns
 }

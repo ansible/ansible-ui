@@ -167,7 +167,12 @@ function OrganizationTeamsTab(props: { organization: Organization }) {
     const history = useNavigate()
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns()
-    const view = useControllerView<Team>(`/api/v2/organizations/${organization.id}/teams/`, toolbarFilters, tableColumns)
+    const view = useControllerView<Team>({
+        url: `/api/v2/organizations/${organization.id}/teams/`,
+        toolbarFilters,
+        tableColumns,
+        disableQueryString: true,
+    })
     return (
         <PageTable<Team>
             toolbarFilters={toolbarFilters}

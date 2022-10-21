@@ -12,12 +12,14 @@ export type IControllerView<T extends { id: number }> = IView &
         refresh: () => Promise<ItemsResponse<T> | undefined>
     }
 
-export function useControllerView<T extends { id: number }>(
-    url: string,
-    toolbarFilters?: IToolbarFilter[],
-    tableColumns?: ITableColumn<T>[],
+export function useControllerView<T extends { id: number }>(options: {
+    url: string
+    toolbarFilters?: IToolbarFilter[]
+    tableColumns?: ITableColumn<T>[]
     disableQueryString?: boolean
-): IControllerView<T> {
+}): IControllerView<T> {
+    let { url } = options
+    const { toolbarFilters, tableColumns, disableQueryString } = options
     const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined }, disableQueryString)
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 

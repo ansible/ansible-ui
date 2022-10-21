@@ -41,7 +41,7 @@ export function Teams() {
 
     const tableColumns = useTeamsColumns()
 
-    const view = useControllerView<Team>('/api/v2/teams/', toolbarFilters, tableColumns)
+    const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns })
 
     const deleteTeams = useDeleteTeams((deleted: Team[]) => {
         for (const team of deleted) {

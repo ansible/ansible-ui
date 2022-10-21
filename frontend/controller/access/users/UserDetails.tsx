@@ -1,5 +1,5 @@
-import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import { Alert, ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -29,7 +29,9 @@ import { Role } from '../roles/Role'
 import { useRolesColumns, useRolesFilters } from '../roles/Roles'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { useDeleteUsers } from './useDeleteUsers'
+import { useAddUserToOrganizations } from './hooks/useAddUserToOrganizations'
+import { useDeleteUsers } from './hooks/useDeleteUsers'
+import { useRemoveUserFromOrganizations } from './hooks/useRemoveUserFromOrganizations'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -155,22 +157,48 @@ function UserOrganizations(props: { user: User }) {
     const { t } = useTranslation()
     const toolbarFilters = useOrganizationsFilters()
     const tableColumns = useOrganizationsColumns()
-    const view = useControllerView<Organization>(`/api/v2/users/${user.id}/organizations/`, toolbarFilters)
+    const view = useControllerView<Organization>({
+        url: `/api/v2/users/${user.id}/organizations/`,
+        toolbarFilters,
+        disableQueryString: true,
+    })
+    const addUserToOrganizations = useAddUserToOrganizations(() => void view.refresh())
+    const removeUserFromOrganizations = useRemoveUserFromOrganizations(() => void view.refresh())
+    const toolbarActions = useMemo<ITypedAction<Organization>[]>(
+        () => [
+            {
+                type: TypedActionType.button,
+                variant: ButtonVariant.primary,
+                icon: PlusIcon,
+                label: t('Add user to organizations'),
+                onClick: () => addUserToOrganizations(user),
+            },
+            {
+                type: TypedActionType.bulk,
+                icon: MinusCircleIcon,
+                label: t('Remove user from selected organizations'),
+                onClick: () => removeUserFromOrganizations(user, view.selectedItems),
+            },
+        ],
+        [addUserToOrganizations, removeUserFromOrganizations, t, user, view.selectedItems]
+    )
     return (
-        <PageTable<Organization>
-            toolbarFilters={toolbarFilters}
-            tableColumns={tableColumns}
-            errorStateTitle={t('Error loading organizations')}
-            emptyStateTitle={user.is_superuser ? t('System administrator') : t('No organizations yet')}
-            emptyStateDescription={
-                user.is_superuser
-                    ? t('System administrators have unrestricted access to all resources.')
-                    : t('To get started, create an organization.')
-            }
-            emptyStateButtonText={t('Create organization')}
-            // emptyStateButtonClick={() => history(RouteE.CreateUser)}
-            {...view}
-        />
+        <>
+            {user.is_superuser && (
+                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+            )}
+            <PageTable<Organization>
+                toolbarFilters={toolbarFilters}
+                tableColumns={tableColumns}
+                toolbarActions={toolbarActions}
+                errorStateTitle={t('Error loading organizations')}
+                emptyStateTitle={t('User is not a member of any organizations.')}
+                emptyStateDescription={t('To get started, add the user to an organization.')}
+                emptyStateButtonText={t('Add user to organization')}
+                emptyStateButtonClick={() => addUserToOrganizations(user)}
+                {...view}
+            />
+        </>
     )
 }
 
@@ -179,22 +207,23 @@ function UserTeams(props: { user: User }) {
     const { t } = useTranslation()
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns()
-    const view = useControllerView<Team>(`/api/v2/users/${user.id}/teams/`, toolbarFilters)
+    const view = useControllerView<Team>({ url: `/api/v2/users/${user.id}/teams/`, toolbarFilters, disableQueryString: true })
     return (
-        <PageTable<Team>
-            toolbarFilters={toolbarFilters}
-            tableColumns={tableColumns}
-            errorStateTitle={t('Error loading teams')}
-            emptyStateTitle={user.is_superuser ? t('System administrator') : t('User is not in any teams.')}
-            emptyStateDescription={
-                user.is_superuser
-                    ? t('System administrators have unrestricted access to all resources.')
-                    : t('To get started, add the user to a team.')
-            }
-            emptyStateButtonText={t('Add user to teams')}
-            emptyStateButtonClick={() => alert('TODO')}
-            {...view}
-        />
+        <>
+            {user.is_superuser && (
+                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+            )}
+            <PageTable<Team>
+                toolbarFilters={toolbarFilters}
+                tableColumns={tableColumns}
+                errorStateTitle={t('Error loading teams')}
+                emptyStateTitle={t('User is not a member of any teams.')}
+                emptyStateDescription={t('To get started, add the user to a team.')}
+                emptyStateButtonText={t('Add user to team')}
+                emptyStateButtonClick={() => alert('TODO')}
+                {...view}
+            />
+        </>
     )
 }
 
@@ -233,23 +262,24 @@ function UserRoles(props: { user: User }) {
         ],
         [t]
     )
-    const view = useControllerView<Role>(`/api/v2/users/${user.id}/roles/`, toolbarFilters, tableColumns)
+    const view = useControllerView<Role>({ url: `/api/v2/users/${user.id}/roles/`, toolbarFilters, tableColumns, disableQueryString: true })
     return (
-        <PageTable<Role>
-            toolbarFilters={toolbarFilters}
-            tableColumns={tableColumns}
-            toolbarActions={toolbarActions}
-            rowActions={rowActions}
-            errorStateTitle={t('Error loading roles')}
-            emptyStateTitle={user.is_superuser ? t('System administrator') : t('User does not have any roles.')}
-            emptyStateDescription={
-                user.is_superuser
-                    ? t('System administrators have unrestricted access to all resources.')
-                    : t('To get started, add roles to the user.')
-            }
-            emptyStateButtonText={t('Add role to user')}
-            // emptyStateButtonClick={() => history(RouteE.CreateUser)}
-            {...view}
-        />
+        <>
+            {user.is_superuser && (
+                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+            )}
+            <PageTable<Role>
+                toolbarFilters={toolbarFilters}
+                tableColumns={tableColumns}
+                toolbarActions={toolbarActions}
+                rowActions={rowActions}
+                errorStateTitle={t('Error loading roles')}
+                emptyStateTitle={t('User does not have any roles.')}
+                emptyStateDescription={t('To get started, add roles to the user.')}
+                emptyStateButtonText={t('Add role to user')}
+                // emptyStateButtonClick={() => history(RouteE.CreateUser)}
+                {...view}
+            />
+        </>
     )
 }
