@@ -42,8 +42,8 @@ export async function requestPatch<ResponseBody, RequestBody = unknown>(url: str
     return requestCommon<ResponseBody>(url, { json }, ky.patch)
 }
 
-export async function requestDelete<ResponseBody>(url: string): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, {}, ky.delete)
+export async function requestDelete<ResponseBody>(url: string, signal?: AbortSignal): Promise<ResponseBody> {
+    return requestCommon<ResponseBody>(url, { signal }, ky.delete)
 }
 
 async function requestCommon<ResponseBody>(url: string, options: Options, methodFn: (input: Input, options: Options) => ResponsePromise) {

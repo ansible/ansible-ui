@@ -21,7 +21,7 @@ export function Credentials() {
     const navigate = useNavigate()
     const toolbarFilters = useCredentialsFilters()
     const tableColumns = useCredentialsColumns()
-    const view = useControllerView<Credential>('/api/v2/credentials/', toolbarFilters, tableColumns)
+    const view = useControllerView<Credential>({ url: '/api/v2/credentials/', toolbarFilters, tableColumns })
     const deleteCredentials = useDeleteCredentials((deleted: Credential[]) => {
         for (const credential of deleted) {
             view.unselectItem(credential)
