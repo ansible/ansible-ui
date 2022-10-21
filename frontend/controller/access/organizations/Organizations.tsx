@@ -3,8 +3,21 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TextCell, TypedActionType } from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TextCell,
+    TypedActionType,
+} from '../../../../framework'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+} from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import {
     useCreatedByToolbarFilter,
@@ -25,7 +38,11 @@ export function Organizations() {
 
     const tableColumns = useOrganizationsColumns()
 
-    const view = useControllerView<Organization>({ url: '/api/v2/organizations/', toolbarFilters, tableColumns })
+    const view = useControllerView<Organization>({
+        url: '/api/v2/organizations/',
+        toolbarFilters,
+        tableColumns,
+    })
 
     const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
         for (const organization of deleted) {
@@ -58,7 +75,8 @@ export function Organizations() {
             {
                 icon: EditIcon,
                 label: t('Edit organization'),
-                onClick: (organization) => navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
+                onClick: (organization) =>
+                    navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -97,17 +115,31 @@ export function useOrganizationsFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
 
-export function useOrganizationsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useOrganizationsColumns(options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const nameClick = useCallback(
-        (organization: Organization) => navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+        (organization: Organization) =>
+            navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
         [navigate]
     )
     const nameColumn = useNameColumn({
@@ -123,11 +155,19 @@ export function useOrganizationsColumns(options?: { disableSort?: boolean; disab
             descriptionColumn,
             {
                 header: t('Members'),
-                cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />,
+                cell: (organization) => (
+                    <TextCell
+                        text={organization.summary_fields?.related_field_counts?.users.toString()}
+                    />
+                ),
             },
             {
                 header: t('Teams'),
-                cell: (organization) => <TextCell text={organization.summary_fields?.related_field_counts?.teams.toString()} />,
+                cell: (organization) => (
+                    <TextCell
+                        text={organization.summary_fields?.related_field_counts?.teams.toString()}
+                    />
+                ),
             },
             createdColumn,
             modifiedColumn,

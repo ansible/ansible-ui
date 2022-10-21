@@ -14,7 +14,10 @@ import {
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { ITableColumn } from './PageTable'
 
-export function useColumnModal<T extends object>(columns: ITableColumn<T>[], t?: (t: string) => string) {
+export function useColumnModal<T extends object>(
+    columns: ITableColumn<T>[],
+    t?: (t: string) => string
+) {
     t = t ? t : (t: string) => t
 
     const [columnModalOpen, setColumnModalOpen] = useState(false)
@@ -25,7 +28,11 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[], t?:
 
     useEffect(() => {
         setManagedColumns((managedColumns) =>
-            managedColumns.map((managedColumn) => columns.find((column) => column.header === managedColumn.header) ?? managedColumn)
+            managedColumns.map(
+                (managedColumn) =>
+                    columns.find((column) => column.header === managedColumn.header) ??
+                    managedColumn
+            )
         )
     }, [columns])
 
@@ -42,7 +49,9 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[], t?:
     // }, [])
     const onDragFinish = useCallback((itemOrder: string[]) => {
         setManagedColumns((managedColumns) => {
-            return itemOrder.map((header) => managedColumns.find((column) => column.header === header)) as ITableColumn<T>[]
+            return itemOrder.map((header) =>
+                managedColumns.find((column) => column.header === header)
+            ) as ITableColumn<T>[]
         })
     }, [])
     const handleChange = useCallback((checked: boolean, event: FormEvent<HTMLInputElement>) => {
@@ -117,7 +126,10 @@ export function useColumnModal<T extends object>(columns: ITableColumn<T>[], t?:
                                 </DataListControl>
                                 <DataListItemCells
                                     dataListCells={[
-                                        <DataListCell id="table-column-management-item1" key={column.header}>
+                                        <DataListCell
+                                            id="table-column-management-item1"
+                                            key={column.header}
+                                        >
                                             <label htmlFor={column.header}>{column.header}</label>
                                         </DataListCell>,
                                     ]}

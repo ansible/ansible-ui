@@ -3,7 +3,14 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
 import {
     useCreatedColumn,
     useDescriptionColumn,
@@ -28,13 +35,19 @@ export function ExecutionEnvironments() {
     const navigate = useNavigate()
     const toolbarFilters = useExecutionEnvironmentsFilters()
     const tableColumns = useExecutionEnvironmentsColumns()
-    const view = useControllerView<ExecutionEnvironment>({ url: '/api/v2/execution_environments/', toolbarFilters, tableColumns })
-    const deleteExecutionEnvironments = useDeleteExecutionEnvironments((deleted: ExecutionEnvironment[]) => {
-        for (const executionEnvironment of deleted) {
-            view.unselectItem(executionEnvironment)
-        }
-        void view.refresh()
+    const view = useControllerView<ExecutionEnvironment>({
+        url: '/api/v2/execution_environments/',
+        toolbarFilters,
+        tableColumns,
     })
+    const deleteExecutionEnvironments = useDeleteExecutionEnvironments(
+        (deleted: ExecutionEnvironment[]) => {
+            for (const executionEnvironment of deleted) {
+                view.unselectItem(executionEnvironment)
+            }
+            void view.refresh()
+        }
+    )
 
     const toolbarActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
         () => [
@@ -61,12 +74,18 @@ export function ExecutionEnvironments() {
                 icon: EditIcon,
                 label: t('Edit execution environment'),
                 onClick: (executionEnvironment) =>
-                    navigate(RouteE.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())),
+                    navigate(
+                        RouteE.EditExecutionEnvironment.replace(
+                            ':id',
+                            executionEnvironment.id.toString()
+                        )
+                    ),
             },
             {
                 icon: TrashIcon,
                 label: t('Delete execution environment'),
-                onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
+                onClick: (executionEnvironment) =>
+                    deleteExecutionEnvironments([executionEnvironment]),
             },
         ],
         [navigate, deleteExecutionEnvironments, t]
@@ -100,18 +119,38 @@ export function useExecutionEnvironmentsFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            organizationToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            organizationToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
 
-export function useExecutionEnvironmentsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useExecutionEnvironmentsColumns(options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const nameClick = useCallback(
         (executionEnvironment: ExecutionEnvironment) =>
-            navigate(RouteE.ExecutionEnvironmentDetails.replace(':id', executionEnvironment.id.toString())),
+            navigate(
+                RouteE.ExecutionEnvironmentDetails.replace(
+                    ':id',
+                    executionEnvironment.id.toString()
+                )
+            ),
         [navigate]
     )
     const nameColumn = useNameColumn({

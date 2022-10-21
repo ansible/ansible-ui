@@ -66,7 +66,16 @@ export function Catalog<T extends object>(props: {
     itemActions?: IItemAction<T>[]
     showSelect: boolean
 }) {
-    const { keyFn, items, itemToCardFn, isSelected, selectItem, unselectItem, itemActions, showSelect } = props
+    const {
+        keyFn,
+        items,
+        itemToCardFn,
+        isSelected,
+        selectItem,
+        unselectItem,
+        itemActions,
+        showSelect,
+    } = props
 
     const catalogCards = useMemo(() => {
         return (
@@ -85,7 +94,17 @@ export function Catalog<T extends object>(props: {
                 ))}
             </Grid>
         )
-    }, [props.cardWidth, items, keyFn, itemToCardFn, isSelected, selectItem, unselectItem, itemActions, showSelect])
+    }, [
+        props.cardWidth,
+        items,
+        keyFn,
+        itemToCardFn,
+        isSelected,
+        selectItem,
+        unselectItem,
+        itemActions,
+        showSelect,
+    ])
 
     return (
         <PageSection style={{ flexGrow: 1 }}>
@@ -193,7 +212,8 @@ export function CatalogCard<T extends object>(props: {
     let { t } = props
     t = t ? t : (t: string) => t
 
-    const { item, itemToCardFn, isSelected, selectItem, unselectItem, itemActions, showSelect } = props
+    const { item, itemToCardFn, isSelected, selectItem, unselectItem, itemActions, showSelect } =
+        props
 
     const card = useMemo(() => itemToCardFn(item), [item, itemToCardFn])
 
@@ -274,7 +294,11 @@ export function CatalogCard<T extends object>(props: {
                         <SplitItem>
                             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                             <div onClick={(e) => e.stopPropagation()}>
-                                <Popover headerContent={card.badgeTooltipTitle} bodyContent={card.badgeTooltip} removeFindDomNode>
+                                <Popover
+                                    headerContent={card.badgeTooltipTitle}
+                                    bodyContent={card.badgeTooltip}
+                                    removeFindDomNode
+                                >
                                     <Label color={card.badgeColor}>{card.badge}</Label>
                                 </Popover>
                             </div>
@@ -321,7 +345,9 @@ export function CatalogCard<T extends object>(props: {
                                             return (
                                                 <DescriptionList key={index}>
                                                     <DescriptionListGroup>
-                                                        <span style={{ opacity: 9 }}>{item.description}</span>
+                                                        <span style={{ opacity: 9 }}>
+                                                            {item.description}
+                                                        </span>
                                                     </DescriptionListGroup>
                                                 </DescriptionList>
                                             )
@@ -329,12 +355,21 @@ export function CatalogCard<T extends object>(props: {
                                             return (
                                                 <DescriptionList
                                                     key={index}
-                                                    orientation={item.horizontal ? { sm: 'horizontal' } : undefined}
+                                                    orientation={
+                                                        item.horizontal
+                                                            ? { sm: 'horizontal' }
+                                                            : undefined
+                                                    }
                                                 >
                                                     <DescriptionListGroup>
-                                                        <DescriptionListTerm>{item.title}</DescriptionListTerm>
+                                                        <DescriptionListTerm>
+                                                            {item.title}
+                                                        </DescriptionListTerm>
                                                         <DescriptionListDescription>
-                                                            <CardList icon={item.icon} items={item.items} />
+                                                            <CardList
+                                                                icon={item.icon}
+                                                                items={item.items}
+                                                            />
                                                         </DescriptionListDescription>
                                                     </DescriptionListGroup>
                                                 </DescriptionList>
@@ -349,13 +384,23 @@ export function CatalogCard<T extends object>(props: {
             )}
             {(card.labels || card.learnMore) && (
                 <CardFooter>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'end', gap: 16 }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'end',
+                            gap: 16,
+                        }}
+                    >
                         <div style={{ flexGrow: 1, opacity: !disabled ? undefined : '0.5' }}>
                             {card.labels && (
                                 <LabelGroup>
                                     {card.labels.map((item) => (
                                         <Label key={item.label} color={item.color}>
-                                            <Truncate content={item.label} style={{ minWidth: 0 }} />
+                                            <Truncate
+                                                content={item.label}
+                                                style={{ minWidth: 0 }}
+                                            />
                                         </Label>
                                     ))}
                                 </LabelGroup>
@@ -423,7 +468,11 @@ export function CardList(props: { icon?: ReactNode; items: ICatalogCardListItem[
                         {listItem.help && (
                             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                             <div onClick={(e) => e.stopPropagation()}>
-                                <Popover headerContent={listItem.helpTitle} bodyContent={listItem.help} removeFindDomNode>
+                                <Popover
+                                    headerContent={listItem.helpTitle}
+                                    bodyContent={listItem.help}
+                                    removeFindDomNode
+                                >
                                     <Button
                                         variant="link"
                                         style={{

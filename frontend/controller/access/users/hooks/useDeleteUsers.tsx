@@ -23,7 +23,9 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
         setDialog(
             <BulkActionDialog<User>
                 title={t('Permanently delete users', { count: users.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} users.', { count: users.length })}
+                confirmText={t('Yes, I confirm that I want to delete these {{count}} users.', {
+                    count: users.length,
+                })}
                 submitText={t('Delete user', { count: users.length })}
                 submitting={t('Deleting users', { count: users.length })}
                 submittingTitle={t('Deleting {{count}} users', { count: users.length })}

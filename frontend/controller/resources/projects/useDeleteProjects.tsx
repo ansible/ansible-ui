@@ -16,7 +16,9 @@ export function useDeleteProjects(callback: (projects: Project[]) => void) {
         setDialog(
             <BulkActionDialog<Project>
                 title={t('Permanently delete projects', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} projects.', { count: items.length })}
+                confirmText={t('Yes, I confirm that I want to delete these {{count}} projects.', {
+                    count: items.length,
+                })}
                 submitText={t('Delete projects', { count: items.length })}
                 submitting={t('Deleting projects', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} projects', { count: items.length })}

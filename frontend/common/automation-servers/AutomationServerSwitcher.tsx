@@ -1,4 +1,13 @@
-import { Button, ContextSelector, ContextSelectorItem, Divider, Flex, PageSection, Text, Title } from '@patternfly/react-core'
+import {
+    Button,
+    ContextSelector,
+    ContextSelectorItem,
+    Divider,
+    Flex,
+    PageSection,
+    Text,
+    Title,
+} from '@patternfly/react-core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -17,7 +26,10 @@ export function AutomationServerSwitcher() {
             variant="dark"
             style={{
                 padding: 12,
-                backgroundColor: settings.theme === 'light' ? undefined : 'var(--pf-global--BackgroundColor--400)',
+                backgroundColor:
+                    settings.theme === 'light'
+                        ? undefined
+                        : 'var(--pf-global--BackgroundColor--400)',
                 borderTop: 'thin solid #fff2',
             }}
             padding={{ default: 'padding' }}
@@ -31,7 +43,9 @@ export function AutomationServerSwitcher() {
                     >
                         <Title headingLevel="h2">{automationServer?.name}</Title>
                         <Text component="small" style={{ opacity: 0.7 }}>
-                            {automationServer?.type === 'controller' ? t('Automation controller') : t('Automation hub')}
+                            {automationServer?.type === 'controller'
+                                ? t('Automation controller')
+                                : t('Automation hub')}
                         </Text>
                     </Flex>
                 }
@@ -53,7 +67,11 @@ export function AutomationServerSwitcher() {
                 {automationServers.map((automationServer, index) => (
                     <ContextSelectorItem
                         key={index}
-                        onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(automationServer.url))}
+                        onClick={() =>
+                            navigate(
+                                RouteE.Login + '?server=' + encodeURIComponent(automationServer.url)
+                            )
+                        }
                     >
                         <Flex
                             direction={{ default: 'column' }}
@@ -62,7 +80,9 @@ export function AutomationServerSwitcher() {
                         >
                             <Title headingLevel="h6">{automationServer?.name}</Title>
                             <Text component="small" style={{ opacity: 0.7 }}>
-                                {automationServer?.type === 'controller' ? t('Automation controller') : t('Automation hub')}
+                                {automationServer?.type === 'controller'
+                                    ? t('Automation controller')
+                                    : t('Automation hub')}
                             </Text>
                         </Flex>
                     </ContextSelectorItem>

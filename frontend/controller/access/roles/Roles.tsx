@@ -31,8 +31,12 @@ export function useRolesColumns() {
                     <TextCell
                         text={role.summary_fields.resource_name}
                         to={
-                            role.summary_fields.resource_id && role.summary_fields.resource_type === 'organization'
-                                ? RouteE.OrganizationDetails.replace(':id', role.summary_fields.resource_id.toString())
+                            role.summary_fields.resource_id &&
+                            role.summary_fields.resource_type === 'organization'
+                                ? RouteE.OrganizationDetails.replace(
+                                      ':id',
+                                      role.summary_fields.resource_id.toString()
+                                  )
                                 : undefined
                         }
                     />

@@ -34,7 +34,16 @@ import { CaretDownIcon, EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/re
 import * as Ajv from 'ajv'
 import deepEqual from 'fast-deep-equal'
 import { JSONSchema6 } from 'json-schema'
-import { Children, CSSProperties, Fragment, isValidElement, ReactNode, useCallback, useContext, useState } from 'react'
+import {
+    Children,
+    CSSProperties,
+    Fragment,
+    isValidElement,
+    ReactNode,
+    useCallback,
+    useContext,
+    useState,
+} from 'react'
 import {
     DeepPartial,
     ErrorOption,
@@ -97,10 +106,18 @@ export function FormPage<T extends object>(props: FormPageProps<T>) {
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onSubmit={props.form.handleSubmit(props.onSubmit as SubmitHandler<FieldValues>)}
                 isHorizontal={props.isVertical ? false : settings.formLayout === 'horizontal'}
-                style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                }}
             >
                 <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-                    <PageSection padding={{ default: props.noPadding ? 'noPadding' : 'padding' }} isWidthLimited>
+                    <PageSection
+                        padding={{ default: props.noPadding ? 'noPadding' : 'padding' }}
+                        isWidthLimited
+                    >
                         <FormSection>{inputs}</FormSection>
                     </PageSection>
                 </Scrollable>
@@ -130,7 +147,11 @@ export function FormPageAlerts() {
     )
 }
 
-export function FormPageButtons(props: { submitText: string; cancelText: string; onCancel: () => void }) {
+export function FormPageButtons(props: {
+    submitText: string
+    cancelText: string
+    onCancel: () => void
+}) {
     const { errors } = useFormState()
 
     return (
@@ -327,9 +348,18 @@ export function FormNumberInput(props: {
             helperTextInvalid={error?.message}
         >
             <Flex alignItems={{ default: 'alignItemsFlexStart' }}>
-                <Flex alignItems={{ default: 'alignItemsFlexStart' }} spaceItems={{ default: 'spaceItemsSm' }}>
-                    <FlexItem style={{ paddingTop: 6, minWidth: 20, textAlign: 'right' }}>{Math.floor((max - min) * value + min)}</FlexItem>
-                    {props.valueLabel && <FlexItem style={{ paddingTop: 6, minWidth: 40 }}>{props.valueLabel}</FlexItem>}
+                <Flex
+                    alignItems={{ default: 'alignItemsFlexStart' }}
+                    spaceItems={{ default: 'spaceItemsSm' }}
+                >
+                    <FlexItem style={{ paddingTop: 6, minWidth: 20, textAlign: 'right' }}>
+                        {Math.floor((max - min) * value + min)}
+                    </FlexItem>
+                    {props.valueLabel && (
+                        <FlexItem style={{ paddingTop: 6, minWidth: 40 }}>
+                            {props.valueLabel}
+                        </FlexItem>
+                    )}
                 </Flex>
                 <FlexItem grow={{ default: 'grow' }}>
                     <Slider
@@ -461,7 +491,9 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         optionsArray.push(option)
         return groups
     }, {})
-    const isGrouped = Object.keys(groups).length > 1 || (Object.keys(groups).length === 1 && Object.keys(groups)[0] !== '')
+    const isGrouped =
+        Object.keys(groups).length > 1 ||
+        (Object.keys(groups).length === 1 && Object.keys(groups)[0] !== '')
 
     const onSelect = useCallback(
         (_event, value: string | SelectOptionObject) => {
@@ -518,7 +550,12 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
             >
                 {!isGrouped
                     ? options.map((option, index) => (
-                          <SelectOption key={index} value={index.toString()} label={option.label} description={option.description}>
+                          <SelectOption
+                              key={index}
+                              value={index.toString()}
+                              label={option.label}
+                              description={option.description}
+                          >
                               {option.label}
                           </SelectOption>
                       ))
@@ -560,7 +597,9 @@ export function FormSelectInput(props: {
         .map((child) => {
             if (isValidElement(child) && child.type === SelectOption) {
                 return (
-                    <MenuItem key={(child.props as { value: string }).value}>{(child.props as { children: ReactNode }).children}</MenuItem>
+                    <MenuItem key={(child.props as { value: string }).value}>
+                        {(child.props as { children: ReactNode }).children}
+                    </MenuItem>
                 )
             }
             return <></>
@@ -592,11 +631,19 @@ export function FormSelectInput(props: {
                     {/* <Button variant="plain" onClick={() => {}} aria-label="Clear button and input">
                         <TimesIcon />
                     </Button> */}
-                    <Button variant="plain" onClick={() => setOpen(!open)} aria-label="Options menu">
+                    <Button
+                        variant="plain"
+                        onClick={() => setOpen(!open)}
+                        aria-label="Options menu"
+                    >
                         <CaretDownIcon />
                     </Button>
                 </TextInputGroupUtilities>
-                {open && <Menu style={{ position: 'absolute', right: 0, top: 36, width: '100%' }}>{menuItems}</Menu>}
+                {open && (
+                    <Menu style={{ position: 'absolute', right: 0, top: 36, width: '100%' }}>
+                        {menuItems}
+                    </Menu>
+                )}
             </TextInputGroup>
         </FormGroup>
     )
@@ -728,11 +775,22 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                                     placeholder={placeholder}
                                     required={required}
                                     selectTitle={(property as { selectTitle?: string }).selectTitle}
-                                    selectValue={(property as { selectValue?: (organization: unknown) => string | number }).selectValue}
+                                    selectValue={
+                                        (
+                                            property as {
+                                                selectValue?: (
+                                                    organization: unknown
+                                                ) => string | number
+                                            }
+                                        ).selectValue
+                                    }
                                     selectOpen={
                                         (
                                             property as {
-                                                selectOpen?: (callback: (organization: Organization) => void, title: string) => void
+                                                selectOpen?: (
+                                                    callback: (organization: Organization) => void,
+                                                    title: string
+                                                ) => void
                                             }
                                         ).selectOpen
                                     }
@@ -793,11 +851,20 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                 break
             }
             case 'boolean': {
-                p.push(<FormBooleanInput key={base + propertyName} name={base + propertyName} label={title} required={required} />)
+                p.push(
+                    <FormBooleanInput
+                        key={base + propertyName}
+                        name={base + propertyName}
+                        label={title}
+                        required={required}
+                    />
+                )
                 break
             }
             case 'object': {
-                p.push(<FormSchema key={propertyName} schema={property} base={base + propertyName} />)
+                p.push(
+                    <FormSchema key={propertyName} schema={property} base={base + propertyName} />
+                )
                 break
             }
         }
@@ -821,7 +888,12 @@ export function PageForm<T extends object>(props: {
     const { schema, defaultValue } = props
     const form = useForm<T>({
         defaultValues: defaultValue ?? ({} as DeepPartial<T>),
-        resolver: schema ? ajvResolver(schema as Ajv.JSONSchemaType<T>, { strict: false, addFormats: true } as Ajv.Options) : undefined,
+        resolver: schema
+            ? ajvResolver(
+                  schema as Ajv.JSONSchemaType<T>,
+                  { strict: false, addFormats: true } as Ajv.Options
+              )
+            : undefined,
     })
 
     const { handleSubmit, setError: setFieldError } = form
@@ -896,17 +968,26 @@ export function PageForm<T extends object>(props: {
                         isFilled={false}
                         style={{
                             borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
+                            backgroundColor:
+                                settings.theme === 'dark'
+                                    ? 'var(--pf-global--BackgroundColor--400)'
+                                    : undefined,
                         }}
                         variant="light"
                     >
                         <ActionGroup style={{ marginTop: 0 }}>
                             <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
-                            {props.onCancel && <PageFormCancelButton onCancel={props.onCancel}>{props.cancelText}</PageFormCancelButton>}
+                            {props.onCancel && (
+                                <PageFormCancelButton onCancel={props.onCancel}>
+                                    {props.cancelText}
+                                </PageFormCancelButton>
+                            )}
                         </ActionGroup>
                     </PageSection>
                 ) : (
-                    <PageFormSubmitButton style={{ marginTop: 48 }}>{props.submitText}</PageFormSubmitButton>
+                    <PageFormSubmitButton style={{ marginTop: 48 }}>
+                        {props.submitText}
+                    </PageFormSubmitButton>
                 )}
             </Form>
         </FormProvider>

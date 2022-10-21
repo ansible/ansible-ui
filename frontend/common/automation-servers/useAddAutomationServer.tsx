@@ -7,7 +7,10 @@ import { useAutomationServers } from './AutomationServerProvider'
 
 export function useAddAutomationServer() {
     const [_, setDialog] = usePageDialog()
-    const addAutomationServer = useCallback(() => setDialog(<AddAutomationServerDialog />), [setDialog])
+    const addAutomationServer = useCallback(
+        () => setDialog(<AddAutomationServerDialog />),
+        [setDialog]
+    )
     return addAutomationServer
 }
 
@@ -31,12 +34,17 @@ export function AddAutomationServerDialog() {
             title: t('Automation type'),
             placeholder: t('Select automation type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: t('Automation type is required'), minLength: t('Automation type is required') },
+            errorMessage: {
+                required: t('Automation type is required'),
+                minLength: t('Automation type is required'),
+            },
             variant: 'select',
             options: [
                 {
                     label: t('Automation controller'),
-                    description: t('Define, operate, scale, and delegate automation across your enterprise.'),
+                    description: t(
+                        'Define, operate, scale, and delegate automation across your enterprise.'
+                    ),
                     value: 'controller',
                 },
                 {
@@ -61,7 +69,12 @@ export function AddAutomationServerDialog() {
     }
 
     return (
-        <Modal title={t('Add automation server')} isOpen onClose={onClose} variant={ModalVariant.small}>
+        <Modal
+            title={t('Add automation server')}
+            isOpen
+            onClose={onClose}
+            variant={ModalVariant.small}
+        >
             <PageForm
                 schema={DataType}
                 submitText={t('Add automation server')}

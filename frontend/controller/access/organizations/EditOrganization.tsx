@@ -67,13 +67,22 @@ export function EditOrganization() {
 
     const { cache } = useSWRConfig()
 
-    const onSubmit: FormPageSubmitHandler<CreateOrganization> = async (editedOrganization, setError) => {
+    const onSubmit: FormPageSubmitHandler<CreateOrganization> = async (
+        editedOrganization,
+        setError
+    ) => {
         try {
             let organization: Organization
             if (Number.isInteger(id)) {
-                organization = await requestPatch<Organization>(`/api/v2/organizations/${id}/`, editedOrganization)
+                organization = await requestPatch<Organization>(
+                    `/api/v2/organizations/${id}/`,
+                    editedOrganization
+                )
             } else {
-                organization = await requestPost<Organization>('/api/v2/organizations/', editedOrganization)
+                organization = await requestPost<Organization>(
+                    '/api/v2/organizations/',
+                    editedOrganization
+                )
             }
             ;(cache as unknown as { clear: () => void }).clear?.()
             navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()))
@@ -88,7 +97,10 @@ export function EditOrganization() {
             return (
                 <>
                     <PageHeader
-                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit organization') }]}
+                        breadcrumbs={[
+                            { label: t('Organizations'), to: RouteE.Organizations },
+                            { label: t('Edit organization') },
+                        ]}
                     />
                 </>
             )
@@ -97,7 +109,10 @@ export function EditOrganization() {
                 <>
                     <PageHeader
                         title={t('Edit organization')}
-                        breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Edit organization') }]}
+                        breadcrumbs={[
+                            { label: t('Organizations'), to: RouteE.Organizations },
+                            { label: t('Edit organization') },
+                        ]}
                     />
                     <PageBody>
                         <PageForm
@@ -117,7 +132,10 @@ export function EditOrganization() {
             <>
                 <PageHeader
                     title={t('Create organization')}
-                    breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: t('Create organization') }]}
+                    breadcrumbs={[
+                        { label: t('Organizations'), to: RouteE.Organizations },
+                        { label: t('Create organization') },
+                    ]}
                 />
                 <PageBody>
                     <PageForm

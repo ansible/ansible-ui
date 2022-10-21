@@ -28,7 +28,10 @@ export function PageBody(props: { children: ReactNode }) {
                         maxHeight: '100%',
                         margin: usePadding ? 24 : 0,
                         overflow: 'hidden',
-                        border: settings.borders && usePadding ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        border:
+                            settings.borders && usePadding
+                                ? 'thin solid var(--pf-global--BorderColor--100)'
+                                : undefined,
                         backgroundColor: 'var(--pf-global--BackgroundColor--100)',
                     }}
                 >

@@ -100,7 +100,10 @@ export default function Dashboard() {
                                 </CardTitle>
                                 <CardBody>
                                     <Stack hasGutter>
-                                        <Text>Sync from the available execution environments below or create your own.</Text>
+                                        <Text>
+                                            Sync from the available execution environments below or
+                                            create your own.
+                                        </Text>
                                         <Split>
                                             <Button>Create execution environment</Button>
                                         </Split>
@@ -114,7 +117,13 @@ export default function Dashboard() {
                                                             </Button>
                                                         </StackItem>
                                                         <StackItem>
-                                                            <Text component="small" style={{ fontWeight: 'normal', opacity: 0.7 }}>
+                                                            <Text
+                                                                component="small"
+                                                                style={{
+                                                                    fontWeight: 'normal',
+                                                                    opacity: 0.7,
+                                                                }}
+                                                            >
                                                                 Provided by Red Hat
                                                             </Text>
                                                         </StackItem>
@@ -138,7 +147,13 @@ export default function Dashboard() {
                                                             </Button>
                                                         </StackItem>
                                                         <StackItem>
-                                                            <Text component="small" style={{ fontWeight: 'normal', opacity: 0.7 }}>
+                                                            <Text
+                                                                component="small"
+                                                                style={{
+                                                                    fontWeight: 'normal',
+                                                                    opacity: 0.7,
+                                                                }}
+                                                            >
                                                                 Provided by Red Hat
                                                             </Text>
                                                         </StackItem>
@@ -147,7 +162,8 @@ export default function Dashboard() {
                                                 <CardBody>
                                                     <Stack hasGutter>
                                                         <Text>
-                                                            This is the description. This ia a very long long long description. This ia a
+                                                            This is the description. This ia a very
+                                                            long long long description. This ia a
                                                             very long long long description.
                                                         </Text>
                                                     </Stack>

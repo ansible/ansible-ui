@@ -88,7 +88,9 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
             const statusCode = response.statusCode ?? 500
             res.writeHead(statusCode, responseHeaders)
-            pipeline(response, res as unknown as NodeJS.WritableStream, (err) => handlePipelineError(err, res))
+            pipeline(response, res as unknown as NodeJS.WritableStream, (err) =>
+                handlePipelineError(err, res)
+            )
         }),
         (err) => handleRequestError(err, res)
     )

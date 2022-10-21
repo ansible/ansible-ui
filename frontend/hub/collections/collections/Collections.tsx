@@ -1,4 +1,12 @@
-import { Button, ButtonVariant, Label, LabelGroup, Stack, StackItem, Text } from '@patternfly/react-core'
+import {
+    Button,
+    ButtonVariant,
+    Label,
+    LabelGroup,
+    Stack,
+    StackItem,
+    Text,
+} from '@patternfly/react-core'
 import { ExclamationTriangleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -94,7 +102,11 @@ export function Collections() {
         ],
         [t]
     )
-    const view = useHubView<Collection>('/api/automation-hub/_ui/v1/repo/published/', idKeyFn, toolbarFilters)
+    const view = useHubView<Collection>(
+        '/api/automation-hub/_ui/v1/repo/published/',
+        idKeyFn,
+        toolbarFilters
+    )
     return (
         <PageLayout>
             <PageHeader
@@ -122,16 +134,38 @@ export function Collections() {
     )
 }
 
-export function useCollectionsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useCollectionsColumns(_options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<Collection>[]>(
         () => [
             { header: t('Name'), cell: (collection) => <TextCell text={collection.name} /> },
-            { header: t('Description'), cell: (collection) => <TextCell text={collection.latest_version.metadata.description} /> },
-            { header: t('Created'), cell: (collection) => <SinceCell value={collection.latest_version.created_at} /> },
-            { header: t('Version'), cell: (collection) => <TextCell text={collection.latest_version.version} /> },
-            { header: t('Signed state'), cell: (collection) => <TextCell text={collection.latest_version.sign_state} /> },
-            { header: t('Tags'), cell: (collection) => <LabelsCell labels={collection.latest_version.metadata.tags.sort()} /> },
+            {
+                header: t('Description'),
+                cell: (collection) => (
+                    <TextCell text={collection.latest_version.metadata.description} />
+                ),
+            },
+            {
+                header: t('Created'),
+                cell: (collection) => <SinceCell value={collection.latest_version.created_at} />,
+            },
+            {
+                header: t('Version'),
+                cell: (collection) => <TextCell text={collection.latest_version.version} />,
+            },
+            {
+                header: t('Signed state'),
+                cell: (collection) => <TextCell text={collection.latest_version.sign_state} />,
+            },
+            {
+                header: t('Tags'),
+                cell: (collection) => (
+                    <LabelsCell labels={collection.latest_version.metadata.tags.sort()} />
+                ),
+            },
         ],
         [t]
     )

@@ -24,7 +24,10 @@ export function Grid(props: { size?: number; maxColumns?: number; children?: Rea
     if (isMd) gap = 16
     if (isXS) gap = 8
     return (
-        <div ref={target} style={{ display: 'grid', gridAutoRows: '1fr', gridTemplateColumns, gap }}>
+        <div
+            ref={target}
+            style={{ display: 'grid', gridAutoRows: '1fr', gridTemplateColumns, gap }}
+        >
             {props.children}
         </div>
     )

@@ -1,12 +1,26 @@
 import { Grid, GridItem, gridSpans, Stack } from '@patternfly/react-core'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Children, Dispatch, ReactNode, SetStateAction, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+    Children,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react'
 
 export function Masonry(props: { minSize: number; maxColumns?: number; children?: ReactNode }) {
     const target = useRef(null)
     const [columns, setColumns] = useState(1)
     useResizeObserver(target, (entry) => {
-        setColumns(Math.min(props.maxColumns ?? 12, Math.max(Math.floor(entry.contentRect.width / props.minSize), 1)))
+        setColumns(
+            Math.min(
+                props.maxColumns ?? 12,
+                Math.max(Math.floor(entry.contentRect.width / props.minSize), 1)
+            )
+        )
     })
     const [span, setSpan] = useState<gridSpans>(12)
 

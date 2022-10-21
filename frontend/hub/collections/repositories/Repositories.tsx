@@ -41,7 +41,12 @@ export function LocalRepositories() {
     const { t } = useTranslation()
     // const navigate = useNavigate()
     const tableColumns = useLocalRepositoriesColumns()
-    const view = useHubView<Repository>('/api/automation-hub/_ui/v1/distributions/', hubKeyFn, undefined, tableColumns)
+    const view = useHubView<Repository>(
+        '/api/automation-hub/_ui/v1/distributions/',
+        hubKeyFn,
+        undefined,
+        tableColumns
+    )
     return (
         <PageTable<Repository>
             // toolbarFilters={toolbarFilters}
@@ -56,14 +61,31 @@ export function LocalRepositories() {
     )
 }
 
-export function useLocalRepositoriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useLocalRepositoriesColumns(_options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const tableColumns = useMemo<ITableColumn<Repository>[]>(
         () => [
             { header: 'Name', cell: (repository) => <TextCell text={repository.name} /> },
-            { header: 'Repository', cell: (repository) => <TextCell text={repository.repository.name} /> },
-            { header: 'Description', cell: (repository) => <TextCell text={repository.repository.description} /> },
-            { header: 'Collections', cell: (repository) => <TextCell text={repository.repository.content_count.toString()} /> },
-            { header: 'Modified', cell: (repository) => <SinceCell value={repository.repository.pulp_last_updated} /> },
+            {
+                header: 'Repository',
+                cell: (repository) => <TextCell text={repository.repository.name} />,
+            },
+            {
+                header: 'Description',
+                cell: (repository) => <TextCell text={repository.repository.description} />,
+            },
+            {
+                header: 'Collections',
+                cell: (repository) => (
+                    <TextCell text={repository.repository.content_count.toString()} />
+                ),
+            },
+            {
+                header: 'Modified',
+                cell: (repository) => <SinceCell value={repository.repository.pulp_last_updated} />,
+            },
         ],
         []
     )
@@ -74,23 +96,31 @@ export function RemoteRepositories() {
     const { t } = useTranslation()
     const navigate = useNavigate()
     const tableColumns = useRemoteRepositoriesColumns()
-    const view = useHubView<RemoteRepository>('/api/automation-hub/_ui/v1/remotes/', pulpHRefKeyFn, undefined, tableColumns)
+    const view = useHubView<RemoteRepository>(
+        '/api/automation-hub/_ui/v1/remotes/',
+        pulpHRefKeyFn,
+        undefined,
+        tableColumns
+    )
     const rowActions = useMemo<IItemAction<RemoteRepository>[]>(
         () => [
             {
                 icon: CogIcon,
                 label: t('Configure repository'),
-                onClick: (repository) => navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+                onClick: (repository) =>
+                    navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
             },
             {
                 icon: SyncIcon,
                 label: t('Sync repository'),
-                onClick: (repository) => navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+                onClick: (repository) =>
+                    navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
             },
             {
                 icon: EditIcon,
                 label: t('Edit repository'),
-                onClick: (repository) => navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+                onClick: (repository) =>
+                    navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
             },
         ],
         [navigate, t]
@@ -109,15 +139,30 @@ export function RemoteRepositories() {
     )
 }
 
-export function useRemoteRepositoriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useRemoteRepositoriesColumns(_options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<RemoteRepository>[]>(
         () => [
             { header: t('Name'), cell: (repository) => <TextCell text={repository.name} /> },
-            { header: t('Sync status'), cell: (repository) => <TextCell text={repository.last_sync_task.state} /> },
-            { header: t('Last sync'), cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} /> },
-            { header: t('Last modified'), cell: (repository) => <SinceCell value={repository.updated_at} /> },
-            { header: t('Created'), cell: (repository) => <SinceCell value={repository.created_at} /> },
+            {
+                header: t('Sync status'),
+                cell: (repository) => <TextCell text={repository.last_sync_task.state} />,
+            },
+            {
+                header: t('Last sync'),
+                cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} />,
+            },
+            {
+                header: t('Last modified'),
+                cell: (repository) => <SinceCell value={repository.updated_at} />,
+            },
+            {
+                header: t('Created'),
+                cell: (repository) => <SinceCell value={repository.created_at} />,
+            },
         ],
         [t]
     )

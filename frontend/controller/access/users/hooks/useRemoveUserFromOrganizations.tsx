@@ -14,11 +14,19 @@ export function useRemoveUserFromOrganizations(onClose?: () => void) {
                 title: t('Removing user from organizations'),
                 keyFn: (organization: Organization) => organization.id,
                 items: organizations,
-                columns: [{ header: 'Organization', cell: (organization: Organization) => organization.name }],
+                columns: [
+                    {
+                        header: 'Organization',
+                        cell: (organization: Organization) => organization.name,
+                    },
+                ],
                 actionFn: async (organization: Organization, signal: AbortSignal) => {
                     await requestPost(
                         `/api/v2/users/${user.id.toString()}/roles/`,
-                        { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
+                        {
+                            id: organization.summary_fields.object_roles.member_role.id,
+                            disassociate: true,
+                        },
                         signal
                     )
                 },

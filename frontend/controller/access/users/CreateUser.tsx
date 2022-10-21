@@ -44,12 +44,16 @@ export function CreateUser() {
             options: [
                 {
                     label: t('System administrator'),
-                    description: t('can edit, change, and update any inventory or automation definition'),
+                    description: t(
+                        'can edit, change, and update any inventory or automation definition'
+                    ),
                     value: 'System administrator',
                 },
                 {
                     label: t('System auditor'),
-                    description: t('can see all aspects of the systems automation, but has no permission to run or change automation'),
+                    description: t(
+                        'can see all aspects of the systems automation, but has no permission to run or change automation'
+                    ),
                     value: 'System auditor',
                 },
                 {
@@ -109,9 +113,15 @@ export function CreateUser() {
     })
     type CreateUser = Static<typeof CreateUserSchema>
 
-    const onSubmit: FormPageSubmitHandler<CreateUser> = async (userData, setError, setFieldError) => {
+    const onSubmit: FormPageSubmitHandler<CreateUser> = async (
+        userData,
+        setError,
+        setFieldError
+    ) => {
         try {
-            const result = await requestGet<ItemsResponse<Organization>>(`/api/v2/organizations/?name=${userData.organization}`)
+            const result = await requestGet<ItemsResponse<Organization>>(
+                `/api/v2/organizations/?name=${userData.organization}`
+            )
             if (result.results.length === 0) {
                 setFieldError('organization', { message: t('Organization not found') })
                 return false
@@ -130,7 +140,10 @@ export function CreateUser() {
                 is_superuser: userData.userType === t('System administrator'),
                 is_system_auditor: userData.userType === t('System auditor'),
             }
-            const user = await requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, newUser)
+            const user = await requestPost<User>(
+                `/api/v2/organizations/${organization.id.toString()}/users/`,
+                newUser
+            )
             navigate(RouteE.UserDetails.replace(':id', user.id.toString()))
         } catch (err) {
             setError(await getControllerError(err))
@@ -141,7 +154,10 @@ export function CreateUser() {
 
     return (
         <>
-            <PageHeader title={t('Create user')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create user') }]} />
+            <PageHeader
+                title={t('Create user')}
+                breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create user') }]}
+            />
             <PageBody>
                 <PageForm
                     schema={CreateUserSchema}

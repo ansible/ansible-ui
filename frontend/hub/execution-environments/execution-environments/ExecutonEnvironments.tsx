@@ -72,13 +72,19 @@ export function ExecutionEnvironments() {
     )
 }
 
-export function useExecutionEnvironmentsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useExecutionEnvironmentsColumns(_options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const descriptionColumn = useDescriptionColumn()
     const createdColumn = useCreatedColumn()
     const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
         () => [
-            { header: t('Collection repository'), cell: (executionEnvironment) => <TextCell text={executionEnvironment.name} /> },
+            {
+                header: t('Collection repository'),
+                cell: (executionEnvironment) => <TextCell text={executionEnvironment.name} />,
+            },
             descriptionColumn,
             createdColumn,
         ],
@@ -89,6 +95,9 @@ export function useExecutionEnvironmentsColumns(_options?: { disableSort?: boole
 
 export function useExecutionEnvironmentFilters() {
     const { t } = useTranslation()
-    const toolbarFilters = useMemo<IToolbarFilter[]>(() => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }], [t])
+    const toolbarFilters = useMemo<IToolbarFilter[]>(
+        () => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }],
+        [t]
+    )
     return toolbarFilters
 }

@@ -1,4 +1,10 @@
-import { ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import {
+    ButtonVariant,
+    DropdownPosition,
+    PageSection,
+    Skeleton,
+    Stack,
+} from '@patternfly/react-core'
 import { EditIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,7 +52,10 @@ export function OrganizationDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit organization'),
-                onClick: () => history(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+                onClick: () =>
+                    history(
+                        RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')
+                    ),
             },
             {
                 type: TypedActionType.button,
@@ -65,8 +74,16 @@ export function OrganizationDetails() {
         <PageLayout>
             <PageHeader
                 title={organization?.name}
-                breadcrumbs={[{ label: t('Organizations'), to: RouteE.Organizations }, { label: organization?.name }]}
-                headerActions={<TypedActions<Organization> actions={itemActions} position={DropdownPosition.right} />}
+                breadcrumbs={[
+                    { label: t('Organizations'), to: RouteE.Organizations },
+                    { label: organization?.name },
+                ]}
+                headerActions={
+                    <TypedActions<Organization>
+                        actions={itemActions}
+                        position={DropdownPosition.right}
+                    />
+                }
             />
             <PageBody>
                 {organization ? (
@@ -123,7 +140,12 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                                 author={organization.summary_fields?.created_by?.username}
                                 onClick={() =>
                                     history(
-                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.created_by?.id ?? 0).toString())
+                                        RouteE.UserDetails.replace(
+                                            ':id',
+                                            (
+                                                organization.summary_fields?.created_by?.id ?? 0
+                                            ).toString()
+                                        )
                                     )
                                 }
                             />
@@ -134,7 +156,12 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                                 author={organization.summary_fields?.modified_by?.username}
                                 onClick={() =>
                                     history(
-                                        RouteE.UserDetails.replace(':id', (organization.summary_fields?.modified_by?.id ?? 0).toString())
+                                        RouteE.UserDetails.replace(
+                                            ':id',
+                                            (
+                                                organization.summary_fields?.modified_by?.id ?? 0
+                                            ).toString()
+                                        )
                                     )
                                 }
                             />

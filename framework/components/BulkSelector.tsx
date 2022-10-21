@@ -1,4 +1,9 @@
-import { Dropdown, DropdownItem, DropdownToggle, DropdownToggleCheckbox } from '@patternfly/react-core'
+import {
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    DropdownToggleCheckbox,
+} from '@patternfly/react-core'
 import { useCallback, useMemo, useState } from 'react'
 import { useBreakpoint } from './useBreakPoint'
 
@@ -97,7 +102,17 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
         )
     }, [selectItems, pageItems])
 
-    const dropdownItems = useMemo(() => [selectNoneDropdownItem, selectPageDropdownItem], [selectNoneDropdownItem, selectPageDropdownItem])
+    const dropdownItems = useMemo(
+        () => [selectNoneDropdownItem, selectPageDropdownItem],
+        [selectNoneDropdownItem, selectPageDropdownItem]
+    )
 
-    return <Dropdown isOpen={isOpen} toggle={toggle} dropdownItems={dropdownItems} style={{ zIndex: 302 }} />
+    return (
+        <Dropdown
+            isOpen={isOpen}
+            toggle={toggle}
+            dropdownItems={dropdownItems}
+            style={{ zIndex: 302 }}
+        />
+    )
 }

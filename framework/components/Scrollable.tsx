@@ -1,7 +1,12 @@
 import useResizeObserver from '@react-hook/resize-observer'
 import { CSSProperties, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
-export function Scrollable(props: { children?: ReactNode; borderTop?: boolean; borderBottom?: boolean; style?: CSSProperties }) {
+export function Scrollable(props: {
+    children?: ReactNode
+    borderTop?: boolean
+    borderBottom?: boolean
+    style?: CSSProperties
+}) {
     const divEl = useRef<HTMLDivElement>(null)
     const [topShadow, setTopShadow] = useState(0)
     const [bottomShadow, setBottomShadow] = useState(0)
@@ -9,7 +14,11 @@ export function Scrollable(props: { children?: ReactNode; borderTop?: boolean; b
         /* istanbul ignore else */
         if (divEl.current) {
             setTopShadow(Math.min(1, divEl.current.scrollTop / 8))
-            const scrollBottom = divEl.current.scrollHeight - divEl.current.scrollTop - divEl.current.clientHeight - 1
+            const scrollBottom =
+                divEl.current.scrollHeight -
+                divEl.current.scrollTop -
+                divEl.current.clientHeight -
+                1
             setBottomShadow(Math.max(0, Math.min(1, scrollBottom / 8)))
         }
     }, [])
@@ -32,10 +41,26 @@ export function Scrollable(props: { children?: ReactNode; borderTop?: boolean; b
     const borderBottom = props.borderBottom ? 'thin solid rgba(0, 0, 0, 0.12)' : ''
 
     return (
-        <div style={{ ...props.style, display: 'flex', flexDirection: 'column', flexGrow: 1, overflowY: 'hidden', position: 'relative' }}>
+        <div
+            style={{
+                ...props.style,
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1,
+                overflowY: 'hidden',
+                position: 'relative',
+            }}
+        >
             <div
                 ref={divEl}
-                style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflowY: 'auto', borderTop, borderBottom }}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexGrow: 1,
+                    overflowY: 'auto',
+                    borderTop,
+                    borderBottom,
+                }}
                 onScroll={update}
             >
                 {props.children}

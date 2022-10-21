@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Checkbox, DrawerPanelBody, DrawerPanelContent, DrawerSection, Stack, Title } from '@patternfly/react-core'
+import {
+    Checkbox,
+    DrawerPanelBody,
+    DrawerPanelContent,
+    DrawerSection,
+    Stack,
+    Title,
+} from '@patternfly/react-core'
 import { Fragment, useCallback } from 'react'
 import { IFilterState, IItemFilter, SetFilterValues } from './PageToolbar'
 
@@ -46,7 +53,9 @@ export function FilterDrawer<T extends object>(props: {
                                         key={option.label}
                                         id={option.label}
                                         isChecked={filterValues?.includes(option.value)}
-                                        onChange={() => toggleFilterValue(filter, filterValues, option.value)}
+                                        onChange={() =>
+                                            toggleFilterValue(filter, filterValues, option.value)
+                                        }
                                         label={option.label}
                                     />
                                 ))}

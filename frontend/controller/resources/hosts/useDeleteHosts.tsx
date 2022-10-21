@@ -16,7 +16,9 @@ export function useDeleteHosts(callback: (hosts: Host[]) => void) {
         setDialog(
             <BulkActionDialog<Host>
                 title={t('Permanently delete hosts', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} hosts.', { count: items.length })}
+                confirmText={t('Yes, I confirm that I want to delete these {{count}} hosts.', {
+                    count: items.length,
+                })}
                 submitText={t('Delete hosts', { count: items.length })}
                 submitting={t('Deleting hosts', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} hosts', { count: items.length })}

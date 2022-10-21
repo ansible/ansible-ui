@@ -16,7 +16,10 @@ export function useDeleteInventories(callback: (inventories: Inventory[]) => voi
         setDialog(
             <BulkActionDialog<Inventory>
                 title={t('Permanently delete inventories', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} inventories.', { count: items.length })}
+                confirmText={t(
+                    'Yes, I confirm that I want to delete these {{count}} inventories.',
+                    { count: items.length }
+                )}
                 submitText={t('Delete inventories', { count: items.length })}
                 submitting={t('Deleting inventories', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} inventories', { count: items.length })}
@@ -27,7 +30,9 @@ export function useDeleteInventories(callback: (inventories: Inventory[]) => voi
                 columns={columns}
                 errorColumns={errorColumns}
                 onClose={callback}
-                action={(inventory: Inventory) => requestDelete(`/api/v2/inventories/${inventory.id}/`)}
+                action={(inventory: Inventory) =>
+                    requestDelete(`/api/v2/inventories/${inventory.id}/`)
+                }
             />
         )
     }

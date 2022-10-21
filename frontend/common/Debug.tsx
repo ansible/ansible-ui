@@ -9,7 +9,10 @@ import { requestPost } from '../Data'
 import { RouteE } from '../Routes'
 
 export default function Debug() {
-    const breadcrumbs = useMemo(() => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }], [])
+    const breadcrumbs = useMemo(
+        () => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }],
+        []
+    )
     const createTeams = useCreateTeams()
     return (
         <>
@@ -31,13 +34,16 @@ function useCreateTeams() {
     const openBulkProgressDialog = useBulkProgressDialog()
     const createTeams = useCallback(
         (count: number) => {
-            const teams = new Array(count).fill(0).map(() => ({ name: randomString(8), organization: 1 })) as Partial<Team>[]
+            const teams = new Array(count)
+                .fill(0)
+                .map(() => ({ name: randomString(8), organization: 1 })) as Partial<Team>[]
             openBulkProgressDialog({
                 title: `Creating ${count} teams`,
                 keyFn: (team: Partial<Team>) => team.name ?? '',
                 items: teams,
                 columns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
-                actionFn: (team, signal) => requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
+                actionFn: (team, signal) =>
+                    requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
                 processingText: 'Creating teams...',
                 successText: 'All teams created successfully.',
                 errorText: 'There were errors creating teams.',

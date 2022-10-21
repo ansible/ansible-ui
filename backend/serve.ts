@@ -6,8 +6,12 @@ import { extname } from 'path'
 import { pipeline } from 'stream'
 import { logger } from './logger'
 
-const cacheControl = process.env.NODE_ENV === 'production' ? 'public, max-age=31536000, stale-if-error=60' : 'no-store'
-const localesCacheControl = process.env.NODE_ENV === 'production' ? 'public, max-age=3600, stale-if-error=60' : 'no-store'
+const cacheControl =
+    process.env.NODE_ENV === 'production'
+        ? 'public, max-age=31536000, stale-if-error=60'
+        : 'no-store'
+const localesCacheControl =
+    process.env.NODE_ENV === 'production' ? 'public, max-age=3600, stale-if-error=60' : 'no-store'
 
 export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): Promise<void> {
     try {

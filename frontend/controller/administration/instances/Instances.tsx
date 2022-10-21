@@ -28,7 +28,11 @@ export function Instances() {
     const navigate = useNavigate()
     const toolbarFilters = useInstancesFilters()
     const tableColumns = useInstancesColumns()
-    const view = useControllerView<Instance>({ url: '/api/v2/instances/', toolbarFilters, tableColumns })
+    const view = useControllerView<Instance>({
+        url: '/api/v2/instances/',
+        toolbarFilters,
+        tableColumns,
+    })
 
     const toolbarActions = useMemo<ITypedAction<Instance>[]>(
         () => [
@@ -38,8 +42,10 @@ export function Instances() {
                 label: t('Run health check'),
                 onClick: (instances) => {
                     for (const instance of instances) {
-                        // eslint-disable-next-line no-console
-                        requestPost(`/api/v2/instances/${instance.id}/health_check/`, {}).catch(console.error)
+                        requestPost(`/api/v2/instances/${instance.id}/health_check/`, {}).catch(
+                            // eslint-disable-next-line no-console
+                            console.error
+                        )
                     }
                 },
             },
@@ -52,7 +58,8 @@ export function Instances() {
             {
                 icon: EditIcon,
                 label: t('Edit instance'),
-                onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
+                onClick: (instance) =>
+                    navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
             },
         ],
         [navigate, t]
@@ -61,7 +68,9 @@ export function Instances() {
     return (
         <TablePage<Instance>
             title={t('Node instances')}
-            description={t('Ansible node instances dedicated for a particular purpose indicated by node type.')}
+            description={t(
+                'Ansible node instances dedicated for a particular purpose indicated by node type.'
+            )}
             toolbarFilters={toolbarFilters}
             toolbarActions={toolbarActions}
             tableColumns={tableColumns}
@@ -80,7 +89,13 @@ export function useInstancesFilters() {
     const { t } = useTranslation()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
         () => [
-            { key: 'name', label: t('Name'), type: 'string', query: 'hostname__icontains', placeholder: t('Enter name') },
+            {
+                key: 'name',
+                label: t('Name'),
+                type: 'string',
+                query: 'hostname__icontains',
+                placeholder: t('Enter name'),
+            },
             {
                 key: 'type',
                 label: t('Node type'),
@@ -111,7 +126,9 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
                 header: t('Name'),
                 cell: (instance) => (
                     <TextCell
-                        onClick={() => navigate(RouteE.InstanceDetails.replace(':id', instance.id.toString()))}
+                        onClick={() =>
+                            navigate(RouteE.InstanceDetails.replace(':id', instance.id.toString()))
+                        }
                         text={instance.hostname}
                     />
                 ),
@@ -119,7 +136,13 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             },
             {
                 header: t('Status'),
-                cell: (instance) => <StatusCell status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'} />,
+                cell: (instance) => (
+                    <StatusCell
+                        status={
+                            !instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'
+                        }
+                    />
+                ),
                 sort: 'errors',
             },
             {
@@ -137,7 +160,9 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
             },
             {
                 header: t('Used capacity'),
-                cell: (instance) => <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />,
+                cell: (instance) => (
+                    <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
+                ),
             },
             {
                 header: t('Memory'),

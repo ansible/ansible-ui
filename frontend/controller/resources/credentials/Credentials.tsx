@@ -3,8 +3,20 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+} from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import {
     useCreatedByToolbarFilter,
@@ -21,7 +33,11 @@ export function Credentials() {
     const navigate = useNavigate()
     const toolbarFilters = useCredentialsFilters()
     const tableColumns = useCredentialsColumns()
-    const view = useControllerView<Credential>({ url: '/api/v2/credentials/', toolbarFilters, tableColumns })
+    const view = useControllerView<Credential>({
+        url: '/api/v2/credentials/',
+        toolbarFilters,
+        tableColumns,
+    })
     const deleteCredentials = useDeleteCredentials((deleted: Credential[]) => {
         for (const credential of deleted) {
             view.unselectItem(credential)
@@ -53,7 +69,8 @@ export function Credentials() {
             {
                 icon: EditIcon,
                 label: t('Edit credential'),
-                onClick: (credential) => navigate(RouteE.EditCredential.replace(':id', credential.id.toString())),
+                onClick: (credential) =>
+                    navigate(RouteE.EditCredential.replace(':id', credential.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -91,8 +108,18 @@ export function useCredentialsFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
@@ -101,7 +128,8 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
     const { t } = useTranslation()
     const navigate = useNavigate()
     const nameClick = useCallback(
-        (credential: Credential) => navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
+        (credential: Credential) =>
+            navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
         [navigate]
     )
     const nameColumn = useNameColumn({

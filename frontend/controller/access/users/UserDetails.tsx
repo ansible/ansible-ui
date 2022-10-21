@@ -1,4 +1,11 @@
-import { Alert, ButtonVariant, DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core'
+import {
+    Alert,
+    ButtonVariant,
+    DropdownPosition,
+    PageSection,
+    Skeleton,
+    Stack,
+} from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -74,7 +81,9 @@ export function UserDetailsPage() {
             <PageHeader
                 title={user?.username}
                 breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: user?.username }]}
-                headerActions={<TypedActions<User> actions={itemActions} position={DropdownPosition.right} />}
+                headerActions={
+                    <TypedActions<User> actions={itemActions} position={DropdownPosition.right} />
+                }
             />
             <PageBody>
                 {user ? (
@@ -131,7 +140,12 @@ function UserDetails(props: { user: User }) {
             <Scrollable>
                 <PageSection
                     variant="light"
-                    style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+                    style={{
+                        backgroundColor:
+                            settings.theme === 'dark'
+                                ? 'var(--pf-global--BackgroundColor--300)'
+                                : undefined,
+                    }}
                 >
                     <DetailsList>
                         <Detail label={t('Username')}>{user.username}</Detail>
@@ -144,7 +158,9 @@ function UserDetails(props: { user: User }) {
                         <Detail label={t('Created')}>
                             <SinceCell value={user.created} />
                         </Detail>
-                        <Detail label={t('Modified')}>{user.modified && <SinceCell value={user.modified} />}</Detail>
+                        <Detail label={t('Modified')}>
+                            {user.modified && <SinceCell value={user.modified} />}
+                        </Detail>
                     </DetailsList>
                 </PageSection>
             </Scrollable>
@@ -185,7 +201,11 @@ function UserOrganizations(props: { user: User }) {
     return (
         <>
             {user.is_superuser && (
-                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+                <Alert
+                    variant="info"
+                    title={t('System administrators have unrestricted access to all resources.')}
+                    isInline
+                />
             )}
             <PageTable<Organization>
                 toolbarFilters={toolbarFilters}
@@ -207,11 +227,19 @@ function UserTeams(props: { user: User }) {
     const { t } = useTranslation()
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns()
-    const view = useControllerView<Team>({ url: `/api/v2/users/${user.id}/teams/`, toolbarFilters, disableQueryString: true })
+    const view = useControllerView<Team>({
+        url: `/api/v2/users/${user.id}/teams/`,
+        toolbarFilters,
+        disableQueryString: true,
+    })
     return (
         <>
             {user.is_superuser && (
-                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+                <Alert
+                    variant="info"
+                    title={t('System administrators have unrestricted access to all resources.')}
+                    isInline
+                />
             )}
             <PageTable<Team>
                 toolbarFilters={toolbarFilters}
@@ -262,11 +290,20 @@ function UserRoles(props: { user: User }) {
         ],
         [t]
     )
-    const view = useControllerView<Role>({ url: `/api/v2/users/${user.id}/roles/`, toolbarFilters, tableColumns, disableQueryString: true })
+    const view = useControllerView<Role>({
+        url: `/api/v2/users/${user.id}/roles/`,
+        toolbarFilters,
+        tableColumns,
+        disableQueryString: true,
+    })
     return (
         <>
             {user.is_superuser && (
-                <Alert variant="info" title={t('System administrators have unrestricted access to all resources.')} isInline />
+                <Alert
+                    variant="info"
+                    title={t('System administrators have unrestricted access to all resources.')}
+                    isInline
+                />
             )}
             <PageTable<Role>
                 toolbarFilters={toolbarFilters}

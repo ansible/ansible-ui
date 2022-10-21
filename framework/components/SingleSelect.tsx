@@ -30,7 +30,13 @@ export function SingleSelect(props: {
     const id = props.id ?? props.label.toLocaleLowerCase().split(' ').join('-')
     return (
         <FormGroup label={props.label} fieldId={id} style={props.style}>
-            <Select id={id} selections={props.value} isOpen={open} onToggle={onToggle} onSelect={onSelect}>
+            <Select
+                id={id}
+                selections={props.value}
+                isOpen={open}
+                onToggle={onToggle}
+                onSelect={onSelect}
+            >
                 {props.children as React.ReactElement[]}
             </Select>
         </FormGroup>
@@ -62,7 +68,13 @@ export function SingleSelect2(props: {
         [onChange]
     )
     return (
-        <Select id={id} selections={props.value} isOpen={open} onToggle={onToggle} onSelect={onSelect}>
+        <Select
+            id={id}
+            selections={props.value}
+            isOpen={open}
+            onToggle={onToggle}
+            onSelect={onSelect}
+        >
             {props.children as React.ReactElement[]}
         </Select>
     )

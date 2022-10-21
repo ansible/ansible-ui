@@ -1,12 +1,33 @@
-import { BanIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons'
+import {
+    BanIcon,
+    CheckCircleIcon,
+    ExclamationCircleIcon,
+    ExclamationTriangleIcon,
+    InfoIcon,
+} from '@patternfly/react-icons'
 import { useTranslation } from 'react-i18next'
-import { PatternFlyColor, pfDanger, pfDisabled, pfInfo, pfSuccess, pfWarning, TextCell } from '../../framework'
+import {
+    PatternFlyColor,
+    pfDanger,
+    pfDisabled,
+    pfInfo,
+    pfSuccess,
+    pfWarning,
+    TextCell,
+} from '../../framework'
 
 export function StatusCell(props: { status?: string }) {
     const { t } = useTranslation()
     switch (props.status) {
         case 'disabled':
-            return <TextCell icon={<BanIcon color={pfDisabled} />} iconSize="sm" text={t('Disabled')} textColor={PatternFlyColor.Grey} />
+            return (
+                <TextCell
+                    icon={<BanIcon color={pfDisabled} />}
+                    iconSize="sm"
+                    text={t('Disabled')}
+                    textColor={PatternFlyColor.Grey}
+                />
+            )
         case 'healthy':
             return (
                 <TextCell
@@ -44,7 +65,14 @@ export function StatusCell(props: { status?: string }) {
                 />
             )
         case 'never-updated':
-            return <TextCell icon={<InfoIcon color={pfInfo} />} iconSize="sm" text={t('Never updated')} textColor={PatternFlyColor.Blue} />
+            return (
+                <TextCell
+                    icon={<InfoIcon color={pfInfo} />}
+                    iconSize="sm"
+                    text={t('Never updated')}
+                    textColor={PatternFlyColor.Blue}
+                />
+            )
         default:
             return (
                 <TextCell

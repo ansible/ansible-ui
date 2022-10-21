@@ -16,7 +16,11 @@ export function EditInstance() {
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
-    const { data: instance } = useSWR<Instance>(`/api/v2/instances/${id.toString()}/`, requestGet, swrOptions)
+    const { data: instance } = useSWR<Instance>(
+        `/api/v2/instances/${id.toString()}/`,
+        requestGet,
+        swrOptions
+    )
 
     const EditInstanceSchema = useMemo(
         () =>
@@ -40,7 +44,8 @@ export function EditInstance() {
 
     const onSubmit: FormPageSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
         try {
-            editedInstance.capacity_adjustment = Math.round(editedInstance.capacity_adjustment * 100) / 100
+            editedInstance.capacity_adjustment =
+                Math.round(editedInstance.capacity_adjustment * 100) / 100
             await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance)
             ;(cache as unknown as { clear: () => void }).clear?.()
             navigate(-1)
@@ -53,7 +58,12 @@ export function EditInstance() {
     if (!instance) {
         return (
             <PageLayout>
-                <PageHeader breadcrumbs={[{ label: t('Instances'), to: RouteE.Instances }, { label: t('Edit instance') }]} />
+                <PageHeader
+                    breadcrumbs={[
+                        { label: t('Instances'), to: RouteE.Instances },
+                        { label: t('Edit instance') },
+                    ]}
+                />
             </PageLayout>
         )
     } else {
@@ -61,7 +71,10 @@ export function EditInstance() {
             <PageLayout>
                 <PageHeader
                     title={instance.hostname}
-                    breadcrumbs={[{ label: t('Instances'), to: RouteE.Instances }, { label: instance.hostname }]}
+                    breadcrumbs={[
+                        { label: t('Instances'), to: RouteE.Instances },
+                        { label: instance.hostname },
+                    ]}
                 />
                 <PageBody>
                     <PageForm
@@ -70,7 +83,10 @@ export function EditInstance() {
                         onSubmit={onSubmit}
                         cancelText={t('Cancel')}
                         onCancel={onCancel}
-                        defaultValue={{ capacity_adjustment: Number(instance.capacity_adjustment), enabled: instance.enabled }}
+                        defaultValue={{
+                            capacity_adjustment: Number(instance.capacity_adjustment),
+                            enabled: instance.enabled,
+                        }}
                     />
                 </PageBody>
             </PageLayout>

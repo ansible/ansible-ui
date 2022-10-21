@@ -11,7 +11,10 @@ export interface Settings {
     borders?: boolean
 }
 
-export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([{}, () => null])
+export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([
+    {},
+    () => null,
+])
 
 export function useSettings() {
     const [settings] = useContext(SettingsContext)
@@ -49,7 +52,11 @@ export function SettingsProvider(props: { children?: ReactNode }) {
         localStorage.setItem('borders', settings.borders ? 'true' : 'false')
         setSettingsState(settings)
         const activeTheme =
-            settings.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : settings.theme
+            settings.theme === 'system'
+                ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light'
+                : settings.theme
         if (activeTheme === 'dark') {
             document.documentElement.classList.add('pf-theme-dark')
         } else {
@@ -57,7 +64,11 @@ export function SettingsProvider(props: { children?: ReactNode }) {
         }
     }, [])
 
-    return <SettingsContext.Provider value={[settings, setSettings]}>{props.children}</SettingsContext.Provider>
+    return (
+        <SettingsContext.Provider value={[settings, setSettings]}>
+            {props.children}
+        </SettingsContext.Provider>
+    )
 }
 
 export function useSettingsDialog(t: (t: string) => string) {
@@ -74,7 +85,11 @@ export function useSettingsDialog(t: (t: string) => string) {
     return openSetting
 }
 
-export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void; t: (t: string) => string }) {
+export function SettingsDialog(props: {
+    open: boolean
+    setOpen: (open: boolean) => void
+    t: (t: string) => string
+}) {
     const onClose = () => props.setOpen(false)
     const [settings, setSettings] = useContext(SettingsContext)
     const { t } = props
@@ -95,7 +110,9 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Theme"
                     value={settings.theme ?? 'system'}
-                    onChange={(theme) => setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })}
+                    onChange={(theme) =>
+                        setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
+                    }
                 >
                     <SelectOption value="system">{t('System default')}</SelectOption>
                     <SelectOption value="light">{t('Light')}</SelectOption>
@@ -104,7 +121,12 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Table Layout"
                     value={settings.tableLayout ?? 'comfortable'}
-                    onChange={(tableLayout) => setSettings({ ...settings, tableLayout: tableLayout as 'compact' | 'comfortable' })}
+                    onChange={(tableLayout) =>
+                        setSettings({
+                            ...settings,
+                            tableLayout: tableLayout as 'compact' | 'comfortable',
+                        })
+                    }
                 >
                     <SelectOption value="comfortable">{t('Comfortable')}</SelectOption>
                     <SelectOption value="compact">{t('Compact')}</SelectOption>
@@ -112,7 +134,12 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Form Columns"
                     value={settings.formColumns ?? 'multiple'}
-                    onChange={(formColumns) => setSettings({ ...settings, formColumns: formColumns as 'multiple' | 'single' })}
+                    onChange={(formColumns) =>
+                        setSettings({
+                            ...settings,
+                            formColumns: formColumns as 'multiple' | 'single',
+                        })
+                    }
                 >
                     <SelectOption value="multiple">{t('Multiple columns')}</SelectOption>
                     <SelectOption value="single">{t('Single column')}</SelectOption>
@@ -120,7 +147,12 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
                 <SingleSelect
                     label="Form Layout"
                     value={settings.formLayout ?? 'vertical'}
-                    onChange={(formLayout) => setSettings({ ...settings, formLayout: formLayout as 'vertical' | 'horizontal' })}
+                    onChange={(formLayout) =>
+                        setSettings({
+                            ...settings,
+                            formLayout: formLayout as 'vertical' | 'horizontal',
+                        })
+                    }
                 >
                     <SelectOption value="vertical">{t('Vertical labels')}</SelectOption>
                     <SelectOption value="horizontal">{t('Horizontal labels')}</SelectOption>

@@ -18,7 +18,9 @@ export interface IItemActionClick<T> {
     onClick: (item: T) => void
 }
 
-export function isItemActionClick<T>(itemAction: IItemAction<T>): itemAction is IItemActionClick<T> {
+export function isItemActionClick<T>(
+    itemAction: IItemAction<T>
+): itemAction is IItemActionClick<T> {
     return 'onClick' in itemAction
 }
 
@@ -26,7 +28,9 @@ export interface IItemActionSeperator {
     isSeparator: true
 }
 
-export function isItemActionSeperator<T>(itemAction: IItemAction<T>): itemAction is IItemActionSeperator {
+export function isItemActionSeperator<T>(
+    itemAction: IItemAction<T>
+): itemAction is IItemActionSeperator {
     return 'isSeparator' in itemAction
 }
 
@@ -62,7 +66,10 @@ export type ITypedBulkAction<T extends object> = ITypedActionCommon & {
     onClick: (selectedItems: T[]) => void
 }
 
-export type ITypedAction<T extends object> = ITypedActionSeperator | ITypedActionButton | ITypedBulkAction<T>
+export type ITypedAction<T extends object> =
+    | ITypedActionSeperator
+    | ITypedActionButton
+    | ITypedBulkAction<T>
 
 export function TypedActionsDropdown<T extends object>(props: {
     actions: ITypedAction<T>[]
@@ -71,9 +78,15 @@ export function TypedActionsDropdown<T extends object>(props: {
 }) {
     const { actions, selectedItems } = props
     const [dropdownOpen, setDropdownOpen] = useState(false)
-    const hasItemActions = useMemo(() => !actions.every((action) => action.type !== TypedActionType.bulk), [actions])
+    const hasItemActions = useMemo(
+        () => !actions.every((action) => action.type !== TypedActionType.bulk),
+        [actions]
+    )
     const hasIcons = useMemo(
-        () => actions.find((action) => action.type !== TypedActionType.seperator && action.icon !== undefined) !== undefined,
+        () =>
+            actions.find(
+                (action) => action.type !== TypedActionType.seperator && action.icon !== undefined
+            ) !== undefined,
         [actions]
     )
     if (actions.length === 0) return <></>
@@ -86,8 +99,14 @@ export function TypedActionsDropdown<T extends object>(props: {
                     onToggle={() => setDropdownOpen(!dropdownOpen)}
                     toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
                     style={{
-                        color: hasItemActions && selectedItems?.length ? 'var(--pf-global--Color--light-100)' : undefined,
-                        backgroundColor: hasItemActions && selectedItems?.length ? 'var(--pf-global--primary-color--100)' : undefined,
+                        color:
+                            hasItemActions && selectedItems?.length
+                                ? 'var(--pf-global--Color--light-100)'
+                                : undefined,
+                        backgroundColor:
+                            hasItemActions && selectedItems?.length
+                                ? 'var(--pf-global--primary-color--100)'
+                                : undefined,
                     }}
                 />
             }
@@ -101,12 +120,19 @@ export function TypedActionsDropdown<T extends object>(props: {
                         if (!Icon && hasIcons) Icon = TransparentIcon
                         let tooltip = action.tooltip
                         let isDisabled = false
-                        if (action.type === TypedActionType.bulk && (!selectedItems || !selectedItems.length)) {
+                        if (
+                            action.type === TypedActionType.bulk &&
+                            (!selectedItems || !selectedItems.length)
+                        ) {
                             tooltip = 'No selections'
                             isDisabled = true
                         }
                         return (
-                            <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+                            <Tooltip
+                                key={action.label}
+                                content={tooltip}
+                                trigger={tooltip ? undefined : 'manual'}
+                            >
                                 <DropdownItem
                                     onClick={() => action.onClick(selectedItems ?? [])}
                                     isAriaDisabled={isDisabled}
@@ -118,7 +144,12 @@ export function TypedActionsDropdown<T extends object>(props: {
                                         ) : undefined
                                     }
                                     // style={{ color: 'var(--pf-global--primary-color--100)' }}
-                                    style={{ color: action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined }}
+                                    style={{
+                                        color:
+                                            action.isDanger && !isDisabled
+                                                ? 'var(--pf-global--danger-color--100)'
+                                                : undefined,
+                                    }}
                                 >
                                     {action.label}
                                 </DropdownItem>
@@ -146,7 +177,12 @@ export function TypedActionsButtons<T extends object>(props: {
     return (
         <>
             {actions.map((action, index) => (
-                <TypedActionButton key={index} action={action} selectedItems={selectedItems} wrapper={wrapper} />
+                <TypedActionButton
+                    key={index}
+                    action={action}
+                    selectedItems={selectedItems}
+                    wrapper={wrapper}
+                />
             ))}
         </>
     )
@@ -262,7 +298,8 @@ export function TypedActions<T extends object>(props: {
         } else {
             const buttonActions = actions?.filter(
                 (action) =>
-                    (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
+                    (action.type === TypedActionType.button ||
+                        action.type === TypedActionType.bulk) &&
                     (action.variant === ButtonVariant.primary ||
                         action.variant === ButtonVariant.secondary ||
                         action.variant === ButtonVariant.danger)
@@ -278,15 +315,20 @@ export function TypedActions<T extends object>(props: {
             let dropdownActions = actions?.filter(
                 (action) =>
                     !(
-                        (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
+                        (action.type === TypedActionType.button ||
+                            action.type === TypedActionType.bulk) &&
                         (action.variant === ButtonVariant.primary ||
                             action.variant === ButtonVariant.secondary ||
                             action.variant === ButtonVariant.danger)
                     )
             )
             dropdownActions = dropdownActions ?? []
-            while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator) dropdownActions.shift()
-            while (dropdownActions.length && dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator)
+            while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator)
+                dropdownActions.shift()
+            while (
+                dropdownActions.length &&
+                dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator
+            )
                 dropdownActions.pop()
             return dropdownActions
         }

@@ -1,4 +1,12 @@
-import { Button, Modal, ModalBoxBody, ModalVariant, Skeleton, Split, SplitItem } from '@patternfly/react-core'
+import {
+    Button,
+    Modal,
+    ModalBoxBody,
+    ModalVariant,
+    Skeleton,
+    Split,
+    SplitItem,
+} from '@patternfly/react-core'
 import { useCallback, useEffect, useState } from 'react'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
@@ -59,7 +67,18 @@ export type SelectDialogProps<T extends object> = {
 } & ISelectDialogOptions<T>
 
 export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {
-    const { title, open, setOpen, onSelect, view, tableColumns, toolbarFilters, confirm, cancel, selected } = props
+    const {
+        title,
+        open,
+        setOpen,
+        onSelect,
+        view,
+        tableColumns,
+        toolbarFilters,
+        confirm,
+        cancel,
+        selected,
+    } = props
     const onClose = () => setOpen(false)
     return (
         <Modal
@@ -90,11 +109,17 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
         >
             <ModalBoxBody style={{ overflow: 'hidden' }}>
                 <Split hasGutter>
-                    <SplitItem style={{ opacity: view.selectedItems.length === 0 ? 0 : undefined }}>{selected}</SplitItem>
+                    <SplitItem style={{ opacity: view.selectedItems.length === 0 ? 0 : undefined }}>
+                        {selected}
+                    </SplitItem>
                     <b>
                         {view.selectedItems.map((item) => {
                             if (tableColumns && tableColumns.length > 0) {
-                                return <span key={props.keyFn(item)}>{tableColumns[0].cell(item)}</span>
+                                return (
+                                    <span key={props.keyFn(item)}>
+                                        {tableColumns[0].cell(item)}
+                                    </span>
+                                )
                             }
                             return <></>
                         })}

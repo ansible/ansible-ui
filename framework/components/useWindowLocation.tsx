@@ -13,7 +13,9 @@ function useIsMounted() {
 
 export function useWindowHistory() {
     const isMounted = useIsMounted()
-    const [location, setLocation] = useState<Location | void>(isMounted ? window.location : undefined)
+    const [location, setLocation] = useState<Location | void>(
+        isMounted ? window.location : undefined
+    )
 
     const setWindowLocation = useCallback(() => {
         setLocation(window.location)
@@ -52,7 +54,10 @@ export function useWindowHistory() {
 export function useSearchParams(): [URLSearchParams, (setSearchParams: URLSearchParams) => void] {
     const history = useWindowHistory()
     const pathname = history.location?.pathname || '/'
-    const searchParams = useMemo<URLSearchParams>(() => new URLSearchParams(history.location?.search ?? '/'), [history.location?.search])
+    const searchParams = useMemo<URLSearchParams>(
+        () => new URLSearchParams(history.location?.search ?? '/'),
+        [history.location?.search]
+    )
     const setSearchParams = useCallback(
         (searchParams: URLSearchParams) => {
             const newSearch = searchParams.toString()

@@ -128,7 +128,10 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     toolbarActions = toolbarActions ?? []
 
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
-    const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
+    const onPerPageSelect = useCallback<OnPerPageSelect>(
+        (_event, perPage) => setPerPage(perPage),
+        [setPerPage]
+    )
 
     const showSearchAndFilters = toolbarFilters !== undefined
     const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
@@ -155,10 +158,15 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         return (
             <Toolbar
                 style={{
-                    borderBottom: disableBorderBottom ? undefined : 'thin solid var(--pf-global--BorderColor--100)',
+                    borderBottom: disableBorderBottom
+                        ? undefined
+                        : 'thin solid var(--pf-global--BorderColor--100)',
                     paddingBottom: sm ? undefined : 8,
                     paddingTop: sm ? undefined : 8,
-                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                    backgroundColor:
+                        settings.theme === 'dark'
+                            ? 'var(--pf-global--BackgroundColor--300)'
+                            : undefined,
                 }}
             >
                 <ToolbarContent>
@@ -174,10 +182,15 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         <Toolbar
             clearAllFilters={clearAllFilters}
             style={{
-                borderBottom: disableBorderBottom ? undefined : 'thin solid var(--pf-global--BorderColor--100)',
+                borderBottom: disableBorderBottom
+                    ? undefined
+                    : 'thin solid var(--pf-global--BorderColor--100)',
                 paddingBottom: sm ? undefined : 8,
                 paddingTop: sm ? undefined : 8,
-                backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                backgroundColor:
+                    settings.theme === 'dark'
+                        ? 'var(--pf-global--BackgroundColor--300)'
+                        : undefined,
             }}
         >
             <ToolbarContent>
@@ -189,7 +202,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                     </ToolbarGroup>
                 )}
                 {toolbarFilters && toolbarFilters.length > 0 && (
-                    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
+                    <ToolbarToggleGroup
+                        toggleIcon={<FilterIcon />}
+                        breakpoint="md"
+                        style={{ zIndex: 302 }}
+                    >
                         <ToolbarGroup variant="filter-group">
                             <ToolbarItem>
                                 <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
@@ -200,7 +217,9 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                                 alignItems={{ default: 'alignItemsCenter' }}
                                                 flexWrap={{ default: 'nowrap' }}
                                             >
-                                                <FlexItem style={{ paddingLeft: 4, paddingRight: 8 }}>
+                                                <FlexItem
+                                                    style={{ paddingLeft: 4, paddingRight: 8 }}
+                                                >
                                                     <FilterIcon />
                                                 </FlexItem>
                                                 <FlexItem>{filter.label}</FlexItem>
@@ -211,7 +230,9 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             </ToolbarItem>
                             <ToolbarItem>
                                 <ToolbarFilterInput
-                                    filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
+                                    filter={toolbarFilters.find(
+                                        (filter) => filter.key === selectedFilter
+                                    )}
                                     addFilter={(value: string) => {
                                         let values = filters?.[selectedFilter]
                                         if (!values) values = []
@@ -235,14 +256,16 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                                         categoryName={filter.label}
                                         chips={values.map((value) => {
                                             return 'options' in filter
-                                                ? filter.options.find((o) => o.value === value)?.label ?? value
+                                                ? filter.options.find((o) => o.value === value)
+                                                      ?.label ?? value
                                                 : value
                                         })}
                                         deleteChip={(_group, value) => {
                                             setFilters?.((filters) => {
                                                 //TODO bug here where value is actually select filter option label... need to map
                                                 const newState = { ...filters }
-                                                value = typeof value === 'string' ? value : value.key
+                                                value =
+                                                    typeof value === 'string' ? value : value.key
                                                 let values = filters[filter.key]
                                                 if (values) {
                                                     values = values.filter((v) => v !== value)
@@ -274,11 +297,19 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
                 {/* Action Buttons */}
                 <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
-                    <TypedActions actions={toolbarActions} selectedItems={selectedItems} wrapper={ToolbarItem} />
+                    <TypedActions
+                        actions={toolbarActions}
+                        selectedItems={selectedItems}
+                        wrapper={ToolbarItem}
+                    />
                     {openColumnModal && (
                         <ToolbarItem>
                             <Tooltip content={'Manage columns'}>
-                                <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
+                                <Button
+                                    variant="plain"
+                                    icon={<ColumnsIcon />}
+                                    onClick={openColumnModal}
+                                />
                             </Tooltip>
                         </ToolbarItem>
                     )}
@@ -288,7 +319,10 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
 
                 {/* Pagination */}
-                <ToolbarItem variant="pagination" visibility={{ default: 'hidden', '2xl': 'visible' }}>
+                <ToolbarItem
+                    variant="pagination"
+                    visibility={{ default: 'hidden', '2xl': 'visible' }}
+                >
                     <Pagination
                         variant={PaginationVariant.top}
                         isCompact
@@ -316,7 +350,13 @@ function ToolbarFilterInput(props: {
         case 'string':
             return <ToolbarTextFilter {...props} placeholder={filter.placeholder} />
         case 'select':
-            return <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
+            return (
+                <ToolbarSelectFilter
+                    {...props}
+                    options={filter.options}
+                    placeholder={filter.placeholder}
+                />
+            )
     }
     return <></>
 }
@@ -405,7 +445,13 @@ function ToolbarSelectFilter(props: {
                 onToggle={setOpen}
                 selections={selections}
                 onSelect={onSelect}
-                placeholderText={values.length ? t('Selected') : <span style={{ opacity: 0.7 }}>{props.placeholder}</span>}
+                placeholderText={
+                    values.length ? (
+                        t('Selected')
+                    ) : (
+                        <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+                    )
+                }
             >
                 {options.map((option) => (
                     <SelectOption id={option.value} key={option.value} value={option.value}>
