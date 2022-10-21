@@ -18,7 +18,11 @@ export function EditTeam() {
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
-    const { data: team } = useSWR<Team>(Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined, requestGet, swrOptions)
+    const { data: team } = useSWR<Team>(
+        Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined,
+        requestGet,
+        swrOptions
+    )
 
     const selectOrganization = useSelectOrganization()
 
@@ -60,13 +64,19 @@ export function EditTeam() {
 
     const { cache } = useSWRConfig()
 
-    const onSubmit: FormPageSubmitHandler<CreateTeam> = async (editedTeam, setError, setFieldError) => {
+    const onSubmit: FormPageSubmitHandler<CreateTeam> = async (
+        editedTeam,
+        setError,
+        setFieldError
+    ) => {
         try {
             const result = await requestGet<ItemsResponse<Organization>>(
                 `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
             )
             if (result.results.length === 0) {
-                setFieldError('summary_fields.organization.name', { message: t('Organization not found') })
+                setFieldError('summary_fields.organization.name', {
+                    message: t('Organization not found'),
+                })
                 return false
             }
             const organization = result.results[0]
@@ -89,13 +99,24 @@ export function EditTeam() {
         if (!team) {
             return (
                 <PageLayout>
-                    <PageHeader breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]} />
+                    <PageHeader
+                        breadcrumbs={[
+                            { label: t('Teams'), to: RouteE.Teams },
+                            { label: t('Edit team') },
+                        ]}
+                    />
                 </PageLayout>
             )
         } else {
             return (
                 <PageLayout>
-                    <PageHeader title={t('Edit team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]} />
+                    <PageHeader
+                        title={t('Edit team')}
+                        breadcrumbs={[
+                            { label: t('Teams'), to: RouteE.Teams },
+                            { label: t('Edit team') },
+                        ]}
+                    />
                     <PageBody>
                         <PageForm
                             schema={EditTeamSchema}
@@ -112,7 +133,13 @@ export function EditTeam() {
     } else {
         return (
             <PageLayout>
-                <PageHeader title={t('Create team')} breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]} />
+                <PageHeader
+                    title={t('Create team')}
+                    breadcrumbs={[
+                        { label: t('Teams'), to: RouteE.Teams },
+                        { label: t('Create team') },
+                    ]}
+                />
                 <PageBody>
                     <PageForm
                         schema={EditTeamSchema}

@@ -72,13 +72,25 @@ export function RemoteRegistries() {
     )
 }
 
-export function useRemoteRegistriesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useRemoteRegistriesColumns(_options?: {
+    disableSort?: boolean
+    disableLinks?: boolean
+}) {
     const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<RemoteRegistry>[]>(
         () => [
-            { header: t('Name'), cell: (remoteRegistry) => <TextCell text={remoteRegistry.name} /> },
-            { header: t('Created'), cell: (remoteRegistry) => <SinceCell value={remoteRegistry.created_at} /> },
-            { header: t('Registry URL'), cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} /> },
+            {
+                header: t('Name'),
+                cell: (remoteRegistry) => <TextCell text={remoteRegistry.name} />,
+            },
+            {
+                header: t('Created'),
+                cell: (remoteRegistry) => <SinceCell value={remoteRegistry.created_at} />,
+            },
+            {
+                header: t('Registry URL'),
+                cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} />,
+            },
         ],
         [t]
     )
@@ -87,6 +99,9 @@ export function useRemoteRegistriesColumns(_options?: { disableSort?: boolean; d
 
 export function useRemoteRegistryFilters() {
     const { t } = useTranslation()
-    const toolbarFilters = useMemo<IToolbarFilter[]>(() => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }], [t])
+    const toolbarFilters = useMemo<IToolbarFilter[]>(
+        () => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }],
+        [t]
+    )
     return toolbarFilters
 }

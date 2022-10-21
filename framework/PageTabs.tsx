@@ -1,15 +1,45 @@
-import { Divider, Flex, FlexItem, PageSection, PageSectionTypes, Skeleton, Tab, Tabs } from '@patternfly/react-core'
-import { Children, Dispatch, isValidElement, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import {
+    Divider,
+    Flex,
+    FlexItem,
+    PageSection,
+    PageSectionTypes,
+    Skeleton,
+    Tab,
+    Tabs,
+} from '@patternfly/react-core'
+import {
+    Children,
+    Dispatch,
+    isValidElement,
+    ReactNode,
+    SetStateAction,
+    useCallback,
+    useState,
+} from 'react'
 
-export function PageTabs(props: { children: ReactNode; preComponents?: ReactNode; postComponents?: ReactNode }) {
+export function PageTabs(props: {
+    children: ReactNode
+    preComponents?: ReactNode
+    postComponents?: ReactNode
+}) {
     const [activeKey, setActiveKey] = useState<number>(0)
-    const onSelect = useCallback((_, key: string | number) => setActiveKey(key as number), [setActiveKey])
+    const onSelect = useCallback(
+        (_, key: string | number) => setActiveKey(key as number),
+        [setActiveKey]
+    )
     const children = Children.toArray(props.children)
     const tabs = children.map((child, index) => {
         if (isValidElement(child)) {
             if (child.type === PageTab) {
                 const title = (child.props as { title: string }).title
-                return <Tab key={title ?? index} title={title ? title : <Skeleton width="60px" />} eventKey={index} />
+                return (
+                    <Tab
+                        key={title ?? index}
+                        title={title ? title : <Skeleton width="60px" />}
+                        eventKey={index}
+                    />
+                )
             }
         }
         return child

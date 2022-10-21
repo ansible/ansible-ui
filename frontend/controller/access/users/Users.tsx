@@ -1,5 +1,11 @@
 import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
-import { EditIcon, MinusCircleIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import {
+    EditIcon,
+    MinusCircleIcon,
+    PlusCircleIcon,
+    PlusIcon,
+    TrashIcon,
+} from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -15,7 +21,11 @@ import {
     TypedActionType,
 } from '../../../../framework'
 import { RouteE } from '../../../Routes'
-import { useFirstNameToolbarFilter, useLastNameToolbarFilter, useUsernameToolbarFilter } from '../../common/controller-toolbar-filters'
+import {
+    useFirstNameToolbarFilter,
+    useLastNameToolbarFilter,
+    useUsernameToolbarFilter,
+} from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
 import { useAddUsersToOrganizations } from './hooks/useAddUsersToOrganizations'
@@ -84,7 +94,15 @@ export function Users() {
                 onClick: deleteUsers,
             },
         ],
-        [t, deleteUsers, navigate, addUsersToTeams, view.selectedItems, addUsersToOrganizations, removeUsersFromOrganizations]
+        [
+            t,
+            deleteUsers,
+            navigate,
+            addUsersToTeams,
+            view.selectedItems,
+            addUsersToOrganizations,
+            removeUsersFromOrganizations,
+        ]
     )
 
     const rowActions = useMemo<IItemAction<User>[]>(
@@ -137,7 +155,12 @@ export function AccessTable(props: { url: string }) {
 
     const tableColumns = useUsersColumns()
 
-    const view = useControllerView<User>({ url: props.url, toolbarFilters, tableColumns, disableQueryString: true })
+    const view = useControllerView<User>({
+        url: props.url,
+        toolbarFilters,
+        tableColumns,
+        disableQueryString: true,
+    })
 
     const toolbarActions = useMemo<ITypedAction<User>[]>(
         () => [
@@ -219,7 +242,12 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         () => [
             {
                 header: t('Username'),
-                cell: (user) => <TextCell text={user.username} to={RouteE.UserDetails.replace(':id', user.id.toString())} />,
+                cell: (user) => (
+                    <TextCell
+                        text={user.username}
+                        to={RouteE.UserDetails.replace(':id', user.id.toString())}
+                    />
+                ),
                 sort: 'username',
                 maxWidth: 200,
             },

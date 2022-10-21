@@ -16,7 +16,10 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
         setDialog(
             <BulkActionDialog<Organization>
                 title={t('Permanently delete organizations', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} organizations.', { count: items.length })}
+                confirmText={t(
+                    'Yes, I confirm that I want to delete these {{count}} organizations.',
+                    { count: items.length }
+                )}
                 submitText={t('Delete organizations', { count: items.length })}
                 submitting={t('Deleting organizations', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} organizations', { count: items.length })}
@@ -27,7 +30,9 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
                 columns={columns}
                 errorColumns={errorColumns}
                 onClose={callback}
-                action={(organization: Organization) => requestDelete(`/api/v2/organizations/${organization.id}/`)}
+                action={(organization: Organization) =>
+                    requestDelete(`/api/v2/organizations/${organization.id}/`)
+                }
             />
         )
     }

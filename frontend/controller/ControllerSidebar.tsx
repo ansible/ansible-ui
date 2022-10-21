@@ -8,7 +8,10 @@ import { AutomationServerSwitcher } from '../common/automation-servers/Automatio
 import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../Routes'
 
-export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
+export function ControllerSidebar(props: {
+    isNavOpen: boolean
+    setNavOpen: (open: boolean) => void
+}) {
     const { t } = useTranslation()
     const location = useLocation()
     const navigate = useNavigate()
@@ -28,7 +31,12 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
     return (
         <PageSidebar
             isNavOpen={isNavOpen}
-            style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+            style={{
+                backgroundColor:
+                    settings.theme === 'dark'
+                        ? 'var(--pf-global--BackgroundColor--300)'
+                        : undefined,
+            }}
             nav={
                 <>
                     <AutomationServerSwitcher />
@@ -74,23 +82,41 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                                 title={t('Resources')}
                                 isExpanded
                                 isActive={isRouteActive(
-                                    [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
+                                    [
+                                        RouteE.Templates,
+                                        RouteE.Credentials,
+                                        RouteE.Projects,
+                                        RouteE.Inventories,
+                                        RouteE.Hosts,
+                                    ],
                                     location
                                 )}
                             >
                                 {/* <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
                                 <Link to={RouteE.Templates}>Templates</Link>
                             </NavItem> */}
-                                <NavItem isActive={isRouteActive(RouteE.Credentials, location)} onClick={() => onClick(RouteE.Credentials)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Credentials, location)}
+                                    onClick={() => onClick(RouteE.Credentials)}
+                                >
                                     {t('Credentials')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Projects, location)} onClick={() => onClick(RouteE.Projects)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Projects, location)}
+                                    onClick={() => onClick(RouteE.Projects)}
+                                >
                                     {t('Projects')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Inventories, location)} onClick={() => onClick(RouteE.Inventories)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Inventories, location)}
+                                    onClick={() => onClick(RouteE.Inventories)}
+                                >
                                     {t('Inventories')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Hosts, location)} onClick={() => onClick(RouteE.Hosts)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Hosts, location)}
+                                    onClick={() => onClick(RouteE.Hosts)}
+                                >
                                     {t('Hosts')}
                                 </NavItem>
                             </NavExpandable>
@@ -98,7 +124,10 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                                 key="access"
                                 title={t('Access')}
                                 isExpanded
-                                isActive={isRouteActive([RouteE.Organizations, RouteE.Users, RouteE.Teams], location)}
+                                isActive={isRouteActive(
+                                    [RouteE.Organizations, RouteE.Users, RouteE.Teams],
+                                    location
+                                )}
                             >
                                 <NavItem
                                     isActive={isRouteActive(RouteE.Organizations, location)}
@@ -106,10 +135,16 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                                 >
                                     {t('Organizations')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Teams, location)} onClick={() => onClick(RouteE.Teams)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Teams, location)}
+                                    onClick={() => onClick(RouteE.Teams)}
+                                >
                                     {t('Teams')}
                                 </NavItem>
-                                <NavItem isActive={isRouteActive(RouteE.Users, location)} onClick={() => onClick(RouteE.Users)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Users, location)}
+                                    onClick={() => onClick(RouteE.Users)}
+                                >
                                     {t('Users')}
                                 </NavItem>
                             </NavExpandable>
@@ -143,7 +178,10 @@ export function ControllerSidebar(props: { isNavOpen: boolean; setNavOpen: (open
                                 {/* <NavItem isActive={isRouteActive(RouteE.InstanceGroups, location)}>
                                 <Link to={RouteE.InstanceGroups}>Instance groups</Link>
                             </NavItem> */}
-                                <NavItem isActive={isRouteActive(RouteE.Instances, location)} onClick={() => onClick(RouteE.Instances)}>
+                                <NavItem
+                                    isActive={isRouteActive(RouteE.Instances, location)}
+                                    onClick={() => onClick(RouteE.Instances)}
+                                >
                                     {t('Instances')}
                                 </NavItem>
                                 {/* <NavItem isActive={isRouteActive(RouteE.Applications, location)}>

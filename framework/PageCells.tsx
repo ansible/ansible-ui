@@ -1,4 +1,15 @@
-import { Button, ClipboardCopy, Flex, FlexItem, Label, LabelGroup, Split, SplitItem, Tooltip, Truncate } from '@patternfly/react-core'
+import {
+    Button,
+    ClipboardCopy,
+    Flex,
+    FlexItem,
+    Label,
+    LabelGroup,
+    Split,
+    SplitItem,
+    Tooltip,
+    Truncate,
+} from '@patternfly/react-core'
 import { DateTime } from 'luxon'
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -73,7 +84,11 @@ export function TextCell(props: {
                     </Button>
                 </SplitItem>
             ) : (
-                <SplitItem style={{ color: props.textColor ? getPatternflyColor(props.textColor) : undefined }}>
+                <SplitItem
+                    style={{
+                        color: props.textColor ? getPatternflyColor(props.textColor) : undefined,
+                    }}
+                >
                     <Tooltip content={props.text ?? ''}>
                         <div
                             style={{
@@ -109,7 +124,12 @@ export function CopyCell(props: { text?: string; minWidth?: number }) {
     )
 }
 
-export function SinceCell(props: { value: string | undefined | null; author?: string; onClick?: () => void; t?: (t: string) => string }) {
+export function SinceCell(props: {
+    value: string | undefined | null
+    author?: string
+    onClick?: () => void
+    t?: (t: string) => string
+}) {
     let { t } = props
     t = t ? t : (t: string) => t
     const { author, onClick } = props
@@ -147,12 +167,19 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
     const ratio = props.used / props.capacity
     if (props.capacity === 0) return <></>
     const base =
-        ratio >= 0.8 ? 'var(--pf-global--palette--red' : ratio >= 0.5 ? 'var(--pf-global--palette--gold' : 'var(--pf-global--palette--green'
+        ratio >= 0.8
+            ? 'var(--pf-global--palette--red'
+            : ratio >= 0.5
+            ? 'var(--pf-global--palette--gold'
+            : 'var(--pf-global--palette--green'
     const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`
     const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`
     const borderColor = settings.theme === 'light' ? `#0002` : `#fff2`
     return (
-        <Flex alignItems={{ default: 'alignItemsBaseline' }} spaceItems={{ default: 'spaceItemsSm' }}>
+        <Flex
+            alignItems={{ default: 'alignItemsBaseline' }}
+            spaceItems={{ default: 'spaceItemsSm' }}
+        >
             {props.capacity > 0 && (
                 <FlexItem>
                     <div
@@ -161,18 +188,30 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
                             height: 25,
                             background: color1,
                             marginBottom: -9,
-                            paddingTop: Math.max(0, Math.min(25, (25 * (props.capacity - props.used)) / props.capacity)),
+                            paddingTop: Math.max(
+                                0,
+                                Math.min(25, (25 * (props.capacity - props.used)) / props.capacity)
+                            ),
                             borderRadius: 2,
                             border: `thin solid ${borderColor}`,
                         }}
                     >
-                        <div style={{ width: '100%', height: '100%', background: color2, borderRadius: 2 }}></div>
+                        <div
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                background: color2,
+                                borderRadius: 2,
+                            }}
+                        ></div>
                     </div>
                 </FlexItem>
             )}
             {props.format ? (
                 <FlexItem>
-                    {props.format.replace('{used}', props.used.toString()).replace('{capacity}', props.capacity.toString())}
+                    {props.format
+                        .replace('{used}', props.used.toString())
+                        .replace('{capacity}', props.capacity.toString())}
                 </FlexItem>
             ) : (
                 <FlexItem>

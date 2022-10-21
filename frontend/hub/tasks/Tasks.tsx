@@ -1,7 +1,16 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ITableColumn, IToolbarFilter, PageBody, PageHeader, PageLayout, PageTable, SinceCell, TextCell } from '../../../framework'
+import {
+    ITableColumn,
+    IToolbarFilter,
+    PageBody,
+    PageHeader,
+    PageLayout,
+    PageTable,
+    SinceCell,
+    TextCell,
+} from '../../../framework'
 import { StatusCell } from '../../common/StatusCell'
 import { RouteE } from '../../Routes'
 import { pulpHRefKeyFn } from '../useHubView'
@@ -12,7 +21,12 @@ export function Tasks() {
     const { t } = useTranslation()
     const toolbarFilters = useTaskFilters()
     const tableColumns = useTasksColumns()
-    const view = usePulpView<Task>('/api/automation-hub/pulp/api/v3/tasks/', pulpHRefKeyFn, toolbarFilters, tableColumns)
+    const view = usePulpView<Task>(
+        '/api/automation-hub/pulp/api/v3/tasks/',
+        pulpHRefKeyFn,
+        toolbarFilters,
+        tableColumns
+    )
     return (
         <PageLayout>
             <PageHeader title={t('Tasks')} />
@@ -39,15 +53,35 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
                 cell: (task) => (
                     <TextCell
                         text={task.name}
-                        onClick={() => navigate(RouteE.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href)))}
+                        onClick={() =>
+                            navigate(
+                                RouteE.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href))
+                            )
+                        }
                     />
                 ),
                 sort: 'name',
             },
-            { header: t('Status'), cell: (task) => <StatusCell status={task.state} />, sort: 'state' },
-            { header: t('Started'), cell: (task) => <SinceCell value={task.started_at} />, sort: 'started_at' },
-            { header: t('Finished'), cell: (task) => <SinceCell value={task.finished_at} />, sort: 'finished_at' },
-            { header: t('Created'), cell: (task) => <SinceCell value={task.pulp_created} />, sort: 'pulp_created' },
+            {
+                header: t('Status'),
+                cell: (task) => <StatusCell status={task.state} />,
+                sort: 'state',
+            },
+            {
+                header: t('Started'),
+                cell: (task) => <SinceCell value={task.started_at} />,
+                sort: 'started_at',
+            },
+            {
+                header: t('Finished'),
+                cell: (task) => <SinceCell value={task.finished_at} />,
+                sort: 'finished_at',
+            },
+            {
+                header: t('Created'),
+                cell: (task) => <SinceCell value={task.pulp_created} />,
+                sort: 'pulp_created',
+            },
         ],
         [navigate, t]
     )

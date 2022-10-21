@@ -39,14 +39,17 @@ export function InstanceDetails() {
                 variant: ButtonVariant.primary,
                 icon: EditIcon,
                 label: t('Edit instance'),
-                onClick: () => history(RouteE.EditInstance.replace(':id', instance?.id.toString() ?? '')),
+                onClick: () =>
+                    history(RouteE.EditInstance.replace(':id', instance?.id.toString() ?? '')),
             },
             {
                 type: TypedActionType.button,
                 label: t('Run health check'),
                 onClick: () => {
-                    // eslint-disable-next-line no-console
-                    requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(console.error)
+                    requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
+                        // eslint-disable-next-line no-console
+                        console.error
+                    )
                 },
             },
         ]
@@ -57,8 +60,16 @@ export function InstanceDetails() {
         <PageLayout>
             <PageHeader
                 title={instance?.hostname}
-                breadcrumbs={[{ label: t('Instances'), to: RouteE.Instances }, { label: instance?.hostname }]}
-                headerActions={<TypedActions<Instance> actions={itemActions} position={DropdownPosition.right} />}
+                breadcrumbs={[
+                    { label: t('Instances'), to: RouteE.Instances },
+                    { label: instance?.hostname },
+                ]}
+                headerActions={
+                    <TypedActions<Instance>
+                        actions={itemActions}
+                        position={DropdownPosition.right}
+                    />
+                }
             />
             <PageBody>
                 {instance ? (
@@ -83,7 +94,12 @@ function InstanceDetailsTab(props: { instance: Instance }) {
             <Scrollable>
                 <PageSection
                     variant="light"
-                    style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+                    style={{
+                        backgroundColor:
+                            settings.theme === 'dark'
+                                ? 'var(--pf-global--BackgroundColor--300)'
+                                : undefined,
+                    }}
                 >
                     <DetailsList>
                         <Detail label={t('Name')}>{instance.hostname}</Detail>
@@ -91,14 +107,29 @@ function InstanceDetailsTab(props: { instance: Instance }) {
                             <NodeTypeCell node_type={instance.node_type} />
                         </Detail>
                         <Detail label={t('Status')}>
-                            <StatusCell status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'} />
+                            <StatusCell
+                                status={
+                                    !instance.enabled
+                                        ? 'disabled'
+                                        : instance.errors
+                                        ? 'error'
+                                        : 'healthy'
+                                }
+                            />
                         </Detail>
                         <Detail label={t('Used capacity')}>
-                            <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
+                            <CapacityCell
+                                used={instance.consumed_capacity}
+                                capacity={instance.capacity}
+                            />
                         </Detail>
-                        <Detail label={t('Running jobs')}>{instance.jobs_running.toString()}</Detail>
+                        <Detail label={t('Running jobs')}>
+                            {instance.jobs_running.toString()}
+                        </Detail>
                         <Detail label={t('Total jobs')}>{instance.jobs_total.toString()}</Detail>
-                        <Detail label={t('Policy type')}>{instance.managed_by_policy ? t('Auto') : t('Manual')}</Detail>
+                        <Detail label={t('Policy type')}>
+                            {instance.managed_by_policy ? t('Auto') : t('Manual')}
+                        </Detail>
                         <Detail label={t('Memory')}>
                             <BytesCell bytes={instance.memory} />
                         </Detail>

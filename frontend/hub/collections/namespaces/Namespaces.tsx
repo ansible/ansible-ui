@@ -22,7 +22,9 @@ export function Namespaces() {
         <PageLayout>
             <PageHeader
                 title={t('Namespaces')}
-                description={t('Use namespaces to organize the collections created by automation developers in your organization.')}
+                description={t(
+                    'Use namespaces to organize the collections created by automation developers in your organization.'
+                )}
                 titleHelpTitle={t('Namespaces')}
                 titleHelp={t(
                     'Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks.'
@@ -48,7 +50,12 @@ export function AllNamespaces() {
     const navigate = useNavigate()
     const toolbarFilters = useNamespaceFilters()
     const tableColumns = useNamespacesColumns()
-    const view = useHubView<Namespace>('/api/automation-hub/_ui/v1/namespaces/', idKeyFn, toolbarFilters, tableColumns)
+    const view = useHubView<Namespace>(
+        '/api/automation-hub/_ui/v1/namespaces/',
+        idKeyFn,
+        toolbarFilters,
+        tableColumns
+    )
     return (
         <PageTable<Namespace>
             toolbarFilters={toolbarFilters}
@@ -68,7 +75,12 @@ export function MyNamespaces() {
     const navigate = useNavigate()
     const toolbarFilters = useNamespaceFilters()
     const tableColumns = useNamespacesColumns()
-    const view = useHubView<Namespace>('/api/automation-hub/_ui/v1/my-namespaces/', idKeyFn, toolbarFilters, tableColumns)
+    const view = useHubView<Namespace>(
+        '/api/automation-hub/_ui/v1/my-namespaces/',
+        idKeyFn,
+        toolbarFilters,
+        tableColumns
+    )
     return (
         <PageTable<Namespace>
             toolbarFilters={toolbarFilters}
@@ -86,7 +98,13 @@ export function MyNamespaces() {
 export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const tableColumns = useMemo<ITableColumn<Namespace>[]>(
-        () => [{ header: t('Name'), cell: (namespace) => <TextCell text={namespace.name} />, sort: 'name' }],
+        () => [
+            {
+                header: t('Name'),
+                cell: (namespace) => <TextCell text={namespace.name} />,
+                sort: 'name',
+            },
+        ],
         [t]
     )
     return tableColumns

@@ -72,7 +72,10 @@ export function BulkActionDialog<T extends object>(props: {
                                 const message = err.message
                                 setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: message }))
                             } else {
-                                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: `Unknown error` }))
+                                setStatuses((statuses) => ({
+                                    ...(statuses ?? {}),
+                                    [key]: `Unknown error`,
+                                }))
                             }
                             setError(props.error)
                         } finally {
@@ -107,7 +110,9 @@ export function BulkActionDialog<T extends object>(props: {
                               isDisabled={!confirmed || isSubmitting || isSubmited}
                               isLoading={isSubmitting}
                           >
-                              {isSubmitting ? props.submitting ?? translations.submittingText : props.submitText ?? translations.submitText}
+                              {isSubmitting
+                                  ? props.submitting ?? translations.submittingText
+                                  : props.submitText ?? translations.submitText}
                           </Button>,
                           <Button key="cancel" variant="link" onClick={onClose}>
                               {props.cancelText ?? translations.cancelText}
@@ -135,8 +140,18 @@ export function BulkActionDialog<T extends object>(props: {
                                     : props.submittingTitle
                             }
                             size={ProgressSize.lg}
-                            variant={error ? ProgressVariant.danger : progress === props.items.length ? ProgressVariant.success : undefined}
-                            measureLocation={error && progress === props.items.length ? ProgressMeasureLocation.none : undefined}
+                            variant={
+                                error
+                                    ? ProgressVariant.danger
+                                    : progress === props.items.length
+                                    ? ProgressVariant.success
+                                    : undefined
+                            }
+                            measureLocation={
+                                error && progress === props.items.length
+                                    ? ProgressMeasureLocation.none
+                                    : undefined
+                            }
                         />
                     </ModalBoxBody>
                 </Collapse>
@@ -178,21 +193,35 @@ export function BulkActionDialog<T extends object>(props: {
                                         const status = statuses?.[key]
                                         if (status === undefined) {
                                             return (
-                                                <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                                    {<PendingIcon />}&nbsp; {props.pendingText ?? translations.pendingText}{' '}
+                                                <span
+                                                    style={{
+                                                        color: 'var(--pf-global--info-color--100)',
+                                                    }}
+                                                >
+                                                    {<PendingIcon />}&nbsp;{' '}
+                                                    {props.pendingText ?? translations.pendingText}{' '}
                                                     {JSON.stringify(status)}
                                                 </span>
                                             )
                                         }
                                         if (status === null) {
                                             return (
-                                                <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                                    {<CheckCircleIcon />}&nbsp; {props.successText ?? translations.successText}
+                                                <span
+                                                    style={{
+                                                        color: 'var(--pf-global--success-color--100)',
+                                                    }}
+                                                >
+                                                    {<CheckCircleIcon />}&nbsp;{' '}
+                                                    {props.successText ?? translations.successText}
                                                 </span>
                                             )
                                         }
                                         return (
-                                            <span style={{ color: 'var(--pf-global--danger-color--100)' }}>
+                                            <span
+                                                style={{
+                                                    color: 'var(--pf-global--danger-color--100)',
+                                                }}
+                                            >
                                                 {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
                                             </span>
                                         )
@@ -213,7 +242,12 @@ export function BulkActionDialog<T extends object>(props: {
                 {props.confirmText && (
                     <Collapse open={!isSubmitting && !isSubmited}>
                         <div style={{ marginLeft: 32, marginTop: 0, marginBottom: 8 }}>
-                            <Checkbox id="confirm" label={props.confirmText} isChecked={confirmed} onChange={setConfirmed} />
+                            <Checkbox
+                                id="confirm"
+                                label={props.confirmText}
+                                isChecked={confirmed}
+                                onChange={setConfirmed}
+                            />
                         </div>
                     </Collapse>
                 )}

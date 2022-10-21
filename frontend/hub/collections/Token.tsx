@@ -13,7 +13,10 @@ export function Token() {
         try {
             setWorking(true)
             setError('')
-            const result = await requestPost<{ token: string }>('/api/automation-hub/v3/auth/token/', {})
+            const result = await requestPost<{ token: string }>(
+                '/api/automation-hub/v3/auth/token/',
+                {}
+            )
             setToken(result.token)
         } catch (err) {
             if (err instanceof Error) {
@@ -27,7 +30,12 @@ export function Token() {
     }
     return (
         <PageLayout>
-            <PageHeader title={t('API token')} description={t('An API token can be used to authenticate the ansible-galaxy client.')} />
+            <PageHeader
+                title={t('API token')}
+                description={t(
+                    'An API token can be used to authenticate the ansible-galaxy client.'
+                )}
+            />
             <PageBody>
                 <PageSection variant="light">
                     {token ? (
@@ -35,13 +43,19 @@ export function Token() {
                             <Alert
                                 variant="warning"
                                 isInline
-                                title={t('Copy this token now. This is the only time you will ever see it.')}
+                                title={t(
+                                    'Copy this token now. This is the only time you will ever see it.'
+                                )}
                             />
                             <CopyCell text={token} />
                         </Stack>
                     ) : (
                         <Stack hasGutter>
-                            <Alert variant="warning" isInline title={t('Generating a new token will delete your old token.')} />
+                            <Alert
+                                variant="warning"
+                                isInline
+                                title={t('Generating a new token will delete your old token.')}
+                            />
                             <ActionGroup>
                                 <Button
                                     // eslint-disable-next-line @typescript-eslint/no-misused-promises

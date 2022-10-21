@@ -23,7 +23,10 @@ export default function Main() {
                             <PageFrameworkProvider>
                                 <Routes>
                                     <Route path={RouteE.Login} element={<Login />} />
-                                    <Route path={RouteE.Controller + '/*'} element={<Controller />} />
+                                    <Route
+                                        path={RouteE.Controller + '/*'}
+                                        element={<Controller />}
+                                    />
                                     <Route path={RouteE.Hub + '/*'} element={<Hub />} />
                                     <Route path="*" element={<Navigate to={RouteE.Login} />} />
                                 </Routes>

@@ -1,11 +1,27 @@
 import debounce from 'debounce'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-export function useTableItems<T extends object>(items: T[], keyFn: (item: T) => string | number, defaults?: { search?: string | null }) {
-    const { selectedItems, selectItem, unselectItem, isSelected, selectItems, unselectAll, allSelected } = useSelected(items, keyFn)
+export function useTableItems<T extends object>(
+    items: T[],
+    keyFn: (item: T) => string | number,
+    defaults?: { search?: string | null }
+) {
+    const {
+        selectedItems,
+        selectItem,
+        unselectItem,
+        isSelected,
+        selectItems,
+        unselectAll,
+        allSelected,
+    } = useSelected(items, keyFn)
     const { sorted, sort, setSort } = useSorted(items)
     const { filtered, setFilterFn } = useFiltered(sorted, keyFn)
-    const { searched, search, setSearch, setSearchFn } = useSearched(filtered, keyFn, defaults?.search)
+    const { searched, search, setSearch, setSearchFn } = useSearched(
+        filtered,
+        keyFn,
+        defaults?.search
+    )
     const { paged, page, setPage, perPage, setPerPage } = usePaged(searched)
     const selectPage = useCallback(() => selectItems(paged), [paged, selectItems])
     const selectAll = useCallback(() => selectItems(searched), [searched, selectItems])
@@ -73,7 +89,10 @@ export interface ISelected<T extends object> {
     keyFn: (item: T) => string | number
 }
 
-export function useSelected<T extends object>(items: T[], keyFn: (item: T) => string | number): ISelected<T> {
+export function useSelected<T extends object>(
+    items: T[],
+    keyFn: (item: T) => string | number
+): ISelected<T> {
     const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
 
     useEffect(() => {
@@ -154,7 +173,10 @@ export function useSelected<T extends object>(items: T[], keyFn: (item: T) => st
     }, [])
 
     const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
-    const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])
+    const allSelected = useMemo(
+        () => selectedItems.length === items.length,
+        [items.length, selectedItems.length]
+    )
 
     return useMemo(
         () => ({
@@ -168,11 +190,24 @@ export function useSelected<T extends object>(items: T[], keyFn: (item: T) => st
             allSelected,
             keyFn,
         }),
-        [allSelected, isSelected, keyFn, selectAll, selectItem, selectItems, selectedItems, unselectAll, unselectItem]
+        [
+            allSelected,
+            isSelected,
+            keyFn,
+            selectAll,
+            selectItem,
+            selectItems,
+            selectedItems,
+            unselectAll,
+            unselectItem,
+        ]
     )
 }
 
-export function useSelectedInMemory<T extends object>(items: T[], keyFn: (item: T) => string | number) {
+export function useSelectedInMemory<T extends object>(
+    items: T[],
+    keyFn: (item: T) => string | number
+) {
     const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
 
     useEffect(() => {
@@ -274,7 +309,10 @@ export function useSelectedInMemory<T extends object>(items: T[], keyFn: (item: 
     }, [])
 
     const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
-    const allSelected = useMemo(() => selectedItems.length === items.length, [items.length, selectedItems.length])
+    const allSelected = useMemo(
+        () => selectedItems.length === items.length,
+        [items.length, selectedItems.length]
+    )
     return useMemo(
         () => ({
             selectedItems,
@@ -287,7 +325,17 @@ export function useSelectedInMemory<T extends object>(items: T[], keyFn: (item: 
             allSelected,
             keyFn,
         }),
-        [allSelected, isSelected, keyFn, selectAll, selectItem, selectItems, selectedItems, unselectAll, unselectItem]
+        [
+            allSelected,
+            isSelected,
+            keyFn,
+            selectAll,
+            selectItem,
+            selectItems,
+            selectedItems,
+            unselectAll,
+            unselectItem,
+        ]
     )
 }
 
@@ -317,9 +365,14 @@ export function useSorted<T extends object>(items: T[]) {
 }
 
 export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => string | number) {
-    const filterMapRef = useRef<{ map: Record<string | number, { item: T; passes: boolean }> }>({ map: {} })
+    const filterMapRef = useRef<{ map: Record<string | number, { item: T; passes: boolean }> }>({
+        map: {},
+    })
     const [filterFn, setFilterFnState] = useState<(item: T) => boolean>()
-    const setFilterFn = useCallback((filterFn: (item: T) => boolean) => setFilterFnState(() => filterFn), [])
+    const setFilterFn = useCallback(
+        (filterFn: (item: T) => boolean) => setFilterFnState(() => filterFn),
+        []
+    )
     const [filtered, setFiltered] = useState<T[]>([])
 
     useEffect(() => {
@@ -358,10 +411,19 @@ export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => st
     )
 }
 
-function useSearched<T extends object>(items: T[], keyFn: (item: T) => string | number, defaultSearch?: string | null) {
-    const searchMapRef = useRef<{ map: Record<string | number, { item: T; score: number }> }>({ map: {} })
+function useSearched<T extends object>(
+    items: T[],
+    keyFn: (item: T) => string | number,
+    defaultSearch?: string | null
+) {
+    const searchMapRef = useRef<{ map: Record<string | number, { item: T; score: number }> }>({
+        map: {},
+    })
     const [searchFn, setSearchFnState] = useState<(item: T, search: string) => number>()
-    const setSearchFn = useCallback((searchFn: (item: T, search: string) => number) => setSearchFnState(() => searchFn), [])
+    const setSearchFn = useCallback(
+        (searchFn: (item: T, search: string) => number) => setSearchFnState(() => searchFn),
+        []
+    )
     const [searched, setSearched] = useState<T[]>([])
     const [search, setSearchState] = useState(defaultSearch ?? '')
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -8,8 +8,20 @@ import { useTeamsColumns, useTeamsFilters } from './Teams'
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
     const toolbarFilters = useTeamsFilters()
     const tableColumns = useTeamsColumns({ disableLinks: true })
-    const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns, disableQueryString: true })
-    return <SelectMultipleDialog {...props} toolbarFilters={toolbarFilters} tableColumns={tableColumns} view={view} />
+    const view = useControllerView<Team>({
+        url: '/api/v2/teams/',
+        toolbarFilters,
+        tableColumns,
+        disableQueryString: true,
+    })
+    return (
+        <SelectMultipleDialog
+            {...props}
+            toolbarFilters={toolbarFilters}
+            tableColumns={tableColumns}
+            view={view}
+        />
+    )
 }
 
 export function useSelectTeams() {

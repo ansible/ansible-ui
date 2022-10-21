@@ -38,7 +38,8 @@ export default function Login() {
                 label: host.name,
                 description: host.url,
                 value: host.url,
-                group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+                group:
+                    host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
             })),
             footer: { label: t('Add automation server'), click: addAutomationHost },
         }),
@@ -46,13 +47,19 @@ export default function Login() {
             title: t('Username'),
             placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: t('Username is required'), minLength: t('Username is required') },
+            errorMessage: {
+                required: t('Username is required'),
+                minLength: t('Username is required'),
+            },
         }),
         password: Type.String({
             title: t('Password'),
             placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
             minLength: 1,
-            errorMessage: { required: t('Password is required'), minLength: t('Password is required') },
+            errorMessage: {
+                required: t('Password is required'),
+                minLength: t('Password is required'),
+            },
             variant: 'secret',
         }),
     })
@@ -62,11 +69,21 @@ export default function Login() {
     const onSubmit = useCallback<FormPageSubmitHandler<Data>>(
         async (data, setError) => {
             try {
-                const automationServer = automationServers.find((server) => server.url === data.server)
+                const automationServer = automationServers.find(
+                    (server) => server.url === data.server
+                )
                 if (!automationServer) return
-                const loginPageUrl = automationServer.type === 'controller' ? '/api/login/' : '/api/automation-hub/_ui/v1/auth/login/'
+                const loginPageUrl =
+                    automationServer.type === 'controller'
+                        ? '/api/login/'
+                        : '/api/automation-hub/_ui/v1/auth/login/'
 
-                let loginPage = await ky.get(loginPageUrl, { credentials: 'include', headers: { 'x-server': data.server } }).text()
+                let loginPage = await ky
+                    .get(loginPageUrl, {
+                        credentials: 'include',
+                        headers: { 'x-server': data.server },
+                    })
+                    .text()
                 loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
                 loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
                 const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))

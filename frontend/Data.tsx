@@ -26,7 +26,10 @@ export async function requestGet<ResponseBody>(url: string): Promise<ResponseBod
     return requestCommon<ResponseBody>(url, {}, ky.get)
 }
 
-export async function requestPut<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
+export async function requestPut<ResponseBody, RequestBody = unknown>(
+    url: string,
+    json: RequestBody
+): Promise<ResponseBody> {
     return requestCommon<ResponseBody>(url, { json }, ky.put)
 }
 
@@ -38,16 +41,27 @@ export async function requestPost<ResponseBody, RequestBody = unknown>(
     return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
 }
 
-export async function requestPatch<ResponseBody, RequestBody = unknown>(url: string, json: RequestBody): Promise<ResponseBody> {
+export async function requestPatch<ResponseBody, RequestBody = unknown>(
+    url: string,
+    json: RequestBody
+): Promise<ResponseBody> {
     return requestCommon<ResponseBody>(url, { json }, ky.patch)
 }
 
-export async function requestDelete<ResponseBody>(url: string, signal?: AbortSignal): Promise<ResponseBody> {
+export async function requestDelete<ResponseBody>(
+    url: string,
+    signal?: AbortSignal
+): Promise<ResponseBody> {
     return requestCommon<ResponseBody>(url, { signal }, ky.delete)
 }
 
-async function requestCommon<ResponseBody>(url: string, options: Options, methodFn: (input: Input, options: Options) => ResponsePromise) {
-    if (process.env.DELAY) await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
+async function requestCommon<ResponseBody>(
+    url: string,
+    options: Options,
+    methodFn: (input: Input, options: Options) => ResponsePromise
+) {
+    if (process.env.DELAY)
+        await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
     try {
         const result = await methodFn(url, {
             ...options,

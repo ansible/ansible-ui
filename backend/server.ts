@@ -2,7 +2,14 @@
 /* istanbul ignore file */
 import { readFileSync } from 'fs'
 import { STATUS_CODES } from 'http'
-import { constants, createSecureServer, createServer, Http2Server, Http2ServerRequest, Http2ServerResponse } from 'http2'
+import {
+    constants,
+    createSecureServer,
+    createServer,
+    Http2Server,
+    Http2ServerRequest,
+    Http2ServerResponse,
+} from 'http2'
 import { Socket } from 'net'
 import { TLSSocket } from 'tls'
 import { HTTP2_HEADER_CONTENT_LENGTH } from './constants'
@@ -40,11 +47,19 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
             logger.debug({ msg: `server start`, secure: true })
             server = createSecureServer(
                 { cert, key, allowHTTP1: true },
-                options.requestHandler as (req: Http2ServerRequest, res: Http2ServerResponse) => void
+                options.requestHandler as (
+                    req: Http2ServerRequest,
+                    res: Http2ServerResponse
+                ) => void
             )
         } else {
             logger.debug({ msg: `server start`, secure: false })
-            server = createServer(options.requestHandler as (req: Http2ServerRequest, res: Http2ServerResponse) => void)
+            server = createServer(
+                options.requestHandler as (
+                    req: Http2ServerRequest,
+                    res: Http2ServerResponse
+                ) => void
+            )
         }
         return new Promise((resolve, reject) => {
             server

@@ -33,7 +33,10 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
 
 export function useDescriptionColumn<T extends { description?: string | undefined }>() {
     const { t } = useTranslation()
-    const column = useMemo<ITableColumn<T>>(() => ({ header: t('Description'), cell: (item) => <TextCell text={item.description} /> }), [t])
+    const column = useMemo<ITableColumn<T>>(
+        () => ({ header: t('Description'), cell: (item) => <TextCell text={item.description} /> }),
+        [t]
+    )
     return column
 }
 
@@ -41,7 +44,8 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
     const { t } = useTranslation()
     const navigate = useNavigate()
     const column: ITableColumn<
-        { created?: string } | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
+        | { created?: string }
+        | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
     > = useMemo(
         () => ({
             header: t('Created'),
@@ -50,11 +54,21 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
                 return (
                     <SinceCell
                         value={item.created}
-                        author={'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined}
+                        author={
+                            'summary_fields' in item
+                                ? item.summary_fields?.created_by?.username
+                                : undefined
+                        }
                         onClick={
                             options?.disableLinks || !('summary_fields' in item)
                                 ? undefined
-                                : () => navigate(RouteE.UserDetails.replace(':id', (item.summary_fields?.created_by?.id ?? 0).toString()))
+                                : () =>
+                                      navigate(
+                                          RouteE.UserDetails.replace(
+                                              ':id',
+                                              (item.summary_fields?.created_by?.id ?? 0).toString()
+                                          )
+                                      )
                         }
                     />
                 )
@@ -71,7 +85,11 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
     const { t } = useTranslation()
     const history = useNavigate()
     const column: ITableColumn<
-        { modified?: string } | { modified?: string; summary_fields?: { modified_by?: { id?: number; username?: string } } }
+        | { modified?: string }
+        | {
+              modified?: string
+              summary_fields?: { modified_by?: { id?: number; username?: string } }
+          }
     > = useMemo(
         () => ({
             header: t('Modified'),
@@ -80,11 +98,21 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
                 return (
                     <SinceCell
                         value={item.modified}
-                        author={'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined}
+                        author={
+                            'summary_fields' in item
+                                ? item.summary_fields?.modified_by?.username
+                                : undefined
+                        }
                         onClick={
                             options?.disableLinks || !('summary_fields' in item)
                                 ? undefined
-                                : () => history(RouteE.UserDetails.replace(':id', (item.summary_fields?.modified_by?.id ?? 0).toString()))
+                                : () =>
+                                      history(
+                                          RouteE.UserDetails.replace(
+                                              ':id',
+                                              (item.summary_fields?.modified_by?.id ?? 0).toString()
+                                          )
+                                      )
                         }
                     />
                 )
@@ -97,7 +125,10 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
     return column
 }
 
-export function useOrganizationNameColumn(options?: { disableLinks?: boolean; disableSort?: boolean }) {
+export function useOrganizationNameColumn(options?: {
+    disableLinks?: boolean
+    disableSort?: boolean
+}) {
     const { t } = useTranslation()
     const column: ITableColumn<{
         summary_fields?: {
@@ -115,7 +146,10 @@ export function useOrganizationNameColumn(options?: { disableLinks?: boolean; di
                     to={
                         options?.disableLinks
                             ? undefined
-                            : RouteE.OrganizationDetails.replace(':id', (item.summary_fields?.organization?.id ?? '').toString())
+                            : RouteE.OrganizationDetails.replace(
+                                  ':id',
+                                  (item.summary_fields?.organization?.id ?? '').toString()
+                              )
                     }
                 />
             ),

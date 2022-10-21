@@ -3,8 +3,20 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+} from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import {
     useCreatedByToolbarFilter,
@@ -67,7 +79,9 @@ export function Hosts() {
     return (
         <TablePage<Host>
             title={t('Hosts')}
-            description={t('A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.')}
+            description={t(
+                'A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.'
+            )}
             titleHelpTitle={t('Hosts')}
             titleHelp={[
                 t(
@@ -98,15 +112,28 @@ export function useHostsFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
 
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const navigate = useNavigate()
-    const nameClick = useCallback((host: Host) => navigate(RouteE.HostDetails.replace(':id', host.id.toString())), [navigate])
+    const nameClick = useCallback(
+        (host: Host) => navigate(RouteE.HostDetails.replace(':id', host.id.toString())),
+        [navigate]
+    )
     const nameColumn = useNameColumn({
         ...options,
         onClick: nameClick,

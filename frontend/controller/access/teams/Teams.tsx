@@ -119,8 +119,18 @@ export function useTeamsFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            organizationToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            organizationToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
@@ -128,7 +138,10 @@ export function useTeamsFilters() {
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
     const { t } = useTranslation()
     const history = useNavigate()
-    const nameColumnClick = useCallback((team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())), [history])
+    const nameColumnClick = useCallback(
+        (team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
+        [history]
+    )
     const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick })
     const descriptionColumn = useDescriptionColumn()
     const organizationColumn = useOrganizationNameColumn(options)

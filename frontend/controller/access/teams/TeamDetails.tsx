@@ -1,4 +1,10 @@
-import { ButtonVariant, Chip, ChipGroup, DropdownPosition, PageSection } from '@patternfly/react-core'
+import {
+    ButtonVariant,
+    Chip,
+    ChipGroup,
+    DropdownPosition,
+    PageSection,
+} from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -68,7 +74,9 @@ export function TeamDetails() {
             <PageHeader
                 title={team?.name}
                 breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
-                headerActions={<TypedActions<Team> actions={itemActions} position={DropdownPosition.right} />}
+                headerActions={
+                    <TypedActions<Team> actions={itemActions} position={DropdownPosition.right} />
+                }
             />
             <PageBody>
                 {team ? (
@@ -111,7 +119,12 @@ function TeamDetailsTab(props: { team: Team }) {
             <Scrollable>
                 <PageSection
                     variant="light"
-                    style={{ backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined }}
+                    style={{
+                        backgroundColor:
+                            settings.theme === 'dark'
+                                ? 'var(--pf-global--BackgroundColor--300)'
+                                : undefined,
+                    }}
                 >
                     <DetailsList>
                         <Detail label={t('Name')}>{team.name}</Detail>
@@ -119,7 +132,10 @@ function TeamDetailsTab(props: { team: Team }) {
                         <Detail label={t('Organization')}>
                             <TextCell
                                 text={team.summary_fields?.organization?.name}
-                                to={RouteE.OrganizationDetails.replace(':id', (team.summary_fields?.organization?.id ?? '').toString())}
+                                to={RouteE.OrganizationDetails.replace(
+                                    ':id',
+                                    (team.summary_fields?.organization?.id ?? '').toString()
+                                )}
                             />
                         </Detail>
                         <Detail label={t('Created')}>
@@ -127,7 +143,12 @@ function TeamDetailsTab(props: { team: Team }) {
                                 value={team.created}
                                 author={team.summary_fields?.created_by?.username}
                                 onClick={() =>
-                                    history(RouteE.UserDetails.replace(':id', (team.summary_fields?.created_by?.id ?? 0).toString()))
+                                    history(
+                                        RouteE.UserDetails.replace(
+                                            ':id',
+                                            (team.summary_fields?.created_by?.id ?? 0).toString()
+                                        )
+                                    )
                                 }
                             />
                         </Detail>
@@ -136,7 +157,12 @@ function TeamDetailsTab(props: { team: Team }) {
                                 value={team.modified}
                                 author={team.summary_fields?.modified_by?.username}
                                 onClick={() =>
-                                    history(RouteE.UserDetails.replace(':id', (team.summary_fields?.modified_by?.id ?? 0).toString()))
+                                    history(
+                                        RouteE.UserDetails.replace(
+                                            ':id',
+                                            (team.summary_fields?.modified_by?.id ?? 0).toString()
+                                        )
+                                    )
                                 }
                             />
                         </Detail>

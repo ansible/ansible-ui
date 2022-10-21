@@ -41,9 +41,15 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
                         id={breadcrumb.id}
                         key={breadcrumb.id ?? breadcrumb.label}
                         component={breadcrumb.component}
-                        onClick={breadcrumb.to ? () => breadcrumb.to && history(breadcrumb.to) : undefined}
+                        onClick={
+                            breadcrumb.to
+                                ? () => breadcrumb.to && history(breadcrumb.to)
+                                : undefined
+                        }
                         style={{
-                            color: breadcrumb.to ? 'var(--pf-c-breadcrumb__link--Color)' : undefined,
+                            color: breadcrumb.to
+                                ? 'var(--pf-c-breadcrumb__link--Color)'
+                                : undefined,
                             cursor: breadcrumb.to ? 'pointer' : undefined,
                         }}
                         isActive={breadcrumb.to === undefined}
@@ -94,7 +100,14 @@ export interface PageHeaderProps {
  * <Page>
  */
 export function PageHeader(props: PageHeaderProps) {
-    const { navigation, breadcrumbs, title, description, controls, headerActions: pageActions } = props
+    const {
+        navigation,
+        breadcrumbs,
+        title,
+        description,
+        controls,
+        headerActions: pageActions,
+    } = props
     const lg = useBreakpoint('lg')
     const xl = useBreakpoint('xl')
     const xxl = useBreakpoint('xxl')
@@ -112,12 +125,21 @@ export function PageHeader(props: PageHeaderProps) {
                         paddingLeft: 0,
                         paddingTop: 0,
                         paddingBottom: 0,
-                        borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        borderBottom: settings.borders
+                            ? 'thin solid var(--pf-global--BorderColor--100)'
+                            : undefined,
                         backgroundColor: 'var(--pf-global--BackgroundColor--100)',
                     }}
                 >
-                    <Flex direction={{ default: 'row' }} flexWrap={{ default: 'nowrap' }} style={{ maxWidth: '100%' }}>
-                        <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }} hasOverflowScroll>
+                    <Flex
+                        direction={{ default: 'row' }}
+                        flexWrap={{ default: 'nowrap' }}
+                        style={{ maxWidth: '100%' }}
+                    >
+                        <PageNavigation
+                            style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }}
+                            hasOverflowScroll
+                        >
                             {navigation}
                         </PageNavigation>
                         {/* {!isMdOrLarger && props.titleDocLink && (
@@ -144,7 +166,9 @@ export function PageHeader(props: PageHeaderProps) {
                     style={{
                         paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
                         paddingBottom: xl ? 20 : 12,
-                        borderBottom: settings.borders ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+                        borderBottom: settings.borders
+                            ? 'thin solid var(--pf-global--BorderColor--100)'
+                            : undefined,
                         backgroundColor:
                             settings.theme === 'dark'
                                 ? xxl
@@ -153,9 +177,17 @@ export function PageHeader(props: PageHeaderProps) {
                                 : undefined,
                     }}
                 >
-                    <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
+                    <Flex
+                        flexWrap={{ default: 'nowrap' }}
+                        alignItems={{ default: 'alignItemsStretch' }}
+                    >
                         <FlexItem grow={{ default: 'grow' }}>
-                            {breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: lg ? 6 : 4 }} />}
+                            {breadcrumbs && (
+                                <Breadcrumbs
+                                    breadcrumbs={breadcrumbs}
+                                    style={{ paddingBottom: lg ? 6 : 4 }}
+                                />
+                            )}
                             {title ? (
                                 props.titleHelp ? (
                                     <Popover
@@ -165,14 +197,21 @@ export function PageHeader(props: PageHeaderProps) {
                                                 {typeof props.titleHelp === 'string' ? (
                                                     <StackItem>{props.titleHelp}</StackItem>
                                                 ) : (
-                                                    props.titleHelp.map((help, index) => <StackItem key={index}>{help}</StackItem>)
+                                                    props.titleHelp.map((help, index) => (
+                                                        <StackItem key={index}>{help}</StackItem>
+                                                    ))
                                                 )}
                                                 {props.titleDocLink && (
                                                     <StackItem>
                                                         <Button
                                                             icon={<ExternalLinkAltIcon />}
                                                             variant="link"
-                                                            onClick={() => window.open(props.titleDocLink, '_blank')}
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    props.titleDocLink,
+                                                                    '_blank'
+                                                                )
+                                                            }
                                                             isInline
                                                         >
                                                             {t('Documentation')}
@@ -188,7 +227,12 @@ export function PageHeader(props: PageHeaderProps) {
                                             {title}
                                             <Button
                                                 variant="link"
-                                                style={{ padding: 0, marginTop: 1, marginLeft: 8, verticalAlign: 'top' }}
+                                                style={{
+                                                    padding: 0,
+                                                    marginTop: 1,
+                                                    marginLeft: 8,
+                                                    verticalAlign: 'top',
+                                                }}
                                             >
                                                 <OutlinedQuestionCircleIcon />
                                             </Button>
@@ -203,7 +247,10 @@ export function PageHeader(props: PageHeaderProps) {
                                 </Title>
                             )}
                             {isMdOrLarger && description && (
-                                <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
+                                <Text
+                                    component="p"
+                                    style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}
+                                >
                                     <Truncate content={description} />
                                 </Text>
                             )}
@@ -214,7 +261,9 @@ export function PageHeader(props: PageHeaderProps) {
                                 spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
                                 justifyContent={{ default: 'justifyContentCenter' }}
                             >
-                                {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
+                                {controls && (
+                                    <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>
+                                )}
                                 {pageActions && <FlexItem>{pageActions}</FlexItem>}
                             </Flex>
                         )}

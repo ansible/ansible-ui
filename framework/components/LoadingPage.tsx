@@ -5,7 +5,10 @@ import { ICatalogBreadcrumb, PageHeader } from '../PageHeader'
 export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBreadcrumb[] }) {
     return (
         <Fragment>
-            <PageHeader breadcrumbs={props.breadcrumbs} title={props.title ?? ((<Skeleton width="200px" />) as unknown as string)} />
+            <PageHeader
+                breadcrumbs={props.breadcrumbs}
+                title={props.title ?? ((<Skeleton width="200px" />) as unknown as string)}
+            />
             <PageSection
             // variant={theme === ThemeE.Dark ? undefined : 'light'}
             >

@@ -1,4 +1,12 @@
-import { Button, Modal, ModalBoxBody, ModalVariant, Progress, ProgressSize, ProgressVariant } from '@patternfly/react-core'
+import {
+    Button,
+    Modal,
+    ModalBoxBody,
+    ModalVariant,
+    Progress,
+    ProgressSize,
+    ProgressVariant,
+} from '@patternfly/react-core'
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
 import pLimit from 'p-limit'
 import { useCallback, useEffect, useState } from 'react'
@@ -78,9 +86,15 @@ export function BulkProgressDialog<T extends object>(props: BulkProgressDialogPr
                             if (!abortController.signal.aborted) {
                                 if (err instanceof Error) {
                                     const message = err.message
-                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: message }))
+                                    setStatuses((statuses) => ({
+                                        ...(statuses ?? {}),
+                                        [key]: message,
+                                    }))
                                 } else {
-                                    setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: `Unknown error` }))
+                                    setStatuses((statuses) => ({
+                                        ...(statuses ?? {}),
+                                        [key]: `Unknown error`,
+                                    }))
                                 }
                                 setError(errorText ?? translations.errorText)
                             }
@@ -139,7 +153,13 @@ export function BulkProgressDialog<T extends object>(props: BulkProgressDialogPr
                             : processingText ?? translations.processingText
                     }
                     size={ProgressSize.lg}
-                    variant={error ? ProgressVariant.danger : progress === items.length ? ProgressVariant.success : undefined}
+                    variant={
+                        error
+                            ? ProgressVariant.danger
+                            : progress === items.length
+                            ? ProgressVariant.success
+                            : undefined
+                    }
                     // measureLocation={error && progress === items.length ? ProgressMeasureLocation.none : undefined}
                 />
             </ModalBoxBody>
@@ -166,15 +186,24 @@ export function BulkProgressDialog<T extends object>(props: BulkProgressDialogPr
                                 const status = statuses?.[key]
                                 if (status === undefined) {
                                     return (
-                                        <span style={{ color: 'var(--pf-global--info-color--100)' }}>
-                                            {<PendingIcon />}&nbsp; {itemPendingText ?? translations.pendingText} {JSON.stringify(status)}
+                                        <span
+                                            style={{ color: 'var(--pf-global--info-color--100)' }}
+                                        >
+                                            {<PendingIcon />}&nbsp;{' '}
+                                            {itemPendingText ?? translations.pendingText}{' '}
+                                            {JSON.stringify(status)}
                                         </span>
                                     )
                                 }
                                 if (status === null) {
                                     return (
-                                        <span style={{ color: 'var(--pf-global--success-color--100)' }}>
-                                            {<CheckCircleIcon />}&nbsp; {itemSuccessText ?? translations.successText}
+                                        <span
+                                            style={{
+                                                color: 'var(--pf-global--success-color--100)',
+                                            }}
+                                        >
+                                            {<CheckCircleIcon />}&nbsp;{' '}
+                                            {itemSuccessText ?? translations.successText}
                                         </span>
                                     )
                                 }

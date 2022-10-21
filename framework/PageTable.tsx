@@ -11,7 +11,17 @@ import {
     Title,
 } from '@patternfly/react-core'
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons'
-import { ActionsColumn, IAction, SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
+import {
+    ActionsColumn,
+    IAction,
+    SortByDirection,
+    TableComposable,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tr,
+} from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
 import {
@@ -37,7 +47,8 @@ import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
 import { IItemAction, isItemActionClick, ITypedAction, TypedActionType } from './TypedActions'
 
-export type TablePageProps<T extends object> = PageHeaderProps & PageTableProps<T> & { error?: Error }
+export type TablePageProps<T extends object> = PageHeaderProps &
+    PageTableProps<T> & { error?: Error }
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
     return (
@@ -125,9 +136,16 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     let { t } = props
     t = t ? t : (t: string) => t
     const showSelect =
-        props.showSelect || toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
+        props.showSelect ||
+        toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+            undefined
     const containerRef = useRef<HTMLDivElement>(null)
-    const [scroll, setScroll] = useState<{ left: number; right: number; top: number; bottom: number }>({
+    const [scroll, setScroll] = useState<{
+        left: number
+        right: number
+        top: number
+        bottom: number
+    }>({
         left: 0,
         right: 0,
         top: 0,
@@ -142,7 +160,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
             right: div.scrollWidth - div.clientWidth - div.scrollLeft,
         })
     }, [])
-    const onScroll = useCallback((event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget), [updateScroll])
+    const onScroll = useCallback(
+        (event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget),
+        [updateScroll]
+    )
     useResizeObserver(containerRef, () => updateScroll(containerRef.current))
     useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
@@ -153,7 +174,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         return (
             <div
                 style={{
-                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                    backgroundColor:
+                        settings.theme === 'dark'
+                            ? 'var(--pf-global--BackgroundColor--300)'
+                            : undefined,
                     height: '100%',
                 }}
             >
@@ -163,7 +187,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                         paddingTop: 64,
                     }}
                 >
-                    <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
+                    <EmptyStateIcon
+                        icon={ExclamationCircleIcon}
+                        color="var(--pf-global--danger-color--100)"
+                    />
                     <Title headingLevel="h2" size="lg">
                         {/* Unable to connect */}
                         {props.errorStateTitle}
@@ -182,7 +209,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                 <Title headingLevel="h4" size="lg">
                     {props.emptyStateTitle}
                 </Title>
-                {props.emptyStateDescription && <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>}
+                {props.emptyStateDescription && (
+                    <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+                )}
                 {props.emptyStateButtonClick && (
                     <Button variant="primary" onClick={props.emptyStateButtonClick}>
                         {props.emptyStateButtonText}
@@ -195,11 +224,26 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     return (
         <Fragment>
             {columnModal}
-            <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
-            <div className="pf-c-scroll-inner-wrapper" style={{ height: '100%' }} ref={containerRef} onScroll={onScroll}>
+            <PageTableToolbar
+                {...props}
+                openColumnModal={openColumnModal}
+                showSelect={showSelect}
+            />
+            <div
+                className="pf-c-scroll-inner-wrapper"
+                style={{ height: '100%' }}
+                ref={containerRef}
+                onScroll={onScroll}
+            >
                 <TableComposable
                     aria-label="Simple table"
-                    variant={props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined}
+                    variant={
+                        props.compact
+                            ? 'compact'
+                            : settings.tableLayout === 'compact'
+                            ? 'compact'
+                            : undefined
+                    }
                     gridBreakPoint=""
                     isStickyHeader
                 >
@@ -270,7 +314,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                                 {t('No results found')}
                             </Title>
                             <EmptyStateBody>
-                                {t('No results match this filter criteria. Adjust your filters and try again.')}
+                                {t(
+                                    'No results match this filter criteria. Adjust your filters and try again.'
+                                )}
                             </EmptyStateBody>
                             {clearAllFilters && (
                                 <EmptyStateSecondaryActions>
@@ -283,7 +329,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                     </div>
                 )}
             </div>
-            {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
+            {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && (
+                <PagePagination {...props} />
+            )}
         </Fragment>
     )
 }
@@ -300,14 +348,29 @@ function TableHead<T extends object>(props: {
     scrollRight?: boolean
     onSelect?: (item: T) => void
 }) {
-    const { tableColumns: columns, rowActions: itemActions, sort, setSort, sortDirection, setSortDirection, showSelect, onSelect } = props
+    const {
+        tableColumns: columns,
+        rowActions: itemActions,
+        sort,
+        setSort,
+        sortDirection,
+        setSortDirection,
+        showSelect,
+        onSelect,
+    } = props
     const settings = useSettings()
 
-    const getColumnSort = useCallback<(columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined>(
+    const getColumnSort = useCallback<
+        (columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined
+    >(
         (columnIndex: number, column: ITableColumn<T>) => {
             if (!column.sort) return undefined
             return {
-                onSort: (_event: MouseEvent, _columnIndex: number, sortByDirection: SortByDirection) => {
+                onSort: (
+                    _event: MouseEvent,
+                    _columnIndex: number,
+                    sortByDirection: SortByDirection
+                ) => {
                     if (column.sort) {
                         setSort?.(column.sort)
                         setSortDirection?.(sortByDirection)
@@ -332,7 +395,10 @@ function TableHead<T extends object>(props: {
                         isStickyColumn
                         style={{
                             width: '0%',
-                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                            backgroundColor:
+                                settings.theme === 'dark'
+                                    ? 'var(--pf-global--BackgroundColor--300)'
+                                    : undefined,
                         }}
                         stickyMinWidth="45px"
                         hasRightBorder={props.scrollLeft}
@@ -350,7 +416,10 @@ function TableHead<T extends object>(props: {
                                 style={{
                                     minWidth: column.minWidth,
                                     maxWidth: column.maxWidth,
-                                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                                    backgroundColor:
+                                        settings.theme === 'dark'
+                                            ? 'var(--pf-global--BackgroundColor--300)'
+                                            : undefined,
                                 }}
                                 sort={getColumnSort(index, column)}
                             >
@@ -365,7 +434,10 @@ function TableHead<T extends object>(props: {
                             paddingLeft: 0,
                             width: '0%',
                             right: 0,
-                            backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                            backgroundColor:
+                                settings.theme === 'dark'
+                                    ? 'var(--pf-global--BackgroundColor--300)'
+                                    : undefined,
                         }}
                         isStickyColumn
                         stickyMinWidth="45px"
@@ -393,7 +465,18 @@ function TableRow<T extends object>(props: {
     onSelect?: (item: T) => void
     unselectAll?: () => void
 }) {
-    const { columns, selectItem, unselectItem, unselectAll, isItemSelected, item, rowActions, rowIndex, showSelect, onSelect } = props
+    const {
+        columns,
+        selectItem,
+        unselectItem,
+        unselectAll,
+        isItemSelected,
+        item,
+        rowActions,
+        rowIndex,
+        showSelect,
+        onSelect,
+    } = props
     const md = useBreakpoint('xl')
     return (
         <Tr

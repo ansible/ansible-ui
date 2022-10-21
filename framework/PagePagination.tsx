@@ -15,7 +15,10 @@ export type PagePaginationProps = {
 export function PagePagination(props: PagePaginationProps) {
     const { setPage, setPerPage } = props
     const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
-    const onPerPageSelect = useCallback<OnPerPageSelect>((_event, perPage) => setPerPage(perPage), [setPerPage])
+    const onPerPageSelect = useCallback<OnPerPageSelect>(
+        (_event, perPage) => setPerPage(perPage),
+        [setPerPage]
+    )
     const sm = useBreakpoint('md')
     const settings = useSettings()
     return (
@@ -34,7 +37,10 @@ export function PagePagination(props: PagePaginationProps) {
                 marginTop: -1,
                 paddingTop: sm ? 6 : undefined,
                 paddingBottom: sm ? 6 : undefined,
-                backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                backgroundColor:
+                    settings.theme === 'dark'
+                        ? 'var(--pf-global--BackgroundColor--300)'
+                        : undefined,
             }}
         />
     )

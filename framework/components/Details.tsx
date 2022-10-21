@@ -55,7 +55,15 @@ export function Details(props: { details: IDetail[] }) {
     const { details } = props
 
     return (
-        <DescriptionList orientation={{ sm: 'vertical', md: 'horizontal', lg: 'horizontal', xl: 'horizontal', '2xl': 'horizontal' }}>
+        <DescriptionList
+            orientation={{
+                sm: 'vertical',
+                md: 'horizontal',
+                lg: 'horizontal',
+                xl: 'horizontal',
+                '2xl': 'horizontal',
+            }}
+        >
             {details.map((detail, index) => {
                 if (isDetailText(detail)) {
                     if (!detail.text) return <></>
@@ -63,7 +71,9 @@ export function Details(props: { details: IDetail[] }) {
                     return (
                         <DescriptionListGroup key={index}>
                             <DescriptionListTerm>{detail.label}</DescriptionListTerm>
-                            <DescriptionListDescription id={detail.label.toLowerCase().split(' ').join('-')}>
+                            <DescriptionListDescription
+                                id={detail.label.toLowerCase().split(' ').join('-')}
+                            >
                                 <Split key={index}>
                                     {Icon && (
                                         <IconWrapper size="sm">
@@ -85,7 +95,9 @@ export function Details(props: { details: IDetail[] }) {
                                     ) : (
                                         detail.text
                                     )}
-                                    {detail.help && <Help title={detail.helpTitle} help={detail.help} />}
+                                    {detail.help && (
+                                        <Help title={detail.helpTitle} help={detail.help} />
+                                    )}
                                 </Split>
                             </DescriptionListDescription>
                         </DescriptionListGroup>
@@ -94,7 +106,9 @@ export function Details(props: { details: IDetail[] }) {
                     return (
                         <DescriptionListGroup key={index}>
                             <DescriptionListTerm>{detail.label}</DescriptionListTerm>
-                            <DescriptionListDescription id={detail.label.toLowerCase().split(' ').join('-')}>
+                            <DescriptionListDescription
+                                id={detail.label.toLowerCase().split(' ').join('-')}
+                            >
                                 <Stack hasGutter>
                                     {detail.items.map((item, index) => {
                                         const Icon = item.icon
@@ -102,7 +116,9 @@ export function Details(props: { details: IDetail[] }) {
                                             <Split key={index} hasGutter>
                                                 {Icon && <SplitItem>{item.icon}</SplitItem>}
                                                 <SplitItem>{item.text}</SplitItem>
-                                                {item.help && <Help title={item.helpTitle} help={item.help} />}
+                                                {item.help && (
+                                                    <Help title={item.helpTitle} help={item.help} />
+                                                )}
                                             </Split>
                                         )
                                     })}
@@ -123,7 +139,13 @@ export function DetailsList(props: { children?: ReactNode }) {
     const isCompact = false
     return (
         <DescriptionList
-            orientation={{ sm: orientation, md: orientation, lg: orientation, xl: orientation, '2xl': orientation }}
+            orientation={{
+                sm: orientation,
+                md: orientation,
+                lg: orientation,
+                xl: orientation,
+                '2xl': orientation,
+            }}
             columnModifier={
                 columns === 'multiple'
                     ? {
@@ -149,7 +171,9 @@ export function Detail(props: { label: string; children?: ReactNode }) {
     return (
         <DescriptionListGroup>
             <DescriptionListTerm>{props.label}</DescriptionListTerm>
-            <DescriptionListDescription id={props.label.toLowerCase().split(' ').join('-')}>{props.children}</DescriptionListDescription>
+            <DescriptionListDescription id={props.label.toLowerCase().split(' ').join('-')}>
+                {props.children}
+            </DescriptionListDescription>
         </DescriptionListGroup>
     )
 }

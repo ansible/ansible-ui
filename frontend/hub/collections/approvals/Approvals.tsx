@@ -22,7 +22,12 @@ export function Approvals() {
     const { t } = useTranslation()
     const toolbarFilters = useApprovalFilters()
     const tableColumns = useApprovalsColumns()
-    const view = useHubView<Approval>('/api/automation-hub/_ui/v1/collection-versions/', idKeyFn, toolbarFilters, tableColumns)
+    const view = useHubView<Approval>(
+        '/api/automation-hub/_ui/v1/collection-versions/',
+        idKeyFn,
+        toolbarFilters,
+        tableColumns
+    )
     const toolbarActions = useMemo<ITypedAction<Approval>[]>(
         () => [
             {

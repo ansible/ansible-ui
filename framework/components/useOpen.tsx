@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export function useOpen(props: { open?: boolean; setOpen?: (open: boolean) => void }): [boolean, (open: boolean) => void, () => void] {
+export function useOpen(props: {
+    open?: boolean
+    setOpen?: (open: boolean) => void
+}): [boolean, (open: boolean) => void, () => void] {
     const [open, setOpenState] = useState(() => props.open ?? false)
     useEffect(() => {
         if (props.open !== undefined) {

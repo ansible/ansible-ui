@@ -3,8 +3,20 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../common/columns'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
+import {
+    useCreatedColumn,
+    useDescriptionColumn,
+    useModifiedColumn,
+    useNameColumn,
+} from '../../../common/columns'
 import { RouteE } from '../../../Routes'
 import {
     useCreatedByToolbarFilter,
@@ -21,7 +33,11 @@ export function Inventories() {
     const navigate = useNavigate()
     const toolbarFilters = useInventoriesFilters()
     const tableColumns = useInventoriesColumns()
-    const view = useControllerView<Inventory>({ url: '/api/v2/inventories/', toolbarFilters, tableColumns })
+    const view = useControllerView<Inventory>({
+        url: '/api/v2/inventories/',
+        toolbarFilters,
+        tableColumns,
+    })
     const deleteInventories = useDeleteInventories((deleted: Inventory[]) => {
         for (const inventory of deleted) {
             view.unselectItem(inventory)
@@ -53,7 +69,8 @@ export function Inventories() {
             {
                 icon: EditIcon,
                 label: t('Edit inventory'),
-                onClick: (inventory) => navigate(RouteE.EditInventory.replace(':id', inventory.id.toString())),
+                onClick: (inventory) =>
+                    navigate(RouteE.EditInventory.replace(':id', inventory.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -95,8 +112,18 @@ export function useInventoriesFilters() {
     const createdByToolbarFilter = useCreatedByToolbarFilter()
     const modifiedByToolbarFilter = useModifiedByToolbarFilter()
     const toolbarFilters = useMemo<IToolbarFilter[]>(
-        () => [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-        [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+        () => [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ],
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
@@ -104,7 +131,8 @@ export function useInventoriesFilters() {
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const navigate = useNavigate()
     const nameClick = useCallback(
-        (inventory: Inventory) => navigate(RouteE.InventoryDetails.replace(':id', inventory.id.toString())),
+        (inventory: Inventory) =>
+            navigate(RouteE.InventoryDetails.replace(':id', inventory.id.toString())),
         [navigate]
     )
     const nameColumn = useNameColumn({

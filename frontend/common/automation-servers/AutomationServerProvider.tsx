@@ -1,6 +1,15 @@
 import { Type } from '@sinclair/typebox'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react'
 import { AutomationServer, AutomationServerType } from './AutomationServer'
 
 export const AutomationServersCompiler = TypeCompiler.Compile(Type.Array(AutomationServerType))
@@ -20,7 +29,8 @@ const AutomationServersContext = createContext<IAutomationServersContext>({
 })
 
 export function AutomationServersProvider(props: { children: ReactNode }) {
-    const [automationServers, setAutomationServers] = useState<AutomationServer[]>(loadAutomationServers)
+    const [automationServers, setAutomationServers] =
+        useState<AutomationServer[]>(loadAutomationServers)
     useEffect(() => saveAutomationServers(automationServers), [automationServers])
 
     const [automationServer, setAutomationServer] = useState<AutomationServer | undefined>(() => {
@@ -32,7 +42,11 @@ export function AutomationServersProvider(props: { children: ReactNode }) {
         () => ({ automationServers, setAutomationServers, automationServer, setAutomationServer }),
         [automationServer, automationServers]
     )
-    return <AutomationServersContext.Provider value={state}>{props.children}</AutomationServersContext.Provider>
+    return (
+        <AutomationServersContext.Provider value={state}>
+            {props.children}
+        </AutomationServersContext.Provider>
+    )
 }
 
 export function useAutomationServers() {
@@ -54,7 +68,9 @@ export function loadAutomationServers(): AutomationServer[] {
         servers.push({ name: 'Dev Controller', url: 'https://localhost:8043', type: 'controller' })
         servers.push({ name: 'Dev Hub', url: 'http://localhost:8002', type: 'hub' })
     }
-    servers = servers.filter((host, index, array) => array.findIndex((h) => h.url === host.url) === index)
+    servers = servers.filter(
+        (host, index, array) => array.findIndex((h) => h.url === host.url) === index
+    )
     return servers
 }
 

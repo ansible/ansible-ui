@@ -11,7 +11,10 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
     const [_, setDialog] = usePageDialog()
     const columns = useTeamsColumns({ disableLinks: true, disableSort: true })
     const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
-    const deleteActionOrganizationColumn = useOrganizationNameColumn({ disableLinks: true, disableSort: true })
+    const deleteActionOrganizationColumn = useOrganizationNameColumn({
+        disableLinks: true,
+        disableSort: true,
+    })
     const errorColumns = useMemo(
         () => [deleteActionNameColumn, deleteActionOrganizationColumn],
         [deleteActionNameColumn, deleteActionOrganizationColumn]
@@ -20,7 +23,9 @@ export function useDeleteTeams(callback: (teams: Team[]) => void) {
         setDialog(
             <BulkActionDialog<Team>
                 title={t('Permanently delete teams', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} teams.', { count: items.length })}
+                confirmText={t('Yes, I confirm that I want to delete these {{count}} teams.', {
+                    count: items.length,
+                })}
                 submitText={t('Delete teams', { count: items.length })}
                 submitting={t('Deleting teams', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} teams', { count: items.length })}

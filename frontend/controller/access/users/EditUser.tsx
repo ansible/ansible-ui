@@ -15,7 +15,11 @@ export function EditUser() {
     const params = useParams<{ id?: string }>()
     const id = Number(params.id)
 
-    const { data: user } = useSWR<User>(Number.isInteger(id) ? `/api/v2/users/${id.toString()}/` : undefined, requestGet, swrOptions)
+    const { data: user } = useSWR<User>(
+        Number.isInteger(id) ? `/api/v2/users/${id.toString()}/` : undefined,
+        requestGet,
+        swrOptions
+    )
 
     const EditUserSchema = Type.Object({
         username: Type.String({
@@ -36,12 +40,16 @@ export function EditUser() {
             options: [
                 {
                     label: t('System administrator'),
-                    description: t('can edit, change, and update any inventory or automation definition'),
+                    description: t(
+                        'can edit, change, and update any inventory or automation definition'
+                    ),
                     value: 'System administrator',
                 },
                 {
                     label: t('System auditor'),
-                    description: t('can see all aspects of the systems automation, but has no permission to run or change automation'),
+                    description: t(
+                        'can see all aspects of the systems automation, but has no permission to run or change automation'
+                    ),
                     value: 'System auditor',
                 },
                 {
@@ -129,7 +137,12 @@ export function EditUser() {
     if (!user) {
         return (
             <>
-                <PageHeader breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]} />
+                <PageHeader
+                    breadcrumbs={[
+                        { label: t('Users'), to: RouteE.Users },
+                        { label: t('Edit user') },
+                    ]}
+                />
             </>
         )
     } else {
@@ -138,11 +151,21 @@ export function EditUser() {
             lastName: user.last_name,
             firstName: user.first_name,
             email: user.email,
-            userType: user.is_superuser ? t('System administrator') : user.is_system_auditor ? t('System auditor') : t('Normal user'),
+            userType: user.is_superuser
+                ? t('System administrator')
+                : user.is_system_auditor
+                ? t('System auditor')
+                : t('Normal user'),
         }
         return (
             <>
-                <PageHeader title={t('Edit user')} breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]} />
+                <PageHeader
+                    title={t('Edit user')}
+                    breadcrumbs={[
+                        { label: t('Users'), to: RouteE.Users },
+                        { label: t('Edit user') },
+                    ]}
+                />
                 <PageBody>
                     <PageForm
                         schema={EditUserSchema}

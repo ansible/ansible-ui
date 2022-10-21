@@ -99,7 +99,9 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
     useEffect(() => {
         if (disableQueryString) return
         const newSearchParams = new URLSearchParams()
-        sortDirection === 'asc' ? newSearchParams.set('sort', sort) : newSearchParams.set('sort', `-${sort}`)
+        sortDirection === 'asc'
+            ? newSearchParams.set('sort', sort)
+            : newSearchParams.set('sort', `-${sort}`)
         newSearchParams.set('page', page.toString())
         newSearchParams.set('perPage', perPage.toString())
         for (const filter in filters) {

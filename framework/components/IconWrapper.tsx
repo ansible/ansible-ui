@@ -1,7 +1,12 @@
 import { Children, cloneElement, isValidElement, ReactNode } from 'react'
 import { getPatternflyColor, PatternFlyColor } from './patternfly-colors'
 
-export function IconWrapper(props: { children: ReactNode; color?: PatternFlyColor; size?: 'sm' | 'md' | 'lg'; noPadding?: boolean }) {
+export function IconWrapper(props: {
+    children: ReactNode
+    color?: PatternFlyColor
+    size?: 'sm' | 'md' | 'lg'
+    noPadding?: boolean
+}) {
     const newProps: {
         color?: string
         size?: string
@@ -38,5 +43,9 @@ export function IconWrapper(props: { children: ReactNode; color?: PatternFlyColo
             return child
         }
     })
-    return <div style={{ marginTop: marginOffset, marginBottom: marginOffset, marginRight }}>{newChildren}</div>
+    return (
+        <div style={{ marginTop: marginOffset, marginBottom: marginOffset, marginRight }}>
+            {newChildren}
+        </div>
+    )
 }

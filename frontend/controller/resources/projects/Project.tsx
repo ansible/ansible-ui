@@ -44,7 +44,21 @@ export interface Project {
             last_name: string
         }
 
-        last_job: { id: number; name: string; description: string; finished: string; failed: boolean; status: 'successful' }
-        last_update: { id: number; name: string; description: string; finished: string; failed: boolean; status: 'successful' }
+        last_job: {
+            id: number
+            name: string
+            description: string
+            finished: string
+            failed: boolean
+            status: 'successful'
+        }
+        last_update: {
+            id: number
+            name: string
+            description: string
+            finished: string
+            failed: boolean
+            status: 'successful'
+        }
     }
 }

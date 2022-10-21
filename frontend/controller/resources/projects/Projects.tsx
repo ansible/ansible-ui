@@ -3,7 +3,14 @@ import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IItemAction, ITableColumn, IToolbarFilter, ITypedAction, TablePage, TypedActionType } from '../../../../framework'
+import {
+    IItemAction,
+    ITableColumn,
+    IToolbarFilter,
+    ITypedAction,
+    TablePage,
+    TypedActionType,
+} from '../../../../framework'
 import {
     useCreatedColumn,
     useDescriptionColumn,
@@ -28,7 +35,11 @@ export function Projects() {
     const navigate = useNavigate()
     const toolbarFilters = useProjectsFilters()
     const tableColumns = useProjectsColumns()
-    const view = useControllerView<Project>({ url: '/api/v2/projects/', toolbarFilters, tableColumns })
+    const view = useControllerView<Project>({
+        url: '/api/v2/projects/',
+        toolbarFilters,
+        tableColumns,
+    })
     const deleteProjects = useDeleteProjects((deleted: Project[]) => {
         for (const project of deleted) {
             view.unselectItem(project)
@@ -60,7 +71,8 @@ export function Projects() {
             {
                 icon: EditIcon,
                 label: t('Edit project'),
-                onClick: (project) => navigate(RouteE.EditProject.replace(':id', project.id.toString())),
+                onClick: (project) =>
+                    navigate(RouteE.EditProject.replace(':id', project.id.toString())),
             },
             {
                 icon: TrashIcon,
@@ -119,7 +131,13 @@ export function useProjectsFilters() {
             createdByToolbarFilter,
             modifiedByToolbarFilter,
         ],
-        [nameToolbarFilter, descriptionToolbarFilter, t, createdByToolbarFilter, modifiedByToolbarFilter]
+        [
+            nameToolbarFilter,
+            descriptionToolbarFilter,
+            t,
+            createdByToolbarFilter,
+            modifiedByToolbarFilter,
+        ]
     )
     return toolbarFilters
 }
@@ -127,7 +145,10 @@ export function useProjectsFilters() {
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
     const { t } = useTranslation()
     const navigate = useNavigate()
-    const nameClick = useCallback((project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())), [navigate])
+    const nameClick = useCallback(
+        (project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())),
+        [navigate]
+    )
     const nameColumn = useNameColumn({ ...options, onClick: nameClick })
     const descriptionColumn = useDescriptionColumn()
     const organizationColumn = useOrganizationNameColumn(options)

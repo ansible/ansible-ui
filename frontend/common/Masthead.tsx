@@ -28,7 +28,13 @@ import {
     ToolbarItem,
     Truncate,
 } from '@patternfly/react-core'
-import { BarsIcon, CogIcon, QuestionCircleIcon, RedhatIcon, UserCircleIcon } from '@patternfly/react-icons'
+import {
+    BarsIcon,
+    CogIcon,
+    QuestionCircleIcon,
+    RedhatIcon,
+    UserCircleIcon,
+} from '@patternfly/react-icons'
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -57,7 +63,11 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                         {controllers.map((server) => (
                             <ApplicationLauncherItem
                                 key={server.name}
-                                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
+                                onClick={() =>
+                                    navigate(
+                                        RouteE.Login + '?server=' + encodeURIComponent(server.url)
+                                    )
+                                }
                             >
                                 <Stack>
                                     {server.name}
@@ -77,7 +87,11 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
                         {hubs.map((server) => (
                             <ApplicationLauncherItem
                                 key={server.name}
-                                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
+                                onClick={() =>
+                                    navigate(
+                                        RouteE.Login + '?server=' + encodeURIComponent(server.url)
+                                    )
+                                }
                             >
                                 <Stack>
                                     {server.name}
@@ -104,7 +118,10 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
     )
 }
 
-export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
+export function AnsibleMasthead(props: {
+    isNavOpen: boolean
+    setNavOpen: (open: boolean) => void
+}) {
     const isSmallOrLarger = useBreakpoint('sm')
     const { t } = useTranslation()
     const openSettings = useSettingsDialog(t)
@@ -125,21 +142,35 @@ export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: 
                                 <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
                             </div>
                             <div style={{ color: 'white', textDecoration: 'none' }}>
-                                <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
+                                <Title
+                                    headingLevel="h4"
+                                    style={{ fontWeight: 'bold', lineHeight: 1.2 }}
+                                >
                                     {t('Red Hat')}
                                 </Title>
-                                <Title headingLevel="h3" style={{ fontWeight: 'lighter', lineHeight: 1.2 }}>
-                                    <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
+                                <Title
+                                    headingLevel="h3"
+                                    style={{ fontWeight: 'lighter', lineHeight: 1.2 }}
+                                >
+                                    <Truncate
+                                        content={t('Ansible Automation Platform')}
+                                        style={{ minWidth: 0 }}
+                                    />
                                 </Title>
                             </div>
                         </div>
                     </MastheadBrand>
                 </MastheadMain>
             ) : (
-                <MastheadMain style={{ marginRight: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
+                <MastheadMain
+                    style={{ marginRight: 0, minHeight: isSmallOrLarger ? undefined : 0 }}
+                >
                     <MastheadBrand>
                         <Title headingLevel="h3" style={{ color: 'white' }}>
-                            <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0, marginLeft: -8 }} />
+                            <Truncate
+                                content={t('Ansible Automation Platform')}
+                                style={{ minWidth: 0, marginLeft: -8 }}
+                            />
                         </Title>
                     </MastheadBrand>
                 </MastheadMain>
@@ -165,7 +196,10 @@ export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: 
                                 <ApplicationLauncherBasic />
                             </ToolbarItem>
 
-                            <ToolbarGroup variant="icon-button-group" visibility={{ default: 'hidden', lg: 'visible' }}>
+                            <ToolbarGroup
+                                variant="icon-button-group"
+                                visibility={{ default: 'hidden', lg: 'visible' }}
+                            >
                                 {/* <ToolbarItem>
                                     <AppBarDropdown icon={<CogIcon />}>
                                         <DropdownGroup label="Theme">
@@ -185,7 +219,11 @@ export function AnsibleMasthead(props: { isNavOpen: boolean; setNavOpen: (open: 
                                     </AppBarDropdown>
                                 </ToolbarItem> */}
                                 <ToolbarItem>
-                                    <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings}></Button>
+                                    <Button
+                                        icon={<CogIcon />}
+                                        variant={ButtonVariant.plain}
+                                        onClick={openSettings}
+                                    ></Button>
                                 </ToolbarItem>
                                 <ToolbarItem>
                                     <AppBarDropdown icon={<QuestionCircleIcon />}>
@@ -267,7 +305,11 @@ function AccountDropdown() {
 function AccountDropdownInternal() {
     const isSmallOrLarger = useBreakpoint('sm')
     const fetcher = useFetcher()
-    const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
+    const meResponse = useSWR<{ results: { username: string }[] }>(
+        '/api/v2/me/',
+        fetcher,
+        swrOptions
+    )
     const history = useNavigate()
     const [open, setOpen] = useState(false)
     const onSelect = useCallback(() => {
@@ -281,12 +323,23 @@ function AccountDropdownInternal() {
         <Dropdown
             onSelect={onSelect}
             toggle={
-                <DropdownToggle toggleIndicator={null} onToggle={onToggle} style={{ paddingRight: 0, paddingLeft: 8 }}>
-                    <Flex alignItems={{ default: 'alignItemsCenter' }} flexWrap={{ default: 'nowrap' }}>
+                <DropdownToggle
+                    toggleIndicator={null}
+                    onToggle={onToggle}
+                    style={{ paddingRight: 0, paddingLeft: 8 }}
+                >
+                    <Flex
+                        alignItems={{ default: 'alignItemsCenter' }}
+                        flexWrap={{ default: 'nowrap' }}
+                    >
                         <FlexItem>
                             <UserCircleIcon size="md" />
                         </FlexItem>
-                        {isSmallOrLarger && <FlexItem wrap="nowrap">{meResponse.data?.results?.[0]?.username}</FlexItem>}
+                        {isSmallOrLarger && (
+                            <FlexItem wrap="nowrap">
+                                {meResponse.data?.results?.[0]?.username}
+                            </FlexItem>
+                        )}
                     </Flex>
                 </DropdownToggle>
             }

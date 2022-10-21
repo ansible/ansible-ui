@@ -25,7 +25,8 @@ import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
-export type DataListPageProps<T extends object> = PageHeaderProps & PageDataListProps<T> & { error?: Error }
+export type DataListPageProps<T extends object> = PageHeaderProps &
+    PageDataListProps<T> & { error?: Error }
 
 export function DataListPage<T extends object>(props: DataListPageProps<T>) {
     return (
@@ -103,14 +104,19 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
         error,
         dataCells,
     } = props
-    const showSelect = toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !== undefined
+    const showSelect =
+        toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+        undefined
     const settings = useSettings()
 
     if (error) {
         return (
             <div
                 style={{
-                    backgroundColor: settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                    backgroundColor:
+                        settings.theme === 'dark'
+                            ? 'var(--pf-global--BackgroundColor--300)'
+                            : undefined,
                     height: '100%',
                 }}
             >
@@ -120,7 +126,10 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                         paddingTop: 64,
                     }}
                 >
-                    <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
+                    <EmptyStateIcon
+                        icon={ExclamationCircleIcon}
+                        color="var(--pf-global--danger-color--100)"
+                    />
                     <Title headingLevel="h2" size="lg">
                         {/* Unable to connect */}
                         {props.errorStateTitle}
@@ -139,7 +148,9 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                 <Title headingLevel="h4" size="lg">
                     {props.emptyStateTitle}
                 </Title>
-                {props.emptyStateDescription && <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>}
+                {props.emptyStateDescription && (
+                    <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+                )}
                 {props.emptyStateButtonClick && (
                     <Button variant="primary" onClick={props.emptyStateButtonClick}>
                         {props.emptyStateButtonText}
@@ -173,7 +184,10 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                                 )}
                                 <DataListItemCells
                                     dataListCells={dataCells.map((dataCell, index) => (
-                                        <DataListCell width={index === 0 ? 5 : 1} key="primary content">
+                                        <DataListCell
+                                            width={index === 0 ? 5 : 1}
+                                            key="primary content"
+                                        >
                                             <span id="simple-item1">{dataCell(item)}</span>
                                         </DataListCell>
                                     ))}
@@ -184,7 +198,9 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                     ))}
                 </DataList>
             </Scrollable>
-            {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
+            {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && (
+                <PagePagination {...props} />
+            )}
         </Fragment>
     )
 }

@@ -16,7 +16,10 @@ export function useDeleteCredentials(callback: (credentials: Credential[]) => vo
         setDialog(
             <BulkActionDialog<Credential>
                 title={t('Permanently delete credentials', { count: items.length })}
-                confirmText={t('Yes, I confirm that I want to delete these {{count}} credentials.', { count: items.length })}
+                confirmText={t(
+                    'Yes, I confirm that I want to delete these {{count}} credentials.',
+                    { count: items.length }
+                )}
                 submitText={t('Delete credentials', { count: items.length })}
                 submitting={t('Deleting credentials', { count: items.length })}
                 submittingTitle={t('Deleting {{count}} credentials', { count: items.length })}
@@ -27,7 +30,9 @@ export function useDeleteCredentials(callback: (credentials: Credential[]) => vo
                 columns={columns}
                 errorColumns={errorColumns}
                 onClose={callback}
-                action={(credential: Credential) => requestDelete(`/api/v2/credentials/${credential.id}/`)}
+                action={(credential: Credential) =>
+                    requestDelete(`/api/v2/credentials/${credential.id}/`)
+                }
             />
         )
     }

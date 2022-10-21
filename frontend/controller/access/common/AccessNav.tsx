@@ -9,7 +9,10 @@ export function AccessNav(props: { active: 'organizations' | 'teams' | 'users' }
     return (
         <Nav aria-label="TODO" variant="tertiary">
             <NavList>
-                <NavItem onClick={() => navigate(RouteE.Organizations)} isActive={props.active === 'organizations'}>
+                <NavItem
+                    onClick={() => navigate(RouteE.Organizations)}
+                    isActive={props.active === 'organizations'}
+                >
                     {t('Organizations')}
                 </NavItem>
                 <NavItem onClick={() => navigate(RouteE.Teams)} isActive={props.active === 'teams'}>

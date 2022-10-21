@@ -20,7 +20,10 @@ export function useControllerView<T extends { id: number }>(options: {
 }): IControllerView<T> {
     let { url } = options
     const { toolbarFilters, tableColumns, disableQueryString } = options
-    const view = useView({ sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined }, disableQueryString)
+    const view = useView(
+        { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+        disableQueryString
+    )
     const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
     const { page, perPage, sort, sortDirection, filters } = view
@@ -35,7 +38,9 @@ export function useControllerView<T extends { id: number }>(options: {
                 if (values.length > 0) {
                     queryString ? (queryString += '&') : (queryString += '?')
                     if (values.length > 1) {
-                        queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
+                        queryString += values
+                            .map((value) => `or__${toolbarFilter.query}=${value}`)
+                            .join('&')
                     } else {
                         queryString += `${toolbarFilter.query}=${values.join(',')}`
                     }
