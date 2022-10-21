@@ -5,13 +5,13 @@ import { HubRouter } from './HubRouter'
 import { HubSidebar } from './HubSidebar'
 
 export function Hub() {
-    const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
-    return (
-        <Page
-            header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-            sidebar={<HubSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
-        >
-            <HubRouter />
-        </Page>
-    )
+  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
+  return (
+    <Page
+      header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+      sidebar={<HubSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
+    >
+      <HubRouter />
+    </Page>
+  )
 }

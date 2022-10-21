@@ -7,101 +7,101 @@ import { RouteE } from './Routes'
 export const headers: Record<string, string> = {}
 
 function initHeaders() {
-    const server = localStorage.getItem('server')
-    if (typeof server === 'string') {
-        headers['x-server'] = server
-    }
+  const server = localStorage.getItem('server')
+  if (typeof server === 'string') {
+    headers['x-server'] = server
+  }
 }
 initHeaders()
 
 export async function requestHead<ResponseBody>(url: string): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, {}, ky.head)
+  return requestCommon<ResponseBody>(url, {}, ky.head)
 }
 
 export async function requestOptions<ResponseBody>(url: string): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get)
+  return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get)
 }
 
 export async function requestGet<ResponseBody>(url: string): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, {}, ky.get)
+  return requestCommon<ResponseBody>(url, {}, ky.get)
 }
 
 export async function requestPut<ResponseBody, RequestBody = unknown>(
-    url: string,
-    json: RequestBody
+  url: string,
+  json: RequestBody
 ): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { json }, ky.put)
+  return requestCommon<ResponseBody>(url, { json }, ky.put)
 }
 
 export async function requestPost<ResponseBody, RequestBody = unknown>(
-    url: string,
-    json: RequestBody,
-    signal?: AbortSignal
+  url: string,
+  json: RequestBody,
+  signal?: AbortSignal
 ): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
+  return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
-    url: string,
-    json: RequestBody
+  url: string,
+  json: RequestBody
 ): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { json }, ky.patch)
+  return requestCommon<ResponseBody>(url, { json }, ky.patch)
 }
 
 export async function requestDelete<ResponseBody>(
-    url: string,
-    signal?: AbortSignal
+  url: string,
+  signal?: AbortSignal
 ): Promise<ResponseBody> {
-    return requestCommon<ResponseBody>(url, { signal }, ky.delete)
+  return requestCommon<ResponseBody>(url, { signal }, ky.delete)
 }
 
 async function requestCommon<ResponseBody>(
-    url: string,
-    options: Options,
-    methodFn: (input: Input, options: Options) => ResponsePromise
+  url: string,
+  options: Options,
+  methodFn: (input: Input, options: Options) => ResponsePromise
 ) {
-    if (process.env.DELAY)
-        await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
-    try {
-        const result = await methodFn(url, {
-            ...options,
-            credentials: 'include',
-            headers: { ...headers, ...(options.headers ?? {}) },
-        }).json<ResponseBody>()
-        // if (process.env.NODE_ENV === 'development') {
-        //     console.debug(result)
-        // }
-        return result
-    } catch (err) {
-        // if (process.env.NODE_ENV === 'development') {
-        //     console.error(err)
-        // }
-        if (err instanceof HTTPError) {
-            switch (err.response.status) {
-                case 401:
-                    location.replace(RouteE.Login)
-                    break
-            }
-        }
-        throw err
+  if (process.env.DELAY)
+    await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
+  try {
+    const result = await methodFn(url, {
+      ...options,
+      credentials: 'include',
+      headers: { ...headers, ...(options.headers ?? {}) },
+    }).json<ResponseBody>()
+    // if (process.env.NODE_ENV === 'development') {
+    //     console.debug(result)
+    // }
+    return result
+  } catch (err) {
+    // if (process.env.NODE_ENV === 'development') {
+    //     console.error(err)
+    // }
+    if (err instanceof HTTPError) {
+      switch (err.response.status) {
+        case 401:
+          location.replace(RouteE.Login)
+          break
+      }
     }
+    throw err
+  }
 }
 
 export function useFetcher() {
-    return requestGet
+  return requestGet
 }
 
 export interface ItemsResponse<T> {
-    count: number
-    next?: string | null
-    previous?: string | null
-    results: T[]
+  count: number
+  next?: string | null
+  previous?: string | null
+  results: T[]
 }
 
 export function getItemKey(item: { id: number }) {
-    return item.id.toString()
+  return item.id.toString()
 }
 
 export const swrOptions: SWRConfiguration = {
-    dedupingInterval: 0,
+  dedupingInterval: 0,
 }

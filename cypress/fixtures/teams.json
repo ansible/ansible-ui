@@ -1,67 +1,67 @@
 {
-    "count": 1,
-    "next": null,
-    "previous": null,
-    "results": [
-        {
-            "id": 1,
-            "type": "team",
-            "name": "Team 001",
-            "organization": 1,
-            "summary_fields": {
-                "organization": {
-                    "id": 1,
-                    "name": "Default"
-                }
-            }
-        },
-        {
-            "id": 2,
-            "type": "team",
-            "name": "Team 002",
-            "organization": 1,
-            "summary_fields": {
-                "organization": {
-                    "id": 1,
-                    "name": "Default"
-                }
-            }
-        },
-        {
-            "id": 3,
-            "type": "team",
-            "name": "Team 003",
-            "organization": 1,
-            "summary_fields": {
-                "organization": {
-                    "id": 1,
-                    "name": "Default"
-                }
-            }
-        },
-        {
-            "id": 4,
-            "type": "team",
-            "name": "Team 004",
-            "organization": 1,
-            "summary_fields": {
-                "organization": {
-                    "id": 1,
-                    "name": "Default"
-                }
-            }
-        },
-        {
-            "id": 5,
-            "type": "team",
-            "name": "Team 005",
-            "organization": 1,
-            "summary_fields": {
-                "organization": {
-                    "id": 1,
-                    "name": "Default"
-                }
-            }
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "team",
+      "name": "Team 001",
+      "organization": 1,
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default"
         }
-    ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "team",
+      "name": "Team 002",
+      "organization": 1,
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "team",
+      "name": "Team 003",
+      "organization": 1,
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "team",
+      "name": "Team 004",
+      "organization": 1,
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "team",
+      "name": "Team 005",
+      "organization": 1,
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default"
+        }
+      }
+    }
+  ]
 }

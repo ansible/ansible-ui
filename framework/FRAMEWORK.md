@@ -6,12 +6,12 @@ The framework is made up of high level components using PatternFly components un
 This allows the framework to adjust the web application for responsive layout.
 Basic structure of the framework can be seen in the tree below.
 
--   [PageLayout](#pagelayout)
-    -   [PageHeader](#pageheader)
-    -   [PageBody](#pagebody)
-        -   [PageTable](#pagetable)
-        -   [PageTabs](#pagetabs)
-        -   [PageForm](#pageform)
+- [PageLayout](#pagelayout)
+  - [PageHeader](#pageheader)
+  - [PageBody](#pagebody)
+    - [PageTable](#pagetable)
+    - [PageTabs](#pagetabs)
+    - [PageForm](#pageform)
 
 ## PageLayout
 
@@ -34,13 +34,13 @@ The PageHeader is used at the start of each page. It provides a consistent layou
 
 ```tsx
 <Page>
-    <PageHeader
-        breadcrumbs={breadcrumbs}
-        title="Page title"
-        titleHelp="Page title popover description."
-        description="Page description"
-        headerActions={actions}
-    />
+  <PageHeader
+    breadcrumbs={breadcrumbs}
+    title="Page title"
+    titleHelp="Page title popover description."
+    description="Page description"
+    headerActions={actions}
+  />
 </Page>
 ```
 
@@ -64,11 +64,11 @@ The page table handles the logic for tables on a page.
 
 ```tsx
 <PageTable<User>
-    toolbarFilters={toolbarFilters}
-    toolbarActions={toolbarActions}
-    tableColumns={tableColumns}
-    rowActions={rowActions}
-    {...view}
+  toolbarFilters={toolbarFilters}
+  toolbarActions={toolbarActions}
+  tableColumns={tableColumns}
+  rowActions={rowActions}
+  {...view}
 />
 ```
 
