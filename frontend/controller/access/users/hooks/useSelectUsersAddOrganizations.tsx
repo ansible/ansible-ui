@@ -8,17 +8,17 @@ import { useSelectUsers } from './useSelectUsers'
 export function useSelectUsersAddOrganizations(onClose?: (users: User[]) => void) {
   const { t } = useTranslation()
   const selectUsers = useSelectUsers()
-  const addUsersToOrganizations = useAddUsersToOrganizations()
+  const addUsersToOrganizations = useAddUsersToOrganizations(onClose)
   const selectUsersAddOrganizations = useCallback(
     (organizations: Organization[]) => {
       selectUsers(
         t('Add users to organizations', { count: organizations.length }),
         (users: User[]) => {
-          addUsersToOrganizations(users, organizations, onClose)
+          addUsersToOrganizations(users, organizations)
         }
       )
     },
-    [addUsersToOrganizations, onClose, selectUsers, t]
+    [addUsersToOrganizations, selectUsers, t]
   )
   return selectUsersAddOrganizations
 }

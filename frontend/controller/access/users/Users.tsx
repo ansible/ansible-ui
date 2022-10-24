@@ -115,6 +115,7 @@ export function Users() {
     () => [
       {
         type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),

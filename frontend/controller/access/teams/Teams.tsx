@@ -95,6 +95,7 @@ export function Teams() {
     () => [
       {
         type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit team'),
         onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),

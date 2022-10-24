@@ -178,6 +178,7 @@ export function TypedActionButton<T extends object>(props: {
   selectedItem?: T
   wrapper?: ComponentClass | FunctionComponent
   noPrimary?: boolean
+  iconOnly?: boolean
 }) {
   const { action, selectedItems, selectedItem, wrapper, noPrimary } = props
   const Wrapper = wrapper ?? Fragment
@@ -196,6 +197,9 @@ export function TypedActionButton<T extends object>(props: {
       if (variant === ButtonVariant.primary && action.isDanger) {
         variant = ButtonVariant.danger
       }
+      if (props.iconOnly) {
+        variant = ButtonVariant.plain
+      }
       return (
         <Wrapper>
           <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
@@ -212,7 +216,13 @@ export function TypedActionButton<T extends object>(props: {
               onClick={() => selectedItem && action.onClick(selectedItem)}
               isDanger={action.isDanger}
             >
-              {action.shortLabel ? action.shortLabel : action.label}
+              {props.iconOnly && Icon ? (
+                <Icon />
+              ) : action.shortLabel ? (
+                action.shortLabel
+              ) : (
+                action.label
+              )}
             </Button>
           </Tooltip>
         </Wrapper>
@@ -425,7 +435,13 @@ export function useTypedActionsToTableActions<T extends object>(props: {
           }
         case TypedActionType.single:
           return {
-            title: <TypedActionButton action={buttonAction} selectedItem={props.item} />,
+            title: (
+              <TypedActionButton
+                action={{ ...buttonAction, tooltip: buttonAction.label }}
+                selectedItem={props.item}
+                iconOnly
+              />
+            ),
             isOutsideDropdown: true,
           }
         case TypedActionType.bulk:
