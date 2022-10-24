@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAddTeamsToUsers } from '../../teams/hooks/useAddTeamsToUsers'
-import { useSelectTeams } from '../../teams/hooks/useSelectTeams'
-import { Team } from '../../teams/Team'
-import { User } from '../User'
+import { User } from '../../users/User'
+import { Team } from '../Team'
+import { useAddTeamsToUsers } from './useAddTeamsToUsers'
+import { useSelectTeams } from './useSelectTeams'
 
 export function useSelectTeamsAddUsers(onClose?: (teams: Team[]) => void) {
   const { t } = useTranslation()

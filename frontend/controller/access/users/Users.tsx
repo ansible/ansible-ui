@@ -27,11 +27,11 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
+import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers'
+import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
+import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useSelectOrganizationsAddUsers } from './hooks/useSelectOrganizationsAddUsers'
-import { useSelectOrganizationsRemoveUsers } from './hooks/useSelectOrganizationsRemoveUsers'
-import { useSelectTeamsAddUsers } from './hooks/useSelectTeamsAddUsers'
-import { useSelectTeamsRemoveUsers } from './hooks/useSelectTeamsRemoveUsers'
 import { User } from './User'
 
 export function Users() {

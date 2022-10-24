@@ -5,11 +5,11 @@ import { requestPost } from '../../../../Data'
 import { Team } from '../../teams/Team'
 import { User } from '../User'
 
-export function useAddUsersToTeams(onClose?: (users: User[]) => void) {
+export function useAddUsersToTeams() {
   const { t } = useTranslation()
   const userProgressDialog = useBulkProgressDialog<User>()
   const addUserToTeams = useCallback(
-    (users: User[], teams: Team[]) => {
+    (users: User[], teams: Team[], onClose?: (users: User[]) => void) => {
       userProgressDialog({
         title: t('Adding users to teams', {
           count: teams.length,
@@ -36,7 +36,7 @@ export function useAddUsersToTeams(onClose?: (users: User[]) => void) {
         onClose: onClose,
       })
     },
-    [userProgressDialog, t, onClose]
+    [userProgressDialog, t]
   )
   return addUserToTeams
 }

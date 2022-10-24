@@ -84,11 +84,13 @@ export function EditTeam() {
       let team: Team
       if (Number.isInteger(id)) {
         team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam)
+        ;(cache as unknown as { clear: () => void }).clear?.()
+        navigate(-1)
       } else {
         team = await requestPost<Team>('/api/v2/teams/', editedTeam)
+        ;(cache as unknown as { clear: () => void }).clear?.()
+        navigate(RouteE.TeamDetails.replace(':id', team.id.toString()))
       }
-      ;(cache as unknown as { clear: () => void }).clear?.()
-      navigate(RouteE.TeamDetails.replace(':id', team.id.toString()))
     } catch (err) {
       setError(await getControllerError(err))
     }

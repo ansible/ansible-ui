@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSelectOrganizations } from '../../organizations/hooks/useSelectOrganizations'
-import { Organization } from '../../organizations/Organization'
-import { User } from '../User'
-import { useRemoveUsersFromOrganizations } from './useRemoveUsersFromOrganizations'
+import { useRemoveUsersFromOrganizations } from '../../users/hooks/useRemoveUsersFromOrganizations'
+import { User } from '../../users/User'
+import { Organization } from '../Organization'
+import { useSelectOrganizations } from './useSelectOrganizations'
 
 export function useSelectOrganizationsRemoveUsers(onClose?: () => void) {
   const { t } = useTranslation()

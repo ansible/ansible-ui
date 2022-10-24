@@ -5,11 +5,11 @@ import { requestPost } from '../../../../Data'
 import { Team } from '../../teams/Team'
 import { User } from '../User'
 
-export function useRemoveUsersFromTeams(onClose?: () => void) {
+export function useRemoveUsersFromTeams() {
   const { t } = useTranslation()
   const userProgressDialog = useBulkProgressDialog<User>()
   const removeUserToTeams = useCallback(
-    (users: User[], teams: Team[]) => {
+    (users: User[], teams: Team[], onClose?: (users: User[]) => void) => {
       userProgressDialog({
         title: t('Removing users from teams', {
           count: teams.length,
@@ -36,7 +36,7 @@ export function useRemoveUsersFromTeams(onClose?: () => void) {
         onClose: onClose,
       })
     },
-    [onClose, userProgressDialog, t]
+    [userProgressDialog, t]
   )
   return removeUserToTeams
 }

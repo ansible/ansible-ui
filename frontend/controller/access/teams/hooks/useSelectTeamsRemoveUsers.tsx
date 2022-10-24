@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUsers'
-import { useSelectTeams } from '../../teams/hooks/useSelectTeams'
-import { Team } from '../../teams/Team'
-import { User } from '../User'
+import { User } from '../../users/User'
+import { Team } from '../Team'
+import { useRemoveTeamsFromUsers } from './useRemoveTeamsFromUsers'
+import { useSelectTeams } from './useSelectTeams'
 
-export function useSelectTeamsRemoveUsers(onClose?: () => void) {
+export function useSelectTeamsRemoveUsers(onClose?: (teams: Team[]) => void) {
   const { t } = useTranslation()
   const selectTeams = useSelectTeams()
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(onClose)
