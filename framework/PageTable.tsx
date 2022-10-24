@@ -525,43 +525,12 @@ function TableCells<T extends object>(props: {
   scrollLeft?: boolean
   scrollRight?: boolean
 }) {
-  // const md = useBreakpoint('xl')
-
   const { columns, item, rowActions, rowIndex } = props
   const actions = useTypedActionsToTableActions({
     actions: rowActions ?? [],
     item,
     collapse: 'xxl',
   })
-  // const actions: IAction[] | undefined = useMemo(
-  //   () =>
-  //     rowActions?.map((rowAction) => {
-  //       switch (rowAction.type) {
-  //         case TypedActionType.seperator:
-  //           return { isSeparator: true }
-  //       }
-  //       if (isItemActionClick(rowAction)) {
-  //         const Icon = rowAction.icon
-  //         return {
-  //           title: (
-  //             <Split hasGutter>
-  //               {Icon && (
-  //                 <SplitItem>
-  //                   <Icon />
-  //                 </SplitItem>
-  //               )}
-  //               <SplitItem>{rowAction.label}</SplitItem>
-  //             </Split>
-  //           ),
-  //           onClick: () => {
-  //             rowAction.onClick(item)
-  //           },
-  //         }
-  //       }
-  //       return { isSeparator: true }
-  //     }),
-  //   [item, rowActions]
-  // )
   return (
     <Fragment>
       {columns
