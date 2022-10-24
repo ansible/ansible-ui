@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -30,8 +29,8 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useDeleteTeams } from './hooks/useDeleteTeams'
 import { Team } from './Team'
-import { useDeleteTeams } from './useDeleteTeams'
 
 export function Teams() {
   const { t } = useTranslation()
@@ -69,14 +68,16 @@ export function Teams() {
     [deleteTeams, navigate, t]
   )
 
-  const rowActions = useMemo<IItemAction<Team>[]>(
+  const rowActions = useMemo<ITypedAction<Team>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit team'),
         onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete team'),
         onClick: (team) => deleteTeams([team]),

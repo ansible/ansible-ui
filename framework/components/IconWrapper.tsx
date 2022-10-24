@@ -20,15 +20,15 @@ export function IconWrapper(props: {
     newProps.size = props.size
     switch (props.size) {
       case 'sm':
-        marginRight = 8
+        marginRight = 6
         break
       case 'md':
         marginOffset = -2
-        marginRight = 12
+        marginRight = 6
         break
       case 'lg':
         marginOffset = -6
-        marginRight = 16
+        marginRight = 6
         break
     }
   }

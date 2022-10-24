@@ -8,8 +8,8 @@ import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { getControllerError } from '../../useControllerView'
+import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
 import { Organization } from '../organizations/Organization'
-import { useSelectOrganization } from '../organizations/useSelectOrganization'
 import { Team } from './Team'
 
 export function EditTeam() {

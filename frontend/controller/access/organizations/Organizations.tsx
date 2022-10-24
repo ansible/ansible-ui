@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -27,8 +26,8 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
 import { Organization } from './Organization'
-import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function Organizations() {
   const { t } = useTranslation()
@@ -70,15 +69,17 @@ export function Organizations() {
     [navigate, deleteOrganizations, t]
   )
 
-  const rowActions = useMemo<IItemAction<Organization>[]>(
+  const rowActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: (organization) =>
           navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => deleteOrganizations([organization]),

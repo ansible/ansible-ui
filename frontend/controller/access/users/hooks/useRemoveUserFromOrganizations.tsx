@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
+import { useSelectOrganizations } from '../../organizations/hooks/useSelectOrganizations'
 import { Organization } from '../../organizations/Organization'
 import { User } from '../User'
 
@@ -39,4 +40,22 @@ export function useRemoveUserFromOrganizations(onClose?: () => void) {
     [onClose, openBulkProgressDialog, t]
   )
   return openRemoveUserFromOrganizations
+}
+
+export function useSelectOrganizationsRemoveUser(onClose?: () => void) {
+  const { t } = useTranslation()
+  const openSelectOrganizations = useSelectOrganizations()
+  const removeUserFromSelectedOrganizations = useRemoveUserFromOrganizations(onClose)
+  const openRemoveUsersToOrganizations = useCallback(
+    (user: User) => {
+      openSelectOrganizations(
+        t('Remove user from organizations'),
+        (organizations: Organization[]) => {
+          removeUserFromSelectedOrganizations(user, organizations)
+        }
+      )
+    },
+    [openSelectOrganizations, removeUserFromSelectedOrganizations, t]
+  )
+  return openRemoveUsersToOrganizations
 }

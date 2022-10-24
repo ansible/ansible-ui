@@ -1,6 +1,7 @@
 import {
   Alert,
   ButtonVariant,
+  Divider,
   DropdownPosition,
   PageSection,
   Skeleton,
@@ -13,7 +14,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   Detail,
   DetailsList,
-  IItemAction,
   ITypedAction,
   PageBody,
   PageHeader,
@@ -25,6 +25,7 @@ import {
   TypedActions,
   TypedActionType,
 } from '../../../../framework'
+import { DetailInfo } from '../../../../framework/components/DetailInfo'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
@@ -36,9 +37,11 @@ import { Role } from '../roles/Role'
 import { useRolesColumns, useRolesFilters } from '../roles/Roles'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { useAddUserToOrganizations } from './hooks/useAddUserToOrganizations'
+import { useAddUserToTeams } from './hooks/useAddUserToTeams'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
 import { useRemoveUserFromOrganizations } from './hooks/useRemoveUserFromOrganizations'
+import { useRemoveUserFromSelectedTeams } from './hooks/useRemoveUserFromTeams'
+import { useSelectOrganizationsAddUser } from './hooks/useSelectOrganizationsAddUser'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -137,6 +140,14 @@ function UserDetails(props: { user: User }) {
   const settings = useSettings()
   return (
     <>
+      {user.is_superuser && (
+        <Alert
+          variant="info"
+          title={t('System administrators have unrestricted access to all resources.')}
+          isInline
+          style={{ border: 0 }}
+        />
+      )}
       <Scrollable>
         <PageSection
           variant="light"
@@ -176,8 +187,11 @@ function UserOrganizations(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const addUserToOrganizations = useAddUserToOrganizations(() => void view.refresh())
-  const removeUserFromOrganizations = useRemoveUserFromOrganizations(() => void view.refresh())
+  const addUserToOrganizations = useSelectOrganizationsAddUser(() => void view.refresh())
+  // const removeUserFromOrganizations = useRemoveUserFromOrganizations(() => void view.refresh())
+  const removeUserFromSelectedOrganizations = useRemoveUserFromOrganizations(
+    () => void view.refresh()
+  )
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
@@ -191,10 +205,21 @@ function UserOrganizations(props: { user: User }) {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
-        onClick: () => removeUserFromOrganizations(user, view.selectedItems),
+        onClick: () => removeUserFromSelectedOrganizations(user, view.selectedItems),
       },
     ],
-    [addUserToOrganizations, removeUserFromOrganizations, t, user, view.selectedItems]
+    [addUserToOrganizations, removeUserFromSelectedOrganizations, t, user, view.selectedItems]
+  )
+  const rowActions = useMemo<ITypedAction<Organization>[]>(
+    () => [
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from organization'),
+        onClick: (organization) => removeUserFromSelectedOrganizations(user, [organization]),
+      },
+    ],
+    [removeUserFromSelectedOrganizations, t, user]
   )
   return (
     <>
@@ -203,12 +228,20 @@ function UserOrganizations(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
+      <DetailInfo disablePaddingTop>
+        {t(
+          'Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.'
+        )}
+      </DetailInfo>
+      <Divider />
       <PageTable<Organization>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
         emptyStateTitle={t('User is not a member of any organizations.')}
         emptyStateDescription={t('To get started, add the user to an organization.')}
@@ -230,6 +263,37 @@ function UserTeams(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
+  const addUserToTeams = useAddUserToTeams(() => void view.refresh())
+  const removeUserFromSelectedTeams = useRemoveUserFromSelectedTeams(() => void view.refresh())
+  const toolbarActions = useMemo<ITypedAction<Team>[]>(
+    () => [
+      {
+        type: TypedActionType.button,
+        variant: ButtonVariant.primary,
+        icon: PlusIcon,
+        label: t('Add user to teams'),
+        onClick: () => addUserToTeams(user),
+      },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove user from selected teams'),
+        onClick: () => removeUserFromSelectedTeams(user, view.selectedItems),
+      },
+    ],
+    [addUserToTeams, removeUserFromSelectedTeams, t, user, view.selectedItems]
+  )
+  const rowActions = useMemo<ITypedAction<Team>[]>(
+    () => [
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from team'),
+        onClick: (team: Team) => removeUserFromSelectedTeams(user, [team]),
+      },
+    ],
+    [removeUserFromSelectedTeams, t, user]
+  )
   return (
     <>
       {user.is_superuser && (
@@ -237,11 +301,18 @@ function UserTeams(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
+      <DetailInfo disablePaddingTop>
+        {t('Being a team member grants the user all the permissions of the team.')}
+      </DetailInfo>
+      <Divider />
       <PageTable<Team>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
         emptyStateTitle={t('User is not a member of any teams.')}
         emptyStateDescription={t('To get started, add the user to a team.')}
@@ -278,9 +349,10 @@ function UserRoles(props: { user: User }) {
     ],
     [t]
   )
-  const rowActions = useMemo<IItemAction<Role>[]>(
+  const rowActions = useMemo<ITypedAction<Role>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),
@@ -301,6 +373,7 @@ function UserRoles(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
       <PageTable<Role>

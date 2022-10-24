@@ -2,11 +2,11 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
+import { useSelectOrganizations } from '../../organizations/hooks/useSelectOrganizations'
 import { Organization } from '../../organizations/Organization'
-import { useSelectOrganizations } from '../../organizations/useSelectOrganiztions'
 import { User } from '../User'
 
-export function useAddUserToOrganizations(onClose?: () => void) {
+export function useSelectOrganizationsAddUser(onClose?: () => void) {
   const { t } = useTranslation()
   const openSelectOrganizations = useSelectOrganizations()
   const openBulkProgressDialog = useBulkProgressDialog<Organization>()
@@ -18,10 +18,7 @@ export function useAddUserToOrganizations(onClose?: () => void) {
           keyFn: (organization: Organization) => organization.id,
           items: organizations,
           columns: [
-            {
-              header: 'Organization',
-              cell: (organization: Organization) => organization.name,
-            },
+            { header: 'Organization', cell: (organization: Organization) => organization.name },
           ],
           actionFn: async (organization: Organization, signal: AbortSignal) => {
             await requestPost(

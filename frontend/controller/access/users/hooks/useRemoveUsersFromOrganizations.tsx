@@ -2,21 +2,21 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
+import { useSelectOrganizations } from '../../organizations/hooks/useSelectOrganizations'
 import { Organization } from '../../organizations/Organization'
-import { useSelectOrganizations } from '../../organizations/useSelectOrganiztions'
 import { User } from '../User'
 
-export function useRemoveUsersFromOrganizations(onClose?: () => void) {
+export function useSelectOrganizationsRemoveUsers(onClose?: () => void) {
   const { t } = useTranslation()
   const openSelectOrganizations = useSelectOrganizations()
   const openBulkProgressDialog = useBulkProgressDialog<User>()
   const openRemoveUsersToOrganizations = useCallback(
     (users: User[]) => {
       openSelectOrganizations(
-        t('Remove users from organizations'),
+        t('Remove users from organizations', { count: users.length }),
         (organizations: Organization[]) => {
           openBulkProgressDialog({
-            title: t('Removing users from organizations'),
+            title: t('Removing users from organizations', { count: users.length }),
             keyFn: (user: User) => user.id,
             items: users,
             columns: [{ header: 'Name', cell: (user: User) => user.username }],
@@ -32,9 +32,11 @@ export function useRemoveUsersFromOrganizations(onClose?: () => void) {
                 )
               }
             },
-            processingText: t('Removing users from organizations...'),
-            successText: t('All users added successfully.'),
-            errorText: t('There were errors adding users from organizations.'),
+            processingText: t('Removing users from organizations...', { count: users.length }),
+            successText: t('All users removed successfully.', { count: users.length }),
+            errorText: t('There were errors removing users from organizations.', {
+              count: users.length,
+            }),
             onClose: onClose,
           })
         }

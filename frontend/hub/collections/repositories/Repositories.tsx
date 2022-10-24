@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
+  ITypedAction,
   PageBody,
   PageHeader,
   PageLayout,
@@ -13,6 +13,7 @@ import {
   PageTabs,
   SinceCell,
   TextCell,
+  TypedActionType,
 } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView'
@@ -100,21 +101,24 @@ export function RemoteRepositories() {
     undefined,
     tableColumns
   )
-  const rowActions = useMemo<IItemAction<RemoteRepository>[]>(
+  const rowActions = useMemo<ITypedAction<RemoteRepository>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: CogIcon,
         label: t('Configure repository'),
         onClick: (repository) =>
           navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: SyncIcon,
         label: t('Sync repository'),
         onClick: (repository) =>
           navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit repository'),
         onClick: (repository) =>

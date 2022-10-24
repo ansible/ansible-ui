@@ -6,14 +6,11 @@ import {
   EmptyStateSecondaryActions,
   EmptyStateVariant,
   Skeleton,
-  Split,
-  SplitItem,
   Title,
 } from '@patternfly/react-core'
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons'
 import {
   ActionsColumn,
-  IAction,
   SortByDirection,
   TableComposable,
   Tbody,
@@ -33,7 +30,6 @@ import {
   UIEvent,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -45,7 +41,7 @@ import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
-import { IItemAction, isItemActionClick, ITypedAction, TypedActionType } from './TypedActions'
+import { ITypedAction, TypedActionType, useTypedActionsToTableActions } from './TypedActions'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
   PageTableProps<T> & { error?: Error }
@@ -73,7 +69,7 @@ export type PageTableProps<T extends object> = {
 
   tableColumns: ITableColumn<T>[]
 
-  rowActions?: IItemAction<T>[]
+  rowActions?: ITypedAction<T>[]
 
   toolbarFilters?: IToolbarFilter[]
   filters?: Record<string, string[]>
@@ -324,7 +320,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
 function TableHead<T extends object>(props: {
   tableColumns: ITableColumn<T>[]
-  rowActions?: IItemAction<T>[]
+  rowActions?: ITypedAction<T>[]
   sort?: string
   setSort?: (sort: string) => void
   sortDirection?: 'asc' | 'desc'
@@ -435,7 +431,7 @@ function TableRow<T extends object>(props: {
   isItemSelected?: boolean
   selectItem?: (item: T) => void
   unselectItem?: (item: T) => void
-  rowActions?: IItemAction<T>[]
+  rowActions?: ITypedAction<T>[]
   rowIndex: number
   showSelect: boolean
   scrollLeft?: boolean
@@ -525,38 +521,47 @@ function TableCells<T extends object>(props: {
   rowIndex: number
   columns: ITableColumn<T>[]
   item: T
-  rowActions?: IItemAction<T>[]
+  rowActions?: ITypedAction<T>[]
   scrollLeft?: boolean
   scrollRight?: boolean
 }) {
   // const md = useBreakpoint('xl')
 
   const { columns, item, rowActions, rowIndex } = props
-  const actions: IAction[] | undefined = useMemo(
-    () =>
-      rowActions?.map((rowAction) => {
-        if (isItemActionClick(rowAction)) {
-          const Icon = rowAction.icon
-          return {
-            title: (
-              <Split hasGutter>
-                {Icon && (
-                  <SplitItem>
-                    <Icon />
-                  </SplitItem>
-                )}
-                <SplitItem>{rowAction.label}</SplitItem>
-              </Split>
-            ),
-            onClick: () => {
-              rowAction.onClick(item)
-            },
-          }
-        }
-        return { isSeparator: true }
-      }),
-    [item, rowActions]
-  )
+  const actions = useTypedActionsToTableActions({
+    actions: rowActions ?? [],
+    item,
+    collapse: 'xxl',
+  })
+  // const actions: IAction[] | undefined = useMemo(
+  //   () =>
+  //     rowActions?.map((rowAction) => {
+  //       switch (rowAction.type) {
+  //         case TypedActionType.seperator:
+  //           return { isSeparator: true }
+  //       }
+  //       if (isItemActionClick(rowAction)) {
+  //         const Icon = rowAction.icon
+  //         return {
+  //           title: (
+  //             <Split hasGutter>
+  //               {Icon && (
+  //                 <SplitItem>
+  //                   <Icon />
+  //                 </SplitItem>
+  //               )}
+  //               <SplitItem>{rowAction.label}</SplitItem>
+  //             </Split>
+  //           ),
+  //           onClick: () => {
+  //             rowAction.onClick(item)
+  //           },
+  //         }
+  //       }
+  //       return { isSeparator: true }
+  //     }),
+  //   [item, rowActions]
+  // )
   return (
     <Fragment>
       {columns
@@ -568,7 +573,7 @@ function TableCells<T extends object>(props: {
             </Td>
           )
         })}
-      {actions !== undefined && (
+      {actions !== undefined && actions.length > 0 && (
         <Th
           // isActionCell
           style={{
@@ -577,17 +582,21 @@ function TableCells<T extends object>(props: {
             paddingLeft: 8,
             width: '0%',
             right: 0,
+            // display: 'flex',
           }}
           isStickyColumn
           stickyMinWidth="0px"
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >
-          <ActionsColumn
-            // dropdownDirection="up" // TODO handle....
-            items={actions}
-            // isDisabled={repo.name === '4'} // Also arbitrary for the example
-            // actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
-          />
+          <div style={{ display: 'flex' }}>
+            {/* <TypedActions actions={rowActions ?? []} /> */}
+            <ActionsColumn
+              // dropdownDirection="up" // TODO handle....
+              items={actions}
+              // isDisabled={repo.name === '4'} // Also arbitrary for the example
+              // actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
+            />
+          </div>
         </Th>
       )}
     </Fragment>
