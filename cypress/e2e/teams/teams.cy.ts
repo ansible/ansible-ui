@@ -28,7 +28,6 @@ describe('teams', () => {
     cy.clickRow(/^Team 001$/)
     cy.url().should('include', '/teams/details')
     cy.get('.pf-c-title').contains(/^Team 001$/)
-
     cy.get('button')
       .contains(/^Details$/)
       .click()
