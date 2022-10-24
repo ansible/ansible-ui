@@ -1,5 +1,11 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import {
+  EditIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -26,6 +32,8 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations'
+import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations'
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
 import { Organization } from './Organization'
 
@@ -50,6 +58,9 @@ export function Organizations() {
     void view.refresh()
   })
 
+  const selectUsersAddOrganizations = useSelectUsersAddOrganizations()
+  const selectUsersRemoveOrganizations = useSelectUsersRemoveOrganizations()
+
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
@@ -59,6 +70,20 @@ export function Organizations() {
         label: t('Create organization'),
         onClick: () => navigate(RouteE.CreateOrganization),
       },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.bulk,
+        icon: PlusCircleIcon,
+        label: t('Add users to selected organizations'),
+        onClick: () => selectUsersAddOrganizations(view.selectedItems),
+      },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove users from selected organizations'),
+        onClick: () => selectUsersRemoveOrganizations(view.selectedItems),
+      },
+      { type: TypedActionType.seperator },
       {
         type: TypedActionType.bulk,
         icon: TrashIcon,
@@ -66,7 +91,14 @@ export function Organizations() {
         onClick: deleteOrganizations,
       },
     ],
-    [navigate, deleteOrganizations, t]
+    [
+      t,
+      deleteOrganizations,
+      navigate,
+      selectUsersAddOrganizations,
+      view.selectedItems,
+      selectUsersRemoveOrganizations,
+    ]
   )
 
   const rowActions = useMemo<ITypedAction<Organization>[]>(
@@ -78,6 +110,20 @@ export function Organizations() {
         onClick: (organization) =>
           navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
       },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.single,
+        icon: PlusCircleIcon,
+        label: t('Add users to organization'),
+        onClick: (organization) => selectUsersAddOrganizations([organization]),
+      },
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove users from organization'),
+        onClick: (organization) => selectUsersRemoveOrganizations([organization]),
+      },
+      { type: TypedActionType.seperator },
       {
         type: TypedActionType.single,
         icon: TrashIcon,
@@ -85,7 +131,7 @@ export function Organizations() {
         onClick: (organization) => deleteOrganizations([organization]),
       },
     ],
-    [navigate, deleteOrganizations, t]
+    [t, navigate, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]
   )
 
   return (

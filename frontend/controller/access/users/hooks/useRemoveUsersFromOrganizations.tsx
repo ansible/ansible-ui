@@ -5,11 +5,11 @@ import { requestPost } from '../../../../Data'
 import { Organization } from '../../organizations/Organization'
 import { User } from '../User'
 
-export function useRemoveUsersFromOrganizations(onClose?: () => void) {
+export function useRemoveUsersFromOrganizations() {
   const { t } = useTranslation()
   const userProgressDialog = useBulkProgressDialog<User>()
   const removeUserToOrganizations = useCallback(
-    (users: User[], organizations: Organization[]) => {
+    (users: User[], organizations: Organization[], onClose?: (users: User[]) => void) => {
       userProgressDialog({
         title: t('Removing users from organizations', {
           count: organizations.length,
@@ -36,7 +36,7 @@ export function useRemoveUsersFromOrganizations(onClose?: () => void) {
         onClose: onClose,
       })
     },
-    [onClose, userProgressDialog, t]
+    [userProgressDialog, t]
   )
   return removeUserToOrganizations
 }

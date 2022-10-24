@@ -5,11 +5,11 @@ import { requestPost } from '../../../../Data'
 import { Organization } from '../../organizations/Organization'
 import { User } from '../User'
 
-export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
+export function useAddUsersToOrganizations() {
   const { t } = useTranslation()
   const userProgressDialog = useBulkProgressDialog<User>()
   const addUserToOrganizations = useCallback(
-    (users: User[], organizations: Organization[]) => {
+    (users: User[], organizations: Organization[], onClose?: (users: User[]) => void) => {
       userProgressDialog({
         title: t('Adding users to organizations', {
           count: organizations.length,
@@ -36,7 +36,7 @@ export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
         onClose: onClose,
       })
     },
-    [userProgressDialog, t, onClose]
+    [userProgressDialog, t]
   )
   return addUserToOrganizations
 }
