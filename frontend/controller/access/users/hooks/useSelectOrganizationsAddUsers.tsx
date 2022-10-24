@@ -7,15 +7,18 @@ import { useAddUsersToOrganizations } from './useAddUsersToOrganizations'
 
 export function useSelectOrganizationsAddUsers(onClose?: () => void) {
   const { t } = useTranslation()
-  const openSelectOrganizations = useSelectOrganizations()
+  const selectOrganizations = useSelectOrganizations()
   const addUsersToOrganizations = useAddUsersToOrganizations(onClose)
-  const openAddUsersToOrganizations = useCallback(
+  const selectOrganizationsAddUsers = useCallback(
     (users: User[]) => {
-      openSelectOrganizations(t('Add users to organizations'), (organizations: Organization[]) => {
-        addUsersToOrganizations(users, organizations)
-      })
+      selectOrganizations(
+        t('Add users to organizations', { count: users.length }),
+        (organizations: Organization[]) => {
+          addUsersToOrganizations(users, organizations)
+        }
+      )
     },
-    [addUsersToOrganizations, openSelectOrganizations, t]
+    [addUsersToOrganizations, selectOrganizations, t]
   )
-  return openAddUsersToOrganizations
+  return selectOrganizationsAddUsers
 }

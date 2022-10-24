@@ -2,23 +2,23 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
-import { Team } from '../../teams/Team'
-import { User } from '../User'
+import { User } from '../../users/User'
+import { Team } from '../Team'
 
-export function useRemoveUsersFromTeams(onClose?: () => void) {
+export function useRemoveTeamsFromUsers(onClose?: (team: Team[]) => void) {
   const { t } = useTranslation()
-  const userProgressDialog = useBulkProgressDialog<User>()
+  const bulkProgressDialog = useBulkProgressDialog<Team>()
   const removeUserToTeams = useCallback(
     (users: User[], teams: Team[]) => {
-      userProgressDialog({
-        title: t('Removing users from teams', {
+      bulkProgressDialog({
+        title: t('Removing user from teams', {
           count: teams.length,
         }),
-        keyFn: (user: User) => user.id,
-        items: users,
-        columns: [{ header: 'User', cell: (user: User) => user.username }],
-        actionFn: async (user: User, signal: AbortSignal) => {
-          for (const team of teams) {
+        keyFn: (team: Team) => team.id,
+        items: teams,
+        columns: [{ header: 'Team', cell: (team: Team) => team.name }],
+        actionFn: async (team: Team, signal: AbortSignal) => {
+          for (const user of users) {
             await requestPost(
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id, disassociate: true },
@@ -26,17 +26,17 @@ export function useRemoveUsersFromTeams(onClose?: () => void) {
             )
           }
         },
-        processingText: t('Removing users from teams...', {
+        processingText: t('Removing user from teams...', {
           count: teams.length,
         }),
-        successText: t('Users removeed successfully.'),
-        errorText: t('There were errors removing users from teams.', {
+        successText: t('User removeed successfully.'),
+        errorText: t('There were errors removing user from teams.', {
           count: teams.length,
         }),
         onClose: onClose,
       })
     },
-    [onClose, userProgressDialog, t]
+    [onClose, bulkProgressDialog, t]
   )
   return removeUserToTeams
 }

@@ -28,11 +28,10 @@ import {
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useRemoveUserFromTeams } from './hooks/useRemoveUserFromTeams'
-import { useSelectOrganizationsRemoveUsers } from './hooks/useRemoveUsersFromOrganizations'
-import { useRemoveUsersFromTeams } from './hooks/useRemoveUsersFromTeams'
 import { useSelectOrganizationsAddUsers } from './hooks/useSelectOrganizationsAddUsers'
+import { useSelectOrganizationsRemoveUsers } from './hooks/useSelectOrganizationsRemoveUsers'
 import { useSelectTeamsAddUsers } from './hooks/useSelectTeamsAddUsers'
+import { useSelectTeamsRemoveUsers } from './hooks/useSelectTeamsRemoveUsers'
 import { User } from './User'
 
 export function Users() {
@@ -55,8 +54,7 @@ export function Users() {
   const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers()
   const selectTeamsAddUsers = useSelectTeamsAddUsers()
   const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers()
-  const removeUserFromTeams = useRemoveUserFromTeams()
-  const removeUsersFromTeams = useRemoveUsersFromTeams()
+  const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers()
 
   const toolbarActions = useMemo<ITypedAction<User>[]>(
     () => [
@@ -78,7 +76,7 @@ export function Users() {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove selected users from teams'),
-        onClick: () => removeUsersFromTeams(view.selectedItems),
+        onClick: () => selectTeamsRemoveUsers(view.selectedItems),
       },
       { type: TypedActionType.seperator },
       {
@@ -107,7 +105,7 @@ export function Users() {
       navigate,
       selectTeamsAddUsers,
       view.selectedItems,
-      removeUsersFromTeams,
+      selectTeamsRemoveUsers,
       selectOrganizationsAddUsers,
       selectOrganizationsRemoveUsers,
     ]
@@ -132,7 +130,7 @@ export function Users() {
         type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from teams'),
-        onClick: (user) => removeUserFromTeams(user),
+        onClick: (user) => selectTeamsRemoveUsers([user]),
       },
       { type: TypedActionType.seperator },
       {
@@ -158,10 +156,10 @@ export function Users() {
     [
       deleteUsers,
       navigate,
-      removeUserFromTeams,
       selectOrganizationsAddUsers,
       selectOrganizationsRemoveUsers,
       selectTeamsAddUsers,
+      selectTeamsRemoveUsers,
       t,
     ]
   )

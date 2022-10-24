@@ -24,26 +24,48 @@
     "Add user to team": "A_D_D_ _U_S_E_R_ _T_O_ _T_E_A_M",
     "Add user to teams": "A_D_D_ _U_S_E_R_ _T_O_ _T_E_A_M_S",
     "Add users": "A_D_D_ _U_S_E_R_S",
-    "Add users to organizations": "A_D_D_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
-    "Add users to teams": "A_D_D_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
+    "Add users to organizations_one": "A_D_D_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Add users to organizations_many": "A_D_D_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Add users to organizations_other": "A_D_D_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Add users to teams_one": "A_D_D_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
+    "Add users to teams_many": "A_D_D_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
+    "Add users to teams_other": "A_D_D_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
     "Adding a user to an organization adds them as a member only": {
         " Permissions can be granted using teams and user roles": "A_D_D_I_N_G_ _A_ _U_S_E_R_ _T_O_ _A_N_ _O_R_G_A_N_I_Z_A_T_I_O_N_ _A_D_D_S_ _T_H_E_M_ _A_S_ _A_ _M_E_M_B_E_R_ _O_N_L_Y_._ _P_E_R_M_I_S_S_I_O_N_S_ _C_A_N_ _B_E_ _G_R_A_N_T_E_D_ _U_S_I_N_G_ _T_E_A_M_S_ _A_N_D_ _U_S_E_R_ _R_O_L_E_S_."
     },
     "Adding user to organizations": {
-        "": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
+        "_one": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_many": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_other": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
     },
+    "Adding user to organizations_one": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Adding user to organizations_many": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Adding user to organizations_other": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Adding user to teams": {
-        "": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_._._."
+        "_one": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_._._.",
+        "_many": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_._._.",
+        "_other": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_._._."
     },
+    "Adding user to teams_one": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S",
+    "Adding user to teams_many": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S",
+    "Adding user to teams_other": "A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S",
     "Adding users to organizations": {
-        "": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
+        "_one": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_many": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_other": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
     },
+    "Adding users to organizations_one": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Adding users to organizations_many": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Adding users to organizations_other": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Adding users to teams": {
-        "": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_._._."
+        "_one": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_._._.",
+        "_many": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_._._.",
+        "_other": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_._._."
     },
+    "Adding users to teams_one": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
+    "Adding users to teams_many": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
+    "Adding users to teams_other": "A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S",
     "All": "A_L_L",
-    "All users added successfully": "A_L_L_ _U_S_E_R_S_ _A_D_D_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
-    "All users removed successfully": "A_L_L_ _U_S_E_R_S_ _R_E_M_O_V_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
     "An API token can be used to authenticate the ansible-galaxy client": "A_N_ _A_P_I_ _T_O_K_E_N_ _C_A_N_ _B_E_ _U_S_E_D_ _T_O_ _A_U_T_H_E_N_T_I_C_A_T_E_ _T_H_E_ _A_N_S_I_B_L_E_-_G_A_L_A_X_Y_ _C_L_I_E_N_T_.",
     "An eror occured": "A_N_ _E_R_O_R_ _O_C_C_U_R_E_D",
     "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate": "A_N_ _I_N_V_E_N_T_O_R_Y_ _D_E_F_I_N_E_S_ _T_H_E_ _H_O_S_T_S_ _A_N_D_ _G_R_O_U_P_S_ _O_F_ _H_O_S_T_S_ _U_P_O_N_ _W_H_I_C_H_ _C_O_M_M_A_N_D_S_,_ _M_O_D_U_L_E_S_,_ _A_N_D_ _T_A_S_K_S_ _I_N_ _A_ _P_L_A_Y_B_O_O_K_ _O_P_E_R_A_T_E_.",
@@ -416,13 +438,25 @@
     "Remove users from organizations_one": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Remove users from organizations_many": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Remove users from organizations_other": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
-    "Remove users from teams": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
+    "Remove users from teams_one": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
+    "Remove users from teams_many": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
+    "Remove users from teams_other": "R_E_M_O_V_E_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
     "Removing user from organizations": {
-        "": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
+        "_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
+        "_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._."
     },
+    "Removing user from organizations_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Removing user from organizations_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
+    "Removing user from organizations_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Removing user from teams": {
-        "": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_._._."
+        "_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_._._.",
+        "_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_._._.",
+        "_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_._._."
     },
+    "Removing user from teams_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S",
+    "Removing user from teams_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S",
+    "Removing user from teams_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S",
     "Removing users from organizations": {
         "_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
         "_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_._._.",
@@ -432,8 +466,13 @@
     "Removing users from organizations_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Removing users from organizations_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S",
     "Removing users from teams": {
-        "": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_._._."
+        "_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_._._.",
+        "_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_._._.",
+        "_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_._._."
     },
+    "Removing users from teams_one": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
+    "Removing users from teams_many": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
+    "Removing users from teams_other": "R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S",
     "Repository management": "R_E_P_O_S_I_T_O_R_Y_ _M_A_N_A_G_E_M_E_N_T",
     "Resource name": "R_E_S_O_U_R_C_E_ _N_A_M_E",
     "Resource type": "R_E_S_O_U_R_C_E_ _T_Y_P_E",
@@ -488,10 +527,26 @@
         }
     },
     "Teams": "T_E_A_M_S",
-    "There were errors adding user to organizations": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
-    "There were errors adding user to teams": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_.",
-    "There were errors adding users to organizations": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
-    "There were errors adding users to teams": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_.",
+    "There were errors adding user to organizations": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_."
+    },
+    "There were errors adding user to teams": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_ _T_O_ _T_E_A_M_S_."
+    },
+    "There were errors adding users to organizations": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_."
+    },
+    "There were errors adding users to teams": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _A_D_D_I_N_G_ _U_S_E_R_S_ _T_O_ _T_E_A_M_S_."
+    },
     "There were errors deleting credentials_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _C_R_E_D_E_N_T_I_A_L_S",
     "There were errors deleting credentials_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _C_R_E_D_E_N_T_I_A_L_S",
     "There were errors deleting credentials_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _C_R_E_D_E_N_T_I_A_L_S",
@@ -516,14 +571,26 @@
     "There were errors deleting users_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _U_S_E_R_S",
     "There were errors deleting users_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _U_S_E_R_S",
     "There were errors deleting users_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _D_E_L_E_T_I_N_G_ _U_S_E_R_S",
-    "There were errors removing user from organizations": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
-    "There were errors removing user from teams": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_.",
+    "There were errors removing user from organizations": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_."
+    },
+    "There were errors removing user from teams": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_ _F_R_O_M_ _T_E_A_M_S_."
+    },
     "There were errors removing users from organizations": {
         "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
         "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
         "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_."
     },
-    "There were errors removing users from teams": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_.",
+    "There were errors removing users from teams": {
+        "_one": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_.",
+        "_many": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_.",
+        "_other": "T_H_E_R_E_ _W_E_R_E_ _E_R_R_O_R_S_ _R_E_M_O_V_I_N_G_ _U_S_E_R_S_ _F_R_O_M_ _T_E_A_M_S_."
+    },
     "To get started, add roles to the user": "T_O_ _G_E_T_ _S_T_A_R_T_E_D_,_ _A_D_D_ _R_O_L_E_S_ _T_O_ _T_H_E_ _U_S_E_R_.",
     "To get started, add the user to a team": "T_O_ _G_E_T_ _S_T_A_R_T_E_D_,_ _A_D_D_ _T_H_E_ _U_S_E_R_ _T_O_ _A_ _T_E_A_M_.",
     "To get started, add the user to an organization": "T_O_ _G_E_T_ _S_T_A_R_T_E_D_,_ _A_D_D_ _T_H_E_ _U_S_E_R_ _T_O_ _A_N_ _O_R_G_A_N_I_Z_A_T_I_O_N_.",
@@ -553,8 +620,7 @@
     "User does not have any roles": "U_S_E_R_ _D_O_E_S_ _N_O_T_ _H_A_V_E_ _A_N_Y_ _R_O_L_E_S_.",
     "User is not a member of any organizations": "U_S_E_R_ _I_S_ _N_O_T_ _A_ _M_E_M_B_E_R_ _O_F_ _A_N_Y_ _O_R_G_A_N_I_Z_A_T_I_O_N_S_.",
     "User is not a member of any teams": "U_S_E_R_ _I_S_ _N_O_T_ _A_ _M_E_M_B_E_R_ _O_F_ _A_N_Y_ _T_E_A_M_S_.",
-    "User removed from all teams successfully": "U_S_E_R_ _R_E_M_O_V_E_D_ _F_R_O_M_ _A_L_L_ _T_E_A_M_S_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
-    "User removed successfully": "U_S_E_R_ _R_E_M_O_V_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
+    "User removeed successfully": "U_S_E_R_ _R_E_M_O_V_E_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
     "User role": "U_S_E_R_ _R_O_L_E",
     "User type": "U_S_E_R_ _T_Y_P_E",
     "Username": "U_S_E_R_N_A_M_E",
@@ -567,6 +633,8 @@
         }
     },
     "Users": "U_S_E_R_S",
+    "Users added successfully": "U_S_E_R_S_ _A_D_D_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
+    "Users removeed successfully": "U_S_E_R_S_ _R_E_M_O_V_E_E_D_ _S_U_C_C_E_S_S_F_U_L_L_Y_.",
     "v": "V",
     "Version": "V_E_R_S_I_O_N",
     "Vertical labels": "V_E_R_T_I_C_A_L_ _L_A_B_E_L_S",

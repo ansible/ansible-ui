@@ -82,6 +82,7 @@ export interface ISelected<T extends object> {
   selectItem: (item: T) => void
   selectItems: (items: T[]) => void
   unselectItem: (item: T) => void
+  unselectItems: (items: T[]) => void
   isSelected: (item: T) => boolean
   selectAll: () => void
   unselectAll: () => void
@@ -163,6 +164,15 @@ export function useSelected<T extends object>(
 
   const selectAll = useCallback(() => selectItems(items), [items, selectItems])
 
+  const unselectItems = useCallback(
+    (items: T[]) => {
+      for (const item of items) {
+        unselectItem(item)
+      }
+    },
+    [unselectItem]
+  )
+
   const unselectAll = useCallback(() => {
     setSelectedMap((selectedMap) => {
       if (Object.keys(selectedMap).length > 0) {
@@ -189,6 +199,7 @@ export function useSelected<T extends object>(
       unselectAll,
       allSelected,
       keyFn,
+      unselectItems,
     }),
     [
       allSelected,
@@ -200,6 +211,7 @@ export function useSelected<T extends object>(
       selectedItems,
       unselectAll,
       unselectItem,
+      unselectItems,
     ]
   )
 }

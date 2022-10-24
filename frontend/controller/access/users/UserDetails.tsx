@@ -35,13 +35,13 @@ import { Organization } from '../organizations/Organization'
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
 import { Role } from '../roles/Role'
 import { useRolesColumns, useRolesFilters } from '../roles/Roles'
+import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { useAddUserToTeams } from './hooks/useAddUserToTeams'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useRemoveUserFromOrganizations } from './hooks/useRemoveUserFromOrganizations'
-import { useRemoveUserFromSelectedTeams } from './hooks/useRemoveUserFromTeams'
-import { useSelectOrganizationsAddUser } from './hooks/useSelectOrganizationsAddUser'
+import { useRemoveUsersFromOrganizations } from './hooks/useRemoveUsersFromOrganizations'
+import { useSelectOrganizationsAddUsers } from './hooks/useSelectOrganizationsAddUsers'
+import { useSelectTeamsAddUsers } from './hooks/useSelectTeamsAddUsers'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -187,11 +187,8 @@ function UserOrganizations(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const addUserToOrganizations = useSelectOrganizationsAddUser(() => void view.refresh())
-  // const removeUserFromOrganizations = useRemoveUserFromOrganizations(() => void view.refresh())
-  const removeUserFromSelectedOrganizations = useRemoveUserFromOrganizations(
-    () => void view.refresh()
-  )
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(() => void view.refresh())
+  const removeUsersFromOrganizations = useRemoveUsersFromOrganizations(() => void view.refresh())
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
@@ -199,16 +196,16 @@ function UserOrganizations(props: { user: User }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to organizations'),
-        onClick: () => addUserToOrganizations(user),
+        onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
-        onClick: () => removeUserFromSelectedOrganizations(user, view.selectedItems),
+        onClick: () => removeUsersFromOrganizations([user], view.selectedItems),
       },
     ],
-    [addUserToOrganizations, removeUserFromSelectedOrganizations, t, user, view.selectedItems]
+    [removeUsersFromOrganizations, selectOrganizationsAddUsers, t, user, view.selectedItems]
   )
   const rowActions = useMemo<ITypedAction<Organization>[]>(
     () => [
@@ -216,10 +213,10 @@ function UserOrganizations(props: { user: User }) {
         type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
-        onClick: (organization) => removeUserFromSelectedOrganizations(user, [organization]),
+        onClick: (organization) => removeUsersFromOrganizations([user], [organization]),
       },
     ],
-    [removeUserFromSelectedOrganizations, t, user]
+    [removeUsersFromOrganizations, t, user]
   )
   return (
     <>
@@ -246,7 +243,7 @@ function UserOrganizations(props: { user: User }) {
         emptyStateTitle={t('User is not a member of any organizations.')}
         emptyStateDescription={t('To get started, add the user to an organization.')}
         emptyStateButtonText={t('Add user to organization')}
-        emptyStateButtonClick={() => addUserToOrganizations(user)}
+        emptyStateButtonClick={() => selectOrganizationsAddUsers([user])}
         {...view}
       />
     </>
@@ -263,8 +260,14 @@ function UserTeams(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const addUserToTeams = useAddUserToTeams(() => void view.refresh())
-  const removeUserFromSelectedTeams = useRemoveUserFromSelectedTeams(() => void view.refresh())
+  const selectTeamsAddUsers = useSelectTeamsAddUsers((teams) => {
+    view.selectItems(teams)
+    void view.refresh()
+  })
+  const removeTeamsFromUsers = useRemoveTeamsFromUsers((teams) => {
+    view.unselectItems(teams)
+    void view.refresh()
+  })
   const toolbarActions = useMemo<ITypedAction<Team>[]>(
     () => [
       {
@@ -272,16 +275,16 @@ function UserTeams(props: { user: User }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to teams'),
-        onClick: () => addUserToTeams(user),
+        onClick: () => selectTeamsAddUsers([user]),
       },
       {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
-        onClick: () => removeUserFromSelectedTeams(user, view.selectedItems),
+        onClick: () => removeTeamsFromUsers([user], view.selectedItems),
       },
     ],
-    [addUserToTeams, removeUserFromSelectedTeams, t, user, view.selectedItems]
+    [t, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
   )
   const rowActions = useMemo<ITypedAction<Team>[]>(
     () => [
@@ -289,10 +292,10 @@ function UserTeams(props: { user: User }) {
         type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
-        onClick: (team: Team) => removeUserFromSelectedTeams(user, [team]),
+        onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
       },
     ],
-    [removeUserFromSelectedTeams, t, user]
+    [removeTeamsFromUsers, t, user]
   )
   return (
     <>
@@ -317,7 +320,7 @@ function UserTeams(props: { user: User }) {
         emptyStateTitle={t('User is not a member of any teams.')}
         emptyStateDescription={t('To get started, add the user to a team.')}
         emptyStateButtonText={t('Add user to team')}
-        emptyStateButtonClick={() => alert('TODO')}
+        emptyStateButtonClick={() => selectTeamsAddUsers([user])}
         {...view}
       />
     </>

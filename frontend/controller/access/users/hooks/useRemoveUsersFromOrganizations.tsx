@@ -2,47 +2,41 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
-import { useSelectOrganizations } from '../../organizations/hooks/useSelectOrganizations'
 import { Organization } from '../../organizations/Organization'
 import { User } from '../User'
 
-export function useSelectOrganizationsRemoveUsers(onClose?: () => void) {
+export function useRemoveUsersFromOrganizations(onClose?: () => void) {
   const { t } = useTranslation()
-  const openSelectOrganizations = useSelectOrganizations()
-  const openBulkProgressDialog = useBulkProgressDialog<User>()
-  const openRemoveUsersToOrganizations = useCallback(
-    (users: User[]) => {
-      openSelectOrganizations(
-        t('Remove users from organizations', { count: users.length }),
-        (organizations: Organization[]) => {
-          openBulkProgressDialog({
-            title: t('Removing users from organizations', { count: users.length }),
-            keyFn: (user: User) => user.id,
-            items: users,
-            columns: [{ header: 'Name', cell: (user: User) => user.username }],
-            actionFn: async (user: User, signal: AbortSignal) => {
-              for (const organization of organizations) {
-                await requestPost(
-                  `/api/v2/users/${user.id.toString()}/roles/`,
-                  {
-                    id: organization.summary_fields.object_roles.member_role.id,
-                    disassociate: true,
-                  },
-                  signal
-                )
-              }
-            },
-            processingText: t('Removing users from organizations...', { count: users.length }),
-            successText: t('All users removed successfully.', { count: users.length }),
-            errorText: t('There were errors removing users from organizations.', {
-              count: users.length,
-            }),
-            onClose: onClose,
-          })
-        }
-      )
+  const userProgressDialog = useBulkProgressDialog<User>()
+  const removeUserToOrganizations = useCallback(
+    (users: User[], organizations: Organization[]) => {
+      userProgressDialog({
+        title: t('Removing users from organizations', {
+          count: organizations.length,
+        }),
+        keyFn: (user: User) => user.id,
+        items: users,
+        columns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionFn: async (user: User, signal: AbortSignal) => {
+          for (const organization of organizations) {
+            await requestPost(
+              `/api/v2/users/${user.id.toString()}/roles/`,
+              { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
+              signal
+            )
+          }
+        },
+        processingText: t('Removing users from organizations...', {
+          count: organizations.length,
+        }),
+        successText: t('Users removeed successfully.'),
+        errorText: t('There were errors removing users from organizations.', {
+          count: organizations.length,
+        }),
+        onClose: onClose,
+      })
     },
-    [onClose, openBulkProgressDialog, openSelectOrganizations, t]
+    [onClose, userProgressDialog, t]
   )
-  return openRemoveUsersToOrganizations
+  return removeUserToOrganizations
 }
