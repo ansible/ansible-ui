@@ -173,9 +173,12 @@ export function ControllerSidebar(props: {
                 {/* <NavItem isActive={isRouteActive(RouteE.ManagementJobs, location)}>
                                 <Link to={RouteE.ManagementJobs}>Management jobs</Link>
                             </NavItem> */}
-                {/* <NavItem isActive={isRouteActive(RouteE.InstanceGroups, location)}>
-                                <Link to={RouteE.InstanceGroups}>Instance groups</Link>
-                            </NavItem> */}
+                <NavItem
+                  isActive={isRouteActive(RouteE.InstanceGroups, location)}
+                  onClick={() => onClick(RouteE.InstanceGroups)}
+                >
+                  {t('Instance groups')}
+                </NavItem>
                 <NavItem
                   isActive={isRouteActive(RouteE.Instances, location)}
                   onClick={() => onClick(RouteE.Instances)}

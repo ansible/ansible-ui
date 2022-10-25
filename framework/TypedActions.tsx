@@ -5,11 +5,12 @@ import {
   DropdownItem,
   DropdownPosition,
   DropdownSeparator,
+  DropdownToggle,
   KebabToggle,
   Tooltip,
 } from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
-import { ComponentClass, Fragment, FunctionComponent, useMemo, useState } from 'react'
+import { ComponentClass, Fragment, FunctionComponent, useMemo, useState, useCallback } from 'react'
 import { useBreakpoint, WindowSize } from './components/useBreakPoint'
 
 export interface IItemActionClick<T> {
@@ -38,6 +39,7 @@ export enum TypedActionType {
   seperator = 'seperator',
   button = 'button',
   bulk = 'bulk',
+  dropdown = 'dropdown',
 }
 
 export type IItemAction<T> = IItemActionClick<T> | IItemActionSeperator
@@ -66,17 +68,26 @@ export type ITypedBulkAction<T extends object> = ITypedActionCommon & {
   onClick: (selectedItems: T[]) => void
 }
 
+export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
+  type: TypedActionType.dropdown
+  variant?: ButtonVariant
+  options: ITypedAction<T>[]
+}
+
 export type ITypedAction<T extends object> =
   | ITypedActionSeperator
   | ITypedActionButton
   | ITypedBulkAction<T>
+  | ITypedDropdownAction<T>
 
 export function TypedActionsDropdown<T extends object>(props: {
   actions: ITypedAction<T>[]
+  label?: string
+  isPrimary?: boolean
   selectedItems?: T[]
   position?: DropdownPosition
 }) {
-  const { actions, selectedItems } = props
+  const { actions, label, isPrimary = false, selectedItems } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasItemActions = useMemo(
     () => !actions.every((action) => action.type !== TypedActionType.bulk),
@@ -90,28 +101,37 @@ export function TypedActionsDropdown<T extends object>(props: {
     [actions]
   )
   if (actions.length === 0) return <></>
+  const Toggle = label ? DropdownToggle : KebabToggle
+
   return (
     <Dropdown
       onSelect={() => setDropdownOpen(false)}
       toggle={
-        <KebabToggle
+        <Toggle
           id="toggle-kebab"
           onToggle={() => setDropdownOpen(!dropdownOpen)}
           toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
-          style={{
-            color:
-              hasItemActions && selectedItems?.length
-                ? 'var(--pf-global--Color--light-100)'
-                : undefined,
-            backgroundColor:
-              hasItemActions && selectedItems?.length
-                ? 'var(--pf-global--primary-color--100)'
-                : undefined,
-          }}
-        />
+          isPrimary={isPrimary}
+          style={
+            !isPrimary
+              ? {
+                  color:
+                    hasItemActions && selectedItems?.length
+                      ? 'var(--pf-global--Color--light-100)'
+                      : undefined,
+                  backgroundColor:
+                    hasItemActions && selectedItems?.length
+                      ? 'var(--pf-global--primary-color--100)'
+                      : undefined,
+                }
+              : {}
+          }
+        >
+          {label}
+        </Toggle>
       }
       isOpen={dropdownOpen}
-      isPlain
+      isPlain={!label}
       dropdownItems={actions.map((action, index) => {
         switch (action.type) {
           case TypedActionType.button:
@@ -153,6 +173,14 @@ export function TypedActionsDropdown<T extends object>(props: {
               </Tooltip>
             )
           }
+          case TypedActionType.dropdown:
+            return (
+              <TypedActionsDropdown<T>
+                key={action.label}
+                label={action.label}
+                actions={action.options}
+              />
+            )
           case TypedActionType.seperator:
             return <DropdownSeparator key={`separator-${index}`} />
         }
@@ -275,6 +303,15 @@ export function TypedActionButton<T extends object>(props: {
         </Wrapper>
       )
     }
+    case TypedActionType.dropdown: {
+      return (
+        <TypedActionsDropdown<T>
+          actions={action.options}
+          label={action.label}
+          isPrimary={action.variant === ButtonVariant.primary}
+        />
+      )
+    }
   }
 }
 
@@ -289,45 +326,36 @@ export function TypedActions<T extends object>(props: {
   const { actions } = props
   const collapseButtons = !useBreakpoint(props.collapse ?? 'lg')
 
+  const isButtonAction = useCallback((action: ITypedAction<T>) => {
+    const actionVariants: Array<ButtonVariant | undefined> = [
+      ButtonVariant.primary,
+      ButtonVariant.secondary,
+      ButtonVariant.danger,
+    ]
+    return action.type !== TypedActionType.seperator && actionVariants.includes(action.variant)
+  }, [])
+
   const buttonActions: ITypedAction<T>[] = useMemo(() => {
     if (collapseButtons) {
       return []
-    } else {
-      const buttonActions = actions?.filter(
-        (action) =>
-          (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
-          (action.variant === ButtonVariant.primary ||
-            action.variant === ButtonVariant.secondary ||
-            action.variant === ButtonVariant.danger)
-      )
-      return buttonActions ?? []
     }
-  }, [collapseButtons, actions])
+    return actions?.filter(isButtonAction) ?? []
+  }, [collapseButtons, actions, isButtonAction])
 
   const dropdownActions: ITypedAction<T>[] = useMemo(() => {
     if (collapseButtons) {
       return actions ?? []
-    } else {
-      let dropdownActions = actions?.filter(
-        (action) =>
-          !(
-            (action.type === TypedActionType.button || action.type === TypedActionType.bulk) &&
-            (action.variant === ButtonVariant.primary ||
-              action.variant === ButtonVariant.secondary ||
-              action.variant === ButtonVariant.danger)
-          )
-      )
-      dropdownActions = dropdownActions ?? []
-      while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator)
-        dropdownActions.shift()
-      while (
-        dropdownActions.length &&
-        dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator
-      )
-        dropdownActions.pop()
-      return dropdownActions
     }
-  }, [collapseButtons, actions])
+    const dropdownActions = actions?.filter((action) => !isButtonAction(action)) ?? []
+    while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator)
+      dropdownActions.shift()
+    while (
+      dropdownActions.length &&
+      dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator
+    )
+      dropdownActions.pop()
+    return dropdownActions
+  }, [collapseButtons, actions, isButtonAction])
 
   return (
     <>

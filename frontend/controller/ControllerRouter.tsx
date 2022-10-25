@@ -12,6 +12,7 @@ import { EditUser } from './access/users/EditUser'
 import { UserDetailsPage } from './access/users/UserDetails'
 import { Users } from './access/users/Users'
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments'
+import { InstanceGroups } from './administration/instance-groups/InstanceGroups'
 import { EditInstance } from './administration/instances/EditInstance'
 import { InstanceDetails } from './administration/instances/InstanceDetails'
 import { Instances } from './administration/instances/Instances'
@@ -76,7 +77,11 @@ export function ControllerRouter() {
       {/* <Route path={RouteE.CredentialTypes} element={CredentialTypesPage} /> */}
       {/* <Route path={RouteE.Notifications} element={NotificationsPage} /> */}
       {/* <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} /> */}
-      {/* <Route path={RouteE.InstanceGroups} element={InstanceGroupsPage} /> */}
+
+      <Route
+        path={RouteE.InstanceGroups.replace(RouteE.Controller, '')}
+        element={<InstanceGroups />}
+      />
 
       <Route path={RouteE.Instances.replace(RouteE.Controller, '')} element={<Instances />} />
       <Route
