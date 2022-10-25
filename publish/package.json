@@ -1,5 +1,5 @@
 {
-  "name": "@ansible/ansible-framework",
+  "name": "@ansible/ansible-ui-framework",
   "repository": {
     "type": "git",
     "url": "https://github.com/ansible/ansible-ui.git"
