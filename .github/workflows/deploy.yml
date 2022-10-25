@@ -1,92 +1,92 @@
 name: Publish
 on:
-    push:
-        branches:
-            - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        concurrency: ansible-ui
-        environment:
-            name: AnsibleDev
-            url: https://ansibledev.com
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  token: ${{ secrets.GH_TOKEN }}
+  publish:
+    runs-on: ubuntu-latest
+    concurrency: ansible-ui
+    environment:
+      name: AnsibleDev
+      url: https://ansibledev.com
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
 
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '18'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-            - name: Increment Version
-              run: |
-                  INCREMENT=${{ github.event.inputs.versionIncrement }}
-                  INCREMENT="${INCREMENT:-patch}"
-                  VERSION=$(npm version $INCREMENT --no-git-tag-version)
-                  echo $VERSION
-                  echo "VERSION=$(echo $VERSION | cut -c 2-)" >> $GITHUB_ENV
+      - name: Increment Version
+        run: |
+          INCREMENT=${{ github.event.inputs.versionIncrement }}
+          INCREMENT="${INCREMENT:-patch}"
+          VERSION=$(npm version $INCREMENT --no-git-tag-version)
+          echo $VERSION
+          echo "VERSION=$(echo $VERSION | cut -c 2-)" >> $GITHUB_ENV
 
-            - name: Commit changes
-              uses: EndBug/add-and-commit@v9
-              with:
-                  default_author: github_actions
-                  message: Release v${{ env.VERSION }} [skip ci]
-                  tag: v${{ env.VERSION }}
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          message: Release v${{ env.VERSION }} [skip ci]
+          tag: v${{ env.VERSION }}
 
-            - name: Setup Docker QEMU
-              uses: docker/setup-qemu-action@v1
+      - name: Setup Docker QEMU
+        uses: docker/setup-qemu-action@v1
 
-            - name: Setup Docker Buildx
-              uses: docker/setup-buildx-action@v1
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-            - name: Cache Docker layers
-              uses: actions/cache@v3
-              with:
-                  path: /tmp/.buildx-cache
-                  key: ${{ runner.os }}-buildx-${{ github.sha }}
-                  restore-keys: |
-                      ${{ runner.os }}-buildx-
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
-            - name: Build Ansible UI
-              uses: docker/build-push-action@v3
-              with:
-                  #platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
-                  #   tags: ansible-ui:latest,ansible-ui:${{ env.VERSION }}
-                  tags: ansible-ui
-                  labels: v${{ env.VERSION }}
-                  build-args: VERSION=${{ env.VERSION }}
-                  #   push: true
-                  load: true
-                  cache-from: type=local,src=/tmp/.buildx-cache
-                  cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - name: Build Ansible UI
+        uses: docker/build-push-action@v3
+        with:
+          #platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          #   tags: ansible-ui:latest,ansible-ui:${{ env.VERSION }}
+          tags: ansible-ui
+          labels: v${{ env.VERSION }}
+          build-args: VERSION=${{ env.VERSION }}
+          #   push: true
+          load: true
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
-            - name: Move cache
-              run: |
-                  rm -rf /tmp/.buildx-cache
-                  mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-            - name: Save image
-              run: docker image save ansible-ui > ansible-ui.tar
+      - name: Save image
+        run: docker image save ansible-ui > ansible-ui.tar
 
-            - name: SCP
-              uses: appleboy/scp-action@master
-              with:
-                  host: ${{ secrets.HOST }}
-                  username: ${{ secrets.USERNAME }}
-                  key: ${{ secrets.HOST_KEY }}
-                  source: 'ansible-ui.tar'
-                  target: '~/'
+      - name: SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.HOST_KEY }}
+          source: 'ansible-ui.tar'
+          target: '~/'
 
-            - name: SSH
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.HOST }}
-                  username: ${{ secrets.USERNAME }}
-                  key: ${{ secrets.HOST_KEY }}
-                  script: |
-                      docker load --input ansible-ui.tar
-                      docker rm --force ansible-ui || true
-                      docker run --name ansible-ui -d --restart unless-stopped -e PORT=443 -p 443:443 -v /root/certs:/home/node/certs ansible-ui
-                      docker image prune -a -f
+      - name: SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.HOST_KEY }}
+          script: |
+            docker load --input ansible-ui.tar
+            docker rm --force ansible-ui || true
+            docker run --name ansible-ui -d --restart unless-stopped -e PORT=443 -p 443:443 -v /root/certs:/home/node/certs ansible-ui
+            docker image prune -a -f
