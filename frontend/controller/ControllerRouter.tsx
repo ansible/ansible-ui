@@ -16,6 +16,7 @@ import { InstanceGroups } from './administration/instance-groups/InstanceGroups'
 import { EditInstance } from './administration/instances/EditInstance'
 import { InstanceDetails } from './administration/instances/InstanceDetails'
 import { Instances } from './administration/instances/Instances'
+import { Topology } from './administration/topology/Topology'
 import { Credentials } from './resources/credentials/Credentials'
 import { Hosts } from './resources/hosts/Hosts'
 import { Inventories } from './resources/inventories/Inventories'
@@ -95,11 +96,13 @@ export function ControllerRouter() {
         path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')}
         element={<ExecutionEnvironments />}
       />
-      {/* <Route path={RouteE.TopologyView} element={TopologyView} /> */}
+
+      <Route path={RouteE.TopologyView.replace(RouteE.Controller, '')} element={<Topology />} />
 
       <Route path={RouteE.Settings.replace(RouteE.Controller, '')} element={<Settings />} />
 
       <Route path={RouteE.ControllerDebug.replace(RouteE.Controller, '')} element={<Debug />} />
+
       <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
     </Routes>
   )
