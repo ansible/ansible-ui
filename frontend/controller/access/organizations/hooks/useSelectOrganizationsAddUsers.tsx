@@ -5,7 +5,7 @@ import { Organization } from '../Organization'
 import { useAddOrganizationsToUsers } from './useAddOrganizationsToUsers'
 import { useSelectOrganizations } from './useSelectOrganizations'
 
-export function useSelectOrganizationsAddUsers(onClose?: () => void) {
+export function useSelectOrganizationsAddUsers(onClose?: (organizations: Organization[]) => void) {
   const { t } = useTranslation()
   const selectOrganizations = useSelectOrganizations()
   const addOrganizationsToUsers = useAddOrganizationsToUsers()

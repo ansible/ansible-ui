@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -31,6 +31,7 @@ import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
+import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers'
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
 import { Organization } from '../organizations/Organization'
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
@@ -41,7 +42,6 @@ import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useRemoveUsersFromOrganizations } from './hooks/useRemoveUsersFromOrganizations'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -187,8 +187,23 @@ function UserOrganizations(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(() => void view.refresh())
-  const removeUsersFromOrganizations = useRemoveUsersFromOrganizations(() => void view.refresh())
+
+  const updateViewAfterAdd = useCallback(
+    (organizations: Organization[]) => {
+      view.selectItems(organizations)
+      void view.refresh()
+    },
+    [view]
+  )
+  const updateViewAfterDelete = useCallback(
+    (organizations: Organization[]) => {
+      view.unselectItems(organizations)
+      void view.refresh()
+    },
+    [view]
+  )
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(updateViewAfterAdd)
+  const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers()
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
@@ -202,10 +217,18 @@ function UserOrganizations(props: { user: User }) {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
-        onClick: () => removeUsersFromOrganizations([user], view.selectedItems),
+        onClick: () =>
+          removeOrganizationsFromUsers([user], view.selectedItems, updateViewAfterDelete),
       },
     ],
-    [removeUsersFromOrganizations, selectOrganizationsAddUsers, t, user, view.selectedItems]
+    [
+      removeOrganizationsFromUsers,
+      selectOrganizationsAddUsers,
+      t,
+      updateViewAfterDelete,
+      user,
+      view.selectedItems,
+    ]
   )
   const rowActions = useMemo<ITypedAction<Organization>[]>(
     () => [
@@ -213,10 +236,11 @@ function UserOrganizations(props: { user: User }) {
         type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
-        onClick: (organization) => removeUsersFromOrganizations([user], [organization]),
+        onClick: (organization) =>
+          removeOrganizationsFromUsers([user], [organization], updateViewAfterDelete),
       },
     ],
-    [removeUsersFromOrganizations, t, user]
+    [removeOrganizationsFromUsers, t, updateViewAfterDelete, user]
   )
   return (
     <>
