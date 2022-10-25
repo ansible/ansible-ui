@@ -55,7 +55,12 @@ export enum RouteE {
   CredentialTypes = '/controller/credential-types',
   Notifications = '/controller/notifications',
   ManagementJobs = '/controller/management-jobs',
+
   InstanceGroups = '/controller/instance-groups',
+  InstanceGroupDetails = '/controller/instance-groups/details/:id',
+  CreateInstanceGroup = '/controller/instance-groups/create',
+  EditInstanceGroup = '/controller/instance-groups/edit/:id',
+
   Applications = '/controller/applications',
 
   Instances = '/controller/instances',
