@@ -17,9 +17,9 @@ type EdgeProps = {
   WithTargetDragProps &
   WithRemoveConnectorProps
 
-interface BendpointProps {
-  point: Point
-}
+// interface BendpointProps {
+//   point: Point
+// }
 
 // const Bendpoint: React.FunctionComponent<BendpointProps> = observer(({ point }) => {
 //   const [hover, setHover] = React.useState(false)
@@ -58,7 +58,7 @@ export const DefaultEdge: React.FunctionComponent<EdgeProps> = ({
       <Layer id={dragging ? 'top' : undefined}>
         <path
           strokeWidth={1}
-          stroke={(element.getData() && element.getData().color) || 'red'}
+          //   stroke={(element.getData() && element.getData().color) || 'red'}
           d={d}
           fill="none"
           onMouseEnter={onShowRemoveConnector}
