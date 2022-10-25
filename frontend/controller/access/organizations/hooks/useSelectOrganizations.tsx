@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
-import { usePageDialog } from '../../../../framework'
-import { SelectMultipleDialog } from '../../../../framework/useSelectMultipleDialog'
-import { useControllerView } from '../../useControllerView'
-import { Organization } from './Organization'
-import { useOrganizationsColumns, useOrganizationsFilters } from './Organizations'
+import { usePageDialog } from '../../../../../framework'
+import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog'
+import { useControllerView } from '../../../useControllerView'
+import { Organization } from '../Organization'
+import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations'
 
 function SelectOrganizations(props: {
   title: string

@@ -30,8 +30,8 @@ import { useControllerView } from '../../useControllerView'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
+import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
 import { Organization } from './Organization'
-import { useDeleteOrganizations } from './useDeleteOrganizations'
 
 export function OrganizationDetails() {
   const { t } = useTranslation()

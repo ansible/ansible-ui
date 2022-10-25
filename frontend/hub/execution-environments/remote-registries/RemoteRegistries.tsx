@@ -3,7 +3,6 @@ import { EditIcon, PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -42,9 +41,10 @@ export function RemoteRegistries() {
     ],
     [t]
   )
-  const rowActions = useMemo<IItemAction<RemoteRegistry>[]>(
+  const rowActions = useMemo<ITypedAction<RemoteRegistry>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit'),
         onClick: () => {

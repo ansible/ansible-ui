@@ -1,10 +1,9 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import { EditIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -18,6 +17,7 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns'
+import { ScmType } from '../../../common/scm'
 import { StatusCell } from '../../../common/StatusCell'
 import { RouteE } from '../../../Routes'
 import {
@@ -66,14 +66,23 @@ export function Projects() {
     [navigate, deleteProjects, t]
   )
 
-  const rowActions = useMemo<IItemAction<Project>[]>(
+  const rowActions = useMemo<ITypedAction<Project>[]>(
     () => [
       {
+        type: TypedActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: SyncIcon,
+        label: t('Sync'),
+        onClick: (_project) => alert('TODO'),
+      },
+      {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project) => navigate(RouteE.EditProject.replace(':id', project.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project) => deleteProjects([project]),
@@ -163,7 +172,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       },
       {
         header: t('Type'),
-        cell: (project) => project.scm_type,
+        cell: (project) => <ScmType scmType={project.scm_type} />,
       },
       {
         header: t('Revision'),

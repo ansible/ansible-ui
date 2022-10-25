@@ -1,12 +1,11 @@
 import { ButtonVariant, Tooltip } from '@patternfly/react-core'
-import { EditIcon } from '@patternfly/react-icons'
+import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
   BytesCell,
   CapacityCell,
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -39,29 +38,47 @@ export function Instances() {
       {
         type: TypedActionType.bulk,
         variant: ButtonVariant.primary,
+        icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instances) => {
           for (const instance of instances) {
-            requestPost(`/api/v2/instances/${instance.id}/health_check/`, {}).catch(
-              // eslint-disable-next-line no-console
-              console.error
-            )
+            requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
+              .then(() => void view.refresh())
+              .catch(
+                // eslint-disable-next-line no-console
+                console.error
+              )
           }
         },
       },
     ],
-    [t]
+    [t, view]
   )
 
-  const rowActions = useMemo<IItemAction<Instance>[]>(
+  const rowActions = useMemo<ITypedAction<Instance>[]>(
     () => [
       {
+        type: TypedActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: HeartbeatIcon,
+        label: t('Run health check'),
+        onClick: (instance) => {
+          void requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
+            .catch(
+              // eslint-disable-next-line no-console
+              console.error
+            )
+            .then(() => void view.refresh())
+        },
+      },
+      {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
-    [navigate, t]
+    [navigate, t, view]
   )
 
   return (

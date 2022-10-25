@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -68,9 +67,10 @@ export function ExecutionEnvironments() {
     [navigate, deleteExecutionEnvironments, t]
   )
 
-  const rowActions = useMemo<IItemAction<ExecutionEnvironment>[]>(
+  const rowActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
@@ -79,6 +79,7 @@ export function ExecutionEnvironments() {
           ),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),

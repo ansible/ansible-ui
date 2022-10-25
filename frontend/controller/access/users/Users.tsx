@@ -10,7 +10,6 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -28,11 +27,11 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
-import { useAddUsersToOrganizations } from './hooks/useAddUsersToOrganizations'
-import { useAddUsersToTeams } from './hooks/useAddUsersToTeams'
-import { useAddUserToOrganizations } from './hooks/useAddUserToOrganizations'
+import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
+import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers'
+import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
+import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useRemoveUsersFromOrganizations } from './hooks/useRemoveUsersFromOrganizations'
 import { User } from './User'
 
 export function Users() {
@@ -52,10 +51,10 @@ export function Users() {
     void view.refresh()
   })
 
-  const addUsersToTeams = useAddUsersToTeams()
-  const addUserToOrganizations = useAddUserToOrganizations()
-  const addUsersToOrganizations = useAddUsersToOrganizations()
-  const removeUsersFromOrganizations = useRemoveUsersFromOrganizations()
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers()
+  const selectTeamsAddUsers = useSelectTeamsAddUsers()
+  const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers()
+  const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers()
 
   const toolbarActions = useMemo<ITypedAction<User>[]>(
     () => [
@@ -71,20 +70,26 @@ export function Users() {
         type: TypedActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add selected users to teams'),
-        onClick: () => addUsersToTeams(view.selectedItems),
+        onClick: () => selectTeamsAddUsers(view.selectedItems),
+      },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove selected users from teams'),
+        onClick: () => selectTeamsRemoveUsers(view.selectedItems),
       },
       { type: TypedActionType.seperator },
       {
         type: TypedActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add selected users to organizations'),
-        onClick: () => addUsersToOrganizations(view.selectedItems),
+        onClick: () => selectOrganizationsAddUsers(view.selectedItems),
       },
       {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove selected users from organizations'),
-        onClick: () => removeUsersFromOrganizations(view.selectedItems),
+        onClick: () => selectOrganizationsRemoveUsers(view.selectedItems),
       },
       { type: TypedActionType.seperator },
       {
@@ -98,32 +103,66 @@ export function Users() {
       t,
       deleteUsers,
       navigate,
-      addUsersToTeams,
+      selectTeamsAddUsers,
       view.selectedItems,
-      addUsersToOrganizations,
-      removeUsersFromOrganizations,
+      selectTeamsRemoveUsers,
+      selectOrganizationsAddUsers,
+      selectOrganizationsRemoveUsers,
     ]
   )
 
-  const rowActions = useMemo<IItemAction<User>[]>(
+  const rowActions = useMemo<ITypedAction<User>[]>(
     () => [
       {
+        type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
       },
+      { type: TypedActionType.seperator },
       {
+        type: TypedActionType.single,
         icon: PlusCircleIcon,
-        label: t('Add user to organizations'),
-        onClick: (user) => addUserToOrganizations(user),
+        label: t('Add user to teams'),
+        onClick: (user) => selectTeamsAddUsers([user]),
       },
       {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from teams'),
+        onClick: (user) => selectTeamsRemoveUsers([user]),
+      },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.single,
+        icon: PlusCircleIcon,
+        label: t('Add user to organizations'),
+        onClick: (user) => selectOrganizationsAddUsers([user]),
+      },
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from organizations'),
+        onClick: (user) => selectOrganizationsRemoveUsers([user]),
+      },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: (user) => deleteUsers([user]),
       },
     ],
-    [addUserToOrganizations, deleteUsers, navigate, t]
+    [
+      deleteUsers,
+      navigate,
+      selectOrganizationsAddUsers,
+      selectOrganizationsRemoveUsers,
+      selectTeamsAddUsers,
+      selectTeamsRemoveUsers,
+      t,
+    ]
   )
 
   return (
@@ -185,9 +224,10 @@ export function AccessTable(props: { url: string }) {
     [t]
   )
 
-  const rowActions = useMemo<IItemAction<User>[]>(
+  const rowActions = useMemo<ITypedAction<User>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

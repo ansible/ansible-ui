@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -60,14 +59,16 @@ export function Hosts() {
     [navigate, deleteHosts, t]
   )
 
-  const rowActions = useMemo<IItemAction<Host>[]>(
+  const rowActions = useMemo<ITypedAction<Host>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteE.EditHost.replace(':id', host.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),

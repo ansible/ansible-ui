@@ -19,7 +19,7 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
     [t]
   )
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const openDeleteUsers = (users: User[]) => {
+  const deleteUsers = (users: User[]) => {
     setDialog(
       <BulkActionDialog<User>
         title={t('Permanently delete users', { count: users.length })}
@@ -40,5 +40,5 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
       />
     )
   }
-  return openDeleteUsers
+  return deleteUsers
 }

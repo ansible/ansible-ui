@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
-import { useNameColumn, useOrganizationNameColumn } from '../../../common/columns'
-import { getItemKey, requestDelete } from '../../../Data'
-import { Team } from './Team'
-import { useTeamsColumns } from './Teams'
+import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns'
+import { getItemKey, requestDelete } from '../../../../Data'
+import { Team } from '../Team'
+import { useTeamsColumns } from '../Teams'
 
 export function useDeleteTeams(callback: (teams: Team[]) => void) {
   const { t } = useTranslation()

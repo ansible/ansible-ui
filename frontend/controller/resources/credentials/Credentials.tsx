@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -64,15 +63,17 @@ export function Credentials() {
     [navigate, deleteCredentials, t]
   )
 
-  const rowActions = useMemo<IItemAction<Credential>[]>(
+  const rowActions = useMemo<ITypedAction<Credential>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential) =>
           navigate(RouteE.EditCredential.replace(':id', credential.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential) => deleteCredentials([credential]),

@@ -3,15 +3,16 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   CopyCell,
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
+  ITypedAction,
   PageBody,
   PageHeader,
   PageLayout,
   PageTable,
   SinceCell,
   TextCell,
+  TypedActionType,
 } from '../../../framework'
 import { downloadTextFile } from '../../../framework/utils/download-file'
 import { pulpHRefKeyFn } from '../useHubView'
@@ -28,12 +29,13 @@ export function SignatureKeys() {
     toolbarFilters,
     tableColumns
   )
-  const rowActions = useMemo<IItemAction<SignatureKey>[]>(
+  const rowActions = useMemo<ITypedAction<SignatureKey>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: DownloadIcon,
         label: t('Download key'),
-        onClick: (signatureKey) => downloadTextFile('key', signatureKey.public_key),
+        onClick: (signatureKey) => downloadTextFile('key', signatureKey?.public_key ?? ''),
       },
     ],
     [t]

@@ -1,11 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core'
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import {
   CapacityCell,
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -68,15 +67,17 @@ export function InstanceGroups() {
     [deleteInstanceGroups, navigate, t]
   )
 
-  const rowActions = useMemo<IItemAction<InstanceGroup>[]>(
+  const rowActions = useMemo<ITypedAction<InstanceGroup>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteE.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete instance group'),
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),

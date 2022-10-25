@@ -13,7 +13,6 @@ import {
   Detail,
   DetailsList,
   DetailsSkeleton,
-  IItemAction,
   ITypedAction,
   PageBody,
   PageHeader,
@@ -33,8 +32,8 @@ import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
 import { User } from '../users/User'
 import { useUsersColumns, useUsersFilters } from '../users/Users'
+import { useDeleteTeams } from './hooks/useDeleteTeams'
 import { Team } from './Team'
-import { useDeleteTeams } from './useDeleteTeams'
 
 export function TeamDetails() {
   const { t } = useTranslation()
@@ -215,9 +214,10 @@ function TeamAccessTab(props: { team: Team }) {
   })
 
   // Row Actions
-  const rowActions = useMemo<IItemAction<User>[]>(
+  const rowActions = useMemo<ITypedAction<User>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

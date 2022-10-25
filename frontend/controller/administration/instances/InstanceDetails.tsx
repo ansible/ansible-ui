@@ -1,5 +1,5 @@
 import { ButtonVariant, DropdownPosition, PageSection } from '@patternfly/react-core'
-import { EditIcon } from '@patternfly/react-icons'
+import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -43,6 +43,8 @@ export function InstanceDetails() {
       },
       {
         type: TypedActionType.button,
+        icon: HeartbeatIcon,
+        variant: ButtonVariant.secondary,
         label: t('Run health check'),
         onClick: () => {
           requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
