@@ -40,6 +40,7 @@
     "@patternfly/react-core": "4.250.1",
     "@patternfly/react-icons": "4.92.6",
     "@patternfly/react-table": "4.111.4",
+    "@patternfly/react-topology": "^4.88.26",
     "@react-hook/resize-observer": "1.2.6",
     "@sinclair/typebox": "0.24.50",
     "@types/cookie": "0.5.1",
