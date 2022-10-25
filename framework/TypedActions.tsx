@@ -100,16 +100,9 @@ export function TypedActionsDropdown<T extends object>(props: {
           toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
           isPrimary={isPrimary}
           style={
-            !isPrimary
+            isPrimary && !label
               ? {
-                  color:
-                    hasItemActions && selectedItems?.length
-                      ? 'var(--pf-global--Color--light-100)'
-                      : undefined,
-                  backgroundColor:
-                    hasItemActions && selectedItems?.length
-                      ? 'var(--pf-global--primary-color--100)'
-                      : undefined,
+                  color: 'var(--pf-global--Color--light-100)',
                 }
               : {}
           }
@@ -339,7 +332,7 @@ export function TypedActionButton<T extends object>(props: {
         <TypedActionsDropdown<T>
           actions={action.options}
           label={action.label}
-          isPrimary={action.variant === ButtonVariant.primary}
+          isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       )
     }
@@ -391,7 +384,12 @@ export function TypedActions<T extends object>(props: {
   return (
     <Split hasGutter>
       <TypedActionsButtons {...props} actions={buttonActions} />
-      <TypedActionsDropdown {...props} actions={dropdownActions} position={props.position} />
+      <TypedActionsDropdown
+        {...props}
+        actions={dropdownActions}
+        position={props.position}
+        isPrimary={!!props.selectedItems?.length}
+      />
     </Split>
   )
 }
