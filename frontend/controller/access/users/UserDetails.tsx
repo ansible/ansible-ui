@@ -252,7 +252,7 @@ function UserOrganizations(props: { user: User }) {
           style={{ border: 0 }}
         />
       )}
-      <DetailInfo disablePaddingTop>
+      <DetailInfo disablePaddingTop={user.is_superuser}>
         {t(
           'Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.'
         )}
@@ -331,7 +331,7 @@ function UserTeams(props: { user: User }) {
           style={{ border: 0 }}
         />
       )}
-      <DetailInfo disablePaddingTop>
+      <DetailInfo disablePaddingTop={user.is_superuser}>
         {t('Being a team member grants the user all the permissions of the team.')}
       </DetailInfo>
       <Divider />
