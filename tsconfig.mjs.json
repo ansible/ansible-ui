@@ -2,12 +2,10 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "jsx": "react-jsx",
     "lib": ["ES2020", "DOM"],
-    "types": ["cypress", "cypress-axe"],
     "allowSyntheticDefaultImports": true,
     "allowJs": false,
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": true,
     "strict": true,
     "noUnusedLocals": false,
@@ -15,24 +13,12 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "outDir": "./build",
-    // "noImplicitUseStrict": true,
-    "removeComments": true,
+    "outDir": "./publish/mjs",
+    "removeComments": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "esModuleInterop": true
-    // "isolatedModules": true
-    // "strictNullChecks": true
   },
-  "include": [
-    "frontend",
-    "framework",
-    "backend",
-    "cypress",
-    "rollup.config.ts",
-    "cypress.config.ts",
-    "cypress.d.ts",
-    "i18next-parser.config.cjs"
-  ]
+  "include": ["framework"]
 }

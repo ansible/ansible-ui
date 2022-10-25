@@ -1,0 +1,27 @@
+name: Publish
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - *
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    concurrency: publish
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@ansible'
+      - run: |
+          npm run build:mjs
+          npm run build:cjs
+          cd publish
+          npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
