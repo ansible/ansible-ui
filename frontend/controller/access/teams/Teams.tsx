@@ -1,10 +1,15 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
+import {
+  EditIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -30,8 +35,10 @@ import {
 } from '../../common/controller-toolbar-filters'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
+import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams'
+import { useSelectUsersRemoveTeams } from '../users/hooks/useSelectUsersRemoveTeams'
+import { useDeleteTeams } from './hooks/useDeleteTeams'
 import { Team } from './Team'
-import { useDeleteTeams } from './useDeleteTeams'
 
 export function Teams() {
   const { t } = useTranslation()
@@ -43,12 +50,13 @@ export function Teams() {
 
   const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns })
 
-  const deleteTeams = useDeleteTeams((deleted: Team[]) => {
-    for (const team of deleted) {
-      view.unselectItem(team)
-    }
+  const deleteTeams = useDeleteTeams((teams: Team[]) => {
+    view.unselectItems(teams)
     void view.refresh()
   })
+
+  const selectUsersAddTeams = useSelectUsersAddTeams()
+  const selectUsersRemoveTeams = useSelectUsersRemoveTeams()
 
   const toolbarActions = useMemo<ITypedAction<Team>[]>(
     () => [
@@ -59,6 +67,20 @@ export function Teams() {
         label: t('Create team'),
         onClick: () => navigate(RouteE.CreateTeam),
       },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.bulk,
+        icon: PlusCircleIcon,
+        label: t('Add users to selected teams'),
+        onClick: () => selectUsersAddTeams(view.selectedItems),
+      },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove users from selected teams'),
+        onClick: () => selectUsersRemoveTeams(view.selectedItems),
+      },
+      { type: TypedActionType.seperator },
       {
         type: TypedActionType.bulk,
         icon: TrashIcon,
@@ -66,23 +88,40 @@ export function Teams() {
         onClick: deleteTeams,
       },
     ],
-    [deleteTeams, navigate, t]
+    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view.selectedItems]
   )
 
-  const rowActions = useMemo<IItemAction<Team>[]>(
+  const rowActions = useMemo<ITypedAction<Team>[]>(
     () => [
       {
+        type: TypedActionType.single,
+        // variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit team'),
         onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),
       },
+      { type: TypedActionType.seperator },
       {
+        type: TypedActionType.single,
+        icon: PlusCircleIcon,
+        label: t('Add users to team'),
+        onClick: (team) => selectUsersAddTeams([team]),
+      },
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove users from team'),
+        onClick: (team) => selectUsersRemoveTeams([team]),
+      },
+      { type: TypedActionType.seperator },
+      {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete team'),
         onClick: (team) => deleteTeams([team]),
       },
     ],
-    [deleteTeams, navigate, t]
+    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]
   )
 
   return (

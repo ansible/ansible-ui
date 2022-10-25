@@ -3,7 +3,6 @@ import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -50,9 +49,10 @@ export function Approvals() {
     ],
     [t]
   )
-  const rowActions = useMemo<IItemAction<Approval>[]>(
+  const rowActions = useMemo<ITypedAction<Approval>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: ThumbsUpIcon,
         label: t('Approve'),
         onClick: () => {
@@ -60,6 +60,7 @@ export function Approvals() {
         },
       },
       {
+        type: TypedActionType.single,
         icon: ThumbsDownIcon,
         label: t('Reject'),
         onClick: () => {

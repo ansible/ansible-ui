@@ -5,8 +5,8 @@ import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { getControllerError } from '../../useControllerView'
+import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
 import { Organization } from '../organizations/Organization'
-import { useSelectOrganization } from '../organizations/useSelectOrganization'
 import { User } from './User'
 
 export function CreateUser() {
