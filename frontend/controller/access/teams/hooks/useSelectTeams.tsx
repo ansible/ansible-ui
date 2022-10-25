@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
-import { usePageDialog } from '../../../../framework'
-import { SelectMultipleDialog } from '../../../../framework/useSelectMultipleDialog'
-import { useControllerView } from '../../useControllerView'
-import { Team } from './Team'
-import { useTeamsColumns, useTeamsFilters } from './Teams'
+import { usePageDialog } from '../../../../../framework'
+import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog'
+import { useControllerView } from '../../../useControllerView'
+import { Team } from '../Team'
+import { useTeamsColumns, useTeamsFilters } from '../Teams'
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
   const toolbarFilters = useTeamsFilters()

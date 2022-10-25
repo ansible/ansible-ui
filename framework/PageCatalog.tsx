@@ -15,7 +15,6 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   Dropdown,
-  DropdownItem,
   DropdownSeparator,
   KebabToggle,
   Label,
@@ -36,7 +35,7 @@ import { Fragment, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Grid } from './components/Grid'
 import { IconWrapper } from './components/IconWrapper'
 import { Scrollable } from './components/Scrollable'
-import { IItemAction, isItemActionClick } from './TypedActions'
+import { ITypedAction } from './TypedActions'
 
 type CatalogFilterValue = string
 
@@ -63,7 +62,7 @@ export function Catalog<T extends object>(props: {
   selectItem: (item: T) => void
   unselectItem: (item: T) => void
   isSelected: (item: T) => boolean
-  itemActions?: IItemAction<T>[]
+  itemActions?: ITypedAction<T>[]
   showSelect: boolean
 }) {
   const {
@@ -205,7 +204,7 @@ export function CatalogCard<T extends object>(props: {
   isSelected: (item: T) => boolean
   selectItem: (item: T) => void
   unselectItem: (item: T) => void
-  itemActions?: IItemAction<T>[]
+  itemActions?: ITypedAction<T>[]
   showSelect: boolean
   t?: (t: string) => string
 }) {
@@ -233,22 +232,22 @@ export function CatalogCard<T extends object>(props: {
   const dropdownItems = useMemo(
     () =>
       itemActions?.map((itemAction, index) => {
-        if (isItemActionClick(itemAction)) {
-          return (
-            <DropdownItem
-              key={itemAction.label}
-              onClick={() => {
-                itemAction.onClick(item)
-                setIsOpen(false)
-              }}
-            >
-              {itemAction.label}
-            </DropdownItem>
-          )
-        }
+        // if (isItemActionClick(itemAction)) {
+        //   return (
+        //     <DropdownItem
+        //       key={itemAction.label}
+        //       onClick={() => {
+        //         itemAction.onClick(item)
+        //         setIsOpen(false)
+        //       }}
+        //     >
+        //       {itemAction.label}
+        //     </DropdownItem>
+        //   )
+        // }
         return <DropdownSeparator key={index} />
       }),
-    [item, itemActions]
+    [itemActions]
   )
 
   const disabled = !card.onClick

@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
-  IItemAction,
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
@@ -64,15 +63,17 @@ export function Inventories() {
     [navigate, deleteInventories, t]
   )
 
-  const rowActions = useMemo<IItemAction<Inventory>[]>(
+  const rowActions = useMemo<ITypedAction<Inventory>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: EditIcon,
         label: t('Edit inventory'),
         onClick: (inventory) =>
           navigate(RouteE.EditInventory.replace(':id', inventory.id.toString())),
       },
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory) => deleteInventories([inventory]),

@@ -1,19 +1,19 @@
 import {
   Alert,
   ButtonVariant,
+  Divider,
   DropdownPosition,
   PageSection,
   Skeleton,
   Stack,
 } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Detail,
   DetailsList,
-  IItemAction,
   ITypedAction,
   PageBody,
   PageHeader,
@@ -25,20 +25,23 @@ import {
   TypedActions,
   TypedActionType,
 } from '../../../../framework'
+import { DetailInfo } from '../../../../framework/components/DetailInfo'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../Routes'
 import { useControllerView } from '../../useControllerView'
+import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers'
+import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
 import { Organization } from '../organizations/Organization'
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
 import { Role } from '../roles/Role'
 import { useRolesColumns, useRolesFilters } from '../roles/Roles'
+import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers'
+import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
 import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { useAddUserToOrganizations } from './hooks/useAddUserToOrganizations'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { useRemoveUserFromOrganizations } from './hooks/useRemoveUserFromOrganizations'
 import { User } from './User'
 import { UserType } from './Users'
 
@@ -137,6 +140,14 @@ function UserDetails(props: { user: User }) {
   const settings = useSettings()
   return (
     <>
+      {user.is_superuser && (
+        <Alert
+          variant="info"
+          title={t('System administrators have unrestricted access to all resources.')}
+          isInline
+          style={{ border: 0 }}
+        />
+      )}
       <Scrollable>
         <PageSection
           variant="light"
@@ -176,8 +187,23 @@ function UserOrganizations(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const addUserToOrganizations = useAddUserToOrganizations(() => void view.refresh())
-  const removeUserFromOrganizations = useRemoveUserFromOrganizations(() => void view.refresh())
+
+  const updateViewAfterAdd = useCallback(
+    (organizations: Organization[]) => {
+      view.selectItems(organizations)
+      void view.refresh()
+    },
+    [view]
+  )
+  const updateViewAfterDelete = useCallback(
+    (organizations: Organization[]) => {
+      view.unselectItems(organizations)
+      void view.refresh()
+    },
+    [view]
+  )
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(updateViewAfterAdd)
+  const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers()
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
       {
@@ -185,16 +211,36 @@ function UserOrganizations(props: { user: User }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to organizations'),
-        onClick: () => addUserToOrganizations(user),
+        onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
         type: TypedActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
-        onClick: () => removeUserFromOrganizations(user, view.selectedItems),
+        onClick: () =>
+          removeOrganizationsFromUsers([user], view.selectedItems, updateViewAfterDelete),
       },
     ],
-    [addUserToOrganizations, removeUserFromOrganizations, t, user, view.selectedItems]
+    [
+      removeOrganizationsFromUsers,
+      selectOrganizationsAddUsers,
+      t,
+      updateViewAfterDelete,
+      user,
+      view.selectedItems,
+    ]
+  )
+  const rowActions = useMemo<ITypedAction<Organization>[]>(
+    () => [
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from organization'),
+        onClick: (organization) =>
+          removeOrganizationsFromUsers([user], [organization], updateViewAfterDelete),
+      },
+    ],
+    [removeOrganizationsFromUsers, t, updateViewAfterDelete, user]
   )
   return (
     <>
@@ -203,17 +249,25 @@ function UserOrganizations(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
+      <DetailInfo disablePaddingTop={user.is_superuser}>
+        {t(
+          'Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.'
+        )}
+      </DetailInfo>
+      <Divider />
       <PageTable<Organization>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
         emptyStateTitle={t('User is not a member of any organizations.')}
         emptyStateDescription={t('To get started, add the user to an organization.')}
         emptyStateButtonText={t('Add user to organization')}
-        emptyStateButtonClick={() => addUserToOrganizations(user)}
+        emptyStateButtonClick={() => selectOrganizationsAddUsers([user])}
         {...view}
       />
     </>
@@ -230,6 +284,43 @@ function UserTeams(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
+  const selectTeamsAddUsers = useSelectTeamsAddUsers((teams) => {
+    view.selectItems(teams)
+    void view.refresh()
+  })
+  const removeTeamsFromUsers = useRemoveTeamsFromUsers((teams) => {
+    view.unselectItems(teams)
+    void view.refresh()
+  })
+  const toolbarActions = useMemo<ITypedAction<Team>[]>(
+    () => [
+      {
+        type: TypedActionType.button,
+        variant: ButtonVariant.primary,
+        icon: PlusIcon,
+        label: t('Add user to teams'),
+        onClick: () => selectTeamsAddUsers([user]),
+      },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove user from selected teams'),
+        onClick: () => removeTeamsFromUsers([user], view.selectedItems),
+      },
+    ],
+    [t, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
+  )
+  const rowActions = useMemo<ITypedAction<Team>[]>(
+    () => [
+      {
+        type: TypedActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user from team'),
+        onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
+      },
+    ],
+    [removeTeamsFromUsers, t, user]
+  )
   return (
     <>
       {user.is_superuser && (
@@ -237,16 +328,23 @@ function UserTeams(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
+      <DetailInfo disablePaddingTop={user.is_superuser}>
+        {t('Being a team member grants the user all the permissions of the team.')}
+      </DetailInfo>
+      <Divider />
       <PageTable<Team>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
         emptyStateTitle={t('User is not a member of any teams.')}
         emptyStateDescription={t('To get started, add the user to a team.')}
         emptyStateButtonText={t('Add user to team')}
-        emptyStateButtonClick={() => alert('TODO')}
+        emptyStateButtonClick={() => selectTeamsAddUsers([user])}
         {...view}
       />
     </>
@@ -278,9 +376,10 @@ function UserRoles(props: { user: User }) {
     ],
     [t]
   )
-  const rowActions = useMemo<IItemAction<Role>[]>(
+  const rowActions = useMemo<ITypedAction<Role>[]>(
     () => [
       {
+        type: TypedActionType.single,
         icon: TrashIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),
@@ -301,6 +400,7 @@ function UserRoles(props: { user: User }) {
           variant="info"
           title={t('System administrators have unrestricted access to all resources.')}
           isInline
+          style={{ border: 0 }}
         />
       )}
       <PageTable<Role>
