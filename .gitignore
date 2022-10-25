@@ -3,3 +3,5 @@
 /certs
 /coverage
 /node_modules
+/publish/cjs
+/publish/mjs
