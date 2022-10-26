@@ -1,0 +1,31 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    concurrency: main
+    environment:
+      name: AnsibleDev
+      url: https://ansibledev.com
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Automated Version Bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          tag-prefix: v
+          version-type: prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
