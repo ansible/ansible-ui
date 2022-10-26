@@ -39,7 +39,7 @@ jobs:
         with:
           # platforms: linux/amd64,linux/arm64 - Quay does not seem to support this :(
           tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ github.ref_name }}
-          labels: ${{ github.ref_name }}
+          labels: version=${{ github.ref_name }}
           build-args: VERSION=${{ github.ref_name }}
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -51,6 +51,9 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   deploy-ansibledev:
+    name: Deploy AnsibleDev.com
     needs: docker-push
+    with:
+      version: latest
     uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main
     secrets: inherit
