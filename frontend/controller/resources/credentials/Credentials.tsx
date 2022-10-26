@@ -37,12 +37,7 @@ export function Credentials() {
     toolbarFilters,
     tableColumns,
   })
-  const deleteCredentials = useDeleteCredentials((deleted: Credential[]) => {
-    for (const credential of deleted) {
-      view.unselectItem(credential)
-    }
-    void view.refresh()
-  })
+  const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<Credential>[]>(
     () => [

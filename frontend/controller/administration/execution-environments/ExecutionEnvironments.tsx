@@ -39,14 +39,7 @@ export function ExecutionEnvironments() {
     toolbarFilters,
     tableColumns,
   })
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(
-    (deleted: ExecutionEnvironment[]) => {
-      for (const executionEnvironment of deleted) {
-        view.unselectItem(executionEnvironment)
-      }
-      void view.refresh()
-    }
-  )
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
     () => [
