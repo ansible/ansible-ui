@@ -15,7 +15,7 @@ import useSWR from 'swr'
 import { swrOptions, useFetcher } from '../../../Data'
 import { DefaultEdge } from './Edge'
 
-export function Topology() {
+export default function Topology() {
   return (
     <VisualizationProvider>
       <TopologyInternal />
@@ -24,7 +24,7 @@ export function Topology() {
   )
 }
 
-export function TopologyInternal() {
+function TopologyInternal() {
   const fetcher = useFetcher()
   const { data } = useSWR<{
     nodes: {
