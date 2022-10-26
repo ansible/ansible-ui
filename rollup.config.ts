@@ -5,22 +5,22 @@ import strip from '@rollup/plugin-strip'
 import typescript from '@rollup/plugin-typescript'
 
 export default {
-    input: 'backend/main.ts',
-    output: {
-        file: 'build/backend.mjs',
-        format: 'es',
-    },
-    plugins: [
-        commonjs(),
-        nodeResolve(),
-        typescript(),
-        replace({
-            preventAssignment: true,
-            values: { 'process.env.NODE_ENV': JSON.stringify('production') },
-        }),
-        strip({
-            include: ['**/*.(ts|js)'],
-            functions: ['console.*', 'assert.*', 'logger.trace'],
-        }),
-    ],
+  input: 'proxy/main.ts',
+  output: {
+    file: 'build/proxy.mjs',
+    format: 'es',
+  },
+  plugins: [
+    commonjs(),
+    nodeResolve(),
+    typescript(),
+    replace({
+      preventAssignment: true,
+      values: { 'process.env.NODE_ENV': JSON.stringify('production') },
+    }),
+    strip({
+      include: ['**/*.(ts|js)'],
+      functions: ['console.*', 'assert.*', 'logger.trace'],
+    }),
+  ],
 }

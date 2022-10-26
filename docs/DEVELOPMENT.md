@@ -7,7 +7,7 @@ The project is broken into three parts.
 | Path       | Description                                                                             |
 | ---------- | --------------------------------------------------------------------------------------- |
 | /frontend  | The React web application for the Ansible UI.                                           |
-| /backend   | The proxy that hosts the web application and proxies calls to controller and hub hosts. |
+| /proxy     | The proxy that hosts the web application and proxies calls to controller and hub hosts. |
 | /framework | A generic framework for web applications using PatternFly and responsive design.        |
 
 In addition the frontend is broken down into the structure needed for supporting both controller and hub.
@@ -28,18 +28,18 @@ graph LR
     end
 
     subgraph Ansible UI
-    browser-->backend(Backend Proxy)
+    browser-->proxy(Proxy)
     end
 
     subgraph Controller 2
-    backend-->controller2(Controller API)
+    proxy-->controller2(Controller API)
     end
 
     subgraph Controller 1
-    backend-->controller1(Controller API)
+    proxy-->controller1(Controller API)
     end
 
     subgraph Hub
-    backend-->hub(Hub API)
+    proxy-->hub(Hub API)
     end
 ```

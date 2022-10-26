@@ -1,7 +1,7 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import { cpus, totalmem } from 'os'
-import { start, stop } from './backend'
 import { logger } from './logger'
+import { start, stop } from './proxy'
 
 logger.info({
   msg: `proxy start`,
