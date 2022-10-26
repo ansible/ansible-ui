@@ -40,12 +40,7 @@ export function Projects() {
     toolbarFilters,
     tableColumns,
   })
-  const deleteProjects = useDeleteProjects((deleted: Project[]) => {
-    for (const project of deleted) {
-      view.unselectItem(project)
-    }
-    void view.refresh()
-  })
+  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<Project>[]>(
     () => [

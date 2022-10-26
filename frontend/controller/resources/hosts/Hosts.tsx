@@ -33,12 +33,7 @@ export function Hosts() {
   const toolbarFilters = useHostsFilters()
   const tableColumns = useHostsColumns()
   const view = useControllerView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns })
-  const deleteHosts = useDeleteHosts((deleted: Host[]) => {
-    for (const host of deleted) {
-      view.unselectItem(host)
-    }
-    void view.refresh()
-  })
+  const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<Host>[]>(
     () => [
