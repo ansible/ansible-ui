@@ -28,7 +28,7 @@
   "include": [
     "frontend",
     "framework",
-    "backend",
+    "proxy",
     "cypress",
     "rollup.config.ts",
     "cypress.config.ts",

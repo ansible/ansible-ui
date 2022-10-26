@@ -16,4 +16,4 @@ WORKDIR /home/node
 ENV NODE_ENV production
 ENV VERSION $VERSION
 COPY --from=builder --chown=node /app/build ./
-CMD ["node", "backend.mjs"]
+CMD ["node", "proxy.mjs"]
