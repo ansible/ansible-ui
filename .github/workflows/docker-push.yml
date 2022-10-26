@@ -47,7 +47,7 @@ jobs:
           tags: quay.io/ansible/ansible-ui:latest,ansible-ui:${{ env.VERSION }}
           labels: v${{ env.VERSION }}
           build-args: VERSION=${{ env.VERSION }}
-            push: true
+          push: true
           # load: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
