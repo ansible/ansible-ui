@@ -1,4 +1,4 @@
-name: Version
+name: NPM Version
 
 on:
   workflow_dispatch:
@@ -15,7 +15,8 @@ on:
           - prerelease
 
 jobs:
-  version:
+  npm-version:
+    name: NPM Version
     runs-on: ubuntu-latest
     concurrency: main
     environment:

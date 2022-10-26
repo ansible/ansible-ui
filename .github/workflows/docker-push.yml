@@ -1,4 +1,4 @@
-name: Deploy
+name: Docker Push
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - '*'
 
 jobs:
-  deploy:
+  docker-push:
+    name: Docker Push
     runs-on: ubuntu-latest
     concurrency: ansibledev
     environment:
