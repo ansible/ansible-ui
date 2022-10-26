@@ -23,6 +23,6 @@ jobs:
         uses: 'phips28/gh-action-bump-version@master'
         with:
           tag-prefix: v
-          version-type: prerelease
+          version-type: patch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
