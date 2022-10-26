@@ -13,11 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Docker QEMU
-        uses: docker/setup-qemu-action@v2
+      # - name: Setup Docker QEMU
+      #   uses: docker/setup-qemu-action@v2
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # - name: Setup Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
 
       - name: Cache Docker layers
         uses: actions/cache@v3
@@ -38,9 +38,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           # platforms: linux/amd64,linux/arm64
-          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ github.ref_name }}
-          labels: v${{ github.ref_name }}
-          build-args: VERSION=${{ github.ref_name }}
+          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ github.ref_name#v }}
+          labels: ${{ github.ref_name }}
+          build-args: VERSION=${{ github.ref_name#v }}
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
