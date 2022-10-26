@@ -11,6 +11,7 @@ import {
   Http2ServerResponse,
 } from 'http2'
 import { Socket } from 'net'
+import selfsigned from 'selfsigned'
 import { TLSSocket } from 'tls'
 import { HTTP2_HEADER_CONTENT_LENGTH } from './constants'
 import { logger } from './logger'
@@ -39,7 +40,10 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
     cert = readFileSync('./certs/tls.crt')
     key = readFileSync('./certs/tls.key')
   } catch (err) {
-    logger.error({ msg: 'no certs', err })
+    var pems = selfsigned.generate()
+    cert = Buffer.from(pems.cert)
+    key = Buffer.from(pems.private)
+    logger.warn({ msg: 'using self signed certificates' })
   }
 
   try {
