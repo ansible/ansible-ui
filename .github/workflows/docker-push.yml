@@ -34,7 +34,7 @@ jobs:
       - name: Login to Quay
         uses: docker/login-action@v2
         with:
-        registry: quay.io
+          registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
