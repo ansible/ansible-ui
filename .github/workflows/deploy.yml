@@ -2,14 +2,13 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    tags:
+      - '*'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    concurrency: ansible-ui
+    concurrency: ansibledev
     environment:
       name: AnsibleDev
       url: https://ansibledev.com
@@ -22,21 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Increment Version
-        run: |
-          INCREMENT=${{ github.event.inputs.versionIncrement }}
-          INCREMENT="${INCREMENT:-patch}"
-          VERSION=$(npm version $INCREMENT --no-git-tag-version)
-          echo $VERSION
-          echo "VERSION=$(echo $VERSION | cut -c 2-)" >> $GITHUB_ENV
-
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          default_author: github_actions
-          message: Release v${{ env.VERSION }} [skip ci]
-          tag: v${{ env.VERSION }}
 
       - name: Setup Docker QEMU
         uses: docker/setup-qemu-action@v1
