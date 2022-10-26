@@ -37,5 +37,5 @@ A live instance of the latest development version is running at [AnsibleDev.com]
 
 5. View the development documentation
 
-   - [Development guide](./docs/DEVELOPMENT.md)
-   - [Framework guide](./framework/FRAMEWORK.md) - Framework for building consistent responsive web applications using PatternFly.
+   - [Development](./docs/DEVELOPMENT.md)
+   - [Framework](./framework/README.md) - Framework for building consistent responsive web applications using PatternFly.
