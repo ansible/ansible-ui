@@ -59,7 +59,6 @@ import {
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
 import { Collapse, PageHeader, PageHeaderProps, useBreakpoint } from '.'
-import { Organization } from '../frontend/controller/access/organizations/Organization'
 import { Scrollable } from './components/Scrollable'
 import { SettingsContext } from './Settings'
 
@@ -779,10 +778,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                   selectOpen={
                     (
                       property as {
-                        selectOpen?: (
-                          callback: (organization: Organization) => void,
-                          title: string
-                        ) => void
+                        selectOpen?: (callback: (item: unknown) => void, title: string) => void
                       }
                     ).selectOpen
                   }
