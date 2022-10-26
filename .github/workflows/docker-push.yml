@@ -19,10 +19,6 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
       - name: Setup Docker QEMU
         uses: docker/setup-qemu-action@v1
 
