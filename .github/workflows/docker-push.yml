@@ -53,3 +53,4 @@ jobs:
 
   deploy-ansibledev:
     uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main
+    secrets: inherit
