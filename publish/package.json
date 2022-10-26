@@ -1,6 +1,6 @@
 {
   "name": "@ansible/ansible-ui-framework",
-  "description": "Framework for building web applications using PatternFly.",
+  "description": "Framework for building consistent responsive web applications using PatternFly.",
   "version": "0.0.0",
   "author": "Red Hat",
   "license": "MIT",
