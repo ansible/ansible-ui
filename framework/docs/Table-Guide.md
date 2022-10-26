@@ -1,17 +1,15 @@
-# Guide to creating a page containing a table
+# Table Guide
 
-Creating a page for a table involves:
+- [Typescript Interface](#typescript-interface)
+- [Page layout](#page-layout)
+- [View](#view)
+- [Table Columns](#table-columns)
+- [Page Table](#page-table)
+- [Toolbar Filters](#toolbar-filters)
+- [Toolbar Actions](#toolbar-actions)
+- [Row Actions](#row-actions)
 
-- [Define an interface for the data](#define-an-interface-for-the-data)
-- [Create page layout](#create-page-layout)
-- [Add a table view](#add-a-table-view)
-- [Define columns for the table](#define-columns-for-the-table)
-- [Add a PageTable](#add-a-pagetable)
-- [Add ToolbarFilters](#add-toolbarfilters)
-- [Add ToolbarActions](#add-toolbaractions)
-- [Add RowActions](#add-rowactions)
-
-## Define an interface for the data
+## Typescript Interface
 
 ```ts
 export interface IPerson {
@@ -19,7 +17,7 @@ export interface IPerson {
 }
 ```
 
-## Create page layout
+## Page layout
 
 The page layout enables the layout to be responsive - responding to different page sizes and adjusting padding and borders.
 
@@ -36,7 +34,7 @@ export function Persons() {
 }
 ```
 
-## Add a table view
+## View
 
 Each table uses a view using a React hook. The view handles the state for the table. Sorting, filtering, pagination, etc...
 
@@ -53,7 +51,7 @@ export function Persons() {
 }
 ```
 
-## Define columns for the table
+## Table Columns
 
 ```tsx
 export function Persons() {
@@ -72,7 +70,7 @@ export function Persons() {
 }
 ```
 
-## Add a PageTable
+## Page Table
 
 The PageTable component takes in the properties from the view and shows a table for the view using the columns.
 
@@ -100,7 +98,7 @@ export function Persons() {
 }
 ```
 
-## Add ToolbarFilters
+## Toolbar Filters
 
 Filters are specified using IToolbarFilter. The key is used for url querystring persistence. The query is used by the view to make the API call with the filter.
 
@@ -133,7 +131,7 @@ export function Persons() {
 }
 ```
 
-## Add ToolbarActions
+## Toolbar Actions
 
 Toolbar actions are specified using ITypedAction.
 
@@ -175,7 +173,7 @@ export function Persons() {
 }
 ```
 
-## Add RowActions
+## Row Actions
 
 Row actions are specified using ITypedAction.
 
