@@ -25,7 +25,7 @@ import { Projects } from './resources/projects/Projects'
 import Settings from './settings/Settings'
 import Dashboard from './views/Dashboard'
 
-// Lasy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
+// Lazy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
 const Topology = lazy(() => import('./administration/topology/Topology'))
 
 export function ControllerRouter() {
