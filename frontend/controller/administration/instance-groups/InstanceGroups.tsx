@@ -29,12 +29,7 @@ export function InstanceGroups() {
     tableColumns,
   })
 
-  const deleteInstanceGroups = useDeleteInstanceGroups((deleted: InstanceGroup[]) => {
-    for (const ig of deleted) {
-      view.unselectItem(ig)
-    }
-    void view.refresh()
-  })
+  const deleteInstanceGroups = useDeleteInstanceGroups(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<InstanceGroup>[]>(
     () => [
