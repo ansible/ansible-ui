@@ -9,11 +9,7 @@ jobs:
   docker-push:
     name: Docker Push
     runs-on: ubuntu-latest
-    concurrency: ansibledev
-    environment:
-      name: AnsibleDev
-      url: https://ansibledev.com
-
+    concurrency: docker-push
     steps:
       - uses: actions/checkout@v3
 
@@ -43,12 +39,10 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           #platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
-          #   tags: ansible-ui:latest,ansible-ui:${{ env.VERSION }}
-          tags: quay.io/ansible/ansible-ui:latest,ansible-ui:${{ env.VERSION }}
+          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ env.VERSION }}
           labels: v${{ env.VERSION }}
           build-args: VERSION=${{ env.VERSION }}
           push: true
-          # load: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
@@ -57,26 +51,5 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      # - name: Save image
-      #   run: docker image save ansible-ui > ansible-ui.tar
-
-      # - name: SCP
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     key: ${{ secrets.HOST_KEY }}
-      #     source: 'ansible-ui.tar'
-      #     target: '~/'
-
-      # - name: SSH
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     key: ${{ secrets.HOST_KEY }}
-      #     script: |
-      #       docker load --input ansible-ui.tar
-      #       docker rm --force ansible-ui || true
-      #       docker run --name ansible-ui -d --restart unless-stopped -e PORT=443 -p 443:443 -v /root/certs:/home/node/certs ansible-ui
-      #       docker image prune -a -f
+  deploy-ansibledev:
+    uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main

@@ -1,0 +1,43 @@
+name: Deploy AnsibleDev.com
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-ansibledev:
+    name: Deploy AnsibleDev.com
+    runs-on: ubuntu-latest
+    concurrency: ansibledev
+    environment:
+      name: AnsibleDev
+      url: https://ansibledev.com
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pull image
+        run: docker pull quay.io/ansible/ansible-ui
+
+      - name: Save image
+        run: docker image save quay.io/ansible/ansible-ui > ansible-ui.tar
+
+      - name: SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.HOST_KEY }}
+          source: 'ansible-ui.tar'
+          target: '~/'
+
+      - name: SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.HOST_KEY }}
+          script: |
+            docker load --input ansible-ui.tar
+            docker rm --force ansible-ui || true
+            docker run --name ansible-ui -d --restart unless-stopped -e PORT=443 -p 443:443 -v /root/certs:/home/node/certs ansible-ui
+            docker image prune -a -f
