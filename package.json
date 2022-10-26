@@ -1,6 +1,6 @@
 {
   "name": "@ansible/ansible-ui",
-  "version": "0.0.185",
+  "version": "0.0.186",
   "type": "module",
   "scripts": {
     "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
