@@ -112,63 +112,71 @@ export function TypedActionsDropdown<T extends object>(props: {
       }
       isOpen={dropdownOpen}
       isPlain={!label}
-      dropdownItems={actions.map((action, index) => {
-        switch (action.type) {
-          case TypedActionType.button:
-          case TypedActionType.bulk: {
-            let Icon: ComponentClass | FunctionComponent | undefined = action.icon
-            if (!Icon && hasIcons) Icon = TransparentIcon
-            let tooltip = action.tooltip
-            let isDisabled = false
-            if (action.type === TypedActionType.bulk && (!selectedItems || !selectedItems.length)) {
-              tooltip = 'No selections'
-              isDisabled = true
-            }
-            return (
-              <Tooltip
-                key={action.label}
-                content={tooltip}
-                trigger={tooltip ? undefined : 'manual'}
-              >
-                <DropdownItem
-                  onClick={() => action.onClick(selectedItems ?? [])}
-                  isAriaDisabled={isDisabled}
-                  icon={
-                    Icon ? (
-                      <span style={{ paddingRight: 4 }}>
-                        <Icon />
-                      </span>
-                    ) : undefined
-                  }
-                  // style={{ color: 'var(--pf-global--primary-color--100)' }}
-                  style={{
-                    color:
-                      action.isDanger && !isDisabled
-                        ? 'var(--pf-global--danger-color--100)'
-                        : undefined,
-                  }}
-                >
-                  {action.label}
-                </DropdownItem>
-              </Tooltip>
-            )
-          }
-          case TypedActionType.dropdown:
-            return (
-              <TypedActionsDropdown<T>
-                key={action.label}
-                label={action.label}
-                actions={action.options}
-              />
-            )
-          case TypedActionType.seperator:
-            return <DropdownSeparator key={`separator-${index}`} />
-        }
-      })}
+      dropdownItems={actions.map((action, index) => (
+        <DropdownActionItem
+          key={'label' in action ? action.label : `action-${index}`}
+          action={action}
+          selectedItems={selectedItems ?? []}
+          hasIcons={hasIcons}
+          index={index}
+        />
+      ))}
       position={props.position}
       style={{ zIndex: 201 }}
     />
   )
+}
+
+export function DropdownActionItem<T extends object>(props: {
+  action: ITypedAction<T>
+  selectedItems: T[]
+  hasIcons: boolean
+  index: number
+}) {
+  const { action, selectedItems, hasIcons, index } = props
+
+  switch (action.type) {
+    case TypedActionType.button:
+    case TypedActionType.bulk: {
+      let Icon: ComponentClass | FunctionComponent | undefined = action.icon
+      if (!Icon && hasIcons) Icon = TransparentIcon
+      let tooltip = action.tooltip
+      let isDisabled = false
+      if (action.type === TypedActionType.bulk && !selectedItems.length) {
+        tooltip = 'No selections'
+        isDisabled = true
+      }
+      return (
+        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+          <DropdownItem
+            onClick={() => action.onClick(selectedItems)}
+            isAriaDisabled={isDisabled}
+            icon={
+              Icon ? (
+                <span style={{ paddingRight: 4 }}>
+                  <Icon />
+                </span>
+              ) : undefined
+            }
+            style={{
+              color:
+                action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined,
+            }}
+          >
+            {action.label}
+          </DropdownItem>
+        </Tooltip>
+      )
+    }
+    case TypedActionType.dropdown:
+      return (
+        <TypedActionsDropdown<T> key={action.label} label={action.label} actions={action.options} />
+      )
+    case TypedActionType.seperator:
+      return <DropdownSeparator key={`separator-${index}`} />
+    default:
+      return <></>
+  }
 }
 
 export function TypedActionsButtons<T extends object>(props: {
