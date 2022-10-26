@@ -19,10 +19,6 @@ jobs:
     name: NPM Version
     runs-on: ubuntu-latest
     concurrency: main
-    environment:
-      name: AnsibleDev
-      url: https://ansibledev.com
-
     steps:
       - uses: actions/checkout@v3
         with:
