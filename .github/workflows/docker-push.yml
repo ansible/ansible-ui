@@ -39,7 +39,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           #platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
-          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ env.VERSION }}
+          tags: quay.io/ansible/ansible-ui:latest
           labels: v${{ env.VERSION }}
           build-args: VERSION=${{ env.VERSION }}
           push: true
@@ -51,6 +51,6 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-  deploy-ansibledev:
-    uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main
-    secrets: inherit
+      - name: deploy-ansibledev
+        uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main
+        secrets: inherit
