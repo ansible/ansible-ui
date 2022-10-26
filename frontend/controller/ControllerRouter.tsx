@@ -39,18 +39,18 @@ export function ControllerRouter() {
     >
       <Routes>
         <Route path={RouteE.Dashboard.replace(RouteE.Controller, '')} element={<Dashboard />} />
-        {/* <Route path={RouteE.Jobs} element={JobsPage} /> */}
-        {/* <Route path={RouteE.Schedules} element={SchedulesPage} /> */}
-        {/* <Route path={RouteE.ActivityStream} element={ActivityStreeam} /> */}
-        {/* <Route path={RouteE.WorkflowApprovals} element={WorkflowApprovalsPage} /> */}
+        {/* <Route path={RouteE.Jobs} element={<Jobs />} /> */}
+        {/* <Route path={RouteE.Schedules} element={<Schedules />} /> */}
+        {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
+        {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
 
-        {/* <Route path={RouteE.Templates} element={TemplatesPage} /> */}
+        {/* <Route path={RouteE.Templates} element={<Templates />} /> */}
 
         <Route path={RouteE.Credentials.replace(RouteE.Controller, '')} element={<Credentials />} />
 
         <Route path={RouteE.Projects.replace(RouteE.Controller, '')} element={<Projects />} />
-        {/* <Route path={RouteE.ProjectDetails} element={ProjectsDetailsPage} /> */}
-        {/* <Route path={RouteE.ProjectEdit} element={ProjectEditPage} /> */}
+        {/* <Route path={RouteE.ProjectDetails} element={<ProjectsDetails />} /> */}
+        {/* <Route path={RouteE.ProjectEdit} element={<ProjectEdit />} /> */}
 
         <Route path={RouteE.Inventories.replace(RouteE.Controller, '')} element={<Inventories />} />
 
@@ -86,9 +86,9 @@ export function ControllerRouter() {
         <Route path={RouteE.CreateTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
         <Route path={RouteE.EditTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
 
-        {/* <Route path={RouteE.CredentialTypes} element={CredentialTypesPage} /> */}
-        {/* <Route path={RouteE.Notifications} element={NotificationsPage} /> */}
-        {/* <Route path={RouteE.ManagementJobs} element={ManagementJobsPage} /> */}
+        {/* <Route path={RouteE.CredentialTypes} element={<CredentialTypes />} /> */}
+        {/* <Route path={RouteE.Notifications} element={<Notifications />} /> */}
+        {/* <Route path={RouteE.ManagementJobs} element={<ManagementJobs />} /> */}
 
         <Route
           path={RouteE.InstanceGroups.replace(RouteE.Controller, '')}
@@ -105,7 +105,7 @@ export function ControllerRouter() {
           element={<EditInstance />}
         />
 
-        {/* <Route path={RouteE.Applications} element={ApplicationsPage} /> */}
+        {/* <Route path={RouteE.Applications} element={<Applications />} /> */}
         <Route
           path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')}
           element={<ExecutionEnvironments />}
