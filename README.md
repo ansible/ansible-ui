@@ -31,7 +31,7 @@ A live instance of the latest development version is running at [AnsibleDev.com]
     npm start
     ```
 
-    This will start the frontend and the backend in parallel.
+    This will start the frontend and the proxy in parallel.
 
     The UI will open and load after a few seconds.
 
