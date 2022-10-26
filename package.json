@@ -4,6 +4,11 @@
   "version": "0.0.190",
   "author": "Red Hat",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansible/ansible-ui.git"
+  },
+  "homepage": "https://github.com/ansible/ansible-ui#readme",
   "type": "module",
   "scripts": {
     "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",
