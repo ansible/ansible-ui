@@ -9,4 +9,4 @@ cd publish
 VERSION=`cat ../package.json | jq -r '.version'` && cat package.json | jq --arg version $VERSION '. +{version: $version}' > temp.json
 rm -f package.json
 mv temp.json package.json
-npm publish --dry-run
+npm publish
