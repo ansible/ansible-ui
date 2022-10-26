@@ -51,12 +51,7 @@ export function Organizations() {
     tableColumns,
   })
 
-  const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
-    for (const organization of deleted) {
-      view.unselectItem(organization)
-    }
-    void view.refresh()
-  })
+  const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh)
 
   const selectUsersAddOrganizations = useSelectUsersAddOrganizations()
   const selectUsersRemoveOrganizations = useSelectUsersRemoveOrganizations()
