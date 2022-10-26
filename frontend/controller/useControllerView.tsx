@@ -10,6 +10,8 @@ export type IControllerView<T extends { id: number }> = IView &
     itemCount: number | undefined
     pageItems: T[] | undefined
     refresh: () => Promise<ItemsResponse<T> | undefined>
+    selectItemsAndRefresh: (items: T[]) => void
+    unselectItemsAndRefresh: (items: T[]) => void
   }
 
 export function useControllerView<T extends { id: number }>(options: {
@@ -85,6 +87,22 @@ export function useControllerView<T extends { id: number }>(options: {
     itemCountRef.current.itemCount = data?.count
   }
 
+  const selectItemsAndRefresh = useCallback(
+    (items: T[]) => {
+      selection.selectItems(items)
+      void refresh()
+    },
+    [refresh, selection]
+  )
+
+  const unselectItemsAndRefresh = useCallback(
+    (items: T[]) => {
+      selection.unselectItems(items)
+      void refresh()
+    },
+    [refresh, selection]
+  )
+
   return useMemo(() => {
     return {
       refresh,
@@ -93,8 +111,18 @@ export function useControllerView<T extends { id: number }>(options: {
       error,
       ...view,
       ...selection,
+      selectItemsAndRefresh,
+      unselectItemsAndRefresh,
     }
-  }, [data, error, refresh, selection, view])
+  }, [
+    data?.results,
+    error,
+    refresh,
+    selectItemsAndRefresh,
+    selection,
+    unselectItemsAndRefresh,
+    view,
+  ])
 }
 
 export async function getControllerError(err: unknown) {

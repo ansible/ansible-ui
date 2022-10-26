@@ -37,12 +37,7 @@ export function Inventories() {
     toolbarFilters,
     tableColumns,
   })
-  const deleteInventories = useDeleteInventories((deleted: Inventory[]) => {
-    for (const inventory of deleted) {
-      view.unselectItem(inventory)
-    }
-    void view.refresh()
-  })
+  const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<Inventory>[]>(
     () => [

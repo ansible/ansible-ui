@@ -44,12 +44,7 @@ export function Users() {
 
   const view = useControllerView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns })
 
-  const deleteUsers = useDeleteUsers((deleted: User[]) => {
-    for (const user of deleted) {
-      view.unselectItem(user)
-    }
-    void view.refresh()
-  })
+  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh)
 
   const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers()
   const selectTeamsAddUsers = useSelectTeamsAddUsers()
