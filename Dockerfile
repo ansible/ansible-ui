@@ -7,6 +7,7 @@ COPY . .
 RUN npm run build
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
+ARG VERSION
 COPY --from=builder /usr/local/bin/node /usr/local/bin/node
 RUN apk upgrade --no-cache -U && apk add --no-cache libstdc++
 RUN addgroup -g 1000 -S node && adduser -u 1000 -S node -G node
