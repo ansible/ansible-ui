@@ -9,9 +9,6 @@ jobs:
   main:
     runs-on: ubuntu-latest
     concurrency: main
-    environment:
-      name: AnsibleDev
-      url: https://ansibledev.com
 
     steps:
       - uses: actions/checkout@v3
@@ -26,6 +23,6 @@ jobs:
         uses: 'phips28/gh-action-bump-version@master'
         with:
           tag-prefix: v
-          version-type: prerelease
+          version-type: rc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
