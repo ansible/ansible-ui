@@ -1,6 +1,9 @@
 {
   "name": "@ansible/ansible-ui",
+  "description": "Ansible Automation Platform UI",
   "version": "0.0.188",
+  "author": "Red Hat",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "start": "concurrently npm:frontend npm:backend --prefix-colors cyan,green",

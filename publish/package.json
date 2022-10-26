@@ -1,10 +1,14 @@
 {
   "name": "@ansible/ansible-ui-framework",
+  "description": "Framework for building web applications using PatternFly.",
+  "version": "0.0.0",
+  "author": "Red Hat",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ansible/ansible-ui.git"
   },
-  "version": "0.0.0",
+  "homepage": "https://github.com/ansible/ansible-ui/framework#readme",
   "type": "module",
   "exports": {
     ".": {
