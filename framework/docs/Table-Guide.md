@@ -26,9 +26,7 @@ export function Persons() {
   return (
     <PageLayout>
       <PageHeader title="Persons" />
-      <PageBody>
-        Table will go here
-      </PageBody>
+      <PageBody>Table will go here</PageBody>
     </PageLayout>
   )
 }
