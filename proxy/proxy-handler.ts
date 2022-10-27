@@ -50,8 +50,8 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   if (proxyUrl.hostname !== 'localhost') {
     headers[HTTP2_HEADER_HOST] = proxyUrl.hostname
-    headers['origin'] = proxyUrl.toString()
-    headers[HTTP2_HEADER_REFERER] = proxyUrl.toString()
+    headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname
+    headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname
   }
 
   const requestOptions: RequestOptions = {
