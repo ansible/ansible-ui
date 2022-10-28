@@ -1,5 +1,4 @@
 import {
-  Button,
   ButtonVariant,
   Dropdown,
   DropdownItem,
@@ -13,8 +12,9 @@ import {
 } from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
 import { IAction } from '@patternfly/react-table'
-import { ComponentClass, Fragment, FunctionComponent, useCallback, useMemo, useState } from 'react'
-import { useBreakpoint, WindowSize } from './components/useBreakPoint'
+import { ComponentClass, FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { useBreakpoint, WindowSize } from '../components/useBreakPoint'
+import { TypedActionsButtons, TypedActionButton } from './TypedActionsButtons'
 
 export enum TypedActionType {
   seperator = 'seperator',
@@ -112,230 +112,71 @@ export function TypedActionsDropdown<T extends object>(props: {
       }
       isOpen={dropdownOpen}
       isPlain={!label}
-      dropdownItems={actions.map((action, index) => {
-        switch (action.type) {
-          case TypedActionType.button:
-          case TypedActionType.bulk: {
-            let Icon: ComponentClass | FunctionComponent | undefined = action.icon
-            if (!Icon && hasIcons) Icon = TransparentIcon
-            let tooltip = action.tooltip
-            let isDisabled = false
-            if (action.type === TypedActionType.bulk && (!selectedItems || !selectedItems.length)) {
-              tooltip = 'No selections'
-              isDisabled = true
-            }
-            return (
-              <Tooltip
-                key={action.label}
-                content={tooltip}
-                trigger={tooltip ? undefined : 'manual'}
-              >
-                <DropdownItem
-                  onClick={() => action.onClick(selectedItems ?? [])}
-                  isAriaDisabled={isDisabled}
-                  icon={
-                    Icon ? (
-                      <span style={{ paddingRight: 4 }}>
-                        <Icon />
-                      </span>
-                    ) : undefined
-                  }
-                  // style={{ color: 'var(--pf-global--primary-color--100)' }}
-                  style={{
-                    color:
-                      action.isDanger && !isDisabled
-                        ? 'var(--pf-global--danger-color--100)'
-                        : undefined,
-                  }}
-                >
-                  {action.label}
-                </DropdownItem>
-              </Tooltip>
-            )
-          }
-          case TypedActionType.dropdown:
-            return (
-              <TypedActionsDropdown<T>
-                key={action.label}
-                label={action.label}
-                actions={action.options}
-              />
-            )
-          case TypedActionType.seperator:
-            return <DropdownSeparator key={`separator-${index}`} />
-        }
-      })}
+      dropdownItems={actions.map((action, index) => (
+        <DropdownActionItem
+          key={'label' in action ? action.label : `action-${index}`}
+          action={action}
+          selectedItems={selectedItems ?? []}
+          hasIcons={hasIcons}
+          index={index}
+        />
+      ))}
       position={props.position}
       style={{ zIndex: 201 }}
     />
   )
 }
 
-export function TypedActionsButtons<T extends object>(props: {
-  actions: ITypedAction<T>[]
-  selectedItems?: T[]
-  wrapper?: ComponentClass | FunctionComponent
-  noPrimary?: boolean
-}) {
-  const { actions, selectedItems, wrapper } = props
-  if (actions.length === 0) return <></>
-  return (
-    <Split hasGutter>
-      {actions.map((action, index) => (
-        <TypedActionButton
-          key={index}
-          action={action}
-          selectedItems={selectedItems}
-          wrapper={wrapper}
-        />
-      ))}
-    </Split>
-  )
-}
-
-export function TypedActionButton<T extends object>(props: {
+export function DropdownActionItem<T extends object>(props: {
   action: ITypedAction<T>
-  selectedItems?: T[]
-  selectedItem?: T
-  wrapper?: ComponentClass | FunctionComponent
-  noPrimary?: boolean
-  iconOnly?: boolean
+  selectedItems: T[]
+  hasIcons: boolean
+  index: number
 }) {
-  const { action, selectedItems, selectedItem, wrapper, noPrimary } = props
-  const Wrapper = wrapper ?? Fragment
+  const { action, selectedItems, hasIcons, index } = props
+
+  // TODO case TypedActionType.single?
   switch (action.type) {
-    case TypedActionType.seperator: {
-      return <></>
-    }
-    case TypedActionType.single: {
-      const Icon = action.icon
-      const tooltip = action.tooltip
-      const isDisabled = false
-      let variant = action.variant ?? ButtonVariant.secondary
-      if (variant === ButtonVariant.primary && noPrimary) {
-        variant = ButtonVariant.secondary
-      }
-      if (variant === ButtonVariant.primary && action.isDanger) {
-        variant = ButtonVariant.danger
-      }
-      if (props.iconOnly) {
-        variant = ButtonVariant.plain
-      }
-      return (
-        <Wrapper>
-          <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-            <Button
-              variant={variant}
-              icon={
-                Icon ? (
-                  <span style={{ marginLeft: -4, paddingRight: 4 }}>
-                    <Icon />
-                  </span>
-                ) : undefined
-              }
-              isAriaDisabled={isDisabled}
-              onClick={() => selectedItem && action.onClick(selectedItem)}
-              isDanger={action.isDanger}
-            >
-              {props.iconOnly && Icon ? (
-                <Icon />
-              ) : action.shortLabel ? (
-                action.shortLabel
-              ) : (
-                action.label
-              )}
-            </Button>
-          </Tooltip>
-        </Wrapper>
-      )
-    }
+    case TypedActionType.button:
     case TypedActionType.bulk: {
-      const Icon = action.icon
+      let Icon: ComponentClass | FunctionComponent | undefined = action.icon
+      if (!Icon && hasIcons) Icon = TransparentIcon
       let tooltip = action.tooltip
       let isDisabled = false
-      let variant = action.variant ?? ButtonVariant.secondary
-      if (variant === ButtonVariant.primary && noPrimary) {
-        variant = ButtonVariant.secondary
-      }
-      if (variant === ButtonVariant.primary && action.isDanger) {
-        variant = ButtonVariant.danger
-      }
-      if (!selectedItems || !selectedItems.length) {
+      if (action.type === TypedActionType.bulk && !selectedItems.length) {
         tooltip = 'No selections'
         isDisabled = true
       }
       return (
-        <Wrapper>
-          <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-            <Button
-              variant={variant}
-              icon={
-                Icon ? (
-                  <span style={{ paddingRight: 4 }}>
-                    <Icon />
-                  </span>
-                ) : undefined
-              }
-              isAriaDisabled={isDisabled}
-              onClick={() => action.onClick(selectedItems ?? [])}
-              isDanger={action.isDanger}
-            >
-              {action.shortLabel ? action.shortLabel : action.label}
-            </Button>
-          </Tooltip>
-        </Wrapper>
+        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+          <DropdownItem
+            onClick={() => action.onClick(selectedItems)}
+            isAriaDisabled={isDisabled}
+            icon={
+              Icon ? (
+                <span style={{ paddingRight: 4 }}>
+                  <Icon />
+                </span>
+              ) : undefined
+            }
+            style={{
+              color:
+                action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined,
+            }}
+          >
+            {action.label}
+          </DropdownItem>
+        </Tooltip>
       )
     }
-    case TypedActionType.button: {
-      const Icon = action.icon
-      const tooltip = action.tooltip
-      const isDisabled = false
-      let variant = action.variant ?? ButtonVariant.secondary
-      if (selectedItems && selectedItems.length) {
-        switch (variant) {
-          case ButtonVariant.danger:
-          case ButtonVariant.primary:
-            variant = ButtonVariant.secondary
-            break
-        }
-      }
-      if (variant === ButtonVariant.primary && noPrimary) {
-        variant = ButtonVariant.secondary
-      }
-      if (variant === ButtonVariant.primary && action.isDanger) {
-        variant = ButtonVariant.danger
-      }
+    case TypedActionType.dropdown:
       return (
-        <Wrapper>
-          <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-            <Button
-              variant={variant}
-              isDanger={action.isDanger}
-              icon={
-                Icon ? (
-                  <span style={{ paddingRight: 4 }}>
-                    <Icon />
-                  </span>
-                ) : undefined
-              }
-              isAriaDisabled={isDisabled}
-              onClick={action.onClick}
-            >
-              {action.shortLabel ? action.shortLabel : action.label}
-            </Button>
-          </Tooltip>
-        </Wrapper>
+        <TypedActionsDropdown<T> key={action.label} label={action.label} actions={action.options} />
       )
-    }
-    case TypedActionType.dropdown: {
-      return (
-        <TypedActionsDropdown<T>
-          actions={action.options}
-          label={action.label}
-          isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
-        />
-      )
-    }
+    case TypedActionType.seperator:
+      return <DropdownSeparator key={`separator-${index}`} />
+    default:
+      return <></>
   }
 }
 

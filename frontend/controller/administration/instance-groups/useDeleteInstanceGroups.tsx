@@ -16,13 +16,13 @@ export function useDeleteInstanceGroups(callback: (teams: InstanceGroup[]) => vo
     setDialog(
       <BulkActionDialog<InstanceGroup>
         title={t('Permanently delete instance groups', { count: items.length })}
-        confirmText={t('Yes, I confirm that I want to delete these {{count}} teams.', {
+        confirmText={t('Yes, I confirm that I want to delete these {{count}} instance groups.', {
           count: items.length,
         })}
-        submitText={t('Delete teams', { count: items.length })}
-        submitting={t('Deleting teams', { count: items.length })}
-        submittingTitle={t('Deleting {{count}} teams', { count: items.length })}
-        error={t('There were errors deleting teams', { count: items.length })}
+        submitText={t('Delete instance groups', { count: items.length })}
+        submitting={t('Deleting instance groups', { count: items.length })}
+        submittingTitle={t('Deleting {{count}} instance groups', { count: items.length })}
+        error={t('There were errors deleting instance groups', { count: items.length })}
         items={items.sort((l, r) => compareStrings(l.name, r.name))}
         keyFn={getItemKey}
         isDanger
