@@ -23,7 +23,7 @@ import { useRemoveAutomationServers } from './useRemoveAutomationServers'
 
 export function AutomationServersPage() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   const tableColumns = useAutomationServersColumns()
   const { automationServers } = useAutomationServers()
