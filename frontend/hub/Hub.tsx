@@ -5,7 +5,7 @@ import { HubRouter } from './HubRouter'
 import { HubSidebar } from './HubSidebar'
 
 export function Hub() {
-  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
+  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth >= 1200)
   return (
     <Page
       header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}

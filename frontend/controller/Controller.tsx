@@ -5,7 +5,7 @@ import { ControllerRouter } from './ControllerRouter'
 import { ControllerSidebar } from './ControllerSidebar'
 
 export function Controller() {
-  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
+  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth >= 1200)
   return (
     <Page
       header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}

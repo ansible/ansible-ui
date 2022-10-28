@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../framework'
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
+import { useAddAutomationServer } from '../automation-servers/useAddAutomationServer'
 import { headers } from '../Data'
 import { RouteE } from '../Routes'
-import { useAutomationServers } from './automation-servers/AutomationServerProvider'
-import { useAddAutomationServer } from './automation-servers/useAddAutomationServer'
 
 export default function Login() {
   const { t } = useTranslation()
@@ -107,13 +107,12 @@ export default function Login() {
         localStorage.setItem('server', data.server)
         setAutomationServer(automationServer)
         headers['x-server'] = data.server
-        navigate(RouteE.Organizations)
         switch (automationServer.type) {
           case 'hub':
-            navigate(RouteE.Hub)
+            navigate(RouteE.HubDashboard)
             break
           default:
-            navigate(RouteE.Organizations)
+            navigate(RouteE.Dashboard)
             break
         }
       } catch (err) {
