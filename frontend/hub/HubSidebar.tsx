@@ -47,12 +47,12 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           <Nav>
             <NavList>
               <NavItemSeparator style={{ margin: 0 }} />
-              <NavItem
+              {/* <NavItem
                 isActive={isRouteActive(RouteE.HubAutomationServers, location)}
                 onClick={() => onClick(RouteE.HubAutomationServers)}
               >
                 {t('Automation Servers')}
-              </NavItem>
+              </NavItem> */}
               <AutomationServerSwitcher />
               <NavItemSeparator style={{ margin: 0 }} />
               <NavItem

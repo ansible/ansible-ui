@@ -71,6 +71,7 @@ export function loadAutomationServers(): AutomationServer[] {
   servers = servers.filter(
     (host, index, array) => array.findIndex((h) => h.url === host.url) === index
   )
+  servers.sort((l, r) => l.name.localeCompare(r.name))
   return servers
 }
 
