@@ -80,6 +80,8 @@ export enum RouteE {
 
   Hub = '/hub',
 
+  HubDashboard = '/hub/dashboard',
+
   Collections = '/hub/collections',
   CollectionDetails = '/hub/collections/details/:id',
 
@@ -111,4 +113,5 @@ export enum RouteE {
 
   AutomationServers = '/automation-servers',
   ControllerAutomationServers = '/controller/automation-servers',
+  HubAutomationServers = '/hub/automation-servers',
 }

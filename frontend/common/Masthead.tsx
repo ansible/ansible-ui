@@ -278,7 +278,12 @@ function AccountDropdown() {
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm')
   const fetcher = useFetcher()
-  const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
+  const { automationServer } = useAutomationServers()
+  const meResponse = useSWR<{ results: { username: string }[] }>(
+    automationServer ? '/api/v2/me/' : undefined,
+    fetcher,
+    swrOptions
+  )
   const history = useNavigate()
   const [open, setOpen] = useState(false)
   const onSelect = useCallback(() => {
@@ -323,7 +328,7 @@ function AccountDropdownInternal() {
           onClick={() => {
             async function logout() {
               await fetch('/api/logout')
-              history(RouteE.Login)
+              history(RouteE.AutomationServers)
             }
             void logout()
           }}

@@ -119,6 +119,10 @@ export function PageHeader(props: PageHeaderProps) {
             paddingLeft: 0,
             paddingTop: 0,
             paddingBottom: 0,
+            borderTop:
+              settings.theme !== 'light' && settings.borders
+                ? 'thin solid var(--pf-global--BorderColor--100)'
+                : undefined,
             borderBottom: settings.borders
               ? 'thin solid var(--pf-global--BorderColor--100)'
               : undefined,
@@ -157,6 +161,10 @@ export function PageHeader(props: PageHeaderProps) {
           style={{
             paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
             paddingBottom: xl ? 20 : 12,
+            borderTop:
+              !navigation && settings.theme !== 'light' && settings.borders
+                ? 'thin solid var(--pf-global--BorderColor--100)'
+                : undefined,
             borderBottom: settings.borders
               ? 'thin solid var(--pf-global--BorderColor--100)'
               : undefined,

@@ -4,7 +4,7 @@ import { useBreakpoint } from '.'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useSettings } from './Settings'
 
-export function PageBody(props: { children: ReactNode }) {
+export function PageBody(props: { children?: ReactNode }) {
   const usePadding = useBreakpoint('xxl')
   const settings = useSettings()
   const { t } = useTranslation()
