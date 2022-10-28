@@ -55,7 +55,19 @@ export function AutomationServerSwitcher() {
         footer={
           <>
             <Divider />
-            <Button variant="link" isInline style={{ margin: 16 }}>
+            <Button
+              variant="link"
+              isInline
+              style={{ margin: 16 }}
+              onClick={() => {
+                automationServer?.type === 'controller'
+                  ? navigate(RouteE.ControllerAutomationServers)
+                  : automationServer?.type === 'hub'
+                  ? navigate(RouteE.HubAutomationServers)
+                  : navigate(RouteE.AutomationServers)
+                setOpen(false)
+              }}
+            >
               {t('Manage automation servers')}
             </Button>
           </>
