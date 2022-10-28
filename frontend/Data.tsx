@@ -79,7 +79,7 @@ async function requestCommon<ResponseBody>(
     if (err instanceof HTTPError) {
       switch (err.response.status) {
         case 401:
-          location.replace(RouteE.Login)
+          location.replace(RouteE.AutomationServers)
           break
       }
     }

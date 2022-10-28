@@ -28,22 +28,16 @@ import {
   ToolbarItem,
   Truncate,
 } from '@patternfly/react-core'
-import {
-  BarsIcon,
-  CogIcon,
-  QuestionCircleIcon,
-  RedhatIcon,
-  UserCircleIcon,
-} from '@patternfly/react-icons'
+import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { swrOptions, useFetcher } from '../Data'
 import { RouteE } from '../Routes'
-import { useAutomationServers } from './automation-servers/AutomationServerProvider'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -128,15 +122,13 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ marginTop: 6 }}>
-                {/* <SparkleSvg style={{ width: 48, height: 48, position: 'absolute' }} /> */}
-                {/* <img src={AnsiblePng} width="192" height="192" style={{ width: 48 }} alt="ansible logo" /> */}
+              {/* <div style={{ marginTop: 6 }}>
                 <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
-              </div>
+              </div> */}
               <div style={{ color: 'white', textDecoration: 'none' }}>
-                <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
+                {/* <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
                   {t('Red Hat')}
-                </Title>
+                </Title> */}
                 <Title headingLevel="h3" style={{ fontWeight: 'lighter', lineHeight: 1.2 }}>
                   <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
                 </Title>

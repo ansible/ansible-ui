@@ -11,8 +11,8 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { useSettings } from '../../../framework/Settings'
-import { RouteE } from '../../Routes'
+import { useSettings } from '../../framework/Settings'
+import { RouteE } from '../Routes'
 import { useAutomationServers } from './AutomationServerProvider'
 
 export function AutomationServerSwitcher() {

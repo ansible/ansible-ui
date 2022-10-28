@@ -109,5 +109,6 @@ export enum RouteE {
 
   ControllerDebug = '/controller/debug',
 
+  AutomationServers = '/automation-servers',
   ControllerAutomationServers = '/controller/automation-servers',
 }

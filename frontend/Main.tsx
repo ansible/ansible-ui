@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { PageFrameworkProvider } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
+import { AutomationServersProvider } from './automation-servers/AutomationServerProvider'
+import { AutomationServers } from './automation-servers/AutomationServers'
 import { AccessCode } from './common/AccessCode'
-import { AutomationServersProvider } from './common/automation-servers/AutomationServerProvider'
 import Login from './common/Login'
 import { Controller } from './controller/Controller'
 import { Hub } from './hub/Hub'
@@ -23,9 +24,10 @@ export default function Main() {
               <PageFrameworkProvider>
                 <Routes>
                   <Route path={RouteE.Login} element={<Login />} />
+                  <Route path={RouteE.AutomationServers} element={<AutomationServers />} />
                   <Route path={RouteE.Controller + '/*'} element={<Controller />} />
                   <Route path={RouteE.Hub + '/*'} element={<Hub />} />
-                  <Route path="*" element={<Navigate to={RouteE.Login} />} />
+                  <Route path="*" element={<Navigate to={RouteE.AutomationServers} />} />
                 </Routes>
               </PageFrameworkProvider>
             </BrowserRouter>

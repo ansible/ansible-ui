@@ -8,13 +8,13 @@ import {
   PageLayout,
   PageTable,
   TextCell,
-} from '../../../framework'
-import { useView } from '../../../framework/useView'
-import { RouteE } from '../../Routes'
+} from '../../framework'
+import { useView } from '../../framework/useView'
+import { RouteE } from '../Routes'
 import { AutomationServer, automationServerKeyFn } from './AutomationServer'
 import { useAutomationServers } from './AutomationServerProvider'
 
-export function AutomationServers() {
+export function AutomationServersPage() {
   const { t } = useTranslation()
   // const navigate = useNavigate()
 

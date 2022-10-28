@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
 import { useSettings } from '../../framework/Settings'
-import { AutomationServerSwitcher } from '../common/automation-servers/AutomationServerSwitcher'
+import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher'
 import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../Routes'
 

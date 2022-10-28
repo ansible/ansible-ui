@@ -2,7 +2,7 @@ import { Modal, ModalVariant } from '@patternfly/react-core'
 import { Static, Type } from '@sinclair/typebox'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PageForm, usePageDialog } from '../../../framework'
+import { PageForm, usePageDialog } from '../../framework'
 import { useAutomationServers } from './AutomationServerProvider'
 
 export function useAddAutomationServer() {
