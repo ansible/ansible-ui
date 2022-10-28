@@ -1,4 +1,5 @@
 /* Copyright Contributors to the Open Cluster Management project */
+import etag from 'etag'
 import { createReadStream, Stats } from 'fs'
 import { stat } from 'fs/promises'
 import { constants, Http2ServerRequest, Http2ServerResponse } from 'http2'
@@ -77,6 +78,7 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
               [constants.HTTP2_HEADER_CONTENT_ENCODING]: 'br',
               [constants.HTTP2_HEADER_CONTENT_TYPE]: contentType,
               [constants.HTTP2_HEADER_CONTENT_LENGTH]: brStats.size.toString(),
+              [constants.HTTP2_HEADER_ETAG]: etag(brStats),
             })
           })
           .on('error', (err) => {
@@ -102,6 +104,7 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
               [constants.HTTP2_HEADER_CONTENT_ENCODING]: 'gzip',
               [constants.HTTP2_HEADER_CONTENT_TYPE]: contentType,
               [constants.HTTP2_HEADER_CONTENT_LENGTH]: gzStats.size.toString(),
+              [constants.HTTP2_HEADER_ETAG]: etag(gzStats),
             })
           })
           .on('error', (err) => {
@@ -123,6 +126,7 @@ export async function serve(req: Http2ServerRequest, res: Http2ServerResponse): 
         res.writeHead(200, {
           [constants.HTTP2_HEADER_CONTENT_TYPE]: contentType,
           [constants.HTTP2_HEADER_CONTENT_LENGTH]: stats.size.toString(),
+          [constants.HTTP2_HEADER_ETAG]: etag(stats),
         })
       })
       .on('error', (err) => {
