@@ -28,7 +28,13 @@ import {
   ToolbarItem,
   Truncate,
 } from '@patternfly/react-core'
-import { BarsIcon, CogIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons'
+import {
+  BarsIcon,
+  CogIcon,
+  QuestionCircleIcon,
+  RedhatIcon,
+  UserCircleIcon,
+} from '@patternfly/react-icons'
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -122,13 +128,13 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              {/* <div style={{ marginTop: 6 }}>
+              <div style={{ marginTop: 6 }}>
                 <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
-              </div> */}
+              </div>
               <div style={{ color: 'white', textDecoration: 'none' }}>
-                {/* <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
+                <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
                   {t('Red Hat')}
-                </Title> */}
+                </Title>
                 <Title headingLevel="h3" style={{ fontWeight: 'lighter', lineHeight: 1.2 }}>
                   <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
                 </Title>
