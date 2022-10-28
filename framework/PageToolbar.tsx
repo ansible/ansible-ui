@@ -283,11 +283,29 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
         {/* Action Buttons */}
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
-          <TypedActions
-            actions={toolbarActions}
-            selectedItems={selectedItems}
-            wrapper={ToolbarItem}
-          />
+          <ToolbarItem>
+            <TypedActions
+              actions={toolbarActions}
+              selectedItems={selectedItems}
+              wrapper={ToolbarItem}
+            />
+          </ToolbarItem>
+        </ToolbarGroup>
+
+        <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
+          {/* <ToolbarItem>
+            <ToggleGroup>
+              <Tooltip content={'Table view'}>
+                <ToggleGroupItem icon={<TableIcon />} isSelected />
+              </Tooltip>
+              <Tooltip content={'List view'}>
+                <ToggleGroupItem icon={<ListIcon />} />
+              </Tooltip>
+              <Tooltip content={'Card view'}>
+                <ToggleGroupItem icon={<ThLargeIcon />} />
+              </Tooltip>
+            </ToggleGroup>
+          </ToolbarItem> */}
           {openColumnModal && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>
