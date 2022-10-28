@@ -1,10 +1,17 @@
-import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core'
+import {
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavItemSeparator,
+  NavList,
+  PageSidebar,
+} from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
 import { useSettings } from '../../framework/Settings'
-import { AutomationServerSwitcher } from '../common/automation-servers/AutomationServerSwitcher'
+import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher'
 import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../Routes'
 
@@ -37,10 +44,24 @@ export function ControllerSidebar(props: {
       }}
       nav={
         <>
-          <AutomationServerSwitcher />
           <Nav>
             <NavList>
-              {/* <NavItem>{t('Hoas Controller')}</NavItem> */}
+              <NavItemSeparator style={{ margin: 0 }} />
+              <NavItem
+                isActive={isRouteActive(RouteE.ControllerAutomationServers, location)}
+                onClick={() => onClick(RouteE.ControllerAutomationServers)}
+              >
+                {t('Automation Servers')}
+              </NavItem>
+              <AutomationServerSwitcher />
+              <NavItemSeparator style={{ margin: 0 }} />
+              <NavItem
+                isActive={isRouteActive(RouteE.Dashboard, location)}
+                onClick={() => onClick(RouteE.Dashboard)}
+              >
+                {t('Dashboard')}
+              </NavItem>
+
               {/* <NavExpandable
                             key="controller"
                             title="Controller"

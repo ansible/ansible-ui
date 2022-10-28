@@ -1,26 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import {
-  Bullseye,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Gallery,
-  Grid,
-  GridItem,
-  PageSection,
-  ProgressStep,
-  ProgressStepper,
-  Split,
-  SplitItem,
-  Stack,
-  StackItem,
-  Text,
-} from '@patternfly/react-core'
+import { Card, CardBody, PageSection, Stack } from '@patternfly/react-core'
 import { Fragment } from 'react'
-import { Help, PageHeader } from '../../../framework'
-import { Scrollable } from '../../../framework/components/Scrollable'
+import { PageHeader } from '../../../framework'
 
 export default function Dashboard() {
   return (
@@ -30,7 +11,14 @@ export default function Dashboard() {
         title="Welcome to Automation Controller"
         description="Install and configure your Ansible Automation Controller clusters."
       />
-      <Scrollable>
+      <PageSection>
+        <Stack hasGutter>
+          <Card isRounded isFlat>
+            <CardBody>Get started by... TODO</CardBody>
+          </Card>
+        </Stack>
+      </PageSection>
+      {/* <Scrollable>
         <PageSection>
           <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>
             <GridItem span={12}>
@@ -249,7 +237,7 @@ export default function Dashboard() {
             </GridItem>
           </Grid>
         </PageSection>
-      </Scrollable>
+      </Scrollable> */}
     </Fragment>
   )
 }

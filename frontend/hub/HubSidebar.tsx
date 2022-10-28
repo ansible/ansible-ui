@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
 import { useSettings } from '../../framework/Settings'
-import { AutomationServerSwitcher } from '../common/automation-servers/AutomationServerSwitcher'
+import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher'
 import { isRouteActive } from '../common/Masthead'
 import { RouteE } from '../Routes'
 
@@ -44,13 +44,26 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
       }}
       nav={
         <>
-          <AutomationServerSwitcher />
           <Nav>
             <NavList>
               <NavItemSeparator style={{ margin: 0 }} />
+              <NavItem
+                isActive={isRouteActive(RouteE.HubAutomationServers, location)}
+                onClick={() => onClick(RouteE.HubAutomationServers)}
+              >
+                {t('Automation Servers')}
+              </NavItem>
+              <AutomationServerSwitcher />
+              <NavItemSeparator style={{ margin: 0 }} />
+              <NavItem
+                isActive={isRouteActive(RouteE.HubDashboard, location)}
+                onClick={() => onClick(RouteE.HubDashboard)}
+              >
+                {t('Dashboard')}
+              </NavItem>
               <NavExpandable
-                key="collections"
-                title={t('Collections')}
+                key="automation-content"
+                title={t('Automation Content')}
                 isExpanded
                 isActive={isRouteActive(
                   [RouteE.Collections, RouteE.Namespaces, RouteE.Repositories],
@@ -58,45 +71,17 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                 )}
               >
                 <NavItem
-                  isActive={isRouteActive(RouteE.Collections, location)}
-                  onClick={() => onClick(RouteE.Collections)}
-                >
-                  {t('Collections')}
-                </NavItem>
-                <NavItem
                   isActive={isRouteActive(RouteE.Namespaces, location)}
                   onClick={() => onClick(RouteE.Namespaces)}
                 >
                   {t('Namespaces')}
                 </NavItem>
                 <NavItem
-                  isActive={isRouteActive(RouteE.Repositories, location)}
-                  onClick={() => onClick(RouteE.Repositories)}
+                  isActive={isRouteActive(RouteE.Collections, location)}
+                  onClick={() => onClick(RouteE.Collections)}
                 >
-                  {t('Repository management')}
+                  {t('Collections')}
                 </NavItem>
-                <NavItem
-                  isActive={isRouteActive(RouteE.APIToken, location)}
-                  onClick={() => onClick(RouteE.APIToken)}
-                >
-                  {t('API token management')}
-                </NavItem>
-                <NavItem
-                  isActive={isRouteActive(RouteE.Approvals, location)}
-                  onClick={() => onClick(RouteE.Approvals)}
-                >
-                  {t('Collection approvals')}
-                </NavItem>
-              </NavExpandable>
-              <NavExpandable
-                key="execution-environments"
-                title={t('Execution environments')}
-                isExpanded
-                isActive={isRouteActive(
-                  [RouteE.HubExecutionEnvironments, RouteE.RemoteRegistries],
-                  location
-                )}
-              >
                 <NavItem
                   isActive={isRouteActive(RouteE.HubExecutionEnvironments, location)}
                   onClick={() => onClick(RouteE.HubExecutionEnvironments)}
@@ -104,24 +89,64 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                   {t('Execution environments')}
                 </NavItem>
                 <NavItem
+                  isActive={isRouteActive(RouteE.SignatureKeys, location)}
+                  onClick={() => onClick(RouteE.SignatureKeys)}
+                >
+                  {t('Signature keys')}
+                </NavItem>
+              </NavExpandable>
+              <NavExpandable
+                key="administration"
+                title={t('Administration')}
+                isExpanded
+                isActive={isRouteActive(
+                  [RouteE.HubExecutionEnvironments, RouteE.RemoteRegistries],
+                  location
+                )}
+              >
+                <NavItem
+                  isActive={isRouteActive(RouteE.Repositories, location)}
+                  onClick={() => onClick(RouteE.Repositories)}
+                >
+                  {t('Repositories')}
+                </NavItem>
+                <NavItem
                   isActive={isRouteActive(RouteE.RemoteRegistries, location)}
                   onClick={() => onClick(RouteE.RemoteRegistries)}
                 >
                   {t('Remote registries')}
                 </NavItem>
+                <NavItem
+                  isActive={isRouteActive(RouteE.Tasks, location)}
+                  onClick={() => onClick(RouteE.Tasks)}
+                >
+                  {t('Tasks')}
+                </NavItem>
+                <NavItem
+                  isActive={isRouteActive(RouteE.Approvals, location)}
+                  onClick={() => onClick(RouteE.Approvals)}
+                >
+                  {t('Approvals')}
+                </NavItem>
               </NavExpandable>
-              <NavItem
-                isActive={isRouteActive(RouteE.Tasks, location)}
-                onClick={() => onClick(RouteE.Tasks)}
+
+              <NavExpandable
+                key="access"
+                title={t('Access')}
+                isExpanded
+                isActive={isRouteActive(
+                  [RouteE.HubExecutionEnvironments, RouteE.RemoteRegistries],
+                  location
+                )}
               >
-                {t('Task management')}
-              </NavItem>
-              <NavItem
-                isActive={isRouteActive(RouteE.SignatureKeys, location)}
-                onClick={() => onClick(RouteE.SignatureKeys)}
-              >
-                {t('Signature keys')}
-              </NavItem>
+                <NavItem
+                  isActive={isRouteActive(RouteE.APIToken, location)}
+                  onClick={() => onClick(RouteE.APIToken)}
+                >
+                  {t('API token')}
+                </NavItem>
+              </NavExpandable>
+
               <NavItem
                 onClick={() =>
                   window.open(

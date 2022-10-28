@@ -7,3 +7,7 @@ export const AutomationServerType = Type.Object({
 })
 
 export type AutomationServer = Static<typeof AutomationServerType>
+
+export function automationServerKeyFn(automationServer: AutomationServer) {
+  return automationServer.name
+}

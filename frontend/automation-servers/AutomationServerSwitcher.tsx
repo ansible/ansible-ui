@@ -11,8 +11,8 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { useSettings } from '../../../framework/Settings'
-import { RouteE } from '../../Routes'
+import { useSettings } from '../../framework/Settings'
+import { RouteE } from '../Routes'
 import { useAutomationServers } from './AutomationServerProvider'
 
 export function AutomationServerSwitcher() {
@@ -28,7 +28,6 @@ export function AutomationServerSwitcher() {
         padding: 12,
         backgroundColor:
           settings.theme === 'light' ? undefined : 'var(--pf-global--BackgroundColor--400)',
-        borderTop: 'thin solid #fff2',
       }}
       padding={{ default: 'padding' }}
     >
@@ -56,7 +55,19 @@ export function AutomationServerSwitcher() {
         footer={
           <>
             <Divider />
-            <Button variant="link" isInline style={{ margin: 16 }}>
+            <Button
+              variant="link"
+              isInline
+              style={{ margin: 16 }}
+              onClick={() => {
+                automationServer?.type === 'controller'
+                  ? navigate(RouteE.ControllerAutomationServers)
+                  : automationServer?.type === 'hub'
+                  ? navigate(RouteE.HubAutomationServers)
+                  : navigate(RouteE.AutomationServers)
+                setOpen(false)
+              }}
+            >
               {t('Manage automation servers')}
             </Button>
           </>

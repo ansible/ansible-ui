@@ -41,9 +41,9 @@ import { useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { useBreakpoint } from '../../framework'
 import { useSettingsDialog } from '../../framework/Settings'
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { swrOptions, useFetcher } from '../Data'
 import { RouteE } from '../Routes'
-import { useAutomationServers } from './automation-servers/AutomationServerProvider'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -129,8 +129,6 @@ export function AnsibleMasthead(props: {
           <MastheadBrand>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <div style={{ marginTop: 6 }}>
-                {/* <SparkleSvg style={{ width: 48, height: 48, position: 'absolute' }} /> */}
-                {/* <img src={AnsiblePng} width="192" height="192" style={{ width: 48 }} alt="ansible logo" /> */}
                 <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
               </div>
               <div style={{ color: 'white', textDecoration: 'none' }}>
@@ -286,7 +284,12 @@ function AccountDropdown() {
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm')
   const fetcher = useFetcher()
-  const meResponse = useSWR<{ results: { username: string }[] }>('/api/v2/me/', fetcher, swrOptions)
+  const { automationServer } = useAutomationServers()
+  const meResponse = useSWR<{ results: { username: string }[] }>(
+    automationServer ? '/api/v2/me/' : undefined,
+    fetcher,
+    swrOptions
+  )
   const history = useNavigate()
   const [open, setOpen] = useState(false)
   const onSelect = useCallback(() => {
@@ -331,7 +334,7 @@ function AccountDropdownInternal() {
           onClick={() => {
             async function logout() {
               await fetch('/api/logout')
-              history(RouteE.Login)
+              history(RouteE.AutomationServers)
             }
             void logout()
           }}
