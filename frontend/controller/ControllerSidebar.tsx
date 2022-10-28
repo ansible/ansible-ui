@@ -37,9 +37,15 @@ export function ControllerSidebar(props: {
       }}
       nav={
         <>
-          <AutomationServerSwitcher />
           <Nav>
             <NavList>
+              <NavItem
+                isActive={isRouteActive(RouteE.ControllerAutomationServers, location)}
+                onClick={() => onClick(RouteE.ControllerAutomationServers)}
+              >
+                {t('Automation Servers')}
+              </NavItem>
+              <AutomationServerSwitcher />
               {/* <NavItem>{t('Hoas Controller')}</NavItem> */}
               {/* <NavExpandable
                             key="controller"
