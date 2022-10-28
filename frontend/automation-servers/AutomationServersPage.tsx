@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -19,6 +19,7 @@ import { RouteE } from '../Routes'
 import { AutomationServer, automationServerKeyFn } from './AutomationServer'
 import { useAutomationServers } from './AutomationServerProvider'
 import { useAddAutomationServer } from './useAddAutomationServer'
+import { useRemoveAutomationServers } from './useRemoveAutomationServers'
 
 export function AutomationServersPage() {
   const { t } = useTranslation()
@@ -30,6 +31,7 @@ export function AutomationServersPage() {
   const selected = useSelected(automationServers, automationServerKeyFn)
 
   const addAutomationServer = useAddAutomationServer()
+  const removeAutomationServers = useRemoveAutomationServers()
 
   const toolbarActions = useMemo<ITypedAction<AutomationServer>[]>(
     () => [
@@ -38,14 +40,7 @@ export function AutomationServersPage() {
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Add automation server'),
-        onClick: () => addAutomationServer(),
-      },
-      { type: TypedActionType.seperator },
-      {
-        type: TypedActionType.bulk,
-        icon: MinusCircleIcon,
-        label: t('Remove selected automation servers'),
-        onClick: () => null,
+        onClick: addAutomationServer,
       },
     ],
     [addAutomationServer, t]
@@ -53,22 +48,22 @@ export function AutomationServersPage() {
 
   const rowActions = useMemo<ITypedAction<AutomationServer>[]>(
     () => [
-      {
-        type: TypedActionType.single,
-        variant: ButtonVariant.primary,
-        icon: EditIcon,
-        label: t('Edit automation server'),
-        onClick: () => null,
-      },
-      { type: TypedActionType.seperator },
+      // {
+      //   type: TypedActionType.single,
+      //   variant: ButtonVariant.primary,
+      //   icon: EditIcon,
+      //   label: t('Edit automation server'),
+      //   onClick: () => null,
+      // },
+      // { type: TypedActionType.seperator },
       {
         type: TypedActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove automation server'),
-        onClick: () => null,
+        onClick: (server) => removeAutomationServers([server]),
       },
     ],
-    [t]
+    [removeAutomationServers, t]
   )
 
   return (

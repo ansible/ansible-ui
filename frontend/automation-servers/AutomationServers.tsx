@@ -5,7 +5,7 @@ import { AutomationServersRouter } from './AutomationServersRouter'
 import { AutomationServersSidebar } from './AutomationServersSidebar'
 
 export function AutomationServers() {
-  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1600)
+  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth > 1200)
   return (
     <Page
       header={<AnsibleMasthead isNavOpen={isNavOpen} setNavOpen={setNavOpen} />}
