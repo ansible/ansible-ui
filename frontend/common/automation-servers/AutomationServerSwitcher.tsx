@@ -28,7 +28,6 @@ export function AutomationServerSwitcher() {
         padding: 12,
         backgroundColor:
           settings.theme === 'light' ? undefined : 'var(--pf-global--BackgroundColor--400)',
-        borderTop: 'thin solid #fff2',
       }}
       padding={{ default: 'padding' }}
     >
