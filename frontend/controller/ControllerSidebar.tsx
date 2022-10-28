@@ -1,4 +1,11 @@
-import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core'
+import {
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavItemSeparator,
+  NavList,
+  PageSidebar,
+} from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -39,6 +46,7 @@ export function ControllerSidebar(props: {
         <>
           <Nav>
             <NavList>
+              <NavItemSeparator style={{ margin: 0 }} />
               <NavItem
                 isActive={isRouteActive(RouteE.ControllerAutomationServers, location)}
                 onClick={() => onClick(RouteE.ControllerAutomationServers)}
@@ -46,6 +54,7 @@ export function ControllerSidebar(props: {
                 {t('Automation Servers')}
               </NavItem>
               <AutomationServerSwitcher />
+              <NavItemSeparator style={{ margin: 0 }} />
               {/* <NavItem>{t('Hoas Controller')}</NavItem> */}
               {/* <NavExpandable
                             key="controller"
