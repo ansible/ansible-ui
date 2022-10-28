@@ -1,7 +1,19 @@
 /* eslint-disable i18next/no-literal-string */
-import { Card, CardBody, PageSection, Stack } from '@patternfly/react-core'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  PageSection,
+  Split,
+  SplitItem,
+  Stack,
+  StackItem,
+  Text,
+} from '@patternfly/react-core'
 import { Fragment } from 'react'
-import { PageHeader } from '../../../framework'
+import { Help, PageHeader } from '../../../framework'
 
 export default function Dashboard() {
   return (
@@ -14,7 +26,62 @@ export default function Dashboard() {
       <PageSection>
         <Stack hasGutter>
           <Card isRounded isFlat>
-            <CardBody>Get started by... TODO</CardBody>
+            <CardTitle>
+              <Split>
+                <SplitItem>Create or sync an execution environment</SplitItem>
+                <SplitItem isFilled>
+                  <Help
+                    title="Execution environments"
+                    help="The ability to build and deploy Python virtual environments for automation has been replaced by
+                                        Ansible execution environments. Unlike legacy virtual environments, execution environments are
+                                        container images that make it possible to incorporate system-level dependencies and collection-based
+                                        content. Each execution environment allows you to have a customized image to run jobs, and each of
+                                        them contain only what you need when running the job, nothing more."
+                  />
+                </SplitItem>
+                <SplitItem>
+                  <Button variant="link" isInline>
+                    Browse all available execution environemnts
+                  </Button>
+                </SplitItem>
+              </Split>
+            </CardTitle>
+            <CardBody>
+              <Stack hasGutter>
+                <Text>Sync from the available execution environments or create your own.</Text>
+                <Split>
+                  <Button>Create execution environment</Button>
+                </Split>
+              </Stack>
+            </CardBody>
+          </Card>
+
+          <Card isRounded isFlat>
+            <CardHeader>
+              <CardTitle>Create an inventory</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Stack hasGutter>
+                <StackItem>To get started, create an inventory.</StackItem>
+                <StackItem>
+                  <Button>Create inventory</Button>
+                </StackItem>
+              </Stack>
+            </CardBody>
+          </Card>
+
+          <Card isRounded isFlat>
+            <CardHeader>
+              <CardTitle>Create your first job template</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Stack hasGutter>
+                <StackItem>To get started, create your first job template.</StackItem>
+                <StackItem>
+                  <Button>Create job template</Button>
+                </StackItem>
+              </Stack>
+            </CardBody>
           </Card>
         </Stack>
       </PageSection>

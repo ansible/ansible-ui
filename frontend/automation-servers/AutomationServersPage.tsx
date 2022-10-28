@@ -23,7 +23,7 @@ import { useRemoveAutomationServers } from './useRemoveAutomationServers'
 
 export function AutomationServersPage() {
   const { t } = useTranslation()
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const tableColumns = useAutomationServersColumns()
   const { automationServers } = useAutomationServers()
@@ -66,9 +66,35 @@ export function AutomationServersPage() {
     [removeAutomationServers, t]
   )
 
+  // const itemToCardFn = useCallback<(automationServer: AutomationServer) => ICatalogCard>(
+  //   (automationServer: AutomationServer) => ({
+  //     id: automationServer.name,
+  //     title: automationServer.name,
+  //     items: [
+  //       {
+  //         type: CatalogCardItemType.Description,
+  //         description: automationServer.url,
+  //       },
+  //     ],
+  //     onClick: () => navigate(RouteE.Login + '?server=' + encodeURIComponent(automationServer.url)),
+  //     labels:
+  //       automationServer.type === 'controller'
+  //         ? [{ label: t('Automation controller') }]
+  //         : automationServer.type === 'hub'
+  //         ? [{ label: t('Automation hub') }]
+  //         : undefined,
+  //   }),
+  //   [navigate, t]
+  // )
+
   return (
     <PageLayout>
       {automationServers.length > 0 && <PageHeader title={t('Automation servers')} />}
+      {/* <Catalog
+        keyFn={automationServerKeyFn}
+        items={automationServers}
+        itemToCardFn={itemToCardFn}
+      /> */}
       <PageBody>
         <PageTable<AutomationServer>
           toolbarActions={toolbarActions}
