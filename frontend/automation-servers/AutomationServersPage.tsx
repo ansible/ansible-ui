@@ -68,33 +68,17 @@ export function AutomationServersPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Automation Servers')}
-        description={t(
-          'The Ansible Automation Platform is comprised of automation controllers and automation hubs.'
-        )}
-        titleHelpTitle="Automation Server"
-        titleHelp={[
-          t(
-            'The Ansible Automation Platform is made up of automation controllers and automation hubs.'
-          ),
-          t(
-            'Automation controller enables you to define, operate, scale, and delegate automation across your enterprise.'
-          ),
-          t(
-            'Automation hub enables you to discover, publish, and manage your Ansible Collections.'
-          ),
-        ]}
-      />
+      {automationServers.length > 0 && <PageHeader title={t('Automation servers')} />}
       <PageBody>
         <PageTable<AutomationServer>
           toolbarActions={toolbarActions}
           tableColumns={tableColumns}
           rowActions={rowActions}
           errorStateTitle={t('Error loading automation servers')}
-          emptyStateTitle={t('No automation servers yet')}
-          emptyStateDescription={t('To get started, create a automation server.')}
-          emptyStateButtonText={t('Create automationServer')}
+          emptyStateTitle={t('Welcome to the ansible automation platform')}
+          emptyStateDescription={t('To get started, add an automation server.')}
+          emptyStateButtonText={t('Add automation server')}
+          emptyStateButtonClick={addAutomationServer}
           {...view}
           pageItems={automationServers}
           itemCount={automationServers.length}

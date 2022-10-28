@@ -63,7 +63,7 @@ export interface PageHeaderProps {
   titleHelpTitle?: string
   titleHelp?: string | string[]
   titleDocLink?: string
-  description?: string
+  description?: string | string[]
   controls?: ReactNode
   headerActions?: ReactNode
   t?: (t: string) => string
@@ -236,7 +236,15 @@ export function PageHeader(props: PageHeaderProps) {
               )}
               {isMdOrLarger && description && (
                 <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
-                  <Truncate content={description} />
+                  {typeof description === 'string' ? (
+                    <Truncate content={description} />
+                  ) : (
+                    <Stack>
+                      {description.map((d) => (
+                        <StackItem key={d}>{d}</StackItem>
+                      ))}
+                    </Stack>
+                  )}
                 </Text>
               )}
             </FlexItem>

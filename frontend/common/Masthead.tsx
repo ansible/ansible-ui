@@ -113,17 +113,21 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
 export function AnsibleMasthead(props: {
   isNavOpen: boolean
   setNavOpen: (open: boolean) => void
+  hideLogin?: boolean
 }) {
+  const { hideLogin } = props
   const isSmallOrLarger = useBreakpoint('sm')
   const { t } = useTranslation()
   const openSettings = useSettingsDialog(t)
   return (
     <Masthead display={{ default: 'inline' }}>
-      <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
-        <PageToggleButton variant="plain" aria-label="Global navigation">
-          <BarsIcon />
-        </PageToggleButton>
-      </MastheadToggle>
+      {!hideLogin && (
+        <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
+          <PageToggleButton variant="plain" aria-label="Global navigation">
+            <BarsIcon />
+          </PageToggleButton>
+        </MastheadToggle>
+      )}
       {isSmallOrLarger ? (
         <MastheadMain>
           <MastheadBrand>
@@ -154,32 +158,33 @@ export function AnsibleMasthead(props: {
           </MastheadBrand>
         </MastheadMain>
       )}
-      <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
-        <span style={{ flexGrow: 1 }} />
-        {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
-        <Toolbar id="toolbar" style={{ padding: 0 }}>
-          <ToolbarContent>
-            <ToolbarGroup
-              variant="icon-button-group"
-              alignment={{ default: 'alignRight' }}
-              spacer={{ default: 'spacerNone', md: 'spacerMd' }}
-            >
-              {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
-                                <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
-                            )} */}
-              <ToolbarItem>
-                <Notifications />
-              </ToolbarItem>
-
-              <ToolbarItem>
-                <ApplicationLauncherBasic />
-              </ToolbarItem>
-
+      {!hideLogin && (
+        <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
+          <span style={{ flexGrow: 1 }} />
+          {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
+          <Toolbar id="toolbar" style={{ padding: 0 }}>
+            <ToolbarContent>
               <ToolbarGroup
                 variant="icon-button-group"
-                visibility={{ default: 'hidden', lg: 'visible' }}
+                alignment={{ default: 'alignRight' }}
+                spacer={{ default: 'spacerNone', md: 'spacerMd' }}
               >
-                {/* <ToolbarItem>
+                {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
+                                <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
+                            )} */}
+                <ToolbarItem>
+                  <Notifications />
+                </ToolbarItem>
+
+                <ToolbarItem>
+                  <ApplicationLauncherBasic />
+                </ToolbarItem>
+
+                <ToolbarGroup
+                  variant="icon-button-group"
+                  visibility={{ default: 'hidden', lg: 'visible' }}
+                >
+                  {/* <ToolbarItem>
                                     <AppBarDropdown icon={<CogIcon />}>
                                         <DropdownGroup label="Theme">
                                             <DropdownItem
@@ -197,36 +202,37 @@ export function AnsibleMasthead(props: {
                                         </DropdownGroup>
                                     </AppBarDropdown>
                                 </ToolbarItem> */}
-                <ToolbarItem>
-                  <Button
-                    icon={<CogIcon />}
-                    variant={ButtonVariant.plain}
-                    onClick={openSettings}
-                  ></Button>
-                </ToolbarItem>
-                <ToolbarItem>
-                  <AppBarDropdown icon={<QuestionCircleIcon />}>
-                    <DropdownItem
-                      onClick={() => {
-                        open(
-                          'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
-                          '_blank'
-                        )
-                      }}
-                    >
-                      {t('Help')}
-                    </DropdownItem>
-                    <DropdownItem>{t('About')}</DropdownItem>
-                  </AppBarDropdown>
-                </ToolbarItem>
+                  <ToolbarItem>
+                    <Button
+                      icon={<CogIcon />}
+                      variant={ButtonVariant.plain}
+                      onClick={openSettings}
+                    ></Button>
+                  </ToolbarItem>
+                  <ToolbarItem>
+                    <AppBarDropdown icon={<QuestionCircleIcon />}>
+                      <DropdownItem
+                        onClick={() => {
+                          open(
+                            'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                            '_blank'
+                          )
+                        }}
+                      >
+                        {t('Help')}
+                      </DropdownItem>
+                      <DropdownItem>{t('About')}</DropdownItem>
+                    </AppBarDropdown>
+                  </ToolbarItem>
+                </ToolbarGroup>
               </ToolbarGroup>
-            </ToolbarGroup>
-            <ToolbarItem>
-              <AccountDropdown />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
-      </MastheadContent>
+              <ToolbarItem>
+                <AccountDropdown />
+              </ToolbarItem>
+            </ToolbarContent>
+          </Toolbar>
+        </MastheadContent>
+      )}
     </Masthead>
   )
 }

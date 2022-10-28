@@ -47,12 +47,12 @@ export function ControllerSidebar(props: {
           <Nav>
             <NavList>
               <NavItemSeparator style={{ margin: 0 }} />
-              <NavItem
+              {/* <NavItem
                 isActive={isRouteActive(RouteE.ControllerAutomationServers, location)}
                 onClick={() => onClick(RouteE.ControllerAutomationServers)}
               >
                 {t('Automation Servers')}
-              </NavItem>
+              </NavItem> */}
               <AutomationServerSwitcher />
               <NavItemSeparator style={{ margin: 0 }} />
               <NavItem
