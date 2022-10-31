@@ -19,7 +19,7 @@ export function PagePagination(props: PagePaginationProps) {
     (_event, perPage) => setPerPage(perPage),
     [setPerPage]
   )
-  const sm = useBreakpoint('md')
+  const compact = !useBreakpoint('sm')
   const settings = useSettings()
   return (
     <Pagination
@@ -34,9 +34,9 @@ export function PagePagination(props: PagePaginationProps) {
         borderTop: 'thin solid var(--pf-global--BorderColor--100)',
         boxShadow: 'none',
         zIndex: 301,
-        marginTop: -1,
-        paddingTop: sm ? 6 : undefined,
-        paddingBottom: sm ? 6 : undefined,
+        // marginTop: -1,
+        paddingTop: compact ? 6 : undefined,
+        paddingBottom: compact ? 6 : undefined,
         backgroundColor:
           settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
       }}
