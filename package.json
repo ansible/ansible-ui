@@ -54,7 +54,7 @@
     "@types/etag": "^1.8.1",
     "@types/json-schema": "7.0.11",
     "@types/luxon": "3.0.2",
-    "@types/node": "18.11.7",
+    "@types/node": "18.11.8",
     "@types/react": "17.0.52",
     "@types/react-dom": "17.0.18",
     "@types/react-router-dom": "5.3.3",
