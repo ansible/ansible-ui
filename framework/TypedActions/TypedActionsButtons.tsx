@@ -66,7 +66,14 @@ export function TypedActionButton<T extends object>(props: {
       )
     }
     case TypedActionType.button: {
-      return <ActionButton action={action} noPrimary={noPrimary} wrapper={wrapper} />
+      return (
+        <ActionButton
+          action={action}
+          selectedItems={selectedItems}
+          noPrimary={noPrimary}
+          wrapper={wrapper}
+        />
+      )
     }
     case TypedActionType.dropdown: {
       return (
