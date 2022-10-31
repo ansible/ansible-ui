@@ -13,10 +13,7 @@ import {
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
+  TablePage,
   TypedActionType,
 } from '../../../../framework'
 import {
@@ -125,30 +122,24 @@ export function Teams() {
   )
 
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Teams')}
-        titleHelpTitle={t('Team')}
-        titleHelp={t('teams.title.help')}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
-        description={t('teams.title.description')}
-        navigation={<AccessNav active="teams" />}
-      />
-      <PageBody>
-        <PageTable<Team>
-          toolbarFilters={toolbarFilters}
-          toolbarActions={toolbarActions}
-          tableColumns={tableColumns}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading teams')}
-          emptyStateTitle={t('No teams yet')}
-          emptyStateDescription={t('To get started, create a team.')}
-          emptyStateButtonText={t('Create team')}
-          emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage
+      title={t('Teams')}
+      titleHelpTitle={t('Team')}
+      titleHelp={t('teams.title.help')}
+      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
+      description={t('teams.title.description')}
+      navigation={<AccessNav active="teams" />}
+      toolbarFilters={toolbarFilters}
+      toolbarActions={toolbarActions}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading teams')}
+      emptyStateTitle={t('No teams yet')}
+      emptyStateDescription={t('To get started, create a team.')}
+      emptyStateButtonText={t('Create team')}
+      emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
+      {...view}
+    />
   )
 }
 
