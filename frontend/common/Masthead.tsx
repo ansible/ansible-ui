@@ -292,7 +292,7 @@ function AccountDropdownInternal() {
   const fetcher = useFetcher()
   const { automationServer } = useAutomationServers()
   const meResponse = useSWR<{ results: { username: string }[] }>(
-    automationServer ? '/api/v2/me/' : undefined,
+    automationServer ? (automationServer.type !== 'eda' ? '/api/v2/me/' : undefined) : undefined,
     fetcher,
     swrOptions
   )

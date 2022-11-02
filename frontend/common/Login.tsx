@@ -73,34 +73,38 @@ export default function Login() {
         const loginPageUrl =
           automationServer.type === 'controller'
             ? '/api/login/'
-            : '/api/automation-hub/_ui/v1/auth/login/'
+            : automationServer.type === 'hub'
+            ? '/api/automation-hub/_ui/v1/auth/login/'
+            : undefined
 
-        let loginPage = await ky
-          .get(loginPageUrl, {
-            credentials: 'include',
-            headers: { 'x-server': data.server },
-          })
-          .text()
-        loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
-        loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
-        const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
+        if (loginPageUrl !== undefined) {
+          let loginPage = await ky
+            .get(loginPageUrl, {
+              credentials: 'include',
+              headers: { 'x-server': data.server },
+            })
+            .text()
+          loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
+          loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
+          const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
 
-        const searchParams = new URLSearchParams()
-        searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
-        searchParams.set('username', data.username)
-        searchParams.set('password', data.password)
-        try {
-          await ky.post(loginPageUrl, {
-            credentials: 'include',
-            headers: { 'x-server': data.server },
-            body: searchParams,
-            redirect: 'manual',
-          })
-        } catch (err) {
-          if (err instanceof HTTPError && err.response.status === 0) {
-            // Do nothing
-          } else {
-            throw err
+          const searchParams = new URLSearchParams()
+          searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
+          searchParams.set('username', data.username)
+          searchParams.set('password', data.password)
+          try {
+            await ky.post(loginPageUrl, {
+              credentials: 'include',
+              headers: { 'x-server': data.server },
+              body: searchParams,
+              redirect: 'manual',
+            })
+          } catch (err) {
+            if (err instanceof HTTPError && err.response.status === 0) {
+              // Do nothing
+            } else {
+              throw err
+            }
           }
         }
 
@@ -108,6 +112,9 @@ export default function Login() {
         setAutomationServer(automationServer)
         headers['x-server'] = data.server
         switch (automationServer.type) {
+          case 'eda':
+            navigate(RouteE.EDAProjects)
+            break
           case 'hub':
             navigate(RouteE.HubDashboard)
             break

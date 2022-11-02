@@ -50,6 +50,11 @@ export function AddAutomationServerDialog() {
           description: t('Discover, publish, and manage your Ansible Collections.'),
           value: 'hub',
         },
+        {
+          label: t('Event driven'),
+          // description: t('Discover, publish, and manage your Ansible Collections.'),
+          value: 'eda',
+        },
       ],
     }),
   })
