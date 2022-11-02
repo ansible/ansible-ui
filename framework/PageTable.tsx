@@ -39,6 +39,7 @@ import { useColumnModal } from './PageColumnModal'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
+import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActionType, useTypedActionsToTableActions } from './TypedActions'
@@ -108,10 +109,43 @@ export type PageTableProps<T extends object> = {
   t?: (t: string) => string
 
   showSelect?: boolean
-  ColumnManagement?: boolean
+
+  disableTableView?: boolean
+  disableListView?: boolean
+  disableCardView?: boolean
+
+  defaultTableView?: PageTableViewType
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
+  const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
+  const showSelect = true
+
+  const hasTableViewType = !props.disableTableView
+  const hasListViewType = !props.disableListView
+  const hasCardViewType = !props.disableCardView
+
+  const [viewType, setViewType] = useState<PageTableViewType>(
+    props.defaultTableView ?? hasTableViewType
+      ? PageTableViewTypeE.Table
+      : hasListViewType
+      ? PageTableViewTypeE.List
+      : PageTableViewTypeE.Cards
+  )
+
+  return (
+    <>
+      <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
+      <PageTableView {...props} tableColumns={managedColumns} />
+      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+        <PagePagination {...props} />
+      )}
+      {columnModal}
+    </>
+  )
+}
+
+function PageTableView<T extends object>(props: PageTableProps<T>) {
   const {
     tableColumns,
     pageItems,
@@ -164,7 +198,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
   const settings = useSettings()
-  const { openColumnModal, columnModal, managedColumns } = useColumnModal(tableColumns)
 
   if (error) {
     return (
@@ -217,8 +250,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <Fragment>
-      {columnModal}
-      <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
       <div
         className="pf-c-scroll-inner-wrapper"
         style={{ height: '100%' }}
@@ -247,7 +278,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               showSelect={showSelect}
               scrollLeft={scroll.left > 0}
               scrollRight={scroll.right > 1}
-              tableColumns={managedColumns}
+              tableColumns={tableColumns}
               onSelect={onSelect}
             />
           )}
@@ -266,7 +297,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
                   <Tr key={index}>
                     {showSelect && <Td></Td>}
-                    <Td colSpan={managedColumns.length}>
+                    <Td colSpan={tableColumns.length}>
                       <div style={{ paddingTop: 5, paddingBottom: 5 }}>
                         <Skeleton height="27px" />
                       </div>
@@ -276,7 +307,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               : pageItems?.map((item, rowIndex) => (
                   <TableRow<T>
                     key={keyFn ? keyFn(item) : rowIndex}
-                    columns={managedColumns}
+                    columns={tableColumns}
                     item={item}
                     isItemSelected={isSelected?.(item)}
                     selectItem={selectItem}
@@ -313,7 +344,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           </div>
         )}
       </div>
-      {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
     </Fragment>
   )
 }
