@@ -114,4 +114,8 @@ export enum RouteE {
   AutomationServers = '/automation-servers',
   ControllerAutomationServers = '/controller/automation-servers',
   HubAutomationServers = '/hub/automation-servers',
+
+  EventDriven = '/eda',
+
+  EDAProjects = '/eda/projects',
 }

@@ -141,6 +141,8 @@ export function useAutomationServersColumns(_options?: {
               return <TextCell text="Controller" />
             case 'hub':
               return <TextCell text="Hub" />
+            case 'eda':
+              return <TextCell text="Event driven" />
             default:
               return <TextCell text="Unknown" />
           }
