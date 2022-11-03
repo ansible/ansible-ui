@@ -139,6 +139,7 @@ export function Teams() {
       emptyStateButtonText={t('Create team')}
       emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
       {...view}
+      defaultCardSubtitle={t('Team')}
     />
   )
 }

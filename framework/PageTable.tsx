@@ -33,12 +33,14 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Scrollable } from './components/Scrollable'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageBody } from './PageBody'
 import { useColumnModal } from './PageColumnModal'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
+import { PageTableCards } from './PageTableCards'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
@@ -113,6 +115,8 @@ export type PageTableProps<T extends object> = {
   defaultTableView?: PageTableViewType
 
   disableBodyPadding?: boolean
+
+  defaultCardSubtitle?: ReactNode
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -124,11 +128,13 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   // const hasCardViewType = !props.disableCardView
 
   const [viewType, setViewType] = useState<PageTableViewType>(
-    props.defaultTableView ?? hasTableViewType
-      ? PageTableViewTypeE.Table
-      : hasListViewType
-      ? PageTableViewTypeE.List
-      : PageTableViewTypeE.Cards
+    () =>
+      props.defaultTableView ??
+      (hasTableViewType
+        ? PageTableViewTypeE.Table
+        : hasListViewType
+        ? PageTableViewTypeE.List
+        : PageTableViewTypeE.Cards)
   )
 
   return (
@@ -146,7 +152,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && <div style={{ flexGrow: 1 }}>TODO</div>}
-      {viewType === PageTableViewTypeE.Cards && <div>TODO</div>}
+      {viewType === PageTableViewTypeE.Cards && (
+        <Scrollable>
+          <PageTableCards {...props} />
+        </Scrollable>
+      )}
       {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
         <PagePagination {...props} />
       )}
@@ -634,4 +644,6 @@ export interface ITableColumn<T extends object> {
    * @deprecated The method should not be used
    */
   sortFn?: (l: T, r: T) => number
+
+  card?: 'description' | 'hidden'
 }
