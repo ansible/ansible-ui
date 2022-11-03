@@ -176,6 +176,7 @@ export function BulkActionDialog<T extends object>(props: {
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"
+              disableBodyPadding
             />
           ) : (
             <PageTable<T>
@@ -233,6 +234,7 @@ export function BulkActionDialog<T extends object>(props: {
               compact
               errorStateTitle=""
               emptyStateTitle="No items"
+              disableBodyPadding
             />
           )}
         </div>

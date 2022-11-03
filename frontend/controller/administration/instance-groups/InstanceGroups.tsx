@@ -144,6 +144,7 @@ export function useInstanceGroupsColumns(options?: {
             text={instanceGroup.is_container_group ? t('Container group') : t('Instance group')}
           />
         ),
+        card: 'description',
       },
       {
         header: t('Running jobs'),
@@ -158,6 +159,7 @@ export function useInstanceGroupsColumns(options?: {
         cell: (instanceGroup) => (
           <CapacityCell used={instanceGroup.consumed_capacity} capacity={instanceGroup.capacity} />
         ),
+        list: 'secondary',
       },
       createdColumn,
       modifiedColumn,

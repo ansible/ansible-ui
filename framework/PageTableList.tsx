@@ -116,7 +116,7 @@ export function useColumnsToDataList<T extends object>(
                           </Text>
                         )
                       )}
-                      <Title headingLevel="h3">
+                      <Title headingLevel="h2">
                         <span id={`data-list-${key}`}>{data.nameColumn?.cell(item)}</span>
                       </Title>
                     </Stack>

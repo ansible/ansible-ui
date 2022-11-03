@@ -161,6 +161,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         header: t('Node type'),
         cell: (instance) => <NodeTypeCell node_type={instance.node_type} />,
         sort: 'node_type',
+        card: 'description',
       },
       {
         header: t('Running jobs'),
@@ -172,14 +173,17 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Used capacity'),
-        cell: (instance) => (
-          <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
-        ),
+        cell: (instance) =>
+          instance.capacity && (
+            <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
+          ),
+        list: 'secondary',
       },
       {
         header: t('Memory'),
-        cell: (instance) => <BytesCell bytes={instance.memory} />,
+        cell: (instance) => instance.memory && <BytesCell bytes={instance.memory} />,
         sort: 'memory',
+        list: 'secondary',
       },
       {
         header: t('Policy type'),
@@ -188,6 +192,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         header: t('Last health check'),
         cell: (instance) => <SinceCell value={instance.last_health_check} />,
+        card: 'hidden',
       },
       createdColumn,
       modifiedColumn,
@@ -207,7 +212,7 @@ export function NodeTypeCell(props: { node_type: string }) {
             'Hybrid is the default node type for control plane nodes, responsible for automation controller runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
           )}
         >
-          <Dotted>{t('Hybrid')}</Dotted>
+          <Dotted>{t('Hybrid node')}</Dotted>
         </Tooltip>
       )
     case 'control':
@@ -217,7 +222,7 @@ export function NodeTypeCell(props: { node_type: string }) {
             'control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes.'
           )}
         >
-          <Dotted>{t('Hybrid')}</Dotted>
+          <Dotted>{t('Control node')}</Dotted>
         </Tooltip>
       )
     case 'execution':
@@ -227,7 +232,7 @@ export function NodeTypeCell(props: { node_type: string }) {
             'Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes.'
           )}
         >
-          <Dotted>{t('Execution')}</Dotted>
+          <Dotted>{t('Execution node')}</Dotted>
         </Tooltip>
       )
     case 'hop':
@@ -237,7 +242,7 @@ export function NodeTypeCell(props: { node_type: string }) {
             'similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation.'
           )}
         >
-          <Dotted>{t('HOP')}</Dotted>
+          <Dotted>{t('HOP node')}</Dotted>
         </Tooltip>
       )
     default:

@@ -121,6 +121,8 @@ export type PageTableProps<T extends object> = {
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
+  let { disableBodyPadding } = props
+  disableBodyPadding = true
   const { toolbarActions } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
   const showSelect =
@@ -151,12 +153,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         setViewType={setViewType}
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody>
+        <PageBody disablePadding={disableBodyPadding}>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
-        <PageBody>
+        <PageBody disablePadding>
           <Scrollable>
             <PageTableList {...props} showSelect={showSelect} />
           </Scrollable>
@@ -279,102 +281,100 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   }
 
   return (
-    <Fragment>
-      <div
-        className="pf-c-scroll-inner-wrapper"
-        style={{ height: '100%' }}
-        ref={containerRef}
-        onScroll={onScroll}
+    <div
+      className="pf-c-scroll-inner-wrapper"
+      style={{ height: '100%', marginBottom: -1 }}
+      ref={containerRef}
+      onScroll={onScroll}
+    >
+      <TableComposable
+        aria-label="Simple table"
+        variant={
+          props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
+        }
+        gridBreakPoint=""
+        isStickyHeader
       >
-        <TableComposable
-          aria-label="Simple table"
-          variant={
-            props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
-          }
-          gridBreakPoint=""
-          isStickyHeader
-        >
-          {itemCount === undefined ? (
-            <Thead>
-              <Tr>
-                <Th>
-                  <Skeleton />
-                </Th>
-              </Tr>
-            </Thead>
-          ) : (
-            <TableHead
-              {...props}
-              showSelect={showSelect}
-              scrollLeft={scroll.left > 0}
-              scrollRight={scroll.right > 1}
-              tableColumns={tableColumns}
-              onSelect={onSelect}
-            />
-          )}
-          <Tbody>
-            {itemCount === undefined
-              ? new Array(perPage).fill(0).map((_, index) => (
-                  <Tr key={index}>
-                    <Td>
-                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                        <Skeleton height="27px" />
-                      </div>
-                    </Td>
-                  </Tr>
-                ))
-              : pageItems === undefined
-              ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
-                  <Tr key={index}>
-                    {showSelect && <Td></Td>}
-                    <Td colSpan={tableColumns.length}>
-                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                        <Skeleton height="27px" />
-                      </div>
-                    </Td>
-                  </Tr>
-                ))
-              : pageItems?.map((item, rowIndex) => (
-                  <TableRow<T>
-                    key={keyFn ? keyFn(item) : rowIndex}
-                    columns={tableColumns}
-                    item={item}
-                    isItemSelected={isSelected?.(item)}
-                    selectItem={selectItem}
-                    unselectItem={unselectItem}
-                    rowActions={rowActions}
-                    rowIndex={rowIndex}
-                    showSelect={showSelect}
-                    scrollLeft={scroll.left > 0}
-                    scrollRight={scroll.right > 1}
-                    unselectAll={unselectAll}
-                    onSelect={onSelect}
-                  />
-                ))}
-          </Tbody>
-        </TableComposable>
-        {itemCount === 0 && (
-          <div style={{ margin: 'auto' }}>
-            <EmptyState>
-              <EmptyStateIcon icon={SearchIcon} />
-              <Title headingLevel="h2" size="lg">
-                {t('No results found')}
-              </Title>
-              <EmptyStateBody>
-                {t('No results match this filter criteria. Adjust your filters and try again.')}
-              </EmptyStateBody>
-              {clearAllFilters && (
-                <EmptyStateSecondaryActions>
-                  <Button variant="link" onClick={clearAllFilters}>
-                    {t('Clear all filters')}
-                  </Button>
-                </EmptyStateSecondaryActions>
-              )}
-            </EmptyState>
-          </div>
+        {itemCount === undefined ? (
+          <Thead>
+            <Tr>
+              <Th>
+                <Skeleton />
+              </Th>
+            </Tr>
+          </Thead>
+        ) : (
+          <TableHead
+            {...props}
+            showSelect={showSelect}
+            scrollLeft={scroll.left > 0}
+            scrollRight={scroll.right > 1}
+            tableColumns={tableColumns}
+            onSelect={onSelect}
+          />
         )}
-      </div>
-    </Fragment>
+        <Tbody>
+          {itemCount === undefined
+            ? new Array(perPage).fill(0).map((_, index) => (
+                <Tr key={index}>
+                  <Td>
+                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                      <Skeleton height="27px" />
+                    </div>
+                  </Td>
+                </Tr>
+              ))
+            : pageItems === undefined
+            ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
+                <Tr key={index}>
+                  {showSelect && <Td></Td>}
+                  <Td colSpan={tableColumns.length}>
+                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                      <Skeleton height="27px" />
+                    </div>
+                  </Td>
+                </Tr>
+              ))
+            : pageItems?.map((item, rowIndex) => (
+                <TableRow<T>
+                  key={keyFn ? keyFn(item) : rowIndex}
+                  columns={tableColumns}
+                  item={item}
+                  isItemSelected={isSelected?.(item)}
+                  selectItem={selectItem}
+                  unselectItem={unselectItem}
+                  rowActions={rowActions}
+                  rowIndex={rowIndex}
+                  showSelect={showSelect}
+                  scrollLeft={scroll.left > 0}
+                  scrollRight={scroll.right > 1}
+                  unselectAll={unselectAll}
+                  onSelect={onSelect}
+                />
+              ))}
+        </Tbody>
+      </TableComposable>
+      {itemCount === 0 && (
+        <div style={{ margin: 'auto' }}>
+          <EmptyState>
+            <EmptyStateIcon icon={SearchIcon} />
+            <Title headingLevel="h2" size="lg">
+              {t('No results found')}
+            </Title>
+            <EmptyStateBody>
+              {t('No results match this filter criteria. Adjust your filters and try again.')}
+            </EmptyStateBody>
+            {clearAllFilters && (
+              <EmptyStateSecondaryActions>
+                <Button variant="link" onClick={clearAllFilters}>
+                  {t('Clear all filters')}
+                </Button>
+              </EmptyStateSecondaryActions>
+            )}
+          </EmptyState>
+        </div>
+      )}
+    </div>
   )
 }
 
