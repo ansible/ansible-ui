@@ -49,14 +49,10 @@ export type TablePageProps<T extends object> = PageHeaderProps &
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
   return (
-    <>
-      <PageLayout>
-        <PageHeader {...props} />
-        <PageBody>
-          <PageTable {...props} />
-        </PageBody>
-      </PageLayout>
-    </>
+    <PageLayout>
+      <PageHeader {...props} />
+      <PageTable {...props} />
+    </PageLayout>
   )
 }
 
@@ -115,6 +111,8 @@ export type PageTableProps<T extends object> = {
   disableCardView?: boolean
 
   defaultTableView?: PageTableViewType
+
+  disableBodyPadding?: boolean
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
@@ -123,7 +121,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const hasTableViewType = !props.disableTableView
   const hasListViewType = !props.disableListView
-  const hasCardViewType = !props.disableCardView
+  // const hasCardViewType = !props.disableCardView
 
   const [viewType, setViewType] = useState<PageTableViewType>(
     props.defaultTableView ?? hasTableViewType
@@ -135,8 +133,20 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <>
-      <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
-      <PageTableView {...props} tableColumns={managedColumns} />
+      <PageTableToolbar
+        {...props}
+        openColumnModal={openColumnModal}
+        showSelect={showSelect}
+        viewType={viewType}
+        setViewType={setViewType}
+      />
+      {viewType === PageTableViewTypeE.Table && (
+        <PageBody>
+          <PageTableView {...props} tableColumns={managedColumns} />
+        </PageBody>
+      )}
+      {viewType === PageTableViewTypeE.List && <div style={{ flexGrow: 1 }}>TODO</div>}
+      {viewType === PageTableViewTypeE.Cards && <div>TODO</div>}
       {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
         <PagePagination {...props} />
       )}
