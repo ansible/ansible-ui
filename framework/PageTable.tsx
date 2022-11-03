@@ -154,7 +154,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       {viewType === PageTableViewTypeE.List && <div style={{ flexGrow: 1 }}>TODO</div>}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          <PageTableCards {...props} />
+          <PageTableCards {...props} showSelect />
         </Scrollable>
       )}
       {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (

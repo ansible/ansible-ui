@@ -10,9 +10,8 @@ import {
   CardTitle,
   Checkbox,
   DescriptionList,
-  Dropdown,
+  DropdownPosition,
   DropdownSeparator,
-  KebabToggle,
   Label,
   LabelGroup,
   Popover,
@@ -27,7 +26,7 @@ import { Detail } from './components/Details'
 import { IconWrapper } from './components/IconWrapper'
 import { LabelColor } from './components/patternfly-colors'
 import { ITableColumn } from './PageTable'
-import { ITypedAction } from './TypedActions'
+import { ITypedAction, TypedActions } from './TypedActions'
 
 export interface IPageTableCard {
   id: string | number
@@ -48,11 +47,11 @@ export interface IPageTableCard {
 export function PageTableCard<T extends object>(props: {
   item: T
   itemToCardFn: (item: T) => IPageTableCard
-  isSelected: (item: T) => boolean
+  isSelected?: (item: T) => boolean
   selectItem?: (item: T) => void
-  unselectItem: (item: T) => void
+  unselectItem?: (item: T) => void
   itemActions?: ITypedAction<T>[]
-  showSelect: boolean
+  showSelect?: boolean
   defaultCardSubtitle?: ReactNode
 }) {
   const {
@@ -68,11 +67,13 @@ export function PageTableCard<T extends object>(props: {
 
   const card = useMemo(() => itemToCardFn(item), [item, itemToCardFn])
 
+  const isItemSelected = !!isSelected?.(item)
+
   const [isOpen, setIsOpen] = useState(false)
   const onSelect = useCallback(() => {}, [])
   const onSelectClick = useCallback(() => {
-    if (isSelected(item)) {
-      unselectItem(item)
+    if (isSelected?.(item)) {
+      unselectItem?.(item)
     } else {
       selectItem?.(item)
     }
@@ -109,6 +110,8 @@ export function PageTableCard<T extends object>(props: {
       isFlat
       isLarge
       isRounded
+      isSelectable={isItemSelected}
+      isSelected={isItemSelected}
       style={{
         transition: 'box-shadow 0.25s',
         cursor: 'default',
@@ -167,24 +170,21 @@ export function PageTableCard<T extends object>(props: {
           )}
         </Split>
         {showActions && (
-          <CardActions hasNoOffset>
-            {showDropdown && (
-              <Dropdown
-                onSelect={onSelect}
-                toggle={<KebabToggle onToggle={setIsOpen} />}
-                isOpen={isOpen}
-                isPlain
-                dropdownItems={dropdownItems}
-                position="right"
+          <CardActions>
+            {itemActions && itemActions.length && (
+              <TypedActions
+                actions={itemActions}
+                position={DropdownPosition.right}
+                selectedItem={item}
               />
             )}
             {showSelect && (
               <Checkbox
-                isChecked={isSelected(item)}
+                isChecked={isSelected?.(item)}
                 onChange={onSelectClick}
-                aria-label="card checkbox example"
+                // aria-label="card checkbox example"
                 id="check-1"
-                name="check1"
+                // name="check1"
               />
             )}
           </CardActions>
@@ -229,9 +229,12 @@ export function useColumnsToTableCardFn<T extends object>(
   keyFn: (item: T) => string | number
 ): (item: T) => IPageTableCard {
   const cardData = useMemo(() => {
-    const cols = columns.filter((column) => column.card !== 'hidden')
+    let cols = columns.filter((column) => column.card !== 'hidden')
     const nameColumn = cols.shift()
-    const descriptionColumn = undefined
+    const descriptionColumn = cols.find((column) => column.card === 'description')
+    if (descriptionColumn) {
+      cols = cols.filter((column) => column !== descriptionColumn)
+    }
     return {
       nameColumn: nameColumn,
       descriptionColumn: descriptionColumn,
@@ -244,6 +247,7 @@ export function useColumnsToTableCardFn<T extends object>(
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
         title: cardData.nameColumn?.cell(item),
+        description: cardData.descriptionColumn?.cell(item),
         cardBody: (
           <CardBody>
             <DescriptionList>
@@ -258,5 +262,5 @@ export function useColumnsToTableCardFn<T extends object>(
       }
       return pageTableCard
     }
-  }, [cardData.columns, cardData.nameColumn, keyFn])
+  }, [cardData.columns, cardData.descriptionColumn, cardData.nameColumn, keyFn])
 }

@@ -1,23 +1,12 @@
 import { PageSection } from '@patternfly/react-core'
-import { ReactNode, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Grid } from './components/Grid'
-import { ITableColumn } from './PageTable'
+import { PageTableProps } from './PageTable'
 import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard'
-import { ITypedAction } from './TypedActions'
 
-export function PageTableCards<T extends object>(props: {
-  keyFn: (item: T) => string | number
-  pageItems: T[] | undefined
-  tableColumns: ITableColumn<T>[]
-  onBack?: () => void
-  cardWidth?: number
-  selectItem?: (item: T) => void
-  unselectItem: (item: T) => void
-  isSelected: (item: T) => boolean
-  itemActions?: ITypedAction<T>[]
-  showSelect: boolean
-  defaultCardSubtitle?: ReactNode
-}) {
+export type PageTableCardsProps<T extends object> = PageTableProps<T>
+
+export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) {
   const {
     keyFn,
     pageItems: items,
@@ -25,9 +14,8 @@ export function PageTableCards<T extends object>(props: {
     isSelected,
     selectItem,
     unselectItem,
-    itemActions,
+    rowActions,
     showSelect,
-    cardWidth,
     defaultCardSubtitle,
   } = props
 
@@ -35,7 +23,7 @@ export function PageTableCards<T extends object>(props: {
 
   const catalogCards = useMemo(() => {
     return (
-      <Grid size={cardWidth ?? 470}>
+      <Grid size={470}>
         {items?.map((item) => (
           <PageTableCard<T>
             key={keyFn(item)}
@@ -44,7 +32,7 @@ export function PageTableCards<T extends object>(props: {
             isSelected={isSelected}
             selectItem={selectItem}
             unselectItem={unselectItem}
-            itemActions={itemActions}
+            itemActions={rowActions}
             showSelect={showSelect}
             defaultCardSubtitle={defaultCardSubtitle}
           />
@@ -52,14 +40,13 @@ export function PageTableCards<T extends object>(props: {
       </Grid>
     )
   }, [
-    cardWidth,
     items,
     keyFn,
     itemToCardFn,
     isSelected,
     selectItem,
     unselectItem,
-    itemActions,
+    rowActions,
     showSelect,
     defaultCardSubtitle,
   ])
