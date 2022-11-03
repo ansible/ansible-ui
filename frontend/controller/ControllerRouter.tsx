@@ -23,6 +23,7 @@ import { Credentials } from './resources/credentials/Credentials'
 import { Hosts } from './resources/hosts/Hosts'
 import { Inventories } from './resources/inventories/Inventories'
 import { Projects } from './resources/projects/Projects'
+import { Templates } from './resources/Templates/Templates'
 import Settings from './settings/Settings'
 import Dashboard from './views/Dashboard'
 
@@ -49,7 +50,7 @@ export function ControllerRouter() {
         {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
 
-        {/* <Route path={RouteE.Templates} element={<Templates />} /> */}
+        <Route path={RouteE.Templates.replace(RouteE.Controller, '')} element={<Templates />} />
 
         <Route path={RouteE.Credentials.replace(RouteE.Controller, '')} element={<Credentials />} />
 
