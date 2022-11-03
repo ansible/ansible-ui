@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { PageSection } from '@patternfly/react-core'
 import { ReactNode, useMemo } from 'react'
 import { Grid } from './components/Grid'
@@ -10,7 +8,6 @@ import { ITypedAction } from './TypedActions'
 export function PageTableCards<T extends object>(props: {
   keyFn: (item: T) => string | number
   pageItems: T[] | undefined
-  // itemToCardFn: (item: T) => IPageTableCard
   tableColumns: ITableColumn<T>[]
   onBack?: () => void
   cardWidth?: number
@@ -64,22 +61,8 @@ export function PageTableCards<T extends object>(props: {
     unselectItem,
     itemActions,
     showSelect,
+    defaultCardSubtitle,
   ])
 
-  return (
-    <PageSection style={{ flexGrow: 1 }}>
-      {/* <Flex style={{ paddingBottom: 16 }}>
-                <FlexItem>
-                    <span style={{ paddingRight: 8 }}>
-                        <b>Cards</b>
-                    </span>
-                    <Chip isReadOnly>{items.length}</Chip>
-                </FlexItem>
-                <FlexItem grow={{ default: 'grow' }} alignSelf={{ default: 'alignSelfCenter' }}>
-                    <Divider />
-                </FlexItem>
-            </Flex> */}
-      <div>{catalogCards}</div>
-    </PageSection>
-  )
+  return <PageSection style={{ flexGrow: 1 }}>{catalogCards}</PageSection>
 }
