@@ -41,6 +41,7 @@ import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
 import { PageTableCards } from './PageTableCards'
+import { PageTableList } from './PageTableList'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
@@ -120,8 +121,11 @@ export type PageTableProps<T extends object> = {
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
+  const { toolbarActions } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
-  const showSelect = true
+  const showSelect =
+    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+    undefined
 
   const hasTableViewType = !props.disableTableView
   const hasListViewType = !props.disableListView
@@ -151,10 +155,16 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
-      {viewType === PageTableViewTypeE.List && <div style={{ flexGrow: 1 }}>TODO</div>}
+      {viewType === PageTableViewTypeE.List && (
+        <PageBody>
+          <Scrollable>
+            <PageTableList {...props} showSelect={showSelect} />
+          </Scrollable>
+        </PageBody>
+      )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          <PageTableCards {...props} showSelect />
+          <PageTableCards {...props} showSelect={showSelect} />
         </Scrollable>
       )}
       {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
@@ -646,4 +656,6 @@ export interface ITableColumn<T extends object> {
   sortFn?: (l: T, r: T) => number
 
   card?: 'description' | 'hidden'
+
+  list?: 'primary' | 'secondary'
 }
