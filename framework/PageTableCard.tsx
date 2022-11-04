@@ -226,9 +226,9 @@ export function useColumnsToTableCardFn<T extends object>(
         description: cardData.descriptionColumn?.cell(item),
         cardBody: (
           <CardBody>
-            <DescriptionList>
+            <DescriptionList isCompact>
               {cardData.columns.map((column) => (
-                <Detail key={column.id} label={column.header}>
+                <Detail key={column.id} label={column.hideLabel ? undefined : column.header}>
                   {column.cell(item)}
                 </Detail>
               ))}
