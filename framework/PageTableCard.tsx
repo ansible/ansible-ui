@@ -11,7 +11,6 @@ import {
   Checkbox,
   DescriptionList,
   DropdownPosition,
-  DropdownSeparator,
   Label,
   LabelGroup,
   Popover,
@@ -21,7 +20,7 @@ import {
   Text,
   Truncate,
 } from '@patternfly/react-core'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import { Detail } from './components/Details'
 import { IconWrapper } from './components/IconWrapper'
 import { LabelColor } from './components/patternfly-colors'
@@ -69,8 +68,6 @@ export function PageTableCard<T extends object>(props: {
 
   const isItemSelected = !!isSelected?.(item)
 
-  const [isOpen, setIsOpen] = useState(false)
-  const onSelect = useCallback(() => {}, [])
   const onSelectClick = useCallback(() => {
     if (isSelected?.(item)) {
       unselectItem?.(item)
@@ -81,27 +78,6 @@ export function PageTableCard<T extends object>(props: {
 
   const showDropdown = itemActions !== undefined && itemActions.length > 0
   const showActions = showSelect || showDropdown
-
-  const dropdownItems = useMemo(
-    () =>
-      itemActions?.map((itemAction, index) => {
-        // if (isItemActionClick(itemAction)) {
-        //   return (
-        //     <DropdownItem
-        //       key={itemAction.label}
-        //       onClick={() => {
-        //         itemAction.onClick(item)
-        //         setIsOpen(false)
-        //       }}
-        //     >
-        //       {itemAction.label}
-        //     </DropdownItem>
-        //   )
-        // }
-        return <DropdownSeparator key={index} />
-      }),
-    [itemActions]
-  )
 
   return (
     <Card

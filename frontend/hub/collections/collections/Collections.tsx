@@ -15,10 +15,9 @@ import {
   IToolbarFilter,
   ITypedAction,
   LabelsCell,
-  PageBody,
-  PageDataList,
   PageHeader,
   PageLayout,
+  PageTable,
   SinceCell,
   TextCell,
   TypedActionType,
@@ -102,6 +101,7 @@ export function Collections() {
     ],
     [t]
   )
+  const tableColumns = useCollectionsColumns()
   const view = useHubView<Collection>(
     '/api/automation-hub/_ui/v1/repo/published/',
     idKeyFn,
@@ -120,16 +120,30 @@ export function Collections() {
         )}
         titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
       />
-      <PageBody>
-        <PageDataList<Collection>
-          toolbarFilters={toolbarFilters}
-          dataCells={dataCells}
-          actions={actions}
-          errorStateTitle={t('Error loading collections')}
-          emptyStateTitle={t('No collections yet')}
-          {...view}
-        />
-      </PageBody>
+      {/* <PageTabs>
+        <PageTab title="Data List">
+          <PageBody disablePadding>
+            <PageDataList<Collection>
+              toolbarFilters={toolbarFilters}
+              dataCells={dataCells}
+              actions={actions}
+              errorStateTitle={t('Error loading collections')}
+              emptyStateTitle={t('No collections yet')}
+              {...view}
+            />
+          </PageBody>
+        </PageTab>
+        <PageTab title="Table"> */}
+      <PageTable<Collection>
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        rowActions={actions}
+        errorStateTitle={t('Error loading collections')}
+        emptyStateTitle={t('No collections yet')}
+        {...view}
+      />
+      {/* </PageTab>
+      </PageTabs> */}
     </PageLayout>
   )
 }
@@ -141,7 +155,10 @@ export function useCollectionsColumns(_options?: {
   const { t } = useTranslation()
   const tableColumns = useMemo<ITableColumn<Collection>[]>(
     () => [
-      { header: t('Name'), cell: (collection) => <TextCell text={collection.name} /> },
+      {
+        header: t('Name'),
+        cell: (collection) => <TextCell text={collection.name} onClick={() => null} />,
+      },
       {
         header: t('Description'),
         cell: (collection) => <TextCell text={collection.latest_version.metadata.description} />,
@@ -149,14 +166,17 @@ export function useCollectionsColumns(_options?: {
       {
         header: t('Created'),
         cell: (collection) => <SinceCell value={collection.latest_version.created_at} />,
+        list: 'secondary',
       },
       {
         header: t('Version'),
         cell: (collection) => <TextCell text={collection.latest_version.version} />,
+        list: 'secondary',
       },
       {
         header: t('Signed state'),
         cell: (collection) => <TextCell text={collection.latest_version.sign_state} />,
+        list: 'secondary',
       },
       {
         header: t('Tags'),

@@ -6,9 +6,13 @@ import {
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   DropdownPosition,
+  Flex,
   Stack,
-  StackItem,
   Text,
   Title,
 } from '@patternfly/react-core'
@@ -103,56 +107,66 @@ export function useColumnsToDataList<T extends object>(
             <DataListItemCells
               dataListCells={[
                 <DataListCell key="primary">
-                  <Stack hasGutter>
-                    <Stack>
-                      {data.descriptionColumn ? (
-                        <Text component="small" style={{ opacity: 0.7 }}>
-                          {data.descriptionColumn.cell(item)}
-                        </Text>
-                      ) : (
-                        defaultCardSubtitle && (
+                  <Flex>
+                    <Stack hasGutter>
+                      <Stack>
+                        <Title headingLevel="h2">
+                          <span id={`data-list-${key}`}>{data.nameColumn?.cell(item)}</span>
+                        </Title>
+                        {data.descriptionColumn ? (
                           <Text component="small" style={{ opacity: 0.7 }}>
-                            {defaultCardSubtitle}
+                            {data.descriptionColumn.cell(item)}
                           </Text>
-                        )
-                      )}
-                      <Title headingLevel="h2">
-                        <span id={`data-list-${key}`}>{data.nameColumn?.cell(item)}</span>
-                      </Title>
-                    </Stack>
-                    {data.columns.map((column) => {
-                      const value = column.cell(item)
-                      if (!value) return <></>
-                      return (
-                        <Stack key={column.header}>
-                          <StackItem>
+                        ) : (
+                          defaultCardSubtitle && (
                             <Text component="small" style={{ opacity: 0.7 }}>
-                              {column.header}
+                              {defaultCardSubtitle}
                             </Text>
-                          </StackItem>
-                          <StackItem>{column.cell(item)}</StackItem>
-                        </Stack>
-                      )
-                    })}
-                  </Stack>
+                          )
+                        )}
+                      </Stack>
+                      <DescriptionList>
+                        {data.columns.map((column) => {
+                          const value = column.cell(item)
+                          if (!value) return <></>
+                          return (
+                            <DescriptionListGroup key={column.header}>
+                              <DescriptionListTerm>
+                                <Text component="small" style={{ opacity: 0.7 }}>
+                                  {column.header}
+                                </Text>
+                              </DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {column.cell(item)}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                          )
+                        })}
+                      </DescriptionList>
+                    </Stack>
+                  </Flex>
                 </DataListCell>,
                 <DataListCell key="secondary">
-                  <Stack hasGutter>
-                    {data.secondary.map((column) => {
-                      const value = column.cell(item)
-                      if (!value) return <></>
-                      return (
-                        <Stack key={column.header}>
-                          <StackItem>
-                            <Text component="small" style={{ opacity: 0.7 }}>
-                              {column.header}
-                            </Text>
-                          </StackItem>
-                          <StackItem>{column.cell(item)}</StackItem>
-                        </Stack>
-                      )
-                    })}
-                  </Stack>
+                  <Flex>
+                    <DescriptionList>
+                      {data.secondary.map((column) => {
+                        const value = column.cell(item)
+                        if (!value) return <></>
+                        return (
+                          <DescriptionListGroup key={column.header}>
+                            <DescriptionListTerm>
+                              <Text component="small" style={{ opacity: 0.7 }}>
+                                {column.header}
+                              </Text>
+                            </DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {column.cell(item)}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )
+                      })}
+                    </DescriptionList>
+                  </Flex>
                 </DataListCell>,
               ]}
             />
@@ -183,10 +197,9 @@ export function useColumnsToDataList<T extends object>(
       defaultCardSubtitle,
       isSelected,
       keyFn,
+      onSelectClick,
       rowActions,
-      selectItem,
       showSelect,
-      unselectItem,
     ]
   )
 }
