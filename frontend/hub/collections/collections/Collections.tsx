@@ -56,51 +56,51 @@ export function Collections() {
     ],
     []
   )
-  const dataCells = useMemo(
-    () => [
-      (item: Collection) => (
-        <Stack hasGutter>
-          <Stack>
-            <StackItem>
-              <Button variant="link" isInline>
-                {item.name}
-              </Button>
-            </StackItem>
-            <StackItem>
-              <Text component="small" style={{ opacity: 0.7 }}>
-                {t('Provided by')} {item.namespace.name}
-              </Text>
-            </StackItem>
-          </Stack>
-          <StackItem>{item.latest_version.metadata.description}</StackItem>
-          <StackItem>
-            <LabelGroup numLabels={999}>
-              {item.latest_version.metadata.tags.map((tag) => (
-                <Label key={tag}>{tag}</Label>
-              ))}
-            </LabelGroup>
-          </StackItem>
-        </Stack>
-      ),
-      (item: Collection) => (
-        <Stack hasGutter>
-          <StackItem style={{ whiteSpace: 'nowrap' }}>
-            {t('Updated')} <SinceCell value={item.latest_version.created_at} />
-          </StackItem>
-          <StackItem>
-            {t('v')}
-            {item.latest_version.version}
-          </StackItem>
-          <StackItem>
-            <Label variant="outline" color="orange" icon={<ExclamationTriangleIcon />}>
-              {item.sign_state === 'signed' ? 'Signed' : 'Unsigned'}
-            </Label>
-          </StackItem>
-        </Stack>
-      ),
-    ],
-    [t]
-  )
+  // const dataCells = useMemo(
+  //   () => [
+  //     (item: Collection) => (
+  //       <Stack hasGutter>
+  //         <Stack>
+  //           <StackItem>
+  //             <Button variant="link" isInline>
+  //               {item.name}
+  //             </Button>
+  //           </StackItem>
+  //           <StackItem>
+  //             <Text component="small" style={{ opacity: 0.7 }}>
+  //               {t('Provided by')} {item.namespace.name}
+  //             </Text>
+  //           </StackItem>
+  //         </Stack>
+  //         <StackItem>{item.latest_version.metadata.description}</StackItem>
+  //         <StackItem>
+  //           <LabelGroup numLabels={999}>
+  //             {item.latest_version.metadata.tags.map((tag) => (
+  //               <Label key={tag}>{tag}</Label>
+  //             ))}
+  //           </LabelGroup>
+  //         </StackItem>
+  //       </Stack>
+  //     ),
+  //     (item: Collection) => (
+  //       <Stack hasGutter>
+  //         <StackItem style={{ whiteSpace: 'nowrap' }}>
+  //           {t('Updated')} <SinceCell value={item.latest_version.created_at} />
+  //         </StackItem>
+  //         <StackItem>
+  //           {t('v')}
+  //           {item.latest_version.version}
+  //         </StackItem>
+  //         <StackItem>
+  //           <Label variant="outline" color="orange" icon={<ExclamationTriangleIcon />}>
+  //             {item.sign_state === 'signed' ? 'Signed' : 'Unsigned'}
+  //           </Label>
+  //         </StackItem>
+  //       </Stack>
+  //     ),
+  //   ],
+  //   [t]
+  // )
   const tableColumns = useCollectionsColumns()
   const view = useHubView<Collection>(
     '/api/automation-hub/_ui/v1/repo/published/',
