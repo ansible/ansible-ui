@@ -110,7 +110,7 @@ export function Users() {
     () => [
       {
         type: TypedActionType.single,
-        variant: ButtonVariant.primary,
+        // variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
@@ -287,27 +287,31 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         maxWidth: 200,
       },
       {
+        header: t('User type'),
+        cell: (user) => <UserType user={user} />,
+        card: 'description',
+      },
+      {
         header: t('First name'),
-        cell: (user) => <TextCell text={user.first_name} />,
+        cell: (user) => user.first_name && <TextCell text={user.first_name} />,
         sort: 'first_name',
+        list: 'secondary',
       },
       {
         header: t('Last name'),
-        cell: (user) => <TextCell text={user.last_name} />,
+        cell: (user) => user.last_name && <TextCell text={user.last_name} />,
         sort: 'last_name',
+        list: 'secondary',
       },
       {
         header: t('Email'),
-        cell: (user) => <TextCell text={user.email} />,
+        cell: (user) => user.email && <TextCell text={user.email} />,
         sort: 'email',
-      },
-      {
-        header: t('User type'),
-        cell: (user) => <UserType user={user} />,
       },
       {
         header: t('Created'),
         cell: (item) => <SinceCell value={item.created} />,
+        card: 'hidden',
       },
     ],
     [t]

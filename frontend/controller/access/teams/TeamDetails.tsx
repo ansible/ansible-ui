@@ -14,7 +14,6 @@ import {
   DetailsList,
   DetailsSkeleton,
   ITypedAction,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
@@ -77,33 +76,33 @@ export function TeamDetails() {
           <TypedActions<Team> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      <PageBody>
-        {team ? (
-          <PageTabs
-          // preComponents={
-          //     <Button variant="plain">
-          //         <CaretLeftIcon /> &nbsp;Back to teams
-          //     </Button>
-          // }
-          >
-            <PageTab title={t('Details')}>
-              <TeamDetailsTab team={team} />
-            </PageTab>
-            <PageTab title={t('Access')}>
-              <TeamAccessTab team={team} />
-            </PageTab>
-            <PageTab title={t('Roles')}>TODO</PageTab>
-          </PageTabs>
-        ) : (
-          <PageTabs>
-            <PageTab>
-              <PageSection variant="light">
-                <DetailsSkeleton />
-              </PageSection>
-            </PageTab>
-          </PageTabs>
-        )}
-      </PageBody>
+      {/* <PageBody> */}
+      {team ? (
+        <PageTabs
+        // preComponents={
+        //     <Button variant="plain">
+        //         <CaretLeftIcon /> &nbsp;Back to teams
+        //     </Button>
+        // }
+        >
+          <PageTab title={t('Details')}>
+            <TeamDetailsTab team={team} />
+          </PageTab>
+          <PageTab title={t('Access')}>
+            <TeamAccessTab team={team} />
+          </PageTab>
+          <PageTab title={t('Roles')}>TODO</PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <DetailsSkeleton />
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
+      {/* </PageBody> */}
     </PageLayout>
   )
 }

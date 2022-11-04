@@ -34,7 +34,11 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
 export function useDescriptionColumn<T extends { description?: string | undefined }>() {
   const { t } = useTranslation()
   const column = useMemo<ITableColumn<T>>(
-    () => ({ header: t('Description'), cell: (item) => <TextCell text={item.description} /> }),
+    () => ({
+      header: t('Description'),
+      cell: (item) => item.description && <TextCell text={item.description} />,
+      list: 'secondary',
+    }),
     [t]
   )
   return column
@@ -73,6 +77,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       },
       sort: options?.disableSort ? undefined : 'created',
       defaultSortDirection: 'desc',
+      card: 'hidden',
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
   )
@@ -115,6 +120,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       },
       sort: options?.disableSort ? undefined : 'modified',
       defaultSortDirection: 'desc',
+      card: 'hidden',
     }),
     [history, options?.disableLinks, options?.disableSort, t]
   )

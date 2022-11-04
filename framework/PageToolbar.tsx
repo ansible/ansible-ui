@@ -15,6 +15,8 @@ import {
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
+  ToggleGroup,
+  ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarFilter,
@@ -23,12 +25,21 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core'
-import { ArrowRightIcon, ColumnsIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons'
+import {
+  ArrowRightIcon,
+  ColumnsIcon,
+  FilterIcon,
+  ListIcon,
+  TableIcon,
+  ThLargeIcon,
+  TimesIcon,
+} from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BulkSelector } from './components/BulkSelector'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useBreakpoint } from './components/useBreakPoint'
+import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
@@ -104,6 +115,9 @@ export type PagetableToolbarProps<T extends object> = {
   disableBorderBottom?: boolean
 
   showSelect?: boolean
+
+  viewType: PageTableViewType
+  setViewType: (viewType: PageTableViewType) => void
 }
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -124,6 +138,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
   const sm = useBreakpoint('md')
 
+  const { viewType, setViewType } = props
   let { toolbarActions } = props
   toolbarActions = toolbarActions ?? []
 
@@ -291,6 +306,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             />
           </ToolbarItem>
         </ToolbarGroup>
+        <div style={{ flexGrow: 1 }} />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           {/* <ToolbarItem>
@@ -306,20 +322,76 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
               </Tooltip>
             </ToggleGroup>
           </ToolbarItem> */}
-          {openColumnModal && (
+          {openColumnModal && viewType === 'table' && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>
                 <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
               </Tooltip>
             </ToolbarItem>
           )}
+          <ToolbarItem>
+            <ToggleGroup>
+              {[PageTableViewTypeE.Table, PageTableViewTypeE.List, PageTableViewTypeE.Cards]
+                // .filter((vt) => {
+                //   switch (vt) {
+                //     case PageTableViewTypeE.Cards:
+                //       return props.itemToCardFn !== undefined
+                //     case PageTableViewTypeE.list:
+                //       return false
+                //     case PageTableViewTypeE.table:
+                //       return props.tableColumns !== undefined
+                //     default:
+                //       return false
+                //   }
+                // })
+                .map((vt) => {
+                  switch (vt) {
+                    case PageTableViewTypeE.Cards:
+                      return (
+                        <Tooltip
+                          content={'Card view'}
+                          key={vt}
+                          position="top-end"
+                          enableFlip={false}
+                        >
+                          <ToggleGroupItem
+                            icon={<ThLargeIcon />}
+                            isSelected={viewType === PageTableViewTypeE.Cards}
+                            onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
+                          />
+                        </Tooltip>
+                      )
+                    case PageTableViewTypeE.List:
+                      return (
+                        <Tooltip content={'List view'} position="top-end" enableFlip={false}>
+                          <ToggleGroupItem
+                            icon={<ListIcon />}
+                            isSelected={viewType === PageTableViewTypeE.List}
+                            onClick={() => setViewType?.(PageTableViewTypeE.List)}
+                          />
+                        </Tooltip>
+                      )
+                    case PageTableViewTypeE.Table:
+                      return (
+                        <Tooltip content={'Table view'} position="top-end" enableFlip={false}>
+                          <ToggleGroupItem
+                            icon={<TableIcon />}
+                            isSelected={viewType === PageTableViewTypeE.Table}
+                            onClick={() => setViewType?.(PageTableViewTypeE.Table)}
+                          />
+                        </Tooltip>
+                      )
+                  }
+                })}
+            </ToggleGroup>
+          </ToolbarItem>
         </ToolbarGroup>
 
         {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}
         {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
 
         {/* Pagination */}
-        <ToolbarItem variant="pagination" visibility={{ default: 'hidden', '2xl': 'visible' }}>
+        <ToolbarItem visibility={{ default: 'hidden', '2xl': 'visible' }}>
           <Pagination
             variant={PaginationVariant.top}
             isCompact

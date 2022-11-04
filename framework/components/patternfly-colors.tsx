@@ -27,3 +27,15 @@ export const pfDanger = 'var(--pf-global--danger-color--100)'
 export const pfWarning = 'var(--pf-global--warning-color--100)'
 export const pfInfo = 'var(--pf-global--info-color--100)'
 export const pfDisabled = 'var(--pf-global--disabled-color--100)'
+
+export enum LabelColorE {
+  blue = 'blue',
+  cyan = 'cyan',
+  green = 'green',
+  orange = 'orange',
+  purple = 'purple',
+  red = 'red',
+  grey = 'grey',
+}
+
+export type LabelColor = 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey'

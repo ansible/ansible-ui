@@ -33,12 +33,16 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Scrollable } from './components/Scrollable'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageBody } from './PageBody'
 import { useColumnModal } from './PageColumnModal'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
+import { PageTableCards } from './PageTableCards'
+import { PageTableList } from './PageTableList'
+import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActionType, useTypedActionsToTableActions } from './TypedActions'
@@ -48,14 +52,10 @@ export type TablePageProps<T extends object> = PageHeaderProps &
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
   return (
-    <>
-      <PageLayout>
-        <PageHeader {...props} />
-        <PageBody>
-          <PageTable {...props} />
-        </PageBody>
-      </PageLayout>
-    </>
+    <PageLayout>
+      <PageHeader {...props} />
+      <PageTable {...props} />
+    </PageLayout>
   )
 }
 
@@ -108,10 +108,76 @@ export type PageTableProps<T extends object> = {
   t?: (t: string) => string
 
   showSelect?: boolean
-  ColumnManagement?: boolean
+
+  disableTableView?: boolean
+  disableListView?: boolean
+  disableCardView?: boolean
+
+  defaultTableView?: PageTableViewType
+
+  disableBodyPadding?: boolean
+
+  defaultCardSubtitle?: ReactNode
 }
 
 export function PageTable<T extends object>(props: PageTableProps<T>) {
+  let { disableBodyPadding } = props
+  disableBodyPadding = true
+  const { toolbarActions } = props
+  const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
+  const showSelect =
+    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+    undefined
+
+  const hasTableViewType = !props.disableTableView
+  const hasListViewType = !props.disableListView
+  // const hasCardViewType = !props.disableCardView
+
+  const [viewType, setViewType] = useState<PageTableViewType>(
+    () =>
+      props.defaultTableView ??
+      (hasTableViewType
+        ? PageTableViewTypeE.Table
+        : hasListViewType
+        ? PageTableViewTypeE.List
+        : PageTableViewTypeE.Cards)
+  )
+
+  return (
+    <>
+      <PageTableToolbar
+        {...props}
+        openColumnModal={openColumnModal}
+        showSelect={showSelect}
+        viewType={viewType}
+        setViewType={setViewType}
+      />
+      {viewType === PageTableViewTypeE.Table && (
+        <PageBody disablePadding={disableBodyPadding}>
+          <PageTableView {...props} tableColumns={managedColumns} />
+        </PageBody>
+      )}
+      {viewType === PageTableViewTypeE.List && (
+        <PageBody disablePadding>
+          <Scrollable>
+            <PageTableList {...props} showSelect={showSelect} />
+          </Scrollable>
+        </PageBody>
+      )}
+      {viewType === PageTableViewTypeE.Cards && (
+        <Scrollable>
+          <PageTableCards {...props} showSelect={showSelect} />
+        </Scrollable>
+      )}
+      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+        <PagePagination {...props} />
+      )}
+      {columnModal}
+    </>
+  )
+}
+
+function PageTableView<T extends object>(props: PageTableProps<T>) {
   const {
     tableColumns,
     pageItems,
@@ -164,7 +230,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
   const settings = useSettings()
-  const { openColumnModal, columnModal, managedColumns } = useColumnModal(tableColumns)
 
   if (error) {
     return (
@@ -216,105 +281,100 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   }
 
   return (
-    <Fragment>
-      {columnModal}
-      <PageTableToolbar {...props} openColumnModal={openColumnModal} showSelect={showSelect} />
-      <div
-        className="pf-c-scroll-inner-wrapper"
-        style={{ height: '100%' }}
-        ref={containerRef}
-        onScroll={onScroll}
+    <div
+      className="pf-c-scroll-inner-wrapper"
+      style={{ height: '100%', marginBottom: -1 }}
+      ref={containerRef}
+      onScroll={onScroll}
+    >
+      <TableComposable
+        aria-label="Simple table"
+        variant={
+          props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
+        }
+        gridBreakPoint=""
+        isStickyHeader
       >
-        <TableComposable
-          aria-label="Simple table"
-          variant={
-            props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
-          }
-          gridBreakPoint=""
-          isStickyHeader
-        >
-          {itemCount === undefined ? (
-            <Thead>
-              <Tr>
-                <Th>
-                  <Skeleton />
-                </Th>
-              </Tr>
-            </Thead>
-          ) : (
-            <TableHead
-              {...props}
-              showSelect={showSelect}
-              scrollLeft={scroll.left > 0}
-              scrollRight={scroll.right > 1}
-              tableColumns={managedColumns}
-              onSelect={onSelect}
-            />
-          )}
-          <Tbody>
-            {itemCount === undefined
-              ? new Array(perPage).fill(0).map((_, index) => (
-                  <Tr key={index}>
-                    <Td>
-                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                        <Skeleton height="27px" />
-                      </div>
-                    </Td>
-                  </Tr>
-                ))
-              : pageItems === undefined
-              ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
-                  <Tr key={index}>
-                    {showSelect && <Td></Td>}
-                    <Td colSpan={managedColumns.length}>
-                      <div style={{ paddingTop: 5, paddingBottom: 5 }}>
-                        <Skeleton height="27px" />
-                      </div>
-                    </Td>
-                  </Tr>
-                ))
-              : pageItems?.map((item, rowIndex) => (
-                  <TableRow<T>
-                    key={keyFn ? keyFn(item) : rowIndex}
-                    columns={managedColumns}
-                    item={item}
-                    isItemSelected={isSelected?.(item)}
-                    selectItem={selectItem}
-                    unselectItem={unselectItem}
-                    rowActions={rowActions}
-                    rowIndex={rowIndex}
-                    showSelect={showSelect}
-                    scrollLeft={scroll.left > 0}
-                    scrollRight={scroll.right > 1}
-                    unselectAll={unselectAll}
-                    onSelect={onSelect}
-                  />
-                ))}
-          </Tbody>
-        </TableComposable>
-        {itemCount === 0 && (
-          <div style={{ margin: 'auto' }}>
-            <EmptyState>
-              <EmptyStateIcon icon={SearchIcon} />
-              <Title headingLevel="h2" size="lg">
-                {t('No results found')}
-              </Title>
-              <EmptyStateBody>
-                {t('No results match this filter criteria. Adjust your filters and try again.')}
-              </EmptyStateBody>
-              {clearAllFilters && (
-                <EmptyStateSecondaryActions>
-                  <Button variant="link" onClick={clearAllFilters}>
-                    {t('Clear all filters')}
-                  </Button>
-                </EmptyStateSecondaryActions>
-              )}
-            </EmptyState>
-          </div>
+        {itemCount === undefined ? (
+          <Thead>
+            <Tr>
+              <Th>
+                <Skeleton />
+              </Th>
+            </Tr>
+          </Thead>
+        ) : (
+          <TableHead
+            {...props}
+            showSelect={showSelect}
+            scrollLeft={scroll.left > 0}
+            scrollRight={scroll.right > 1}
+            tableColumns={tableColumns}
+            onSelect={onSelect}
+          />
         )}
-      </div>
-      {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
-    </Fragment>
+        <Tbody>
+          {itemCount === undefined
+            ? new Array(perPage).fill(0).map((_, index) => (
+                <Tr key={index}>
+                  <Td>
+                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                      <Skeleton height="27px" />
+                    </div>
+                  </Td>
+                </Tr>
+              ))
+            : pageItems === undefined
+            ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
+                <Tr key={index}>
+                  {showSelect && <Td></Td>}
+                  <Td colSpan={tableColumns.length}>
+                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                      <Skeleton height="27px" />
+                    </div>
+                  </Td>
+                </Tr>
+              ))
+            : pageItems?.map((item, rowIndex) => (
+                <TableRow<T>
+                  key={keyFn ? keyFn(item) : rowIndex}
+                  columns={tableColumns}
+                  item={item}
+                  isItemSelected={isSelected?.(item)}
+                  selectItem={selectItem}
+                  unselectItem={unselectItem}
+                  rowActions={rowActions}
+                  rowIndex={rowIndex}
+                  showSelect={showSelect}
+                  scrollLeft={scroll.left > 0}
+                  scrollRight={scroll.right > 1}
+                  unselectAll={unselectAll}
+                  onSelect={onSelect}
+                />
+              ))}
+        </Tbody>
+      </TableComposable>
+      {itemCount === 0 && (
+        <div style={{ margin: 'auto' }}>
+          <EmptyState>
+            <EmptyStateIcon icon={SearchIcon} />
+            <Title headingLevel="h2" size="lg">
+              {t('No results found')}
+            </Title>
+            <EmptyStateBody>
+              {t('No results match this filter criteria. Adjust your filters and try again.')}
+            </EmptyStateBody>
+            {clearAllFilters && (
+              <EmptyStateSecondaryActions>
+                <Button variant="link" onClick={clearAllFilters}>
+                  {t('Clear all filters')}
+                </Button>
+              </EmptyStateSecondaryActions>
+            )}
+          </EmptyState>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -594,4 +654,8 @@ export interface ITableColumn<T extends object> {
    * @deprecated The method should not be used
    */
   sortFn?: (l: T, r: T) => number
+
+  card?: 'description' | 'hidden'
+
+  list?: 'primary' | 'secondary'
 }
