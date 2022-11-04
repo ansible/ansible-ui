@@ -38,6 +38,7 @@ export function useDescriptionColumn<T extends { description?: string | undefine
       header: t('Description'),
       cell: (item) => item.description && <TextCell text={item.description} />,
       list: 'secondary',
+      hideLabel: true,
     }),
     [t]
   )

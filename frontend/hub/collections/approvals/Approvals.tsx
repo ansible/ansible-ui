@@ -6,11 +6,8 @@ import {
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
   SinceCell,
+  TablePage,
   TextCell,
   TypedActionType,
 } from '../../../../framework'
@@ -71,20 +68,16 @@ export function Approvals() {
     [t]
   )
   return (
-    <PageLayout>
-      <PageHeader title={t('Collection approvals')} />
-      <PageBody>
-        <PageTable<Approval>
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          toolbarActions={toolbarActions}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading approvals')}
-          emptyStateTitle={t('No approvals yet')}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage<Approval>
+      title={t('Collection approvals')}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading approvals')}
+      emptyStateTitle={t('No approvals yet')}
+      {...view}
+    />
   )
 }
 

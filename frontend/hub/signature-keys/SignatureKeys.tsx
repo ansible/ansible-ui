@@ -6,11 +6,8 @@ import {
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
   SinceCell,
+  TablePage,
   TextCell,
   TypedActionType,
 } from '../../../framework'
@@ -41,19 +38,15 @@ export function SignatureKeys() {
     [t]
   )
   return (
-    <PageLayout>
-      <PageHeader title={t('SignatureKeys')} />
-      <PageBody>
-        <PageTable<SignatureKey>
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading signature keys')}
-          emptyStateTitle={t('No signature keys yet')}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage<SignatureKey>
+      title={t('SignatureKeys')}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading signature keys')}
+      emptyStateTitle={t('No signature keys yet')}
+      {...view}
+    />
   )
 }
 
@@ -72,10 +65,12 @@ export function useSignatureKeysColumns(_options?: {
       {
         header: t('Public key'),
         cell: (signatureKey) => <CopyCell text={signatureKey.public_key} />,
+        list: 'secondary',
       },
       {
         header: t('Created'),
         cell: (signatureKey) => <SinceCell value={signatureKey.pulp_created} />,
+        card: 'hidden',
       },
     ],
     [t]

@@ -6,11 +6,8 @@ import {
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
   SinceCell,
+  TablePage,
   TextCell,
   TypedActionType,
 } from '../../../../framework'
@@ -55,20 +52,16 @@ export function RemoteRegistries() {
     [t]
   )
   return (
-    <PageLayout>
-      <PageHeader title={t('Remote registries')} />
-      <PageBody>
-        <PageTable<RemoteRegistry>
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          toolbarActions={toolbarActions}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading remote registries')}
-          emptyStateTitle={t('No remote registries yet')}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage<RemoteRegistry>
+      title={t('Remote registries')}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading remote registries')}
+      emptyStateTitle={t('No remote registries yet')}
+      {...view}
+    />
   )
 }
 

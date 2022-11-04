@@ -1,16 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import {
-  ITableColumn,
-  IToolbarFilter,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
-  SinceCell,
-  TextCell,
-} from '../../../framework'
+import { ITableColumn, IToolbarFilter, SinceCell, TablePage, TextCell } from '../../../framework'
 import { StatusCell } from '../../common/StatusCell'
 import { RouteE } from '../../Routes'
 import { pulpHRefKeyFn } from '../useHubView'
@@ -28,18 +19,14 @@ export function Tasks() {
     tableColumns
   )
   return (
-    <PageLayout>
-      <PageHeader title={t('Tasks')} />
-      <PageBody>
-        <PageTable<Task>
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          errorStateTitle={t('Error loading tasks')}
-          emptyStateTitle={t('No tasks yet')}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage<Task>
+      title={t('Tasks')}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      errorStateTitle={t('Error loading tasks')}
+      emptyStateTitle={t('No tasks yet')}
+      {...view}
+    />
   )
 }
 
