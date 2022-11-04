@@ -14,7 +14,7 @@ import { CircleIcon } from '@patternfly/react-icons'
 import { IAction } from '@patternfly/react-table'
 import { ComponentClass, FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { useBreakpoint, WindowSize } from '../components/useBreakPoint'
-import { TypedActionsButtons, TypedActionButton } from './TypedActionsButtons'
+import { TypedActionButton, TypedActionsButtons } from './TypedActionsButtons'
 
 export enum TypedActionType {
   seperator = 'seperator',
@@ -72,9 +72,10 @@ export function TypedActionsDropdown<T extends object>(props: {
   label?: string
   isPrimary?: boolean
   selectedItems?: T[]
+  selectedItem?: T
   position?: DropdownPosition
 }) {
-  const { actions, label, isPrimary = false, selectedItems } = props
+  const { actions, label, isPrimary = false, selectedItems, selectedItem } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasItemActions = useMemo(
     () => !actions.every((action) => action.type !== TypedActionType.bulk),
@@ -117,6 +118,7 @@ export function TypedActionsDropdown<T extends object>(props: {
           key={'label' in action ? action.label : `action-${index}`}
           action={action}
           selectedItems={selectedItems ?? []}
+          selectedItem={selectedItem}
           hasIcons={hasIcons}
           index={index}
         />
@@ -130,13 +132,41 @@ export function TypedActionsDropdown<T extends object>(props: {
 export function DropdownActionItem<T extends object>(props: {
   action: ITypedAction<T>
   selectedItems: T[]
+  selectedItem?: T
   hasIcons: boolean
   index: number
 }) {
-  const { action, selectedItems, hasIcons, index } = props
+  const { action, selectedItems, selectedItem, hasIcons, index } = props
 
-  // TODO case TypedActionType.single?
   switch (action.type) {
+    case TypedActionType.single: {
+      let Icon: ComponentClass | FunctionComponent | undefined = action.icon
+      if (!Icon && hasIcons) Icon = TransparentIcon
+      const tooltip = action.tooltip
+      const isDisabled = false
+      return (
+        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+          <DropdownItem
+            onClick={() => selectedItem && action.onClick(selectedItem)}
+            isAriaDisabled={isDisabled}
+            icon={
+              Icon ? (
+                <span style={{ paddingRight: 4 }}>
+                  <Icon />
+                </span>
+              ) : undefined
+            }
+            style={{
+              color:
+                action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined,
+            }}
+          >
+            {action.label}
+          </DropdownItem>
+        </Tooltip>
+      )
+    }
+
     case TypedActionType.button:
     case TypedActionType.bulk: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon
@@ -183,6 +213,7 @@ export function DropdownActionItem<T extends object>(props: {
 export function TypedActions<T extends object>(props: {
   actions: ITypedAction<T>[]
   selectedItems?: T[]
+  selectedItem?: T
   wrapper?: ComponentClass | FunctionComponent
   collapse?: WindowSize
   noPrimary?: boolean

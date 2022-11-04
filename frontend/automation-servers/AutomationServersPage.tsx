@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   ITableColumn,
   ITypedAction,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTable,
@@ -14,6 +13,7 @@ import {
   TypedActionType,
   useSelected,
 } from '../../framework'
+import { PageTableViewTypeE } from '../../framework/PageTableViewType'
 import { useView } from '../../framework/useView'
 import { RouteE } from '../Routes'
 import { AutomationServer, automationServerKeyFn } from './AutomationServer'
@@ -95,22 +95,21 @@ export function AutomationServersPage() {
         items={automationServers}
         itemToCardFn={itemToCardFn}
       /> */}
-      <PageBody>
-        <PageTable<AutomationServer>
-          toolbarActions={toolbarActions}
-          tableColumns={tableColumns}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading automation servers')}
-          emptyStateTitle={t('Welcome to the ansible automation platform')}
-          emptyStateDescription={t('To get started, add an automation server.')}
-          emptyStateButtonText={t('Add automation server')}
-          emptyStateButtonClick={addAutomationServer}
-          {...view}
-          pageItems={automationServers}
-          itemCount={automationServers.length}
-          {...selected}
-        />
-      </PageBody>
+      <PageTable<AutomationServer>
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading automation servers')}
+        emptyStateTitle={t('Welcome to the ansible automation platform')}
+        emptyStateDescription={t('To get started, add an automation server.')}
+        emptyStateButtonText={t('Add automation server')}
+        emptyStateButtonClick={addAutomationServer}
+        {...view}
+        pageItems={automationServers}
+        itemCount={automationServers.length}
+        {...selected}
+        defaultTableView={PageTableViewTypeE.Cards}
+      />
     </PageLayout>
   )
 }

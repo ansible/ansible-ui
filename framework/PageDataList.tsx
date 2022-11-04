@@ -21,7 +21,7 @@ import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
-import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
+import { IToolbarFilter } from './PageToolbar'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
@@ -160,7 +160,6 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
 
   return (
     <Fragment>
-      <PageTableToolbar {...props} disableBorderBottom />
       <Scrollable>
         <DataList aria-label="Simple data list example">
           {pageItems?.map((item) => (

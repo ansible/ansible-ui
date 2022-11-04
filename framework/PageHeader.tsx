@@ -67,6 +67,7 @@ export interface PageHeaderProps {
   controls?: ReactNode
   headerActions?: ReactNode
   t?: (t: string) => string
+  disableBorderBottom?: boolean
 }
 
 /**
@@ -123,9 +124,10 @@ export function PageHeader(props: PageHeaderProps) {
               settings.theme !== 'light' && settings.borders
                 ? 'thin solid var(--pf-global--BorderColor--100)'
                 : undefined,
-            borderBottom: settings.borders
-              ? 'thin solid var(--pf-global--BorderColor--100)'
-              : undefined,
+            borderBottom:
+              !props.disableBorderBottom && settings.borders
+                ? 'thin solid var(--pf-global--BorderColor--100)'
+                : undefined,
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
@@ -165,9 +167,10 @@ export function PageHeader(props: PageHeaderProps) {
               !navigation && settings.theme !== 'light' && settings.borders
                 ? 'thin solid var(--pf-global--BorderColor--100)'
                 : undefined,
-            borderBottom: settings.borders
-              ? 'thin solid var(--pf-global--BorderColor--100)'
-              : undefined,
+            borderBottom:
+              !props.disableBorderBottom && settings.borders
+                ? 'thin solid var(--pf-global--BorderColor--100)'
+                : undefined,
             backgroundColor:
               settings.theme === 'dark'
                 ? xxl

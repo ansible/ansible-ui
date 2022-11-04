@@ -7,6 +7,7 @@ import {
   Split,
   SplitItem,
   Stack,
+  Text,
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -162,7 +163,11 @@ export function Detail(props: { label: string; children?: ReactNode }) {
   if (!props.children) return <></>
   return (
     <DescriptionListGroup>
-      <DescriptionListTerm>{props.label}</DescriptionListTerm>
+      <DescriptionListTerm>
+        <Text component="small" style={{ opacity: 0.7 }}>
+          {props.label}
+        </Text>
+      </DescriptionListTerm>
       <DescriptionListDescription id={props.label.toLowerCase().split(' ').join('-')}>
         {props.children}
       </DescriptionListDescription>
