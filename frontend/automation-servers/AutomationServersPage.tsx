@@ -2,7 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ITableColumn,
   ITypedAction,
@@ -42,8 +42,14 @@ export function AutomationServersPage() {
         label: t('Add automation server'),
         onClick: addAutomationServer,
       },
+      {
+        type: TypedActionType.bulk,
+        icon: MinusCircleIcon,
+        label: t('Remove selected automation servers'),
+        onClick: (servers) => removeAutomationServers(servers),
+      },
     ],
-    [addAutomationServer, t]
+    [addAutomationServer, removeAutomationServers, t]
   )
 
   const rowActions = useMemo<ITypedAction<AutomationServer>[]>(
@@ -137,17 +143,22 @@ export function useAutomationServersColumns(_options?: {
         cell: (server) => {
           switch (server.type) {
             case 'controller':
-              return <TextCell text="Controller" />
+              return <TextCell text="Automation controller" />
             case 'hub':
-              return <TextCell text="Hub" />
+              return <TextCell text="Automation hub" />
             case 'eda':
-              return <TextCell text="Event driven" />
+              return <TextCell text="Event driven automation" />
             default:
               return <TextCell text="Unknown" />
           }
         },
+        card: 'description',
       },
-      { header: t('Url'), cell: (server) => server.url },
+      {
+        header: t('Url'),
+        cell: (server) => <Link to={server.url}>{server.url}</Link>,
+        hideLabel: true,
+      },
     ],
     [navigate, t]
   )

@@ -156,6 +156,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
           />
         ),
         sort: 'errors',
+        hideLabel: true,
       },
       {
         header: t('Node type'),

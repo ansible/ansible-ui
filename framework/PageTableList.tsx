@@ -110,7 +110,7 @@ export function useColumnsToDataList<T extends object>(
                   <Flex>
                     <Stack hasGutter>
                       <Stack>
-                        <Title headingLevel="h2">
+                        <Title headingLevel="h2" style={{ marginTop: -4 }}>
                           <span id={`data-list-${key}`}>{data.nameColumn?.cell(item)}</span>
                         </Title>
                         {data.descriptionColumn ? (
@@ -125,17 +125,19 @@ export function useColumnsToDataList<T extends object>(
                           )
                         )}
                       </Stack>
-                      <DescriptionList>
+                      <DescriptionList isCompact>
                         {data.columns.map((column) => {
                           const value = column.cell(item)
                           if (!value) return <></>
                           return (
                             <DescriptionListGroup key={column.header}>
-                              <DescriptionListTerm>
-                                <Text component="small" style={{ opacity: 0.7 }}>
-                                  {column.header}
-                                </Text>
-                              </DescriptionListTerm>
+                              {!column.hideLabel && (
+                                <DescriptionListTerm>
+                                  <Text component="small" style={{ opacity: 0.7 }}>
+                                    {column.header}
+                                  </Text>
+                                </DescriptionListTerm>
+                              )}
                               <DescriptionListDescription>
                                 {column.cell(item)}
                               </DescriptionListDescription>
@@ -148,17 +150,19 @@ export function useColumnsToDataList<T extends object>(
                 </DataListCell>,
                 <DataListCell key="secondary">
                   <Flex>
-                    <DescriptionList>
+                    <DescriptionList isCompact>
                       {data.secondary.map((column) => {
                         const value = column.cell(item)
                         if (!value) return <></>
                         return (
                           <DescriptionListGroup key={column.header}>
-                            <DescriptionListTerm>
-                              <Text component="small" style={{ opacity: 0.7 }}>
-                                {column.header}
-                              </Text>
-                            </DescriptionListTerm>
+                            {!column.hideLabel && (
+                              <DescriptionListTerm>
+                                <Text component="small" style={{ opacity: 0.7 }}>
+                                  {column.header}
+                                </Text>
+                              </DescriptionListTerm>
+                            )}
                             <DescriptionListDescription>
                               {column.cell(item)}
                             </DescriptionListDescription>

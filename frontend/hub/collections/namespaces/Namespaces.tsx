@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   ITableColumn,
   IToolbarFilter,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
@@ -31,16 +30,14 @@ export function Namespaces() {
         )}
         titleDocLink="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.2/html/curating_collections_using_namespaces_in_automation_hub/index"
       />
-      <PageBody>
-        <PageTabs>
-          <PageTab title={t('All')}>
-            <AllNamespaces />
-          </PageTab>
-          <PageTab title={t('My namespaces')}>
-            <MyNamespaces />
-          </PageTab>
-        </PageTabs>
-      </PageBody>
+      <PageTabs>
+        <PageTab title={t('All')}>
+          <AllNamespaces />
+        </PageTab>
+        <PageTab title={t('My namespaces')}>
+          <MyNamespaces />
+        </PageTab>
+      </PageTabs>
     </PageLayout>
   )
 }

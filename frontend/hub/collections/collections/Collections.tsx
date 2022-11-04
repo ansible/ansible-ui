@@ -132,6 +132,7 @@ export function Collections() {
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}
         {...view}
+        defaultTableView="list"
       />
       {/* </PageTab>
       </PageTabs> */}
@@ -153,6 +154,7 @@ export function useCollectionsColumns(_options?: {
       {
         header: t('Description'),
         cell: (collection) => <TextCell text={collection.latest_version.metadata.description} />,
+        hideLabel: true,
       },
       {
         header: t('Created'),
@@ -174,6 +176,7 @@ export function useCollectionsColumns(_options?: {
         cell: (collection) => (
           <LabelsCell labels={collection.latest_version.metadata.tags.sort()} />
         ),
+        hideLabel: true,
       },
     ],
     [t]

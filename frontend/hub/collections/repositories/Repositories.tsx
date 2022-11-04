@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   ITableColumn,
   ITypedAction,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
@@ -24,16 +23,14 @@ export function Repositories() {
   return (
     <PageLayout>
       <PageHeader title={t('Repository management')} />
-      <PageBody>
-        <PageTabs>
-          <PageTab title={t('Local')}>
-            <LocalRepositories />
-          </PageTab>
-          <PageTab title={t('Remote')}>
-            <RemoteRepositories />
-          </PageTab>
-        </PageTabs>
-      </PageBody>
+      <PageTabs>
+        <PageTab title={t('Local')}>
+          <LocalRepositories />
+        </PageTab>
+        <PageTab title={t('Remote')}>
+          <RemoteRepositories />
+        </PageTab>
+      </PageTabs>
     </PageLayout>
   )
 }

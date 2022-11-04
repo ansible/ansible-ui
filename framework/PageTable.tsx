@@ -658,4 +658,6 @@ export interface ITableColumn<T extends object> {
   card?: 'description' | 'hidden'
 
   list?: 'primary' | 'secondary'
+
+  hideLabel?: boolean
 }

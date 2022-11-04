@@ -6,10 +6,7 @@ import {
   ITableColumn,
   IToolbarFilter,
   ITypedAction,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  PageTable,
+  TablePage,
   TextCell,
   TypedActionType,
 } from '../../../../framework'
@@ -55,20 +52,16 @@ export function ExecutionEnvironments() {
     [t]
   )
   return (
-    <PageLayout>
-      <PageHeader title={t('Execution environments')} />
-      <PageBody>
-        <PageTable<ExecutionEnvironment>
-          toolbarFilters={toolbarFilters}
-          tableColumns={tableColumns}
-          toolbarActions={toolbarActions}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading execution environments')}
-          emptyStateTitle={t('No execution environments yet')}
-          {...view}
-        />
-      </PageBody>
-    </PageLayout>
+    <TablePage<ExecutionEnvironment>
+      title={t('Execution environments')}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading execution environments')}
+      emptyStateTitle={t('No execution environments yet')}
+      {...view}
+    />
   )
 }
 

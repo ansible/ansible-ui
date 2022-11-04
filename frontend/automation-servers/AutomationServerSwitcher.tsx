@@ -2,7 +2,6 @@ import {
   Button,
   ContextSelector,
   ContextSelectorItem,
-  Divider,
   Flex,
   PageSection,
   Text,
@@ -42,7 +41,9 @@ export function AutomationServerSwitcher() {
             <Text component="small" style={{ opacity: 0.7 }}>
               {automationServer?.type === 'controller'
                 ? t('Automation controller')
-                : t('Automation hub')}
+                : automationServer?.type === 'hub'
+                ? t('Automation hub')
+                : t('Event driven automation')}
             </Text>
           </Flex>
         }
@@ -53,8 +54,7 @@ export function AutomationServerSwitcher() {
         screenReaderLabel="Selected Project:"
         isPlain
         footer={
-          <>
-            <Divider />
+          <div style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
             <Button
               variant="link"
               isInline
@@ -70,7 +70,7 @@ export function AutomationServerSwitcher() {
             >
               {t('Manage automation servers')}
             </Button>
-          </>
+          </div>
         }
       >
         {automationServers.map((automationServer, index) => (
@@ -89,7 +89,9 @@ export function AutomationServerSwitcher() {
               <Text component="small" style={{ opacity: 0.7 }}>
                 {automationServer?.type === 'controller'
                   ? t('Automation controller')
-                  : t('Automation hub')}
+                  : automationServer?.type === 'hub'
+                  ? t('Automation hub')
+                  : t('Event driven automation')}
               </Text>
             </Flex>
           </ContextSelectorItem>
