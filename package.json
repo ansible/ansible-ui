@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible Automation Platform UI",
-  "version": "0.0.233",
+  "version": "0.0.234",
   "author": "Red Hat",
   "license": "MIT",
   "repository": {
