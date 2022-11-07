@@ -106,7 +106,7 @@
     "css-minimizer-webpack-plugin": "4.2.2",
     "cypress": "10.11.0",
     "cypress-axe": "1.0.0",
-    "eslint": "8.26.0",
+    "eslint": "8.27.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-i18next": "6.0.0-4",
     "eslint-plugin-import": "2.26.0",
