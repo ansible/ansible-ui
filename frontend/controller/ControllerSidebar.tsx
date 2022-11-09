@@ -111,9 +111,12 @@ export function ControllerSidebar(props: {
                   location
                 )}
               >
-                {/* <NavItem isActive={isRouteActive(RouteE.Templates, location)}>
-                                <Link to={RouteE.Templates}>Templates</Link>
-                            </NavItem> */}
+                <NavItem
+                  isActive={isRouteActive(RouteE.Templates, location)}
+                  onClick={() => onClick(RouteE.Templates)}
+                >
+                  {t('Templates')}
+                </NavItem>
                 <NavItem
                   isActive={isRouteActive(RouteE.Credentials, location)}
                   onClick={() => onClick(RouteE.Credentials)}

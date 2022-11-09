@@ -14,6 +14,12 @@ export enum RouteE {
 
   // Resources
   Templates = '/controller/templates',
+  JobTemplateDetails = '/controller/job_template/:id/details',
+  WorkflowJobTemplateDetails = '/controller/workflow_job_template/:id/details',
+  WorkflowJobTemplateEdit = '/controller/workflow_job_template/:id/edit',
+  JobTemplateEdit = '/controller/job_template/:id/edit',
+  CreateWorkflowJobTemplate = '/controller/workflow_job_template/:id/create',
+  CreateJobTemplate = '/controller/job_template/:id/create',
 
   Credentials = '/controller/credentials',
   CredentialDetails = '/controller/credentials/details/:id',
