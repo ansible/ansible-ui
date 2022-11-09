@@ -15,6 +15,7 @@ import {
   TypedActionType,
 } from '../../../../framework'
 import { Dotted } from '../../../../framework/components/Dotted'
+import { AlertToasterProps, usePageAlertToaster } from '../../../../framework/PageAlertToaster'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { StatusCell } from '../../../common/StatusCell'
 import { requestPost } from '../../../Data'
@@ -32,6 +33,8 @@ export function Instances() {
     toolbarFilters,
     tableColumns,
   })
+
+  const alertToaster = usePageAlertToaster()
 
   const toolbarActions = useMemo<ITypedAction<Instance>[]>(
     () => [
@@ -63,12 +66,27 @@ export function Instances() {
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instance) => {
+          const alert: AlertToasterProps = {
+            variant: 'info',
+            title: t('Health check running'),
+          }
+          alertToaster.addAlert(alert)
           void requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
-            .catch(
-              // eslint-disable-next-line no-console
-              console.error
-            )
-            .then(() => void view.refresh())
+            .catch((err) => {
+              alertToaster.replaceAlert(alert, {
+                variant: 'danger',
+                title: t('Health check failed'),
+                children: err instanceof Error && err.message,
+              })
+            })
+            .then(() => {
+              void view.refresh()
+              alertToaster.replaceAlert(alert, {
+                variant: 'success',
+                title: t('Health check success'),
+                timeout: 2000,
+              })
+            })
         },
       },
       {
@@ -78,7 +96,7 @@ export function Instances() {
         onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
-    [navigate, t, view]
+    [alertToaster, navigate, t, view]
   )
 
   return (
