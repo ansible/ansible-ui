@@ -10,7 +10,12 @@ export interface IPageAlertToaster {
   removeAlerts: (filter?: (alert: AlertToasterProps) => boolean) => void
 }
 
-export const PageAlertToasterContext = createContext<IPageAlertToaster>({})
+export const PageAlertToasterContext = createContext<IPageAlertToaster>({
+  addAlert: () => null,
+  removeAlert: () => null,
+  replaceAlert: () => null,
+  removeAlerts: () => null,
+})
 export function usePageAlertToaster(): IPageAlertToaster {
   return useContext(PageAlertToasterContext)
 }

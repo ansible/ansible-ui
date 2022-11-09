@@ -44,7 +44,6 @@ export function Instances() {
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instances) => {
-          alertToaster.addAlert({ title: 'Test' }, 2000)
           for (const instance of instances) {
             requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
               .then(() => void view.refresh())
@@ -56,7 +55,7 @@ export function Instances() {
         },
       },
     ],
-    [alertToaster, t, view]
+    [t, view]
   )
 
   const rowActions = useMemo<ITypedAction<Instance>[]>(
