@@ -46,6 +46,7 @@ export function Templates() {
         type: TypedActionType.dropdown,
         variant: ButtonVariant.primary,
         label: t('Create template'),
+        icon: PlusIcon,
         options: [
           {
             type: TypedActionType.button,
@@ -91,14 +92,14 @@ export function Templates() {
   )
   return (
     <TablePage<Template>
-      title={t('Templates')}
-      titleHelpTitle={t('Templates')}
+      title={t('Job templates')}
+      titleHelpTitle={t('Job templates')}
       titleHelp={t(
-        'An template defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
       )}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/templates.html"
+      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
       description={t(
-        'An template defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        'A job template is a definition and set of parameters for running an Ansible job.'
       )}
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
