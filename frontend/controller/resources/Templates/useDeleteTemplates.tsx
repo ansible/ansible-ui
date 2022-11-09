@@ -15,8 +15,8 @@ export function useDeleteTemplates(callback: (templates: Template[]) => void) {
   const deleteTemplates = (items: Template[]) => {
     setDialog(
       <BulkActionDialog<Template>
-        title={t('Permanently delete instance groups', { count: items.length })}
-        confirmText={t('Yes, I confirm that I want to delete these {{count}} teams.', {
+        title={t('Permanently delete templates', { count: items.length })}
+        confirmText={t('Yes, I confirm that I want to delete these {{count}} templates.', {
           count: items.length,
         })}
         submitText={t('Delete templates', { count: items.length })}
