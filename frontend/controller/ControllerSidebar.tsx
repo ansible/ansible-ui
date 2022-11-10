@@ -25,13 +25,6 @@ export function ControllerSidebar(props: {
   )
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
-      <NavItem
-        isActive={isRouteActive(RouteE.Dashboard, location)}
-        onClick={() => onClick(RouteE.Dashboard)}
-      >
-        {t('Dashboard')}
-      </NavItem>
-
       {/* <NavExpandable
                             key="controller"
                             title="Controller"
@@ -41,31 +34,34 @@ export function ControllerSidebar(props: {
                                 location
                             )}
                         > */}
-      {/* <NavExpandable
-                            key="views"
-                            title="Views"
-                            isExpanded
-                            isActive={isRouteActive(
-                                [RouteE.Dashboard, RouteE.Jobs, RouteE.Schedules, RouteE.ActivityStream, RouteE.WorkflowApprovals],
-                                location
-                            )}
-                        >
-                            <NavItem isActive={isRouteActive(RouteE.Dashboard, location)}>
-                                <Link to={RouteE.Dashboard}>Dashboard</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Jobs, location)}>
-                                <Link to={RouteE.Jobs}>Jobs</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.Schedules, location)}>
-                                <Link to={RouteE.Schedules}>Schedules</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.ActivityStream, location)}>
-                                <Link to={RouteE.ActivityStream}>Activity stream</Link>
-                            </NavItem>
-                            <NavItem isActive={isRouteActive(RouteE.WorkflowApprovals, location)}>
-                                <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
-                            </NavItem>
-                        </NavExpandable> */}
+      <NavExpandable
+        key="views"
+        title="Views"
+        isExpanded
+        isActive={isRouteActive([RouteE.Dashboard, RouteE.Jobs], location)}
+      >
+        <NavItem
+          isActive={isRouteActive(RouteE.Dashboard, location)}
+          onClick={() => onClick(RouteE.Dashboard)}
+        >
+          {t('Dashboard')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteE.Jobs, location)}
+          onClick={() => onClick(RouteE.Jobs)}
+        >
+          {t('Jobs')}
+        </NavItem>
+        {/* <NavItem isActive={isRouteActive(RouteE.Schedules, location)}>
+          <Link to={RouteE.Schedules}>Schedules</Link>
+        </NavItem>
+        <NavItem isActive={isRouteActive(RouteE.ActivityStream, location)}>
+          <Link to={RouteE.ActivityStream}>Activity stream</Link>
+        </NavItem>
+        <NavItem isActive={isRouteActive(RouteE.WorkflowApprovals, location)}>
+          <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
+        </NavItem> */}
+      </NavExpandable>
       <NavExpandable
         key="resources"
         title={t('Resources')}
