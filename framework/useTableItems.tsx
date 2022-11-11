@@ -285,6 +285,15 @@ export function useSelectedInMemory<T extends object>(
     [keyFn]
   )
 
+  const unselectItems = useCallback(
+    (items: T[]) => {
+      for (const item of items) {
+        unselectItem(item)
+      }
+    },
+    [unselectItem]
+  )
+
   const isSelected = useCallback(
     (item: T) => {
       const itemKey = keyFn(item)
@@ -336,6 +345,7 @@ export function useSelectedInMemory<T extends object>(
       unselectAll,
       allSelected,
       keyFn,
+      unselectItems,
     }),
     [
       allSelected,
@@ -347,6 +357,7 @@ export function useSelectedInMemory<T extends object>(
       selectedItems,
       unselectAll,
       unselectItem,
+      unselectItems,
     ]
   )
 }
@@ -382,7 +393,7 @@ export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => st
   })
   const [filterFn, setFilterFnState] = useState<(item: T) => boolean>()
   const setFilterFn = useCallback(
-    (filterFn: (item: T) => boolean) => setFilterFnState(() => filterFn),
+    (filterFn: ((item: T) => boolean) | undefined) => setFilterFnState(() => filterFn),
     []
   )
   const [filtered, setFiltered] = useState<T[]>([])

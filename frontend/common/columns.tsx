@@ -157,6 +157,7 @@ export function useOrganizationNameColumn(options?: {
         />
       ),
       sort: options?.disableSort ? undefined : 'organization',
+      list: 'secondary',
     }),
     [options?.disableLinks, options?.disableSort, t]
   )
