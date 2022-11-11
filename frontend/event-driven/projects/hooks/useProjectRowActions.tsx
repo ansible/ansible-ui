@@ -18,7 +18,7 @@ export function useProjectRowActions(refresh: () => Promise<unknown>) {
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project: Project) =>
-          navigate(RouteE.EditEDAProject.replace(':id', project.id.toString())),
+          navigate(RouteE.EditEdaProject.replace(':id', project.id.toString())),
       },
       {
         type: TypedActionType.single,

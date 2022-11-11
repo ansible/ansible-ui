@@ -19,7 +19,7 @@ export function useProjectsToolbarActions(refresh: () => Promise<unknown>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
-        onClick: () => navigate(RouteE.CreateEDAProject),
+        onClick: () => navigate(RouteE.CreateEdaProject),
       },
       {
         type: TypedActionType.bulk,

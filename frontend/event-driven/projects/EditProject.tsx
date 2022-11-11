@@ -55,7 +55,7 @@ export function EditProject() {
         const _newProject = await requestPost<Project>('/api/projects', project)
         ;(cache as unknown as { clear: () => void }).clear?.()
         // navigate(RouteE.replace(':id', newProject.id.toString()))
-        navigate(RouteE.EDAProjects)
+        navigate(RouteE.EdaProjects)
       }
     } catch (err) {
       setError('TODO')

@@ -113,7 +113,7 @@ export default function Login() {
         headers['x-server'] = data.server
         switch (automationServer.type) {
           case 'eda':
-            navigate(RouteE.EDAProjects)
+            navigate(RouteE.EdaProjects)
             break
           case 'hub':
             navigate(RouteE.HubDashboard)
