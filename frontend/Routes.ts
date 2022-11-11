@@ -124,4 +124,7 @@ export enum RouteE {
   EventDriven = '/eda',
 
   EDAProjects = '/eda/projects',
+  EDAProjectDetails = '/eda/projects/details/:id',
+  CreateEDAProject = '/eda/projects/create',
+  EditEDAProject = '/eda/projects/edit/:id',
 }

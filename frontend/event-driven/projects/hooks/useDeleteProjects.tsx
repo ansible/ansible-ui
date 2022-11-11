@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { idKeyFn } from '../../../hub/useHubView'
-import { Project } from '../Project'
-import { useProjectsColumns } from '../Projects'
+import { Project } from '../../interfaces/Project'
+import { useProjectsColumns } from './useProjectsColumns'
 
 export function useDeleteProjects(callback: (projects: Project[]) => void) {
   const { t } = useTranslation()
@@ -27,7 +27,7 @@ export function useDeleteProjects(callback: (projects: Project[]) => void) {
         columns={columns}
         errorColumns={errorColumns}
         onClose={callback}
-        action={(project: Project) => requestDelete(`/api/projects/${project.id}/`)}
+        action={(project: Project) => requestDelete(`/api/projects/${project.id}`)}
       />
     )
   }

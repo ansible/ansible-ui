@@ -1,4 +1,11 @@
-import { Nav, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core'
+import {
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavItemSeparator,
+  NavList,
+  PageSidebar,
+} from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -41,12 +48,19 @@ export function EventDrivenSidebar(props: {
             <NavItemSeparator style={{ margin: 0 }} />
             <AutomationServerSwitcher />
             <NavItemSeparator style={{ margin: 0 }} />
-            <NavItem
-              isActive={isRouteActive(RouteE.EDAProjects, location)}
-              onClick={() => onClick(RouteE.EDAProjects)}
+            <NavExpandable
+              key="resources"
+              title={t('Resources')}
+              isExpanded
+              isActive={isRouteActive([RouteE.EDAProjects], location)}
             >
-              {t('Projects')}
-            </NavItem>
+              <NavItem
+                isActive={isRouteActive(RouteE.EDAProjects, location)}
+                onClick={() => onClick(RouteE.EDAProjects)}
+              >
+                {t('Projects')}
+              </NavItem>
+            </NavExpandable>
           </NavList>
         </Nav>
       }
