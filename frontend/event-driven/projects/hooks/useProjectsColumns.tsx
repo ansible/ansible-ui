@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITableColumn, TextCell } from '../../../../framework'
 import { RouteE } from '../../../Routes'
-import { Project } from '../../interfaces/Project'
+import { EdaProject } from '../../interfaces/EdaProject'
 
 export function useProjectsColumns() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const tableColumns = useMemo<ITableColumn<Project>[]>(
+  const tableColumns = useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
         header: t('Name'),
