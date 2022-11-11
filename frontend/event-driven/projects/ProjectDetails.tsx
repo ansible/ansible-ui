@@ -7,14 +7,14 @@ import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
 import { useGet } from '../../common/useItem'
 import { RouteE } from '../../Routes'
-import { Project } from '../interfaces/Project'
+import { EdaProject } from '../interfaces/EdaProject'
 import { useProjectRowActions } from './hooks/useProjectRowActions'
 import { useProjectsColumns } from './hooks/useProjectsColumns'
 
 export function ProjectDetails() {
   const { t } = useTranslation()
   const params = useParams<{ id: string }>()
-  const { data: project, mutate: refresh } = useGet<Project>(`/api/projects/${params.id ?? ''}`)
+  const { data: project, mutate: refresh } = useGet<EdaProject>(`/api/projects/${params.id ?? ''}`)
   const settings = useSettings()
   const tableColumns = useProjectsColumns()
   const itemActions = useProjectRowActions(refresh)
@@ -24,7 +24,7 @@ export function ProjectDetails() {
         title={project?.name}
         breadcrumbs={[{ label: t('Projects'), to: RouteE.EdaProjects }, { label: project?.name }]}
         headerActions={
-          <TypedActions<Project>
+          <TypedActions<EdaProject>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={project}

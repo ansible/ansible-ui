@@ -2,17 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { idKeyFn } from '../../../hub/useHubView'
-import { Project } from '../../interfaces/Project'
+import { EdaProject } from '../../interfaces/EdaProject'
 import { useProjectsColumns } from './useProjectsColumns'
 
-export function useDeleteProjects(callback: (projects: Project[]) => void) {
+export function useDeleteProjects(callback: (projects: EdaProject[]) => void) {
   const { t } = useTranslation()
   const [_, setDialog] = usePageDialog()
   const columns = useProjectsColumns()
   const errorColumns = columns
-  const deleteProjects = (items: Project[]) => {
+  const deleteProjects = (items: EdaProject[]) => {
     setDialog(
-      <BulkActionDialog<Project>
+      <BulkActionDialog<EdaProject>
         title={t('Permanently delete projects', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} projects.', {
           count: items.length,
@@ -27,7 +27,7 @@ export function useDeleteProjects(callback: (projects: Project[]) => void) {
         columns={columns}
         errorColumns={errorColumns}
         onClose={callback}
-        action={(project: Project) => requestDelete(`/api/projects/${project.id}`)}
+        action={(project: EdaProject) => requestDelete(`/api/projects/${project.id}`)}
       />
     )
   }
