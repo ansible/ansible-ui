@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
-import { Organization } from '../../organizations/Organization'
-import { User } from '../User'
+import { Organization } from '../../../interfaces/Organization'
+import { User } from '../../../interfaces/User'
 
 export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
   const { t } = useTranslation()

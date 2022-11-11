@@ -23,8 +23,8 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters'
+import { Host } from '../../interfaces/Host'
 import { useControllerView } from '../../useControllerView'
-import { Host } from './Host'
 import { useDeleteHosts } from './useDeleteHosts'
 
 export function Hosts() {

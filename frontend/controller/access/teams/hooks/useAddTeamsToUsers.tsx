@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
-import { User } from '../../users/User'
-import { Team } from '../Team'
+import { Team } from '../../../interfaces/Team'
+import { User } from '../../../interfaces/User'
 
 export function useAddTeamsToUsers() {
   const { t } = useTranslation()

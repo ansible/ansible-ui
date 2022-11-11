@@ -6,8 +6,8 @@ import useSWR, { useSWRConfig } from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { Organization } from '../../interfaces/Organization'
 import { getControllerError } from '../../useControllerView'
-import { Organization } from './Organization'
 
 export function EditOrganization() {
   const { t } = useTranslation()

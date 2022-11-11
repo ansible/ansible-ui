@@ -26,8 +26,8 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters'
+import { Project } from '../../interfaces/Project'
 import { useControllerView } from '../../useControllerView'
-import { Project } from './Project'
 import { useDeleteProjects } from './useDeleteProjects'
 
 export function Projects() {

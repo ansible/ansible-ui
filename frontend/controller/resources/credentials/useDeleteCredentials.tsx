@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
-import { Credential } from './Credential'
+import { Credential } from '../../interfaces/Credential'
 import { useCredentialsColumns } from './Credentials'
 
 export function useDeleteCredentials(callback: (credentials: Credential[]) => void) {

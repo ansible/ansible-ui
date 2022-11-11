@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { Organization } from '../../interfaces/Organization'
+import { User } from '../../interfaces/User'
 import { getControllerError } from '../../useControllerView'
 import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
-import { Organization } from '../organizations/Organization'
-import { User } from './User'
 
 export function CreateUser() {
   const { t } = useTranslation()

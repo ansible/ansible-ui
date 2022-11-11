@@ -20,8 +20,8 @@ import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { StatusCell } from '../../../common/StatusCell'
 import { requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { Instance } from '../../interfaces/Instance'
 import { useControllerView } from '../../useControllerView'
-import { Instance } from './Instance'
 
 export function Instances() {
   const { t } = useTranslation()

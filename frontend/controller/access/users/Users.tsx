@@ -25,6 +25,7 @@ import {
   useLastNameToolbarFilter,
   useUsernameToolbarFilter,
 } from '../../common/controller-toolbar-filters'
+import { User } from '../../interfaces/User'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
@@ -32,7 +33,6 @@ import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSel
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
 import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers'
 import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { User } from './User'
 
 export function Users() {
   const { t } = useTranslation()

@@ -30,12 +30,12 @@ import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
 } from '../../common/controller-toolbar-filters'
+import { Team } from '../../interfaces/Team'
 import { useControllerView } from '../../useControllerView'
 import { AccessNav } from '../common/AccessNav'
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams'
 import { useSelectUsersRemoveTeams } from '../users/hooks/useSelectUsersRemoveTeams'
 import { useDeleteTeams } from './hooks/useDeleteTeams'
-import { Team } from './Team'
 
 export function Teams() {
   const { t } = useTranslation()

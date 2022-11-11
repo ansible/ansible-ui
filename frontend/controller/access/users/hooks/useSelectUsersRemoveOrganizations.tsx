@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Organization } from '../../organizations/Organization'
-import { User } from '../User'
+import { Organization } from '../../../interfaces/Organization'
+import { User } from '../../../interfaces/User'
 import { useRemoveUsersFromOrganizations } from './useRemoveUsersFromOrganizations'
 import { useSelectUsers } from './useSelectUsers'
 
