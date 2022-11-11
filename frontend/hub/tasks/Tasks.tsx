@@ -14,9 +14,9 @@ export function Tasks() {
   const { t } = useTranslation()
   const toolbarFilters = useTaskFilters()
   const tableColumns = useTasksColumns()
-  const tasksResult = useGet<{ results: Task[] }>('/api/automation-hub/pulp/api/v3/tasks/')
+  const { data: tasks } = useGet<{ results: Task[] }>('/api/automation-hub/pulp/api/v3/tasks/')
   const view = useInMemoryView<Task>({
-    items: tasksResult?.results,
+    items: tasks?.results,
     keyFn: pulpHRefKeyFn,
     tableColumns,
     toolbarFilters,
