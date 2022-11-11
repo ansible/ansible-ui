@@ -36,7 +36,7 @@ export function Projects() {
       emptyStateTitle={t('No projects yet')}
       emptyStateDescription={t('To get started, create a project.')}
       emptyStateButtonText={t('Create project')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEDAProject)}
+      emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
       {...view}
     />
   )

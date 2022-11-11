@@ -31,7 +31,7 @@ export default function Main() {
                   <Route path={RouteE.Login} element={<Login />} />
                   <Route path={RouteE.AutomationServers} element={<AutomationServers />} />
                   <Route path={RouteE.Controller + '/*'} element={<Controller />} />
-                  <Route path={RouteE.EventDriven + '/*'} element={<EventDriven />} />
+                  <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />
                   <Route path={RouteE.Hub + '/*'} element={<Hub />} />
                   <Route
                     path="*"
