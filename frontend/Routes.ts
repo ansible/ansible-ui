@@ -134,10 +134,37 @@ export enum RouteE {
   EditEdaProject = '/eda/projects/edit/:id',
 
   EdaExecutionEnvironments = '/eda/execution-environments',
+  EdaExecutionEnvironmentDetails = '/eda/execution-environments/details/:id',
+  CreateEdaExecutionEnvironment = '/eda/execution-environments/create',
+  EditEdaExecutionEnvironment = '/eda/execution-environments/edit/:id',
+
   EdaInventories = '/eda/inventories',
+  EdaInventoryDetails = '/eda/inventories/details/:id',
+  CreateEdaInventory = '/eda/inventories/create',
+  EditEdaInventory = '/eda/inventories/edit/:id',
+
   EdaActions = '/eda/actions',
+  EdaActionDetails = '/eda/actions/details/:id',
+  CreateEdaAction = '/eda/actions/create',
+  EditEdaAction = '/eda/actions/edit/:id',
+
   EdaRulebookActivations = '/eda/rulebook-activations',
+  EdaRulebookActivationDetails = '/eda/rulebook-activations/details/:id',
+  CreateEdaRulebookActivation = '/eda/rulebook-activations/create',
+  EditEdaRulebookActivation = '/eda/rulebook-activations/edit/:id',
+
   EdaActivities = '/eda/activities',
+  EdaActivityDetails = '/eda/activities/details/:id',
+  CreateEdaActivity = '/eda/activities/create',
+  EditEdaActivity = '/eda/activities/edit/:id',
+
   EdaRulebooks = '/eda/rulebooks',
+  EdaRulebookDetails = '/eda/rulebooks/details/:id',
+  CreateEdaRulebook = '/eda/rulebooks/create',
+  EditEdaRulebook = '/eda/rulebooks/edit/:id',
+
   EdaRules = '/eda/rules',
+  EdaRuleDetails = '/eda/rules/details/:id',
+  CreateEdaRule = '/eda/rules/create',
+  EditEdaRule = '/eda/rules/edit/:id',
 }
