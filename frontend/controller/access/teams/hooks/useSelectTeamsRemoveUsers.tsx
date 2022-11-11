@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { User } from '../../users/User'
-import { Team } from '../Team'
+import { Team } from '../../../interfaces/Team'
+import { User } from '../../../interfaces/User'
 import { useRemoveTeamsFromUsers } from './useRemoveTeamsFromUsers'
 import { useSelectTeams } from './useSelectTeams'
 

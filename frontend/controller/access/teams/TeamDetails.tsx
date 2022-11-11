@@ -28,11 +28,11 @@ import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../Routes'
+import { Team } from '../../interfaces/Team'
+import { User } from '../../interfaces/User'
 import { useControllerView } from '../../useControllerView'
-import { User } from '../users/User'
 import { useUsersColumns, useUsersFilters } from '../users/Users'
 import { useDeleteTeams } from './hooks/useDeleteTeams'
-import { Team } from './Team'
 
 export function TeamDetails() {
   const { t } = useTranslation()

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
-import { Project } from './Project'
+import { Project } from '../../interfaces/Project'
 import { useProjectsColumns } from './Projects'
 
 export function useDeleteProjects(callback: (projects: Project[]) => void) {

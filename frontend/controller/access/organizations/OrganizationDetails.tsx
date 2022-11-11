@@ -26,12 +26,12 @@ import {
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useItem } from '../../../common/useItem'
 import { RouteE } from '../../../Routes'
+import { Organization } from '../../interfaces/Organization'
+import { Team } from '../../interfaces/Team'
 import { useControllerView } from '../../useControllerView'
-import { Team } from '../teams/Team'
 import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
 import { AccessTable } from '../users/Users'
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
-import { Organization } from './Organization'
 
 export function OrganizationDetails() {
   const { t } = useTranslation()

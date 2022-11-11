@@ -23,8 +23,8 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters'
+import { Credential } from '../../interfaces/Credential'
 import { useControllerView } from '../../useControllerView'
-import { Credential } from './Credential'
 import { useDeleteCredentials } from './useDeleteCredentials'
 
 export function Credentials() {

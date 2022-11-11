@@ -7,8 +7,8 @@ import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { Instance } from '../../interfaces/Instance'
 import { getControllerError } from '../../useControllerView'
-import { Instance } from './Instance'
 
 export function EditInstance() {
   const { t } = useTranslation()

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
-import { Organization } from '../Organization'
+import { Organization } from '../../../interfaces/Organization'
 import { useOrganizationsColumns } from '../Organizations'
 
 export function useDeleteOrganizations(callback: (organizations: Organization[]) => void) {
