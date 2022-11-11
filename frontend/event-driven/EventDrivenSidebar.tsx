@@ -33,18 +33,18 @@ export function EventDrivenSidebar(props: {
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
       <NavExpandable
-              key="resources"
-              title={t('Resources')}
-              isExpanded
-              isActive={isRouteActive([RouteE.EDAProjects], location)}
-            >
-              <NavItem
-                isActive={isRouteActive(RouteE.EDAProjects, location)}
-                onClick={() => onClick(RouteE.EDAProjects)}
-              >
-                {t('Projects')}
-              </NavItem>
-            </NavExpandable>
-          </CommonSidebar>
+        key="resources"
+        title={t('Resources')}
+        isExpanded
+        isActive={isRouteActive([RouteE.EDAProjects], location)}
+      >
+        <NavItem
+          isActive={isRouteActive(RouteE.EDAProjects, location)}
+          onClick={() => onClick(RouteE.EDAProjects)}
+        >
+          {t('Projects')}
+        </NavItem>
+      </NavExpandable>
+    </CommonSidebar>
   )
 }
