@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import { usePageDialog } from '../../../../../framework'
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog'
+import { Team } from '../../../interfaces/Team'
 import { useControllerView } from '../../../useControllerView'
-import { Team } from '../Team'
 import { useTeamsColumns, useTeamsFilters } from '../Teams'
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {

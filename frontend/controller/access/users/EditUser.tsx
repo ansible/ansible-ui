@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -5,8 +6,8 @@ import useSWR from 'swr'
 import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { User } from '../../interfaces/User'
 import { getControllerError } from '../../useControllerView'
-import { User } from './User'
 
 export function EditUser() {
   const { t } = useTranslation()
@@ -110,9 +111,9 @@ export function EditUser() {
     try {
       if (user) {
         user.username = userData.username
-        user.first_name = userData.firstName
-        user.last_name = userData.lastName
-        user.email = userData.email
+        user.first_name = userData.firstName!
+        user.last_name = userData.lastName!
+        user.email = userData.email!
         user.is_superuser = userData.userType === t('System administrator')
         user.is_system_auditor = userData.userType === t('System auditor')
         if (userData.password) {
@@ -120,7 +121,7 @@ export function EditUser() {
             setFieldError('confirmPassword', { message: t('Password does not match.') })
             return false
           }
-          user.password = userData.password
+          user.password = userData.password!
         }
         const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user)
         navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()))

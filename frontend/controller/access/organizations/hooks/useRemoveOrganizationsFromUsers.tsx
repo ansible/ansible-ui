@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
 import { requestPost } from '../../../../Data'
-import { User } from '../../users/User'
-import { Organization } from '../Organization'
+import { Organization } from '../../../interfaces/Organization'
+import { User } from '../../../interfaces/User'
 
 export function useRemoveOrganizationsFromUsers() {
   const { t } = useTranslation()

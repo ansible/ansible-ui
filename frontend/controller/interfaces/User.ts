@@ -27,6 +27,17 @@ export interface User {
       edit: boolean
       delete: boolean
     }
+    indirect_access?: {
+      descendant_roles: string[]
+      role: {
+        id: number
+        name: string
+        description: string
+        user_capabilities: {
+          unattach: boolean
+        }
+      }
+    }[]
   }
   created: string
   modified: string
@@ -40,4 +51,5 @@ export interface User {
   last_login: string
   external_account: null
   auth: unknown[]
+  password: string
 }

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { PageHeader } from '../../framework'
 import { useBulkProgressDialog } from '../../framework/BulkProgressDialog'
 import { randomString } from '../../framework/utils/random-string'
-import { Team } from '../controller/access/teams/Team'
+import { Team } from '../controller/interfaces/Team'
 import { requestPost } from '../Data'
 import { RouteE } from '../Routes'
 

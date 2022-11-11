@@ -7,10 +7,10 @@ import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
+import { Organization } from '../../interfaces/Organization'
+import { Team } from '../../interfaces/Team'
 import { getControllerError } from '../../useControllerView'
 import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
-import { Organization } from '../organizations/Organization'
-import { Team } from './Team'
 
 export function EditTeam() {
   const { t } = useTranslation()

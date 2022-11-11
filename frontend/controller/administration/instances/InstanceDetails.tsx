@@ -23,7 +23,7 @@ import { StatusCell } from '../../../common/StatusCell'
 import { useItem } from '../../../common/useItem'
 import { requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
-import { Instance } from './Instance'
+import { Instance } from '../../interfaces/Instance'
 import { NodeTypeCell } from './Instances'
 
 export function InstanceDetails() {
