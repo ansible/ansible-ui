@@ -1,4 +1,11 @@
-import { NavItem } from '@patternfly/react-core'
+import {
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavItemSeparator,
+  NavList,
+  PageSidebar,
+} from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -25,12 +32,19 @@ export function EventDrivenSidebar(props: {
   )
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
-      <NavItem
-        isActive={isRouteActive(RouteE.EDAProjects, location)}
-        onClick={() => onClick(RouteE.EDAProjects)}
-      >
-        {t('Projects')}
-      </NavItem>
-    </CommonSidebar>
+      <NavExpandable
+              key="resources"
+              title={t('Resources')}
+              isExpanded
+              isActive={isRouteActive([RouteE.EDAProjects], location)}
+            >
+              <NavItem
+                isActive={isRouteActive(RouteE.EDAProjects, location)}
+                onClick={() => onClick(RouteE.EDAProjects)}
+              >
+                {t('Projects')}
+              </NavItem>
+            </NavExpandable>
+          </CommonSidebar>
   )
 }
