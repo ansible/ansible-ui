@@ -120,12 +120,24 @@ export enum RouteE {
   AutomationServers = '/automation-servers',
   ControllerAutomationServers = '/controller/automation-servers',
   HubAutomationServers = '/hub/automation-servers',
+
+  // Event Driven Automation
+  Eda = '/eda',
+
   EdaAutomationServers = '/eda/automation-servers',
 
-  EventDriven = '/eda',
+  EdaDashboard = '/eda/dashboard',
 
-  EDAProjects = '/eda/projects',
-  EDAProjectDetails = '/eda/projects/details/:id',
-  CreateEDAProject = '/eda/projects/create',
-  EditEDAProject = '/eda/projects/edit/:id',
+  EdaProjects = '/eda/projects',
+  EdaProjectDetails = '/eda/projects/details/:id',
+  CreateEdaProject = '/eda/projects/create',
+  EditEdaProject = '/eda/projects/edit/:id',
+
+  EdaExecutionEnvironments = '/eda/execution-environments',
+  EdaInventories = '/eda/inventories',
+  EdaActions = '/eda/actions',
+  EdaRulebookActivations = '/eda/rulebook-activations',
+  EdaActivities = '/eda/activities',
+  EdaRulebooks = '/eda/rulebooks',
+  EdaRules = '/eda/rules',
 }

@@ -15,7 +15,7 @@ export function useProjectsColumns() {
         cell: (project) => (
           <TextCell
             text={project.name}
-            onClick={() => navigate(RouteE.EDAProjectDetails.replace(':id', project.id.toString()))}
+            onClick={() => navigate(RouteE.EdaProjectDetails.replace(':id', project.id.toString()))}
           />
         ),
       },

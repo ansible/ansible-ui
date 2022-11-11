@@ -22,7 +22,7 @@ export function ProjectDetails() {
     <PageLayout>
       <PageHeader
         title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteE.EDAProjects }, { label: project?.name }]}
+        breadcrumbs={[{ label: t('Projects'), to: RouteE.EdaProjects }, { label: project?.name }]}
         headerActions={
           <TypedActions<Project>
             actions={itemActions}
