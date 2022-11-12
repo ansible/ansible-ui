@@ -2,6 +2,9 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AutomationServersPage } from '../automation-servers/AutomationServersPage'
 import { RouteE } from '../Routes'
 import Dashboard from './dashboard/Dashboard'
+import { EditInventory } from './inventories/EditInventory'
+import { Inventories } from './inventories/Inventories'
+import { InventoryDetails } from './inventories/InventoryDetails'
 import { EditProject } from './projects/EditProject'
 import { ProjectDetails } from './projects/ProjectDetails'
 import { Projects } from './projects/Projects'
@@ -39,19 +42,13 @@ export function EventDrivenRouter() {
         element={<UnderDevelopment />}
       />
 
-      <Route
-        path={RouteE.CreateEdaInventory.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route
-        path={RouteE.EditEdaInventory.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
+      <Route path={RouteE.CreateEdaInventory.replace(RouteE.Eda, '')} element={<EditInventory />} />
+      <Route path={RouteE.EditEdaInventory.replace(RouteE.Eda, '')} element={<EditInventory />} />
       <Route
         path={RouteE.EdaInventoryDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<InventoryDetails />}
       />
-      <Route path={RouteE.EdaInventories.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
+      <Route path={RouteE.EdaInventories.replace(RouteE.Eda, '')} element={<Inventories />} />
 
       <Route path={RouteE.CreateEdaAction.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
       <Route path={RouteE.EditEdaAction.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
