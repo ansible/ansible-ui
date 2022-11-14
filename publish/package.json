@@ -9,16 +9,8 @@
     "url": "https://github.com/ansible/ansible-ui.git"
   },
   "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./mjs/index.d.ts",
-      "import": "./mjs/index.js",
-      "require": "./cjs/index.cjs"
-    }
-  },
-  "main": "mjs/index.js",
-  "types": "mjs/index.d.ts",
+  "main": "cjs/index.js",
+  "types": "cjs/index.d.ts",
   "peerDependencies": {
     "@hookform/resolvers": "^2.0.0",
     "@patternfly/patternfly": "^4.0.0",
