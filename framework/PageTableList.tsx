@@ -148,30 +148,32 @@ export function useColumnsToDataList<T extends object>(
                     </Stack>
                   </Flex>
                 </DataListCell>,
-                <DataListCell key="secondary">
-                  <Flex>
-                    <DescriptionList isCompact>
-                      {data.secondary.map((column) => {
-                        const value = column.cell(item)
-                        if (!value) return <></>
-                        return (
-                          <DescriptionListGroup key={column.header}>
-                            {!column.hideLabel && (
-                              <DescriptionListTerm>
-                                <Text component="small" style={{ opacity: 0.7 }}>
-                                  {column.header}
-                                </Text>
-                              </DescriptionListTerm>
-                            )}
-                            <DescriptionListDescription>
-                              {column.cell(item)}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                        )
-                      })}
-                    </DescriptionList>
-                  </Flex>
-                </DataListCell>,
+                data.secondary.length > 0 ? (
+                  <DataListCell key="secondary">
+                    <Flex>
+                      <DescriptionList isCompact>
+                        {data.secondary.map((column) => {
+                          const value = column.cell(item)
+                          if (!value) return <></>
+                          return (
+                            <DescriptionListGroup key={column.header}>
+                              {!column.hideLabel && (
+                                <DescriptionListTerm>
+                                  <Text component="small" style={{ opacity: 0.7 }}>
+                                    {column.header}
+                                  </Text>
+                                </DescriptionListTerm>
+                              )}
+                              <DescriptionListDescription>
+                                {column.cell(item)}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                          )
+                        })}
+                      </DescriptionList>
+                    </Flex>
+                  </DataListCell>
+                ) : null,
               ]}
             />
             {rowActions && (
