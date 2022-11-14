@@ -2,7 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   ITableColumn,
   ITypedAction,
@@ -156,7 +156,7 @@ export function useAutomationServersColumns(_options?: {
       },
       {
         header: t('Url'),
-        cell: (server) => <Link to={server.url}>{server.url}</Link>,
+        cell: (server) => server.url,
         hideLabel: true,
       },
     ],
