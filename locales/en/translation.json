@@ -163,6 +163,7 @@
     "Delete inventories_one": "Delete inventories",
     "Delete inventories_other": "Delete inventories",
     "Delete inventory": "Delete inventory",
+    "Delete job": "Delete job",
     "Delete jobs_one": "Delete job",
     "Delete jobs_other": "Delete jobs",
     "Delete organization": "Delete organization",
@@ -346,6 +347,7 @@
     },
     "Inventories": "Inventories",
     "Inventory Sync": "Inventory Sync",
+    "Job": "Job",
     "Job templates": "Job templates",
     "jobs": {
         "title": {

@@ -178,6 +178,7 @@
     "Delete inventories_many": "D_E_L_E_T_E_ _I_N_V_E_N_T_O_R_I_E_S",
     "Delete inventories_other": "D_E_L_E_T_E_ _I_N_V_E_N_T_O_R_I_E_S",
     "Delete inventory": "D_E_L_E_T_E_ _I_N_V_E_N_T_O_R_Y",
+    "Delete job": "D_E_L_E_T_E_ _J_O_B",
     "Delete jobs_one": "D_E_L_E_T_E_ _J_O_B_S",
     "Delete jobs_many": "D_E_L_E_T_E_ _J_O_B_S",
     "Delete jobs_other": "D_E_L_E_T_E_ _J_O_B_S",
@@ -360,7 +361,6 @@
     "Failed": "F_A_I_L_E_D",
     "Filters": "F_I_L_T_E_R_S",
     "Fingerprint": "F_I_N_G_E_R_P_R_I_N_T",
-    "Finish Time": "F_I_N_I_S_H_ _T_I_M_E",
     "Finished": "F_I_N_I_S_H_E_D",
     "First name": "F_I_R_S_T_ _N_A_M_E",
     "First name cannot contain more than 150 characters": "F_I_R_S_T_ _N_A_M_E_ _C_A_N_N_O_T_ _C_O_N_T_A_I_N_ _M_O_R_E_ _T_H_A_N_ _1_5_0_ _C_H_A_R_A_C_T_E_R_S_.",
@@ -392,6 +392,7 @@
     },
     "Inventories": "I_N_V_E_N_T_O_R_I_E_S",
     "Inventory Sync": "I_N_V_E_N_T_O_R_Y_ _S_Y_N_C",
+    "Job": "J_O_B",
     "Job templates": "J_O_B_ _T_E_M_P_L_A_T_E_S",
     "jobs": {
         "title": {
@@ -614,7 +615,6 @@
     },
     "Single column": "S_I_N_G_L_E_ _C_O_L_U_M_N",
     "Source Control Update": "S_O_U_R_C_E_ _C_O_N_T_R_O_L_ _U_P_D_A_T_E",
-    "Start Time": "S_T_A_R_T_ _T_I_M_E",
     "Started": "S_T_A_R_T_E_D",
     "Status": "S_T_A_T_U_S",
     "Subversion": "S_U_B_V_E_R_S_I_O_N",
