@@ -1,5 +1,11 @@
 # Development
 
+Given the need to move to a central user interface the existing user interfaces will need to be modularized. All of our user interfaces should be presented together as a single system whose options are capable of being enabled or disabled based on availability, entitlement, or authorization.
+
+This UI will be the single visible component of the platform and should be a small lightweight service on its own, acting as a pass through to the APIs exposed by the components of the system. It will also act as the primary entrypoint for application-wide settings including Central Authentication.
+
+![Alt text](./design.min.svg)
+
 ## Project organization
 
 The project is broken into three parts.
@@ -8,38 +14,12 @@ The project is broken into three parts.
 | ---------- | --------------------------------------------------------------------------------------- |
 | /frontend  | The React web application for the Ansible UI.                                           |
 | /proxy     | The proxy that hosts the web application and proxies calls to controller and hub hosts. |
-| /framework | A generic framework for web applications using PatternFly and responsive design.        |
+| /framework | An application framework for web applications using PatternFly and responsive design.   |
 
-In addition the frontend is broken down into the structure needed for supporting both controller and hub.
+In addition the frontend is broken down into the structure needed for supporting both controller, hub, and EDA.
 
-| Path                     | Description                        |
-| ------------------------ | ---------------------------------- |
-| /frontend/src/controller | The source code for controller UI. |
-| /frontend/src/hub        | The source code for hub UI.        |
-
-## Architecture
-
-One of the currrent thoughts about how to unify the Ansible Platform is to have an Ansible UI that can connect to either a hub or controller. This would enable the user to switch between their hub and controllers without having to switch their browser to a different host. This would also enable customers to have multiple controllers and to switch between them.
-
-```mermaid
-graph LR
-    subgraph Customer
-    browser(Web Browser)
-    end
-
-    subgraph Ansible UI
-    browser-->proxy(Proxy)
-    end
-
-    subgraph Controller 2
-    proxy-->controller2(Controller API)
-    end
-
-    subgraph Controller 1
-    proxy-->controller1(Controller API)
-    end
-
-    subgraph Hub
-    proxy-->hub(Hub API)
-    end
-```
+| Path                   | Description                                           |
+| ---------------------- | ----------------------------------------------------- |
+| /frontend/controller   | The source code for the controller UI.                |
+| /frontend/hub          | The source code for the hub UI.                       |
+| /frontend/event-driven | The source code for the event driven architecture UI. |
