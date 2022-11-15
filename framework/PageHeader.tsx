@@ -17,8 +17,8 @@ import {
 } from '@patternfly/react-core'
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
 import { CSSProperties, Fragment, ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useBreakpoint } from './components/useBreakPoint'
+import { usePageNavigate } from './components/usePageNavigate'
 import { useSettings } from './Settings'
 
 export interface ICatalogBreadcrumb {
@@ -30,7 +30,7 @@ export interface ICatalogBreadcrumb {
 }
 
 function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
-  const history = useNavigate()
+  const navigate = usePageNavigate()
   if (!props.breadcrumbs) return <Fragment />
   return (
     <Breadcrumb style={props.style}>
@@ -41,14 +41,21 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
             id={breadcrumb.id}
             key={breadcrumb.id ?? breadcrumb.label}
             component={breadcrumb.component}
-            onClick={breadcrumb.to ? () => breadcrumb.to && history(breadcrumb.to) : undefined}
-            style={{
-              color: breadcrumb.to ? 'var(--pf-c-breadcrumb__link--Color)' : undefined,
-              cursor: breadcrumb.to ? 'pointer' : undefined,
-            }}
             isActive={breadcrumb.to === undefined}
           >
-            {breadcrumb.label}
+            {breadcrumb.to ? (
+              <a
+                href={breadcrumb.to}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(breadcrumb.to)
+                }}
+              >
+                {breadcrumb.label}
+              </a>
+            ) : (
+              breadcrumb.label
+            )}
           </BreadcrumbItem>
         )
       })}

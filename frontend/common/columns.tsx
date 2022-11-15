@@ -37,7 +37,7 @@ export function useDescriptionColumn<T extends { description?: string | undefine
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Description'),
-      cell: (item) => item.description && <TextCell text={item.description} />,
+      cell: (item) => item.description && <TextCell text={item.description} maxWidth={400} />,
       list: 'secondary',
       hideLabel: true,
     }),
@@ -147,14 +147,11 @@ export function useOrganizationNameColumn(options?: {
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
-          to={
-            options?.disableLinks
-              ? undefined
-              : RouteE.OrganizationDetails.replace(
-                  ':id',
-                  (item.summary_fields?.organization?.id ?? '').toString()
-                )
-          }
+          to={RouteE.OrganizationDetails.replace(
+            ':id',
+            (item.summary_fields?.organization?.id ?? '').toString()
+          )}
+          disableLinks={options?.disableLinks}
         />
       ),
       sort: options?.disableSort ? undefined : 'organization',
