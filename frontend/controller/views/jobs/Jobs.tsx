@@ -10,7 +10,7 @@ import {
 } from '../../../../framework'
 import { StatusCell } from '../../../common/StatusCell'
 import { useNameToolbarFilter } from '../../common/controller-toolbar-filters'
-import { TrashIcon } from '@patternfly/react-icons'
+import { BanIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
@@ -18,6 +18,7 @@ import { useControllerView } from '../../useControllerView'
 import { useNameColumn } from '../../../common/columns'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteJobs } from './useDeleteJobs'
+import { useCancelJobs } from './useCancelJobs'
 import { RouteE } from '../../../Routes'
 
 export default function Jobs() {
@@ -35,6 +36,11 @@ export default function Jobs() {
     void view.refresh()
   })
 
+  const cancelJobs = useCancelJobs((jobs: UnifiedJob[]) => {
+    view.unselectItems(jobs)
+    void view.refresh()
+  })
+
   const toolbarActions = useMemo<ITypedAction<UnifiedJob>[]>(
     () => [
       {
@@ -43,8 +49,14 @@ export default function Jobs() {
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
       },
+      {
+        type: TypedActionType.bulk,
+        icon: BanIcon,
+        label: t('Cancel selected jobs'),
+        onClick: cancelJobs,
+      },
     ],
-    [deleteJobs, t]
+    [deleteJobs, cancelJobs, t]
   )
 
   const rowActions = useMemo<ITypedAction<UnifiedJob>[]>(
@@ -55,8 +67,14 @@ export default function Jobs() {
         label: t(`Delete job`),
         onClick: (job: UnifiedJob) => deleteJobs([job]),
       },
+      {
+        type: TypedActionType.single,
+        icon: BanIcon,
+        label: t(`Cancel job`),
+        onClick: (job: UnifiedJob) => cancelJobs([job]),
+      },
     ],
-    [deleteJobs, t]
+    [deleteJobs, cancelJobs, t]
   )
 
   return (

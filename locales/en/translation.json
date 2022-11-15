@@ -1,6 +1,7 @@
 {
     " of ": " of ",
     "A job template is a definition and set of parameters for running an Ansible job": "A job template is a definition and set of parameters for running an Ansible job.",
+    "A Project is a logical collection of Ansible playbooks, represented in Tower": "A Project is a logical collection of Ansible playbooks, represented in Tower.",
     "A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device": "A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.",
     "A system managed by Tower, which may include a physical, virtual, cloud-based server, or other device": {
         " Typically an operating system instance": {
@@ -11,6 +12,8 @@
     },
     "About": "About",
     "Access": "Access",
+    "Actions": "Actions",
+    "Activities": "Activities",
     "Add": "Add",
     "Add automation server": "Add automation server",
     "Add execution environment": "Add execution environment",
@@ -91,7 +94,15 @@
     "can edit, change, and update any inventory or automation definition": "can edit, change, and update any inventory or automation definition",
     "can see all aspects of the systems automation, but has no permission to run or change automation": "can see all aspects of the systems automation, but has no permission to run or change automation",
     "Cancel": "Cancel",
+    "Cancel job": "Cancel job",
+    "Cancel jobs_one": "Cancel job",
+    "Cancel jobs_other": "Cancel jobs",
+    "Cancel selected jobs": "Cancel selected jobs",
     "Canceled": "Canceled",
+    "Canceling {{count}} jobs_one": "Canceling {{count}} jobs",
+    "Canceling {{count}} jobs_other": "Canceling {{count}} jobs",
+    "Canceling jobs_one": "Canceling job",
+    "Canceling jobs_other": "Canceling jobs",
     "Capacity": "Capacity",
     "Clear all filters": "Clear all filters",
     "Close": "Close",
@@ -271,6 +282,7 @@
     "Enter the description": "Enter the description",
     "Enter the name": "Enter the name",
     "Enter the organization": "Enter the organization",
+    "Enter the URL": "Enter the URL",
     "Enter the url of the automation server": "Enter the url of the automation server",
     "Enter username": "Enter username",
     "Error": "Error",
@@ -314,9 +326,9 @@
         }
     },
     "Failed": "Failed",
-    "Filters": "Filters",
     "Filter By Job Type": "Filter By Job Type",
     "Filter By Status": "Filter By Status",
+    "Filters": "Filters",
     "Fingerprint": "Fingerprint",
     "Finished": "Finished",
     "First name": "First name",
@@ -350,8 +362,8 @@
     },
     "Inventories": "Inventories",
     "Inventory Sync": "Inventory Sync",
-    "Job": "Job",
     "Job templates": "Job templates",
+    "Job Type": "Job Type",
     "jobs": {
         "title": {
             "description": "A job is an instance of Tower launching an Ansible playbook against an inventory of hosts.",
@@ -359,7 +371,6 @@
         }
     },
     "Jobs": "Jobs",
-    "Job Type": "Job Type",
     "Keywords": "Keywords",
     "Label Name": "Label Name",
     "Last health check": "Last health check",
@@ -457,12 +468,6 @@
     "Playbook Run": "Playbook Run",
     "Please run a job to populate this list": "Please run a job to populate this list.",
     "Policy type": "Policy type",
-    "projects": {
-        "title": {
-            "description": "A Project is a logical collection of Ansible playbooks, represented in Tower.",
-            "help": "A Project is a logical collection of Ansible playbooks, represented in Tower. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your Tower server, or by placing your playbooks into a source code management (SCM) system supported by Tower, including Git, Subversion, Mercurial, and Red Hat Insights."
-        }
-    },
     "Projects": "Projects",
     "Public key": "Public key",
     "Red Hat": "Red Hat",
@@ -530,11 +535,16 @@
     "Revision": "Revision",
     "Role": "Role",
     "Roles": "Roles",
+    "Rulebook activations": "Rulebook activations",
+    "Rulebooks": "Rulebooks",
+    "Rules": "Rules",
     "Run health check": "Run health check",
     "Running": "Running",
     "Running jobs": "Running jobs",
     "Save instance": "Save instance",
+    "Save inventory": "Save inventory",
     "Save organization": "Save organization",
+    "Save project": "Save project",
     "Save team": "Save team",
     "Save user": "Save user",
     "Select an organization": "Select an organization",
@@ -596,6 +606,8 @@
         "_one": "There were errors adding users to teams.",
         "_other": "There were errors adding users to teams."
     },
+    "There were errors canceling jobs_one": "There were errors canceling the job",
+    "There were errors canceling jobs_other": "There were errors canceling jobs",
     "There were errors deleting automation servers_one": "There were errors deleting automation servers",
     "There were errors deleting automation servers_other": "There were errors deleting automation servers",
     "There were errors deleting credentials_one": "There were errors deleting credentials",
@@ -640,6 +652,7 @@
     "To get started, add roles to the user": "To get started, add roles to the user.",
     "To get started, add the user to a team": "To get started, add the user to a team.",
     "To get started, add the user to an organization": "To get started, add the user to an organization.",
+    "To get started, create a inventory": "To get started, create a inventory.",
     "To get started, create a project": "To get started, create a project.",
     "To get started, create a team": "To get started, create a team.",
     "To get started, create a template": "To get started, create a template.",
@@ -656,8 +669,10 @@
     "Topology view": "Topology view",
     "Total jobs": "Total jobs",
     "Type": "Type",
+    "Under development": "Under development",
     "Unknown": "Unknown",
     "Url": "Url",
+    "URL": "URL",
     "Url is required": "Url is required",
     "Use namespaces to organize the collections created by automation developers in your organization": {
         " Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks": "Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks."
@@ -691,6 +706,10 @@
     "Welcome to the ansible automation platform": "Welcome to the ansible automation platform",
     "Workflow Job": "Workflow Job",
     "Yes": "Yes",
+    "Yes, I confirm that I want to cancel these {{count}} jobs": {
+        "_one": "Yes, I confirm that I want to cancel this job.",
+        "_other": "Yes, I confirm that I want to cancel these {{count}} jobs."
+    },
     "Yes, I confirm that I want to delete these {{count}} automation servers": {
         "_one": "Yes, I confirm that I want to delete these {{count}} automation servers.",
         "_other": "Yes, I confirm that I want to delete these {{count}} automation servers."
