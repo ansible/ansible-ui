@@ -5,6 +5,7 @@ import {
   TablePage,
   TextCell,
   TypedActionType,
+  SinceCell,
 } from '../../../../framework'
 import { StatusCell } from '../../../common/StatusCell'
 import { TrashIcon } from '@patternfly/react-icons'
@@ -13,7 +14,6 @@ import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
 import { useControllerView } from '../../useControllerView'
 import { useNameColumn } from '../../../common/columns'
-import { formatDateString } from '../../../common/dates'
 import { useNavigate } from 'react-router-dom'
 import { useDeleteJobs } from './useDeleteJobs'
 import { RouteE } from '../../../Routes'
@@ -109,13 +109,13 @@ export function useJobsColumns(options?: {
         sort: 'type',
       },
       {
-        header: t('Start Time'),
-        cell: (job: UnifiedJob) => <TextCell text={formatDateString(job.started)} />,
+        header: t('Started'),
+        cell: (job: UnifiedJob) => <SinceCell value={job.started} />,
         sort: 'started',
       },
       {
-        header: t('Finish Time'),
-        cell: (job: UnifiedJob) => <TextCell text={formatDateString(job.finished)} />,
+        header: t('Finished'),
+        cell: (job: UnifiedJob) => <SinceCell value={job.finished} />,
         sort: 'finished',
       },
     ],
