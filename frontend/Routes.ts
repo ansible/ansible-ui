@@ -8,6 +8,7 @@ export enum RouteE {
   // Views
   Dashboard = '/controller/dashboard',
   Jobs = '/controller/jobs',
+  JobDetails = '/controller/jobs/details/:id',
   Schedules = '/controller/schedules',
   ActivityStream = '/controller/activity-stream',
   WorkflowApprovals = '/controller/workflow-approvals',
