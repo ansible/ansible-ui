@@ -37,7 +37,7 @@ export function useDescriptionColumn<T extends { description?: string | undefine
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Description'),
-      cell: (item) => item.description && <TextCell text={item.description} />,
+      cell: (item) => item.description && <TextCell text={item.description} maxWidth={400} />,
       list: 'secondary',
       hideLabel: true,
     }),
