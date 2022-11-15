@@ -1,18 +1,23 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
-import { useNameColumn } from '../../../common/columns'
-import { getItemKey, requestDelete } from '../../../Data'
-import { UnifiedJob } from '../../interfaces/UnifiedJob'
-import { useJobsColumns } from './Jobs'
+import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { useNameColumn } from '../../../../common/columns'
+import { getItemKey, requestDelete } from '../../../../Data'
+import { UnifiedJob } from '../../../interfaces/UnifiedJob'
+import { useJobsColumns } from './useJobsColumns'
+import { getJobsAPIUrl } from '../JobTypeAPIUrl'
 
 export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
   const [_, setDialog] = usePageDialog()
-  const columns = useJobsColumns({ disableLinks: true, disableSort: true })
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
+  const columns = useJobsColumns({ disableLinks: true, disableSort: true, displayIdWithName: true })
+  const deleteActionNameColumn = useNameColumn({
+    disableLinks: true,
+    disableSort: true,
+    displayIdWithName: true,
+  })
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const deleteTemplates = (jobs: UnifiedJob[]) => {
+  const deleteJobs = (jobs: UnifiedJob[]) => {
     setDialog(
       <BulkActionDialog<UnifiedJob>
         title={t('Permanently delete jobs', { count: jobs.length })}
@@ -29,9 +34,9 @@ export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
         columns={columns}
         errorColumns={errorColumns}
         onClose={callback}
-        action={(job: UnifiedJob) => requestDelete(`/api/v2/jobs/${job.id}/`)}
+        action={(job: UnifiedJob) => requestDelete(`${getJobsAPIUrl(job.type)}${job.id}/`)}
       />
     )
   }
-  return deleteTemplates
+  return deleteJobs
 }
