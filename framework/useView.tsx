@@ -108,7 +108,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
       newSearchParams.set(filter, filters[filter].join(','))
     }
     localStorage.setItem('perPage', perPage.toString())
-    setSearchParams(newSearchParams, { replace: true })
+    setSearchParams(newSearchParams)
   }, [sort, sortDirection, setSearchParams, disableQueryString, page, perPage, filters])
 
   return useMemo(
