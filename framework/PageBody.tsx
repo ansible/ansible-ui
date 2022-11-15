@@ -1,15 +1,15 @@
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '.'
 import ErrorBoundary from './components/ErrorBoundary'
+import { useBreakpoint } from './components/useBreakPoint'
 import { useSettings } from './Settings'
+import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export function PageBody(props: { children?: ReactNode; disablePadding?: boolean }) {
   const usePadding = useBreakpoint('xxl') && props.disablePadding !== true
   const settings = useSettings()
-  const { t } = useTranslation()
+  const [translations] = useFrameworkTranslations()
   return (
-    <ErrorBoundary message={t('Error')}>
+    <ErrorBoundary message={translations.errorText}>
       <div
         style={{
           display: 'flex',

@@ -12,11 +12,11 @@ import {
 } from '@patternfly/react-core'
 import { DateTime } from 'luxon'
 import { ReactNode, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { IconWrapper } from './components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from './components/patternfly-colors'
 import { useSettings } from './Settings'
+import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export function LabelsCell(props: { labels: string[] }) {
   return (
@@ -162,7 +162,7 @@ export function SinceCell(props: {
 }
 
 export function CapacityCell(props: { format?: string; used: number; capacity: number }) {
-  const { t } = useTranslation()
+  const [translations] = useFrameworkTranslations()
   const settings = useSettings()
   const ratio = props.used / props.capacity
   if (props.capacity === 0) return <></>
@@ -213,7 +213,7 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
       ) : (
         <FlexItem>
           {props.used}
-          {t(' of ')}
+          {` ${translations.ofText} `}
           {props.capacity}
         </FlexItem>
       )}
