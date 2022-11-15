@@ -12,18 +12,20 @@
   "main": "cjs/index.js",
   "types": "cjs/index.d.ts",
   "peerDependencies": {
-    "@hookform/resolvers": "^2.0.0",
-    "@patternfly/patternfly": "^4.0.0",
-    "@patternfly/react-core": "^4.0.0",
-    "@patternfly/react-icons": "^4.0.0",
-    "@patternfly/react-table": "^4.0.0",
-    "@react-hook/resize-observer": "^1.0.0",
-    "@types/json-schema": "^7.0.0",
-    "debounce": "^1.0.0",
-    "luxon": "^3.0.0",
-    "p-limit": "^4.0.0",
-    "react": "^17.0.0 || ^18.0.0 ",
-    "@types/react": "^17.0.0 || ^18.0.0 ",
-    "react-hook-form": "^7.0.0"
+    "@hookform/resolvers": "^2",
+    "@patternfly/patternfly": "^4",
+    "@patternfly/react-core": "^4",
+    "@patternfly/react-icons": "^4",
+    "@patternfly/react-table": "^4",
+    "@react-hook/resize-observer": "^1",
+    "@types/json-schema": "^7",
+    "@types/react": "^17 || ^18 ",
+    "debounce": "^1",
+    "get-value": "^3",
+    "luxon": "^3",
+    "p-limit": "^4",
+    "react": "^17 || ^18 ",
+    "react-hook-form": "^7",
+    "styled-components": "^5"
   }
 }
