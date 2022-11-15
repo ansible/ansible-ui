@@ -34,6 +34,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       getByLabel(label: string | RegExp): Chainable<void>
+      clickLink(label: string | RegExp): Chainable<void>
       clickButton(label: string | RegExp): Chainable<void>
       navigateTo(label: string | RegExp): Chainable<void>
       clickRow(name: string | RegExp): Chainable<void>
@@ -53,6 +54,10 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
         cy.get('#' + id)
       }
     })
+})
+
+Cypress.Commands.add('clickLink', (label: string | RegExp) => {
+  cy.wait(1).get('a').contains(label).click()
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
@@ -76,7 +81,7 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
 
 Cypress.Commands.add('clickRow', (name: string | RegExp) => {
   cy.contains('td', name).within(() => {
-    cy.get('button:not(:disabled)').click()
+    cy.get('a').click()
   })
 })
 
