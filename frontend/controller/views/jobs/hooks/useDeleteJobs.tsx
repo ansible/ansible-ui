@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
-import { useNameColumn } from '../../../common/columns'
-import { getItemKey, requestDelete } from '../../../Data'
-import { UnifiedJob } from '../../interfaces/UnifiedJob'
-import { useJobsColumns } from './Jobs'
-import { getJobsAPIUrl } from './JobTypeAPIUrl'
+import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { useNameColumn } from '../../../../common/columns'
+import { getItemKey, requestDelete } from '../../../../Data'
+import { UnifiedJob } from '../../../interfaces/UnifiedJob'
+import { useJobsColumns } from './useJobsColumns'
+import { getJobsAPIUrl } from '../JobTypeAPIUrl'
 
 export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
