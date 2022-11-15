@@ -147,14 +147,11 @@ export function useOrganizationNameColumn(options?: {
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
-          to={
-            options?.disableLinks
-              ? undefined
-              : RouteE.OrganizationDetails.replace(
-                  ':id',
-                  (item.summary_fields?.organization?.id ?? '').toString()
-                )
-          }
+          to={RouteE.OrganizationDetails.replace(
+            ':id',
+            (item.summary_fields?.organization?.id ?? '').toString()
+          )}
+          disableLinks={options?.disableLinks}
         />
       ),
       sort: options?.disableSort ? undefined : 'organization',

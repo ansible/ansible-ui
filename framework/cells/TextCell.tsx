@@ -2,6 +2,7 @@ import { Split, SplitItem } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { IconWrapper } from '../components/IconWrapper'
 import { getPatternflyColor, PatternFlyColor } from '../components/patternfly-colors'
+import { usePageNavigate } from '../components/usePageNavigate'
 
 export interface TextCellProps {
   icon?: ReactNode
@@ -11,9 +12,11 @@ export interface TextCellProps {
   onClick?: () => void
   textColor?: PatternFlyColor
   maxWidth?: number
+  disableLinks?: boolean
 }
 
 export function TextCell(props: TextCellProps) {
+  const navigate = usePageNavigate()
   return (
     <Split style={{ maxWidth: '100%' }}>
       {props.icon && (
@@ -32,16 +35,16 @@ export function TextCell(props: TextCellProps) {
               color: props.textColor ? getPatternflyColor(props.textColor) : undefined,
             }}
           >
-            {props.to ? (
-              <a href={props.to} target="_blank" rel="noreferrer">
-                {props.text}
-              </a>
-            ) : props.onClick ? (
+            {!props.disableLinks && (props.to || props.onClick) ? (
               <a
                 href={props.to}
                 onClick={(e) => {
                   e.preventDefault()
-                  props.onClick?.()
+                  if (props.onClick) {
+                    props.onClick()
+                  } else {
+                    navigate(props.to)
+                  }
                 }}
               >
                 {props.text}
