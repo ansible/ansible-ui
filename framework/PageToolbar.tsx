@@ -35,13 +35,13 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { BulkSelector } from './components/BulkSelector'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { useSettings } from './Settings'
 import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
+import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export interface IItemFilter<T extends object> {
   label: string
@@ -488,7 +488,7 @@ function ToolbarSelectFilter(props: {
   values: string[]
   placeholder?: string
 }) {
-  const { t } = useTranslation()
+  const [translations] = useFrameworkTranslations()
   const { addFilter, removeFilter, options, values } = props
   const [open, setOpen] = useState(false)
   const onSelect = useCallback(
@@ -511,7 +511,11 @@ function ToolbarSelectFilter(props: {
         selections={selections}
         onSelect={onSelect}
         placeholderText={
-          values.length ? t('Selected') : <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+          values.length ? (
+            translations.selectedText
+          ) : (
+            <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+          )
         }
       >
         {options.map((option) => (

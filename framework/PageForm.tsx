@@ -58,8 +58,10 @@ import {
   useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { Collapse, PageHeader, PageHeaderProps, useBreakpoint } from '.'
+import { Collapse } from './components/Collapse'
 import { Scrollable } from './components/Scrollable'
+import { useBreakpoint } from './components/useBreakPoint'
+import { PageHeader, PageHeaderProps } from './PageHeader'
 import { SettingsContext } from './Settings'
 
 export type FormPageProps<T extends object> = PageHeaderProps & {

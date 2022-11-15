@@ -2,6 +2,7 @@ import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/rea
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { SingleSelect } from './components/SingleSelect'
 import { usePageDialog } from './PageDialog'
+import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export interface Settings {
   theme?: 'system' | 'light' | 'dark'
@@ -77,7 +78,7 @@ export function useSettingsDialog(t: (t: string) => string) {
   const [_, setDialog] = usePageDialog()
   useEffect(() => {
     if (open) {
-      setDialog(<SettingsDialog open={open} setOpen={setOpen} t={t} />)
+      setDialog(<SettingsDialog open={open} setOpen={setOpen} />)
     } else {
       setDialog(undefined)
     }
@@ -85,14 +86,10 @@ export function useSettingsDialog(t: (t: string) => string) {
   return openSetting
 }
 
-export function SettingsDialog(props: {
-  open: boolean
-  setOpen: (open: boolean) => void
-  t: (t: string) => string
-}) {
+export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void }) {
   const onClose = () => props.setOpen(false)
   const [settings, setSettings] = useContext(SettingsContext)
-  const { t } = props
+  const [translations] = useFrameworkTranslations()
   return (
     <Modal
       title="Settings"
@@ -102,7 +99,7 @@ export function SettingsDialog(props: {
       tabIndex={0}
       actions={[
         <Button key="close" variant="primary" onClick={onClose}>
-          {t('Close')}
+          {translations.closeText}
         </Button>,
       ]}
     >
@@ -114,9 +111,9 @@ export function SettingsDialog(props: {
             setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
           }
         >
-          <SelectOption value="system">{t('System default')}</SelectOption>
-          <SelectOption value="light">{t('Light')}</SelectOption>
-          <SelectOption value="dark">{t('Dark')}</SelectOption>
+          <SelectOption value="system">{'System default'}</SelectOption>
+          <SelectOption value="light">{'Light'}</SelectOption>
+          <SelectOption value="dark">{'Dark'}</SelectOption>
         </SingleSelect>
         <SingleSelect
           label="Table Layout"
@@ -128,8 +125,8 @@ export function SettingsDialog(props: {
             })
           }
         >
-          <SelectOption value="comfortable">{t('Comfortable')}</SelectOption>
-          <SelectOption value="compact">{t('Compact')}</SelectOption>
+          <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
+          <SelectOption value="compact">{'Compact'}</SelectOption>
         </SingleSelect>
         <SingleSelect
           label="Form Columns"
@@ -141,8 +138,8 @@ export function SettingsDialog(props: {
             })
           }
         >
-          <SelectOption value="multiple">{t('Multiple columns')}</SelectOption>
-          <SelectOption value="single">{t('Single column')}</SelectOption>
+          <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
+          <SelectOption value="single">{'Single column'}</SelectOption>
         </SingleSelect>
         <SingleSelect
           label="Form Layout"
@@ -154,8 +151,8 @@ export function SettingsDialog(props: {
             })
           }
         >
-          <SelectOption value="vertical">{t('Vertical labels')}</SelectOption>
-          <SelectOption value="horizontal">{t('Horizontal labels')}</SelectOption>
+          <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
+          <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
         </SingleSelect>
         <SingleSelect
           label="Borders"
@@ -163,8 +160,8 @@ export function SettingsDialog(props: {
           onChange={(value) => setSettings({ ...settings, borders: value === 'true' })}
           style={{ paddingBottom: 120 }}
         >
-          <SelectOption value="true">{t('Yes')}</SelectOption>
-          <SelectOption value="false">{t('No')}</SelectOption>
+          <SelectOption value="true">{'Yes'}</SelectOption>
+          <SelectOption value="false">{'No'}</SelectOption>
         </SingleSelect>
       </Form>
     </Modal>
