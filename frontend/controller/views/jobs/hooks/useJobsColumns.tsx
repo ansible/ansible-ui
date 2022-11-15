@@ -1,10 +1,9 @@
-import { ITableColumn, TextCell, SinceCell } from '../../../../../framework'
-import { StatusCell } from '../../../../common/StatusCell'
-import { useNameColumn } from '../../../../common/columns'
-import { useNavigate } from 'react-router-dom'
-import { useMemo, useCallback } from 'react'
-import { RouteE } from '../../../../Routes'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ITableColumn, SinceCell, TextCell } from '../../../../../framework'
+import { ElapsedTimeCell } from '../../../../../framework/cells/ElapsedTimeCell'
+import { StatusCell } from '../../../../common/StatusCell'
+import { RouteE } from '../../../../Routes'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
 
 export function useJobsColumns(options?: {
@@ -13,19 +12,31 @@ export function useJobsColumns(options?: {
   displayIdWithName?: boolean
 }) {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const nameColumnClick = useCallback(
-    (job: UnifiedJob) => navigate(RouteE.JobDetails.replace(':id', job.id.toString())),
-    [navigate]
-  )
-  const nameColumn = useNameColumn({ header: t('Name'), ...options, onClick: nameColumnClick })
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
-      nameColumn,
+      {
+        header: t('ID'),
+        cell: (job: UnifiedJob) => job.id,
+        sort: 'id',
+        card: 'hidden',
+      },
+      {
+        header: t('Name'),
+        cell: (job: UnifiedJob) => (
+          <TextCell
+            text={job.name}
+            to={RouteE.JobDetails.replace(':id', job.id.toString())}
+            disableLinks={options?.disableLinks}
+          />
+        ),
+        sort: 'name',
+        primary: true,
+      },
       {
         header: t('Status'),
         cell: (job: UnifiedJob) => <StatusCell status={job.status} />,
         sort: 'status',
+        hideLabel: true,
       },
       {
         header: t('Type'),
@@ -41,19 +52,31 @@ export function useJobsColumns(options?: {
           return <TextCell text={jobTypes[job.type]} />
         },
         sort: 'type',
+        card: 'description',
+      },
+      {
+        header: t('Elapsed'),
+        cell: (job: UnifiedJob) =>
+          job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
+        list: 'secondary',
       },
       {
         header: t('Started'),
-        cell: (job: UnifiedJob) => <SinceCell value={job.started} />,
+        cell: (job: UnifiedJob) => job.started && <SinceCell value={job.started} />,
         sort: 'started',
+        list: 'secondary',
+        defaultSortDirection: 'desc',
       },
       {
         header: t('Finished'),
-        cell: (job: UnifiedJob) => <SinceCell value={job.finished} />,
+        cell: (job: UnifiedJob) => job.finished && <SinceCell value={job.finished} />,
         sort: 'finished',
+        card: 'hidden',
+        list: 'secondary',
+        defaultSortDirection: 'desc',
       },
     ],
-    [t, nameColumn]
+    [options?.disableLinks, t]
   )
   return tableColumns
 }

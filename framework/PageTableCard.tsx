@@ -23,7 +23,7 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react'
 import { Detail } from './components/Details'
 import { IconWrapper } from './components/IconWrapper'
-import { LabelColor } from './components/patternfly-colors'
+import { LabelColor } from './components/pfcolors'
 import { ITableColumn } from './PageTable'
 import { ITypedAction, TypedActions } from './TypedActions'
 
@@ -206,7 +206,8 @@ export function useColumnsToTableCardFn<T extends object>(
 ): (item: T) => IPageTableCard {
   const cardData = useMemo(() => {
     let cols = columns.filter((column) => column.card !== 'hidden')
-    const nameColumn = cols.shift()
+    const nameColumn = cols.find((column) => column.primary) ?? cols[0]
+    cols = cols.filter((column) => column !== nameColumn)
     const descriptionColumn = cols.find((column) => column.card === 'description')
     if (descriptionColumn) {
       cols = cols.filter((column) => column !== descriptionColumn)

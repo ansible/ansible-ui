@@ -36,8 +36,16 @@ export function BulkActionDialog<T extends object>(props: {
   pendingText?: string
   isDanger?: boolean
   items: T[]
+
+  /** These are the columns shown when confirming the bulk actions. */
   columns: ITableColumn<T>[]
+
+  /**
+   * These are the columns shown when processing the bulk actions plus an error column.
+   * @note This is usually the name column, unless the name column is not unique enough to identify the item.
+   */
   errorColumns: ITableColumn<T>[]
+
   keyFn: (item: T) => string | number
   action: (item: T) => Promise<void>
   onClose?: (items: T[]) => void
