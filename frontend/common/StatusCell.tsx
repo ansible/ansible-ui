@@ -5,9 +5,7 @@ import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
   InfoIcon,
-  SyncAltIcon,
 } from '@patternfly/react-icons'
-import styled, { Keyframes, keyframes } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import {
   PatternFlyColor,
@@ -17,22 +15,8 @@ import {
   pfSuccess,
   pfWarning,
   TextCell,
+  RunningIcon,
 } from '../../framework'
-
-const Spin: Keyframes = keyframes`
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(1turn);
-  }
-`
-
-const RunningIcon = styled(SyncAltIcon)`
-  animation: ${Spin} 1.75s linear infinite;
-`
-
-RunningIcon.displayName = 'RunningIcon'
 
 export function StatusCell(props: { status?: string }) {
   const { t } = useTranslation()
