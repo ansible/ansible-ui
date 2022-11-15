@@ -1,6 +1,7 @@
 import {
   BanIcon,
   CheckCircleIcon,
+  ClockIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
   InfoIcon,
@@ -14,6 +15,7 @@ import {
   pfSuccess,
   pfWarning,
   TextCell,
+  RunningIcon,
 } from '../../framework'
 
 export function StatusCell(props: { status?: string }) {
@@ -62,6 +64,60 @@ export function StatusCell(props: { status?: string }) {
           iconSize="sm"
           text={t('Failed')}
           textColor={PatternFlyColor.Red}
+        />
+      )
+    case 'error':
+      return (
+        <TextCell
+          icon={<ExclamationCircleIcon color={pfDanger} />}
+          iconSize="sm"
+          text={t('Error')}
+          textColor={PatternFlyColor.Red}
+        />
+      )
+    case 'waiting':
+      return (
+        <TextCell
+          icon={<ClockIcon color={pfInfo} />}
+          iconSize="sm"
+          text={t('Waiting')}
+          textColor={PatternFlyColor.Grey}
+        />
+      )
+    case 'pending':
+      return (
+        <TextCell
+          icon={<ClockIcon color={pfInfo} />}
+          iconSize="sm"
+          text={t('Pending')}
+          textColor={PatternFlyColor.Blue}
+        />
+      )
+    case 'new':
+      return (
+        <TextCell
+          icon={<InfoIcon color={pfInfo} />}
+          iconSize="sm"
+          text={t('Pending')}
+          textColor={PatternFlyColor.Blue}
+        />
+      )
+    case 'running':
+      return (
+        <TextCell
+          icon={<RunningIcon color={pfInfo} />}
+          iconSize="sm"
+          text={t('Running')}
+          textColor={PatternFlyColor.Blue}
+        />
+      )
+    case 'canceled':
+      return (
+        <TextCell
+          icon={<ExclamationTriangleIcon color={pfWarning} />}
+          iconSize="sm"
+          text={t('Canceled')}
+          textColor={PatternFlyColor.Yellow}
         />
       )
     case 'never-updated':
