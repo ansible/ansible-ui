@@ -26,6 +26,7 @@ import { Projects } from './resources/projects/Projects'
 import { Templates } from './resources/Templates/Templates'
 import Settings from './settings/Settings'
 import Dashboard from './views/Dashboard'
+import Jobs from './views/jobs/Jobs'
 
 // Lazy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
 const Topology = lazy(() => import('./administration/topology/Topology'))
@@ -45,7 +46,7 @@ export function ControllerRouter() {
           element={<AutomationServersPage />}
         />
         <Route path={RouteE.Dashboard.replace(RouteE.Controller, '')} element={<Dashboard />} />
-        {/* <Route path={RouteE.Jobs} element={<Jobs />} /> */}
+        <Route path={RouteE.Jobs.replace(RouteE.Controller, '')} element={<Jobs />} />
         {/* <Route path={RouteE.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}

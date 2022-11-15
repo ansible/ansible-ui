@@ -10,6 +10,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
   onClick?: (item: T) => void
   disableSort?: boolean
   disableLinks?: boolean
+  displayIdWithName?: boolean
 }) {
   const { url, onClick, disableSort, disableLinks } = options ?? {}
   const { t } = useTranslation()
@@ -18,7 +19,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
-          text={item.name}
+          text={options?.displayIdWithName ? `${item.id} - ${item.name}` : item.name}
           iconSize="sm"
           to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
@@ -26,7 +27,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       ),
       sort: disableSort ? undefined : 'name',
     }),
-    [disableLinks, disableSort, onClick, options?.header, t, url]
+    [disableLinks, disableSort, onClick, options?.header, options?.displayIdWithName, t, url]
   )
   return column
 }
