@@ -20,6 +20,7 @@
     "@react-hook/resize-observer": "^1",
     "@types/json-schema": "^7",
     "@types/react": "^17 || ^18",
+    "@types/styled-components": "^5",
     "debounce": "^1",
     "get-value": "^3",
     "luxon": "^3",
