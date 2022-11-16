@@ -1,18 +1,18 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
 import { requestPost } from '../../../../Data'
 import { Organization } from '../../../interfaces/Organization'
 import { User } from '../../../interfaces/User'
 
 export function useRemoveOrganizationsFromUsers() {
   const { t } = useTranslation()
-  const organizationProgressDialog = useBulkProgressDialog<Organization>()
+  const organizationProgressDialog = useBulkActionDialog<Organization>()
   const removeUserToOrganizations = useCallback(
     (
       users: User[],
       organizations: Organization[],
-      onClose?: (organizations: Organization[]) => void
+      onComplete?: (organizations: Organization[]) => void
     ) => {
       organizationProgressDialog({
         title: t('Removing user from organizations', {
@@ -20,7 +20,7 @@ export function useRemoveOrganizationsFromUsers() {
         }),
         keyFn: (organization: Organization) => organization.id,
         items: organizations,
-        columns: [
+        actionColumns: [
           { header: 'Organization', cell: (organization: Organization) => organization.name },
         ],
         actionFn: async (organization: Organization, signal: AbortSignal) => {
@@ -35,11 +35,7 @@ export function useRemoveOrganizationsFromUsers() {
         processingText: t('Removing user from organizations...', {
           count: organizations.length,
         }),
-        successText: t('User removeed successfully.'),
-        errorText: t('There were errors removing user from organizations.', {
-          count: organizations.length,
-        }),
-        onClose: onClose,
+        onComplete,
       })
     },
     [organizationProgressDialog, t]

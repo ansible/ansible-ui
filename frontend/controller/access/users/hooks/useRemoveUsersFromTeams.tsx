@@ -1,22 +1,22 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
 import { requestPost } from '../../../../Data'
 import { Team } from '../../../interfaces/Team'
 import { User } from '../../../interfaces/User'
 
 export function useRemoveUsersFromTeams() {
   const { t } = useTranslation()
-  const userProgressDialog = useBulkProgressDialog<User>()
+  const userProgressDialog = useBulkActionDialog<User>()
   const removeUserToTeams = useCallback(
-    (users: User[], teams: Team[], onClose?: (users: User[]) => void) => {
+    (users: User[], teams: Team[], onComplete?: (users: User[]) => void) => {
       userProgressDialog({
         title: t('Removing users from teams', {
           count: teams.length,
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        columns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const team of teams) {
             await requestPost(
@@ -29,11 +29,7 @@ export function useRemoveUsersFromTeams() {
         processingText: t('Removing users from teams...', {
           count: teams.length,
         }),
-        successText: t('Users removeed successfully.'),
-        errorText: t('There were errors removing users from teams.', {
-          count: teams.length,
-        }),
-        onClose: onClose,
+        onComplete,
       })
     },
     [userProgressDialog, t]

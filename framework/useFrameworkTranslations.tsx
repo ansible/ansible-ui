@@ -2,32 +2,34 @@ import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useStat
 
 export interface IFrameworkTranslations {
   cancelText: string
+  canceledText: string
   closeText: string
   confirmText: string
   errorText: string
   noItemsFound: string
+  ofText: string
   pendingText: string
   processingText: string
   selectedText: string
   submitText: string
   submittingText: string
   successText: string
-  ofText: string
 }
 
 const defaultTranslations: IFrameworkTranslations = {
   cancelText: 'Cancel',
+  canceledText: 'Canceled',
   closeText: 'Close',
   confirmText: 'Confirm',
   errorText: 'Error',
   noItemsFound: 'No items found',
+  ofText: 'of',
   pendingText: 'Pending',
   processingText: 'Processing',
+  selectedText: 'Selected',
   submitText: 'Submit',
   submittingText: 'Submitting',
   successText: 'Success',
-  selectedText: 'Selected',
-  ofText: 'of',
 }
 
 const FrameworkTranslationsContext = createContext<

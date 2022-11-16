@@ -45,8 +45,7 @@ declare global {
 }
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
-  cy.get('.pf-c-form__label-text')
-    .contains(label)
+  cy.contains('.pf-c-form__label-text', label)
     .parent()
     .invoke('attr', 'for')
     .then((id: string | undefined) => {
@@ -57,11 +56,11 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 })
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.wait(1).get('a').contains(label).click()
+  cy.contains('a', label).click()
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.wait(1).get('button:not(:disabled)').contains(label).click()
+  cy.contains('button:not(:disabled)', label).click()
 })
 
 Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
@@ -70,13 +69,13 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
       cy.get('#nav-toggle').click()
     }
   })
-  cy.get('.pf-c-nav__link').contains(label).click()
+  cy.contains('.pf-c-nav__link', label).click()
   cy.get('#page-sidebar').then((c) => {
     if (!c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click()
     }
   })
-  cy.get('.pf-c-title').contains(label)
+  // cy.contains('.pf-c-title', label)
 })
 
 Cypress.Commands.add('clickRow', (name: string | RegExp) => {
@@ -255,7 +254,7 @@ before(() => {
     cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json))
   }
 
-  cy.visit(`/controller/teams`)
+  cy.visit(`/controller/debug`)
   // cy.injectAxe()
 })
 

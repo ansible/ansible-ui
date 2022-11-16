@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
 import { requestPost } from '../../../../Data'
 import { Organization } from '../../../interfaces/Organization'
 import { User } from '../../../interfaces/User'
 
-export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
+export function useAddUsersToOrganizations(onComplete?: (users: User[]) => void) {
   const { t } = useTranslation()
-  const userProgressDialog = useBulkProgressDialog<User>()
+  const userProgressDialog = useBulkActionDialog<User>()
   const addUserToOrganizations = useCallback(
     (users: User[], organizations: Organization[]) => {
       userProgressDialog({
@@ -16,7 +16,7 @@ export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        columns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const organization of organizations) {
             await requestPost(
@@ -29,14 +29,10 @@ export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
         processingText: t('Adding users to organizations...', {
           count: organizations.length,
         }),
-        successText: t('Users added successfully.'),
-        errorText: t('There were errors adding users to organizations.', {
-          count: organizations.length,
-        }),
-        onClose: onClose,
+        onComplete,
       })
     },
-    [userProgressDialog, t, onClose]
+    [userProgressDialog, t, onComplete]
   )
   return addUserToOrganizations
 }

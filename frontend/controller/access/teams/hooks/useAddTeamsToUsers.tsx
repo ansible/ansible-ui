@@ -1,20 +1,20 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBulkProgressDialog } from '../../../../../framework/BulkProgressDialog'
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
 import { requestPost } from '../../../../Data'
 import { Team } from '../../../interfaces/Team'
 import { User } from '../../../interfaces/User'
 
 export function useAddTeamsToUsers() {
   const { t } = useTranslation()
-  const teamProgressDialog = useBulkProgressDialog<Team>()
+  const teamProgressDialog = useBulkActionDialog<Team>()
   const addTeamsToUser = useCallback(
-    (teams: Team[], users: User[], onClose?: (teams: Team[]) => void) => {
+    (teams: Team[], users: User[], onComplete?: (teams: Team[]) => void) => {
       teamProgressDialog({
         title: t('Adding user to teams', { count: teams.length }),
         keyFn: (team: Team) => team.id,
         items: teams,
-        columns: [{ header: 'Team', cell: (team: Team) => team.name }],
+        actionColumns: [{ header: 'Team', cell: (team: Team) => team.name }],
         actionFn: async (team: Team, signal: AbortSignal) => {
           for (const user of users) {
             await requestPost(
@@ -25,9 +25,7 @@ export function useAddTeamsToUsers() {
           }
         },
         processingText: t('Adding user to teams...', { count: teams.length }),
-        successText: t('User added successfully.'),
-        errorText: t('There were errors adding the user to teams.', { count: teams.length }),
-        onClose: onClose,
+        onComplete,
       })
     },
     [teamProgressDialog, t]
