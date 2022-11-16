@@ -10,7 +10,7 @@ import {
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
 import pLimit from 'p-limit'
 import { useCallback, useEffect, useState } from 'react'
-import { pfDanger, pfInfo, pfSuccess } from './components/patternfly-colors'
+import { pfDanger, pfInfo, pfSuccess } from './components/pfcolors'
 import { usePageDialog } from './PageDialog'
 import { ITableColumn, PageTable } from './PageTable'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
