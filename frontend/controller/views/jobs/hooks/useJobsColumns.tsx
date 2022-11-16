@@ -70,6 +70,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         card: 'hidden',
         list: 'secondary',
         defaultSortDirection: 'desc',
+        defaultSort: true,
       },
     ],
     [options?.disableLinks, t]
