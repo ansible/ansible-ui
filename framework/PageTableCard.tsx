@@ -152,6 +152,8 @@ export function PageTableCard<T extends object>(props: {
                 actions={itemActions}
                 position={DropdownPosition.right}
                 selectedItem={item}
+                iconOnly
+                collapse="always"
               />
             )}
             {showSelect && (

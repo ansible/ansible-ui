@@ -215,12 +215,14 @@ export function TypedActions<T extends object>(props: {
   selectedItems?: T[]
   selectedItem?: T
   wrapper?: ComponentClass | FunctionComponent
-  collapse?: WindowSize
+  collapse?: WindowSize | 'always'
   noPrimary?: boolean
   position?: DropdownPosition
+  iconOnly?: boolean
 }) {
   const { actions } = props
-  const collapseButtons = !useBreakpoint(props.collapse ?? 'lg')
+  const bp = useBreakpoint(props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg')
+  const collapseButtons = props.collapse === 'always' || !bp
 
   const isButtonAction = useCallback((action: ITypedAction<T>) => {
     const actionVariants: Array<ButtonVariant | undefined> = [
@@ -254,7 +256,7 @@ export function TypedActions<T extends object>(props: {
   }, [collapseButtons, actions, isButtonAction])
 
   return (
-    <Split hasGutter>
+    <Split hasGutter={!props.iconOnly}>
       <TypedActionsButtons {...props} actions={buttonActions} />
       <TypedActionsDropdown
         {...props}
