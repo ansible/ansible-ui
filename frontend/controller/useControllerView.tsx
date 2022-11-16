@@ -14,23 +14,45 @@ export type IControllerView<T extends { id: number }> = IView &
     unselectItemsAndRefresh: (items: T[]) => void
   }
 
+export type QueryParams = {
+  [key: string]: string
+}
+
+function getQueryString(queryParams: QueryParams) {
+  return Object.entries(queryParams)
+    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&')
+}
+
 export function useControllerView<T extends { id: number }>(options: {
   url: string
   toolbarFilters?: IToolbarFilter[]
   tableColumns?: ITableColumn<T>[]
+  queryParams?: QueryParams
   disableQueryString?: boolean
 }): IControllerView<T> {
   let { url } = options
   const { toolbarFilters, tableColumns, disableQueryString } = options
+
+  let defaultSort: string | undefined = undefined
+  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined
+
+  // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
+  if (tableColumns && tableColumns.length) {
+    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0]
+    defaultSort = defaultSortColumn?.sort
+    defaultSortDirection = defaultSortColumn?.defaultSortDirection
+  }
+
   const view = useView(
-    { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    { sort: defaultSort, sortDirection: defaultSortDirection },
     disableQueryString
   )
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
 
   const { page, perPage, sort, sortDirection, filters } = view
 
-  let queryString = ''
+  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : ''
 
   if (filters) {
     for (const key in filters) {
@@ -49,7 +71,7 @@ export function useControllerView<T extends { id: number }>(options: {
     }
   }
 
-  if (sort) {
+  if (sort && !queryString.includes('order_by')) {
     queryString ? (queryString += '&') : (queryString += '?')
     if (sortDirection === 'desc') {
       queryString += `order_by=-${sort}`
