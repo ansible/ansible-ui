@@ -7,13 +7,13 @@ export function ElapsedTimeCell(props: { start?: number | string; finish?: numbe
   const start = useMemo(() => new Date(props.start ?? 0).valueOf(), [props.start])
   const finish = useMemo(() => new Date(props.finish ?? 0).valueOf(), [props.finish])
 
-  const [elapsed, setElapsed] = useState(finish - start.valueOf())
+  const [elapsed, setElapsed] = useState(Math.max(0, finish - start.valueOf()))
 
   useEffect(() => {
     const timeout = setInterval(() => {
       if (start) {
-        if (!props.finish) setElapsed(Date.now() - start)
-        else setElapsed(finish - start)
+        if (!props.finish) setElapsed(Math.max(0, Date.now() - start))
+        else setElapsed(Math.max(0, finish - start))
       }
     }, 1000)
     return () => clearTimeout(timeout)

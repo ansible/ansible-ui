@@ -55,7 +55,7 @@ export function useJobsColumns(options?: {
         card: 'description',
       },
       {
-        header: t('Elapsed'),
+        header: t('Duration'),
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
         list: 'secondary',
