@@ -1,9 +1,7 @@
 import { Split, SplitItem } from '@patternfly/react-core'
 import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 export function ElapsedTimeCell(props: { start?: number | string; finish?: number | string }) {
-  const { t } = useTranslation()
   const start = useMemo(() => new Date(props.start ?? 0).valueOf(), [props.start])
   const finish = useMemo(() => new Date(props.finish ?? 0).valueOf(), [props.finish])
 
@@ -31,25 +29,25 @@ export function ElapsedTimeCell(props: { start?: number | string; finish?: numbe
       {days !== 0 && (
         <SplitItem>
           {days}
-          {t('d')}&nbsp;
+          {'d'}&nbsp;
         </SplitItem>
       )}
       {hours !== 0 && (
         <SplitItem>
           {hours}
-          {t('h')}&nbsp;
+          {'h'}&nbsp;
         </SplitItem>
       )}
       {minutes !== 0 && (
         <SplitItem>
           {minutes}
-          {t('m')}&nbsp;
+          {'m'}&nbsp;
         </SplitItem>
       )}
       {
         <SplitItem>
           {seconds}
-          {t('s')}
+          {'s'}
         </SplitItem>
       }
     </Split>
