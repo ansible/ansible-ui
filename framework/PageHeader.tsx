@@ -143,7 +143,7 @@ export function PageHeader(props: PageHeaderProps) {
             flexWrap={{ default: 'nowrap' }}
             style={{ maxWidth: '100%' }}
           >
-            <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }} hasOverflowScroll>
+            <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }}>
               {navigation}
             </PageNavigation>
             {/* {!isMdOrLarger && props.titleDocLink && (

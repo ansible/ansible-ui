@@ -330,7 +330,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             </ToolbarItem>
           )}
           <ToolbarItem>
-            <ToggleGroup>
+            <ToggleGroup aria-label="table view toggle">
               {[PageTableViewTypeE.Table, PageTableViewTypeE.List, PageTableViewTypeE.Cards]
                 // .filter((vt) => {
                 //   switch (vt) {
@@ -358,26 +358,39 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             icon={<ThLargeIcon />}
                             isSelected={viewType === PageTableViewTypeE.Cards}
                             onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
+                            aria-label="card view"
                           />
                         </Tooltip>
                       )
                     case PageTableViewTypeE.List:
                       return (
-                        <Tooltip content={'List view'} position="top-end" enableFlip={false}>
+                        <Tooltip
+                          content={'List view'}
+                          key={vt}
+                          position="top-end"
+                          enableFlip={false}
+                        >
                           <ToggleGroupItem
                             icon={<ListIcon />}
                             isSelected={viewType === PageTableViewTypeE.List}
                             onClick={() => setViewType?.(PageTableViewTypeE.List)}
+                            aria-label="list view"
                           />
                         </Tooltip>
                       )
                     case PageTableViewTypeE.Table:
                       return (
-                        <Tooltip content={'Table view'} position="top-end" enableFlip={false}>
+                        <Tooltip
+                          content={'Table view'}
+                          key={vt}
+                          position="top-end"
+                          enableFlip={false}
+                        >
                           <ToggleGroupItem
                             icon={<TableIcon />}
                             isSelected={viewType === PageTableViewTypeE.Table}
                             onClick={() => setViewType?.(PageTableViewTypeE.Table)}
+                            aria-label="table view"
                           />
                         </Tooltip>
                       )

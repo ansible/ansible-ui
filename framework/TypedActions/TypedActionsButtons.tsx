@@ -1,21 +1,23 @@
+import { Button, ButtonVariant, Split, Tooltip } from '@patternfly/react-core'
 import { ComponentClass, Fragment, FunctionComponent } from 'react'
-import { Button, ButtonVariant, Tooltip, Split } from '@patternfly/react-core'
 import {
   ITypedAction,
   ITypedActionButton,
-  ITypedSingleAction,
   ITypedBulkAction,
-  TypedActionType,
+  ITypedSingleAction,
   TypedActionsDropdown,
+  TypedActionType,
 } from './TypedActions'
 
 export function TypedActionsButtons<T extends object>(props: {
   actions: ITypedAction<T>[]
   selectedItems?: T[]
+  selectedItem?: T
   wrapper?: ComponentClass | FunctionComponent
   noPrimary?: boolean
+  iconOnly?: boolean
 }) {
-  const { actions, selectedItems, wrapper } = props
+  const { actions, selectedItems, selectedItem, wrapper, iconOnly } = props
   if (actions.length === 0) return <></>
   return (
     <Split hasGutter>
@@ -24,12 +26,15 @@ export function TypedActionsButtons<T extends object>(props: {
           key={index}
           action={action}
           selectedItems={selectedItems}
+          selectedItem={selectedItem}
           wrapper={wrapper}
+          iconOnly={iconOnly}
         />
       ))}
     </Split>
   )
 }
+
 export function TypedActionButton<T extends object>(props: {
   action: ITypedAction<T>
   selectedItems?: T[]
@@ -192,7 +197,7 @@ function ActionSingleButton<T extends object>(props: {
   const { action, selectedItem, noPrimary, wrapper } = props
   const Wrapper = wrapper ?? Fragment
   const Icon = action.icon
-  const tooltip = action.tooltip
+  const tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined
   const isDisabled = false
   let variant = action.variant ?? ButtonVariant.secondary
   if (variant === ButtonVariant.primary && noPrimary) {
