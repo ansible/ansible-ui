@@ -5,15 +5,15 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
 import { useControllerView } from '../../useControllerView'
-import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useCancelJobs } from './hooks/useCancelJobs'
-import { useJobsFilters } from './hooks/useJobsFilters'
+import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useJobsColumns } from './hooks/useJobsColumns'
+import { useJobsFilters } from './hooks/useJobsFilters'
 
 export default function Jobs() {
   const { t } = useTranslation()
   const toolbarFilters = useJobsFilters()
-  const tableColumns = useJobsColumns({ displayIdWithName: true })
+  const tableColumns = useJobsColumns()
   const view = useControllerView<UnifiedJob>({
     url: '/api/v2/unified_jobs/',
     toolbarFilters,

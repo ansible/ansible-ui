@@ -4,17 +4,16 @@ import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { useJobsColumns } from './useJobsColumns'
 import { getJobsAPIUrl } from '../JobTypeAPIUrl'
+import { useJobsColumns } from './useJobsColumns'
 
 export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
   const [_, setDialog] = usePageDialog()
-  const columns = useJobsColumns({ disableLinks: true, disableSort: true, displayIdWithName: true })
+  const columns = useJobsColumns({ disableLinks: true, disableSort: true })
   const deleteActionNameColumn = useNameColumn({
     disableLinks: true,
     disableSort: true,
-    displayIdWithName: true,
   })
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteJobs = (jobs: UnifiedJob[]) => {

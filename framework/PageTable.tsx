@@ -450,12 +450,13 @@ function TableHead<T extends object>(props: {
                 modifier="fitContent"
                 key={column.header}
                 style={{
-                  minWidth: column.minWidth,
+                  minWidth: column.minWidth ?? 0,
                   maxWidth: column.maxWidth,
                   backgroundColor:
                     settings.theme === 'dark'
                       ? 'var(--pf-global--BackgroundColor--300)'
                       : undefined,
+                  width: index === 0 ? '0%' : undefined,
                 }}
                 sort={getColumnSort(index, column)}
               >
@@ -660,4 +661,6 @@ export interface ITableColumn<T extends object> {
   list?: 'primary' | 'secondary'
 
   hideLabel?: boolean
+
+  primary?: boolean
 }

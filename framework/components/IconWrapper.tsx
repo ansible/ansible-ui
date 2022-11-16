@@ -1,9 +1,9 @@
 import { Children, cloneElement, isValidElement, ReactNode } from 'react'
-import { getPatternflyColor, PatternFlyColor } from './patternfly-colors'
+import { getPatternflyColor, PFColor } from './pfcolors'
 
 export function IconWrapper(props: {
   children: ReactNode
-  color?: PatternFlyColor
+  color?: PFColor
   size?: 'sm' | 'md' | 'lg'
   noPadding?: boolean
 }) {

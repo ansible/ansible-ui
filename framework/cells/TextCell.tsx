@@ -1,7 +1,7 @@
 import { Split, SplitItem } from '@patternfly/react-core'
 import { ReactNode } from 'react'
 import { IconWrapper } from '../components/IconWrapper'
-import { getPatternflyColor, PatternFlyColor } from '../components/patternfly-colors'
+import { getPatternflyColor, PFColor } from '../components/pfcolors'
 import { usePageNavigate } from '../components/usePageNavigate'
 
 export interface TextCellProps {
@@ -10,7 +10,8 @@ export interface TextCellProps {
   text?: string
   to?: string
   onClick?: () => void
-  textColor?: PatternFlyColor
+  color?: PFColor
+  iconColor?: PFColor
   maxWidth?: number
   disableLinks?: boolean
 }
@@ -21,7 +22,9 @@ export function TextCell(props: TextCellProps) {
     <Split style={{ maxWidth: '100%' }}>
       {props.icon && (
         <SplitItem>
-          <IconWrapper size={props.iconSize ?? 'sm'}>{props.icon}</IconWrapper>
+          <IconWrapper size={props.iconSize ?? 'sm'} color={props.iconColor ?? props.color}>
+            {props.icon}
+          </IconWrapper>
         </SplitItem>
       )}
       {props.text && (
@@ -32,7 +35,7 @@ export function TextCell(props: TextCellProps) {
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
               overflow: 'hidden',
-              color: props.textColor ? getPatternflyColor(props.textColor) : undefined,
+              color: props.color ? getPatternflyColor(props.color) : undefined,
             }}
           >
             {!props.disableLinks && (props.to || props.onClick) ? (
