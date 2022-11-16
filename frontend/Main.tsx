@@ -3,7 +3,7 @@ import './styles.css'
 import { StrictMode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import { PageFrameworkProvider } from '../framework'
+import { PageFramework } from '../framework'
 import ErrorBoundary from '../framework/components/ErrorBoundary'
 import {
   AutomationServersProvider,
@@ -19,41 +19,47 @@ import { RouteE } from './Routes'
 
 export default function Main() {
   const { t } = useTranslation()
-  const { automationServer } = useAutomationServers()
-  const navigate = useNavigate()
   return (
     <StrictMode>
-      <ErrorBoundary message={t('An eror occured')}>
+      <ErrorBoundary message={t('An error occured')}>
         <AccessCode>
           <AutomationServersProvider>
             <BrowserRouter>
-              <PageFrameworkProvider navigate={navigate}>
-                <Routes>
-                  <Route path={RouteE.Login} element={<Login />} />
-                  <Route path={RouteE.AutomationServers} element={<AutomationServers />} />
-                  <Route path={RouteE.Controller + '/*'} element={<Controller />} />
-                  <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />
-                  <Route path={RouteE.Hub + '/*'} element={<Hub />} />
-                  <Route
-                    path="*"
-                    element={
-                      <Navigate
-                        to={
-                          automationServer?.type === 'controller'
-                            ? RouteE.Controller
-                            : automationServer?.type === 'hub'
-                            ? RouteE.Hub
-                            : RouteE.AutomationServers
-                        }
-                      />
-                    }
-                  />
-                </Routes>
-              </PageFrameworkProvider>
+              <Routing />
             </BrowserRouter>
           </AutomationServersProvider>
         </AccessCode>
       </ErrorBoundary>
     </StrictMode>
+  )
+}
+
+function Routing() {
+  const { automationServer } = useAutomationServers()
+  const navigate = useNavigate()
+  return (
+    <PageFramework navigate={navigate}>
+      <Routes>
+        <Route path={RouteE.Login} element={<Login />} />
+        <Route path={RouteE.AutomationServers} element={<AutomationServers />} />
+        <Route path={RouteE.Controller + '/*'} element={<Controller />} />
+        <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />
+        <Route path={RouteE.Hub + '/*'} element={<Hub />} />
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={
+                automationServer?.type === 'controller'
+                  ? RouteE.Controller
+                  : automationServer?.type === 'hub'
+                  ? RouteE.Hub
+                  : RouteE.AutomationServers
+              }
+            />
+          }
+        />
+      </Routes>
+    </PageFramework>
   )
 }
