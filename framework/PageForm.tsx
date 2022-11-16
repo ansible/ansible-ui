@@ -58,7 +58,6 @@ import {
   useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { Collapse } from './components/Collapse'
 import { Scrollable } from './components/Scrollable'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageHeader, PageHeaderProps } from './PageHeader'
@@ -943,14 +942,14 @@ export function PageForm<T extends object>(props: {
             </PageSection>
           </Scrollable>
         )}
-        <Collapse open={!!error}>
+        {error && (
           <Alert
             variant="danger"
             title={error ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
           />
-        </Collapse>
+        )}
         {props.onCancel ? (
           <PageSection
             isFilled={false}
