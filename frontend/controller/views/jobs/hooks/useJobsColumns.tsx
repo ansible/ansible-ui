@@ -6,11 +6,7 @@ import { StatusCell } from '../../../../common/StatusCell'
 import { RouteE } from '../../../../Routes'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
 
-export function useJobsColumns(options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
-  displayIdWithName?: boolean
-}) {
+export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation()
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [

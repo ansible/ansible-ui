@@ -4,17 +4,16 @@ import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestPost } from '../../../../Data'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { useJobsColumns } from './useJobsColumns'
 import { getJobsAPIUrl } from '../JobTypeAPIUrl'
+import { useJobsColumns } from './useJobsColumns'
 
 export function useCancelJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
   const [_, setDialog] = usePageDialog()
-  const columns = useJobsColumns({ disableLinks: true, disableSort: true, displayIdWithName: true })
+  const columns = useJobsColumns({ disableLinks: true, disableSort: true })
   const cancelActionNameColumn = useNameColumn({
     disableLinks: true,
     disableSort: true,
-    displayIdWithName: true,
   })
   const errorColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn])
   const cancelJobs = (jobs: UnifiedJob[]) => {
