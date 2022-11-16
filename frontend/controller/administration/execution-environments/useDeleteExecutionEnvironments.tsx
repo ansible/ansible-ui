@@ -1,46 +1,42 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { compareStrings, useBulkConfirmation } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { ExecutionEnvironment } from './ExecutionEnvironment'
 import { useExecutionEnvironmentsColumns } from './ExecutionEnvironments'
 
 export function useDeleteExecutionEnvironments(
-  callback: (executionEnvironments: ExecutionEnvironment[]) => void
+  onComplete: (executionEnvironments: ExecutionEnvironment[]) => void
 ) {
   const { t } = useTranslation()
-  const [_, setDialog] = usePageDialog()
-  const columns = useExecutionEnvironmentsColumns({ disableLinks: true, disableSort: true })
+  const confirmationColumns = useExecutionEnvironmentsColumns({
+    disableLinks: true,
+    disableSort: true,
+  })
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
-  const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const deleteExecutionEnvironments = (items: ExecutionEnvironment[]) => {
-    setDialog(
-      <BulkActionDialog<ExecutionEnvironment>
-        title={t('Permanently delete executionEnvironments', { count: items.length })}
-        confirmText={t(
-          'Yes, I confirm that I want to delete these {{count}} executionEnvironments.',
-          { count: items.length }
-        )}
-        submitText={t('Delete executionEnvironments', { count: items.length })}
-        submitting={t('Deleting executionEnvironments', { count: items.length })}
-        submittingTitle={t('Deleting {{count}} executionEnvironments', {
-          count: items.length,
-        })}
-        error={t('There were errors deleting executionEnvironments', {
-          count: items.length,
-        })}
-        items={items.sort((l, r) => compareStrings(l.name, r.name))}
-        keyFn={getItemKey}
-        isDanger
-        columns={columns}
-        errorColumns={errorColumns}
-        onClose={callback}
-        action={(executionEnvironment: ExecutionEnvironment) =>
-          requestDelete(`/api/v2/execution_environments/${executionEnvironment.id}/`)
-        }
-      />
-    )
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
+  const bulkAction = useBulkConfirmation<ExecutionEnvironment>()
+  const deleteExecutionEnvironments = (executionEnvironments: ExecutionEnvironment[]) => {
+    bulkAction({
+      title:
+        executionEnvironments.length === 1
+          ? t('Permanently delete executionEnvironment')
+          : t('Permanently delete executionEnvironments'),
+      confirmText: t(
+        'Yes, I confirm that I want to delete these {{count}} executionEnvironments.',
+        { count: executionEnvironments.length }
+      ),
+      actionButtonText: t('Delete executionEnvironment', { count: executionEnvironments.length }),
+      items: executionEnvironments.sort((l, r) => compareStrings(l.name, r.name)),
+      keyFn: getItemKey,
+      isDanger: true,
+      confirmationColumns,
+      actionColumns,
+      onComplete,
+      actionFn: (executionEnvironment: ExecutionEnvironment) =>
+        requestDelete(`/api/v2/executionEnvironments/${executionEnvironment.id}/`),
+    })
   }
   return deleteExecutionEnvironments
 }

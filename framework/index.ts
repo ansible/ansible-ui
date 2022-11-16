@@ -1,4 +1,5 @@
 export * from './BulkActionDialog'
+export * from './BulkConfirmationDialog'
 export * from './cells/BytesCell'
 export * from './cells/CapacityCell'
 export * from './cells/CopyCell'

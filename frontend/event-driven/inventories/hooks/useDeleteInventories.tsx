@@ -1,35 +1,30 @@
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { compareStrings, useBulkConfirmation } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { idKeyFn } from '../../../hub/useHubView'
 import { EdaInventory } from '../../interfaces/EdaInventory'
 import { useInventoriesColumns } from './useInventoryColumns'
 
-export function useDeleteInventories(callback: (inventories: EdaInventory[]) => void) {
+export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) => void) {
   const { t } = useTranslation()
-  const [_, setDialog] = usePageDialog()
-  const columns = useInventoriesColumns()
-  const errorColumns = columns
+  const confirmationColumns = useInventoriesColumns()
+  const actionColumns = [confirmationColumns[0]]
+  const bulkAction = useBulkConfirmation<EdaInventory>()
   const deleteInventories = (items: EdaInventory[]) => {
-    setDialog(
-      <BulkActionDialog<EdaInventory>
-        title={t('Permanently delete inventories', { count: items.length })}
-        confirmText={t('Yes, I confirm that I want to delete these {{count}} inventories.', {
-          count: items.length,
-        })}
-        submitText={t('Delete inventories', { count: items.length })}
-        submitting={t('Deleting inventories', { count: items.length })}
-        submittingTitle={t('Deleting {{count}} inventories', { count: items.length })}
-        error={t('There were errors deleting inventories', { count: items.length })}
-        items={items.sort((l, r) => compareStrings(l.name, r.name))}
-        keyFn={idKeyFn}
-        isDanger
-        columns={columns}
-        errorColumns={errorColumns}
-        onClose={callback}
-        action={(inventory: EdaInventory) => requestDelete(`/api/inventories/${inventory.id}`)}
-      />
-    )
+    bulkAction({
+      title: t('Permanently delete inventories', { count: items.length }),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} inventories.', {
+        count: items.length,
+      }),
+      actionButtonText: t('Delete inventories', { count: items.length }),
+      items: items.sort((l, r) => compareStrings(l.name, r.name)),
+      keyFn: idKeyFn,
+      actionFn: (inventory: EdaInventory) => requestDelete(`/api/inventories/${inventory.id}`),
+      confirmationColumns,
+      actionColumns,
+      onComplete,
+      isDanger: true,
+    })
   }
   return deleteInventories
 }
