@@ -645,6 +645,7 @@ export interface ITableColumn<T extends object> {
 
   sort?: string
   defaultSortDirection?: 'asc' | 'desc'
+  defaultSort?: boolean
 
   /**
    * @deprecated The method should not be used

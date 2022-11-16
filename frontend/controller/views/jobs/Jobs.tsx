@@ -16,6 +16,9 @@ export default function Jobs() {
   const tableColumns = useJobsColumns()
   const view = useControllerView<UnifiedJob>({
     url: '/api/v2/unified_jobs/',
+    queryParams: {
+      not__launch_type: 'sync',
+    },
     toolbarFilters,
     tableColumns,
   })
