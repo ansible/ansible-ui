@@ -1,6 +1,5 @@
 import './styles.css'
 
-import { StrictMode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { PageFramework } from '../framework'
@@ -20,17 +19,17 @@ import { RouteE } from './Routes'
 export default function Main() {
   const { t } = useTranslation()
   return (
-    <StrictMode>
-      <ErrorBoundary message={t('An error occured')}>
-        <AccessCode>
-          <AutomationServersProvider>
-            <BrowserRouter>
-              <Routing />
-            </BrowserRouter>
-          </AutomationServersProvider>
-        </AccessCode>
-      </ErrorBoundary>
-    </StrictMode>
+    // <StrictMode>
+    <ErrorBoundary message={t('An error occured')}>
+      <AccessCode>
+        <AutomationServersProvider>
+          <BrowserRouter>
+            <Routing />
+          </BrowserRouter>
+        </AutomationServersProvider>
+      </AccessCode>
+    </ErrorBoundary>
+    // </StrictMode>
   )
 }
 
