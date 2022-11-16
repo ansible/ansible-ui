@@ -1,25 +1,46 @@
-export enum PatternFlyColor {
+export enum PFColorE {
   Green = 'green',
+  Success = 'success',
   Blue = 'blue',
+  Info = 'info',
   Red = 'red',
+  Danger = 'danger',
   Yellow = 'yellow',
+  Warning = 'warning',
   Grey = 'grey',
+  Disabled = 'disabled',
 }
 
-export function getPatternflyColor(color: PatternFlyColor) {
+export type PFColor =
+  | 'green'
+  | 'success'
+  | 'blue'
+  | 'info'
+  | 'red'
+  | 'danger'
+  | 'yellow'
+  | 'warning'
+  | 'grey'
+  | 'disabled'
+
+export function getPatternflyColor(color: PFColor) {
   switch (color) {
     case 'green':
+    case 'success':
       return pfSuccess
     case 'red':
+    case 'danger':
       return pfDanger
     case 'yellow':
+    case 'warning':
       return pfWarning
     case 'blue':
+    case 'info':
       return pfInfo
     case 'grey':
+    case 'disabled':
       return pfDisabled
   }
-  return undefined
 }
 
 export const pfSuccess = 'var(--pf-global--success-color--100)'
