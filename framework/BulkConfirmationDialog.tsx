@@ -1,53 +1,89 @@
 import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core'
 import { useCallback, useEffect, useState } from 'react'
+import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog'
 import { usePageDialog } from './PageDialog'
 import { ITableColumn, PageTable } from './PageTable'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 import { usePaged } from './useTableItems'
 
-export interface BulkConfirmationDialogProps<T extends object> {
+export interface BulkConfirmationDialog<T extends object> {
+  /** The title of the model.
+   * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
+   */
   title: string
+
+  /** The prompt that shows up under the confirmation title. */
   prompt?: string
-  submitText: string
-  confirmText: string
-  cancelText?: string
-  isDanger?: boolean
+
+  /** The items to confirm for the bulk action. */
   items: T[]
-  columns: ITableColumn<T>[]
+
+  /** A function that gets a unique key for each item. */
   keyFn: (item: T) => string | number
-  onConfirm?: (items: T[]) => void
+
+  /** The columns to display for confirmation. */
+  confirmationColumns: ITableColumn<T>[]
+
+  /** Callback called when the user confirms. */
+  onConfirm: () => void
+
+  /** Callback called when the dialog closes. */
+  onClose?: () => void
+
+  /** The prompt to show for the user to confirm the bulk action. */
+  confirmText: string
+
+  /** The button text to perform the action. */
+  actionButtonText: string
+
+  /** Indicates if this is a destructive operation */
+  isDanger?: boolean
 }
 
-function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialogProps<T>) {
+function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<T>) {
+  const {
+    title,
+    items,
+    keyFn,
+    confirmationColumns,
+    onConfirm,
+    onClose,
+    confirmText,
+    actionButtonText,
+    isDanger,
+  } = props
   const [_, setDialog] = usePageDialog()
   const [translations] = useFrameworkTranslations()
-  const onClose = useCallback(() => {
+  const onCloseClicked = useCallback(() => {
     setDialog(undefined)
-  }, [setDialog])
-  const onConfirm = () => props.onConfirm?.(props.items)
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(props.items)
-  const [confirmed, setConfirmed] = useState(!props.confirmText)
+    onClose?.()
+  }, [onClose, setDialog])
+  const { paged, page, perPage, setPage, setPerPage } = usePaged(items)
+  const [confirmed, setConfirmed] = useState(!confirmText)
   return (
     <Modal
-      titleIconVariant={props.isDanger ? 'warning' : undefined}
-      title={props.title}
+      titleIconVariant={isDanger ? 'warning' : undefined}
+      title={title}
+      description={prompt}
       variant={ModalVariant.medium}
       isOpen
-      onClose={onClose}
+      onClose={onCloseClicked}
       actions={[
         <Button
           key="submit"
-          variant={props.isDanger ? 'danger' : 'primary'}
-          onClick={onConfirm}
+          variant={isDanger ? 'danger' : 'primary'}
+          onClick={() => {
+            onCloseClicked()
+            onConfirm()
+          }}
           isAriaDisabled={!confirmed}
         >
-          {props.submitText ?? translations.submitText}
+          {actionButtonText}
         </Button>,
         <Button key="cancel" variant="link" onClick={onClose}>
-          {props.cancelText ?? translations.cancelText}
+          {translations.cancelText}
         </Button>,
       ]}
-      description={props.prompt}
       hasNoBodyWrapper
     >
       <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -55,7 +91,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialogP
           style={{
             display: 'flex',
             flexDirection: 'column',
-            maxHeight: 500,
+            maxHeight: 560,
             overflow: 'hidden',
             borderTop: 'thin solid var(--pf-global--BorderColor--100)',
           }}
@@ -63,9 +99,9 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialogP
           <PageTable<T>
             key="items"
             pageItems={paged}
-            itemCount={props.items.length}
-            tableColumns={props.columns}
-            keyFn={props.keyFn}
+            itemCount={items.length}
+            tableColumns={confirmationColumns}
+            keyFn={keyFn}
             page={page}
             perPage={perPage}
             setPage={setPage}
@@ -75,11 +111,11 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialogP
             emptyStateTitle="No items"
           />
         </div>
-        {props.confirmText && (
-          <div style={{ marginLeft: 32, marginTop: 0, marginBottom: 8 }}>
+        {confirmText && (
+          <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
             <Checkbox
               id="confirm"
-              label={props.confirmText}
+              label={confirmText}
               isChecked={confirmed}
               onChange={setConfirmed}
             />
@@ -90,19 +126,35 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialogP
   )
 }
 
-export function useBulkConfirmationDialog<T extends object>() {
+function useBulkConfirmationDialog<T extends object>() {
   const [_, setDialog] = usePageDialog()
-  const [props, setProps] = useState<BulkConfirmationDialogProps<T>>()
+  const [props, setProps] = useState<BulkConfirmationDialog<T>>()
   useEffect(() => {
     if (props) {
-      const onCloseHandler = (items: T[]) => {
+      const onCloseHandler = () => {
         setProps(undefined)
-        props.onConfirm?.(items)
+        props.onClose?.()
       }
-      setDialog(<BulkConfirmationDialog<T> {...props} onConfirm={onCloseHandler} />)
+      setDialog(<BulkConfirmationDialog<T> {...props} onClose={onCloseHandler} />)
     } else {
       setDialog(undefined)
     }
   }, [props, setDialog])
   return setProps
+}
+
+export function useBulkConfirmation<T extends object>() {
+  const bulkConfirmationDialog = useBulkConfirmationDialog<T>()
+  const bulkActionDialog = useBulkActionDialog<T>()
+  return useCallback(
+    (
+      options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
+        Omit<BulkActionDialogProps<T>, 'onClose'>
+    ) =>
+      bulkConfirmationDialog({
+        ...options,
+        onConfirm: () => bulkActionDialog(options),
+      }),
+    [bulkActionDialog, bulkConfirmationDialog]
+  )
 }

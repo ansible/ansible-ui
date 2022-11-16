@@ -1,39 +1,37 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { compareStrings } from '../../../../../framework'
-import { useBulkAction } from '../../../../../framework/useBulkAction'
+import { compareStrings, useBulkConfirmation } from '../../../../../framework'
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { Team } from '../../../interfaces/Team'
 import { useTeamsColumns } from '../Teams'
 
-export function useDeleteTeams(callback: (teams: Team[]) => void) {
+export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation()
-  const columns = useTeamsColumns({ disableLinks: true, disableSort: true })
+  const confirmationColumns = useTeamsColumns({ disableLinks: true, disableSort: true })
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
   const deleteActionOrganizationColumn = useOrganizationNameColumn({
     disableLinks: true,
     disableSort: true,
   })
-  const progressColumns = useMemo(
+  const actionColumns = useMemo(
     () => [deleteActionNameColumn, deleteActionOrganizationColumn],
     [deleteActionNameColumn, deleteActionOrganizationColumn]
   )
-  const bulkAction = useBulkAction<Team>()
+  const bulkAction = useBulkConfirmation<Team>()
   const deleteTeams = (teams: Team[]) => {
     bulkAction({
-      title: teams.length === 1 ? t('Permanently delete team') : t('Permanently delete teams'),
+      title: t('Permanently delete teams', { count: teams.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} teams.', {
         count: teams.length,
       }),
-      submitText: teams.length === 1 ? t('Delete team') : t('Delete teams'),
+      actionButtonText: t('Delete teams', { count: teams.length }),
       items: teams.sort((l, r) => compareStrings(l.name, r.name)),
-      errorText: t('There were errors deleting teams', { count: teams.length }),
       keyFn: getItemKey,
       isDanger: true,
-      columns,
-      progressColumns,
-      onClose: callback,
+      confirmationColumns,
+      actionColumns,
+      onComplete,
       actionFn: (team: Team) => requestDelete(`/api/v2/teams/${team.id}/`),
     })
   }

@@ -2,7 +2,7 @@
 import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core'
 import { useCallback, useMemo } from 'react'
 import { PageHeader } from '../../framework'
-import { useBulkProgressDialog } from '../../framework/BulkProgressDialog'
+import { useBulkActionDialog } from '../../framework/BulkActionDialog'
 import { randomString } from '../../framework/utils/random-string'
 import { Team } from '../controller/interfaces/Team'
 import { requestPost } from '../Data'
@@ -31,7 +31,7 @@ export default function Debug() {
 }
 
 function useCreateTeams() {
-  const openBulkProgressDialog = useBulkProgressDialog()
+  const openBulkProgressDialog = useBulkActionDialog()
   const createTeams = useCallback(
     (count: number) => {
       const teams = new Array(count)
@@ -41,12 +41,10 @@ function useCreateTeams() {
         title: `Creating ${count} teams`,
         keyFn: (team: Partial<Team>) => team.name ?? '',
         items: teams,
-        progressColumns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
+        actionColumns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
         actionFn: (team, signal) =>
           requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
         processingText: 'Creating teams...',
-        successText: 'All teams created successfully.',
-        errorText: 'There were errors creating teams.',
       })
     },
     [openBulkProgressDialog]

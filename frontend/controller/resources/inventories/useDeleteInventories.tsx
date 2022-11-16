@@ -1,37 +1,35 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { compareStrings, useBulkConfirmation } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { useInventoriesColumns } from './Inventories'
 import { Inventory } from './Inventory'
 
-export function useDeleteInventories(callback: (inventories: Inventory[]) => void) {
+export function useDeleteInventories(onComplete: (inventories: Inventory[]) => void) {
   const { t } = useTranslation()
-  const [_, setDialog] = usePageDialog()
-  const columns = useInventoriesColumns({ disableLinks: true, disableSort: true })
+  const confirmationColumns = useInventoriesColumns({ disableLinks: true, disableSort: true })
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
-  const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const deleteInventories = (items: Inventory[]) => {
-    setDialog(
-      <BulkConfirmationDialog<Inventory>
-        title={t('Permanently delete inventories', { count: items.length })}
-        confirmText={t('Yes, I confirm that I want to delete these {{count}} inventories.', {
-          count: items.length,
-        })}
-        submitText={t('Delete inventories', { count: items.length })}
-        submitting={t('Deleting inventories', { count: items.length })}
-        submittingTitle={t('Deleting {{count}} inventories', { count: items.length })}
-        error={t('There were errors deleting inventories', { count: items.length })}
-        items={items.sort((l, r) => compareStrings(l.name, r.name))}
-        keyFn={getItemKey}
-        isDanger
-        columns={columns}
-        errorColumns={errorColumns}
-        onConfirm={callback}
-        action={(inventory: Inventory) => requestDelete(`/api/v2/inventories/${inventory.id}/`)}
-      />
-    )
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
+  const bulkAction = useBulkConfirmation<Inventory>()
+  const deleteInventories = (inventories: Inventory[]) => {
+    bulkAction({
+      title:
+        inventories.length === 1
+          ? t('Permanently delete inventory')
+          : t('Permanently delete inventories'),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} inventories.', {
+        count: inventories.length,
+      }),
+      actionButtonText: t('Delete inventory', { count: inventories.length }),
+      items: inventories.sort((l, r) => compareStrings(l.name, r.name)),
+      keyFn: getItemKey,
+      isDanger: true,
+      confirmationColumns,
+      actionColumns,
+      onComplete,
+      actionFn: (inventory: Inventory) => requestDelete(`/api/v2/inventories/${inventory.id}/`),
+    })
   }
   return deleteInventories
 }
