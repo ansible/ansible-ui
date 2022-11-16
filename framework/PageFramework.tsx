@@ -7,14 +7,16 @@ import { FrameworkTranslationsProvider } from './useFrameworkTranslations'
 
 export function PageFramework(props: { children: ReactNode; navigate?: (to: string) => void }) {
   return (
-    <PageNavigateCallbackContextProvider callback={props.navigate}>
-      <FrameworkTranslationsProvider>
-        <PageAlertToasterProvider>
-          <PageDialogProvider>
-            <SettingsProvider>{props.children}</SettingsProvider>
-          </PageDialogProvider>
-        </PageAlertToasterProvider>
-      </FrameworkTranslationsProvider>
-    </PageNavigateCallbackContextProvider>
+    <FrameworkTranslationsProvider>
+      <SettingsProvider>
+        <PageDialogProvider>
+          <PageAlertToasterProvider>
+            <PageNavigateCallbackContextProvider callback={props.navigate}>
+              {props.children}
+            </PageNavigateCallbackContextProvider>
+          </PageAlertToasterProvider>
+        </PageDialogProvider>
+      </SettingsProvider>
+    </FrameworkTranslationsProvider>
   )
 }
