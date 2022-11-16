@@ -20,7 +20,7 @@ export function useRemoveOrganizationsFromUsers() {
         }),
         keyFn: (organization: Organization) => organization.id,
         items: organizations,
-        columns: [
+        progressColumns: [
           { header: 'Organization', cell: (organization: Organization) => organization.name },
         ],
         actionFn: async (organization: Organization, signal: AbortSignal) => {

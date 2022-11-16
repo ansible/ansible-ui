@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../../framework'
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { useJobsColumns } from './useJobsColumns'
 import { getJobsAPIUrl } from '../JobTypeAPIUrl'
+import { useJobsColumns } from './useJobsColumns'
 
 export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
@@ -19,7 +19,7 @@ export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteJobs = (jobs: UnifiedJob[]) => {
     setDialog(
-      <BulkActionDialog<UnifiedJob>
+      <BulkConfirmationDialog<UnifiedJob>
         title={t('Permanently delete jobs', { count: jobs.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} jobs.', {
           count: jobs.length,
@@ -33,7 +33,7 @@ export function useDeleteJobs(callback: (jobs: UnifiedJob[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(job: UnifiedJob) => requestDelete(`${getJobsAPIUrl(job.type)}${job.id}/`)}
       />
     )

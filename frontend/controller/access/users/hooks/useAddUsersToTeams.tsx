@@ -16,7 +16,7 @@ export function useAddUsersToTeams() {
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        columns: [{ header: 'User', cell: (user: User) => user.username }],
+        progressColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const team of teams) {
             await requestPost(

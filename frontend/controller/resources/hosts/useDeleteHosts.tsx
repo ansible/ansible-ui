@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Host } from '../../interfaces/Host'
@@ -14,7 +14,7 @@ export function useDeleteHosts(callback: (hosts: Host[]) => void) {
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteHosts = (items: Host[]) => {
     setDialog(
-      <BulkActionDialog<Host>
+      <BulkConfirmationDialog<Host>
         title={t('Permanently delete hosts', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} hosts.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteHosts(callback: (hosts: Host[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(host: Host) => requestDelete(`/api/v2/hosts/${host.id}/`)}
       />
     )

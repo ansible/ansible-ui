@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Credential } from '../../interfaces/Credential'
@@ -14,7 +14,7 @@ export function useDeleteCredentials(callback: (credentials: Credential[]) => vo
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteCredentials = (items: Credential[]) => {
     setDialog(
-      <BulkActionDialog<Credential>
+      <BulkConfirmationDialog<Credential>
         title={t('Permanently delete credentials', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} credentials.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteCredentials(callback: (credentials: Credential[]) => vo
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(credential: Credential) => requestDelete(`/api/v2/credentials/${credential.id}/`)}
       />
     )

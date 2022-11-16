@@ -1,6 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, TextCell, usePageDialog } from '../../../../../framework'
+import {
+  BulkConfirmationDialog,
+  compareStrings,
+  TextCell,
+  usePageDialog,
+} from '../../../../../framework'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { User } from '../../../interfaces/User'
 import { useUsersColumns } from '../Users'
@@ -21,7 +26,7 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteUsers = (users: User[]) => {
     setDialog(
-      <BulkActionDialog<User>
+      <BulkConfirmationDialog<User>
         title={t('Permanently delete users', { count: users.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} users.', {
           count: users.length,
@@ -35,7 +40,7 @@ export function useDeleteUsers(callback: (users: User[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(user: User) => requestDelete(`/api/v2/users/${user.id}/`)}
       />
     )

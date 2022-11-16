@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { InstanceGroup } from './InstanceGroup'
@@ -14,7 +14,7 @@ export function useDeleteInstanceGroups(callback: (teams: InstanceGroup[]) => vo
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteInstanceGroups = (items: InstanceGroup[]) => {
     setDialog(
-      <BulkActionDialog<InstanceGroup>
+      <BulkConfirmationDialog<InstanceGroup>
         title={t('Permanently delete instance groups', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} instance groups.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteInstanceGroups(callback: (teams: InstanceGroup[]) => vo
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(ig: InstanceGroup) => requestDelete(`/api/v2/instance-groups/${ig.id}/`)}
       />
     )

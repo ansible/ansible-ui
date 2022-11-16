@@ -41,7 +41,7 @@ function useCreateTeams() {
         title: `Creating ${count} teams`,
         keyFn: (team: Partial<Team>) => team.name ?? '',
         items: teams,
-        columns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
+        progressColumns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
         actionFn: (team, signal) =>
           requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
         processingText: 'Creating teams...',

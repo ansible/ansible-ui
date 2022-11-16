@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { idKeyFn } from '../../../hub/useHubView'
 import { EdaProject } from '../../interfaces/EdaProject'
@@ -12,7 +12,7 @@ export function useDeleteProjects(callback: (projects: EdaProject[]) => void) {
   const errorColumns = columns
   const deleteProjects = (items: EdaProject[]) => {
     setDialog(
-      <BulkActionDialog<EdaProject>
+      <BulkConfirmationDialog<EdaProject>
         title={t('Permanently delete projects', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} projects.', {
           count: items.length,
@@ -26,7 +26,7 @@ export function useDeleteProjects(callback: (projects: EdaProject[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(project: EdaProject) => requestDelete(`/api/projects/${project.id}`)}
       />
     )

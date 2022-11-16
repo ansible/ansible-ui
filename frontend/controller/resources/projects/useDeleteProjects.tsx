@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Project } from '../../interfaces/Project'
@@ -14,7 +14,7 @@ export function useDeleteProjects(callback: (projects: Project[]) => void) {
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteProjects = (items: Project[]) => {
     setDialog(
-      <BulkActionDialog<Project>
+      <BulkConfirmationDialog<Project>
         title={t('Permanently delete projects', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} projects.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteProjects(callback: (projects: Project[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(project: Project) => requestDelete(`/api/v2/projects/${project.id}/`)}
       />
     )

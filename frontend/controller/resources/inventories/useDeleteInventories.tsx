@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { useInventoriesColumns } from './Inventories'
@@ -14,7 +14,7 @@ export function useDeleteInventories(callback: (inventories: Inventory[]) => voi
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteInventories = (items: Inventory[]) => {
     setDialog(
-      <BulkActionDialog<Inventory>
+      <BulkConfirmationDialog<Inventory>
         title={t('Permanently delete inventories', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} inventories.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteInventories(callback: (inventories: Inventory[]) => voi
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(inventory: Inventory) => requestDelete(`/api/v2/inventories/${inventory.id}/`)}
       />
     )

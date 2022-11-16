@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { Template } from './Template'
@@ -14,7 +14,7 @@ export function useDeleteTemplates(callback: (templates: Template[]) => void) {
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteTemplates = (items: Template[]) => {
     setDialog(
-      <BulkActionDialog<Template>
+      <BulkConfirmationDialog<Template>
         title={t('Permanently delete templates', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} templates.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteTemplates(callback: (templates: Template[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(template: Template) => requestDelete(`/api/v2/instance-groups/${template.id}/`)}
       />
     )

@@ -19,7 +19,7 @@ export interface BulkProgressDialogProps<T extends object> {
   title: string
   keyFn: (item: T) => string | number
   items: T[]
-  columns: ITableColumn<T>[]
+  progressColumns: ITableColumn<T>[]
   actionFn: (item: T, signal: AbortSignal) => Promise<unknown>
   onClose?: (items: T[]) => void
 
@@ -39,7 +39,7 @@ export function BulkProgressDialog<T extends object>(props: BulkProgressDialogPr
     title,
     keyFn,
     items,
-    columns,
+    progressColumns,
     actionFn,
     onClose,
     processingText,
@@ -177,7 +177,7 @@ export function BulkProgressDialog<T extends object>(props: BulkProgressDialogPr
           pageItems={[...paged]}
           itemCount={items.length}
           tableColumns={[
-            ...columns,
+            ...progressColumns,
             {
               header: 'Status',
               cell: (item) => {

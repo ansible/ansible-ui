@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../framework'
 import { useNameColumn } from '../../../common/columns'
 import { getItemKey, requestDelete } from '../../../Data'
 import { ExecutionEnvironment } from './ExecutionEnvironment'
@@ -16,7 +16,7 @@ export function useDeleteExecutionEnvironments(
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteExecutionEnvironments = (items: ExecutionEnvironment[]) => {
     setDialog(
-      <BulkActionDialog<ExecutionEnvironment>
+      <BulkConfirmationDialog<ExecutionEnvironment>
         title={t('Permanently delete executionEnvironments', { count: items.length })}
         confirmText={t(
           'Yes, I confirm that I want to delete these {{count}} executionEnvironments.',
@@ -35,7 +35,7 @@ export function useDeleteExecutionEnvironments(
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(executionEnvironment: ExecutionEnvironment) =>
           requestDelete(`/api/v2/execution_environments/${executionEnvironment.id}/`)
         }

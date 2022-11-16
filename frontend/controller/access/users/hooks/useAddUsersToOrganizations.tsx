@@ -16,7 +16,7 @@ export function useAddUsersToOrganizations(onClose?: (users: User[]) => void) {
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        columns: [{ header: 'User', cell: (user: User) => user.username }],
+        progressColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const organization of organizations) {
             await requestPost(

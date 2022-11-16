@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../../framework'
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { Organization } from '../../../interfaces/Organization'
@@ -14,7 +14,7 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
   const errorColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
   const deleteOrganizations = (items: Organization[]) => {
     setDialog(
-      <BulkActionDialog<Organization>
+      <BulkConfirmationDialog<Organization>
         title={t('Permanently delete organizations', { count: items.length })}
         confirmText={t('Yes, I confirm that I want to delete these {{count}} organizations.', {
           count: items.length,
@@ -28,7 +28,7 @@ export function useDeleteOrganizations(callback: (organizations: Organization[])
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(organization: Organization) =>
           requestDelete(`/api/v2/organizations/${organization.id}/`)
         }

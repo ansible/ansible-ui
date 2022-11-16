@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BulkActionDialog, compareStrings, usePageDialog } from '../../../../../framework'
+import { BulkConfirmationDialog, compareStrings, usePageDialog } from '../../../../../framework'
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestPost } from '../../../../Data'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { useJobsColumns } from './useJobsColumns'
 import { getJobsAPIUrl } from '../JobTypeAPIUrl'
+import { useJobsColumns } from './useJobsColumns'
 
 export function useCancelJobs(callback: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
@@ -19,7 +19,7 @@ export function useCancelJobs(callback: (jobs: UnifiedJob[]) => void) {
   const errorColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn])
   const cancelJobs = (jobs: UnifiedJob[]) => {
     setDialog(
-      <BulkActionDialog<UnifiedJob>
+      <BulkConfirmationDialog<UnifiedJob>
         title={t('Cancel jobs', { count: jobs.length })}
         confirmText={t('Yes, I confirm that I want to cancel these {{count}} jobs.', {
           count: jobs.length,
@@ -33,7 +33,7 @@ export function useCancelJobs(callback: (jobs: UnifiedJob[]) => void) {
         isDanger
         columns={columns}
         errorColumns={errorColumns}
-        onClose={callback}
+        onConfirm={callback}
         action={(job: UnifiedJob) =>
           requestPost(`${getJobsAPIUrl(job.type)}${job.id}/cancel/`, null)
         }
