@@ -65,7 +65,8 @@ export function useColumnsToDataList<T extends object>(
 ): (item: T) => ReactNode {
   const data = useMemo(() => {
     let cols = tableColumns.filter((column) => column.card !== 'hidden')
-    const nameColumn = cols.shift()
+    const nameColumn = cols.find((column) => column.primary) ?? cols[0]
+    cols = cols.filter((column) => column !== nameColumn)
     const descriptionColumn = cols.find((column) => column.card === 'description')
     if (descriptionColumn) {
       cols = cols.filter((column) => column !== descriptionColumn)
@@ -106,7 +107,7 @@ export function useColumnsToDataList<T extends object>(
             )}
             <DataListItemCells
               dataListCells={[
-                <DataListCell key="primary">
+                <DataListCell key="primary" width={5}>
                   <Flex>
                     <Stack hasGutter>
                       <Stack>
@@ -133,7 +134,10 @@ export function useColumnsToDataList<T extends object>(
                             <DescriptionListGroup key={column.header}>
                               {!column.hideLabel && (
                                 <DescriptionListTerm>
-                                  <Text component="small" style={{ opacity: 0.7 }}>
+                                  <Text
+                                    component="small"
+                                    style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
+                                  >
                                     {column.header}
                                   </Text>
                                 </DescriptionListTerm>
@@ -159,7 +163,10 @@ export function useColumnsToDataList<T extends object>(
                             <DescriptionListGroup key={column.header}>
                               {!column.hideLabel && (
                                 <DescriptionListTerm>
-                                  <Text component="small" style={{ opacity: 0.7 }}>
+                                  <Text
+                                    component="small"
+                                    style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
+                                  >
                                     {column.header}
                                   </Text>
                                 </DescriptionListTerm>

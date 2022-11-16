@@ -9,16 +9,8 @@ import { useJobsColumns } from './useJobsColumns'
 
 export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation()
-  const confirmationColumns = useJobsColumns({
-    disableLinks: true,
-    disableSort: true,
-    displayIdWithName: true,
-  })
-  const cancelActionNameColumn = useNameColumn({
-    disableLinks: true,
-    disableSort: true,
-    displayIdWithName: true,
-  })
+  const confirmationColumns = useJobsColumns({ disableLinks: true, disableSort: true })
+  const cancelActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
   const actionColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn])
   const bulkAction = useBulkConfirmation<UnifiedJob>()
   const cancelUnifiedJobs = (jobs: UnifiedJob[]) => {
