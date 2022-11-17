@@ -14,7 +14,7 @@ The framework:
 - does not use any state libraries other than the built in react context state management.
 - does not assume any specific translation libraries, but does provide a hook for internal translations.
 - does not assume any specific navigation libraries, but does provide a hook for internal navigation.
-  
+
 There is an [Ansible UI Framework Demo](https://github.com/jamestalton/ansible-ui-framework-demo) repo showing an example of using the framework.
 
 ## Getting Started
@@ -32,11 +32,7 @@ Near the top of your application add the `<PageFramework>` component.
 The `PageFramework` component bundles up all the context providers in the Ansible UI framework in a convienent component for framework consumers. Examples of internal context providers are translations, navigation, settings, alerts, and dialogs.
 
 ```tsx
-(
-<PageFramework navigate={navigate}>
-  ...
-</PageFramework>
-)
+<PageFramework navigate={navigate}>...</PageFramework>
 ```
 
 ### Use PageLayout in your pages
