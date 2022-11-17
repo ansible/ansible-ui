@@ -1,5 +1,7 @@
 # Ansible UI Framework
 
+[NPM Package](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
+
 A framework for building responsive web applications using [PatternFly](https://www.patternfly.org).
 
 Developed by the Ansible UI developers.
@@ -44,7 +46,7 @@ The `PageLayout` is used at the start of each page. It provides a consistent lay
 <Page>
   <PageLayout>
     <PageHeader {...}/>
-    <PageBody> ... </PageBody>
+    ...
   </PageLayout>
 </Page>
 )
@@ -84,4 +86,4 @@ The `PageTable` handles the logic for tables on a page. It supports responsive l
 />
 ```
 
-See the [Table Guide](./docs/tables.md) for details.
+See the [Table Guide](https://github.com/ansible/ansible-ui/blob/main/framework/docs/tables.md) for details.
