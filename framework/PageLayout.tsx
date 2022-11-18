@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import styled from 'styled-components'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 
@@ -18,16 +17,16 @@ export function PageLayout(props: { children: ReactNode }) {
   const [translations] = useFrameworkTranslations()
   return (
     <ErrorBoundary message={translations.errorText}>
-      <StyledLayout>{props.children}</StyledLayout>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          maxHeight: '100%',
+        }}
+      >
+        {props.children}
+      </div>
     </ErrorBoundary>
   )
 }
-
-const StyledLayout = styled.div`
-  display: flex;
-  flexdirection: column;
-  height: 100%;
-  maxheight: 100%;
-`
-
-StyledLayout.displayName = 'StyledLayout'
