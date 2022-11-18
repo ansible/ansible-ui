@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@patternfly/react-core'
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -188,21 +188,7 @@ function UserOrganizations(props: { user: User }) {
     disableQueryString: true,
   })
 
-  const updateViewAfterAdd = useCallback(
-    (organizations: Organization[]) => {
-      view.selectItems(organizations)
-      void view.refresh()
-    },
-    [view]
-  )
-  const updateViewAfterDelete = useCallback(
-    (organizations: Organization[]) => {
-      view.unselectItems(organizations)
-      void view.refresh()
-    },
-    [view]
-  )
-  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(updateViewAfterAdd)
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(view.selectItemsAndRefresh)
   const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers()
   const toolbarActions = useMemo<ITypedAction<Organization>[]>(
     () => [
@@ -218,16 +204,16 @@ function UserOrganizations(props: { user: User }) {
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
         onClick: () =>
-          removeOrganizationsFromUsers([user], view.selectedItems, updateViewAfterDelete),
+          removeOrganizationsFromUsers([user], view.selectedItems, view.unselectItemsAndRefresh),
       },
     ],
     [
       removeOrganizationsFromUsers,
       selectOrganizationsAddUsers,
       t,
-      updateViewAfterDelete,
       user,
       view.selectedItems,
+      view.unselectItemsAndRefresh,
     ]
   )
   const rowActions = useMemo<ITypedAction<Organization>[]>(
@@ -237,10 +223,10 @@ function UserOrganizations(props: { user: User }) {
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
         onClick: (organization) =>
-          removeOrganizationsFromUsers([user], [organization], updateViewAfterDelete),
+          removeOrganizationsFromUsers([user], [organization], view.unselectItemsAndRefresh),
       },
     ],
-    [removeOrganizationsFromUsers, t, updateViewAfterDelete, user]
+    [removeOrganizationsFromUsers, t, user, view.unselectItemsAndRefresh]
   )
   return (
     <>
@@ -284,14 +270,8 @@ function UserTeams(props: { user: User }) {
     toolbarFilters,
     disableQueryString: true,
   })
-  const selectTeamsAddUsers = useSelectTeamsAddUsers((teams) => {
-    view.selectItems(teams)
-    void view.refresh()
-  })
-  const removeTeamsFromUsers = useRemoveTeamsFromUsers((teams) => {
-    view.unselectItems(teams)
-    void view.refresh()
-  })
+  const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh)
+  const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh)
   const toolbarActions = useMemo<ITypedAction<Team>[]>(
     () => [
       {
