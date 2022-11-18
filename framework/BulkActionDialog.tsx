@@ -16,6 +16,10 @@ import { ITableColumn, PageTable } from './PageTable'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 import { usePaged } from './useTableItems'
 
+/**
+ * BulkActionDialogProps
+ * @typedef {Object} BulkActionDialogProps
+ */
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
@@ -49,6 +53,13 @@ export interface BulkActionDialogProps<T extends object> {
   isDanger?: boolean
 }
 
+/**
+ * BulkActionDialog
+ * @param {string} title - The title of the model.
+ * @param {Array(T)} items - The items to confirm for the bulk action.
+ * @param {function(T) : (string | number)} keyFn - A function that gets a unique key for each item.
+ * @param {Array(ITableColumn<T>)} actionColumns - The columns to display when processing the actions.
+ */
 function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
   const {
     title,
