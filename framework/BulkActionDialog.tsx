@@ -50,9 +50,13 @@ export interface BulkActionDialogProps<T extends object> {
 }
 
 /**
- * BulkActionDialog
+ * BulkActionDialog is a generic dialog for process bulk actions.
+ *
+ * It processes the actions in parallel up to 5 concurrently.
+ * The easiest way to use the BulkActionDialog is then useBulkActionDialog hook.
+ *
  * @param {string} title - The title of the model.
- * @param {Array(T)} items - The items to confirm for the bulk action.
+ * @param {T[]} items - The items to confirm for the bulk action.
  * @param {function} keyFn - A function that gets a unique key for each item.
  * @param {Array(ITableColumn<T>)} actionColumns - The columns to display when processing the actions.
  * @param {function} actionFn - The action function to perform on each item
@@ -258,6 +262,9 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
   )
 }
 
+/**
+ * useBulkActionDialog - react hook to open a BulkActionDialog by calling the hook with BulkActionDialogProps
+ */
 export function useBulkActionDialog<T extends object>() {
   const [_, setDialog] = usePageDialog()
   const [props, setProps] = useState<BulkActionDialogProps<T>>()
