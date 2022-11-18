@@ -6,7 +6,7 @@ const ActiveUserContext = createContext<User | null | undefined>(undefined)
 
 /**
  * Get the active logged in user
- * @returns undefined while querying the user, null if user not found, otherwise the User.
+ * @returns undefined while querying, null if user not logged in, otherwise the User.
  */
 export function useActiveUser() {
   return useContext(ActiveUserContext)
