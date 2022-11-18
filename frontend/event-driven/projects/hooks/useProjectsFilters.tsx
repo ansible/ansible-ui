@@ -11,7 +11,7 @@ export function useProjectsFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: 'Filter by name',
+        placeholder: t('Filter by name'),
       },
     ],
     [t]
