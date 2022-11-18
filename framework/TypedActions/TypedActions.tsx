@@ -55,7 +55,6 @@ export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
   variant?: ButtonVariant
   onClick: (item: T) => void
   isDisabled?: (item: T) => string
-  isHidden?: (item: T) => boolean
 }
 
 export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
