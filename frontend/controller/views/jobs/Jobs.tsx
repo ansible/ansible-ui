@@ -23,15 +23,9 @@ export default function Jobs() {
     tableColumns,
   })
 
-  const deleteJobs = useDeleteJobs((jobs: UnifiedJob[]) => {
-    view.unselectItems(jobs)
-    void view.refresh()
-  })
+  const deleteJobs = useDeleteJobs(view.unselectItemsAndRefresh)
 
-  const cancelJobs = useCancelJobs((jobs: UnifiedJob[]) => {
-    view.unselectItems(jobs)
-    void view.refresh()
-  })
+  const cancelJobs = useCancelJobs(view.unselectItemsAndRefresh)
 
   const toolbarActions = useMemo<ITypedAction<UnifiedJob>[]>(
     () => [

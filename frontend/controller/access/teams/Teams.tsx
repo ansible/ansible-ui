@@ -47,10 +47,7 @@ export function Teams() {
 
   const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns })
 
-  const deleteTeams = useDeleteTeams((teams: Team[]) => {
-    view.unselectItems(teams)
-    void view.refresh()
-  })
+  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh)
 
   const selectUsersAddTeams = useSelectUsersAddTeams()
   const selectUsersRemoveTeams = useSelectUsersRemoveTeams()
