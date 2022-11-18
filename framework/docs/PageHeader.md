@@ -1,4 +1,4 @@
-## PageHeader(breadcrumbs, title, titleHelpTitle, titleHelp, description, controls, headerActions)
+# PageHeader
 
 PageHeader enables the responsive layout of the header.
 
@@ -12,7 +12,7 @@ PageHeader enables the responsive layout of the header.
 | controls       | `ReactNode`          | Support for extra page controls.  |
 | headerActions  | `ReactNode`          | The actions for the page.         |
 
-**Example**
+## Example
 
 ```js
 <Page>

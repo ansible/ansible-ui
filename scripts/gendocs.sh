@@ -18,7 +18,11 @@ do
   sed -i -e '/^<a/d' "$OUT/${component}.md"
   sed -i -e "s/&lt;/</" "$OUT/${component}.md"
   sed -i -e "s/&gt;/>/" "$OUT/${component}.md"
+  ./node_modules/.bin/prettier --write "$OUT/${component}.md"
+  sed -i -e "1s/(.*//" "$OUT/${component}.md"
+  sed -i -e "1s/## /# /" "$OUT/${component}.md"
+  sed -i -e "s/\*\*Example\*\*/## Example/" "$OUT/${component}.md"
 done
 
 rm -f $OUT/*.md-e
-./node_modules/.bin/prettier --write $OUT/*.md
+# ./node_modules/.bin/prettier --write $OUT/*.md
