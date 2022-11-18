@@ -1,6 +1,6 @@
 # Ansible UI Framework
 
-[NPM Package](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
+[NPM Package: @ansible/ansible-ui-framework](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
 
 A framework for building responsive web applications using [PatternFly](https://www.patternfly.org).
 
@@ -54,7 +54,7 @@ The `PageLayout` is used at the start of each page. It provides a consistent lay
 
 ### Use PageHeader at the top of your pages
 
-The `PageHeader` is used at the top of each page. It provides a consistent layout of header elements. It supports responsive layout based on the size of the window.
+The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/PageHeader.tsx) is used at the top of each page. It provides a consistent layout of header elements. It supports responsive layout based on the size of the window.
 
 ```tsx
 (

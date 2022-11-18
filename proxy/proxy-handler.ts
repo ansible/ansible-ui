@@ -5,6 +5,7 @@ import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'ht
 import { request, RequestOptions } from 'https'
 import { pipeline } from 'stream'
 import {
+  HTTP2_HEADER_CACHE_CONTROL,
   HTTP2_HEADER_CONNECTION,
   HTTP2_HEADER_COOKIE,
   HTTP2_HEADER_HOST,
@@ -15,6 +16,7 @@ import {
   HTTP2_HEADER_TE,
   HTTP2_HEADER_TRANSFER_ENCODING,
   HTTP2_HEADER_UPGRADE,
+  HTTP2_HEADER_VARY,
   HTTP_STATUS_BAD_GATEWAY,
   HTTP_STATUS_NOT_FOUND,
   HTTP_STATUS_SERVICE_UNAVAILABLE,
@@ -85,6 +87,10 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
         trailer: _trailer,
         ...responseHeaders
       } = response.headers
+
+      // Force no caching
+      responseHeaders[HTTP2_HEADER_CACHE_CONTROL] = 'no-store'
+      delete responseHeaders[HTTP2_HEADER_VARY]
 
       const statusCode = response.statusCode ?? 500
       res.writeHead(statusCode, responseHeaders)
