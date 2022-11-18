@@ -9,6 +9,8 @@ for component in ${components}
 do
   echo $component
   ./node_modules/.bin/jsdoc2md ./framework/${component}.tsx --configure ./jsdoc2md.json > $OUT/${component}.md
+  sed -i -e '1d' "$OUT/${component}.md"
+  sed -i -e -n '/^## /,$p' "$OUT/${component}.md"
   sed -i -e "s/<code>/\`/" "$OUT/${component}.md"
   sed -i -e "s/<\/code>/\`/" "$OUT/${component}.md"
   sed -i -e "s/<\/code>/\`/" "$OUT/${component}.md"
@@ -23,7 +25,11 @@ do
   sed -i -e "1s/## /# /" "$OUT/${component}.md"
   sed -i -e "s/\*\*Example\*\*/## Example/" "$OUT/${component}.md"
   sed -i -e "s/\`js/\`tsx/" "$OUT/${component}.md"
+  sed -i -e "s/\`Array.<\(.*\)>\`/\`\1[]\`/" "$OUT/${component}.md"
+  sed -i -e "s/\`Array(\(.*\))\`/\`\1[]\`/" "$OUT/${component}.md"
+  sed -i -e "s/() ⇒//" "$OUT/${component}.md"
 done
 
 rm -f $OUT/*.md-e
-# ./node_modules/.bin/prettier --write $OUT/*.md
+rm -f $OUT/*.md-n
+./node_modules/.bin/prettier --write $OUT/*.md
