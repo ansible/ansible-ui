@@ -1,9 +1,10 @@
 import { ReactNode } from 'react'
+import styled from 'styled-components'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 /**
- * PageLayout enables the responsive layout of the page.
+ * PageLayout enables the layout of the page to be responsive.
  *
  * @example
  * <Page>
@@ -17,16 +18,16 @@ export function PageLayout(props: { children: ReactNode }) {
   const [translations] = useFrameworkTranslations()
   return (
     <ErrorBoundary message={translations.errorText}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          maxHeight: '100%',
-        }}
-      >
-        {props.children}
-      </div>
+      <StyledLayout>{props.children}</StyledLayout>
     </ErrorBoundary>
   )
 }
+
+const StyledLayout = styled.div`
+  display: flex;
+  flexdirection: column;
+  height: 100%;
+  maxheight: 100%;
+`
+
+StyledLayout.displayName = 'StyledLayout'
