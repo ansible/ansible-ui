@@ -18,7 +18,7 @@
 - [ ] Execute - May run the workflow job template
 - [ ] Read - May view settings for the workflow job template
 - [ ] Approve - Can approve or deny a workflow approval node
-  
+
 ## Inventory
 
 - [ ] Admin - Can manage all aspects of the inventory
