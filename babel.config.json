@@ -1,4 +1,16 @@
 {
-    "presets": [["@babel/preset-react", { "runtime": "automatic" }], "@babel/preset-typescript"],
-    "plugins": ["transform-class-properties", "istanbul"]
+  "presets": [["@babel/preset-react", { "runtime": "automatic" }], "@babel/preset-typescript"],
+  "plugins": [
+    [
+      "babel-plugin-styled-components",
+      {
+        "displayName": false,
+        "fileName": false,
+        "pure": true,
+        "namespace": "ans"
+      }
+    ],
+    "transform-class-properties",
+    "istanbul"
+  ]
 }
