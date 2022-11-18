@@ -22,6 +22,7 @@ do
   sed -i -e "1s/(.*//" "$OUT/${component}.md"
   sed -i -e "1s/## /# /" "$OUT/${component}.md"
   sed -i -e "s/\*\*Example\*\*/## Example/" "$OUT/${component}.md"
+  sed -i -e "s/\`js/\`tsx/" "$OUT/${component}.md"
 done
 
 rm -f $OUT/*.md-e

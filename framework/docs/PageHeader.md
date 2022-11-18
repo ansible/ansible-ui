@@ -14,7 +14,7 @@ PageHeader enables the responsive layout of the header.
 
 ## Example
 
-```js
+```tsx
 <Page>
   <PageLayout>
     <PageHeader

@@ -4,7 +4,7 @@ PageLayout enables the layout of the page to be responsive.
 
 ## Example
 
-```js
+```tsx
 <Page>
   <PageLayout>
     <PageHeader />
