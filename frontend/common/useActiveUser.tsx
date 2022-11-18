@@ -4,6 +4,10 @@ import { User } from '../controller/interfaces/User'
 
 const ActiveUserContext = createContext<User | null | undefined>(undefined)
 
+/**
+ * Get the active logged in user
+ * @returns undefined while querying the user, null if user not found, otherwise the User.
+ */
 export function useActiveUser() {
   return useContext(ActiveUserContext)
 }
