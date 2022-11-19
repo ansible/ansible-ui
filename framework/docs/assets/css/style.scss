@@ -5,18 +5,19 @@
 
 body {
     color:  rgba(255, 255, 255, 0.7);
-    line-height: 1.6em;
+    // line-height: 1.6em;
+    // background: unset;
     background-color: rgb(27,29,33);
-    background: unset;
-    font-size: medium;
+    // font-size: medium;
 }
 
 #header {
-  display: none;
+//   display: none;
 }
 
+
 #title {
-  display: none;
+//   display: none;
 }
 
 a {
@@ -28,37 +29,45 @@ a:hover {
 }
 
 li {
-    padding-bottom: 4px;
+    // padding-bottom: 4px;
 }
 
 .wrapper {
-    max-width: 1024px;
+    // max-width: 1024px;
 }
 
 section {
-    padding: unset;
-    margin: 24px;
-    max-width: 1024px;
+    // padding: unset;
+    // margin: 24px;
+    // max-width: 1024px;
 }
 
 h1 {
-    padding-bottom: 8px;
+    color: white;
+    // padding-bottom: 8px;
 }
 
 h2 {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    color: white;
+    // padding-top: 8px;
+    // padding-bottom: 8px;
+}
+
+h3 {
+    color: white;
+    // padding-top: 8px;
+    // padding-bottom: 8px;
 }
 
 p {
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
 }
 
 ul {
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
 }
 
 .err {
-    background-color: unset;
-    color: unset;
+    // background-color: unset;
+    // color: unset;
 }
