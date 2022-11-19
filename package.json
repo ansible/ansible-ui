@@ -22,7 +22,7 @@
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 frontend proxy framework cypress",
     "eslint:fix": "eslint --fix frontend proxy framework cypress",
-    "prettier": "prettier --check frontend proxy framework cypress",
+    "prettier": "prettier --check !**/*.scss frontend proxy framework cypress",
     "prettier:fix": "prettier --write frontend proxy framework cypress",
     "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix || true && npm dedup || true ",
     "docker:build": "docker build --tag ansible/console .",
