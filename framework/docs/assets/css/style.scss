@@ -49,35 +49,39 @@ h4 {
     color: #FFFFFFE7;
 }
 
-.p {
+.highlight pre .p {
     color: #FFF8;
 }
 
-.nv {
+.highlight pre .nv {
     color: #4AD;
 }
 
-.nc {
+.highlight pre .nc {
     color: #4AD;
 }
 
-.na {
+.highlight pre .na {
     color: #4AD;
 }
 
-.kd {
+.highlight pre .kd {
     color: orangered
 }
 
-.o {
+.highlight pre .o {
     color: white
 }
 
-.s1 {
+.highlight pre .s1 {
     color: green
 }
 
-.err {
+.highlight pre .si {
+    color: FFF8
+}
+
+.highlight pre .err {
     background: unset;
     color: #B00;
 }
