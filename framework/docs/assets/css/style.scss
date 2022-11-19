@@ -104,11 +104,18 @@ table {
   background-color: unset;
 }
 
-.markdown-body table th,
 .markdown-body table td {
   border: unset;
+  border-top: #fff2;
+}
+
+.markdown-body table th {
+  color: FFF8;
+  border: unset;
+  border-bottom: #fff4;
 }
 
 td code {
   color: #4ad;
+  background-color: #fff2;
 }
