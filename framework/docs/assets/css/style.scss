@@ -95,11 +95,20 @@ table {
   background-color: #0004;
 }
 
-tr {
-  background-color: 'unset';
+.markdown-body table tr {
+  background-color: unset;
   border: unset;
 }
 
-td {
+.markdown-body table tr:nth-child(2n) {
+  background-color: unset;
+}
+
+.markdown-body table th,
+.markdown-body table td {
   border: unset;
+}
+
+td code {
+  color: #4ad;
 }
