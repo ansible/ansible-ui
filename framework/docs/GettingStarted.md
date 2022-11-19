@@ -87,7 +87,8 @@ TODO
 ### Other Components
 
 <!-- - [PageAlertToaster](PageAlertToaster.md) -->
+
 - [BulkActionDialog](BulkActionDialog.md)
-<!-- - [BulkConfirmationDialog](BulkConfirmationDialog.md) -->
-<!-- - [SelectDialog](SelectDialog.md) -->
-<!-- - [SelectMultipleDialog](SelectMultipleDialog.md) -->
+  <!-- - [BulkConfirmationDialog](BulkConfirmationDialog.md) -->
+  <!-- - [SelectDialog](SelectDialog.md) -->
+  <!-- - [SelectMultipleDialog](SelectMultipleDialog.md) -->

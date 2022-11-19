@@ -30,7 +30,7 @@ do
   ./node_modules/.bin/prettier --write "$OUT/${component}.md"
   sed -i -e "1s/(.*//" "$OUT/${component}.md"
   sed -i -e "1s/## /# /" "$OUT/${component}.md"
-  sed -i -e "s/\*\*Example\*\*/## Example/" "$OUT/${component}.md"
+  # sed -i -e "s/\*\*Example\*\*/## Example/" "$OUT/${component}.md"
   sed -i -e "s/\`js/\`tsx/" "$OUT/${component}.md"
   sed -i -e "s/\`Array.<\(.*\)>\`/\`\1[]\`/" "$OUT/${component}.md"
   sed -i -e "s/\`Array(\(.*\))\`/\`\1[]\`/" "$OUT/${component}.md"
