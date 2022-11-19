@@ -8,8 +8,6 @@ A framework for building applications using [PatternFly](https://www.patternfly.
 - [Guides](Guides.md)
 - [Components](Components.md)
 
-The framework is made up of high level components abstracting design patterns away from the PatternFly components used underneath.
-
 While PatternFly provides the building blocks and guidance on building applications, PatternFly does not manage state for the developer. This framework adds state management and abstractions for common patterns of application development.
 
 This framework:
