@@ -1,3 +1,5 @@
+[`Ansible UI Framework`](https://github.com/ansible/ansible-ui/blob/main/framework/README.md) ▸ [PageTable](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageTable.md#PageTable)
+
 # Ansible UI Framework
 
 [NPM Package: @ansible/ansible-ui-framework](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
