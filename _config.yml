@@ -1,3 +1,4 @@
 domain: ansible.github.io
 url: https://ansible.github.io
 baseurl: /ansible-ui/
+theme: midnight
