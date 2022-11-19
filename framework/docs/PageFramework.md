@@ -1,4 +1,4 @@
-[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Components](Components.md#ansible-ui-components) ▸ PageFramework
+[Ansible UI Framework](Framework.md) ▸ [Components](Components.md) ▸ PageFramework
 
 # PageFramework
 

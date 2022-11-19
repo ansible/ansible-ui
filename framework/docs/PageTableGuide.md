@@ -1,4 +1,4 @@
-[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Guides](Guides.md#ansible-ui-guides) ▸ PageTable
+[Ansible UI Framework](Framework.md) ▸ [Guides](Guides.md) ▸ PageTable
 
 # PageTable Guide
 

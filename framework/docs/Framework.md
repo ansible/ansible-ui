@@ -4,9 +4,9 @@ Ansible UI Framework
 
 A framework for building applications using [PatternFly](https://www.patternfly.org).
 
-- [Getting Started](GettingStarted.md#getting-started)
-- [Guides](Guides.md#ansible-ui-guides)
-- [Components](Components.md#ansible-ui-components)
+- [Getting Started](GettingStarted.md)
+- [Guides](Guides.md)
+- [Components](Components.md)
 
 The framework is made up of high level components using PatternFly components underneath.
 This allows the framework to adjust the web application for responsive layout.
