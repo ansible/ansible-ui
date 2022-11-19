@@ -120,6 +120,9 @@ export type PageTableProps<T extends object> = {
   defaultCardSubtitle?: ReactNode
 }
 
+/**
+ * PageTable
+ */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   let { disableBodyPadding } = props
   disableBodyPadding = true

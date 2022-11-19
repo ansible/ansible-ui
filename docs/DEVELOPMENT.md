@@ -14,7 +14,7 @@ The project is broken into three parts.
 | ---------- | --------------------------------------------------------------------------------------- |
 | /frontend  | The React web application for the Ansible UI.                                           |
 | /proxy     | The proxy that hosts the web application and proxies calls to controller and hub hosts. |
-| /framework | An application framework for web applications using PatternFly and responsive design.   |
+| /framework | A framework for building applications using [PatternFly](https://www.patternfly.org)    |
 
 In addition the frontend is broken down into the structure needed for supporting both controller, hub, and EDA.
 

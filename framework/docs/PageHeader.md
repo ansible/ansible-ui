@@ -1,4 +1,4 @@
-[Ansible UI Framework](https://github.com/ansible/ansible-ui/blob/main/framework/README.md#ansible-ui-framework) ▸ [Components](https://github.com/ansible/ansible-ui/blob/main/framework/docs/components.md#Ansible-UI-Components) ▸ PageHeader
+[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Components](Components.md#ansible-ui-components) ▸ PageHeader
 
 # PageHeader
 

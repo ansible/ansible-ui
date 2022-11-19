@@ -1,36 +1,6 @@
-# Table Guide
+[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Guides](Guides.md#ansible-ui-guides) ▸ PageTable
 
-- [Typescript Interface](#typescript-interface)
-- [Page layout](#page-layout)
-- [View](#view)
-- [Table Columns](#table-columns)
-- [Page Table](#page-table)
-- [Toolbar Filters](#toolbar-filters)
-- [Toolbar Actions](#toolbar-actions)
-- [Row Actions](#row-actions)
-
-## Typescript Interface
-
-```ts
-export interface IPerson {
-  name: string
-}
-```
-
-## Page layout
-
-The page layout enables the layout to be responsive - responding to different page sizes and adjusting padding and borders.
-
-```tsx
-export function Persons() {
-  return (
-    <PageLayout>
-      <PageHeader title="Persons" />
-      <PageBody>Table will go here</PageBody>
-    </PageLayout>
-  )
-}
-```
+# PageTable Guide
 
 ## View
 
