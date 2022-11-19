@@ -4,20 +4,16 @@
 @import "{{ site.theme }}";
 
 body {
-    color:  rgba(255, 255, 255, 0.7);
-    // line-height: 1.6em;
-    // background: unset;
-    background-color: rgb(27,29,33);
-    // font-size: medium;
+    color:  #FFFD;
+    background-color: #101216;
 }
 
-#header {
-//   display: none;
+.markdown-body h1 {
+    border-bottom: 1px solid #FFF2;
 }
 
-
-#title {
-//   display: none;
+.markdown-body .highlight pre, .markdown-body pre {
+    background-color: #08090b;
 }
 
 a {
@@ -27,47 +23,18 @@ a {
 a:hover {
     color: #73bcf7;
 }
-
-li {
-    // padding-bottom: 4px;
-}
-
-.wrapper {
-    // max-width: 1024px;
-}
-
-section {
-    // padding: unset;
-    // margin: 24px;
-    // max-width: 1024px;
-}
-
 h1 {
     color: white;
-    // padding-bottom: 8px;
 }
 
 h2 {
     color: white;
-    // padding-top: 8px;
-    // padding-bottom: 8px;
 }
 
 h3 {
     color: white;
-    // padding-top: 8px;
-    // padding-bottom: 8px;
-}
-
-p {
-    // margin-bottom: 12px;
-}
-
-ul {
-    // margin-bottom: 12px;
 }
 
 .err {
-    // background-color: unset;
-    // color: unset;
+    color: #800;
 }
