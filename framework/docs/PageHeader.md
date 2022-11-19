@@ -14,7 +14,7 @@ PageHeader enables the responsive layout of the header.
 | controls       | `ReactNode`    | Support for extra page controls.  |
 | headerActions  | `ReactNode`    | The actions for the page.         |
 
-## Example
+**Example**
 
 ```tsx
 <Page>

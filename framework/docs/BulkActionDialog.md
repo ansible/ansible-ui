@@ -22,7 +22,7 @@ The easiest way to use the BulkActionDialog is then useBulkActionDialog hook.
 
 useBulkActionDialog - react hook to open a BulkActionDialog
 
-## Example
+**Example**
 
 ```tsx
 const openBulkActionDialog = useBulkActionDialog()
