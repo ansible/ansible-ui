@@ -36,9 +36,7 @@ The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/
 
 ```tsx
 <Page>
-  <PageLayout>
-    ...
-  </PageLayout>
+  <PageLayout>...</PageLayout>
 </Page>
 ```
 
