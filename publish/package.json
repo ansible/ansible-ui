@@ -11,6 +11,12 @@
   "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
   "main": "cjs/index.js",
   "types": "cjs/index.d.ts",
+  "keywords": [
+    "ansible",
+    "react",
+    "patternfly",
+    "framework"
+  ],
   "peerDependencies": {
     "@hookform/resolvers": "^2",
     "@patternfly/patternfly": "^4",
