@@ -3,6 +3,11 @@
 
 @import "{{ site.theme }}";
 
+body {
+    line-height: 1.6em;
+    background-color: rgb(27,29,33);
+}
+
 #header {
   display: none;
 }
@@ -12,6 +17,11 @@
 }
 
 a {
-    color: #0066CC;
+    color: #1FA7F8;
 }
+
+li {
+    padding-bottom: 4px;
+}
+
 
