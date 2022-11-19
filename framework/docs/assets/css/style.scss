@@ -4,6 +4,7 @@
 @import "{{ site.theme }}";
 
 body {
+    color:  rgba(255, 255, 255, 0.7);
     line-height: 1.6em;
     background-color: rgb(27,29,33);
 }
@@ -20,8 +21,32 @@ a {
     color: #1FA7F8;
 }
 
+a:hover {
+    color: #73bcf7;
+}
+
 li {
     padding-bottom: 4px;
 }
 
+section {
+    padding: unset;
+    margin-top: unset;
+}
 
+h1 {
+    padding-bottom: 8px;
+}
+
+h2 {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+p {
+    margin-bottom: 12px;
+}
+
+ul {
+    margin-bottom: 12px;
+}
