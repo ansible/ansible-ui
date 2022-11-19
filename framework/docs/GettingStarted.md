@@ -14,7 +14,7 @@ There is an [Ansible UI Framework Demo](https://github.com/jamestalton/ansible-u
 npm install @ansible/ansible-ui-framework
 ```
 
-## Add the [PageFramework](PageFramework.md) to your application
+## Add the PageFramework to your application
 
 Near the top of your application add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md) component.
 
