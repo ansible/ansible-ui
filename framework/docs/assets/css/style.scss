@@ -4,16 +4,25 @@
 @import "{{ site.theme }}";
 
 body {
-    color:  #FFFD;
+    color:  #FFFFFFCF;
     background-color: #101216;
 }
 
 .markdown-body h1 {
+    border-bottom: 1px solid #FFF3;
+}
+
+.markdown-body h2 {
     border-bottom: 1px solid #FFF2;
+}
+
+.markdown-body .highlight {
+    background-color: unset;
 }
 
 .markdown-body .highlight pre, .markdown-body pre {
     background-color: #08090b;
+    border-radius: 8px;
 }
 
 a {
@@ -23,22 +32,32 @@ a {
 a:hover {
     color: #73bcf7;
 }
+
 h1 {
-    color: white;
+    color: #FFFFFF;
 }
 
 h2 {
-    color: white;
+    color: #FFFFFFF7;
 }
 
 h3 {
-    color: white;
+    color: #FFFFFFEF;
 }
 
 h4 {
-    color: white;
+    color: #FFFFFFE7;
+}
+
+.p {
+    color: #FFF8;
+}
+
+.nv {
+    color: #4AD;
 }
 
 .err {
-    color: #800;
+    background: unset;
+    color: #B00;
 }
