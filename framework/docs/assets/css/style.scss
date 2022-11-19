@@ -1,8 +1,13 @@
 ---
 ---
 
-@import '{{ site.theme }}';
+@import "{{ site.theme }}";
 
 header {
   display: none;
 }
+
+title {
+  display: none;
+}
+  
