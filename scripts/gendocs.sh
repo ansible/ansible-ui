@@ -4,7 +4,7 @@ cd $SCRIPT_DIR/..
 
 OUT=./framework/docs
 
-components=("PageHeader PageLayout BulkActionDialog")
+components=("PageHeader PageLayout BulkActionDialog PageFramework")
 for component in ${components}
 do
   echo $component

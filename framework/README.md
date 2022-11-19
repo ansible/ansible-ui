@@ -6,10 +6,7 @@ A framework for building responsive web applications using [PatternFly](https://
 
 Developed by the Ansible UI developers.
 
-While PatternFly provides the building blocks and guidance on building applications,
-PatternFly does not manage state for the developer.
-
-This framework adds state management and abstractions for common patterns of application development.
+While PatternFly provides the building blocks and guidance on building applications, PatternFly does not manage state for the developer. This framework adds state management and abstractions for common patterns of application development.
 
 The framework:
 
@@ -21,69 +18,67 @@ There is an [Ansible UI Framework Demo](https://github.com/jamestalton/ansible-u
 
 ## Getting Started
 
-### Install the NPM package
+### Install the [NPM package](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
 
 ```
 npm install @ansible/ansible-ui-framework
 ```
 
-### Add PageFramework to your application
+### Add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md#PageFramework) to your application
 
-Near the top of your application add the `<PageFramework>` component.
+Near the top of your application add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md#PageFramework) component. This component adds the state management needed by the framework components.
 
-The `PageFramework` component bundles up all the context providers in the Ansible UI framework in a convienent component for framework consumers. Examples of internal context providers are translations, navigation, settings, alerts, and dialogs.
+## Use the framework in your application pages
 
-```tsx
-<PageFramework navigate={navigate}>...</PageFramework>
-```
+### Use PageLayout to control the layout in your pages
 
-### Use PageLayout in your pages
-
-The `PageLayout` is used at the start of each page. It provides a consistent layout of page elements. It enables responsive layout based on the size of the window.
+The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageLayout.md#pagelayout) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table that the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
 
 ```tsx
-(
 <Page>
   <PageLayout>
-    <PageHeader {...}/>
-    ...
-  </PageLayout>
-</Page>
-)
-```
-
-### Use PageHeader at the top of your pages
-
-The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/PageHeader.tsx) is used at the top of each page. It provides a consistent layout of header elements. It supports responsive layout based on the size of the window.
-
-```tsx
-(
-<Page>
-  <PageLayout>
-    <PageHeader
-      breadcrumbs={breadcrumbs}
-      title="Page title"
-      titleHelp="Page title popover description."
-      description="Page description"
-      headerActions={actions}
-    />
     ...
   </PageLayout>
 </Page>
 ```
 
-#### Adding a page with a table
+### Use PageHeader for the heading of your pages
 
-The `PageTable` handles the logic for tables on a page. It supports responsive layout based on the size of the window.
+The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageHeader.md#pageheader) is used at the top of each page. It provides a consistent layout of header elements.
 
 ```tsx
-<PageTable<User>
-  toolbarFilters={toolbarFilters}
-  toolbarActions={toolbarActions}
-  tableColumns={tableColumns}
-  rowActions={rowActions}
-  {...view}
-/>
+<Page>
+  <PageLayout>
+    <PageHeader ... />
+    ...
+  </PageLayout>
+</Page>
 ```
 
-See the [Table Guide](https://github.com/ansible/ansible-ui/blob/main/framework/docs/tables.md) for details.
+### Add content to the page
+
+#### Table Pages
+
+For pages containing a table, use the [PageTable](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageTable.md#pagetable) component.
+
+```tsx
+<Page>
+  <PageLayout>
+    <PageHeader ... />
+    <PageTable ... />
+  </PageLayout>
+</Page>
+```
+
+#### Form Pages
+
+For pages containing an input form, use the [PageForm](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageForm.md#pageform) component.
+
+```tsx
+<Page>
+  <PageLayout>
+    <PageHeader ... />
+    <PageForm ... />
+  </PageLayout>
+</Page>
+```
