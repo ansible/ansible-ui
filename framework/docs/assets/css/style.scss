@@ -3,11 +3,15 @@
 
 @import "{{ site.theme }}";
 
-header {
+#header {
   display: none;
 }
 
-title {
+#title {
   display: none;
 }
-  
+
+a {
+    color: #0066CC;
+}
+
