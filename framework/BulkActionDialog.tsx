@@ -263,7 +263,11 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
 }
 
 /**
- * useBulkActionDialog - react hook to open a BulkActionDialog by calling the hook with BulkActionDialogProps
+ * useBulkActionDialog - react hook to open a BulkActionDialog
+ *
+ * @example
+ * const openBulkActionDialog = useBulkActionDialog()
+ * openBulkActionDialog(...) // Pass BulkActionDialogProps
  */
 export function useBulkActionDialog<T extends object>() {
   const [_, setDialog] = usePageDialog()

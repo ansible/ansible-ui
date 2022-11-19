@@ -20,4 +20,11 @@ The easiest way to use the BulkActionDialog is then useBulkActionDialog hook.
 
 ## useBulkActionDialog()
 
-useBulkActionDialog - react hook to open a BulkActionDialog by calling the hook with BulkActionDialogProps
+useBulkActionDialog - react hook to open a BulkActionDialog
+
+## Example
+
+```tsx
+const openBulkActionDialog = useBulkActionDialog()
+openBulkActionDialog(...) // Pass BulkActionDialogProps
+```
