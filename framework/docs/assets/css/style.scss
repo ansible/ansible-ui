@@ -1,87 +1,105 @@
 ---
 ---
 
-@import "{{ site.theme }}";
+@import '{{ site.theme }}';
 
 body {
-    color:  #FFFFFFCF;
-    background-color: #101216;
+  color: #ffffffcf;
+  background-color: #101216;
 }
 
 .markdown-body h1 {
-    border-bottom: 1px solid #FFF3;
+  border-bottom: 1px solid #fff3;
 }
 
 .markdown-body h2 {
-    border-bottom: 1px solid #FFF2;
+  border-bottom: 1px solid #fff2;
 }
 
 .markdown-body .highlight {
-    background-color: unset;
+  background-color: unset;
 }
 
-.markdown-body .highlight pre, .markdown-body pre {
-    background-color: #08090b;
-    border-radius: 8px;
+.markdown-body .highlight pre,
+.markdown-body pre {
+  background-color: #08090b;
+  border-radius: 8px;
 }
 
 a {
-    color: #1FA7F8;
+  color: #1fa7f8;
 }
 
 a:hover {
-    color: #73bcf7;
+  color: #73bcf7;
 }
 
 h1 {
-    color: #FFFFFF;
+  color: #ffffff;
 }
 
 h2 {
-    color: #FFFFFFF7;
+  color: #fffffff7;
 }
 
 h3 {
-    color: #FFFFFFEF;
+  color: #ffffffef;
 }
 
 h4 {
-    color: #FFFFFFE7;
+  color: #ffffffe7;
 }
 
-.highlight pre .p {
-    color: #FFF8;
+.highlight .p {
+  color: #fff8;
 }
 
-.highlight pre .nv {
-    color: #4AD;
+.highlight .nv {
+  color: #4ad;
 }
 
-.highlight pre .nc {
-    color: #4AD;
+.highlight .nc {
+  color: #fff;
 }
 
-.highlight pre .na {
-    color: #4AD;
+.highlight .na {
+  color: #4ad;
 }
 
-.highlight pre .kd {
-    color: orangered
+.highlight .kd {
+  color: orangered;
 }
 
-.highlight pre .o {
-    color: white
+.highlight .o {
+  color: white;
 }
 
-.highlight pre .s1 {
-    color: green
+.highlight .s1 {
+  color: green;
 }
 
-.highlight pre .si {
-    color: FFF8
+.highlight .s {
+  color: FFF8;
 }
 
-.highlight pre .err {
-    background: unset;
-    color: #B00;
+.highlight .si {
+  color: FFF8;
+}
+
+.highlight .err {
+  background: unset;
+  color: #b00;
+}
+
+table {
+  background-color: #0004;
+}
+
+tr {
+  background-color: 'unset';
+  border: unset;
+}
+
+td {
+  border: unset;
 }
