@@ -7,6 +7,7 @@ body {
     color:  rgba(255, 255, 255, 0.7);
     line-height: 1.6em;
     background-color: rgb(27,29,33);
+    font-size: medium;
 }
 
 #header {
@@ -29,9 +30,15 @@ li {
     padding-bottom: 4px;
 }
 
+#wrapper {
+    display: none;
+    max-width: 1024px;
+}
+
 section {
     padding: unset;
-    margin-top: unset;
+    margin: 16px;
+    max-width: 1024px;
 }
 
 h1 {
@@ -49,4 +56,8 @@ p {
 
 ul {
     margin-bottom: 12px;
+}
+
+code {
+    font-family: monospace;
 }
