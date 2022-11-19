@@ -13,8 +13,8 @@ const view = useView()
 For different backends, the view can be wrapped to make a specific view hook for the API.
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
   ...
 }
 ```
@@ -22,13 +22,13 @@ export function Persons() {
 ## Table Columns
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
-  const tableColumns = useMemo<ITableColumn<IPerson>[]>(
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
+  const tableColumns = useMemo<ITableColumn<IUser>[]>(
     () => [
       {
         header: 'Name',
-        cell: (person) => <TextCell text={person.name} />,
+        cell: (user) => <TextCell text={user.name} />,
         sort: 'name',
       },
     ],
@@ -43,13 +43,13 @@ export function Persons() {
 The PageTable component takes in the properties from the view and shows a table for the view using the columns.
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
-  const tableColumns = useMemo<ITableColumn<IPerson>[]>(
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
+  const tableColumns = useMemo<ITableColumn<IUser>[]>(
     () => [
       {
         header: 'Name',
-        cell: (person) => <TextCell text={person.name} />,
+        cell: (user) => <TextCell text={user.name} />,
         sort: 'name',
       },
     ],
@@ -57,9 +57,9 @@ export function Persons() {
   )
   return (
     <PageLayout>
-      <PageHeader title="Persons" />
+      <PageHeader title="Users" />
       <PageBody>
-        <PageTable<IPerson> tableColumns={tableColumns} {...view} />
+        <PageTable<IUser> tableColumns={tableColumns} {...view} />
       </PageBody>
     </PageLayout>
   )
@@ -71,8 +71,8 @@ export function Persons() {
 Filters are specified using IToolbarFilter. The key is used for url querystring persistence. The query is used by the view to make the API call with the filter.
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
   const tableColumns = ...
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
@@ -87,9 +87,9 @@ export function Persons() {
   )
   return (
     <PageLayout>
-      <PageHeader title="Persons" />
+      <PageHeader title="Users" />
       <PageBody>
-        <PageTable<IPerson>
+        <PageTable<IUser>
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           {...view} />
@@ -104,33 +104,33 @@ export function Persons() {
 Toolbar actions are specified using ITypedAction.
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
   const tableColumns = ...
   const toolbarFilters = ...
-  const toolbarActions = useMemo<ITypedAction<IPerson>[]>(
+  const toolbarActions = useMemo<ITypedAction<IUser>[]>(
     () => [
       {
         type: TypedActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: 'Create person',
+        label: 'Create user',
         onClick: () => alert("TODO"),
       },
       {
         type: TypedActionType.bulk,
         icon: TrashIcon,
-        label: 'Deleted selected persons',
-        onClick: (persons) => alert("TODO"),
+        label: 'Deleted selected users',
+        onClick: (users) => alert("TODO"),
       },
     ],
     []
   )
   return (
     <PageLayout>
-      <PageHeader title="Persons" />
+      <PageHeader title="Users" />
       <PageBody>
-        <PageTable<IPerson>
+        <PageTable<IUser>
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           toolbarActions={toolbarActions}
@@ -146,8 +146,8 @@ export function Persons() {
 Row actions are specified using ITypedAction.
 
 ```tsx
-export function Persons() {
-  const view = useMyApiView<IPerson>({ url: '/api/persons' })
+export function Users() {
+  const view = useMyApiView<IUser>({ url: '/api/users' })
   const tableColumns = ...
   const toolbarFilters = ...
   const toolbarActions = ...
@@ -155,17 +155,17 @@ export function Persons() {
     () => [
       {
         icon: EditIcon,
-        label: 'Edit person',
-        onClick: (person) => alert("TODO"),
+        label: 'Edit user',
+        onClick: (user) => alert("TODO"),
       },
     ],
     [t]
   )
   return (
     <PageLayout>
-      <PageHeader title="Persons" />
+      <PageHeader title="Users" />
       <PageBody>
-        <PageTable<IPerson>
+        <PageTable<IUser>
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           toolbarActions={toolbarActions}
