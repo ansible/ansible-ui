@@ -67,7 +67,7 @@ h4 {
 }
 
 .highlight .kd {
-  color: orangered;
+  color: #4ad;
 }
 
 .highlight .o {
@@ -75,7 +75,7 @@ h4 {
 }
 
 .highlight .s1 {
-  color: #0a0;
+  color: #fffc;
 }
 
 .highlight .s {
@@ -88,11 +88,15 @@ h4 {
 
 .highlight .err {
   background: unset;
-  color: #b00;
+  color: orangered;
 }
 
-table {
+table head {
   background-color: #0004;
+}
+
+table body {
+  background-color: #0006;
 }
 
 .markdown-body table tr {
@@ -110,12 +114,13 @@ table {
 }
 
 .markdown-body table th {
-  color: FFF8;
+  color: #fffb;
   border: unset;
   border-bottom: 1px solid #fff4;
 }
 
-td code {
+.markdown-body code,
+.markdown-body tt {
   color: #4ad;
   background-color: #fff2;
 }
