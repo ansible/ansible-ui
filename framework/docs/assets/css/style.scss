@@ -66,8 +66,12 @@ h4 {
   color: #4ad;
 }
 
+.highlight .k {
+  color: #248;
+}
+
 .highlight .kd {
-  color: #4ad;
+  color: #248;
 }
 
 .highlight .o {
@@ -91,11 +95,11 @@ h4 {
   color: orangered;
 }
 
-table head {
+table thead {
   background-color: #0004;
 }
 
-table body {
+table tbody {
   background-color: #0006;
 }
 
@@ -114,7 +118,7 @@ table body {
 }
 
 .markdown-body table th {
-  color: #fffb;
+  color: #fff9;
   border: unset;
   border-bottom: 1px solid #fff4;
 }
