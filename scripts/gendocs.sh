@@ -47,3 +47,5 @@ done
 rm -f $OUT/*.md-e
 rm -f $OUT/*.md-n
 ./node_modules/.bin/prettier --write $OUT/*.md
+
+cp $OUT/Framework.md $OUT/index.md
