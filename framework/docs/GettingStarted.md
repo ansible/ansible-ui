@@ -16,7 +16,7 @@ npm install @ansible/ansible-ui-framework
 
 ## Add the PageFramework to your application
 
-Near the top of your application add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md) component.
+Near the top of your application add the [PageFramework](PageFramework.md) component.
 
 This component adds the state management needed by the framework.
 
@@ -24,7 +24,7 @@ This component adds the state management needed by the framework.
 
 ### Use PageLayout to control the layout in your pages
 
-The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageLayout.md) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table that the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
+The [PageLayout](PageLayout.md) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table where the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
 
 ```tsx
 <Page>
@@ -37,7 +37,7 @@ The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/
 
 ### Use PageHeader for the heading of your pages
 
-The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
+The [PageHeader](PageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
 
 ```tsx
 <Page>
@@ -52,7 +52,7 @@ The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/
 
 #### Table Pages
 
-For pages containing a table, use the [PageTable](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageTable.md) component.
+For pages containing a table, use the [PageTable](PageTable.md) component. The PageTable support table, list, and card views of the data.
 
 ```tsx
 <Page>
@@ -65,7 +65,7 @@ For pages containing a table, use the [PageTable](https://github.com/ansible/ans
 
 #### Form Pages
 
-For pages containing an input form, use the [PageForm](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageForm.md) component.
+For pages containing an input form, use the [PageForm](PageForm.md) component.
 
 ```tsx
 <Page>
@@ -76,4 +76,18 @@ For pages containing an input form, use the [PageForm](https://github.com/ansibl
 </Page>
 ```
 
-## Next Steps
+#### Detail Pages
+
+TODO
+
+#### Page sub navigation
+
+TODO
+
+### Other Components
+
+<!-- - [PageAlertToaster](PageAlertToaster.md) -->
+- [BulkActionDialog](BulkActionDialog.md)
+<!-- - [BulkConfirmationDialog](BulkConfirmationDialog.md) -->
+<!-- - [SelectDialog](SelectDialog.md) -->
+<!-- - [SelectMultipleDialog](SelectMultipleDialog.md) -->
