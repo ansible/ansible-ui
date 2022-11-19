@@ -6,7 +6,7 @@ OUT=./framework/docs
 
 components=("BulkActionDialog PageFramework PageHeader PageLayout PageTable")
 
-echo "[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ Components" > $OUT/Components.md
+echo "[Ansible UI Framework](Framework.md) ▸ Components" > $OUT/Components.md
 echo "" >> $OUT/Components.md
 echo "# Ansible UI Components" >> $OUT/Components.md
 echo "" >> $OUT/Components.md
@@ -36,12 +36,12 @@ do
   sed -i -e "s/\`Array(\(.*\))\`/\`\1[]\`/" "$OUT/${component}.md"
   sed -i -e "s/() ⇒//" "$OUT/${component}.md"
 
-  echo "[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Components](Components.md#ansible-ui-components) ▸ ${component}" > temp.md
+  echo "[Ansible UI Framework](Framework.md) ▸ [Components](Components.md) ▸ ${component}" > temp.md
   cat "$OUT/${component}.md" >> temp.md
   rm -f "$OUT/${component}.md"
   mv temp.md "$OUT/${component}.md"
 
-  echo "- [${component}](${component}.md#${component})" >> $OUT/Components.md
+  echo "- [${component}](${component}.md)" >> $OUT/Components.md
 done
 
 rm -f $OUT/*.md-e

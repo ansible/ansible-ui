@@ -1,4 +1,4 @@
-[Ansible UI Framework](Framework.md#ansible-ui-framework) ▸ [Guides](Guides.md#ansible-ui-guides) ▸ Getting Started
+[Ansible UI Framework](Framework.md) ▸ [Guides](Guides.md) ▸ Getting Started
 
 # Getting Started
 
@@ -14,9 +14,9 @@ There is an [Ansible UI Framework Demo](https://github.com/jamestalton/ansible-u
 npm install @ansible/ansible-ui-framework
 ```
 
-## Add the [PageFramework](PageFramework.md#pageframework) to your application
+## Add the [PageFramework](PageFramework.md) to your application
 
-Near the top of your application add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md#PageFramework) component.
+Near the top of your application add the [PageFramework](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageFramework.md) component.
 
 This component adds the state management needed by the framework.
 
@@ -24,7 +24,7 @@ This component adds the state management needed by the framework.
 
 ### Use PageLayout to control the layout in your pages
 
-The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageLayout.md#pagelayout) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table that the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
+The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageLayout.md) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table that the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
 
 ```tsx
 <Page>
@@ -37,7 +37,7 @@ The [PageLayout](https://github.com/ansible/ansible-ui/blob/main/framework/docs/
 
 ### Use PageHeader for the heading of your pages
 
-The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageHeader.md#pageheader) is used at the top of each page. It provides a consistent layout of header elements.
+The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
 
 ```tsx
 <Page>
@@ -52,7 +52,7 @@ The [PageHeader](https://github.com/ansible/ansible-ui/blob/main/framework/docs/
 
 #### Table Pages
 
-For pages containing a table, use the [PageTable](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageTable.md#pagetable) component.
+For pages containing a table, use the [PageTable](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageTable.md) component.
 
 ```tsx
 <Page>
@@ -65,7 +65,7 @@ For pages containing a table, use the [PageTable](https://github.com/ansible/ans
 
 #### Form Pages
 
-For pages containing an input form, use the [PageForm](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageForm.md#pageform) component.
+For pages containing an input form, use the [PageForm](https://github.com/ansible/ansible-ui/blob/main/framework/docs/PageForm.md) component.
 
 ```tsx
 <Page>
