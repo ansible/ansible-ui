@@ -10,6 +10,8 @@ A framework for building applications using [PatternFly](https://www.patternfly.
 
 The framework is made up of high level components abstracting design patterns away from the PatternFly components used underneath.
 
+While PatternFly provides the building blocks and guidance on building applications, PatternFly does not manage state for the developer. This framework adds state management and abstractions for common patterns of application development.
+
 This framework:
 
 - does not use any state libraries other than the built in react context state management.

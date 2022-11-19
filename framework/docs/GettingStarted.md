@@ -2,13 +2,9 @@
 
 # Getting Started
 
-While PatternFly provides the building blocks and guidance on building applications, PatternFly does not manage state for the developer. This framework adds state management and abstractions for common patterns of application development.
-
-There is an [Ansible UI Framework Demo](https://github.com/jamestalton/ansible-ui-framework-demo) repo showing an example of using the framework.
-
 ## Install the NPM package
 
-[NPM Package: @ansible/ansible-ui-framework](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
+NPM Package: [@ansible/ansible-ui-framework](https://www.npmjs.com/package/@ansible/ansible-ui-framework)
 
 ```
 npm install @ansible/ansible-ui-framework
@@ -84,7 +80,7 @@ TODO
 
 TODO
 
-### Other Components
+### Other Useful Components
 
 <!-- - [PageAlertToaster](PageAlertToaster.md) -->
 
