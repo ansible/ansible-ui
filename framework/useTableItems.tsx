@@ -217,7 +217,7 @@ export function useSelected<T extends object>(
 }
 
 export function useSelectedInMemory<T extends object>(
-  items: T[],
+  items: T[] | undefined,
   keyFn: (item: T) => string | number
 ) {
   const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
@@ -226,15 +226,17 @@ export function useSelectedInMemory<T extends object>(
     setSelectedMap((selectedMap) => {
       let changed = false
 
-      const itemsKeys = items.reduce((itemsKeys, item) => {
-        const key = keyFn(item)
-        itemsKeys[key] = item
-        if (selectedMap[key] && selectedMap[key] !== item) {
-          changed = true
-          selectedMap[key] = item
-        }
-        return itemsKeys
-      }, {} as Record<string | number, T>)
+      const itemsKeys = !items
+        ? {}
+        : items.reduce((itemsKeys, item) => {
+            const key = keyFn(item)
+            itemsKeys[key] = item
+            if (selectedMap[key] && selectedMap[key] !== item) {
+              changed = true
+              selectedMap[key] = item
+            }
+            return itemsKeys
+          }, {} as Record<string | number, T>)
 
       const removeKeyMap: Record<string | number, true> = {}
       for (const key in selectedMap) {
@@ -317,7 +319,7 @@ export function useSelectedInMemory<T extends object>(
   )
 
   const selectAll = useCallback(() => {
-    selectItems(items)
+    selectItems(items ?? [])
   }, [items, selectItems])
 
   const unselectAll = useCallback(() => {
@@ -331,9 +333,10 @@ export function useSelectedInMemory<T extends object>(
 
   const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
   const allSelected = useMemo(
-    () => selectedItems.length === items.length,
-    [items.length, selectedItems.length]
+    () => selectedItems.length === items?.length ?? 0,
+    [items, selectedItems.length]
   )
+
   return useMemo(
     () => ({
       selectedItems,
@@ -367,12 +370,13 @@ export interface ISort<T extends object> {
   sortFn: (l: T, r: T) => number
   direction: 'asc' | 'desc'
 }
-export function useSorted<T extends object>(items: T[]) {
+export function useSorted<T extends object>(items: T[] | undefined) {
   const [sort, setSort] = useState<ISort<T>>()
 
   const { direction, sortFn } = sort ?? {}
 
   const sorted = useMemo(() => {
+    if (!items) return []
     if (sortFn) {
       if (direction === 'asc') {
         return [...items.sort(sortFn)]

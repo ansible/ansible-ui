@@ -1,5 +1,5 @@
 import { EditIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITypedAction, TypedActionType } from '../../../../framework'
@@ -10,7 +10,8 @@ import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments
 export function useExecutionEnvironmentActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => void refresh())
+  const refreshHandler = useCallback(() => void refresh(), [refresh])
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(refreshHandler)
   return useMemo<ITypedAction<EdaExecutionEnvironment>[]>(
     () => [
       {

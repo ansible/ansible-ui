@@ -16,7 +16,7 @@ export function RulebookActivations() {
   const navigate = useNavigate()
   const toolbarFilters = useRulebookActivationFilters()
   const { data: rulebookActivations, mutate: refresh } = useGet<EdaRulebookActivation[]>(
-    '/api/rulebookActivations'
+    '/api/activation_instances'
   )
   const tableColumns = useRulebookActivationColumns()
   const view = useInMemoryView<EdaRulebookActivation>({

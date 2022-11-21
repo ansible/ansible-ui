@@ -471,7 +471,7 @@ function TableHead<T extends object>(props: {
                     settings.theme === 'dark'
                       ? 'var(--pf-global--BackgroundColor--300)'
                       : undefined,
-                  width: index === 0 ? '0%' : undefined,
+                  width: column.isIdColumn ? '0%' : undefined,
                 }}
                 sort={getColumnSort(index, column)}
               >
@@ -657,6 +657,7 @@ export interface ITableColumn<T extends object> {
   minWidth?: number
   maxWidth?: number
   enabled?: boolean
+  isIdColumn?: boolean
 
   sort?: string
   defaultSortDirection?: 'asc' | 'desc'

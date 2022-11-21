@@ -21,7 +21,7 @@ export function EditRulebookActivation() {
   const params = useParams<{ id?: string }>()
   const id = Number(params.id)
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
-    `/api/rulebookActivations/${id.toString()}`
+    `/api/activation_instances/${id.toString()}`
   )
 
   const RulebookActivationSchemaType = useMemo(
@@ -48,14 +48,14 @@ export function EditRulebookActivation() {
     try {
       if (Number.isInteger(id)) {
         rulebookActivation = await requestPatch<EdaRulebookActivation>(
-          `/api/rulebookActivations/${id}`,
+          `/api/activation_instances/${id}`,
           rulebookActivation
         )
         ;(cache as unknown as { clear: () => void }).clear?.()
         navigate(-1)
       } else {
         const newRulebookActivation = await requestPost<EdaRulebookActivation>(
-          '/api/rulebookActivations',
+          '/api/activation_instances',
           rulebookActivation
         )
         ;(cache as unknown as { clear: () => void }).clear?.()

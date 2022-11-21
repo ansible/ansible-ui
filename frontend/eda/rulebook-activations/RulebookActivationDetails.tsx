@@ -15,7 +15,7 @@ export function RulebookActivationDetails() {
   const { t } = useTranslation()
   const params = useParams<{ id: string }>()
   const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
-    `/api/rulebookActivations/${params.id ?? ''}`
+    `/api/activation_instances/${params.id ?? ''}`
   )
   const settings = useSettings()
   const tableColumns = useRulebookActivationColumns()
