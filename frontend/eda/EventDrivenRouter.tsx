@@ -2,12 +2,24 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AutomationServersPage } from '../automation-servers/AutomationServersPage'
 import { RouteE } from '../Routes'
 import Dashboard from './dashboard/Dashboard'
+import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment'
+import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails'
+import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments'
 import { EditInventory } from './inventories/EditInventory'
 import { Inventories } from './inventories/Inventories'
 import { InventoryDetails } from './inventories/InventoryDetails'
 import { EditProject } from './projects/EditProject'
 import { ProjectDetails } from './projects/ProjectDetails'
 import { Projects } from './projects/Projects'
+import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation'
+import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails'
+import { RulebookActivations } from './rulebook-activations/RulebookActivations'
+import { EditRulebook } from './rulebooks/EditRulebook'
+import { RulebookDetails } from './rulebooks/RulebookDetails'
+import { Rulebooks } from './rulebooks/Rulebooks'
+import { EditRule } from './rules/EditRule'
+import { RuleDetails } from './rules/RuleDetails'
+import { Rules } from './rules/Rules'
 import { UnderDevelopment } from './under-development/UnderDevelopment'
 
 export function EventDrivenRouter() {
@@ -27,19 +39,19 @@ export function EventDrivenRouter() {
 
       <Route
         path={RouteE.CreateEdaExecutionEnvironment.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<EditExecutionEnvironment />}
       />
       <Route
         path={RouteE.EditEdaExecutionEnvironment.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<EditExecutionEnvironment />}
       />
       <Route
         path={RouteE.EdaExecutionEnvironmentDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<ExecutionEnvironmentDetails />}
       />
       <Route
         path={RouteE.EdaExecutionEnvironments.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<ExecutionEnvironments />}
       />
 
       <Route path={RouteE.CreateEdaInventory.replace(RouteE.Eda, '')} element={<EditInventory />} />
@@ -60,19 +72,19 @@ export function EventDrivenRouter() {
 
       <Route
         path={RouteE.CreateEdaRulebookActivation.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<EditRulebookActivation />}
       />
       <Route
         path={RouteE.EditEdaRulebookActivation.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<EditRulebookActivation />}
       />
       <Route
         path={RouteE.EdaRulebookActivationDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<RulebookActivationDetails />}
       />
       <Route
         path={RouteE.EdaRulebookActivations.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<RulebookActivations />}
       />
 
       <Route
@@ -86,24 +98,18 @@ export function EventDrivenRouter() {
       />
       <Route path={RouteE.EdaActivities.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
 
-      <Route
-        path={RouteE.CreateEdaRulebook.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route path={RouteE.EditEdaRulebook.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
+      <Route path={RouteE.CreateEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
+      <Route path={RouteE.EditEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
       <Route
         path={RouteE.EdaRulebookDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
+        element={<RulebookDetails />}
       />
-      <Route path={RouteE.EdaRulebooks.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
+      <Route path={RouteE.EdaRulebooks.replace(RouteE.Eda, '')} element={<Rulebooks />} />
 
-      <Route path={RouteE.CreateEdaRule.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-      <Route path={RouteE.EditEdaRule.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-      <Route
-        path={RouteE.EdaProjectDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
+      <Route path={RouteE.CreateEdaRule.replace(RouteE.Eda, '')} element={<EditRule />} />
+      <Route path={RouteE.EditEdaRule.replace(RouteE.Eda, '')} element={<EditRule />} />
+      <Route path={RouteE.EdaRuleDetails.replace(RouteE.Eda, '')} element={<RuleDetails />} />
+      <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
 
       <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
     </Routes>

@@ -7,27 +7,32 @@ import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
 import { useGet } from '../../common/useItem'
 import { RouteE } from '../../Routes'
-import { EdaProject } from '../interfaces/EdaProject'
-import { useProjectRowActions } from './hooks/useProjectRowActions'
-import { useProjectsColumns } from './hooks/useProjectsColumns'
+import { EdaRulebook } from '../interfaces/EdaRulebook'
+import { useRulebookActions } from './hooks/useRulebookActions'
+import { useRulebookColumns } from './hooks/useRulebookColumns'
 
-export function ProjectDetails() {
+export function RulebookDetails() {
   const { t } = useTranslation()
   const params = useParams<{ id: string }>()
-  const { data: project, mutate: refresh } = useGet<EdaProject>(`/api/projects/${params.id ?? ''}`)
+  const { data: rulebook, mutate: refresh } = useGet<EdaRulebook>(
+    `/api/rulebooks/${params.id ?? ''}`
+  )
   const settings = useSettings()
-  const tableColumns = useProjectsColumns()
-  const itemActions = useProjectRowActions(refresh)
+  const tableColumns = useRulebookColumns()
+  const itemActions = useRulebookActions(refresh)
   return (
     <PageLayout>
       <PageHeader
-        title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteE.EdaProjects }, { label: project?.name }]}
+        title={rulebook?.name}
+        breadcrumbs={[
+          { label: t('Rulebooks'), to: RouteE.EdaRulebooks },
+          { label: rulebook?.name },
+        ]}
         headerActions={
-          <TypedActions<EdaProject>
+          <TypedActions<EdaRulebook>
             actions={itemActions}
             position={DropdownPosition.right}
-            selectedItem={project}
+            selectedItem={rulebook}
           />
         }
       />
@@ -39,7 +44,7 @@ export function ProjectDetails() {
               settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           }}
         >
-          <TableDetails item={project} columns={tableColumns} />
+          <TableDetails item={rulebook} columns={tableColumns} />
         </PageSection>
       </Scrollable>
     </PageLayout>

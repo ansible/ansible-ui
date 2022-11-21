@@ -10,6 +10,7 @@ export type IInMemoryView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined
     pageItems: T[] | undefined
+    error: Error | undefined
   }
 
 export function useInMemoryView<T extends object>(options: {
@@ -18,6 +19,7 @@ export function useInMemoryView<T extends object>(options: {
   toolbarFilters?: IToolbarFilter[]
   disableQueryString?: boolean
   keyFn: (item: T) => string | number
+  error?: Error
 }): IInMemoryView<T> {
   const { items, keyFn, tableColumns, toolbarFilters, disableQueryString } = options
   const view = useView(
@@ -28,7 +30,7 @@ export function useInMemoryView<T extends object>(options: {
   )
   const { page, perPage, sort, sortDirection, filters } = view
 
-  const sorted = useSorted(items ?? [])
+  const sorted = useSorted(items)
   const { setSort } = sorted
   useEffect(
     () =>
@@ -72,14 +74,15 @@ export function useInMemoryView<T extends object>(options: {
   useEffect(() => setPage(page), [page, paged, setPage])
   useEffect(() => setPerPage(perPage), [perPage, paged, setPerPage])
 
-  const selection = useSelectedInMemory(items ?? [], keyFn)
+  const selection = useSelectedInMemory(items, keyFn)
 
   return useMemo(() => {
     return {
-      itemCount: items ? filtered.filtered.length : 0,
+      itemCount: items ? filtered.filtered.length : undefined,
       pageItems: items ? paged.paged : undefined,
+      error: options.error,
       ...view,
       ...selection,
     }
-  }, [filtered.filtered.length, items, paged.paged, selection, view])
+  }, [filtered.filtered.length, items, options.error, paged.paged, selection, view])
 }

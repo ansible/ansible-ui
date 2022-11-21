@@ -60,8 +60,8 @@ export function EventDrivenSidebar(props: {
         </NavItem>
       </NavExpandable>
       <NavExpandable
-        key="resources"
-        title={t('Resources')}
+        key="views"
+        title={t('Views')}
         isExpanded
         isActive={isRouteActive([RouteE.EdaActions, RouteE.EdaRulebookActivations], location)}
       >

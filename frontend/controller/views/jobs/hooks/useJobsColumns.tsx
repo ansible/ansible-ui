@@ -15,6 +15,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         cell: (job: UnifiedJob) => job.id,
         sort: 'id',
         card: 'hidden',
+        isIdColumn: true,
       },
       {
         header: t('Name'),

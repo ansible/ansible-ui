@@ -8,11 +8,11 @@ import { RouteE } from '../../../Routes'
 import { EdaProject } from '../../interfaces/EdaProject'
 import { useDeleteProjects } from './useDeleteProjects'
 
-export function useProjectsToolbarActions(refresh: () => Promise<unknown>) {
+export function useProjectsActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const deleteProjects = useDeleteProjects(() => void refresh())
-  const toolbarActions = useMemo<ITypedAction<EdaProject>[]>(
+  return useMemo<ITypedAction<EdaProject>[]>(
     () => [
       {
         type: TypedActionType.button,
@@ -30,5 +30,4 @@ export function useProjectsToolbarActions(refresh: () => Promise<unknown>) {
     ],
     [deleteProjects, navigate, t]
   )
-  return toolbarActions
 }

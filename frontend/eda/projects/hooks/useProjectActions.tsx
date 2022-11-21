@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom'
 import { ITypedAction, TypedActionType } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import { EdaProject } from '../../interfaces/EdaProject'
-import { useDeleteProjects } from '../hooks/useDeleteProjects'
+import { useDeleteProjects } from './useDeleteProjects'
 
-export function useProjectRowActions(refresh: () => Promise<unknown>) {
+export function useProjectActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const deleteProjects = useDeleteProjects(() => void refresh())
-  const rowActions = useMemo<ITypedAction<EdaProject>[]>(
+  return useMemo<ITypedAction<EdaProject>[]>(
     () => [
       {
         type: TypedActionType.single,
@@ -29,5 +29,4 @@ export function useProjectRowActions(refresh: () => Promise<unknown>) {
     ],
     [deleteProjects, navigate, t]
   )
-  return rowActions
 }
