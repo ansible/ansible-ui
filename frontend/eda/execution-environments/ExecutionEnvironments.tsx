@@ -34,7 +34,7 @@ export function ExecutionEnvironments() {
   )
   return (
     <TablePage
-      title={t('ExecutionEnvironments')}
+      title={t('Execution environments')}
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}

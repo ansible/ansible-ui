@@ -29,7 +29,7 @@ export function RulebookActivations() {
   const rowActions = useRulebookActivationActions(refresh)
   return (
     <TablePage
-      title={t('RulebookActivations')}
+      title={t('Rulebook activations')}
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}
