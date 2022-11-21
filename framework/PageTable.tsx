@@ -121,7 +121,19 @@ export type PageTableProps<T extends object> = {
 }
 
 /**
- * PageTable
+ * The PageTable component is used for adding a table to a page.
+ *
+ * See the [Table Guide](docs/guides/PageTableGuide.md).
+ *
+ * @example
+ * ```tsx
+ * <Page>
+ *   <PageLayout>
+ *     <PageHeader ... />
+ *     <PageTable ... />
+ *   </PageLayout>
+ * </Page>
+ * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   let { disableBodyPadding } = props
