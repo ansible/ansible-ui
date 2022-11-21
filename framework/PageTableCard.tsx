@@ -208,6 +208,10 @@ export function useColumnsToTableCardFn<T extends object>(
 ): (item: T) => IPageTableCard {
   const cardData = useMemo(() => {
     let cols = columns.filter((column) => column.card !== 'hidden')
+
+    const countColumns = cols.filter((column) => column.card === 'count')
+    cols = cols.filter((column) => column.card !== 'count')
+
     const nameColumn = cols.find((column) => column.primary) ?? cols[0]
     cols = cols.filter((column) => column !== nameColumn)
     const descriptionColumn = cols.find((column) => column.card === 'description')
@@ -217,6 +221,7 @@ export function useColumnsToTableCardFn<T extends object>(
     return {
       nameColumn: nameColumn,
       descriptionColumn: descriptionColumn,
+      countColumns,
       columns: cols,
     }
   }, [columns])
@@ -235,11 +240,33 @@ export function useColumnsToTableCardFn<T extends object>(
                   {column.cell(item)}
                 </Detail>
               ))}
+              {cardData.countColumns.length > 0 && (
+                <Detail>
+                  <div style={{ display: 'flex', gap: 16 }}>
+                    {cardData.countColumns.map((column, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                        {column.cell(item)}
+                        <small style={{ opacity: 0.7 }}>{column.header}</small>
+                      </div>
+                    ))}
+                  </div>
+                </Detail>
+              )}
             </DescriptionList>
           </CardBody>
         ),
+        // labels: [{ label: 'hhh' }],
+      }
+      if (cardData.columns.length === 0 && cardData.countColumns.length === 0) {
+        pageTableCard.cardBody = undefined
       }
       return pageTableCard
     }
-  }, [cardData.columns, cardData.descriptionColumn, cardData.nameColumn, keyFn])
+  }, [
+    cardData.columns,
+    cardData.countColumns,
+    cardData.descriptionColumn,
+    cardData.nameColumn,
+    keyFn,
+  ])
 }

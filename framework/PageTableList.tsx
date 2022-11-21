@@ -126,29 +126,31 @@ export function useColumnsToDataList<T extends object>(
                           )
                         )}
                       </Stack>
-                      <DescriptionList isCompact>
-                        {data.columns.map((column) => {
-                          const value = column.cell(item)
-                          if (!value) return <></>
-                          return (
-                            <DescriptionListGroup key={column.header}>
-                              {!column.hideLabel && (
-                                <DescriptionListTerm>
-                                  <Text
-                                    component="small"
-                                    style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
-                                  >
-                                    {column.header}
-                                  </Text>
-                                </DescriptionListTerm>
-                              )}
-                              <DescriptionListDescription>
-                                {column.cell(item)}
-                              </DescriptionListDescription>
-                            </DescriptionListGroup>
-                          )
-                        })}
-                      </DescriptionList>
+                      {data.columns.length > 0 && (
+                        <DescriptionList isCompact>
+                          {data.columns.map((column) => {
+                            const value = column.cell(item)
+                            if (!value) return <></>
+                            return (
+                              <DescriptionListGroup key={column.header}>
+                                {!column.hideLabel && (
+                                  <DescriptionListTerm>
+                                    <Text
+                                      component="small"
+                                      style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
+                                    >
+                                      {column.header}
+                                    </Text>
+                                  </DescriptionListTerm>
+                                )}
+                                <DescriptionListDescription>
+                                  {column.cell(item)}
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            )
+                          })}
+                        </DescriptionList>
+                      )}
                     </Stack>
                   </Flex>
                 </DataListCell>,
