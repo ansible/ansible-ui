@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core'
 import { DownloadIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,6 +31,7 @@ export function SignatureKeys() {
     () => [
       {
         type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: DownloadIcon,
         label: t('Download key'),
         onClick: (signatureKey) => downloadTextFile('key', signatureKey?.public_key ?? ''),

@@ -32,36 +32,40 @@ export function Token() {
         description={t('An API token can be used to authenticate the ansible-galaxy client.')}
       />
       <PageBody>
-        <PageSection variant="light">
-          {token ? (
-            <Stack hasGutter>
-              <Alert
-                variant="warning"
-                isInline
-                title={t('Copy this token now. This is the only time you will ever see it.')}
-              />
+        {token ? (
+          <Stack>
+            <Alert
+              variant="warning"
+              isInline
+              title={t('Copy this token now. This is the only time you will ever see it.')}
+            />
+            <PageSection variant="light">
               <CopyCell text={token} />
-            </Stack>
-          ) : (
-            <Stack hasGutter>
-              <Alert
-                variant="warning"
-                isInline
-                title={t('Generating a new token will delete your old token.')}
-              />
-              <ActionGroup>
-                <Button
-                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                  onClick={onClick}
-                  isDisabled={working}
-                >
-                  {t('Generate token')}
-                </Button>
-              </ActionGroup>
-              {error && <Alert variant="danger" isInline title={error} />}
-            </Stack>
-          )}
-        </PageSection>
+            </PageSection>
+          </Stack>
+        ) : (
+          <Stack>
+            <Alert
+              variant="warning"
+              isInline
+              title={t('Generating a new token will delete your old token.')}
+            />
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <ActionGroup>
+                  <Button
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    onClick={onClick}
+                    isDisabled={working}
+                  >
+                    {t('Generate token')}
+                  </Button>
+                </ActionGroup>
+                {error && <Alert variant="danger" isInline title={error} />}
+              </Stack>
+            </PageSection>
+          </Stack>
+        )}
       </PageBody>
     </PageLayout>
   )
