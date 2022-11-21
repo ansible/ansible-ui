@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { compareStrings, useBulkConfirmation } from '../../../../framework'
 import { requestDelete } from '../../../Data'
 import { idKeyFn } from '../../../hub/useHubView'
-import { EdaRulebook } from '../../interfaces/EdaRulebook'
+import { EdaRulebook } from '../../interfaces/EdaRulebook2'
 import { useRulebookColumns } from './useRulebookColumns'
 
 export function useDeleteRulebooks(onComplete: (rulebooks: EdaRulebook[]) => void) {

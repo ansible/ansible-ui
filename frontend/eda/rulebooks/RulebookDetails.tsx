@@ -7,7 +7,7 @@ import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
 import { useGet } from '../../common/useItem'
 import { RouteE } from '../../Routes'
-import { EdaRulebook } from '../interfaces/EdaRulebook'
+import { EdaRulebook } from '../interfaces/EdaRulebook2'
 import { useRulebookActions } from './hooks/useRulebookActions'
 import { useRulebookColumns } from './hooks/useRulebookColumns'
 
