@@ -11,6 +11,12 @@ export function useExecutionEnvironmentColumns() {
   return useMemo<ITableColumn<EdaExecutionEnvironment>[]>(
     () => [
       {
+        header: t('ID'),
+        cell: (inventory) => inventory.id,
+        isIdColumn: true,
+        sort: 'id',
+      },
+      {
         header: t('Name'),
         cell: (executionEnvironment) => (
           <TextCell
@@ -26,6 +32,8 @@ export function useExecutionEnvironmentColumns() {
           />
         ),
         sort: 'name',
+        primary: true,
+        defaultSort: true,
       },
     ],
     [navigate, t]

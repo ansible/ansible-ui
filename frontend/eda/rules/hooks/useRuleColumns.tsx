@@ -11,6 +11,12 @@ export function useRuleColumns() {
   return useMemo<ITableColumn<EdaRule>[]>(
     () => [
       {
+        header: t('ID'),
+        cell: (inventory) => inventory.id,
+        isIdColumn: true,
+        sort: 'id',
+      },
+      {
         header: t('Name'),
         cell: (rule) => (
           <TextCell
@@ -19,6 +25,8 @@ export function useRuleColumns() {
           />
         ),
         sort: 'name',
+        primary: true,
+        defaultSort: true,
       },
     ],
     [navigate, t]

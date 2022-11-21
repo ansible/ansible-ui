@@ -11,6 +11,12 @@ export function useProjectColumns() {
   return useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
+        header: t('ID'),
+        cell: (inventory) => inventory.id,
+        isIdColumn: true,
+        sort: 'id',
+      },
+      {
         header: t('Name'),
         cell: (project) => (
           <TextCell
@@ -19,6 +25,8 @@ export function useProjectColumns() {
           />
         ),
         sort: 'name',
+        primary: true,
+        defaultSort: true,
       },
       {
         header: t('Url'),
