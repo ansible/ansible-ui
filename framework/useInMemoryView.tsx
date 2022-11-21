@@ -78,7 +78,7 @@ export function useInMemoryView<T extends object>(options: {
 
   return useMemo(() => {
     return {
-      itemCount: items ? filtered.filtered.length : 0,
+      itemCount: items ? filtered.filtered.length : undefined,
       pageItems: items ? paged.paged : undefined,
       error: options.error,
       ...view,
