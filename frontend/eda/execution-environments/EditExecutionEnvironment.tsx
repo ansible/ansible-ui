@@ -79,7 +79,7 @@ export function EditExecutionEnvironment() {
           <PageHeader
             breadcrumbs={[
               { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
-              { label: t('Edit executionEnvironment') },
+              { label: t('Edit execution environment') },
             ]}
           />
         </PageLayout>
@@ -88,16 +88,16 @@ export function EditExecutionEnvironment() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit executionEnvironment')}
+            title={t('Edit execution environment')}
             breadcrumbs={[
               { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
-              { label: t('Edit executionEnvironment') },
+              { label: t('Edit execution environment') },
             ]}
           />
           <PageBody>
             <PageForm
               schema={ExecutionEnvironmentSchemaType}
-              submitText={t('Save executionEnvironment')}
+              submitText={t('Save execution environment')}
               onSubmit={onSubmit}
               cancelText={t('Cancel')}
               onCancel={onCancel}
@@ -111,16 +111,16 @@ export function EditExecutionEnvironment() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create executionEnvironment')}
+          title={t('Create execution environment')}
           breadcrumbs={[
             { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
-            { label: t('Create executionEnvironment') },
+            { label: t('Create execution environment') },
           ]}
         />
         <PageBody>
           <PageForm
             schema={ExecutionEnvironmentSchemaType}
-            submitText={t('Create executionEnvironment')}
+            submitText={t('Create execution environment')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}

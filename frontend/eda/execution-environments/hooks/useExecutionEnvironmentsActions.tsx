@@ -19,13 +19,13 @@ export function useExecutionEnvironmentsActions(refresh: () => Promise<unknown>)
         type: TypedActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: t('Create executionEnvironment'),
+        label: t('Create execution environment'),
         onClick: () => navigate(RouteE.CreateEdaExecutionEnvironment),
       },
       {
         type: TypedActionType.bulk,
         icon: TrashIcon,
-        label: t('Delete selected executionEnvironments'),
+        label: t('Delete selected execution environments'),
         onClick: (executionEnvironments: EdaExecutionEnvironment[]) =>
           deleteExecutionEnvironments(executionEnvironments),
       },

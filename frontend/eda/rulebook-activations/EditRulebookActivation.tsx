@@ -75,8 +75,8 @@ export function EditRulebookActivation() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
-              { label: t('Edit rulebookActivation') },
+              { label: t('Rulebook activations'), to: RouteE.EdaRulebookActivations },
+              { label: t('Edit rulebook activation') },
             ]}
           />
         </PageLayout>
@@ -85,16 +85,16 @@ export function EditRulebookActivation() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit rulebookActivation')}
+            title={t('Edit rulebook activation')}
             breadcrumbs={[
-              { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
-              { label: t('Edit rulebookActivation') },
+              { label: t('Rulebook activations'), to: RouteE.EdaRulebookActivations },
+              { label: t('Edit rulebook activation') },
             ]}
           />
           <PageBody>
             <PageForm
               schema={RulebookActivationSchemaType}
-              submitText={t('Save rulebookActivation')}
+              submitText={t('Save rulebook activation')}
               onSubmit={onSubmit}
               cancelText={t('Cancel')}
               onCancel={onCancel}
@@ -108,16 +108,16 @@ export function EditRulebookActivation() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create rulebookActivation')}
+          title={t('Create rulebook activation')}
           breadcrumbs={[
             { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
-            { label: t('Create rulebookActivation') },
+            { label: t('Create rulebook activation') },
           ]}
         />
         <PageBody>
           <PageForm
             schema={RulebookActivationSchemaType}
-            submitText={t('Create rulebookActivation')}
+            submitText={t('Create rulebook activation')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}

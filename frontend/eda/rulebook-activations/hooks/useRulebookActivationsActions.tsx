@@ -18,13 +18,13 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
         type: TypedActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: t('Create rulebookActivation'),
+        label: t(' activation'),
         onClick: () => navigate(RouteE.CreateEdaRulebookActivation),
       },
       {
         type: TypedActionType.bulk,
         icon: TrashIcon,
-        label: t('Delete selected rulebookActivations'),
+        label: t('Delete selected rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
       },
