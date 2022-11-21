@@ -9,6 +9,7 @@ import { useCancelJobs } from './hooks/useCancelJobs'
 import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useJobsColumns } from './hooks/useJobsColumns'
 import { useJobsFilters } from './hooks/useJobsFilters'
+import { isJobRunning } from './jobUtils'
 
 export default function Jobs() {
   const { t } = useTranslation()
@@ -45,23 +46,40 @@ export default function Jobs() {
     [deleteJobs, cancelJobs, t]
   )
 
-  const rowActions = useMemo<ITypedAction<UnifiedJob>[]>(
-    () => [
+  const rowActions = useMemo<ITypedAction<UnifiedJob>[]>(() => {
+    const cannotDeleteJob = (job: UnifiedJob) => {
+      if (!job.summary_fields.user_capabilities.delete)
+        return t(`The job cannot be deleted due to insufficient permission`)
+      else if (isJobRunning(job.status))
+        return t(`The job cannot be deleted due to a running job status`)
+      return ''
+    }
+
+    const cannotCancelJob = (job: UnifiedJob) => {
+      if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
+        return t(`The job cannot be canceled due to insufficient permission`)
+      else if (!isJobRunning(job.status))
+        return t(`The job cannot be canceled because it is not running`)
+      return ''
+    }
+
+    return [
       {
         type: TypedActionType.single,
         icon: TrashIcon,
         label: t(`Delete job`),
+        isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
         onClick: (job: UnifiedJob) => deleteJobs([job]),
       },
       {
         type: TypedActionType.single,
         icon: BanIcon,
         label: t(`Cancel job`),
+        isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
-    ],
-    [deleteJobs, cancelJobs, t]
-  )
+    ]
+  }, [deleteJobs, cancelJobs, t])
 
   return (
     <TablePage
