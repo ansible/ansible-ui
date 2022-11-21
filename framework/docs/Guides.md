@@ -2,5 +2,5 @@
 
 # Ansible UI Guides
 
-- [Getting Started](GettingStarted.md)
-- [PageTable Guide](PageTableGuide.md)
+- [Getting Started](guides/GettingStarted.md)
+- [PageTable Guide](guides/PageTableGuide.md)

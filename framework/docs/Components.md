@@ -2,8 +2,8 @@
 
 # Ansible UI Components
 
-- [BulkActionDialog](BulkActionDialog.md)
-- [PageFramework](PageFramework.md)
-- [PageHeader](PageHeader.md)
-- [PageLayout](PageLayout.md)
-- [PageTable](PageTable.md)
+- [BulkActionDialog](components/BulkActionDialog.md)
+- [PageFramework](components/PageFramework.md)
+- [PageHeader](components/PageHeader.md)
+- [PageLayout](components/PageLayout.md)
+- [PageTable](components/PageTable.md)
