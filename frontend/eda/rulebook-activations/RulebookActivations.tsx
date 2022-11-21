@@ -34,10 +34,10 @@ export function RulebookActivations() {
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
-      errorStateTitle={t('Error loading rulebookActivations')}
-      emptyStateTitle={t('No rulebookActivations yet')}
-      emptyStateDescription={t('To get started, create a rulebookActivation.')}
-      emptyStateButtonText={t('Create rulebookActivation')}
+      errorStateTitle={t('Error loading rulebook activations')}
+      emptyStateTitle={t('No rulebook activations yet')}
+      emptyStateDescription={t('To get started, create a rulebook activation.')}
+      emptyStateButtonText={t('Create rulebook activation')}
       emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebookActivation)}
       {...view}
     />

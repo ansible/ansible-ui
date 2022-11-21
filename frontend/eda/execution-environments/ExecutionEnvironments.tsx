@@ -39,10 +39,10 @@ export function ExecutionEnvironments() {
       toolbarActions={toolbarActions}
       toolbarFilters={toolbarFilters}
       rowActions={rowActions}
-      errorStateTitle={t('Error loading executionEnvironments')}
-      emptyStateTitle={t('No executionEnvironments yet')}
-      emptyStateDescription={t('To get started, create a executionEnvironment.')}
-      emptyStateButtonText={t('Create executionEnvironment')}
+      errorStateTitle={t('Error loading execution environments')}
+      emptyStateTitle={t('No execution environments yet')}
+      emptyStateDescription={t('To get started, create a execution evironment.')}
+      emptyStateButtonText={t('Create execution environment')}
       emptyStateButtonClick={emptyStateButtonClick}
       {...view}
     />
