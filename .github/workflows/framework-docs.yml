@@ -31,6 +31,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+      - run: npm ci
       - name: Gen Docs
         run: npm run gendocs
       - uses: EndBug/add-and-commit@v9
