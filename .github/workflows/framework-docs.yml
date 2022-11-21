@@ -1,8 +1,9 @@
 name: Publish Framework Docs
+
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 permissions:
   contents: read
