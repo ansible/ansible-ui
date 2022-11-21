@@ -106,7 +106,7 @@
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-styled-components": "^2.0.7",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "concurrently": "7.5.0",
+    "concurrently": "7.6.0",
     "copy-webpack-plugin": "11.0.0",
     "coverage-istanbul-loader": "3.0.5",
     "css-loader": "6.7.2",
