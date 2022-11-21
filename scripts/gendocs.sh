@@ -42,7 +42,7 @@ do
   rm -f "$OUT/${component}.md"
   mv temp.md "$OUT/${component}.md"
 
-  echo "- [${component}](${component}.md)" >> $COMPONENTS
+  echo "- [${component}](components/${component}.md)" >> $COMPONENTS
 done
 
 rm -f $OUT/*.md-e
