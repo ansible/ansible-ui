@@ -1,4 +1,5 @@
 import {
+  Bullseye,
   Button,
   EmptyState,
   EmptyStateBody,
@@ -7,6 +8,7 @@ import {
   EmptyStateVariant,
   PageSection,
   Skeleton,
+  Spinner,
   Title,
 } from '@patternfly/react-core'
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons'
@@ -212,8 +214,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === undefined) {
     return (
-      <PageSection isFilled>
-        <Skeleton height="100%" />
+      <PageSection isFilled variant="light">
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
       </PageSection>
     )
   }

@@ -1,4 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core'
+import { TrashIcon, UploadIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -22,7 +23,8 @@ export function Collections() {
   const actions = useMemo<ITypedAction<Collection>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: TypedActionType.single,
+        icon: UploadIcon,
         variant: ButtonVariant.secondary,
         label: 'Upload new version',
         onClick: () => {
@@ -32,6 +34,7 @@ export function Collections() {
       { type: TypedActionType.seperator },
       {
         type: TypedActionType.button,
+        icon: TrashIcon,
         label: 'Delete entire collection',
         onClick: () => {
           /**/

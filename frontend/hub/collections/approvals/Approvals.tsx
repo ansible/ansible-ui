@@ -50,6 +50,7 @@ export function Approvals() {
     () => [
       {
         type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: ThumbsUpIcon,
         label: t('Approve'),
         onClick: () => {
@@ -58,6 +59,7 @@ export function Approvals() {
       },
       {
         type: TypedActionType.single,
+        variant: ButtonVariant.primary,
         icon: ThumbsDownIcon,
         label: t('Reject'),
         onClick: () => {
