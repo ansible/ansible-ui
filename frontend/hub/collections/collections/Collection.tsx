@@ -19,6 +19,10 @@ export interface Collection {
     metadata: {
       description: string
       tags: string[]
+      contents: {
+        content_type: string
+      }[]
+      dependencies: Record<string, string>
     }
   }
 }

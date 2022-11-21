@@ -1,5 +1,11 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { TrashIcon, UploadIcon } from '@patternfly/react-icons'
+import { ButtonVariant, Label } from '@patternfly/react-core'
+import {
+  BanIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  TrashIcon,
+  UploadIcon,
+} from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -42,6 +48,7 @@ export function Collections() {
       },
       {
         type: TypedActionType.button,
+        icon: BanIcon,
         label: 'Deprecate',
         onClick: () => {
           /**/
@@ -155,23 +162,88 @@ export function useCollectionsColumns(_options?: {
         cell: (collection) => <TextCell text={collection.name} onClick={() => null} />,
       },
       {
+        header: t('Namespace'),
+        cell: (collection) => <TextCell text={collection.namespace.name} onClick={() => null} />,
+        card: 'description',
+      },
+      {
         header: t('Description'),
         cell: (collection) => <TextCell text={collection.latest_version.metadata.description} />,
         hideLabel: true,
       },
       {
-        header: t('Created'),
+        header: t('Modules'),
+        cell: (collection) => (
+          <TextCell
+            text={collection.latest_version.metadata.contents
+              .filter((c) => c.content_type === 'module')
+              .length.toString()}
+          />
+        ),
+        card: 'count',
+      },
+      {
+        header: t('Roles'),
+        cell: (collection) => (
+          <TextCell
+            text={collection.latest_version.metadata.contents
+              .filter((c) => c.content_type === 'TODO')
+              .length.toString()}
+          />
+        ),
+        card: 'count',
+      },
+      {
+        header: t('Plugins'),
+        cell: (collection) => (
+          <TextCell
+            text={collection.latest_version.metadata.contents
+              .filter((c) => c.content_type === 'TODO')
+              .length.toString()}
+          />
+        ),
+        card: 'count',
+      },
+      {
+        header: t('Dependencies'),
+        cell: (collection) => (
+          <TextCell
+            text={Object.keys(collection.latest_version.metadata.dependencies).length.toString()}
+          />
+        ),
+        card: 'count',
+      },
+      {
+        header: t('Updated'),
         cell: (collection) => <SinceCell value={collection.latest_version.created_at} />,
         list: 'secondary',
       },
       {
         header: t('Version'),
-        cell: (collection) => <TextCell text={collection.latest_version.version} />,
+        cell: (collection) => <TextCell text={`v${collection.latest_version.version}`} />,
         list: 'secondary',
+        card: 'hidden',
       },
       {
         header: t('Signed state'),
-        cell: (collection) => <TextCell text={collection.latest_version.sign_state} />,
+        cell: (collection) => {
+          switch (collection.latest_version.sign_state) {
+            case 'signed':
+              return (
+                <Label icon={<CheckCircleIcon />} variant="outline" color="green">
+                  {t('Signed')}
+                </Label>
+              )
+            case 'unsigned':
+              return (
+                <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
+                  {t('Unsigned')}
+                </Label>
+              )
+            default:
+              return <></>
+          }
+        },
         list: 'secondary',
       },
       {

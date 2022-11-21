@@ -63,6 +63,8 @@ export function AllNamespaces() {
       emptyStateButtonText={t('Add namespace')}
       emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
       {...view}
+      defaultCardSubtitle={t('Namespace')}
+      defaultTableView="cards"
     />
   )
 }
@@ -88,6 +90,7 @@ export function MyNamespaces() {
       emptyStateButtonText={t('Add namespace')}
       emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
       {...view}
+      defaultCardSubtitle={t('Namespace')}
     />
   )
 }
@@ -97,7 +100,7 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
   const tableColumns = useMemo<ITableColumn<Namespace>[]>(
     () => [
       {
-        header: t('Name'),
+        header: t('Namespace'),
         cell: (namespace) => <TextCell text={namespace.name} />,
         sort: 'name',
       },

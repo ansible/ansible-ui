@@ -139,8 +139,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  let { disableBodyPadding } = props
-  disableBodyPadding = true
+  const { disableBodyPadding } = props
   const { toolbarActions, filters, error, itemCount } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
   const showSelect =
@@ -237,7 +236,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
-        <PageBody disablePadding>
+        <PageBody>
           <Scrollable>
             <PageTableList {...props} showSelect={showSelect} />
           </Scrollable>
@@ -686,7 +685,7 @@ export interface ITableColumn<T extends object> {
    */
   sortFn?: (l: T, r: T) => number
 
-  card?: 'description' | 'hidden'
+  card?: 'description' | 'hidden' | 'count'
 
   list?: 'primary' | 'secondary'
 
