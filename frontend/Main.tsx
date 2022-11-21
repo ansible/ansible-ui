@@ -12,7 +12,7 @@ import { AutomationServers } from './automation-servers/AutomationServers'
 import { AccessCode } from './common/AccessCode'
 import Login from './common/Login'
 import { Controller } from './controller/Controller'
-import { EventDriven } from './event-driven/EventDriven'
+import { EventDriven } from './eda/EventDriven'
 import { Hub } from './hub/Hub'
 import { RouteE } from './Routes'
 

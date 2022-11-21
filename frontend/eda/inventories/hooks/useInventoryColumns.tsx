@@ -11,6 +11,12 @@ export function useInventoriesColumns() {
   const tableColumns = useMemo<ITableColumn<EdaInventory>[]>(
     () => [
       {
+        header: t('ID'),
+        cell: (inventory) => inventory.id,
+        isIdColumn: true,
+        sort: 'id',
+      },
+      {
         header: t('Name'),
         cell: (inventory) => (
           <TextCell
@@ -20,6 +26,9 @@ export function useInventoriesColumns() {
             }
           />
         ),
+        sort: 'name',
+        primary: true,
+        defaultSort: true,
       },
     ],
     [navigate, t]

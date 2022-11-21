@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IToolbarFilter } from '../../../../framework'
 
-export function useProjectsFilters() {
+export function useExecutionEnvironmentFilters() {
   const { t } = useTranslation()
   return useMemo<IToolbarFilter[]>(
     () => [

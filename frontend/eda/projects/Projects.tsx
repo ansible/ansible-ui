@@ -6,25 +6,25 @@ import { useGet } from '../../common/useItem'
 import { idKeyFn } from '../../hub/usePulpView'
 import { RouteE } from '../../Routes'
 import { EdaProject } from '../interfaces/EdaProject'
-import { useProjectRowActions } from './hooks/useProjectRowActions'
-import { useProjectsColumns } from './hooks/useProjectsColumns'
-import { useProjectsFilters } from './hooks/useProjectsFilters'
-import { useProjectsToolbarActions } from './hooks/useProjectsToolbarActions'
+import { useProjectActions } from './hooks/useProjectActions'
+import { useProjectColumns } from './hooks/useProjectColumns'
+import { useProjectFilters } from './hooks/useProjectFilters'
+import { useProjectsActions } from './hooks/useProjectsActions'
 
 export function Projects() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const toolbarFilters = useProjectsFilters()
+  const toolbarFilters = useProjectFilters()
   const { data: projects, mutate: refresh } = useGet<EdaProject[]>('/api/projects')
-  const tableColumns = useProjectsColumns()
+  const tableColumns = useProjectColumns()
   const view = useInMemoryView<EdaProject>({
     items: projects,
     tableColumns,
     toolbarFilters,
     keyFn: idKeyFn,
   })
-  const toolbarActions = useProjectsToolbarActions(refresh)
-  const rowActions = useProjectRowActions(refresh)
+  const toolbarActions = useProjectsActions(refresh)
+  const rowActions = useProjectActions(refresh)
   return (
     <TablePage
       title={t('Projects')}

@@ -5,11 +5,17 @@ import { ITableColumn, TextCell } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import { EdaProject } from '../../interfaces/EdaProject'
 
-export function useProjectsColumns() {
+export function useProjectColumns() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const tableColumns = useMemo<ITableColumn<EdaProject>[]>(
+  return useMemo<ITableColumn<EdaProject>[]>(
     () => [
+      {
+        header: t('ID'),
+        cell: (inventory) => inventory.id,
+        isIdColumn: true,
+        sort: 'id',
+      },
       {
         header: t('Name'),
         cell: (project) => (
@@ -18,6 +24,9 @@ export function useProjectsColumns() {
             onClick={() => navigate(RouteE.EdaProjectDetails.replace(':id', project.id.toString()))}
           />
         ),
+        sort: 'name',
+        primary: true,
+        defaultSort: true,
       },
       {
         header: t('Url'),
@@ -27,5 +36,4 @@ export function useProjectsColumns() {
     ],
     [navigate, t]
   )
-  return tableColumns
 }

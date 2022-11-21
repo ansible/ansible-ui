@@ -5,6 +5,7 @@ import {
   EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
+  PageSection,
   Skeleton,
   Title,
 } from '@patternfly/react-core'
@@ -138,7 +139,7 @@ export type PageTableProps<T extends object> = {
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   let { disableBodyPadding } = props
   disableBodyPadding = true
-  const { toolbarActions } = props
+  const { toolbarActions, filters, error, itemCount } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
   const showSelect =
     toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
@@ -157,92 +158,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         ? PageTableViewTypeE.List
         : PageTableViewTypeE.Cards)
   )
-
-  return (
-    <>
-      <PageTableToolbar
-        {...props}
-        openColumnModal={openColumnModal}
-        showSelect={showSelect}
-        viewType={viewType}
-        setViewType={setViewType}
-      />
-      {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} tableColumns={managedColumns} />
-        </PageBody>
-      )}
-      {viewType === PageTableViewTypeE.List && (
-        <PageBody disablePadding>
-          <Scrollable>
-            <PageTableList {...props} showSelect={showSelect} />
-          </Scrollable>
-        </PageBody>
-      )}
-      {viewType === PageTableViewTypeE.Cards && (
-        <Scrollable>
-          <PageTableCards {...props} showSelect={showSelect} />
-        </Scrollable>
-      )}
-      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-        <PagePagination {...props} />
-      )}
-      {columnModal}
-    </>
-  )
-}
-
-function PageTableView<T extends object>(props: PageTableProps<T>) {
-  const {
-    tableColumns,
-    pageItems,
-    selectItem,
-    unselectItem,
-    isSelected,
-    keyFn,
-    rowActions,
-    toolbarActions,
-    itemCount,
-    perPage,
-    clearAllFilters,
-    filters,
-    error,
-    onSelect,
-    unselectAll,
-  } = props
-  let { t } = props
-  t = t ? t : (t: string) => t
-  const showSelect =
-    props.showSelect ||
-    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
-      undefined
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [scroll, setScroll] = useState<{
-    left: number
-    right: number
-    top: number
-    bottom: number
-  }>({
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  })
-  const updateScroll = useCallback((div: HTMLDivElement | null) => {
-    if (!div) return
-    setScroll({
-      top: div.scrollTop,
-      bottom: div.scrollHeight - div.clientHeight - div.scrollTop,
-      left: div.scrollLeft,
-      right: div.scrollWidth - div.clientWidth - div.scrollLeft,
-    })
-  }, [])
-  const onScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget),
-    [updateScroll]
-  )
-  useResizeObserver(containerRef, () => updateScroll(containerRef.current))
-  useEffect(() => updateScroll(containerRef.current), [updateScroll])
 
   const settings = useSettings()
 
@@ -294,6 +209,100 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
       </EmptyState>
     )
   }
+
+  if (itemCount === undefined) {
+    return (
+      <PageSection isFilled>
+        <Skeleton height="100%" />
+      </PageSection>
+    )
+  }
+
+  return (
+    <>
+      <PageTableToolbar
+        {...props}
+        openColumnModal={openColumnModal}
+        showSelect={showSelect}
+        viewType={viewType}
+        setViewType={setViewType}
+      />
+      {viewType === PageTableViewTypeE.Table && (
+        <PageBody disablePadding={disableBodyPadding}>
+          <PageTableView {...props} tableColumns={managedColumns} />
+        </PageBody>
+      )}
+      {viewType === PageTableViewTypeE.List && (
+        <PageBody disablePadding>
+          <Scrollable>
+            <PageTableList {...props} showSelect={showSelect} />
+          </Scrollable>
+        </PageBody>
+      )}
+      {viewType === PageTableViewTypeE.Cards && (
+        <Scrollable>
+          <PageTableCards {...props} showSelect={showSelect} />
+        </Scrollable>
+      )}
+      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+        <PagePagination {...props} />
+      )}
+      {columnModal}
+    </>
+  )
+}
+
+function PageTableView<T extends object>(props: PageTableProps<T>) {
+  const {
+    tableColumns,
+    pageItems,
+    selectItem,
+    unselectItem,
+    isSelected,
+    keyFn,
+    rowActions,
+    toolbarActions,
+    itemCount,
+    perPage,
+    clearAllFilters,
+    onSelect,
+    unselectAll,
+  } = props
+  let { t } = props
+  t = t ? t : (t: string) => t
+  const showSelect =
+    props.showSelect ||
+    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+      undefined
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scroll, setScroll] = useState<{
+    left: number
+    right: number
+    top: number
+    bottom: number
+  }>({
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  })
+  const updateScroll = useCallback((div: HTMLDivElement | null) => {
+    if (!div) return
+    setScroll({
+      top: div.scrollTop,
+      bottom: div.scrollHeight - div.clientHeight - div.scrollTop,
+      left: div.scrollLeft,
+      right: div.scrollWidth - div.clientWidth - div.scrollLeft,
+    })
+  }, [])
+  const onScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget),
+    [updateScroll]
+  )
+  useResizeObserver(containerRef, () => updateScroll(containerRef.current))
+  useEffect(() => updateScroll(containerRef.current), [updateScroll])
+
+  const settings = useSettings()
 
   return (
     <div
@@ -471,7 +480,7 @@ function TableHead<T extends object>(props: {
                     settings.theme === 'dark'
                       ? 'var(--pf-global--BackgroundColor--300)'
                       : undefined,
-                  width: index === 0 ? '0%' : undefined,
+                  width: column.isIdColumn ? '0%' : undefined,
                 }}
                 sort={getColumnSort(index, column)}
               >
@@ -657,6 +666,7 @@ export interface ITableColumn<T extends object> {
   minWidth?: number
   maxWidth?: number
   enabled?: boolean
+  isIdColumn?: boolean
 
   sort?: string
   defaultSortDirection?: 'asc' | 'desc'

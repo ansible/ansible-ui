@@ -13,16 +13,18 @@ import {
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
-import { EdaProject } from '../interfaces/EdaProject'
+import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment'
 
-export function EditProject() {
+export function EditExecutionEnvironment() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const params = useParams<{ id?: string }>()
   const id = Number(params.id)
-  const { data: project } = useGet<EdaProject>(`/api/projects/${id.toString()}`)
+  const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
+    `/api/executionEnvironments/${id.toString()}`
+  )
 
-  const ProjectSchemaType = useMemo(
+  const ExecutionEnvironmentSchemaType = useMemo(
     () =>
       Type.Object({
         name: Type.String({
@@ -31,31 +33,38 @@ export function EditProject() {
           minLength: 1,
           errorMessage: { minLength: t('Name is required') },
         }),
-        url: Type.Optional(
-          Type.String({
-            title: t('URL'),
-            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
       }),
     [t]
   )
 
-  type ProjectSchema = Static<typeof ProjectSchemaType>
+  type ExecutionEnvironmentSchema = Static<typeof ExecutionEnvironmentSchemaType>
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<ProjectSchema> = async (project, setError) => {
+  const onSubmit: FormPageSubmitHandler<ExecutionEnvironmentSchema> = async (
+    executionEnvironment,
+    setError
+  ) => {
     try {
       if (Number.isInteger(id)) {
-        project = await requestPatch<EdaProject>(`/api/projects/${id}`, project)
+        executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
+          `/api/executionEnvironments/${id}`,
+          executionEnvironment
+        )
         ;(cache as unknown as { clear: () => void }).clear?.()
         navigate(-1)
       } else {
-        const _newProject = await requestPost<EdaProject>('/api/projects', project)
+        const newExecutionEnvironment = await requestPost<EdaExecutionEnvironment>(
+          '/api/executionEnvironments',
+          executionEnvironment
+        )
         ;(cache as unknown as { clear: () => void }).clear?.()
-        // navigate(RouteE.replace(':id', newProject.id.toString()))
-        navigate(RouteE.EdaProjects)
+        navigate(
+          RouteE.EdaExecutionEnvironmentDetails.replace(
+            ':id',
+            newExecutionEnvironment.id.toString()
+          )
+        )
       }
     } catch (err) {
       setError('TODO')
@@ -64,13 +73,13 @@ export function EditProject() {
   const onCancel = () => navigate(-1)
 
   if (Number.isInteger(id)) {
-    if (!project) {
+    if (!executionEnvironment) {
       return (
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Projects'), to: RouteE.Projects },
-              { label: t('Edit project') },
+              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('Edit execution environment') },
             ]}
           />
         </PageLayout>
@@ -79,20 +88,20 @@ export function EditProject() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit project')}
+            title={t('Edit execution environment')}
             breadcrumbs={[
-              { label: t('Projects'), to: RouteE.Projects },
-              { label: t('Edit project') },
+              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('Edit execution environment') },
             ]}
           />
           <PageBody>
             <PageForm
-              schema={ProjectSchemaType}
-              submitText={t('Save project')}
+              schema={ExecutionEnvironmentSchemaType}
+              submitText={t('Save execution environment')}
               onSubmit={onSubmit}
               cancelText={t('Cancel')}
               onCancel={onCancel}
-              defaultValue={project}
+              defaultValue={executionEnvironment}
             />
           </PageBody>
         </PageLayout>
@@ -102,16 +111,16 @@ export function EditProject() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create project')}
+          title={t('Create execution environment')}
           breadcrumbs={[
-            { label: t('Projects'), to: RouteE.Projects },
-            { label: t('Create project') },
+            { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+            { label: t('Create execution environment') },
           ]}
         />
         <PageBody>
           <PageForm
-            schema={ProjectSchemaType}
-            submitText={t('Create project')}
+            schema={ExecutionEnvironmentSchemaType}
+            submitText={t('Create execution environment')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
