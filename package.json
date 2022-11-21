@@ -38,7 +38,7 @@
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
     "build:mjs": "npx tsc -p tsconfig.mjs.json",
     "build:cjs": "npx tsc -p tsconfig.cjs.json",
-    "build:doc": "jsdoc2md --files ./framework/*.tsx --files ./framework/**/*.tsx  --configure ./jsdoc2md.json > ./docs/API.md"
+    "gendocs": "./scripts/gendocs.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.10",
