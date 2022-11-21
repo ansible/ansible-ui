@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITableColumn, TextCell } from '../../../../framework'
 import { RouteE } from '../../../Routes'
-import { EdaRulebook } from '../../interfaces/EdaRulebook2'
+import { EdaRulebook } from '../../interfaces/EdaRulebook'
 
 export function useRulebookColumns() {
   const { t } = useTranslation()

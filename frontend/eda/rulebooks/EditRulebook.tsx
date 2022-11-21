@@ -13,7 +13,7 @@ import {
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
-import { EdaRulebook } from '../interfaces/EdaRulebook2'
+import { EdaRulebook } from '../interfaces/EdaRulebook'
 
 export function EditRulebook() {
   const { t } = useTranslation()

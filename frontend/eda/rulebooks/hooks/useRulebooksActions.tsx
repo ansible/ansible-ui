@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ITypedAction, TypedActionType } from '../../../../framework'
 import { RouteE } from '../../../Routes'
-import { EdaRulebook } from '../../interfaces/EdaRulebook2'
+import { EdaRulebook } from '../../interfaces/EdaRulebook'
 import { useDeleteRulebooks } from './useDeleteRulebooks'
 
 export function useRulebooksActions(refresh: () => Promise<unknown>) {
