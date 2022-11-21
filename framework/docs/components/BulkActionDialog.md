@@ -1,4 +1,4 @@
-[Ansible UI Framework](Framework.md) ▸ [Components](Components.md) ▸ BulkActionDialog
+[Ansible UI Framework](../Framework.md) ▸ [Components](../Components.md) ▸ BulkActionDialog
 
 # BulkActionDialog
 

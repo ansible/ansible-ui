@@ -1,4 +1,4 @@
-[Ansible UI Framework](Framework.md) ▸ [Components](Components.md) ▸ PageLayout
+[Ansible UI Framework](../Framework.md) ▸ [Components](../Components.md) ▸ PageLayout
 
 # PageLayout
 
