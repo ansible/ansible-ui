@@ -15,6 +15,9 @@ export function useProjectColumns() {
         cell: (inventory) => inventory.id,
         isIdColumn: true,
         sort: 'id',
+        card: 'hidden',
+        list: 'hidden',
+        isIdColumn: true,
       },
       {
         header: t('Name'),
@@ -25,13 +28,15 @@ export function useProjectColumns() {
           />
         ),
         sort: 'name',
-        primary: true,
+        card: 'name',
+        list: 'name',
         defaultSort: true,
       },
       {
         header: t('Url'),
         cell: (project) => project.url && <TextCell text={project.url} />,
         card: 'description',
+        list: 'description',
       },
     ],
     [navigate, t]

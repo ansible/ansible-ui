@@ -38,6 +38,7 @@ export function Projects() {
       emptyStateButtonText={t('Create project')}
       emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
       {...view}
+      defaultCardSubtitle={t('Project')}
     />
   )
 }
