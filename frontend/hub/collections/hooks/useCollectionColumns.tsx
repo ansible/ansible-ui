@@ -2,20 +2,23 @@ import { Label } from '@patternfly/react-core'
 import { AnsibleTowerIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ITableColumn, TextCell } from '../../../../../framework'
+import { ITableColumn, TextCell } from '../../../../framework'
+import { RouteE } from '../../../Routes'
 import { Collection } from '../Collection'
 
-export function useCollectionsColumns(_options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
-}) {
+export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation()
   return useMemo<ITableColumn<Collection>[]>(
     () => [
       {
         header: t('Name'),
         value: (collection) => collection.name,
-        cell: (collection) => <TextCell text={collection.name} onClick={() => null} />,
+        cell: (collection) => (
+          <TextCell
+            text={collection.name}
+            to={RouteE.CollectionDetails.replace(':id', collection.name)}
+          />
+        ),
         card: 'name',
         list: 'name',
         icon: () => <AnsibleTowerIcon />,
