@@ -11,12 +11,10 @@ import {
   Checkbox,
   DescriptionList,
   DropdownPosition,
+  FlexItem,
   Label,
   LabelGroup,
   Popover,
-  Split,
-  SplitItem,
-  Stack,
   Text,
   Truncate,
 } from '@patternfly/react-core'
@@ -24,14 +22,19 @@ import { ReactNode, useCallback, useMemo } from 'react'
 import { Detail } from './components/Details'
 import { IconWrapper } from './components/IconWrapper'
 import { LabelColor } from './components/pfcolors'
-import { ITableColumn } from './PageTable'
+import {
+  ITableColumn,
+  ITableColumnTypeCount,
+  ITableColumnTypeLabels,
+  TableColumnCell,
+} from './PageTable'
 import { ITypedAction, TypedActions } from './TypedActions'
 
 export interface IPageTableCard {
   id: string | number
   icon?: ReactNode
   title: ReactNode
-  description?: ReactNode
+  subtitle?: ReactNode
   cardBody: ReactNode
   labels?: { label: string; color?: LabelColor }[] // TODO - disable/enable auto generated filters
   badge?: string
@@ -91,42 +94,48 @@ export function PageTableCard<T extends object>(props: {
       style={{
         transition: 'box-shadow 0.25s',
         cursor: 'default',
+        maxWidth: '100%',
+        overflow: 'hidden',
       }}
     >
-      <CardHeader>
-        <Split hasGutter style={{ width: '100%' }}>
-          <SplitItem isFilled>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {card.icon && (
-                <div
-                  style={{
-                    display: 'flex',
-                    height: 40,
-                    width: 40,
-                    marginTop: -20,
-                    marginBottom: -20,
-                    marginRight: 12,
-                    alignItems: 'center',
-                    justifyItems: 'stretch',
-                  }}
-                >
-                  <IconWrapper size="lg">{card.icon}</IconWrapper>
-                </div>
-              )}
-              <Stack>
-                <CardTitle>{card.title}</CardTitle>
-                {card.description ? (
+      <CardHeader
+        style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%', overflow: 'hidden' }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'nowrap',
+            maxWidth: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 16,
+              maxWidth: '100%',
+            }}
+          >
+            {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
+            <div style={{ maxWidth: '100%' }}>
+              <CardTitle>{card.title}</CardTitle>
+              {card.subtitle ? (
+                <Text component="small" style={{ opacity: 0.7 }}>
+                  {card.subtitle}
+                </Text>
+              ) : (
+                defaultCardSubtitle && (
                   <Text component="small" style={{ opacity: 0.7 }}>
-                    {card.description}
+                    {defaultCardSubtitle}
                   </Text>
-                ) : (
-                  defaultCardSubtitle && <Text component="small">{defaultCardSubtitle}</Text>
-                )}
-              </Stack>
+                )
+              )}
             </div>
-          </SplitItem>
+          </div>
           {card.badge && card.badgeTooltip && (
-            <SplitItem>
+            <FlexItem>
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
               <div onClick={(e) => e.stopPropagation()}>
                 <Popover
@@ -137,14 +146,14 @@ export function PageTableCard<T extends object>(props: {
                   <Label color={card.badgeColor}>{card.badge}</Label>
                 </Popover>
               </div>
-            </SplitItem>
+            </FlexItem>
           )}
           {card.badge && !card.badgeTooltip && (
-            <SplitItem>
+            <FlexItem>
               <Label color={card.badgeColor}>{card.badge}</Label>
-            </SplitItem>
+            </FlexItem>
           )}
-        </Split>
+        </div>
         {showActions && (
           <CardActions>
             {itemActions && itemActions.length && (
@@ -181,7 +190,7 @@ export function PageTableCard<T extends object>(props: {
           >
             <div style={{ flexGrow: 1 }}>
               {card.labels && (
-                <LabelGroup>
+                <LabelGroup numLabels={999}>
                   {card.labels.map((item) => (
                     <Label key={item.label} color={item.color}>
                       <Truncate content={item.label} style={{ minWidth: 0 }} />
@@ -206,46 +215,90 @@ export function useColumnsToTableCardFn<T extends object>(
   columns: ITableColumn<T>[],
   keyFn: (item: T) => string | number
 ): (item: T) => IPageTableCard {
-  const cardData = useMemo(() => {
-    let cols = columns.filter((column) => column.card !== 'hidden')
+  const data = useMemo(() => {
+    let nameColumn: ITableColumn<T> | undefined
+    let subtitleColumn: ITableColumn<T> | undefined
+    let descriptionColumn: ITableColumn<T> | undefined
+    const countColumns: ITableColumnTypeCount<T>[] = []
+    let labelColumn: ITableColumnTypeLabels<T> | undefined
+    const cardColumns: ITableColumn<T>[] = []
 
-    const countColumns = cols.filter((column) => column.card === 'count')
-    cols = cols.filter((column) => column.card !== 'count')
-
-    const nameColumn = cols.find((column) => column.primary) ?? cols[0]
-    cols = cols.filter((column) => column !== nameColumn)
-    const descriptionColumn = cols.find((column) => column.card === 'description')
-    if (descriptionColumn) {
-      cols = cols.filter((column) => column !== descriptionColumn)
+    for (const column of columns) {
+      switch (column.type) {
+        case 'description':
+          if (!descriptionColumn) descriptionColumn = column
+          break
+        case 'labels':
+          if (!labelColumn) labelColumn = column
+          break
+        case 'count':
+          countColumns.push(column)
+          break
+        default:
+          switch (column.card) {
+            case 'name':
+              nameColumn = column
+              break
+            case 'subtitle':
+              subtitleColumn = column
+              break
+            case 'description':
+              descriptionColumn = column
+              break
+            case 'hidden':
+              break
+            default:
+              cardColumns.push(column)
+              break
+          }
+          break
+      }
     }
     return {
-      nameColumn: nameColumn,
-      descriptionColumn: descriptionColumn,
+      nameColumn,
+      subtitleColumn,
+      descriptionColumn,
       countColumns,
-      columns: cols,
+      cardColumns,
+      labelColumn,
     }
   }, [columns])
+
+  const { nameColumn, subtitleColumn, descriptionColumn, countColumns, cardColumns, labelColumn } =
+    data
 
   return useMemo<(item: T) => IPageTableCard>(() => {
     return (item: T) => {
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
-        title: cardData.nameColumn?.cell(item),
-        description: cardData.descriptionColumn?.cell(item),
+        icon: nameColumn?.icon?.(item),
+        title: <TableColumnCell column={nameColumn} item={item} />,
+        subtitle: subtitleColumn && (!subtitleColumn.value || subtitleColumn.value(item)) && (
+          <TableColumnCell column={subtitleColumn} item={item} />
+        ),
         cardBody: (
           <CardBody>
             <DescriptionList isCompact>
-              {cardData.columns.map((column) => (
-                <Detail key={column.id} label={column.hideLabel ? undefined : column.header}>
-                  {column.cell(item)}
+              {descriptionColumn && (!descriptionColumn.value || descriptionColumn.value(item)) && (
+                <Detail key={descriptionColumn.id}>
+                  {descriptionColumn.type === 'description' ? (
+                    <div>{descriptionColumn.value(item)}</div>
+                  ) : (
+                    <TableColumnCell column={descriptionColumn} item={item} />
+                  )}
+                </Detail>
+              )}
+              {cardColumns.map((column) => (
+                <Detail key={column.id} label={column.header}>
+                  <TableColumnCell column={column} item={item} />
                 </Detail>
               ))}
-              {cardData.countColumns.length > 0 && (
+              {countColumns.length > 0 && (
                 <Detail>
-                  <div style={{ display: 'flex', gap: 16 }}>
-                    {cardData.countColumns.map((column, i) => (
+                  <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
+                    {countColumns.map((column, i) => (
                       <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
-                        {column.cell(item)}
+                        <TableColumnCell column={column} item={item} />
                         <small style={{ opacity: 0.7 }}>{column.header}</small>
                       </div>
                     ))}
@@ -255,18 +308,12 @@ export function useColumnsToTableCardFn<T extends object>(
             </DescriptionList>
           </CardBody>
         ),
-        // labels: [{ label: 'hhh' }],
+        labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
       }
-      if (cardData.columns.length === 0 && cardData.countColumns.length === 0) {
+      if (!descriptionColumn && cardColumns.length === 0 && countColumns.length === 0) {
         pageTableCard.cardBody = undefined
       }
       return pageTableCard
     }
-  }, [
-    cardData.columns,
-    cardData.countColumns,
-    cardData.descriptionColumn,
-    cardData.nameColumn,
-    keyFn,
-  ])
+  }, [cardColumns, countColumns, descriptionColumn, labelColumn, nameColumn, subtitleColumn, keyFn])
 }

@@ -59,7 +59,12 @@ export function useSignatureKeysColumns(_options?: {
   const { t } = useTranslation()
   const tableColumns = useMemo<ITableColumn<SignatureKey>[]>(
     () => [
-      { header: t('Name'), cell: (signatureKey) => <TextCell text={signatureKey.name} /> },
+      {
+        header: t('Name'),
+        cell: (signatureKey) => <TextCell text={signatureKey.name} />,
+        card: 'name',
+        list: 'name',
+      },
       {
         header: t('Fingerprint'),
         cell: (signatureKey) => <CopyCell text={signatureKey.pubkey_fingerprint} />,

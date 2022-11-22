@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable'
+import { ITableColumn, PageTable, TableColumnCell } from './PageTable'
 import { IToolbarFilter } from './PageToolbar'
 import { ISelected } from './useTableItems'
 import { IView } from './useView'
@@ -113,9 +113,9 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
             {selected}
           </SplitItem>
           <b>
-            {view.selectedItems.map((item) => {
+            {view.selectedItems.map((item, i) => {
               if (tableColumns && tableColumns.length > 0) {
-                return <span key={props.keyFn(item)}>{tableColumns[0].cell(item)}</span>
+                return <TableColumnCell key={i} item={item} column={tableColumns[0]} />
               }
               return <></>
             })}

@@ -22,7 +22,11 @@ export function TextCell(props: TextCellProps) {
     <Split style={{ maxWidth: '100%' }}>
       {props.icon && (
         <SplitItem>
-          <IconWrapper size={props.iconSize ?? 'sm'} color={props.iconColor ?? props.color}>
+          <IconWrapper
+            size={props.iconSize ?? 'sm'}
+            color={props.iconColor ?? props.color}
+            padRight
+          >
             {props.icon}
           </IconWrapper>
         </SplitItem>

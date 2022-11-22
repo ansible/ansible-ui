@@ -25,6 +25,8 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
         />
       ),
       sort: disableSort ? undefined : 'name',
+      card: 'name',
+      list: 'name',
     }),
     [disableLinks, disableSort, onClick, options?.header, t, url]
   )
@@ -36,9 +38,9 @@ export function useDescriptionColumn<T extends { description?: string | undefine
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Description'),
-      cell: (item) => item.description && <TextCell text={item.description} maxWidth={400} />,
+      type: 'description',
+      value: (item) => item.description,
       list: 'secondary',
-      hideLabel: true,
     }),
     [t]
   )
@@ -79,6 +81,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       sort: options?.disableSort ? undefined : 'created',
       defaultSortDirection: 'desc',
       card: 'hidden',
+      list: 'secondary',
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
   )
@@ -122,6 +125,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       sort: options?.disableSort ? undefined : 'modified',
       defaultSortDirection: 'desc',
       card: 'hidden',
+      list: 'secondary',
     }),
     [history, options?.disableLinks, options?.disableSort, t]
   )
@@ -154,7 +158,6 @@ export function useOrganizationNameColumn(options?: {
         />
       ),
       sort: options?.disableSort ? undefined : 'organization',
-      list: 'secondary',
     }),
     [options?.disableLinks, options?.disableSort, t]
   )

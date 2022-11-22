@@ -13,7 +13,7 @@ export function DateCell(props: { value: number | string }) {
 }
 
 export function SinceCell(props: {
-  value: string | undefined | null
+  value: string | number | undefined | null
   author?: string
   onClick?: () => void
   t?: (t: string) => string
@@ -23,11 +23,15 @@ export function SinceCell(props: {
   const { author, onClick } = props
   const [dateTime, setDateTime] = useState<string | null>(null)
   useEffect(() => {
-    if (props.value) {
+    if (typeof props.value === 'number') {
+      setDateTime(DateTime.fromMillis(props.value).toRelative())
+    } else if (props.value) {
       setDateTime(DateTime.fromISO(props.value).toRelative())
     }
     const timeout = setInterval(() => {
-      if (props.value) {
+      if (typeof props.value === 'number') {
+        setDateTime(DateTime.fromMillis(props.value).toRelative())
+      } else if (props.value) {
         setDateTime(DateTime.fromISO(props.value).toRelative())
       }
     }, 1000)

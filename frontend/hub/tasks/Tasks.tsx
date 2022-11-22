@@ -1,7 +1,14 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ITableColumn, IToolbarFilter, SinceCell, TablePage, TextCell } from '../../../framework'
+import {
+  ElapsedTimeCell,
+  ITableColumn,
+  IToolbarFilter,
+  SinceCell,
+  TablePage,
+  TextCell,
+} from '../../../framework'
 import { useInMemoryView } from '../../../framework/useInMemoryView'
 import { StatusCell } from '../../common/StatusCell'
 import { useGet } from '../../common/useItem'
@@ -36,6 +43,7 @@ export function Tasks() {
         errorStateTitle={t('Error loading tasks')}
         emptyStateTitle={t('No tasks yet')}
         {...view}
+        defaultCardSubtitle={t('Task')}
       />
     </>
   )
@@ -57,12 +65,18 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           />
         ),
         sort: 'name',
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Status'),
         cell: (task) => <StatusCell status={task.state} />,
         sort: 'state',
         hideLabel: true,
+      },
+      {
+        header: t('Duration'),
+        cell: (task) => <ElapsedTimeCell start={task.started_at} finish={task.finished_at} />,
       },
       {
         header: t('Started'),
@@ -81,6 +95,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <SinceCell value={task.pulp_created} />,
         sort: 'pulp_created',
         card: 'hidden',
+        list: 'secondary',
       },
     ],
     [navigate, t]

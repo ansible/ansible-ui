@@ -36,6 +36,9 @@ import {
   useRef,
   useState,
 } from 'react'
+import { SinceCell } from './cells/DateTimeCell'
+import { LabelsCell } from './cells/LabelsCell'
+import { TextCell } from './cells/TextCell'
 import { Scrollable } from './components/Scrollable'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageBody } from './PageBody'
@@ -139,7 +142,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { disableBodyPadding } = props
+  // const { disableBodyPadding } = props
   const { toolbarActions, filters, error, itemCount } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
   const showSelect =
@@ -161,6 +164,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   )
 
   const settings = useSettings()
+
+  const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true
 
   if (error) {
     return (
@@ -231,16 +236,27 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         setViewType={setViewType}
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding={disableBodyPadding}>
+        <PageBody disablePadding>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
-        <PageBody>
-          <Scrollable>
-            <PageTableList {...props} showSelect={showSelect} />
-          </Scrollable>
-        </PageBody>
+        <Scrollable>
+          <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
+            <div
+              style={{
+                borderLeft: usePadding
+                  ? 'thin solid var(--pf-global--BorderColor--100)'
+                  : undefined,
+                borderRight: usePadding
+                  ? 'thin solid var(--pf-global--BorderColor--100)'
+                  : undefined,
+              }}
+            >
+              <PageTableList {...props} showSelect={showSelect} />
+            </div>
+          </PageSection>
+        </Scrollable>
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
@@ -626,7 +642,7 @@ function TableCells<T extends object>(props: {
         .map((column) => {
           return (
             <Td key={column.header} dataLabel={column.header} modifier="nowrap">
-              {column.cell(item)}
+              <TableColumnCell item={item} column={column} />
             </Td>
           )
         })}
@@ -660,12 +676,11 @@ function TableCells<T extends object>(props: {
   )
 }
 
-type CellFn<T extends object> = (item: T) => ReactNode
+type CellFn<T extends object, R> = (item: T) => R
 
-export interface ITableColumn<T extends object> {
+export interface ITableColumnCommon<T extends object> {
   id?: string
   header: string
-  cell: CellFn<T>
   minWidth?: number
   maxWidth?: number
   enabled?: boolean
@@ -675,21 +690,85 @@ export interface ITableColumn<T extends object> {
   defaultSortDirection?: 'asc' | 'desc'
   defaultSort?: boolean
 
-  /**
-   * @deprecated The method should not be used
-   */
-  type?: 'labels' | 'progress' | 'date'
+  // card?: 'description' | 'hidden' | 'count'
 
-  /**
-   * @deprecated The method should not be used
-   */
-  sortFn?: (l: T, r: T) => number
+  // list?: 'primary' | 'secondary'
 
-  card?: 'description' | 'hidden' | 'count'
+  // hideLabel?: boolean
 
-  list?: 'primary' | 'secondary'
+  // primary?: boolean
 
-  hideLabel?: boolean
+  icon?: (item: T) => ReactNode
+  card?: 'name' | 'subtitle' | 'description' | 'hidden'
+  list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary'
+}
 
-  primary?: boolean
+export enum TableColumnSomething {
+  'id',
+  'name',
+  'description',
+}
+
+export enum TableColumnCardType {
+  'description',
+  'hidden',
+  'count',
+}
+
+export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
+  type?: undefined
+  value?: CellFn<T, string | string[] | number | boolean>
+  cell: CellFn<T, ReactNode | undefined>
+}
+
+export interface ITableColumnTypeCount<T extends object> extends ITableColumnCommon<T> {
+  type: 'count'
+  value: CellFn<T, number | undefined>
+}
+
+export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
+  type: 'labels'
+  value: CellFn<T, string[] | undefined>
+}
+
+export interface ITableColumnTypeDateTime<T extends object> extends ITableColumnCommon<T> {
+  type: 'datetime'
+  value: CellFn<T, number | string | undefined>
+}
+
+export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
+  type: 'description'
+  value: CellFn<T, string | undefined>
+}
+
+export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
+  type: 'text'
+  value: CellFn<T, string | undefined>
+}
+
+export type ITableColumn<T extends object> =
+  | ITableColumnTypeReactNode<T>
+  | ITableColumnTypeDateTime<T>
+  | ITableColumnTypeLabels<T>
+  | ITableColumnTypeCount<T>
+  | ITableColumnTypeText<T>
+  | ITableColumnTypeDescription<T>
+
+export function TableColumnCell<T extends object>(props: { item: T; column?: ITableColumn<T> }) {
+  const { item, column } = props
+  if (!column) return <></>
+  switch (column.type) {
+    case 'text':
+      return <TextCell text={column.value(item)} />
+    case 'labels':
+      return <LabelsCell labels={column.value(item) ?? []} />
+    case 'description':
+      return <TextCell text={column.value(item)} />
+    case 'count':
+      return <>{column.value(item) ?? '-'}</>
+    case 'datetime':
+      return <SinceCell value={column.value(item)} />
+    default:
+      return <>{column.cell(item)}</>
+  }
 }

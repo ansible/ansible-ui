@@ -79,6 +79,7 @@ export function Approvals() {
       errorStateTitle={t('Error loading approvals')}
       emptyStateTitle={t('No approvals yet')}
       {...view}
+      defaultCardSubtitle={t('Collection approval')}
     />
   )
 }
@@ -87,7 +88,11 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
   const { t } = useTranslation()
   const tableColumns = useMemo<ITableColumn<Approval>[]>(
     () => [
-      { header: t('Namespace'), cell: (approval) => <TextCell text={approval.namespace} /> },
+      {
+        header: t('Namespace'),
+        cell: (approval) => <TextCell text={approval.namespace} />,
+        card: 'name',
+      },
       { header: t('Collection'), cell: (approval) => <TextCell text={approval.name} /> },
       { header: t('Version'), cell: (approval) => <TextCell text={approval.version} /> },
       { header: t('Created'), cell: (approval) => <SinceCell value={approval.created_at} /> },
