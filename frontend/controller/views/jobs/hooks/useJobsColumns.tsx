@@ -35,7 +35,6 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Status'),
         cell: (job: UnifiedJob) => <StatusCell status={job.status} />,
         sort: 'status',
-        hideLabel: true,
       },
       {
         header: t('Type'),

@@ -13,7 +13,6 @@ export function useProjectColumns() {
       {
         header: t('ID'),
         cell: (inventory) => inventory.id,
-        isIdColumn: true,
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
