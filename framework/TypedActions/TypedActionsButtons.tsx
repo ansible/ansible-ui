@@ -1,4 +1,4 @@
-import { Button, ButtonVariant, Split, Tooltip } from '@patternfly/react-core'
+import { Button, ButtonVariant, DropdownPosition, Split, Tooltip } from '@patternfly/react-core'
 import { ComponentClass, Fragment, FunctionComponent } from 'react'
 import {
   ITypedAction,
@@ -89,6 +89,9 @@ export function TypedActionButton<T extends object>(props: {
           isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       )
+    }
+    default: {
+      return <></>
     }
   }
 }
@@ -201,6 +204,12 @@ function ActionSingleButton<T extends object>(props: {
   const isDisabled =
     action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
   tooltip = isDisabled ? isDisabled : tooltip
+  const isHidden =
+    action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
+  const dropdownActions =
+    action.dropdownActions !== undefined && selectedItem
+      ? action.dropdownActions(selectedItem)
+      : undefined
 
   let variant = action.variant ?? ButtonVariant.secondary
   if (variant === ButtonVariant.primary && noPrimary) {
@@ -214,23 +223,45 @@ function ActionSingleButton<T extends object>(props: {
   }
   return (
     <Wrapper>
-      <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-        <Button
-          variant={variant}
-          icon={
-            Icon ? (
-              <span style={{ marginLeft: -4, paddingRight: 4 }}>
-                <Icon />
-              </span>
-            ) : undefined
-          }
-          isAriaDisabled={Boolean(isDisabled)}
-          onClick={() => selectedItem && action.onClick(selectedItem)}
-          isDanger={action.isDanger}
+      {dropdownActions?.options && dropdownActions.options.length > 0 ? (
+        <Tooltip
+          content={isDisabled ? tooltip : dropdownActions.label}
+          trigger={action.label ? undefined : 'manual'}
         >
-          {props.iconOnly && Icon ? <Icon /> : action.shortLabel ? action.shortLabel : action.label}
-        </Button>
-      </Tooltip>
+          <TypedActionsDropdown<T>
+            isHidden={isHidden}
+            isDisabled={Boolean(isDisabled)}
+            icon={action.icon}
+            actions={dropdownActions.options}
+            position={DropdownPosition.right}
+          />
+        </Tooltip>
+      ) : (
+        <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+          <Button
+            variant={variant}
+            icon={
+              Icon ? (
+                <span style={{ marginLeft: -4, paddingRight: 4 }}>
+                  <Icon />
+                </span>
+              ) : undefined
+            }
+            isAriaDisabled={Boolean(isDisabled)}
+            onClick={() => selectedItem && action.onClick(selectedItem)}
+            isDanger={action.isDanger}
+            style={{ visibility: isHidden ? 'hidden' : 'visible' }}
+          >
+            {props.iconOnly && Icon ? (
+              <Icon />
+            ) : action.shortLabel ? (
+              action.shortLabel
+            ) : (
+              action.label
+            )}
+          </Button>
+        </Tooltip>
+      )}
     </Wrapper>
   )
 }

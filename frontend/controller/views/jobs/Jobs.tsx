@@ -1,6 +1,6 @@
 import { ITypedAction, TablePage, TypedActionType } from '../../../../framework'
-
-import { BanIcon, TrashIcon } from '@patternfly/react-icons'
+import { ButtonVariant } from '@patternfly/react-core'
+import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
@@ -64,6 +64,45 @@ export default function Jobs() {
     }
 
     return [
+      {
+        type: TypedActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: RocketIcon,
+        label: t(`Relaunch job`),
+        isHidden: (job: UnifiedJob) =>
+          !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start),
+        onClick: (job: UnifiedJob) => {
+          // eslint-disable-next-line no-console
+          console.log('Clicked Relaunch job', job)
+        },
+        dropdownActions: (job: UnifiedJob) =>
+          job.status === 'failed' && job.type === 'job'
+            ? {
+                type: TypedActionType.dropdown,
+                label: t(`Relaunch using host parameters`),
+                options: [
+                  { type: TypedActionType.plainText, label: t(`Relaunch on`) },
+                  { type: TypedActionType.seperator },
+                  {
+                    type: TypedActionType.single,
+                    label: t(`All`),
+                    onClick: (job: UnifiedJob) => {
+                      // eslint-disable-next-line no-console
+                      console.log('Clicked All', job)
+                    },
+                  },
+                  {
+                    type: TypedActionType.single,
+                    label: t(`Failed hosts`),
+                    onClick: (job: UnifiedJob) => {
+                      // eslint-disable-next-line no-console
+                      console.log('Clicked Failed hosts', job)
+                    },
+                  },
+                ],
+              }
+            : undefined,
+      },
       {
         type: TypedActionType.single,
         icon: TrashIcon,
