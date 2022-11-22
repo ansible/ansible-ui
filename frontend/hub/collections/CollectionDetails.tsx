@@ -8,8 +8,6 @@ import {
   NavList,
   PageSection,
   SearchInput,
-  Split,
-  SplitItem,
   Stack,
   StackItem,
   Title,
@@ -160,22 +158,62 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
   }, [data?.latest_version.docs_blob.contents])
 
   return (
-    <PageSection variant="light" padding={{ default: 'noPadding' }}>
-      <Split>
-        <SplitItem style={{ borderRight: 'thin solid var(--pf-global--BorderColor--100)' }}>
+    <div
+      style={{
+        display: 'flex',
+        height: '100%',
+        maxHeight: '100%',
+        width: '100%',
+        maxWidth: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          height: '100%',
+          maxHeight: '100%',
+          width: '100%',
+          maxWidth: '100%',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            borderRight: 'thin solid var(--pf-global--BorderColor--100)',
+          }}
+        >
           <Scrollable>
             <Stack>
-              <PageSection variant="light">
+              <PageSection
+                variant="light"
+                style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
+              >
                 <SearchInput />
               </PageSection>
               <PageSection variant="light" padding={{ default: 'noPadding' }}>
                 <Nav theme="light">
                   <NavList>
+                    <NavExpandable key="documentation" title="Documentation" isExpanded>
+                      <NavItem key="readme">{t('Readme')}</NavItem>
+                    </NavExpandable>
                     {docGroups.map((group) => (
-                      <NavExpandable key={group.name} title={group.name} isExpanded>
-                        {group.contents.map((content) => (
-                          <NavItem key={content.content_name} onClick={() => setContent(content)}>
-                            {content.content_name}
+                      <NavExpandable
+                        key={group.name}
+                        title={group.name}
+                        isExpanded
+                        isActive={group.contents.find((c) => c === content) !== undefined}
+                      >
+                        {group.contents.map((c) => (
+                          <NavItem
+                            key={c.content_name}
+                            onClick={() => setContent(c)}
+                            isActive={c === content}
+                          >
+                            {c.content_name}
                           </NavItem>
                         ))}
                       </NavExpandable>
@@ -185,8 +223,15 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
               </PageSection>
             </Stack>
           </Scrollable>
-        </SplitItem>
-        <SplitItem isFilled>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            flexGrow: 1,
+          }}
+        >
           <Scrollable>
             <PageSection variant="light">
               <Stack hasGutter>
@@ -242,9 +287,9 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
               {/* <pre>{JSON.stringify(content, undefined, ' ')}</pre> */}
             </PageSection>
           </Scrollable>
-        </SplitItem>
-      </Split>
-    </PageSection>
+        </div>
+      </div>
+    </div>
   )
 }
 
