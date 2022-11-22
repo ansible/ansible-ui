@@ -25,7 +25,7 @@ export function pkKeyFn(item: { pk: number | string }) {
   return item.pk
 }
 
-interface HubItemsResponse<T extends object> {
+export interface HubItemsResponse<T extends object> {
   meta: {
     count: number
   }
