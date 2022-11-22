@@ -24,10 +24,16 @@ export enum TypedActionType {
   single = 'single',
   bulk = 'bulk',
   dropdown = 'dropdown',
+  plainText = 'plainText',
 }
 
 export interface ITypedActionSeperator {
   type: TypedActionType.seperator
+}
+
+export interface ITypedActionPlainText {
+  type: TypedActionType.plainText
+  label: string
 }
 
 interface ITypedActionCommon {
@@ -56,6 +62,7 @@ export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
   onClick: (item: T) => void
   isDisabled?: (item: T) => string
   isHidden?: (item: T) => boolean
+  dropdownActions?: (item: T) => ITypedDropdownAction<T> | undefined
 }
 
 export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
@@ -66,6 +73,7 @@ export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
 
 export type ITypedAction<T extends object> =
   | ITypedActionSeperator
+  | ITypedActionPlainText
   | ITypedActionButton
   | ITypedBulkAction<T>
   | ITypedSingleAction<T>
@@ -74,12 +82,24 @@ export type ITypedAction<T extends object> =
 export function TypedActionsDropdown<T extends object>(props: {
   actions: ITypedAction<T>[]
   label?: string
+  icon?: ComponentClass | FunctionComponent
+  isHidden?: boolean
+  isDisabled?: boolean
   isPrimary?: boolean
   selectedItems?: T[]
   selectedItem?: T
   position?: DropdownPosition
 }) {
-  const { actions, label, isPrimary = false, selectedItems, selectedItem } = props
+  const {
+    actions,
+    label,
+    icon,
+    isHidden,
+    isDisabled,
+    isPrimary = false,
+    selectedItems,
+    selectedItem,
+  } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasItemActions = useMemo(
     () => !actions.every((action) => action.type !== TypedActionType.bulk),
@@ -88,12 +108,16 @@ export function TypedActionsDropdown<T extends object>(props: {
   const hasIcons = useMemo(
     () =>
       actions.find(
-        (action) => action.type !== TypedActionType.seperator && action.icon !== undefined
+        (action) =>
+          action.type !== TypedActionType.seperator &&
+          action.type !== TypedActionType.plainText &&
+          action.icon !== undefined
       ) !== undefined,
     [actions]
   )
   if (actions.length === 0) return <></>
-  const Toggle = label ? DropdownToggle : KebabToggle
+  const Icon = icon
+  const Toggle = label || Icon ? DropdownToggle : KebabToggle
 
   return (
     <Dropdown
@@ -101,9 +125,11 @@ export function TypedActionsDropdown<T extends object>(props: {
       toggle={
         <Toggle
           id="toggle-kebab"
+          isDisabled={isDisabled}
           onToggle={() => setDropdownOpen(!dropdownOpen)}
           toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
           isPrimary={isPrimary}
+          toggleIndicator={Icon ? null : undefined}
           style={
             isPrimary && !label
               ? {
@@ -112,7 +138,7 @@ export function TypedActionsDropdown<T extends object>(props: {
               : {}
           }
         >
-          {label}
+          {Icon ? <Icon /> : label}
         </Toggle>
       }
       isOpen={dropdownOpen}
@@ -128,7 +154,7 @@ export function TypedActionsDropdown<T extends object>(props: {
         />
       ))}
       position={props.position}
-      style={{ zIndex: 201 }}
+      style={{ zIndex: 201, visibility: isHidden ? 'hidden' : 'visible' }}
     />
   )
 }
@@ -214,6 +240,8 @@ export function DropdownActionItem<T extends object>(props: {
       return (
         <TypedActionsDropdown<T> key={action.label} label={action.label} actions={action.options} />
       )
+    case TypedActionType.plainText:
+      return <DropdownItem isPlainText>{action.label}</DropdownItem>
     case TypedActionType.seperator:
       return <DropdownSeparator key={`separator-${index}`} />
     default:
@@ -241,7 +269,11 @@ export function TypedActions<T extends object>(props: {
       ButtonVariant.secondary,
       ButtonVariant.danger,
     ]
-    return action.type !== TypedActionType.seperator && actionVariants.includes(action.variant)
+    return (
+      action.type !== TypedActionType.seperator &&
+      action.type !== TypedActionType.plainText &&
+      actionVariants.includes(action.variant)
+    )
   }, [])
 
   const buttonActions: ITypedAction<T>[] = useMemo(() => {
