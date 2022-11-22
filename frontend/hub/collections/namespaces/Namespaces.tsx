@@ -103,6 +103,8 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
         header: t('Namespace'),
         cell: (namespace) => <TextCell text={namespace.name} />,
         sort: 'name',
+        card: 'name',
+        list: 'name',
       },
     ],
     [t]

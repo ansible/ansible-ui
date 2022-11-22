@@ -14,7 +14,6 @@ import {
   IToolbarFilter,
   ITypedAction,
   TablePage,
-  TextCell,
   TypedActionType,
 } from '../../../../framework'
 import {
@@ -193,15 +192,13 @@ export function useOrganizationsColumns(options?: {
       descriptionColumn,
       {
         header: t('Members'),
-        cell: (organization) => (
-          <TextCell text={organization.summary_fields?.related_field_counts?.users.toString()} />
-        ),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.users,
       },
       {
         header: t('Teams'),
-        cell: (organization) => (
-          <TextCell text={organization.summary_fields?.related_field_counts?.teams.toString()} />
-        ),
+        type: 'count',
+        value: (organization) => organization.summary_fields?.related_field_counts?.teams,
       },
       createdColumn,
       modifiedColumn,

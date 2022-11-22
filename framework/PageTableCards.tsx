@@ -23,7 +23,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
 
   const catalogCards = useMemo(() => {
     return (
-      <Grid size={470}>
+      <Grid size={400}>
         {items?.map((item) => (
           <PageTableCard<T>
             key={keyFn(item)}
