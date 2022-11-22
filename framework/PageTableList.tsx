@@ -17,7 +17,14 @@ import {
   Title,
 } from '@patternfly/react-core'
 import { ReactNode, useCallback, useMemo } from 'react'
-import { ITableColumn, PageTableProps } from './PageTable'
+import { IconWrapper } from './components/IconWrapper'
+import {
+  ITableColumn,
+  ITableColumnTypeCount,
+  ITableColumnTypeLabels,
+  PageTableProps,
+  TableColumnCell,
+} from './PageTable'
 import { ITypedAction, TypedActions } from './TypedActions'
 
 export type PageTableListProps<T extends object> = PageTableProps<T>
@@ -47,7 +54,7 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
   )
 
   return (
-    <DataList aria-label="TODO" style={{ marginTop: -1 }}>
+    <DataList aria-label="TODO" style={{ marginTop: -1, maxWidth: '100%', overflow: 'hidden' }}>
       {pageItems?.map(columnsToDataList)}
     </DataList>
   )
@@ -64,18 +71,56 @@ export function useColumnsToDataList<T extends object>(
   showSelect?: boolean
 ): (item: T) => ReactNode {
   const data = useMemo(() => {
-    let cols = tableColumns.filter((column) => column.card !== 'hidden')
-    const nameColumn = cols.find((column) => column.primary) ?? cols[0]
-    cols = cols.filter((column) => column !== nameColumn)
-    const descriptionColumn = cols.find((column) => column.card === 'description')
-    if (descriptionColumn) {
-      cols = cols.filter((column) => column !== descriptionColumn)
+    let nameColumn: ITableColumn<T> | undefined
+    let subtitleColumn: ITableColumn<T> | undefined
+    let descriptionColumn: ITableColumn<T> | undefined
+    const countColumns: ITableColumnTypeCount<T>[] = []
+    let labelColumn: ITableColumnTypeLabels<T> | undefined
+    const primaryColumns: ITableColumn<T>[] = []
+    const secondaryColumns: ITableColumn<T>[] = []
+
+    for (const column of tableColumns) {
+      switch (column.type) {
+        case 'description':
+          if (!descriptionColumn) descriptionColumn = column
+          break
+        case 'labels':
+          if (!labelColumn) labelColumn = column
+          break
+        case 'count':
+          countColumns.push(column)
+          break
+        default:
+          switch (column.list) {
+            case 'name':
+              nameColumn = column
+              break
+            case 'subtitle':
+              subtitleColumn = column
+              break
+            case 'description':
+              descriptionColumn = column
+              break
+            case 'hidden':
+              break
+            case 'secondary':
+              secondaryColumns.push(column)
+              break
+            default:
+              primaryColumns.push(column)
+              break
+          }
+          break
+      }
     }
     return {
-      nameColumn: nameColumn,
-      descriptionColumn: descriptionColumn,
-      columns: cols.filter((column) => column.list !== 'secondary'),
-      secondary: cols.filter((column) => column.list === 'secondary'),
+      nameColumn,
+      subtitleColumn,
+      descriptionColumn,
+      countColumns,
+      primaryColumns,
+      secondaryColumns,
+      labelColumn,
     }
   }, [tableColumns])
 
@@ -89,6 +134,16 @@ export function useColumnsToDataList<T extends object>(
     },
     [isSelected, selectItem, unselectItem]
   )
+
+  const {
+    nameColumn,
+    subtitleColumn,
+    descriptionColumn,
+    countColumns,
+    primaryColumns,
+    secondaryColumns,
+    labelColumn,
+  } = data
 
   return useCallback(
     (item: T) => {
@@ -110,60 +165,46 @@ export function useColumnsToDataList<T extends object>(
                 <DataListCell key="primary" width={5}>
                   <Flex>
                     <Stack hasGutter>
-                      <Stack>
-                        <Title headingLevel="h2" style={{ marginTop: -4 }}>
-                          <span id={`data-list-${key}`}>{data.nameColumn?.cell(item)}</span>
-                        </Title>
-                        {data.descriptionColumn ? (
-                          <Text component="small" style={{ opacity: 0.7 }}>
-                            {data.descriptionColumn.cell(item)}
-                          </Text>
-                        ) : (
-                          defaultCardSubtitle && (
-                            <Text component="small" style={{ opacity: 0.7 }}>
-                              {defaultCardSubtitle}
-                            </Text>
-                          )
+                      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+                        {nameColumn?.icon && (
+                          <IconWrapper size="xl">{nameColumn?.icon(item)}</IconWrapper>
                         )}
-                      </Stack>
-                      {data.columns.length > 0 && (
+                        <Stack>
+                          <Title headingLevel="h2" style={{ marginTop: -4, fontWeight: 'bold' }}>
+                            <span id={`data-list-${key}`}>
+                              <TableColumnCell column={nameColumn} item={item} />
+                            </span>
+                          </Title>
+                          {subtitleColumn ? (
+                            <Text component="small" style={{ opacity: 0.7 }}>
+                              <TableColumnCell column={subtitleColumn} item={item} />
+                            </Text>
+                          ) : (
+                            defaultCardSubtitle && (
+                              <Text component="small" style={{ opacity: 0.7 }}>
+                                {defaultCardSubtitle}
+                              </Text>
+                            )
+                          )}
+                        </Stack>
+                      </Flex>
+                      {(descriptionColumn ||
+                        primaryColumns.length > 0 ||
+                        countColumns.length > 0 ||
+                        labelColumn) && (
                         <DescriptionList isCompact>
-                          {data.columns.map((column) => {
-                            const value = column.cell(item)
-                            if (!value) return <></>
-                            return (
-                              <DescriptionListGroup key={column.header}>
-                                {!column.hideLabel && (
-                                  <DescriptionListTerm>
-                                    <Text
-                                      component="small"
-                                      style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
-                                    >
-                                      {column.header}
-                                    </Text>
-                                  </DescriptionListTerm>
-                                )}
+                          {descriptionColumn &&
+                            (!descriptionColumn.value || descriptionColumn.value(item)) && (
+                              <DescriptionListGroup key={descriptionColumn.header}>
                                 <DescriptionListDescription>
-                                  {column.cell(item)}
+                                  <TableColumnCell column={descriptionColumn} item={item} />
                                 </DescriptionListDescription>
                               </DescriptionListGroup>
-                            )
-                          })}
-                        </DescriptionList>
-                      )}
-                    </Stack>
-                  </Flex>
-                </DataListCell>,
-                data.secondary.length > 0 ? (
-                  <DataListCell key="secondary">
-                    <Flex>
-                      <DescriptionList isCompact>
-                        {data.secondary.map((column) => {
-                          const value = column.cell(item)
-                          if (!value) return <></>
-                          return (
-                            <DescriptionListGroup key={column.header}>
-                              {!column.hideLabel && (
+                            )}
+                          {primaryColumns.map((column) => {
+                            if (column.value && !column.value(item)) return <></>
+                            return (
+                              <DescriptionListGroup key={column.header}>
                                 <DescriptionListTerm>
                                   <Text
                                     component="small"
@@ -172,15 +213,70 @@ export function useColumnsToDataList<T extends object>(
                                     {column.header}
                                   </Text>
                                 </DescriptionListTerm>
-                              )}
+                                <DescriptionListDescription>
+                                  <TableColumnCell column={column} item={item} />
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            )
+                          })}
+                          {countColumns.length > 0 && (
+                            <DescriptionListGroup key="counts">
                               <DescriptionListDescription>
-                                {column.cell(item)}
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    gap: 16,
+                                    marginTop: 8,
+                                    flexWrap: 'wrap',
+                                  }}
+                                >
+                                  {countColumns.map((column, i) => (
+                                    <div
+                                      key={i}
+                                      style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}
+                                    >
+                                      <TableColumnCell column={column} item={item} />
+                                      <small style={{ opacity: 0.7 }}>{column.header}</small>
+                                    </div>
+                                  ))}
+                                </div>
                               </DescriptionListDescription>
                             </DescriptionListGroup>
-                          )
-                        })}
-                      </DescriptionList>
-                    </Flex>
+                          )}
+                          {labelColumn && (
+                            <DescriptionListGroup key={labelColumn.header}>
+                              <DescriptionListDescription>
+                                <TableColumnCell column={labelColumn} item={item} />
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                          )}
+                        </DescriptionList>
+                      )}
+                    </Stack>
+                  </Flex>
+                </DataListCell>,
+                secondaryColumns.length > 0 ? (
+                  <DataListCell key="secondary">
+                    <DescriptionList isCompact>
+                      {secondaryColumns.map((column) => {
+                        if (column.value && !column.value(item)) return <></>
+                        return (
+                          <DescriptionListGroup key={column.header}>
+                            <DescriptionListTerm>
+                              <Text
+                                component="small"
+                                style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
+                              >
+                                {column.header}
+                              </Text>
+                            </DescriptionListTerm>
+                            <DescriptionListDescription>
+                              <TableColumnCell column={column} item={item} />
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )
+                      })}
+                    </DescriptionList>
                   </DataListCell>
                 ) : null,
               ]}
@@ -206,16 +302,19 @@ export function useColumnsToDataList<T extends object>(
       )
     },
     [
-      data.columns,
-      data.descriptionColumn,
-      data.nameColumn,
-      data.secondary,
-      defaultCardSubtitle,
-      isSelected,
       keyFn,
-      onSelectClick,
-      rowActions,
+      isSelected,
       showSelect,
+      nameColumn,
+      subtitleColumn,
+      defaultCardSubtitle,
+      primaryColumns,
+      descriptionColumn,
+      countColumns,
+      labelColumn,
+      secondaryColumns,
+      rowActions,
+      onSelectClick,
     ]
   )
 }

@@ -283,25 +283,26 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
             to={RouteE.UserDetails.replace(':id', user.id.toString())}
           />
         ),
+        card: 'name',
+        list: 'name',
         sort: 'username',
         maxWidth: 200,
       },
       {
         header: t('User type'),
         cell: (user) => <UserType user={user} />,
-        card: 'description',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('First name'),
         cell: (user) => user.first_name && <TextCell text={user.first_name} />,
         sort: 'first_name',
-        list: 'secondary',
       },
       {
         header: t('Last name'),
         cell: (user) => user.last_name && <TextCell text={user.last_name} />,
         sort: 'last_name',
-        list: 'secondary',
       },
       {
         header: t('Email'),
@@ -312,6 +313,7 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         header: t('Created'),
         cell: (item) => <SinceCell value={item.created} />,
         card: 'hidden',
+        list: 'secondary',
       },
     ],
     [t]

@@ -4,48 +4,48 @@ import { getPatternflyColor, PFColor } from './pfcolors'
 export function IconWrapper(props: {
   children: ReactNode
   color?: PFColor
-  size?: 'sm' | 'md' | 'lg'
-  noPadding?: boolean
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  padRight?: boolean
 }) {
   const newProps: {
     color?: string
     size?: string
+    marginRight?: number
   } = {}
+
   if (props.color) {
     newProps.color = getPatternflyColor(props.color)
   }
-  let marginOffset: number | undefined = undefined
-  let marginRight: number | undefined = undefined
+
   if (props.size) {
     newProps.size = props.size
+  }
+
+  let paddingRight = 0
+  if (props.padRight) {
     switch (props.size) {
       case 'sm':
-        marginRight = 6
+        paddingRight = 4
         break
       case 'md':
-        marginOffset = -2
-        marginRight = 6
+        paddingRight = 6
         break
       case 'lg':
-        marginOffset = -6
-        marginRight = 6
+        paddingRight = 8
+        break
+      case 'xl':
+        paddingRight = 12
         break
     }
   }
-  if (props.noPadding) {
-    marginRight = undefined
-  }
+
   const newChildren = Children.toArray(props.children).map((child) => {
     if (isValidElement(child)) {
-      const newChild = cloneElement(child, newProps)
-      return newChild
+      return cloneElement(child, newProps)
     } else {
       return child
     }
   })
-  return (
-    <div style={{ marginTop: marginOffset, marginBottom: marginOffset, marginRight }}>
-      {newChildren}
-    </div>
-  )
+
+  return <div style={{ paddingRight }}>{newChildren}</div>
 }
