@@ -13,8 +13,10 @@ export function useRulebookColumns() {
       {
         header: t('ID'),
         cell: (inventory) => inventory.id,
-        isIdColumn: true,
         sort: 'id',
+        card: 'hidden',
+        list: 'hidden',
+        isIdColumn: true,
       },
       {
         header: t('Name'),
@@ -27,8 +29,9 @@ export function useRulebookColumns() {
           />
         ),
         sort: 'name',
-        primary: true,
         defaultSort: true,
+        card: 'name',
+        list: 'name',
       },
     ],
     [navigate, t]

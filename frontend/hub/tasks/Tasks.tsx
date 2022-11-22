@@ -72,7 +72,6 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         header: t('Status'),
         cell: (task) => <StatusCell status={task.state} />,
         sort: 'state',
-        hideLabel: true,
       },
       {
         header: t('Duration'),

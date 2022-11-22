@@ -13,8 +13,10 @@ export function useRuleColumns() {
       {
         header: t('ID'),
         cell: (inventory) => inventory.id,
-        isIdColumn: true,
         sort: 'id',
+        card: 'hidden',
+        list: 'hidden',
+        isIdColumn: true,
       },
       {
         header: t('Name'),
@@ -25,7 +27,8 @@ export function useRuleColumns() {
           />
         ),
         sort: 'name',
-        primary: true,
+        card: 'name',
+        list: 'name',
         defaultSort: true,
       },
     ],
