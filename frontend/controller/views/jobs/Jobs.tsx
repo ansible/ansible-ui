@@ -1,6 +1,6 @@
 import { ITypedAction, TablePage, TypedActionType } from '../../../../framework'
 
-import { BanIcon, TrashIcon } from '@patternfly/react-icons'
+import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
@@ -10,6 +10,7 @@ import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useJobsColumns } from './hooks/useJobsColumns'
 import { useJobsFilters } from './hooks/useJobsFilters'
 import { isJobRunning } from './jobUtils'
+import { ButtonVariant } from '@patternfly/react-core'
 
 export default function Jobs() {
   const { t } = useTranslation()
@@ -64,6 +65,18 @@ export default function Jobs() {
     }
 
     return [
+      {
+        type: TypedActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: RocketIcon,
+        label: t(`Relaunch job`),
+        isHidden: (job: UnifiedJob) =>
+          job.type === 'system_job' || !job.summary_fields?.user_capabilities?.start,
+        onClick: (job: UnifiedJob) => {
+          // eslint-disable-next-line no-console
+          console.log('Clicked job', job)
+        },
+      },
       {
         type: TypedActionType.single,
         icon: TrashIcon,

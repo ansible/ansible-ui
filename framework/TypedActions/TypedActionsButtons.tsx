@@ -201,6 +201,8 @@ function ActionSingleButton<T extends object>(props: {
   const isDisabled =
     action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
   tooltip = isDisabled ? isDisabled : tooltip
+  const isHidden =
+    action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
 
   let variant = action.variant ?? ButtonVariant.secondary
   if (variant === ButtonVariant.primary && noPrimary) {
@@ -227,6 +229,7 @@ function ActionSingleButton<T extends object>(props: {
           isAriaDisabled={Boolean(isDisabled)}
           onClick={() => selectedItem && action.onClick(selectedItem)}
           isDanger={action.isDanger}
+          style={{ visibility: isHidden ? 'hidden' : 'visible' }}
         >
           {props.iconOnly && Icon ? <Icon /> : action.shortLabel ? action.shortLabel : action.label}
         </Button>

@@ -55,6 +55,7 @@ export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
   variant?: ButtonVariant
   onClick: (item: T) => void
   isDisabled?: (item: T) => string
+  isHidden?: (item: T) => boolean
 }
 
 export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
@@ -148,7 +149,12 @@ export function DropdownActionItem<T extends object>(props: {
       let tooltip = action.tooltip
       const isDisabled =
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
+      const isHidden =
+        action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
       tooltip = isDisabled ? isDisabled : tooltip
+      if (isHidden) {
+        return null
+      }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
@@ -391,6 +397,15 @@ export function useTypedActionsToTableActions<T extends object>(props: {
               ? buttonAction.isDisabled(props.item)
               : false
           tooltip = isDisabled ? isDisabled : tooltip
+          const isHidden =
+            buttonAction.isHidden !== undefined && props.item
+              ? buttonAction.isHidden(props.item)
+              : false
+          if (isHidden) {
+            // eslint-disable-next-line no-console
+            console.log('isHidden buttonAction', buttonAction)
+            return null
+          }
           return {
             title: (
               <Tooltip
