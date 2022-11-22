@@ -130,7 +130,6 @@ export function useAutomationServersColumns(_options?: {
       {
         header: t('Url'),
         cell: (server) => <TextCell text={server.url} to={server.url} />,
-        hideLabel: true,
       },
     ],
     [navigate, t]

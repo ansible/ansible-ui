@@ -15,6 +15,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         cell: (job: UnifiedJob) => job.id,
         sort: 'id',
         card: 'hidden',
+        list: 'hidden',
         isIdColumn: true,
       },
       {
@@ -27,13 +28,13 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           />
         ),
         sort: 'name',
-        primary: true,
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Status'),
         cell: (job: UnifiedJob) => <StatusCell status={job.status} />,
         sort: 'status',
-        hideLabel: true,
       },
       {
         header: t('Type'),
