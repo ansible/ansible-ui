@@ -4,7 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework'
 import { useNameColumn } from '../../../../common/columns'
 import { getItemKey, requestDelete } from '../../../../Data'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { getJobsAPIUrl } from '../JobTypeAPIUrl'
+import { getJobsAPIUrl } from '../jobUtils'
 import { useJobsColumns } from './useJobsColumns'
 
 export function useDeleteJobs(onComplete: (jobs: UnifiedJob[]) => void) {

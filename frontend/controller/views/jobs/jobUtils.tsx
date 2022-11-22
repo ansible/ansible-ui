@@ -15,3 +15,7 @@ export function getJobsAPIUrl(type: string) {
       return '/api/v2/jobs/'
   }
 }
+
+export function isJobRunning(status: string) {
+  return ['new', 'pending', 'waiting', 'running'].includes(status)
+}

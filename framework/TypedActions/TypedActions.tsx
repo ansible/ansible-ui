@@ -13,6 +13,8 @@ import {
 import { CircleIcon } from '@patternfly/react-icons'
 import { IAction } from '@patternfly/react-table'
 import { ComponentClass, FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { IconWrapper } from '../components/IconWrapper'
+import { PFColorE, pfDisabled } from '../components/pfcolors'
 import { useBreakpoint, WindowSize } from '../components/useBreakPoint'
 import { TypedActionButton, TypedActionsButtons } from './TypedActionsButtons'
 
@@ -52,6 +54,7 @@ export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
   type: TypedActionType.single
   variant?: ButtonVariant
   onClick: (item: T) => void
+  isDisabled?: (item: T) => string
 }
 
 export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
@@ -142,13 +145,15 @@ export function DropdownActionItem<T extends object>(props: {
     case TypedActionType.single: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon
       if (!Icon && hasIcons) Icon = TransparentIcon
-      const tooltip = action.tooltip
-      const isDisabled = false
+      let tooltip = action.tooltip
+      const isDisabled =
+        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
+      tooltip = isDisabled ? isDisabled : tooltip
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
             onClick={() => selectedItem && action.onClick(selectedItem)}
-            isAriaDisabled={isDisabled}
+            isAriaDisabled={Boolean(isDisabled)}
             icon={
               Icon ? (
                 <span style={{ paddingRight: 4 }}>
@@ -380,19 +385,35 @@ export function useTypedActionsToTableActions<T extends object>(props: {
         }
         case TypedActionType.single: {
           const Icon = buttonAction.icon
+          let tooltip = buttonAction.tooltip
+          const isDisabled =
+            buttonAction.isDisabled !== undefined && props.item
+              ? buttonAction.isDisabled(props.item)
+              : false
+          tooltip = isDisabled ? isDisabled : tooltip
           return {
             title: (
-              <Split hasGutter>
-                {Icon && (
-                  <SplitItem>
-                    <Icon />
+              <Tooltip
+                key={buttonAction.label}
+                content={tooltip}
+                trigger={tooltip ? undefined : 'manual'}
+              >
+                <Split hasGutter style={{ cursor: isDisabled ? 'default' : 'pointer' }}>
+                  {Icon && (
+                    <SplitItem>
+                      <IconWrapper color={isDisabled ? PFColorE.Disabled : undefined}>
+                        <Icon />
+                      </IconWrapper>
+                    </SplitItem>
+                  )}
+                  <SplitItem style={{ color: isDisabled ? pfDisabled : undefined }}>
+                    {buttonAction.label}
                   </SplitItem>
-                )}
-                <SplitItem>{buttonAction.label}</SplitItem>
-              </Split>
+                </Split>
+              </Tooltip>
             ),
-            onClick: () => {
-              buttonAction.onClick(props.item)
+            onClick: (event: Event) => {
+              isDisabled ? event.stopPropagation() : buttonAction.onClick(props.item)
             },
           }
         }

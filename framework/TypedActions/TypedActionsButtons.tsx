@@ -197,8 +197,11 @@ function ActionSingleButton<T extends object>(props: {
   const { action, selectedItem, noPrimary, wrapper } = props
   const Wrapper = wrapper ?? Fragment
   const Icon = action.icon
-  const tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined
-  const isDisabled = false
+  let tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined
+  const isDisabled =
+    action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
+  tooltip = isDisabled ? isDisabled : tooltip
+
   let variant = action.variant ?? ButtonVariant.secondary
   if (variant === ButtonVariant.primary && noPrimary) {
     variant = ButtonVariant.secondary
@@ -221,7 +224,7 @@ function ActionSingleButton<T extends object>(props: {
               </span>
             ) : undefined
           }
-          isAriaDisabled={isDisabled}
+          isAriaDisabled={Boolean(isDisabled)}
           onClick={() => selectedItem && action.onClick(selectedItem)}
           isDanger={action.isDanger}
         >
