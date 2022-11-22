@@ -10,9 +10,9 @@ import {
   PageTable,
   PageTabs,
   TextCell,
-} from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { idKeyFn, useHubView } from '../../useHubView'
+} from '../../../framework'
+import { RouteE } from '../../Routes'
+import { idKeyFn, useHubView } from '../useHubView'
 import { Namespace } from './Namespace'
 
 export function Namespaces() {

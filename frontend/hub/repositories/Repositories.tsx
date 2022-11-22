@@ -13,9 +13,9 @@ import {
   SinceCell,
   TextCell,
   TypedActionType,
-} from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView'
+} from '../../../framework'
+import { RouteE } from '../../Routes'
+import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../useHubView'
 import { RemoteRepository, Repository } from './Repository'
 
 export function Repositories() {

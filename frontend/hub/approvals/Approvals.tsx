@@ -10,8 +10,8 @@ import {
   TablePage,
   TextCell,
   TypedActionType,
-} from '../../../../framework'
-import { idKeyFn, useHubView } from '../../useHubView'
+} from '../../../framework'
+import { idKeyFn, useHubView } from '../useHubView'
 import { Approval } from './Approval'
 
 export function Approvals() {

@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next'
-import { PageHeader, PageLayout, PageTable } from '../../../../framework'
-import { idKeyFn, useHubView } from '../../useHubView'
+import { PageHeader, PageLayout, PageTable } from '../../../framework'
+import { idKeyFn, useHubView } from '../useHubView'
 import { Collection } from './Collection'
 import { useCollectionActions } from './hooks/useCollectionActions'
-import { useCollectionsColumns } from './hooks/useCollectionColumns'
+import { useCollectionColumns } from './hooks/useCollectionColumns'
 import { useCollectionFilters } from './hooks/useCollectionFilters'
 
 export function Collections() {
   const { t } = useTranslation()
   const toolbarFilters = useCollectionFilters()
-  const tableColumns = useCollectionsColumns()
+  const tableColumns = useCollectionColumns()
   const view = useHubView<Collection>(
     '/api/automation-hub/_ui/v1/repo/published/',
     idKeyFn,

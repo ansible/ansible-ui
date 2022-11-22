@@ -23,6 +23,7 @@ export interface Collection {
         content_type: string
       }[]
       dependencies: Record<string, string>
+      license: string[]
     }
   }
 }

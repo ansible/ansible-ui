@@ -9,9 +9,9 @@ import {
   TablePage,
   TextCell,
   TypedActionType,
-} from '../../../../framework'
-import { useCreatedColumn, useDescriptionColumn } from '../../../common/columns'
-import { idKeyFn, useHubView } from '../../useHubView'
+} from '../../../framework'
+import { useCreatedColumn, useDescriptionColumn } from '../../common/columns'
+import { idKeyFn, useHubView } from '../useHubView'
 import { ExecutionEnvironment } from './ExecutionEnvironment'
 
 export function ExecutionEnvironments() {

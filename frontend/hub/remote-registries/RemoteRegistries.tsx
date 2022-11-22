@@ -10,8 +10,8 @@ import {
   TablePage,
   TextCell,
   TypedActionType,
-} from '../../../../framework'
-import { pkKeyFn, useHubView } from '../../useHubView'
+} from '../../../framework'
+import { pkKeyFn, useHubView } from '../useHubView'
 import { RemoteRegistry } from './RemoteRegistry'
 
 export function RemoteRegistries() {
