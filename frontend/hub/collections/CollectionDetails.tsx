@@ -1,6 +1,21 @@
 import {
+  Alert,
   Breadcrumb,
   BreadcrumbItem,
+  Button,
+  CodeBlock,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Drawer,
+  DrawerActions,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerHead,
+  DrawerPanelBody,
+  DrawerPanelContent,
   DropdownPosition,
   Nav,
   NavExpandable,
@@ -12,22 +27,27 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core'
+import { BarsIcon } from '@patternfly/react-icons'
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
-import { useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import {
   CopyCell,
   Detail,
   DetailsList,
+  getPatternflyColor,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
+  PFColorE,
   TypedActions,
+  useBreakpoint,
 } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { TableDetails } from '../../../framework/PageTableDetails'
+import { StatusCell } from '../../common/StatusCell'
 import { useGet } from '../../common/useItem'
 import { RouteE } from '../../Routes'
 import { HubItemsResponse } from '../useHubView'
@@ -128,7 +148,6 @@ function CollectionInstallTab(props: { collection?: Collection }) {
 }
 
 function CollectionDocumentationTab(props: { collection?: Collection }) {
-  const { t } = useTranslation()
   const { collection } = props
 
   const [content, setContent] = useState<IContents>()
@@ -139,7 +158,7 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
     }/?include_related=my_permissions`
   )
 
-  const docGroups = useMemo(() => {
+  const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {}
     if (data?.latest_version.docs_blob.contents) {
       for (const content of data.latest_version.docs_blob.contents) {
@@ -157,139 +176,217 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
     return Object.values(groups)
   }, [data?.latest_version.docs_blob.contents])
 
+  const [isDrawerOpen, setDrawerOpen] = useState(true)
+  const lg = useBreakpoint('lg')
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        height: '100%',
-        maxHeight: '100%',
-        width: '100%',
-        maxWidth: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          height: '100%',
-          maxHeight: '100%',
-          width: '100%',
-          maxWidth: '100%',
-        }}
+    <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
+      <DrawerContent
+        panelContent={
+          isDrawerOpen ? (
+            <CollectionDocumentationTabPanel
+              setDrawerOpen={setDrawerOpen}
+              groups={groups}
+              content={content}
+              setContent={setContent}
+            />
+          ) : undefined
+        }
       >
-        <div
-          style={{
-            display: 'flex',
-            maxHeight: '100%',
-            maxWidth: '100%',
-            borderRight: 'thin solid var(--pf-global--BorderColor--100)',
-          }}
-        >
-          <Scrollable>
-            <Stack>
-              <PageSection
-                variant="light"
-                style={{ borderBottom: 'thin solid var(--pf-global--BorderColor--100)' }}
+        <DrawerContentBody>
+          <CollectionDocumentationTabContent
+            content={content}
+            isDrawerOpen={isDrawerOpen}
+            setDrawerOpen={setDrawerOpen}
+          />
+        </DrawerContentBody>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+
+function CollectionDocumentationTabPanel(props: {
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>
+  content: IContents | undefined
+  setContent: Dispatch<SetStateAction<IContents | undefined>>
+  groups: {
+    name: string
+    contents: IContents[]
+  }[]
+}) {
+  const { content, setContent, groups, setDrawerOpen } = props
+  const { t } = useTranslation()
+  return (
+    <DrawerPanelContent>
+      <DrawerHead style={{ gap: 16 }}>
+        <SearchInput placeholder={t('Find content')} />
+        <DrawerActions style={{ alignSelf: 'center' }}>
+          <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
+        </DrawerActions>
+      </DrawerHead>
+      <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
+        <Nav theme="light">
+          <NavList>
+            <NavExpandable key="documentation" title="Documentation" isExpanded>
+              <NavItem key="readme">{t('Readme')}</NavItem>
+            </NavExpandable>
+            {groups.map((group) => (
+              <NavExpandable
+                key={group.name}
+                title={group.name}
+                isExpanded
+                isActive={group.contents.find((c) => c === content) !== undefined}
               >
-                <SearchInput />
-              </PageSection>
-              <PageSection variant="light" padding={{ default: 'noPadding' }}>
-                <Nav theme="light">
-                  <NavList>
-                    <NavExpandable key="documentation" title="Documentation" isExpanded>
-                      <NavItem key="readme">{t('Readme')}</NavItem>
-                    </NavExpandable>
-                    {docGroups.map((group) => (
-                      <NavExpandable
-                        key={group.name}
-                        title={group.name}
-                        isExpanded
-                        isActive={group.contents.find((c) => c === content) !== undefined}
-                      >
-                        {group.contents.map((c) => (
-                          <NavItem
-                            key={c.content_name}
-                            onClick={() => setContent(c)}
-                            isActive={c === content}
-                          >
-                            {c.content_name}
-                          </NavItem>
-                        ))}
-                      </NavExpandable>
-                    ))}
-                  </NavList>
-                </Nav>
-              </PageSection>
-            </Stack>
-          </Scrollable>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            maxHeight: '100%',
-            maxWidth: '100%',
-            flexGrow: 1,
-          }}
-        >
-          <Scrollable>
-            <PageSection variant="light">
-              <Stack hasGutter>
-                <Breadcrumb>
-                  <BreadcrumbItem>{content?.content_type}</BreadcrumbItem>
-                  <BreadcrumbItem>{content?.content_name}</BreadcrumbItem>
-                </Breadcrumb>
-                <Title headingLevel="h1">{content?.content_name}</Title>
-                <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
-                <Title headingLevel="h2">{t('Synopsis')}</Title>
-                <p>{content?.doc_strings?.doc.description}</p>
-              </Stack>
-            </PageSection>
-            <PageSection variant="light" style={{ paddingTop: 0, paddingBottom: 0 }}>
-              <Title headingLevel="h2">{t('Parameters')}</Title>
-            </PageSection>
-            <PageSection variant="light" padding={{ default: 'noPadding' }}>
-              <TableComposable variant="compact" isStriped>
-                <Thead>
-                  <Tr>
-                    <Th>{t('Parameter')}</Th>
-                    <Th>{t('Choices')}</Th>
-                    <Th>{t('Comments')}</Th>
+                {group.contents.map((c) => (
+                  <NavItem
+                    key={c.content_name}
+                    onClick={() => setContent(c)}
+                    isActive={c === content}
+                  >
+                    {c.content_name}
+                  </NavItem>
+                ))}
+              </NavExpandable>
+            ))}
+          </NavList>
+        </Nav>
+      </DrawerPanelBody>
+    </DrawerPanelContent>
+  )
+}
+
+function CollectionDocumentationTabContent(props: {
+  content: IContents | undefined
+  isDrawerOpen: boolean
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>
+}) {
+  const { t } = useTranslation()
+  const { content, isDrawerOpen, setDrawerOpen } = props
+  return (
+    <>
+      <PageSection variant="light" sticky="top">
+        <Stack hasGutter>
+          <Breadcrumb>
+            {!isDrawerOpen && (
+              <BreadcrumbItem>
+                <Button onClick={() => setDrawerOpen(true)} variant="plain" isInline>
+                  <BarsIcon />
+                </Button>
+              </BreadcrumbItem>
+            )}
+            {content?.content_type && <BreadcrumbItem>{content.content_type}</BreadcrumbItem>}
+            {content?.content_name && <BreadcrumbItem>{content.content_name}</BreadcrumbItem>}
+          </Breadcrumb>
+          <Title headingLevel="h1">{content?.content_name}</Title>
+          {content?.doc_strings?.doc.short_description && (
+            <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
+          )}
+        </Stack>
+      </PageSection>
+      {content?.doc_strings?.doc.description && (
+        <PageSection variant="light">
+          <Stack hasGutter>
+            <Title headingLevel="h2">{t('Synopsis')}</Title>
+            <p>{content?.doc_strings?.doc.description}</p>
+          </Stack>
+        </PageSection>
+      )}
+      {content?.doc_strings?.doc.options && (
+        <>
+          <PageSection variant="light" style={{ paddingBottom: 0 }}>
+            <Title headingLevel="h2">{t('Parameters')}</Title>
+          </PageSection>
+          <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+            <TableComposable variant="compact">
+              <Thead>
+                <Tr>
+                  <Th>{t('Parameter')}</Th>
+                  <Th>{t('Choices')}</Th>
+                  <Th>{t('Comments')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {content?.doc_strings?.doc.options?.map((option) => (
+                  <Tr key={option.name}>
+                    <Td>
+                      <div>{option.name}</div>
+                      <small style={{ opacity: 0.7 }}>{option.type}</small>
+                    </Td>
+                    <Td>
+                      {option.choices?.map((choice) => (
+                        <p key={choice}>{choice}</p>
+                      ))}
+                    </Td>
+                    <Td>{option.description}</Td>
                   </Tr>
-                </Thead>
-                <Tbody>
-                  {content?.doc_strings?.doc.options?.map((option) => (
-                    <Tr key={option.name}>
-                      <Td>
-                        <div>{option.name}</div>
-                        <small style={{ opacity: 0.7 }}>{option.type}</small>
-                      </Td>
-                      <Td>
-                        {option.choices?.map((choice) => (
-                          <p key={choice}>{choice}</p>
-                        ))}
-                      </Td>
-                      <Td>{option.description}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </TableComposable>
-              <PageSection variant="light">
-                <Stack hasGutter>
-                  <Title headingLevel="h2">{t('Notes')}</Title>
-                  <Stack hasGutter>
-                    {content?.doc_strings?.doc.notes?.map((note, index) => (
-                      <p key={index}>{note}</p>
-                    ))}
-                  </Stack>
-                </Stack>
-              </PageSection>
-              {/* <pre>{JSON.stringify(content, undefined, ' ')}</pre> */}
-            </PageSection>
-          </Scrollable>
-        </div>
-      </div>
-    </div>
+                ))}
+              </Tbody>
+            </TableComposable>
+          </PageSection>
+        </>
+      )}
+      {content?.doc_strings?.doc.notes && (
+        <PageSection variant="light">
+          <Stack hasGutter>
+            <Title headingLevel="h2">{t('Notes')}</Title>
+            {content?.doc_strings?.doc.notes?.map((note, index) => (
+              <p key={index}>{note}</p>
+            ))}
+          </Stack>
+        </PageSection>
+      )}
+      {content?.doc_strings?.examples && (
+        <PageSection variant="light">
+          <Stack hasGutter>
+            <Title headingLevel="h2">{t('Examples')}</Title>
+            {content.doc_strings.examples
+              .split('- name')
+              .filter((example) => !!example.trim())
+              .map((example, index) => (
+                <CodeBlock key={index} style={{ overflowY: 'auto' }}>
+                  <pre>
+                    {'- name'}
+                    {example
+                      .split('\n')
+                      .filter((example) => !!example.trim())
+                      .join('\n')}
+                  </pre>
+                </CodeBlock>
+              ))}
+          </Stack>
+        </PageSection>
+      )}
+      {content?.doc_strings?.return && (
+        <>
+          <PageSection variant="light" style={{ paddingBottom: 0 }}>
+            <Title headingLevel="h2">{t('Returns')}</Title>
+          </PageSection>
+          <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+            <TableComposable variant="compact">
+              <Thead>
+                <Tr>
+                  <Th>{t('Key')}</Th>
+                  <Th>{t('Returned')}</Th>
+                  <Th>{t('Description')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {content?.doc_strings?.return?.map((parameter) => (
+                  <Tr key={parameter.name}>
+                    <Td>
+                      <div>{parameter.name}</div>
+                      <small style={{ opacity: 0.7 }}>{parameter.type}</small>
+                    </Td>
+                    <Td>{parameter.returned}</Td>
+                    <Td>{parameter.description}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </TableComposable>
+          </PageSection>
+        </>
+      )}
+    </>
   )
 }
 
@@ -301,18 +398,116 @@ function CollectionContentsTab(_props: { collection?: Collection }) {
   )
 }
 
-function CollectionImportLogTab(_props: { collection?: Collection }) {
+function CollectionImportLogTab(props: { collection?: Collection }) {
+  const { collection } = props
+  const { t } = useTranslation()
+  const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
+    collection
+      ? `/api/automation-hub/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
+      : ''
+  )
+
+  const { data: collectionImport } = useGet<CollectionImport>(
+    collectionImportsResponse && collectionImportsResponse.data.length
+      ? `/api/automation-hub/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
+      : ''
+  )
+  // http://ec2-54-147-146-116.compute-1.amazonaws.com:8002/api/automation-hub/_ui/v1/imports/collections/ef7849bd-17f5-434f-b35a-3c1877884d12/
+
+  if (!collection) return <></>
+  // &sort=-created&offset=0&limit=10
+
   return (
     <Scrollable>
-      <PageSection variant="light">TODO</PageSection>
+      <PageSection variant="light">
+        <Stack hasGutter>
+          <DetailsList>
+            <Detail label={t('Status')}>
+              <StatusCell status={collectionImport?.state} />
+            </Detail>
+            {/* <Detail label={t('Approval Status')}>
+            </Detail> */}
+            <Detail label={t('Version')}>{collectionImport?.version}</Detail>
+          </DetailsList>
+          {collectionImport?.error && (
+            <Alert
+              variant="danger"
+              title={
+                <Stack>
+                  {collectionImport?.error?.description.split('\n').map((line, index) => (
+                    <StackItem key={index}>{line}</StackItem>
+                  ))}
+                </Stack>
+              }
+              isInline
+              isExpandable
+            >
+              <pre>{collectionImport?.error?.traceback}</pre>
+            </Alert>
+          )}
+          <CodeBlock>
+            {collectionImport?.messages?.map((message, index) => (
+              <div
+                key={index}
+                style={{
+                  color: getPatternflyColor(
+                    message.level === 'INFO'
+                      ? PFColorE.Default
+                      : message.level === 'WARNING'
+                      ? PFColorE.Warning
+                      : message.level === 'ERROR'
+                      ? PFColorE.Danger
+                      : PFColorE.Disabled
+                  ),
+                }}
+              >
+                {message.message}
+              </div>
+            ))}
+          </CodeBlock>
+        </Stack>
+      </PageSection>
     </Scrollable>
   )
 }
 
-function CollectionDependenciesTab(_props: { collection?: Collection }) {
+interface CollectionImport {
+  created_at: string
+  finished_at: string
+  id: string
+  name: string
+  namespace: string
+  started_at: string
+  state: string
+  updated_at: string
+  version: string
+  error?: { traceback: string; description: string }
+  messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[]
+}
+
+function CollectionDependenciesTab(props: { collection?: Collection }) {
+  const { collection } = props
+  const { t } = useTranslation()
+  if (!collection) return <></>
   return (
     <Scrollable>
-      <PageSection variant="light">TODO</PageSection>
+      <PageSection variant="light">
+        <Stack hasGutter>
+          <Title headingLevel="h2">{t('Dependencies')}</Title>
+          <DescriptionList isHorizontal>
+            {Object.keys(collection.latest_version.metadata.dependencies).map((key) => {
+              return (
+                <DescriptionListGroup key={key}>
+                  <DescriptionListTerm>{key}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {collection.latest_version.metadata.dependencies[key]}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )
+            })}
+          </DescriptionList>
+        </Stack>
+      </PageSection>
     </Scrollable>
   )
 }

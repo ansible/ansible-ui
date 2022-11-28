@@ -1,4 +1,5 @@
 export enum PFColorE {
+  Default = 'default',
   Green = 'green',
   Success = 'success',
   Blue = 'blue',
@@ -12,6 +13,7 @@ export enum PFColorE {
 }
 
 export type PFColor =
+  | 'default'
   | 'green'
   | 'success'
   | 'blue'
@@ -25,6 +27,8 @@ export type PFColor =
 
 export function getPatternflyColor(color: PFColor) {
   switch (color) {
+    case 'default':
+      return undefined
     case 'green':
     case 'success':
       return pfSuccess
