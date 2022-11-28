@@ -1,3 +1,5 @@
+import { UnifiedJob } from '../../interfaces/UnifiedJob'
+
 /** Returns the jobs API endpoint based on the job type */
 export function getJobsAPIUrl(type: string) {
   switch (type) {
@@ -18,4 +20,20 @@ export function getJobsAPIUrl(type: string) {
 
 export function isJobRunning(status: string) {
   return ['new', 'pending', 'waiting', 'running'].includes(status)
+}
+
+export function getRelaunchEndpoint(job: UnifiedJob) {
+  switch (job.type) {
+    case 'ad_hoc_command':
+    case 'workflow_job':
+    case 'job':
+      return `${getJobsAPIUrl(job.type)}${job.id}/relaunch/`
+    case 'inventory_update':
+    case 'project_update':
+      return `${getJobsAPIUrl(job.type)}${job.id}/update/`
+    case 'system_job':
+      return `${getJobsAPIUrl(job.type)}${job.id}/update/`
+    default:
+      return `/api/v2/jobs/${job.id}/relaunch/`
+  }
 }

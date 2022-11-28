@@ -85,6 +85,7 @@ export function TypedActionsDropdown<T extends object>(props: {
   icon?: ComponentClass | FunctionComponent
   isHidden?: boolean
   isDisabled?: boolean
+  isPlain?: boolean
   isPrimary?: boolean
   selectedItems?: T[]
   selectedItem?: T
@@ -94,6 +95,7 @@ export function TypedActionsDropdown<T extends object>(props: {
     actions,
     label,
     icon,
+    isPlain,
     isHidden,
     isDisabled,
     isPrimary = false,
@@ -142,7 +144,7 @@ export function TypedActionsDropdown<T extends object>(props: {
         </Toggle>
       }
       isOpen={dropdownOpen}
-      isPlain={!label}
+      isPlain={!label ?? isPlain}
       dropdownItems={actions.map((action, index) => (
         <DropdownActionItem
           key={'label' in action ? action.label : `action-${index}`}
@@ -343,6 +345,29 @@ export function useTypedActionsToTableActions<T extends object>(props: {
 
   const dropdownActions: ITypedAction<T>[] = useMemo(() => {
     if (collapseButtons) {
+      /**
+       * Handle actions of type 'single' that contain a submenu by displaying the
+       * expanded submenu in the row actions dropdown
+       */
+      const singleActionsWithSubmenus = actions?.filter((action) => {
+        return isSingleActionWithSubmenu(action, props.item)
+      })
+      let filteredActions = actions?.filter((action) => {
+        return !isSingleActionWithSubmenu(action, props.item)
+      })
+      // Replace single action with its expanded submenu
+      singleActionsWithSubmenus.forEach((action) => {
+        const submenuActions = isSingleActionWithSubmenu(action, props.item)
+        if (submenuActions !== undefined) {
+          filteredActions = [
+            ...submenuActions,
+            { type: TypedActionType.seperator }, // Additional separator to distinguish the expanded submenu from the other actions
+            ...filteredActions,
+          ]
+        }
+      })
+
+      return filteredActions ?? []
       return actions ?? []
     } else {
       let dropdownActions = actions?.filter(
@@ -366,7 +391,7 @@ export function useTypedActionsToTableActions<T extends object>(props: {
         dropdownActions.pop()
       return dropdownActions
     }
-  }, [collapseButtons, actions])
+  }, [collapseButtons, actions, props.item])
 
   return [
     ...buttonActions.map((buttonAction) => {
@@ -422,6 +447,13 @@ export function useTypedActionsToTableActions<T extends object>(props: {
           }
         }
         case TypedActionType.single: {
+          const isHidden =
+            buttonAction.isHidden !== undefined && props.item
+              ? buttonAction.isHidden(props.item)
+              : false
+          if (isHidden) {
+            return null
+          }
           const Icon = buttonAction.icon
           let tooltip = buttonAction.tooltip
           const isDisabled =
@@ -429,15 +461,6 @@ export function useTypedActionsToTableActions<T extends object>(props: {
               ? buttonAction.isDisabled(props.item)
               : false
           tooltip = isDisabled ? isDisabled : tooltip
-          const isHidden =
-            buttonAction.isHidden !== undefined && props.item
-              ? buttonAction.isHidden(props.item)
-              : false
-          if (isHidden) {
-            // eslint-disable-next-line no-console
-            console.log('isHidden buttonAction', buttonAction)
-            return null
-          }
           return {
             title: (
               <Tooltip
@@ -482,9 +505,29 @@ export function useTypedActionsToTableActions<T extends object>(props: {
             },
           }
         }
+        case TypedActionType.plainText: {
+          return {
+            title: (
+              <Split hasGutter style={{ cursor: 'default' }}>
+                <SplitItem style={{ color: pfDisabled }}>{buttonAction.label}</SplitItem>
+              </Split>
+            ),
+          }
+        }
         default:
           return { isSeparator: true }
       }
     }),
   ].filter((i) => i !== null) as IAction[]
+}
+
+function isSingleActionWithSubmenu<T extends object>(
+  action: ITypedAction<T>,
+  item: T
+): ITypedAction<T>[] | undefined {
+  const submenu =
+    action.type === TypedActionType.single && action.dropdownActions !== undefined && item
+      ? action.dropdownActions(item)
+      : undefined
+  return submenu?.options && submenu.options.length > 0 ? submenu.options : undefined
 }
