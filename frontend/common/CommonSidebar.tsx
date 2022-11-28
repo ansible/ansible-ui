@@ -3,7 +3,6 @@ import { ReactNode, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '../../framework'
-import { useSettings } from '../../framework/Settings'
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher'
 import { RouteE } from '../Routes'
@@ -17,7 +16,6 @@ export function CommonSidebar(props: {
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
-  const settings = useSettings()
   const { automationServer } = useAutomationServers()
 
   const isXl = useBreakpoint('xl')
@@ -34,10 +32,6 @@ export function CommonSidebar(props: {
   return (
     <PageSidebar
       isNavOpen={isNavOpen}
-      style={{
-        backgroundColor:
-          settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-      }}
       nav={
         <Nav>
           <NavList>

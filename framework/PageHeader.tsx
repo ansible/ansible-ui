@@ -112,9 +112,7 @@ export function PageHeader(props: PageHeaderProps) {
   } = props
   const lg = useBreakpoint('lg')
   const xl = useBreakpoint('xl')
-  const xxl = useBreakpoint('xxl')
   const isMdOrLarger = useBreakpoint('md')
-  // const isSmLarger = useBreakpoint('sm')
   const settings = useSettings()
   let { t } = props
   t = t ? t : (t: string) => t
@@ -179,11 +177,7 @@ export function PageHeader(props: PageHeaderProps) {
                 ? 'thin solid var(--pf-global--BorderColor--100)'
                 : undefined,
             backgroundColor:
-              settings.theme === 'dark'
-                ? xxl
-                  ? 'var(--pf-global--BackgroundColor--300)'
-                  : 'var(--pf-global--BackgroundColor--400)'
-                : undefined,
+              settings.theme !== 'light' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           }}
         >
           <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
