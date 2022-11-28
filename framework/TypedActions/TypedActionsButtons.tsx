@@ -230,6 +230,7 @@ function ActionSingleButton<T extends object>(props: {
         >
           <TypedActionsDropdown<T>
             isHidden={isHidden}
+            selectedItem={selectedItem}
             isDisabled={Boolean(isDisabled)}
             icon={action.icon}
             actions={dropdownActions.options}
