@@ -425,27 +425,26 @@ function CollectionImportLogTab(props: { collection?: Collection }) {
             <Detail label={t('Status')}>
               <StatusCell status={collectionImport?.state} />
             </Detail>
-            <Detail label={t('Approval Status')}>
-              {/* <StatusCell status={collectionImport?.} /> */}
-            </Detail>
-            <Detail label={t('Version')}>
-              <StatusCell status={collectionImport?.version} />
-            </Detail>
+            {/* <Detail label={t('Approval Status')}>
+            </Detail> */}
+            <Detail label={t('Version')}>{collectionImport?.version}</Detail>
           </DetailsList>
-          <Alert
-            variant="danger"
-            title={
-              <Stack>
-                {collectionImport?.error?.description.split('\n').map((line, index) => (
-                  <StackItem key={index}>{line}</StackItem>
-                ))}
-              </Stack>
-            }
-            isInline
-            isExpandable
-          >
-            <pre>{collectionImport?.error?.traceback}</pre>
-          </Alert>
+          {collectionImport?.error && (
+            <Alert
+              variant="danger"
+              title={
+                <Stack>
+                  {collectionImport?.error?.description.split('\n').map((line, index) => (
+                    <StackItem key={index}>{line}</StackItem>
+                  ))}
+                </Stack>
+              }
+              isInline
+              isExpandable
+            >
+              <pre>{collectionImport?.error?.traceback}</pre>
+            </Alert>
+          )}
           <CodeBlock>
             {collectionImport?.messages?.map((message, index) => (
               <div
