@@ -176,6 +176,11 @@ export function DropdownActionItem<T extends object>(props: {
       const isDisabled =
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
       tooltip = isDisabled ? isDisabled : tooltip
+      const isHidden =
+        action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
+      if (isHidden) {
+        return null
+      }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
@@ -424,6 +429,13 @@ export function useTypedActionsToTableActions<T extends object>(props: {
               ? buttonAction.isDisabled(props.item)
               : false
           tooltip = isDisabled ? isDisabled : tooltip
+          const isHidden =
+            buttonAction.isHidden !== undefined && props.item
+              ? buttonAction.isHidden(props.item)
+              : false
+          if (isHidden) {
+            return null
+          }
           return {
             title: (
               <Tooltip
