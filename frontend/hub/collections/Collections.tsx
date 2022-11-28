@@ -38,7 +38,7 @@ export function Collections() {
         emptyStateTitle={t('No collections yet')}
         {...view}
         defaultTableView="list"
-        defaultCardSubtitle={t('Collection')}
+        defaultSubtitle={t('Collection')}
       />
     </PageLayout>
   )
