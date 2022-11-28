@@ -110,6 +110,8 @@ export function useAutomationServersColumns(_options?: {
             onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
           />
         ),
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Type'),
@@ -125,11 +127,14 @@ export function useAutomationServersColumns(_options?: {
               return <TextCell text="Unknown" />
           }
         },
-        card: 'description',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('Url'),
         cell: (server) => <TextCell text={server.url} to={server.url} />,
+        card: 'description',
+        list: 'description',
       },
     ],
     [navigate, t]

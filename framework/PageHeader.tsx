@@ -179,11 +179,7 @@ export function PageHeader(props: PageHeaderProps) {
                 ? 'thin solid var(--pf-global--BorderColor--100)'
                 : undefined,
             backgroundColor:
-              settings.theme === 'dark'
-                ? xxl
-                  ? 'var(--pf-global--BackgroundColor--300)'
-                  : 'var(--pf-global--BackgroundColor--400)'
-                : undefined,
+              settings.theme !== 'light' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           }}
         >
           <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
