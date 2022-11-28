@@ -1,6 +1,7 @@
 import {
   Bullseye,
   Button,
+  DropdownPosition,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -12,16 +13,7 @@ import {
   Title,
 } from '@patternfly/react-core'
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons'
-import {
-  ActionsColumn,
-  SortByDirection,
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table'
+import { SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
 import useResizeObserver from '@react-hook/resize-observer'
 import {
@@ -51,7 +43,7 @@ import { PageTableList } from './PageTableList'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
-import { ITypedAction, TypedActionType, useTypedActionsToTableActions } from './TypedActions'
+import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
   PageTableProps<T> & { error?: Error }
@@ -630,11 +622,6 @@ function TableCells<T extends object>(props: {
   scrollRight?: boolean
 }) {
   const { columns, item, rowActions, rowIndex } = props
-  const actions = useTypedActionsToTableActions({
-    actions: rowActions ?? [],
-    item,
-    collapse: 'xxl',
-  })
   return (
     <Fragment>
       {columns
@@ -646,9 +633,8 @@ function TableCells<T extends object>(props: {
             </Td>
           )
         })}
-      {actions !== undefined && actions.length > 0 && (
+      {rowActions !== undefined && rowActions.length > 0 && (
         <Th
-          // isActionCell
           style={{
             zIndex: 100 - rowIndex,
             paddingRight: 8,
@@ -661,15 +647,12 @@ function TableCells<T extends object>(props: {
           stickyMinWidth="0px"
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >
-          <div style={{ display: 'flex' }}>
-            {/* <TypedActions actions={rowActions ?? []} /> */}
-            <ActionsColumn
-              // dropdownDirection="up" // TODO handle....
-              items={actions}
-              // isDisabled={repo.name === '4'} // Also arbitrary for the example
-              // actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
-            />
-          </div>
+          <TypedActions
+            actions={rowActions}
+            selectedItem={item}
+            position={DropdownPosition.right}
+            iconOnly
+          />
         </Th>
       )}
     </Fragment>
