@@ -123,7 +123,7 @@ export type PageTableProps<T extends object> = {
 
   disableBodyPadding?: boolean
 
-  defaultCardSubtitle?: ReactNode
+  defaultSubtitle?: ReactNode
 }
 
 /**

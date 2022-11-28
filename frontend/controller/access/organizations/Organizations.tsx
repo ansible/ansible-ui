@@ -146,7 +146,7 @@ export function Organizations() {
       emptyStateButtonText={t('Create organization')}
       emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
       {...view}
-      defaultCardSubtitle={t('Organization')}
+      defaultSubtitle={t('Organization')}
     />
   )
 }

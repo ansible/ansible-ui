@@ -43,7 +43,7 @@ export function Tasks() {
         errorStateTitle={t('Error loading tasks')}
         emptyStateTitle={t('No tasks yet')}
         {...view}
-        defaultCardSubtitle={t('Task')}
+        defaultSubtitle={t('Task')}
       />
     </>
   )

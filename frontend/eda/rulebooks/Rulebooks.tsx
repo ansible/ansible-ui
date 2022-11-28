@@ -38,7 +38,7 @@ export function Rulebooks() {
       emptyStateButtonText={t('Create rulebook')}
       emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebook)}
       {...view}
-      defaultCardSubtitle={t('Rulebook')}
+      defaultSubtitle={t('Rulebook')}
     />
   )
 }

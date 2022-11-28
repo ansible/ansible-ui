@@ -38,7 +38,7 @@ export function Inventories() {
       emptyStateButtonText={t('Create inventory')}
       emptyStateButtonClick={() => navigate(RouteE.CreateEdaInventory)}
       {...view}
-      defaultCardSubtitle={t('Inventory')}
+      defaultSubtitle={t('Inventory')}
     />
   )
 }

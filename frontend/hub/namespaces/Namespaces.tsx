@@ -55,7 +55,7 @@ export function AllNamespaces() {
       emptyStateButtonText={t('Add namespace')}
       emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
       {...view}
-      defaultCardSubtitle={t('Namespace')}
+      defaultSubtitle={t('Namespace')}
       defaultTableView="cards"
     />
   )
@@ -82,7 +82,7 @@ export function MyNamespaces() {
       emptyStateButtonText={t('Add namespace')}
       emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
       {...view}
-      defaultCardSubtitle={t('Namespace')}
+      defaultSubtitle={t('Namespace')}
     />
   )
 }

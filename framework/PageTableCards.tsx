@@ -16,7 +16,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
     unselectItem,
     rowActions,
     showSelect,
-    defaultCardSubtitle,
+    defaultSubtitle: defaultCardSubtitle,
   } = props
 
   const itemToCardFn = useColumnsToTableCardFn(tableColumns, keyFn)
