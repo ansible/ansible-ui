@@ -38,7 +38,7 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
     selectItem,
     unselectItem,
     rowActions,
-    defaultCardSubtitle,
+    defaultSubtitle: defaultCardSubtitle,
     showSelect,
   } = props
 
