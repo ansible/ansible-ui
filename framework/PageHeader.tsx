@@ -112,9 +112,7 @@ export function PageHeader(props: PageHeaderProps) {
   } = props
   const lg = useBreakpoint('lg')
   const xl = useBreakpoint('xl')
-  const xxl = useBreakpoint('xxl')
   const isMdOrLarger = useBreakpoint('md')
-  // const isSmLarger = useBreakpoint('sm')
   const settings = useSettings()
   let { t } = props
   t = t ? t : (t: string) => t
