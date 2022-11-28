@@ -118,6 +118,19 @@ export function TypedActionsDropdown<T extends object>(props: {
   if (actions.length === 0) return <></>
   const Icon = icon
   const Toggle = label || Icon ? DropdownToggle : KebabToggle
+  let toggleContent = Icon ? <Icon /> : label
+  if (Icon && label) {
+    toggleContent = (
+      <Split hasGutter>
+        {Icon && (
+          <SplitItem>
+            <Icon />
+          </SplitItem>
+        )}
+        <SplitItem>{label}</SplitItem>
+      </Split>
+    )
+  }
 
   return (
     <Dropdown
@@ -129,7 +142,7 @@ export function TypedActionsDropdown<T extends object>(props: {
           onToggle={() => setDropdownOpen(!dropdownOpen)}
           toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
           isPrimary={isPrimary}
-          toggleIndicator={Icon ? null : undefined}
+          toggleIndicator={label ? undefined : null}
           style={
             isPrimary && !label
               ? {
@@ -138,7 +151,7 @@ export function TypedActionsDropdown<T extends object>(props: {
               : {}
           }
         >
-          {Icon ? <Icon /> : label}
+          {toggleContent}
         </Toggle>
       }
       isOpen={dropdownOpen}
@@ -423,12 +436,16 @@ export function useTypedActionsToTableActions<T extends object>(props: {
         }
         case TypedActionType.single: {
           const Icon = buttonAction.icon
-          let tooltip = buttonAction.tooltip
+          let tooltip = buttonAction.label
           const isDisabled =
             buttonAction.isDisabled !== undefined && props.item
               ? buttonAction.isDisabled(props.item)
               : false
           tooltip = isDisabled ? isDisabled : tooltip
+          const dropdownActions =
+            buttonAction.dropdownActions !== undefined && props.item
+              ? buttonAction.dropdownActions(props.item)
+              : undefined
           const isHidden =
             buttonAction.isHidden !== undefined && props.item
               ? buttonAction.isHidden(props.item)
@@ -437,28 +454,55 @@ export function useTypedActionsToTableActions<T extends object>(props: {
             return null
           }
           return {
-            title: (
-              <Tooltip
-                key={buttonAction.label}
-                content={tooltip}
-                trigger={tooltip ? undefined : 'manual'}
-              >
-                <Split hasGutter style={{ cursor: isDisabled ? 'default' : 'pointer' }}>
-                  {Icon && (
-                    <SplitItem>
-                      <IconWrapper color={isDisabled ? PFColorE.Disabled : undefined}>
-                        <Icon />
-                      </IconWrapper>
+            title:
+              dropdownActions?.options && dropdownActions.options.length > 0 ? (
+                <Tooltip
+                  key={buttonAction.label}
+                  content={dropdownActions.label}
+                  trigger={tooltip ? undefined : 'manual'}
+                >
+                  <TypedActionsDropdown<T>
+                    isHidden={isHidden}
+                    selectedItem={props.item}
+                    isDisabled={Boolean(isDisabled)}
+                    label={dropdownActions.label}
+                    icon={buttonAction.icon}
+                    actions={dropdownActions.options}
+                    position={DropdownPosition.right}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  key={buttonAction.label}
+                  content={tooltip}
+                  trigger={tooltip ? undefined : 'manual'}
+                >
+                  <Split hasGutter style={{ cursor: isDisabled ? 'default' : 'pointer' }}>
+                    {Icon && (
+                      <SplitItem>
+                        <IconWrapper color={isDisabled ? PFColorE.Disabled : undefined}>
+                          <Icon />
+                        </IconWrapper>
+                      </SplitItem>
+                    )}
+                    <SplitItem style={{ color: isDisabled ? pfDisabled : undefined }}>
+                      {buttonAction.label}
                     </SplitItem>
-                  )}
-                  <SplitItem style={{ color: isDisabled ? pfDisabled : undefined }}>
-                    {buttonAction.label}
-                  </SplitItem>
-                </Split>
-              </Tooltip>
-            ),
+                  </Split>
+                </Tooltip>
+              ),
             onClick: (event: Event) => {
-              isDisabled ? event.stopPropagation() : buttonAction.onClick(props.item)
+              // eslint-disable-next-line no-debugger
+              debugger
+              if (isDisabled) {
+                event.stopPropagation()
+                return
+              }
+              if (dropdownActions?.options && dropdownActions.options.length > 0) {
+                event.preventDefault()
+                return
+              }
+              buttonAction.onClick(props.item)
             },
           }
         }
