@@ -91,7 +91,7 @@
     "@rollup/plugin-node-resolve": "15.0.1",
     "@rollup/plugin-replace": "5.0.1",
     "@rollup/plugin-strip": "3.0.1",
-    "@rollup/plugin-typescript": "9.0.2",
+    "@rollup/plugin-typescript": "10.0.0",
     "@svgr/webpack": "6.5.1",
     "@types/css-minimizer-webpack-plugin": "3.2.0",
     "@types/html-webpack-plugin": "3.2.6",
