@@ -46,6 +46,9 @@ module.exports = function (_env, argv) {
         'process.env.NODE_ENV': isProduction
           ? JSON.stringify('production')
           : JSON.stringify('development'),
+        'process.env.VERSION': isProduction
+          ? JSON.stringify(process.env.VERSION)
+          : JSON.stringify('development'),
         'process.env.DELAY': isProduction
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),

@@ -87,6 +87,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         header: t('Finished'),
         cell: (task) => <SinceCell value={task.finished_at} />,
         sort: 'finished_at',
+        card: 'hidden',
         list: 'secondary',
       },
       {

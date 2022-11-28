@@ -31,6 +31,7 @@ import {
 import {
   BarsIcon,
   CogIcon,
+  ExternalLinkAltIcon,
   QuestionCircleIcon,
   RedhatIcon,
   UserCircleIcon,
@@ -44,6 +45,7 @@ import { useSettingsDialog } from '../../framework/Settings'
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { swrOptions, useFetcher } from '../Data'
 import { RouteE } from '../Routes'
+import { useAnsibleAboutModal } from './AboutModal'
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -119,6 +121,7 @@ export function AnsibleMasthead(props: {
   const isSmallOrLarger = useBreakpoint('sm')
   const { t } = useTranslation()
   const openSettings = useSettingsDialog(t)
+  const openAnsibleAboutModal = useAnsibleAboutModal()
   return (
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
@@ -176,9 +179,9 @@ export function AnsibleMasthead(props: {
                   <Notifications />
                 </ToolbarItem>
 
-                <ToolbarItem>
+                {/* <ToolbarItem>
                   <ApplicationLauncherBasic />
-                </ToolbarItem>
+                </ToolbarItem> */}
 
                 <ToolbarGroup
                   variant="icon-button-group"
@@ -207,7 +210,7 @@ export function AnsibleMasthead(props: {
                       icon={<CogIcon />}
                       variant={ButtonVariant.plain}
                       onClick={openSettings}
-                    ></Button>
+                    />
                   </ToolbarItem>
                   <ToolbarItem>
                     <AppBarDropdown icon={<QuestionCircleIcon />}>
@@ -218,10 +221,13 @@ export function AnsibleMasthead(props: {
                             '_blank'
                           )
                         }}
+                        icon={<ExternalLinkAltIcon />}
                       >
-                        {t('Help')}
+                        {t('Documentation')}
                       </DropdownItem>
-                      <DropdownItem>{t('About')}</DropdownItem>
+                      <DropdownItem onClick={() => openAnsibleAboutModal({})}>
+                        {t('About')}
+                      </DropdownItem>
                     </AppBarDropdown>
                   </ToolbarItem>
                 </ToolbarGroup>

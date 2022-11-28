@@ -72,12 +72,12 @@ export function useSignatureKeysColumns(_options?: {
       {
         header: t('Public key'),
         cell: (signatureKey) => <CopyCell text={signatureKey.public_key} />,
-        list: 'secondary',
       },
       {
         header: t('Created'),
         cell: (signatureKey) => <SinceCell value={signatureKey.pulp_created} />,
         card: 'hidden',
+        list: 'secondary',
       },
     ],
     [t]

@@ -1,18 +1,10 @@
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import {
-  ITableColumn,
-  IToolbarFilter,
-  PageHeader,
-  PageLayout,
-  PageTab,
-  PageTable,
-  PageTabs,
-  TextCell,
-} from '../../../framework'
+import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework'
 import { RouteE } from '../../Routes'
 import { idKeyFn, useHubView } from '../useHubView'
+import { useNamespaceFilters } from './hooks/useNamespaceFilters'
+import { useNamespacesColumns } from './hooks/useNamespacesColumns'
 import { Namespace } from './Namespace'
 
 export function Namespaces() {
@@ -93,30 +85,4 @@ export function MyNamespaces() {
       defaultCardSubtitle={t('Namespace')}
     />
   )
-}
-
-export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const tableColumns = useMemo<ITableColumn<Namespace>[]>(
-    () => [
-      {
-        header: t('Namespace'),
-        cell: (namespace) => <TextCell text={namespace.name} />,
-        sort: 'name',
-        card: 'name',
-        list: 'name',
-      },
-    ],
-    [t]
-  )
-  return tableColumns
-}
-
-export function useNamespaceFilters() {
-  const { t } = useTranslation()
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [{ key: 'keywords', label: t('Keywords'), type: 'string', query: 'keywords' }],
-    [t]
-  )
-  return toolbarFilters
 }

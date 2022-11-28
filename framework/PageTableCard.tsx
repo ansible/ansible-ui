@@ -288,11 +288,13 @@ export function useColumnsToTableCardFn<T extends object>(
                   )}
                 </Detail>
               )}
-              {cardColumns.map((column) => (
-                <Detail key={column.id} label={column.header}>
-                  <TableColumnCell column={column} item={item} />
-                </Detail>
-              ))}
+              {cardColumns
+                .filter((column) => !column.value || column.value(item))
+                .map((column) => (
+                  <Detail key={column.id} label={column.header}>
+                    <TableColumnCell column={column} item={item} />
+                  </Detail>
+                ))}
               {countColumns.length > 0 && (
                 <Detail>
                   <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
