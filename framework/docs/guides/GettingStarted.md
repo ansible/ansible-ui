@@ -12,7 +12,7 @@ npm install @ansible/ansible-ui-framework
 
 ## Add the PageFramework to your application
 
-Near the top of your application add the [PageFramework](components/PageFramework.md) component.
+Near the top of your application add the [PageFramework](../componentsPageFramework.md) component.
 
 This component adds the state management needed by the framework.
 
@@ -20,7 +20,7 @@ This component adds the state management needed by the framework.
 
 ### Use PageLayout to control the layout in your pages
 
-The [PageLayout](components/PageLayout.md) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table where the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
+The [PageLayout](../components/PageLayout.md) is used as the container for the contents of the page. It enables page components to leverage full page layout and scrolling of sub content. An example is a full page table where the page header, toolbar, column headers, and pagination stay fixed, but the rows of the table can scroll.
 
 ```tsx
 <Page>
@@ -33,7 +33,7 @@ The [PageLayout](components/PageLayout.md) is used as the container for the cont
 
 ### Use PageHeader for the heading of your pages
 
-The [PageHeader](components/PageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
+The [PageHeader](../componentsPageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
 
 ```tsx
 <Page>
@@ -48,7 +48,7 @@ The [PageHeader](components/PageHeader.md) is used at the top of each page. It p
 
 #### Table Pages
 
-For pages containing a table, use the [PageTable](components/PageTable.md) component. The PageTable support table, list, and card views of the data.
+For pages containing a table, use the [PageTable](../componentsPageTable.md) component. The PageTable support table, list, and card views of the data.
 
 ```tsx
 <Page>
@@ -61,7 +61,7 @@ For pages containing a table, use the [PageTable](components/PageTable.md) compo
 
 <!-- #### Form Pages
 
-For pages containing an input form, use the [PageForm](components/PageForm.md) component.
+For pages containing an input form, use the [PageForm](../componentsPageForm.md) component.
 
 ```tsx
 <Page>
@@ -82,9 +82,9 @@ TODO -->
 
 ### Other Useful Components
 
-<!-- - [PageAlertToaster](components/PageAlertToaster.md) -->
+<!-- - [PageAlertToaster](../componentsPageAlertToaster.md) -->
 
-- [BulkActionDialog](components/BulkActionDialog.md)
-  <!-- - [BulkConfirmationDialog](components/BulkConfirmationDialog.md) -->
-  <!-- - [SelectDialog](components/SelectDialog.md) -->
-  <!-- - [SelectMultipleDialog](components/SelectMultipleDialog.md) -->
+- [BulkActionDialog](../componentsBulkActionDialog.md)
+  <!-- - [BulkConfirmationDialog](../componentsBulkConfirmationDialog.md) -->
+  <!-- - [SelectDialog](../componentsSelectDialog.md) -->
+  <!-- - [SelectMultipleDialog](../componentsSelectMultipleDialog.md) -->
