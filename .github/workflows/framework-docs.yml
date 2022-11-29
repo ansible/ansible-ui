@@ -28,7 +28,7 @@ jobs:
       - name: Gen Docs
         run: npm run gendocs
       - name: Add index.html
-        run: mv framework/docs/Framework.md framework/docs/index.md
+        run: cp framework/docs/Framework.md framework/docs/index.md
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
