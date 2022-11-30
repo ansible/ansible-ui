@@ -7,19 +7,19 @@ import { requestPost } from '../../../Data'
 import { Collection } from '../Collection'
 import { useUploadCollection } from './useUploadCollection'
 
-export function useCollectionActions(_callback?: () => void) {
+export function useCollectionsActions(_callback?: () => void) {
   const { t } = useTranslation()
   const uploadCollection = useUploadCollection()
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.button,
         icon: UploadIcon,
-        variant: ButtonVariant.secondary,
-        label: t('Upload new version'),
+        variant: ButtonVariant.primary,
+        label: t('Upload collection'),
         onClick: () => {
           uploadCollection({
-            title: t('Upload collection version'),
+            title: t('Upload collection'),
             onClose: (data) => {
               if (!data) return
               void requestPost(
@@ -32,17 +32,17 @@ export function useCollectionActions(_callback?: () => void) {
       },
       { type: PageActionType.seperator },
       {
-        type: PageActionType.button,
+        type: PageActionType.bulk,
         icon: TrashIcon,
-        label: t('Delete entire collection'),
+        label: t('Delete selected collections'),
         onClick: () => {
           /**/
         },
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.bulk,
         icon: BanIcon,
-        label: t('Deprecate collection'),
+        label: t('Deprecate selected collections'),
         onClick: () => {
           /**/
         },

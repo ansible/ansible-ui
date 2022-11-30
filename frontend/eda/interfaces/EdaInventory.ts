@@ -7,6 +7,7 @@
 
 export interface EdaInventory {
   name: string
+  description: string
   inventory: string
   id: number
   project_id: number

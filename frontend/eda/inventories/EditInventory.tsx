@@ -31,10 +31,17 @@ export function EditInventory() {
           minLength: 1,
           errorMessage: { minLength: t('Name is required') },
         }),
-        url: Type.Optional(
+        description: Type.Optional(
           Type.String({
-            title: t('URL'),
-            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            title: t('Description'),
+            placeholder: t('Enter the description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          })
+        ),
+        inventory: Type.Optional(
+          Type.String({
+            title: t('Inventory'),
+            variant: 'textarea',
+            placeholder: t('Enter the inventory'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
           })
         ),
       }),
@@ -52,13 +59,16 @@ export function EditInventory() {
         ;(cache as unknown as { clear: () => void }).clear?.()
         navigate(-1)
       } else {
-        const _newInventory = await requestPost<EdaInventory>('/api/inventory', inventory)
+        const newInventory = await requestPost<EdaInventory>('/api/inventory/', inventory)
         ;(cache as unknown as { clear: () => void }).clear?.()
-        // navigate(RouteE.replace(':id', newInventory.id.toString()))
-        navigate(RouteE.EdaInventories)
+        navigate(RouteE.EdaInventoryDetails.replace(':id', newInventory.id.toString()))
       }
     } catch (err) {
-      setError('TODO')
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('TODO')
+      }
     }
   }
   const onCancel = () => navigate(-1)

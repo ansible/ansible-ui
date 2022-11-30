@@ -58,10 +58,11 @@ import {
   useFormState,
 } from 'react-hook-form'
 import { PartialDeep } from 'type-fest'
-import { Scrollable } from './components/Scrollable'
-import { useBreakpoint } from './components/useBreakPoint'
-import { PageHeader, PageHeaderProps } from './PageHeader'
-import { SettingsContext } from './Settings'
+import { Scrollable } from '../components/Scrollable'
+import { useBreakpoint } from '../components/useBreakPoint'
+import { PageHeader, PageHeaderProps } from '../PageHeader'
+import { SettingsContext } from '../Settings'
+import { PageFormSelectOption } from './PageFormSelectOption'
 
 export type FormPageProps<T extends object> = PageHeaderProps & {
   children?: ReactNode
@@ -253,7 +254,6 @@ export function FormTextInput(props: {
           onChange={(v, e) => {
             void registration.onChange(e)
           }}
-          // innerRef={registration.ref}
           isReadOnly={isSubmitting}
         />
         {props.secret && (
@@ -530,6 +530,7 @@ export function FormSelect<T>(props: FormSelectProps<T>) {
         isInputFilterPersisted={props.create}
         placeholderText={props.placeholder}
         isGrouped={isGrouped}
+        ref={field.ref}
         footer={
           props.footer?.label && (
             <Button
@@ -750,12 +751,12 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
             if ('options' in property) {
               const formSelectProps = property as unknown as FormSelectProps<unknown>
               p.push(
-                <FormSelect
+                <PageFormSelectOption
                   key={base + propertyName}
                   name={base + propertyName}
                   label={title}
                   placeholder={placeholder}
-                  required={required}
+                  isRequired={required}
                   options={formSelectProps.options}
                   footer={formSelectProps.footer}
                 />
@@ -916,30 +917,20 @@ export function PageForm<T extends object>(props: {
         }}
       >
         {props.disableScrolling ? (
-          <PageSection
-            isFilled
-            // padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
-            variant="light"
-            style={{ maxWidth }}
-          >
+          <div style={{ maxWidth, padding: 24 }}>
             <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
               {props.schema && <FormSchema schema={props.schema} />}
               {props.children}
             </Grid>
-          </PageSection>
+          </div>
         ) : (
           <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-            <PageSection
-              isFilled
-              // padding={{ default: props.onCancel ? 'padding' : 'noPadding' }}
-              variant="light"
-              style={{ maxWidth }}
-            >
+            <div style={{ maxWidth, padding: 24 }}>
               <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
                 {props.schema && <FormSchema schema={props.schema} />}
                 {props.children}
               </Grid>
-            </PageSection>
+            </div>
           </Scrollable>
         )}
         {error && (
@@ -951,14 +942,12 @@ export function PageForm<T extends object>(props: {
           />
         )}
         {props.onCancel ? (
-          <PageSection
-            isFilled={false}
+          <div
             style={{
-              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
               backgroundColor:
                 settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
+              padding: 24,
             }}
-            variant="light"
           >
             <ActionGroup style={{ marginTop: 0 }}>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
@@ -968,7 +957,7 @@ export function PageForm<T extends object>(props: {
                 </PageFormCancelButton>
               )}
             </ActionGroup>
-          </PageSection>
+          </div>
         ) : (
           <PageFormSubmitButton style={{ marginTop: 48 }}>{props.submitText}</PageFormSubmitButton>
         )}
