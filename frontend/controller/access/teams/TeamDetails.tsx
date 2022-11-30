@@ -13,7 +13,9 @@ import {
   Detail,
   DetailsList,
   DetailsSkeleton,
-  ITypedAction,
+  IPageAction,
+  PageActions,
+  PageActionType,
   PageHeader,
   PageLayout,
   PageTab,
@@ -21,8 +23,6 @@ import {
   PageTabs,
   SinceCell,
   TextCell,
-  TypedActions,
-  TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
@@ -45,17 +45,17 @@ export function TeamDetails() {
     }
   })
 
-  const itemActions: ITypedAction<Team>[] = useMemo(() => {
-    const itemActions: ITypedAction<Team>[] = [
+  const itemActions: IPageAction<Team>[] = useMemo(() => {
+    const itemActions: IPageAction<Team>[] = [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit team'),
         onClick: () => history(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
       },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: TrashIcon,
         label: t('Delete team'),
         onClick: () => {
@@ -73,7 +73,7 @@ export function TeamDetails() {
         title={team?.name}
         breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
         headerActions={
-          <TypedActions<Team> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Team> actions={itemActions} position={DropdownPosition.right} />
         }
       />
       {/* <PageBody> */}
@@ -175,10 +175,10 @@ function TeamAccessTab(props: { team: Team }) {
 
   const toolbarFilters = useUsersFilters()
 
-  const toolbarActions = useMemo<ITypedAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
@@ -186,7 +186,7 @@ function TeamAccessTab(props: { team: Team }) {
         onClick: () => null,
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
@@ -213,10 +213,10 @@ function TeamAccessTab(props: { team: Team }) {
   })
 
   // Row Actions
-  const rowActions = useMemo<ITypedAction<User>[]>(
+  const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -41,17 +41,17 @@ export function ExecutionEnvironments() {
   })
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
+  const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create execution environment'),
         onClick: () => navigate(RouteE.CreateExecutionEnvironment),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
         onClick: deleteExecutionEnvironments,
@@ -60,10 +60,10 @@ export function ExecutionEnvironments() {
     [navigate, deleteExecutionEnvironments, t]
   )
 
-  const rowActions = useMemo<ITypedAction<ExecutionEnvironment>[]>(
+  const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
@@ -72,7 +72,7 @@ export function ExecutionEnvironments() {
           ),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),

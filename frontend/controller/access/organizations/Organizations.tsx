@@ -10,11 +10,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -55,31 +55,31 @@ export function Organizations() {
   const selectUsersAddOrganizations = useSelectUsersAddOrganizations()
   const selectUsersRemoveOrganizations = useSelectUsersRemoveOrganizations()
 
-  const toolbarActions = useMemo<ITypedAction<Organization>[]>(
+  const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
         onClick: () => navigate(RouteE.CreateOrganization),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add users to selected organizations'),
         onClick: () => selectUsersAddOrganizations(view.selectedItems),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove users from selected organizations'),
         onClick: () => selectUsersRemoveOrganizations(view.selectedItems),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected organizations'),
         onClick: deleteOrganizations,
@@ -95,31 +95,31 @@ export function Organizations() {
     ]
   )
 
-  const rowActions = useMemo<ITypedAction<Organization>[]>(
+  const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: (organization) =>
           navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: PlusCircleIcon,
         label: t('Add users to organization'),
         onClick: (organization) => selectUsersAddOrganizations([organization]),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove users from organization'),
         onClick: (organization) => selectUsersRemoveOrganizations([organization]),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => deleteOrganizations([organization]),

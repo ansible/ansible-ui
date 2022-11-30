@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -39,17 +39,17 @@ export function Inventories() {
   })
   const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<Inventory>[]>(
+  const toolbarActions = useMemo<IPageAction<Inventory>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create inventory'),
         onClick: () => navigate(RouteE.CreateInventory),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: deleteInventories,
@@ -58,17 +58,17 @@ export function Inventories() {
     [navigate, deleteInventories, t]
   )
 
-  const rowActions = useMemo<ITypedAction<Inventory>[]>(
+  const rowActions = useMemo<IPageAction<Inventory>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit inventory'),
         onClick: (inventory) =>
           navigate(RouteE.EditInventory.replace(':id', inventory.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory) => deleteInventories([inventory]),

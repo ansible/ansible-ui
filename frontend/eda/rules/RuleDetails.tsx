@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection } from '@patternfly/react-core'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { PageHeader, PageLayout, TypedActions } from '../../../framework'
+import { PageActions, PageHeader, PageLayout } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
@@ -24,7 +24,7 @@ export function RuleDetails() {
         title={rule?.name}
         breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: rule?.name }]}
         headerActions={
-          <TypedActions<EdaRule>
+          <PageActions<EdaRule>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={rule}

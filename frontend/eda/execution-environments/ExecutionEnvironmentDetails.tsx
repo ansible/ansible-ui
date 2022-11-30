@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection } from '@patternfly/react-core'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { PageHeader, PageLayout, TypedActions } from '../../../framework'
+import { PageActions, PageHeader, PageLayout } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
@@ -29,7 +29,7 @@ export function ExecutionEnvironmentDetails() {
           { label: executionEnvironment?.name },
         ]}
         headerActions={
-          <TypedActions<EdaExecutionEnvironment>
+          <PageActions<EdaExecutionEnvironment>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={executionEnvironment}

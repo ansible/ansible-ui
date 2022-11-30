@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -42,17 +42,17 @@ export function Projects() {
   })
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<Project>[]>(
+  const toolbarActions = useMemo<IPageAction<Project>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
         onClick: () => navigate(RouteE.CreateProject),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: deleteProjects,
@@ -61,23 +61,23 @@ export function Projects() {
     [navigate, deleteProjects, t]
   )
 
-  const rowActions = useMemo<ITypedAction<Project>[]>(
+  const rowActions = useMemo<IPageAction<Project>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         variant: ButtonVariant.secondary,
         icon: SyncIcon,
         label: t('Sync'),
         onClick: (_project) => alert('TODO'),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project) => navigate(RouteE.EditProject.replace(':id', project.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project) => deleteProjects([project]),

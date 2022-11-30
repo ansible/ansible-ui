@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ITypedAction, TypedActionType } from '../../../../framework'
+import { IPageAction, PageActionType } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import { EdaProject } from '../../interfaces/EdaProject'
 import { useDeleteProjects } from './useDeleteProjects'
@@ -12,17 +12,17 @@ export function useProjectsActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const deleteProjects = useDeleteProjects(() => void refresh())
-  return useMemo<ITypedAction<EdaProject>[]>(
+  return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
         onClick: () => navigate(RouteE.CreateEdaProject),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: (projects: EdaProject[]) => deleteProjects(projects),

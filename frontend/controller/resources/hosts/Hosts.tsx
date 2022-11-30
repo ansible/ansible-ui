@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -35,17 +35,17 @@ export function Hosts() {
   const view = useControllerView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns })
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<Host>[]>(
+  const toolbarActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () => navigate(RouteE.CreateHost),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected hosts'),
         onClick: deleteHosts,
@@ -54,16 +54,16 @@ export function Hosts() {
     [navigate, deleteHosts, t]
   )
 
-  const rowActions = useMemo<ITypedAction<Host>[]>(
+  const rowActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteE.EditHost.replace(':id', host.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),

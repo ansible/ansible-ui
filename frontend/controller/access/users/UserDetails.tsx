@@ -14,7 +14,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   Detail,
   DetailsList,
-  ITypedAction,
+  IPageAction,
+  PageActions,
+  PageActionType,
   PageBody,
   PageHeader,
   PageLayout,
@@ -22,8 +24,6 @@ import {
   PageTable,
   PageTabs,
   SinceCell,
-  TypedActions,
-  TypedActionType,
 } from '../../../../framework'
 import { DetailInfo } from '../../../../framework/components/DetailInfo'
 import { Scrollable } from '../../../../framework/components/Scrollable'
@@ -57,17 +57,17 @@ export function UserDetailsPage() {
     }
   })
 
-  const itemActions: ITypedAction<User>[] = useMemo(() => {
-    const itemActions: ITypedAction<User>[] = [
+  const itemActions: IPageAction<User>[] = useMemo(() => {
+    const itemActions: IPageAction<User>[] = [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: () => history(RouteE.EditUser.replace(':id', user?.id.toString() ?? '')),
       },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: () => {
@@ -85,7 +85,7 @@ export function UserDetailsPage() {
         title={user?.username}
         breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: user?.username }]}
         headerActions={
-          <TypedActions<User> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<User> actions={itemActions} position={DropdownPosition.right} />
         }
       />
       <PageBody>
@@ -190,17 +190,17 @@ function UserOrganizations(props: { user: User }) {
 
   const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(view.selectItemsAndRefresh)
   const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers()
-  const toolbarActions = useMemo<ITypedAction<Organization>[]>(
+  const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
         onClick: () =>
@@ -216,10 +216,10 @@ function UserOrganizations(props: { user: User }) {
       view.unselectItemsAndRefresh,
     ]
   )
-  const rowActions = useMemo<ITypedAction<Organization>[]>(
+  const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
         onClick: (organization) =>
@@ -272,17 +272,17 @@ function UserTeams(props: { user: User }) {
   })
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh)
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh)
-  const toolbarActions = useMemo<ITypedAction<Team>[]>(
+  const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to teams'),
         onClick: () => selectTeamsAddUsers([user]),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
@@ -290,10 +290,10 @@ function UserTeams(props: { user: User }) {
     ],
     [t, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
   )
-  const rowActions = useMemo<ITypedAction<Team>[]>(
+  const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
         onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
@@ -336,10 +336,10 @@ function UserRoles(props: { user: User }) {
   const { t } = useTranslation()
   const toolbarFilters = useRolesFilters()
   const tableColumns = useRolesColumns()
-  const toolbarActions = useMemo<ITypedAction<Role>[]>(
+  const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add role to user'),
@@ -347,7 +347,7 @@ function UserRoles(props: { user: User }) {
         onClick: () => alert('TODO'),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Remove selected roles from user'),
         shortLabel: t('Remove roles'),
@@ -356,10 +356,10 @@ function UserRoles(props: { user: User }) {
     ],
     [t]
   )
-  const rowActions = useMemo<ITypedAction<Role>[]>(
+  const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),

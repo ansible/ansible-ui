@@ -17,13 +17,15 @@ import {
 import { ExclamationCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
 import { Dispatch, Fragment, ReactNode, SetStateAction } from 'react'
 import { Scrollable } from './components/Scrollable'
+import { IPageAction } from './PageActions/PageAction'
+import { PageActions } from './PageActions/PageActions'
+import { PageActionType } from './PageActions/PageActionType'
 import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
 import { PagePagination } from './PagePagination'
 import { IToolbarFilter } from './PageToolbar'
 import { useSettings } from './Settings'
-import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
 export type DataListPageProps<T extends object> = PageHeaderProps &
   PageDataListProps<T> & { error?: Error }
@@ -47,10 +49,10 @@ export type PageDataListProps<T extends object> = {
   itemCount?: number
   pageItems: T[] | undefined
 
-  toolbarActions?: ITypedAction<T>[]
+  toolbarActions?: IPageAction<T>[]
 
   dataCells: ((item: T) => ReactNode)[]
-  actions: ITypedAction<T>[]
+  actions: IPageAction<T>[]
 
   toolbarFilters?: IToolbarFilter[]
   filters?: Record<string, string[]>
@@ -105,7 +107,7 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
     dataCells,
   } = props
   const showSelect =
-    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
     undefined
   const settings = useSettings()
 
@@ -197,7 +199,7 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
   )
 }
 
-function DataListActions<T extends object>(props: { actions: ITypedAction<T>[] }) {
+function DataListActions<T extends object>(props: { actions: IPageAction<T>[] }) {
   return (
     <DataListAction
       aria-labelledby="check-action-item1 check-action-action1"
@@ -206,7 +208,7 @@ function DataListActions<T extends object>(props: { actions: ITypedAction<T>[] }
       isPlainButtonAction
       style={{ whiteSpace: 'nowrap' }}
     >
-      <TypedActions actions={props.actions} position={DropdownPosition.right}></TypedActions>
+      <PageActions actions={props.actions} position={DropdownPosition.right}></PageActions>
     </DataListAction>
   )
 }

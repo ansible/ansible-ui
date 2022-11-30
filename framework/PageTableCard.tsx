@@ -22,13 +22,14 @@ import { ReactNode, useCallback, useMemo } from 'react'
 import { Detail } from './components/Details'
 import { IconWrapper } from './components/IconWrapper'
 import { LabelColor } from './components/pfcolors'
+import { IPageAction } from './PageActions/PageAction'
+import { PageActions } from './PageActions/PageActions'
 import {
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
   TableColumnCell,
 } from './PageTable'
-import { ITypedAction, TypedActions } from './TypedActions'
 
 export interface IPageTableCard {
   id: string | number
@@ -52,7 +53,7 @@ export function PageTableCard<T extends object>(props: {
   isSelected?: (item: T) => boolean
   selectItem?: (item: T) => void
   unselectItem?: (item: T) => void
-  itemActions?: ITypedAction<T>[]
+  itemActions?: IPageAction<T>[]
   showSelect?: boolean
   defaultCardSubtitle?: ReactNode
 }) {
@@ -157,7 +158,7 @@ export function PageTableCard<T extends object>(props: {
         {showActions && (
           <CardActions>
             {itemActions && itemActions.length && (
-              <TypedActions
+              <PageActions
                 actions={itemActions}
                 position={DropdownPosition.right}
                 selectedItem={item}

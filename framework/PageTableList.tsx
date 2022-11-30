@@ -18,6 +18,8 @@ import {
 } from '@patternfly/react-core'
 import { ReactNode, useCallback, useMemo } from 'react'
 import { IconWrapper } from './components/IconWrapper'
+import { IPageAction } from './PageActions/PageAction'
+import { PageActions } from './PageActions/PageActions'
 import {
   ITableColumn,
   ITableColumnTypeCount,
@@ -25,7 +27,6 @@ import {
   PageTableProps,
   TableColumnCell,
 } from './PageTable'
-import { ITypedAction, TypedActions } from './TypedActions'
 
 export type PageTableListProps<T extends object> = PageTableProps<T>
 
@@ -66,7 +67,7 @@ export function useColumnsToDataList<T extends object>(
   isSelected?: (item: T) => boolean,
   selectItem?: (item: T) => void,
   unselectItem?: (item: T) => void,
-  rowActions?: ITypedAction<T>[],
+  rowActions?: IPageAction<T>[],
   defaultCardSubtitle?: ReactNode,
   showSelect?: boolean
 ): (item: T) => ReactNode {
@@ -289,7 +290,7 @@ export function useColumnsToDataList<T extends object>(
                 isPlainButtonAction
                 style={{ whiteSpace: 'nowrap' }}
               >
-                <TypedActions
+                <PageActions
                   actions={rowActions}
                   position={DropdownPosition.right}
                   selectedItem={item}

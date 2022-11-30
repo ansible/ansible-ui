@@ -12,7 +12,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   Detail,
   DetailsList,
-  ITypedAction,
+  IPageAction,
+  PageActions,
+  PageActionType,
   PageBody,
   PageHeader,
   PageLayout,
@@ -20,8 +22,6 @@ import {
   PageTable,
   PageTabs,
   SinceCell,
-  TypedActions,
-  TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useItem } from '../../../common/useItem'
@@ -45,10 +45,10 @@ export function OrganizationDetails() {
     }
   })
 
-  const itemActions: ITypedAction<Organization>[] = useMemo(() => {
-    const itemActions: ITypedAction<Organization>[] = [
+  const itemActions: IPageAction<Organization>[] = useMemo(() => {
+    const itemActions: IPageAction<Organization>[] = [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit organization'),
@@ -56,7 +56,7 @@ export function OrganizationDetails() {
           history(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: () => {
@@ -77,7 +77,7 @@ export function OrganizationDetails() {
           { label: organization?.name },
         ]}
         headerActions={
-          <TypedActions<Organization> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Organization> actions={itemActions} position={DropdownPosition.right} />
         }
       />
       <PageBody>

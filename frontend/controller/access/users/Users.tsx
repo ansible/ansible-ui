@@ -10,14 +10,14 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   PageTable,
   SinceCell,
   TablePage,
   TextCell,
-  TypedActionType,
 } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import {
@@ -51,44 +51,44 @@ export function Users() {
   const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers()
   const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers()
 
-  const toolbarActions = useMemo<ITypedAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create user'),
         onClick: () => navigate(RouteE.CreateUser),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add selected users to teams'),
         onClick: () => selectTeamsAddUsers(view.selectedItems),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove selected users from teams'),
         onClick: () => selectTeamsRemoveUsers(view.selectedItems),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add selected users to organizations'),
         onClick: () => selectOrganizationsAddUsers(view.selectedItems),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove selected users from organizations'),
         onClick: () => selectOrganizationsRemoveUsers(view.selectedItems),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected users'),
         onClick: deleteUsers,
@@ -106,44 +106,44 @@ export function Users() {
     ]
   )
 
-  const rowActions = useMemo<ITypedAction<User>[]>(
+  const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         // variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: PlusCircleIcon,
         label: t('Add user to teams'),
         onClick: (user) => selectTeamsAddUsers([user]),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from teams'),
         onClick: (user) => selectTeamsRemoveUsers([user]),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: PlusCircleIcon,
         label: t('Add user to organizations'),
         onClick: (user) => selectOrganizationsAddUsers([user]),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user from organizations'),
         onClick: (user) => selectOrganizationsRemoveUsers([user]),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: (user) => deleteUsers([user]),
@@ -196,10 +196,10 @@ export function AccessTable(props: { url: string }) {
     disableQueryString: true,
   })
 
-  const toolbarActions = useMemo<ITypedAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
@@ -207,7 +207,7 @@ export function AccessTable(props: { url: string }) {
         onClick: () => null,
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
@@ -219,10 +219,10 @@ export function AccessTable(props: { url: string }) {
     [t]
   )
 
-  const rowActions = useMemo<ITypedAction<User>[]>(
+  const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

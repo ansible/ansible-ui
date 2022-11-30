@@ -33,6 +33,9 @@ import { LabelsCell } from './cells/LabelsCell'
 import { TextCell } from './cells/TextCell'
 import { Scrollable } from './components/Scrollable'
 import { useBreakpoint } from './components/useBreakPoint'
+import { IPageAction } from './PageActions/PageAction'
+import { PageActions } from './PageActions/PageActions'
+import { PageActionType } from './PageActions/PageActionType'
 import { PageBody } from './PageBody'
 import { useColumnModal } from './PageColumnModal'
 import { PageHeader, PageHeaderProps } from './PageHeader'
@@ -43,7 +46,6 @@ import { PageTableList } from './PageTableList'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
 import { useSettings } from './Settings'
-import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 
 export type TablePageProps<T extends object> = PageHeaderProps &
   PageTableProps<T> & { error?: Error }
@@ -63,11 +65,11 @@ export type PageTableProps<T extends object> = {
   itemCount?: number
   pageItems: T[] | undefined
 
-  toolbarActions?: ITypedAction<T>[]
+  toolbarActions?: IPageAction<T>[]
 
   tableColumns: ITableColumn<T>[]
 
-  rowActions?: ITypedAction<T>[]
+  rowActions?: IPageAction<T>[]
 
   toolbarFilters?: IToolbarFilter[]
   filters?: Record<string, string[]>
@@ -138,7 +140,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { toolbarActions, filters, error, itemCount } = props
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
   const showSelect =
-    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
     undefined
 
   const hasTableViewType = !props.disableTableView
@@ -283,7 +285,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   t = t ? t : (t: string) => t
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type) !==
+    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
       undefined
   const containerRef = useRef<HTMLDivElement>(null)
   const [scroll, setScroll] = useState<{
@@ -415,7 +417,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
 function TableHead<T extends object>(props: {
   tableColumns: ITableColumn<T>[]
-  rowActions?: ITypedAction<T>[]
+  rowActions?: IPageAction<T>[]
   sort?: string
   setSort?: (sort: string) => void
   sortDirection?: 'asc' | 'desc'
@@ -527,7 +529,7 @@ function TableRow<T extends object>(props: {
   isItemSelected?: boolean
   selectItem?: (item: T) => void
   unselectItem?: (item: T) => void
-  rowActions?: ITypedAction<T>[]
+  rowActions?: IPageAction<T>[]
   rowIndex: number
   showSelect: boolean
   scrollLeft?: boolean
@@ -617,7 +619,7 @@ function TableCells<T extends object>(props: {
   rowIndex: number
   columns: ITableColumn<T>[]
   item: T
-  rowActions?: ITypedAction<T>[]
+  rowActions?: IPageAction<T>[]
   scrollLeft?: boolean
   scrollRight?: boolean
 }) {
@@ -641,18 +643,16 @@ function TableCells<T extends object>(props: {
             paddingLeft: 8,
             width: '0%',
             right: 0,
-            // display: 'flex',
           }}
           isStickyColumn
           stickyMinWidth="0px"
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >
-          <TypedActions
+          <PageActions
             actions={rowActions}
             selectedItem={item}
             position={DropdownPosition.right}
             iconOnly
-            isFilled
           />
         </Th>
       )}

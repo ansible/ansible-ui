@@ -4,13 +4,13 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
-  ITypedAction,
+  PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
   TextCell,
-  TypedActionType,
   useSelected,
 } from '../../framework'
 import { PageTableViewTypeE } from '../../framework/PageTableViewType'
@@ -32,17 +32,17 @@ export function AutomationServersPage() {
   const addAutomationServer = useAddAutomationServer()
   const removeAutomationServers = useRemoveAutomationServers()
 
-  const toolbarActions = useMemo<ITypedAction<AutomationServer>[]>(
+  const toolbarActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Add automation server'),
         onClick: addAutomationServer,
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove selected automation servers'),
         onClick: (servers) => removeAutomationServers(servers),
@@ -51,7 +51,7 @@ export function AutomationServersPage() {
     [addAutomationServer, removeAutomationServers, t]
   )
 
-  const rowActions = useMemo<ITypedAction<AutomationServer>[]>(
+  const rowActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
       // {
       //   type: TypedActionType.single,
@@ -62,7 +62,7 @@ export function AutomationServersPage() {
       // },
       // { type: TypedActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove automation server'),
         onClick: (server) => removeAutomationServers([server]),

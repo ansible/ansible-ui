@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ITypedAction, TypedActionType } from '../../../../framework'
+import { IPageAction, PageActionType } from '../../../../framework'
 import { RouteE } from '../../../Routes'
 import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment'
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments'
@@ -13,17 +13,17 @@ export function useExecutionEnvironmentsActions(refresh: () => Promise<unknown>)
   const navigate = useNavigate()
   const refreshHandler = useCallback(() => void refresh(), [refresh])
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(refreshHandler)
-  return useMemo<ITypedAction<EdaExecutionEnvironment>[]>(
+  return useMemo<IPageAction<EdaExecutionEnvironment>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create execution environment'),
         onClick: () => navigate(RouteE.CreateEdaExecutionEnvironment),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
         onClick: (executionEnvironments: EdaExecutionEnvironment[]) =>
