@@ -2,9 +2,9 @@ import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly
 import { useCallback, useEffect, useState } from 'react'
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable'
+import { ITableColumn, PageTable } from './PageTable/PageTable'
+import { usePaged } from './PageTable/useTableItems'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
-import { usePaged } from './useTableItems'
 
 export interface BulkConfirmationDialog<T extends object> {
   /** The title of the model.

@@ -23,8 +23,8 @@ import { PageActionType } from './PageActions/PageActionType'
 import { PageBody } from './PageBody'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import { PageLayout } from './PageLayout'
-import { PagePagination } from './PagePagination'
-import { IToolbarFilter } from './PageToolbar'
+import { PagePagination } from './PageTable/PagePagination'
+import { IToolbarFilter } from './PageTable/PageToolbar'
 import { useSettings } from './Settings'
 
 export type DataListPageProps<T extends object> = PageHeaderProps &
