@@ -10,9 +10,9 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { Collapse } from './components/Collapse'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable, TableColumnCell } from './PageTable'
-import { IToolbarFilter } from './PageToolbar'
-import { ISelected } from './useTableItems'
+import { ITableColumn, PageTable, TableColumnCell } from './PageTable/PageTable'
+import { IToolbarFilter } from './PageTable/PageToolbar'
+import { ISelected } from './PageTable/useTableItems'
 import { IView } from './useView'
 
 interface ISelectDialogOptions<T extends object> {

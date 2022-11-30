@@ -12,9 +12,9 @@ import pLimit from 'p-limit'
 import { useCallback, useEffect, useState } from 'react'
 import { pfDanger, pfInfo, pfSuccess } from './components/pfcolors'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable'
+import { ITableColumn, PageTable } from './PageTable/PageTable'
+import { usePaged } from './PageTable/useTableItems'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
-import { usePaged } from './useTableItems'
 
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.

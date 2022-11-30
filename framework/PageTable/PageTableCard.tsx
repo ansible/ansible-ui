@@ -19,11 +19,11 @@ import {
   Truncate,
 } from '@patternfly/react-core'
 import { ReactNode, useCallback, useMemo } from 'react'
-import { Detail } from './components/Details'
-import { IconWrapper } from './components/IconWrapper'
-import { LabelColor } from './components/pfcolors'
-import { IPageAction } from './PageActions/PageAction'
-import { PageActions } from './PageActions/PageActions'
+import { Detail } from '../components/Details'
+import { IconWrapper } from '../components/IconWrapper'
+import { LabelColor } from '../components/pfcolors'
+import { IPageAction } from '../PageActions/PageAction'
+import { PageActions } from '../PageActions/PageActions'
 import {
   ITableColumn,
   ITableColumnTypeCount,

@@ -46,7 +46,7 @@ import {
   useBreakpoint,
 } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
-import { TableDetails } from '../../../framework/PageTableDetails'
+import { TableDetails } from '../../../framework/PageTable/PageTableDetails'
 import { StatusCell } from '../../common/StatusCell'
 import { useGet } from '../../common/useItem'
 import { RouteE } from '../../Routes'

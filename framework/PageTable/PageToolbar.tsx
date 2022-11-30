@@ -35,15 +35,15 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
-import { BulkSelector } from './components/BulkSelector'
-import { PageSelect } from './components/PageSelect'
-import { useBreakpoint } from './components/useBreakPoint'
-import { IPageAction } from './PageActions/PageAction'
-import { PageActions } from './PageActions/PageActions'
-import { PageActionType } from './PageActions/PageActionType'
+import { BulkSelector } from '../components/BulkSelector'
+import { PageSelect } from '../components/PageSelect'
+import { useBreakpoint } from '../components/useBreakPoint'
+import { IPageAction } from '../PageActions/PageAction'
+import { PageActions } from '../PageActions/PageActions'
+import { PageActionType } from '../PageActions/PageActionType'
+import { useSettings } from '../Settings'
+import { useFrameworkTranslations } from '../useFrameworkTranslations'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
-import { useSettings } from './Settings'
-import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export interface IItemFilter<T extends object> {
   label: string

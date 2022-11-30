@@ -12,7 +12,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
-import { ITableColumn } from './PageTable'
+import { ITableColumn } from './PageTable/PageTable'
 
 export function useColumnModal<T extends object>(
   columns: ITableColumn<T>[],
