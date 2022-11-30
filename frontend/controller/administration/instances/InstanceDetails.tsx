@@ -9,13 +9,13 @@ import {
   Detail,
   DetailsList,
   DetailsSkeleton,
-  ITypedAction,
+  IPageAction,
+  PageActions,
+  PageActionType,
   PageBody,
   PageHeader,
   PageLayout,
   SinceCell,
-  TypedActions,
-  TypedActionType,
 } from '../../../../framework'
 import { Scrollable } from '../../../../framework/components/Scrollable'
 import { useSettings } from '../../../../framework/Settings'
@@ -32,17 +32,17 @@ export function InstanceDetails() {
   const instance = useItem<Instance>('/api/v2/instances', params.id ?? '0')
   const history = useNavigate()
 
-  const itemActions: ITypedAction<Instance>[] = useMemo(() => {
-    const itemActions: ITypedAction<Instance>[] = [
+  const itemActions: IPageAction<Instance>[] = useMemo(() => {
+    const itemActions: IPageAction<Instance>[] = [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: () => history(RouteE.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
         label: t('Run health check'),
@@ -66,7 +66,7 @@ export function InstanceDetails() {
           { label: instance?.hostname },
         ]}
         headerActions={
-          <TypedActions<Instance> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Instance> actions={itemActions} position={DropdownPosition.right} />
         }
       />
       <PageBody>

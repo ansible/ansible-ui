@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
   CapacityCell,
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
   TextCell,
-  TypedActionType,
 } from '../../../../framework'
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
 import { RouteE } from '../../../Routes'
@@ -31,21 +31,21 @@ export function InstanceGroups() {
 
   const deleteInstanceGroups = useDeleteInstanceGroups(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<InstanceGroup>[]>(
+  const toolbarActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
-        type: TypedActionType.dropdown,
+        type: PageActionType.dropdown,
         variant: ButtonVariant.primary,
         label: t('Create group'),
         options: [
           {
-            type: TypedActionType.button,
+            type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create container group'),
             onClick: () => navigate(RouteE.CreateInstanceGroup),
           },
           {
-            type: TypedActionType.button,
+            type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create instance group'),
             onClick: () => navigate(RouteE.CreateInstanceGroup),
@@ -53,7 +53,7 @@ export function InstanceGroups() {
         ],
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected instance groups'),
         onClick: deleteInstanceGroups,
@@ -62,17 +62,17 @@ export function InstanceGroups() {
     [deleteInstanceGroups, navigate, t]
   )
 
-  const rowActions = useMemo<ITypedAction<InstanceGroup>[]>(
+  const rowActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteE.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete instance group'),
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),

@@ -2,7 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ITypedAction, TypedActionType } from '../../../../framework'
+import { IPageAction, PageActionType } from '../../../../framework'
 import { requestPost } from '../../../Data'
 import { Collection } from '../Collection'
 import { useUploadCollection } from './useUploadCollection'
@@ -10,10 +10,10 @@ import { useUploadCollection } from './useUploadCollection'
 export function useCollectionActions(_callback?: () => void) {
   const { t } = useTranslation()
   const uploadCollection = useUploadCollection()
-  return useMemo<ITypedAction<Collection>[]>(
+  return useMemo<IPageAction<Collection>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: UploadIcon,
         variant: ButtonVariant.secondary,
         label: t('Upload new version'),
@@ -30,9 +30,9 @@ export function useCollectionActions(_callback?: () => void) {
           })
         },
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: TrashIcon,
         label: t('Delete entire collection'),
         onClick: () => {
@@ -40,7 +40,7 @@ export function useCollectionActions(_callback?: () => void) {
         },
       },
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         icon: BanIcon,
         label: t('Deprecate collection'),
         onClick: () => {

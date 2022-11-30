@@ -10,11 +10,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -52,31 +52,31 @@ export function Teams() {
   const selectUsersAddTeams = useSelectUsersAddTeams()
   const selectUsersRemoveTeams = useSelectUsersRemoveTeams()
 
-  const toolbarActions = useMemo<ITypedAction<Team>[]>(
+  const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create team'),
         onClick: () => navigate(RouteE.CreateTeam),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: PlusCircleIcon,
         label: t('Add users to selected teams'),
         onClick: () => selectUsersAddTeams(view.selectedItems),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: MinusCircleIcon,
         label: t('Remove users from selected teams'),
         onClick: () => selectUsersRemoveTeams(view.selectedItems),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected teams'),
         onClick: deleteTeams,
@@ -85,31 +85,31 @@ export function Teams() {
     [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view.selectedItems]
   )
 
-  const rowActions = useMemo<ITypedAction<Team>[]>(
+  const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         // variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit team'),
         onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: PlusCircleIcon,
         label: t('Add users to team'),
         onClick: (team) => selectUsersAddTeams([team]),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove users from team'),
         onClick: (team) => selectUsersRemoveTeams([team]),
       },
-      { type: TypedActionType.seperator },
+      { type: PageActionType.seperator },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete team'),
         onClick: (team) => deleteTeams([team]),

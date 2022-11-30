@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection } from '@patternfly/react-core'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { PageHeader, PageLayout, TypedActions } from '../../../framework'
+import { PageActions, PageHeader, PageLayout } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
 import { TableDetails } from '../../../framework/PageTableDetails'
 import { useSettings } from '../../../framework/Settings'
@@ -24,7 +24,7 @@ export function ProjectDetails() {
         title={project?.name}
         breadcrumbs={[{ label: t('Projects'), to: RouteE.EdaProjects }, { label: project?.name }]}
         headerActions={
-          <TypedActions<EdaProject>
+          <PageActions<EdaProject>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={project}
