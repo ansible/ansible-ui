@@ -1,10 +1,10 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable'
-import { IToolbarFilter } from './PageToolbar'
+import { ITableColumn, PageTable } from './PageTable/PageTable'
+import { IToolbarFilter } from './PageTable/PageToolbar'
+import { ISelected } from './PageTable/useTableItems'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
-import { ISelected } from './useTableItems'
 import { IView } from './useView'
 
 export type SelectMultipleDialogProps<T extends object> = {

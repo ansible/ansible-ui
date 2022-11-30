@@ -1,6 +1,6 @@
 import { PageSection } from '@patternfly/react-core'
 import { useMemo } from 'react'
-import { Grid } from './components/Grid'
+import { Grid } from '../components/Grid'
 import { PageTableProps } from './PageTable'
 import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard'
 

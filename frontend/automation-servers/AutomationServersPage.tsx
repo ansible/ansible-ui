@@ -13,7 +13,7 @@ import {
   TextCell,
   useSelected,
 } from '../../framework'
-import { PageTableViewTypeE } from '../../framework/PageTableViewType'
+import { PageTableViewTypeE } from '../../framework/PageTable/PageTableViewType'
 import { useView } from '../../framework/useView'
 import { RouteE } from '../Routes'
 import { AutomationServer, automationServerKeyFn } from './AutomationServer'
