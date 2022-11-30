@@ -23,7 +23,7 @@ PageHeader enables the responsive layout of the header.
       breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
       title='Page title'
       description='Page description'
-      headerActions={<PageActions actions={actions} />}
+      headerActions={<TypedActions actions={actions} />}
     />
     <PageBody />...</PageBody>
   </PageLayout>

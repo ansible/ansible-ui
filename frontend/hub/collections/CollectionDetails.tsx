@@ -37,12 +37,12 @@ import {
   Detail,
   DetailsList,
   getPatternflyColor,
+  PageActions,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
   PFColorE,
-  TypedActions,
   useBreakpoint,
 } from '../../../framework'
 import { Scrollable } from '../../../framework/components/Scrollable'
@@ -75,7 +75,7 @@ export function CollectionDetails() {
           { label: collection?.name },
         ]}
         headerActions={
-          <TypedActions<Collection>
+          <PageActions<Collection>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={collection}

@@ -2,15 +2,15 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { PlusIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ITypedAction, TypedActionType } from '../../../../framework'
+import { IPageAction, PageActionType } from '../../../../framework'
 import { RemoteRegistry } from '../RemoteRegistry'
 
 export function useRemoteRegistriesActions() {
   const { t } = useTranslation()
-  return useMemo<ITypedAction<RemoteRegistry>[]>(
+  return useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add remote registry'),

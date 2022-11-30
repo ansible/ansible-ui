@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -39,17 +39,17 @@ export function Credentials() {
   })
   const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<Credential>[]>(
+  const toolbarActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: TypedActionType.button,
+        type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create credential'),
         onClick: () => navigate(RouteE.CreateCredential),
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected credentials'),
         onClick: deleteCredentials,
@@ -58,17 +58,17 @@ export function Credentials() {
     [navigate, deleteCredentials, t]
   )
 
-  const rowActions = useMemo<ITypedAction<Credential>[]>(
+  const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential) =>
           navigate(RouteE.EditCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential) => deleteCredentials([credential]),

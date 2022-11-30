@@ -6,13 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import {
   BytesCell,
   CapacityCell,
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   SinceCell,
   TablePage,
   TextCell,
-  TypedActionType,
 } from '../../../../framework'
 import { Dotted } from '../../../../framework/components/Dotted'
 import { AlertToasterProps, usePageAlertToaster } from '../../../../framework/PageAlertToaster'
@@ -36,10 +36,10 @@ export function Instances() {
 
   const alertToaster = usePageAlertToaster()
 
-  const toolbarActions = useMemo<ITypedAction<Instance>[]>(
+  const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         variant: ButtonVariant.primary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -58,10 +58,10 @@ export function Instances() {
     [t, view]
   )
 
-  const rowActions = useMemo<ITypedAction<Instance>[]>(
+  const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         variant: ButtonVariant.secondary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -90,7 +90,7 @@ export function Instances() {
         },
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),

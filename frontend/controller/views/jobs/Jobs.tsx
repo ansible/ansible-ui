@@ -1,5 +1,6 @@
-import { ITypedAction, TablePage, TypedActionType } from '../../../../framework'
+import { IPageAction, PageActionType, TablePage } from '../../../../framework'
 
+import { ButtonVariant } from '@patternfly/react-core'
 import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,6 @@ import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useJobsColumns } from './hooks/useJobsColumns'
 import { useJobsFilters } from './hooks/useJobsFilters'
 import { isJobRunning } from './jobUtils'
-import { ButtonVariant } from '@patternfly/react-core'
 
 export default function Jobs() {
   const { t } = useTranslation()
@@ -29,16 +29,16 @@ export default function Jobs() {
 
   const cancelJobs = useCancelJobs(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<UnifiedJob>[]>(
+  const toolbarActions = useMemo<IPageAction<UnifiedJob>[]>(
     () => [
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: BanIcon,
         label: t('Cancel selected jobs'),
         onClick: cancelJobs,
@@ -47,7 +47,7 @@ export default function Jobs() {
     [deleteJobs, cancelJobs, t]
   )
 
-  const rowActions = useMemo<ITypedAction<UnifiedJob>[]>(() => {
+  const rowActions = useMemo<IPageAction<UnifiedJob>[]>(() => {
     const cannotDeleteJob = (job: UnifiedJob) => {
       if (!job.summary_fields.user_capabilities.delete)
         return t(`The job cannot be deleted due to insufficient permission`)
@@ -66,7 +66,7 @@ export default function Jobs() {
 
     return [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
         label: t(`Relaunch job`),
@@ -79,7 +79,7 @@ export default function Jobs() {
         },
       },
       {
-        type: TypedActionType.dropdown,
+        type: PageActionType.dropdown,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
         label: t(`Relaunch using host parameters`),
@@ -88,7 +88,7 @@ export default function Jobs() {
           !(job.status === 'failed' && job.type === 'job'),
         options: [
           {
-            type: TypedActionType.single,
+            type: PageActionType.single,
             label: t(`Relaunch on all hosts`),
             onClick: (job: UnifiedJob) => {
               // eslint-disable-next-line no-console
@@ -96,7 +96,7 @@ export default function Jobs() {
             },
           },
           {
-            type: TypedActionType.single,
+            type: PageActionType.single,
             label: t(`Relaunch on failed hosts`),
             onClick: (job: UnifiedJob) => {
               // eslint-disable-next-line no-console
@@ -106,14 +106,14 @@ export default function Jobs() {
         ],
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t(`Delete job`),
         isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
         onClick: (job: UnifiedJob) => deleteJobs([job]),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: BanIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
