@@ -193,14 +193,14 @@ export function filterActionSeperators<T extends object>(actions: IPageAction<T>
   const filteredActions = [...actions]
 
   // Remove seperators at beginning of actions
-  while (filteredActions.length && filteredActions[0].type === PageActionType.seperator) {
+  while (filteredActions.length > 0 && filteredActions[0].type === PageActionType.seperator) {
     filteredActions.shift()
   }
 
   // Remove seperators at end of actions
   while (
-    filteredActions.length &&
-    filteredActions[actions.length - 1].type === PageActionType.seperator
+    filteredActions.length > 0 &&
+    filteredActions[filteredActions.length - 1].type === PageActionType.seperator
   ) {
     filteredActions.pop()
   }
