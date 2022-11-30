@@ -100,7 +100,7 @@ function PageDropdownActionItem<T extends object>(props: {
   selectedItem?: T
   hasIcons: boolean
   index: number
-}) {
+}): JSX.Element {
   const { action, selectedItems, selectedItem, hasIcons, index } = props
 
   switch (action.type) {
@@ -184,8 +184,6 @@ function PageDropdownActionItem<T extends object>(props: {
     }
     case PageActionType.seperator:
       return <DropdownSeparator key={`separator-${index}`} />
-    default:
-      return <></>
   }
 }
 
