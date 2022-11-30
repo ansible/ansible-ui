@@ -2,14 +2,13 @@ import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core'
 import { ComponentClass, Fragment, FunctionComponent } from 'react'
 import { IPageSingleAction } from './PageAction'
 
-export function PageActionSingle<T extends object>(props: {
+export function PageSingleAction<T extends object>(props: {
   action: IPageSingleAction<T>
   selectedItem?: T
-  noPrimary?: boolean
   iconOnly?: boolean
   wrapper?: ComponentClass | FunctionComponent
 }) {
-  const { action, selectedItem, noPrimary, wrapper } = props
+  const { action, selectedItem, wrapper } = props
   const Wrapper = wrapper ?? Fragment
   const Icon = action.icon
   let tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined
@@ -18,9 +17,6 @@ export function PageActionSingle<T extends object>(props: {
   tooltip = isDisabled ? isDisabled : tooltip
 
   let variant = action.variant ?? ButtonVariant.secondary
-  if (variant === ButtonVariant.primary && noPrimary) {
-    variant = ButtonVariant.secondary
-  }
   if (variant === ButtonVariant.primary && action.isDanger) {
     variant = ButtonVariant.danger
   }

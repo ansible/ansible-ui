@@ -643,7 +643,6 @@ function TableCells<T extends object>(props: {
             paddingLeft: 8,
             width: '0%',
             right: 0,
-            // display: 'flex',
           }}
           isStickyColumn
           stickyMinWidth="0px"
@@ -654,7 +653,6 @@ function TableCells<T extends object>(props: {
             selectedItem={item}
             position={DropdownPosition.right}
             iconOnly
-            isFilled
           />
         </Th>
       )}

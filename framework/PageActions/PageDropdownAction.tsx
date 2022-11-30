@@ -12,31 +12,20 @@ import { ComponentClass, FunctionComponent, useMemo, useState } from 'react'
 import { IPageAction } from './PageAction'
 import { PageActionType } from './PageActionType'
 
-export function PageActionsDropdown<T extends object>(props: {
+export function PageDropdownAction<T extends object>(props: {
   actions: IPageAction<T>[]
   label?: string
   icon?: ComponentClass | FunctionComponent
   isDisabled?: boolean
   tooltip?: string
-  isPrimary?: boolean
   selectedItems?: T[]
   selectedItem?: T
   position?: DropdownPosition
   iconOnly?: boolean
 }) {
-  const {
-    actions,
-    label,
-    icon,
-    isPrimary = false,
-    selectedItems,
-    selectedItem,
-    iconOnly,
-    isDisabled,
-    tooltip,
-  } = props
+  const { actions, label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const hasItemActions = useMemo(
+  const hasBulkActions = useMemo(
     () => !actions.every((action) => action.type !== PageActionType.bulk),
     [actions]
   )
@@ -50,7 +39,7 @@ export function PageActionsDropdown<T extends object>(props: {
   if (actions.length === 0) return <></>
   const Icon = icon
   const Toggle = label || Icon ? DropdownToggle : KebabToggle
-
+  const isPrimary = hasBulkActions && !!selectedItems?.length
   const dropdown = (
     <Dropdown
       onSelect={() => setDropdownOpen(false)}
@@ -59,8 +48,7 @@ export function PageActionsDropdown<T extends object>(props: {
           id="toggle-kebab"
           isDisabled={isDisabled}
           onToggle={() => setDropdownOpen(!dropdownOpen)}
-          toggleVariant={hasItemActions && selectedItems?.length ? 'primary' : undefined}
-          isPrimary={isPrimary}
+          toggleVariant={isPrimary ? 'primary' : undefined}
           toggleIndicator={Icon ? null : undefined}
           style={
             isPrimary && !label
@@ -188,7 +176,7 @@ function PageActionDropdownItem<T extends object>(props: {
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
       tooltip = isDisabled ? isDisabled : tooltip
       return (
-        <PageActionsDropdown<T>
+        <PageDropdownAction<T>
           key={action.label}
           label={action.label}
           actions={action.options}

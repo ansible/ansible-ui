@@ -1,18 +1,22 @@
-import { ButtonVariant, DropdownPosition, Split } from '@patternfly/react-core'
+import { DropdownPosition, Split } from '@patternfly/react-core'
 import { ComponentClass, FunctionComponent } from 'react'
 import { IPageAction } from './PageAction'
-import { PageActionBulk } from './PageActionBulk'
-import { PageActionButton } from './PageActionButton'
-import { PageActionsDropdown } from './PageActionsDropdown'
-import { PageActionSingle } from './PageActionSingle'
 import { PageActionType } from './PageActionType'
+import { PageBulkAction } from './PageBulkAction'
+import { PageButtonAction } from './PageButtonAction'
+import { PageDropdownAction } from './PageDropdownAction'
+import { PageSingleAction } from './PageSingleAction'
 
-export function PageActionsButtons<T extends object>(props: {
+export function PagePinnedActions<T extends object>(props: {
   actions: IPageAction<T>[]
-  selectedItems?: T[]
   selectedItem?: T
+  selectedItems?: T[]
   wrapper?: ComponentClass | FunctionComponent
-  noPrimary?: boolean
+
+  /**
+   * indicates to only show the icon for the action
+   * Example: Table rows only show the icon but toolbars and details page actions show label
+   */
   iconOnly?: boolean
 }) {
   const { actions, selectedItems, selectedItem, wrapper, iconOnly } = props
@@ -20,11 +24,11 @@ export function PageActionsButtons<T extends object>(props: {
   return (
     <Split hasGutter>
       {actions.map((action, index) => (
-        <PageActionButton2
+        <PagePinnedAction
           key={index}
           action={action}
-          selectedItems={selectedItems}
           selectedItem={selectedItem}
+          selectedItems={selectedItems}
           wrapper={wrapper}
           iconOnly={iconOnly}
         />
@@ -33,15 +37,14 @@ export function PageActionsButtons<T extends object>(props: {
   )
 }
 
-export function PageActionButton2<T extends object>(props: {
+export function PagePinnedAction<T extends object>(props: {
   action: IPageAction<T>
-  selectedItems?: T[]
   selectedItem?: T
+  selectedItems?: T[]
   wrapper?: ComponentClass | FunctionComponent
-  noPrimary?: boolean
   iconOnly?: boolean
 }) {
-  const { action, selectedItems, selectedItem, wrapper, noPrimary } = props
+  const { action, selectedItems, selectedItem, wrapper } = props
 
   switch (action.type) {
     case PageActionType.seperator: {
@@ -49,10 +52,9 @@ export function PageActionButton2<T extends object>(props: {
     }
     case PageActionType.single: {
       return (
-        <PageActionSingle
+        <PageSingleAction
           action={action}
           selectedItem={selectedItem}
-          noPrimary={noPrimary}
           iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
@@ -60,20 +62,23 @@ export function PageActionButton2<T extends object>(props: {
     }
     case PageActionType.bulk: {
       return (
-        <PageActionBulk
+        <PageBulkAction
           action={action}
           selectedItems={selectedItems}
-          noPrimary={noPrimary}
+          // iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
       )
     }
     case PageActionType.button: {
       return (
-        <PageActionButton
+        <PageButtonAction
           action={action}
-          selectedItems={selectedItems}
-          noPrimary={noPrimary}
+          isSecondary={
+            (selectedItems !== undefined && selectedItems.length !== 0) ||
+            selectedItem !== undefined
+          }
+          // iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
       )
@@ -84,22 +89,19 @@ export function PageActionButton2<T extends object>(props: {
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
       tooltip = isDisabled ? isDisabled : tooltip
       return (
-        <PageActionsDropdown<T>
-          actions={action.options}
-          selectedItems={selectedItems}
-          selectedItem={selectedItem}
-          label={action.label}
+        <PageDropdownAction<T>
           icon={action.icon}
+          label={action.label}
+          actions={action.options}
+          selectedItem={selectedItem}
+          selectedItems={selectedItems}
           iconOnly={props.iconOnly}
           position={DropdownPosition.right}
           isDisabled={Boolean(isDisabled)}
           tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
-          isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
+          // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       )
-    }
-    default: {
-      return <></>
     }
   }
 }

@@ -1,34 +1,33 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core'
 import { ComponentClass, Fragment, FunctionComponent } from 'react'
-import { IPageBulkAction } from './PageAction'
+import { IPageActionButton } from './PageAction'
 
-export function PageActionBulk<T extends object>(props: {
-  action: IPageBulkAction<T>
-  selectedItems?: T[]
-  noPrimary?: boolean
+export function PageButtonAction(props: {
+  action: IPageActionButton
+
+  /** Turn primary buttons to secondary if there are items selected */
+  isSecondary?: boolean
+
   wrapper?: ComponentClass | FunctionComponent
 }) {
-  const { action, noPrimary, selectedItems, wrapper } = props
+  const { action, isSecondary, wrapper } = props
   const Wrapper = wrapper ?? Fragment
   const Icon = action.icon
-  let tooltip = action.tooltip
-  let isDisabled = false
+  const tooltip = action.tooltip
+  const isDisabled = false
   let variant = action.variant ?? ButtonVariant.secondary
-  if (variant === ButtonVariant.primary && noPrimary) {
+  if (isSecondary && [ButtonVariant.primary, ButtonVariant.danger].includes(variant)) {
     variant = ButtonVariant.secondary
   }
   if (variant === ButtonVariant.primary && action.isDanger) {
     variant = ButtonVariant.danger
-  }
-  if (!selectedItems || !selectedItems.length) {
-    tooltip = 'No selections'
-    isDisabled = true
   }
   return (
     <Wrapper>
       <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
         <Button
           variant={variant}
+          isDanger={action.isDanger}
           icon={
             Icon ? (
               <span style={{ paddingRight: 4 }}>
@@ -37,8 +36,7 @@ export function PageActionBulk<T extends object>(props: {
             ) : undefined
           }
           isAriaDisabled={isDisabled}
-          onClick={() => action.onClick(selectedItems ?? [])}
-          isDanger={action.isDanger}
+          onClick={action.onClick}
         >
           {action.shortLabel ? action.shortLabel : action.label}
         </Button>

@@ -300,13 +300,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
         {/* Action Buttons */}
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
-          <ToolbarItem>
-            <PageActions
-              actions={toolbarActions}
-              selectedItems={selectedItems}
-              wrapper={ToolbarItem}
-            />
-          </ToolbarItem>
+          <PageActions
+            actions={toolbarActions}
+            selectedItems={selectedItems}
+            wrapper={ToolbarItem}
+          />
         </ToolbarGroup>
         <div style={{ flexGrow: 1 }} />
 
