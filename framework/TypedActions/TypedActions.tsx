@@ -7,6 +7,7 @@ import {
   DropdownToggle,
   KebabToggle,
   Split,
+  SplitItem,
   Tooltip,
 } from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
@@ -271,6 +272,7 @@ export function TypedActions<T extends object>(props: {
   noPrimary?: boolean
   position?: DropdownPosition
   iconOnly?: boolean
+  isFilled?: boolean
 }) {
   const { actions } = props
   const bp = useBreakpoint(props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg')
@@ -322,8 +324,11 @@ export function TypedActions<T extends object>(props: {
   }, [collapseButtons, actions, isButtonAction, isHidden])
 
   return (
-    <Split hasGutter={!props.iconOnly}>
-      <TypedActionsButtons {...props} actions={buttonActions} />
+    <Split style={props.isFilled ? { width: '100%' } : undefined} hasGutter={!props.iconOnly}>
+      <SplitItem isFilled>
+        <TypedActionsButtons {...props} actions={buttonActions} />
+      </SplitItem>
+
       <TypedActionsDropdown
         {...props}
         actions={dropdownActions}

@@ -652,6 +652,7 @@ function TableCells<T extends object>(props: {
             selectedItem={item}
             position={DropdownPosition.right}
             iconOnly
+            isFilled
           />
         </Th>
       )}
