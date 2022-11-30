@@ -64,7 +64,7 @@ export function PageDropdownAction<T extends object>(props: {
       isOpen={dropdownOpen}
       isPlain={!label || iconOnly}
       dropdownItems={actions.map((action, index) => (
-        <PageActionDropdownItem
+        <PageDropdownActionItem
           key={'label' in action ? action.label : `action-${index}`}
           action={action}
           selectedItems={selectedItems ?? []}
@@ -88,7 +88,7 @@ export function PageDropdownAction<T extends object>(props: {
   )
 }
 
-function PageActionDropdownItem<T extends object>(props: {
+function PageDropdownActionItem<T extends object>(props: {
   action: IPageAction<T>
   selectedItems: T[]
   selectedItem?: T
