@@ -1,4 +1,4 @@
-import { Button, ButtonVariant, Split, Tooltip } from '@patternfly/react-core'
+import { Button, ButtonVariant, DropdownPosition, Split, Tooltip } from '@patternfly/react-core'
 import { ComponentClass, Fragment, FunctionComponent } from 'react'
 import {
   ITypedAction,
@@ -81,14 +81,27 @@ export function TypedActionButton<T extends object>(props: {
       )
     }
     case TypedActionType.dropdown: {
+      let tooltip = action.label
+      const isDisabled =
+        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
+      tooltip = isDisabled ? isDisabled : tooltip
       return (
         <TypedActionsDropdown<T>
           actions={action.options}
           selectedItems={selectedItems}
+          selectedItem={selectedItem}
           label={action.label}
+          icon={action.icon}
+          iconOnly={props.iconOnly}
+          position={DropdownPosition.right}
+          isDisabled={Boolean(isDisabled)}
+          tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
           isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       )
+    }
+    default: {
+      return <></>
     }
   }
 }
