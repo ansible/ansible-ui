@@ -33,6 +33,13 @@ export function useInventoriesColumns() {
         list: 'name',
         defaultSort: true,
       },
+      {
+        header: t('Description'),
+        type: 'description',
+        value: (inventory) => inventory.description,
+        card: 'description',
+        list: 'description',
+      },
     ],
     [navigate, t]
   )
