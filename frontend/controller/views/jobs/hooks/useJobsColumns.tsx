@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ITableColumn, SinceCell, TextCell } from '../../../../../framework'
-import { ElapsedTimeCell } from '../../../../../framework/cells/ElapsedTimeCell'
+import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell'
 import { StatusCell } from '../../../../common/StatusCell'
 import { RouteE } from '../../../../Routes'
 import { UnifiedJob } from '../../../interfaces/UnifiedJob'

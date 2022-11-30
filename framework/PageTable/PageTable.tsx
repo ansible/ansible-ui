@@ -28,15 +28,15 @@ import {
   useRef,
   useState,
 } from 'react'
-import { SinceCell } from '../cells/DateTimeCell'
-import { LabelsCell } from '../cells/LabelsCell'
-import { TextCell } from '../cells/TextCell'
 import { Scrollable } from '../components/Scrollable'
 import { useBreakpoint } from '../components/useBreakPoint'
 import { IPageAction } from '../PageActions/PageAction'
 import { PageActions } from '../PageActions/PageActions'
 import { PageActionType } from '../PageActions/PageActionType'
 import { PageBody } from '../PageBody'
+import { SinceCell } from '../PageCells/DateTimeCell'
+import { LabelsCell } from '../PageCells/LabelsCell'
+import { TextCell } from '../PageCells/TextCell'
 import { useColumnModal } from '../PageColumnModal'
 import { PageHeader, PageHeaderProps } from '../PageHeader'
 import { PageLayout } from '../PageLayout'
