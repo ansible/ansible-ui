@@ -20,16 +20,10 @@ export enum TypedActionType {
   single = 'single',
   bulk = 'bulk',
   dropdown = 'dropdown',
-  plainText = 'plainText',
 }
 
 export interface ITypedActionSeperator {
   type: TypedActionType.seperator
-}
-
-export interface ITypedActionPlainText {
-  type: TypedActionType.plainText
-  label: string
 }
 
 interface ITypedActionCommon {
@@ -58,19 +52,18 @@ export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
   onClick: (item: T) => void
   isDisabled?: (item: T) => string
   isHidden?: (item: T) => boolean
-  dropdownActions?: (item: T) => ITypedDropdownAction<T> | undefined
 }
 
 export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
   type: TypedActionType.dropdown
   variant?: ButtonVariant
+  isHidden?: (item: T) => boolean
+  isDisabled?: (item: T) => string
   options: ITypedAction<T>[]
-  isSubmenu?: boolean
 }
 
 export type ITypedAction<T extends object> =
   | ITypedActionSeperator
-  | ITypedActionPlainText
   | ITypedActionButton
   | ITypedBulkAction<T>
   | ITypedSingleAction<T>
@@ -80,24 +73,24 @@ export function TypedActionsDropdown<T extends object>(props: {
   actions: ITypedAction<T>[]
   label?: string
   icon?: ComponentClass | FunctionComponent
-  isHidden?: boolean
   isDisabled?: boolean
+  tooltip?: string
   isPrimary?: boolean
-  isSubmenu?: boolean
   selectedItems?: T[]
   selectedItem?: T
   position?: DropdownPosition
+  iconOnly?: boolean
 }) {
   const {
     actions,
     label,
     icon,
-    isHidden,
-    isDisabled,
     isPrimary = false,
-    isSubmenu,
     selectedItems,
     selectedItem,
+    iconOnly,
+    isDisabled,
+    tooltip,
   } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasItemActions = useMemo(
@@ -107,10 +100,7 @@ export function TypedActionsDropdown<T extends object>(props: {
   const hasIcons = useMemo(
     () =>
       actions.find(
-        (action) =>
-          action.type !== TypedActionType.seperator &&
-          action.type !== TypedActionType.plainText &&
-          action.icon !== undefined
+        (action) => action.type !== TypedActionType.seperator && action.icon !== undefined
       ) !== undefined,
     [actions]
   )
@@ -118,7 +108,7 @@ export function TypedActionsDropdown<T extends object>(props: {
   const Icon = icon
   const Toggle = label || Icon ? DropdownToggle : KebabToggle
 
-  return (
+  const dropdown = (
     <Dropdown
       onSelect={() => setDropdownOpen(false)}
       toggle={
@@ -141,7 +131,7 @@ export function TypedActionsDropdown<T extends object>(props: {
         </Toggle>
       }
       isOpen={dropdownOpen}
-      isPlain={!label}
+      isPlain={!label || iconOnly}
       dropdownItems={actions.map((action, index) => (
         <DropdownActionItem
           key={'label' in action ? action.label : `action-${index}`}
@@ -155,10 +145,15 @@ export function TypedActionsDropdown<T extends object>(props: {
       position={props.position}
       style={{
         zIndex: 201,
-        visibility: isHidden ? 'hidden' : 'visible',
-        padding: isSubmenu ? 'var(--pf-global--spacer--sm)' : undefined,
       }}
     />
+  )
+  return tooltip && (iconOnly || isDisabled) ? (
+    <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+      {dropdown}
+    </Tooltip>
+  ) : (
+    { ...dropdown }
   )
 }
 
@@ -239,18 +234,27 @@ export function DropdownActionItem<T extends object>(props: {
         </Tooltip>
       )
     }
-    case TypedActionType.dropdown:
+    case TypedActionType.dropdown: {
+      const isHidden =
+        action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
+      if (isHidden) {
+        return null
+      }
+      let tooltip = action.label
+      const isDisabled =
+        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
+      tooltip = isDisabled ? isDisabled : tooltip
       return (
         <TypedActionsDropdown<T>
           key={action.label}
           label={action.label}
           actions={action.options}
           selectedItem={selectedItem}
-          isSubmenu={action.isSubmenu}
+          isDisabled={Boolean(isDisabled)}
+          tooltip={tooltip}
         />
       )
-    case TypedActionType.plainText:
-      return <DropdownItem isPlainText>{action.label}</DropdownItem>
+    }
     case TypedActionType.seperator:
       return <DropdownSeparator key={`separator-${index}`} />
     default:
@@ -278,45 +282,35 @@ export function TypedActions<T extends object>(props: {
       ButtonVariant.secondary,
       ButtonVariant.danger,
     ]
-    return (
-      action.type !== TypedActionType.seperator &&
-      action.type !== TypedActionType.plainText &&
-      actionVariants.includes(action.variant)
-    )
+    return action.type !== TypedActionType.seperator && actionVariants.includes(action.variant)
   }, [])
+  const isHidden = useCallback(
+    (action: ITypedAction<T>) => {
+      return (action.type === TypedActionType.single || action.type === TypedActionType.dropdown) &&
+        action.isHidden !== undefined &&
+        props.selectedItem
+        ? action.isHidden(props.selectedItem)
+        : false
+    },
+    [props.selectedItem]
+  )
 
   const buttonActions: ITypedAction<T>[] = useMemo(() => {
     if (collapseButtons) {
       return []
     }
-    return actions?.filter(isButtonAction) ?? []
-  }, [collapseButtons, actions, isButtonAction])
+    return (
+      actions?.filter((action: ITypedAction<T>) => isButtonAction(action) && !isHidden(action)) ??
+      []
+    )
+  }, [collapseButtons, actions, isButtonAction, isHidden])
 
   const dropdownActions: ITypedAction<T>[] = useMemo(() => {
     if (collapseButtons) {
-      const dropdownActions = [...actions]
-      /** If there is a button action (type ITypedSingleAction<T>) that contains a submenu of type ITypedDropdownAction<T>,
-       * add the underlying dropdown action directly to the kebab menu when the button is collapsed
-       */
-      dropdownActions?.forEach((action, index) => {
-        if (
-          action.type === TypedActionType.single &&
-          action.dropdownActions !== undefined &&
-          props.selectedItem
-        ) {
-          const subMenuActions = action.dropdownActions(props.selectedItem)
-          if (subMenuActions && subMenuActions.type === TypedActionType.dropdown) {
-            subMenuActions.isSubmenu = true
-            dropdownActions[index] = subMenuActions
-          }
-        } else if (action.type === TypedActionType.dropdown) {
-          action.isSubmenu = true
-        }
-      })
-
-      return dropdownActions ?? []
+      return actions ?? []
     }
-    const dropdownActions = actions?.filter((action) => !isButtonAction(action)) ?? []
+    const dropdownActions =
+      actions?.filter((action) => !isButtonAction(action) && !isHidden(action)) ?? []
     while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator)
       dropdownActions.shift()
     while (
@@ -325,7 +319,7 @@ export function TypedActions<T extends object>(props: {
     )
       dropdownActions.pop()
     return dropdownActions
-  }, [collapseButtons, actions, props.selectedItem, isButtonAction])
+  }, [collapseButtons, actions, isButtonAction, isHidden])
 
   return (
     <Split hasGutter={!props.iconOnly}>
