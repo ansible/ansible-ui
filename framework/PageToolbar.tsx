@@ -36,7 +36,7 @@ import {
 } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
 import { BulkSelector } from './components/BulkSelector'
-import { SingleSelect2 } from './components/SingleSelect'
+import { PageSelect } from './components/PageSelect'
 import { useBreakpoint } from './components/useBreakPoint'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { useSettings } from './Settings'
@@ -216,7 +216,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
             <ToolbarGroup variant="filter-group">
               <ToolbarItem>
-                <SingleSelect2 onChange={setSeletedFilter} value={selectedFilter}>
+                <PageSelect onSelect={setSeletedFilter} value={selectedFilter}>
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
                       <Flex
@@ -231,7 +231,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                       </Flex>
                     </SelectOption>
                   ))}
-                </SingleSelect2>
+                </PageSelect>
               </ToolbarItem>
               <ToolbarItem>
                 <ToolbarFilterInput
