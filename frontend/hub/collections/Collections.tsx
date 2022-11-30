@@ -5,6 +5,8 @@ import { Collection } from './Collection'
 import { useCollectionActions } from './hooks/useCollectionActions'
 import { useCollectionColumns } from './hooks/useCollectionColumns'
 import { useCollectionFilters } from './hooks/useCollectionFilters'
+import { useCollectionsActions } from './hooks/useCollectionsActions'
+import { useUploadCollection } from './hooks/useUploadCollection'
 
 export function Collections() {
   const { t } = useTranslation()
@@ -15,7 +17,10 @@ export function Collections() {
     idKeyFn,
     toolbarFilters
   )
+  const toolbarActions = useCollectionsActions()
   const rowActions = useCollectionActions()
+  const uploadCollection = useUploadCollection()
+
   return (
     <PageLayout>
       <PageHeader
@@ -32,10 +37,14 @@ export function Collections() {
 
       <PageTable<Collection>
         toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}
+        emptyStateDescription={t('To get started, upload a collection.')}
+        emptyStateButtonText={t('Upload collection')}
+        emptyStateButtonClick={() => uploadCollection({ title: t('Upload collection') })}
         {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}
