@@ -7,7 +7,8 @@ import { PageDropdownAction } from './PageDropdownAction'
 import { PagePinnedActions } from './PagePinnedActions'
 
 /**
- * PageActions
+ * Page actions represent actions used in table rows, toolbars, and page headers.
+ * The PageActions component controls the collapsing of the actions at given breakpoints.
  */
 export function PageActions<T extends object>(props: {
   /** An array of PageActions */
@@ -55,27 +56,7 @@ export function PageActions<T extends object>(props: {
   /** Actions that are not pinned and show up inside the dropdown */
   const dropdownActions: IPageAction<T>[] = useMemo(() => {
     if (collapseButtons) return visibleActions
-
-    const dropdownActions = visibleActions?.filter((action) => !isPinnedAction(action)) ?? []
-
-    // TODO move this logic to PageDropdown Action as it needs to remove seperators for sub dropdowns
-
-    // Remove seperators at beginning of actions
-    while (dropdownActions.length && dropdownActions[0].type === PageActionType.seperator) {
-      dropdownActions.shift()
-    }
-
-    // Remove seperators at end of actions
-    while (
-      dropdownActions.length &&
-      dropdownActions[dropdownActions.length - 1].type === PageActionType.seperator
-    ) {
-      dropdownActions.pop()
-    }
-
-    // TODO remove two seperators in a row
-
-    return dropdownActions
+    return visibleActions?.filter((action) => !isPinnedAction(action)) ?? []
   }, [collapseButtons, visibleActions])
 
   return (
@@ -105,7 +86,7 @@ function isPinnedAction<T extends object>(action: IPageAction<T>) {
   return action.type !== PageActionType.seperator && actionVariants.includes(action.variant)
 }
 
-function isHiddenAction<T extends object>(
+export function isHiddenAction<T extends object>(
   action: IPageAction<T>,
   selectedItem: T | undefined
 ): boolean {

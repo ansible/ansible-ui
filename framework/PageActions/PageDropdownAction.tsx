@@ -10,6 +10,7 @@ import {
 import { CircleIcon } from '@patternfly/react-icons'
 import { ComponentClass, FunctionComponent, useMemo, useState } from 'react'
 import { IPageAction } from './PageAction'
+import { isHiddenAction } from './PageActions'
 import { PageActionType } from './PageActionType'
 
 export function PageDropdownAction<T extends object>(props: {
@@ -23,7 +24,12 @@ export function PageDropdownAction<T extends object>(props: {
   position?: DropdownPosition
   iconOnly?: boolean
 }) {
-  const { actions, label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props
+  const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props
+
+  let { actions } = props
+  actions = actions.filter((action) => !isHiddenAction(action, selectedItem))
+  actions = filterActionSeperators(actions)
+
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasBulkActions = useMemo(
     () => !actions.every((action) => action.type !== PageActionType.bulk),
@@ -105,11 +111,6 @@ function PageDropdownActionItem<T extends object>(props: {
       const isDisabled =
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false
       tooltip = isDisabled ? isDisabled : tooltip
-      const isHidden =
-        action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
-      if (isHidden) {
-        return null
-      }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
@@ -166,11 +167,6 @@ function PageDropdownActionItem<T extends object>(props: {
       )
     }
     case PageActionType.dropdown: {
-      const isHidden =
-        action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
-      if (isHidden) {
-        return null
-      }
       let tooltip = action.label
       const isDisabled =
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
@@ -194,3 +190,24 @@ function PageDropdownActionItem<T extends object>(props: {
 }
 
 const TransparentIcon = () => <CircleIcon style={{ opacity: 0 }} />
+
+export function filterActionSeperators<T extends object>(actions: IPageAction<T>[]) {
+  const filteredActions = [...actions]
+
+  // Remove seperators at beginning of actions
+  while (filteredActions.length && filteredActions[0].type === PageActionType.seperator) {
+    filteredActions.shift()
+  }
+
+  // Remove seperators at end of actions
+  while (
+    filteredActions.length &&
+    filteredActions[actions.length - 1].type === PageActionType.seperator
+  ) {
+    filteredActions.pop()
+  }
+
+  // TODO remove two seperators in a row
+
+  return filteredActions
+}
