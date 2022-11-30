@@ -4,11 +4,11 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  IPageAction,
   ITableColumn,
   IToolbarFilter,
-  ITypedAction,
+  PageActionType,
   TablePage,
-  TypedActionType,
 } from '../../../../framework'
 import {
   useCreatedColumn,
@@ -40,22 +40,22 @@ export function Templates() {
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh)
 
-  const toolbarActions = useMemo<ITypedAction<Template>[]>(
+  const toolbarActions = useMemo<IPageAction<Template>[]>(
     () => [
       {
-        type: TypedActionType.dropdown,
+        type: PageActionType.dropdown,
         variant: ButtonVariant.primary,
         label: t('Create template'),
         icon: PlusIcon,
         options: [
           {
-            type: TypedActionType.button,
+            type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create Job Template'),
             onClick: () => navigate(RouteE.CreateJobTemplate),
           },
           {
-            type: TypedActionType.button,
+            type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create Workflow Job Template'),
             onClick: () => navigate(RouteE.CreateWorkflowJobTemplate),
@@ -63,7 +63,7 @@ export function Templates() {
         ],
       },
       {
-        type: TypedActionType.bulk,
+        type: PageActionType.bulk,
         icon: TrashIcon,
         label: 'Delete selected templates',
         onClick: deleteTemplates,
@@ -72,17 +72,17 @@ export function Templates() {
     [deleteTemplates, navigate, t]
   )
 
-  const rowActions = useMemo<ITypedAction<Template>[]>(
+  const rowActions = useMemo<IPageAction<Template>[]>(
     () => [
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: EditIcon,
         label: t(`Edit Template`),
         onClick: (template) =>
           navigate(RouteE.JobTemplateEdit.replace(':id', template.id.toString())),
       },
       {
-        type: TypedActionType.single,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t(`Delete Template`),
         onClick: (template) => deleteTemplates([template]),

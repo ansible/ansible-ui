@@ -38,9 +38,11 @@ import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react
 import { BulkSelector } from './components/BulkSelector'
 import { SingleSelect2 } from './components/SingleSelect'
 import { useBreakpoint } from './components/useBreakPoint'
+import { IPageAction } from './PageActions/PageAction'
+import { PageActions } from './PageActions/PageActions'
+import { PageActionType } from './PageActions/PageActionType'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
 import { useSettings } from './Settings'
-import { ITypedAction, TypedActions, TypedActionType } from './TypedActions'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export interface IItemFilter<T extends object> {
@@ -55,7 +57,7 @@ export interface IItemFilter<T extends object> {
 
 export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void
 
-export function toolbarActionsHaveBulkActions<T extends object>(actions?: ITypedAction<T>[]) {
+export function toolbarActionsHaveBulkActions<T extends object>(actions?: IPageAction<T>[]) {
   if (!actions) return false
   for (const action of actions) {
     if (action.type === 'bulk') return true
@@ -93,7 +95,7 @@ export type PagetableToolbarProps<T extends object> = {
 
   itemCount?: number
 
-  toolbarActions?: ITypedAction<T>[]
+  toolbarActions?: IPageAction<T>[]
 
   toolbarFilters?: IToolbarFilter[]
   filters?: Record<string, string[]>
@@ -155,7 +157,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     props.showSelect === true ||
     (selectedItems !== undefined &&
       toolbarActions &&
-      toolbarActions.find((toolbarAction) => TypedActionType.bulk === toolbarAction.type))
+      toolbarActions.find((toolbarAction) => PageActionType.bulk === toolbarAction.type))
 
   const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
 
@@ -299,7 +301,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         {/* Action Buttons */}
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           <ToolbarItem>
-            <TypedActions
+            <PageActions
               actions={toolbarActions}
               selectedItems={selectedItems}
               wrapper={ToolbarItem}

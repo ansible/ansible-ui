@@ -1,77 +1,19 @@
 import {
-  ButtonVariant,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   DropdownSeparator,
   DropdownToggle,
   KebabToggle,
-  Split,
-  SplitItem,
   Tooltip,
 } from '@patternfly/react-core'
 import { CircleIcon } from '@patternfly/react-icons'
-import { ComponentClass, FunctionComponent, useCallback, useMemo, useState } from 'react'
-import { useBreakpoint, WindowSize } from '../components/useBreakPoint'
-import { TypedActionsButtons } from './TypedActionsButtons'
+import { ComponentClass, FunctionComponent, useMemo, useState } from 'react'
+import { IPageAction } from './PageAction'
+import { PageActionType } from './PageActionType'
 
-export enum TypedActionType {
-  seperator = 'seperator',
-  button = 'button',
-  single = 'single',
-  bulk = 'bulk',
-  dropdown = 'dropdown',
-}
-
-export interface ITypedActionSeperator {
-  type: TypedActionType.seperator
-}
-
-interface ITypedActionCommon {
-  icon?: ComponentClass
-  label: string
-  shortLabel?: string
-  tooltip?: string
-  isDanger?: boolean
-}
-
-export type ITypedActionButton = ITypedActionCommon & {
-  type: TypedActionType.button
-  variant?: ButtonVariant
-  onClick: () => void
-}
-
-export type ITypedBulkAction<T extends object> = ITypedActionCommon & {
-  type: TypedActionType.bulk
-  variant?: ButtonVariant
-  onClick: (selectedItems: T[]) => void
-}
-
-export type ITypedSingleAction<T extends object> = ITypedActionCommon & {
-  type: TypedActionType.single
-  variant?: ButtonVariant
-  onClick: (item: T) => void
-  isDisabled?: (item: T) => string
-  isHidden?: (item: T) => boolean
-}
-
-export type ITypedDropdownAction<T extends object> = ITypedActionCommon & {
-  type: TypedActionType.dropdown
-  variant?: ButtonVariant
-  isHidden?: (item: T) => boolean
-  isDisabled?: (item: T) => string
-  options: ITypedAction<T>[]
-}
-
-export type ITypedAction<T extends object> =
-  | ITypedActionSeperator
-  | ITypedActionButton
-  | ITypedBulkAction<T>
-  | ITypedSingleAction<T>
-  | ITypedDropdownAction<T>
-
-export function TypedActionsDropdown<T extends object>(props: {
-  actions: ITypedAction<T>[]
+export function PageActionsDropdown<T extends object>(props: {
+  actions: IPageAction<T>[]
   label?: string
   icon?: ComponentClass | FunctionComponent
   isDisabled?: boolean
@@ -95,13 +37,13 @@ export function TypedActionsDropdown<T extends object>(props: {
   } = props
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const hasItemActions = useMemo(
-    () => !actions.every((action) => action.type !== TypedActionType.bulk),
+    () => !actions.every((action) => action.type !== PageActionType.bulk),
     [actions]
   )
   const hasIcons = useMemo(
     () =>
       actions.find(
-        (action) => action.type !== TypedActionType.seperator && action.icon !== undefined
+        (action) => action.type !== PageActionType.seperator && action.icon !== undefined
       ) !== undefined,
     [actions]
   )
@@ -134,7 +76,7 @@ export function TypedActionsDropdown<T extends object>(props: {
       isOpen={dropdownOpen}
       isPlain={!label || iconOnly}
       dropdownItems={actions.map((action, index) => (
-        <DropdownActionItem
+        <PageActionDropdownItem
           key={'label' in action ? action.label : `action-${index}`}
           action={action}
           selectedItems={selectedItems ?? []}
@@ -158,8 +100,8 @@ export function TypedActionsDropdown<T extends object>(props: {
   )
 }
 
-export function DropdownActionItem<T extends object>(props: {
-  action: ITypedAction<T>
+function PageActionDropdownItem<T extends object>(props: {
+  action: IPageAction<T>
   selectedItems: T[]
   selectedItem?: T
   hasIcons: boolean
@@ -168,7 +110,7 @@ export function DropdownActionItem<T extends object>(props: {
   const { action, selectedItems, selectedItem, hasIcons, index } = props
 
   switch (action.type) {
-    case TypedActionType.single: {
+    case PageActionType.single: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon
       if (!Icon && hasIcons) Icon = TransparentIcon
       let tooltip = action.tooltip
@@ -203,13 +145,13 @@ export function DropdownActionItem<T extends object>(props: {
       )
     }
 
-    case TypedActionType.button:
-    case TypedActionType.bulk: {
+    case PageActionType.button:
+    case PageActionType.bulk: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon
       if (!Icon && hasIcons) Icon = TransparentIcon
       let tooltip = action.tooltip
       let isDisabled = false
-      if (action.type === TypedActionType.bulk && !selectedItems.length) {
+      if (action.type === PageActionType.bulk && !selectedItems.length) {
         tooltip = 'No selections'
         isDisabled = true
       }
@@ -235,7 +177,7 @@ export function DropdownActionItem<T extends object>(props: {
         </Tooltip>
       )
     }
-    case TypedActionType.dropdown: {
+    case PageActionType.dropdown: {
       const isHidden =
         action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
       if (isHidden) {
@@ -246,7 +188,7 @@ export function DropdownActionItem<T extends object>(props: {
         action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : ''
       tooltip = isDisabled ? isDisabled : tooltip
       return (
-        <TypedActionsDropdown<T>
+        <PageActionsDropdown<T>
           key={action.label}
           label={action.label}
           actions={action.options}
@@ -256,88 +198,11 @@ export function DropdownActionItem<T extends object>(props: {
         />
       )
     }
-    case TypedActionType.seperator:
+    case PageActionType.seperator:
       return <DropdownSeparator key={`separator-${index}`} />
     default:
       return <></>
   }
-}
-
-export function TypedActions<T extends object>(props: {
-  actions: ITypedAction<T>[]
-  selectedItems?: T[]
-  selectedItem?: T
-  wrapper?: ComponentClass | FunctionComponent
-  collapse?: WindowSize | 'always'
-  noPrimary?: boolean
-  position?: DropdownPosition
-  iconOnly?: boolean
-  isFilled?: boolean
-}) {
-  const { actions } = props
-  const bp = useBreakpoint(props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg')
-  const collapseButtons = props.collapse === 'always' || !bp
-
-  const isButtonAction = useCallback((action: ITypedAction<T>) => {
-    const actionVariants: Array<ButtonVariant | undefined> = [
-      ButtonVariant.primary,
-      ButtonVariant.secondary,
-      ButtonVariant.danger,
-    ]
-    return action.type !== TypedActionType.seperator && actionVariants.includes(action.variant)
-  }, [])
-  const isHidden = useCallback(
-    (action: ITypedAction<T>) => {
-      return (action.type === TypedActionType.single || action.type === TypedActionType.dropdown) &&
-        action.isHidden !== undefined &&
-        props.selectedItem
-        ? action.isHidden(props.selectedItem)
-        : false
-    },
-    [props.selectedItem]
-  )
-
-  const buttonActions: ITypedAction<T>[] = useMemo(() => {
-    if (collapseButtons) {
-      return []
-    }
-    return (
-      actions?.filter((action: ITypedAction<T>) => isButtonAction(action) && !isHidden(action)) ??
-      []
-    )
-  }, [collapseButtons, actions, isButtonAction, isHidden])
-
-  const dropdownActions: ITypedAction<T>[] = useMemo(() => {
-    if (collapseButtons) {
-      return actions ?? []
-    }
-    const dropdownActions =
-      actions?.filter((action) => !isButtonAction(action) && !isHidden(action)) ?? []
-    while (dropdownActions.length && dropdownActions[0].type === TypedActionType.seperator)
-      dropdownActions.shift()
-    while (
-      dropdownActions.length &&
-      dropdownActions[dropdownActions.length - 1].type === TypedActionType.seperator
-    )
-      dropdownActions.pop()
-    return dropdownActions
-  }, [collapseButtons, actions, isButtonAction, isHidden])
-
-  return (
-    <Split style={props.isFilled ? { width: '100%' } : undefined} hasGutter={!props.iconOnly}>
-      <SplitItem isFilled>
-        <TypedActionsButtons {...props} actions={buttonActions} />
-      </SplitItem>
-
-      <TypedActionsDropdown
-        {...props}
-        actions={dropdownActions}
-        selectedItem={props.selectedItem}
-        position={props.position}
-        isPrimary={!!props.selectedItems?.length}
-      />
-    </Split>
-  )
 }
 
 const TransparentIcon = () => <CircleIcon style={{ opacity: 0 }} />

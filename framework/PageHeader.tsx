@@ -95,21 +95,14 @@ export interface PageHeaderProps {
  *       breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
  *       title='Page title'
  *       description='Page description'
- *       headerActions={<PageActions actions={actions} />}
+ *       headerActions={<TypedActions actions={actions} />}
  *     />
  *     <PageBody />...</PageBody>
  *   </PageLayout>
  * <Page>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const {
-    navigation,
-    breadcrumbs,
-    title,
-    description,
-    controls,
-    headerActions: pageActions,
-  } = props
+  const { navigation, breadcrumbs, title, description, controls, headerActions } = props
   const lg = useBreakpoint('lg')
   const xl = useBreakpoint('xl')
   const isMdOrLarger = useBreakpoint('md')
@@ -252,14 +245,14 @@ export function PageHeader(props: PageHeaderProps) {
                 </Text>
               )}
             </FlexItem>
-            {title && (pageActions || controls) && (
+            {title && (headerActions || controls) && (
               <Flex
                 direction={{ default: 'column' }}
                 spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
                 justifyContent={{ default: 'justifyContentCenter' }}
               >
                 {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
-                {pageActions && <FlexItem>{pageActions}</FlexItem>}
+                {headerActions && <FlexItem>{headerActions}</FlexItem>}
               </Flex>
             )}
           </Flex>
