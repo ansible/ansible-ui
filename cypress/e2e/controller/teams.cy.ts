@@ -4,7 +4,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickButton(/^Create team$/)
     cy.typeByLabel(/^Name$/, 'My team')
-    cy.typeByLabel(/^Organization/, 'Default')
+    cy.typeByLabel(/^Organization$/, 'Default')
     cy.clickButton(/^Create team$/)
     cy.hasTitle(/^My team$/)
   })
@@ -32,14 +32,14 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickRow(/^Team 001$/)
     cy.hasTitle(/^Team 001$/)
-    cy.clickTab(/^Access$/).click()
+    cy.clickTab(/^Access$/)
   })
 
   it('team roles', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickRow(/^Team 001$/)
     cy.hasTitle(/^Team 001$/)
-    cy.clickTab(/^Roles$/).click()
+    cy.clickTab(/^Roles$/)
   })
 
   it('team details edit team', () => {
@@ -71,7 +71,7 @@ describe('teams', () => {
 
   it('teams table row delete team', () => {
     cy.navigateTo(/^Teams$/)
-    cy.clickRowAction(/^Team 005$/, /^Delete team/)
+    cy.clickRowAction(/^Team 005$/, /^Delete team$/)
     cy.get('#confirm').click()
     cy.clickButton(/^Delete team/)
     cy.contains(/^Success$/)
@@ -81,7 +81,7 @@ describe('teams', () => {
   it('teams toolbar delete teams', () => {
     cy.navigateTo(/^Teams$/)
     cy.get('#select-all').click()
-    cy.clickToolbarAction(/^Delete selected teams/)
+    cy.clickToolbarAction(/^Delete selected teams$/)
     cy.get('#confirm').click()
     cy.clickButton(/^Delete team/)
     cy.contains(/^Success$/)
@@ -90,7 +90,7 @@ describe('teams', () => {
 
   it('teams empty state', () => {
     cy.navigateTo(/^Teams$/)
-    cy.contains('No teams yet')
+    cy.contains(/^No teams yet$/)
   })
 
   it('empty state create team', () => {
