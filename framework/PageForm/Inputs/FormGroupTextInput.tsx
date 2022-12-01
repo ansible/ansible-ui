@@ -17,6 +17,7 @@ export type FormGroupTextInputProps = Pick<
 > &
   PageFormGroupProps
 
+/** Thin wrapper combining a PF FormGroup and a PF TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
   const [showSecret, setShowSecret] = useState(false)
   return (

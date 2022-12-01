@@ -8,10 +8,7 @@ export type FormGroupSelectProps = Pick<
 > &
   PageFormGroupProps & { isReadOnly?: boolean }
 
-/** Wrapper over a PatternFly Select.
- * Simplifies the PatternFly Select.
- * Supports a PageFormGroup with label if label is specififed.
- */
+/** Thin wrapper combining a PF FormGroup and a PF Select */
 export function FormGroupSelect(props: FormGroupSelectProps) {
   const { children, helperTextInvalid, isReadOnly, onSelect, value } = props
 
