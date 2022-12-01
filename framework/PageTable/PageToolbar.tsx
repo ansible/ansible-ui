@@ -218,7 +218,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
             <ToolbarGroup variant="filter-group">
               <ToolbarItem>
-                <FormGroupSelect onSelect={setSeletedFilter} value={selectedFilter}>
+                <FormGroupSelect
+                  id="filter"
+                  onSelect={(_, v) => setSeletedFilter(v.toString())}
+                  value={selectedFilter}
+                >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
                       <Flex

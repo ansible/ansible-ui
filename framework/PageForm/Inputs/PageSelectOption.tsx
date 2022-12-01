@@ -1,4 +1,4 @@
-import { SelectGroup, SelectOption } from '@patternfly/react-core'
+import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core'
 import { ChangeEvent, useCallback } from 'react'
 import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
@@ -22,8 +22,11 @@ export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
   const { onSelect, value } = props
 
   const onSelectHandler = useCallback(
-    (label: string, event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>) => {
-      onSelect(props.options.find((option) => option.label === label)?.value, event)
+    (
+      event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
+      label: string | SelectOptionObject
+    ) => {
+      onSelect(props.options.find((option) => option.label === label.toString())?.value, event)
     },
     [onSelect, props.options]
   )

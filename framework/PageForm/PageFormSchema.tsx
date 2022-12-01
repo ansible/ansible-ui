@@ -81,17 +81,19 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
           case 'textarea':
             p.push(
               <PageFormTextArea
+                id={base + propertyName}
                 key={base + propertyName}
                 name={base + propertyName}
                 label={title}
                 placeholder={placeholder}
-                required={required}
+                isRequired={required}
               />
             )
             break
           case 'secret':
             p.push(
               <PageFormTextInput
+                id={base + propertyName}
                 key={base + propertyName}
                 name={base + propertyName}
                 label={title}
@@ -104,6 +106,7 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
           default:
             p.push(
               <PageFormTextInput
+                id={base + propertyName}
                 key={base + propertyName}
                 name={base + propertyName}
                 label={title}

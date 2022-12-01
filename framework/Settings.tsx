@@ -105,9 +105,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
     >
       <Form isHorizontal={settings.formLayout === 'horizontal'}>
         <FormGroupSelect
+          id="theme"
           label="Theme"
           value={settings.theme ?? 'system'}
-          onSelect={(theme) =>
+          onSelect={(_, theme) =>
             setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
           }
         >
@@ -116,9 +117,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           <SelectOption value="dark">{'Dark'}</SelectOption>
         </FormGroupSelect>
         <FormGroupSelect
+          id="table-layout"
           label="Table Layout"
           value={settings.tableLayout ?? 'comfortable'}
-          onSelect={(tableLayout) =>
+          onSelect={(_, tableLayout) =>
             setSettings({
               ...settings,
               tableLayout: tableLayout as 'compact' | 'comfortable',
@@ -129,9 +131,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           <SelectOption value="compact">{'Compact'}</SelectOption>
         </FormGroupSelect>
         <FormGroupSelect
+          id="form-columns"
           label="Form Columns"
           value={settings.formColumns ?? 'multiple'}
-          onSelect={(formColumns) =>
+          onSelect={(_, formColumns) =>
             setSettings({
               ...settings,
               formColumns: formColumns as 'multiple' | 'single',
@@ -142,9 +145,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           <SelectOption value="single">{'Single column'}</SelectOption>
         </FormGroupSelect>
         <FormGroupSelect
+          id="form-layout"
           label="Form Layout"
           value={settings.formLayout ?? 'vertical'}
-          onSelect={(formLayout) =>
+          onSelect={(_, formLayout) =>
             setSettings({
               ...settings,
               formLayout: formLayout as 'vertical' | 'horizontal',
@@ -155,9 +159,10 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
         </FormGroupSelect>
         <FormGroupSelect
+          id="borders"
           label="Borders"
           value={settings.borders ? 'true' : 'false'}
-          onSelect={(value) => setSettings({ ...settings, borders: value === 'true' })}
+          onSelect={(_, value) => setSettings({ ...settings, borders: value === 'true' })}
         >
           <SelectOption value="true">{'Yes'}</SelectOption>
           <SelectOption value="false">{'No'}</SelectOption>
