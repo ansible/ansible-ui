@@ -1,12 +1,12 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput'
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
-export type PageFormTextInputProps = { name: string } & Omit<
-  FormGroupTextInputProps,
-  'onChange' | 'value'
+export type PageFormSelectProps = { name: string } & Omit<
+  FormGroupSelectProps,
+  'onSelect' | 'value'
 >
 
-export function PageFormTextInput(props: PageFormTextInputProps) {
+export function PageFormSelect(props: PageFormSelectProps) {
   const {
     control,
     formState: { isSubmitting },
@@ -16,10 +16,10 @@ export function PageFormTextInput(props: PageFormTextInputProps) {
       name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupTextInput
+        <FormGroupSelect
           {...props}
           value={value as string}
-          onChange={onChange}
+          onSelect={(_, value) => onChange(value)}
           helperTextInvalid={error?.message}
           isReadOnly={props.isReadOnly || isSubmitting}
         />

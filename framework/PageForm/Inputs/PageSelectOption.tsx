@@ -1,6 +1,6 @@
 import { SelectGroup, SelectOption } from '@patternfly/react-core'
 import { ChangeEvent, useCallback } from 'react'
-import { PageSelect, PageSelectProps } from './PageSelect'
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
 export interface IPageSelectOption<T> {
   group?: string
@@ -16,7 +16,7 @@ export type PageSelectOptionProps<T> = {
     event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>
   ) => void
   value: T | undefined
-} & Omit<PageSelectProps, 'onSelect' | 'value' | 'children'>
+} & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
 
 export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
   const { onSelect, value } = props
@@ -63,7 +63,12 @@ export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
   const selected = props.options.find((option) => option.value === value)
 
   return (
-    <PageSelect {...props} value={selected?.label} onSelect={onSelectHandler} isGrouped={isGrouped}>
+    <FormGroupSelect
+      {...props}
+      value={selected?.label}
+      onSelect={onSelectHandler}
+      isGrouped={isGrouped}
+    >
       {!isGrouped
         ? options.map((option) => (
             <SelectOption
@@ -89,6 +94,6 @@ export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
               ))}
             </SelectGroup>
           ))}
-    </PageSelect>
+    </FormGroupSelect>
   )
 }

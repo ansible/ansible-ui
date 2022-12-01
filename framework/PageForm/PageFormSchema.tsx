@@ -6,7 +6,8 @@ import { PageFormSwitch } from './Inputs/PageFormSwitch'
 import { PageFormTextArea } from './Inputs/PageFormTextArea'
 import { PageFormTextInput } from './Inputs/PageFormTextInput'
 import { FormTextSelect } from './Inputs/PageFormTextSelect'
-export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
+
+export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
   const { schema } = props
   const base = props.base ? props.base + '.' : ''
 
@@ -22,6 +23,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
     }
 
     const title = typeof property.title === 'string' ? property.title : propertyName
+    const description = typeof property.description === 'string' ? property.description : undefined
 
     let placeholder: string | undefined = (property as { placeholder?: string }).placeholder
     placeholder = typeof placeholder === 'string' ? placeholder : undefined
@@ -36,6 +38,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
               const formSelectProps = property as unknown as PageFormSelectOptionProps<unknown>
               p.push(
                 <PageFormSelectOption
+                  id={base + propertyName}
                   key={base + propertyName}
                   name={base + propertyName}
                   label={title}
@@ -43,6 +46,8 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                   isRequired={required}
                   options={formSelectProps.options}
                   footer={formSelectProps.footer}
+                  labelHelpTitle={title}
+                  labelHelp={description}
                 />
               )
             } else {
@@ -91,8 +96,8 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                 name={base + propertyName}
                 label={title}
                 placeholder={placeholder}
-                required={required}
-                secret
+                isRequired={required}
+                type="password"
               />
             )
             break
@@ -103,7 +108,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
                 name={base + propertyName}
                 label={title}
                 placeholder={placeholder}
-                required={required}
+                isRequired={required}
               />
             )
             break
@@ -136,7 +141,7 @@ export function FormSchema(props: { schema: JSONSchema6; base?: string }) {
         break
       }
       case 'object': {
-        p.push(<FormSchema key={propertyName} schema={property} base={base + propertyName} />)
+        p.push(<PageFormSchema key={propertyName} schema={property} base={base + propertyName} />)
         break
       }
     }

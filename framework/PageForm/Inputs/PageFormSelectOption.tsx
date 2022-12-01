@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { PageSelectOption, PageSelectOptionProps } from '../../components/PageSelectOption'
+import { PageSelectOption, PageSelectOptionProps } from './PageSelectOption'
 
 export type PageFormSelectOptionProps<T> = {
   name: string
@@ -13,18 +13,17 @@ export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
     control,
     formState: { isSubmitting },
   } = useFormContext()
-  const { name } = props
   return (
     <Controller
-      name={name}
+      name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <PageSelectOption
           {...props}
           value={value as T}
-          onSelect={onChange}
+          onSelect={(_, value) => onChange(value)}
           helperTextInvalid={error?.message}
-          readOnly={isSubmitting}
+          isReadOnly={props.isReadOnly || isSubmitting}
         />
       )}
     />
