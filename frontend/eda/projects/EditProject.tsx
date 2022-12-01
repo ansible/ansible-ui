@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import {
-  FormPageSubmitHandler,
   PageBody,
   PageForm,
+  PageFormSubmitHandler,
   PageHeader,
   PageLayout,
 } from '../../../framework'
@@ -45,7 +45,7 @@ export function EditProject() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<ProjectSchema> = async (project, setError) => {
+  const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
       if (Number.isInteger(id)) {
         project = await requestPatch<EdaProject>(`/api/projects/${id}`, project)

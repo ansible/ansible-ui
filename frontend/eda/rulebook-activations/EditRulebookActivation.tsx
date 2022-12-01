@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import {
-  FormPageSubmitHandler,
   PageBody,
   PageForm,
+  PageFormSubmitHandler,
   PageHeader,
   PageLayout,
 } from '../../../framework'
@@ -41,7 +41,7 @@ export function EditRulebookActivation() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<RulebookActivationSchema> = async (
+  const onSubmit: PageFormSubmitHandler<RulebookActivationSchema> = async (
     rulebookActivation,
     setError
   ) => {

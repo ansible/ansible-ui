@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
-import { FormPageSubmitHandler, PageForm, useBreakpoint } from '../../framework'
+import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework'
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { useAddAutomationServer } from '../automation-servers/useAddAutomationServer'
 import { headers } from '../Data'
@@ -65,7 +65,7 @@ export default function Login() {
 
   type Data = Static<typeof DataType>
 
-  const onSubmit = useCallback<FormPageSubmitHandler<Data>>(
+  const onSubmit = useCallback<PageFormSubmitHandler<Data>>(
     async (data, setError) => {
       try {
         const automationServer = automationServers.find((server) => server.url === data.server)

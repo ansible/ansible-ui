@@ -1,14 +1,14 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { PageSelectOption, PageSelectOptionProps } from '../components/PageSelectOption'
+import { PageSelectOption, PageSelectOptionProps } from '../../components/PageSelectOption'
 
-export type PageFormSelectOption<T> = {
+export type PageFormSelectOptionProps<T> = {
   name: string
 } & Omit<PageSelectOptionProps<T>, 'onSelect' | 'value'>
 
 /**
  * A PageSelectOption for use in PageForms
  */
-export function PageFormSelectOption<T>(props: PageFormSelectOption<T>) {
+export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
   const {
     control,
     formState: { isSubmitting },
