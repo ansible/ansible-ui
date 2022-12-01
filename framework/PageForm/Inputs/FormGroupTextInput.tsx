@@ -14,17 +14,20 @@ export type FormGroupTextInputProps = Pick<
   | 'onChange'
   | 'type'
   | 'aria-label'
+  | 'autoComplete'
+  | 'autoFocus'
 > &
   PageFormGroupProps
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
   const [showSecret, setShowSecret] = useState(false)
+  const { helperTextInvalid: _helperTextInvalid, ...textInputProps } = props
   return (
     <PageFormGroup {...props}>
       <InputGroup>
         <TextInput
-          {...props}
+          {...textInputProps}
           id={props.id}
           label={undefined}
           aria-describedby={`${props.id}-form-group`}

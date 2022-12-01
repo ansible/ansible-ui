@@ -20,11 +20,12 @@ export type FormGroupTextAreaProps = Pick<
 /** A PatternFly FormGroup with a PatternFly TextArea */
 export function FormGroupTextArea(props: FormGroupTextAreaProps) {
   const [showSecret, setShowSecret] = useState(false)
+  const { helperTextInvalid: _helperTextInvalid, ...textAreaProps } = props
   return (
     <PageFormGroup {...props}>
       <InputGroup>
         <TextArea
-          {...props}
+          {...textAreaProps}
           id={props.id}
           label={undefined}
           aria-describedby={`${props.id}-form-group`}
