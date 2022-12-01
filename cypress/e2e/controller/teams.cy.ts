@@ -32,15 +32,14 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickRow(/^Team 001$/)
     cy.hasTitle(/^Team 001$/)
-    cy.clickTab('Access').click()
+    cy.clickTab(/^Access$/).click()
   })
 
   it('team roles', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickRow(/^Team 001$/)
-    cy.url().should('include', '/teams/details')
     cy.hasTitle(/^Team 001$/)
-    cy.clickTab('Roles').click()
+    cy.clickTab(/^Roles$/).click()
   })
 
   it('team details edit team', () => {
@@ -61,7 +60,7 @@ describe('teams', () => {
     cy.clickPageAction(/^Delete team/)
     cy.get('#confirm').click()
     cy.clickButton(/^Delete team/)
-    cy.url().should('include', '/teams?')
+    cy.hasTitle(/^Teams$/)
   })
 
   it('teams table row edit team', () => {
