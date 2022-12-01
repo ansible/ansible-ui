@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import {
-  FormPageSubmitHandler,
   PageBody,
   PageForm,
+  PageFormSubmitHandler,
   PageHeader,
   PageLayout,
 } from '../../../framework'
@@ -39,7 +39,7 @@ export function EditRulebook() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<RulebookSchema> = async (rulebook, setError) => {
+  const onSubmit: PageFormSubmitHandler<RulebookSchema> = async (rulebook, setError) => {
     try {
       if (Number.isInteger(id)) {
         rulebook = await requestPatch<EdaRulebook>(`/api/rulebooks/${id}`, rulebook)

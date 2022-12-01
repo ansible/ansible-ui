@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import {
-  FormPageSubmitHandler,
   PageBody,
   PageForm,
+  PageFormSubmitHandler,
   PageHeader,
   PageLayout,
 } from '../../../framework'
@@ -39,7 +39,7 @@ export function EditRule() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<RuleSchema> = async (rule, setError) => {
+  const onSubmit: PageFormSubmitHandler<RuleSchema> = async (rule, setError) => {
     try {
       if (Number.isInteger(id)) {
         rule = await requestPatch<EdaRule>(`/api/rules/${id}`, rule)

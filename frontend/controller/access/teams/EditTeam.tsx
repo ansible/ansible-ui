@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm/PageForm'
+import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -64,7 +64,7 @@ export function EditTeam() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<CreateTeam> = async (
+  const onSubmit: PageFormSubmitHandler<CreateTeam> = async (
     editedTeam,
     setError,
     setFieldError

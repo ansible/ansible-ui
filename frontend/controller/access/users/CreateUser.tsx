@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
+import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -111,7 +111,7 @@ export function CreateUser() {
   })
   type CreateUser = Static<typeof CreateUserSchema>
 
-  const onSubmit: FormPageSubmitHandler<CreateUser> = async (userData, setError, setFieldError) => {
+  const onSubmit: PageFormSubmitHandler<CreateUser> = async (userData, setError, setFieldError) => {
     try {
       const result = await requestGet<ItemsResponse<Organization>>(
         `/api/v2/organizations/?name=${userData.organization}`

@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
-import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
+import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -67,7 +67,7 @@ export function EditOrganization() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<CreateOrganization> = async (
+  const onSubmit: PageFormSubmitHandler<CreateOrganization> = async (
     editedOrganization,
     setError
   ) => {
