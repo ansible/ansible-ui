@@ -44,29 +44,35 @@ export function PageDropdownAction<T extends object>(props: {
   )
   if (actions.length === 0) return <></>
   const Icon = icon
-  const Toggle = label || Icon ? DropdownToggle : KebabToggle
+  const toggleIcon = Icon ? <Icon /> : label
   const isPrimary = hasBulkActions && !!selectedItems?.length
+  const Toggle =
+    label || Icon ? (
+      <DropdownToggle
+        id="toggle-dropdown"
+        isDisabled={isDisabled}
+        onToggle={() => setDropdownOpen(!dropdownOpen)}
+        toggleVariant={isPrimary ? 'primary' : undefined}
+        toggleIndicator={null}
+        style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+      >
+        {toggleIcon}
+      </DropdownToggle>
+    ) : (
+      <KebabToggle
+        id="toggle-kebab"
+        isDisabled={isDisabled}
+        onToggle={() => setDropdownOpen(!dropdownOpen)}
+        toggleVariant={isPrimary ? 'primary' : undefined}
+        style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+      >
+        {toggleIcon}
+      </KebabToggle>
+    )
   const dropdown = (
     <Dropdown
       onSelect={() => setDropdownOpen(false)}
-      toggle={
-        <Toggle
-          id="toggle-kebab"
-          isDisabled={isDisabled}
-          onToggle={() => setDropdownOpen(!dropdownOpen)}
-          toggleVariant={isPrimary ? 'primary' : undefined}
-          toggleIndicator={Icon ? null : undefined}
-          style={
-            isPrimary && !label
-              ? {
-                  color: 'var(--pf-global--Color--light-100)',
-                }
-              : {}
-          }
-        >
-          {Icon ? <Icon /> : label}
-        </Toggle>
-      }
+      toggle={Toggle}
       isOpen={dropdownOpen}
       isPlain={!label || iconOnly}
       dropdownItems={actions.map((action, index) => (
