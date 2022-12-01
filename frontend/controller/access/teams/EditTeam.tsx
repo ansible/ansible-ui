@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
+import { TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -29,26 +30,13 @@ export function EditTeam() {
   const EditTeamSchema = useMemo(
     () =>
       Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          minLength: 1,
-          errorMessage: { minLength: t('Name is required') },
-        }),
-        description: Type.Optional(
-          Type.String({
-            title: t('Description'),
-            placeholder: t('Enter the description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-            variant: 'textarea',
-          })
-        ),
+        name: TypeTextInput({ title: t('Name') }),
+        description: Type.Optional(Type.String({ title: t('Description'), variant: 'textarea' })),
         summary_fields: Type.Object({
           organization: Type.Object({
             name: Type.String({
               title: t('Organization'),
               placeholder: t('Enter the organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-              minLength: 1,
-              errorMessage: { minLength: t('Organization is required') },
               variant: 'select',
               selectTitle: t('Select an organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
               selectValue: (organization: Organization) => organization.name,

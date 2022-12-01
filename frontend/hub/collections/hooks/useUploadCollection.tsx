@@ -74,8 +74,6 @@ function FileUploadModal(props: FileUploadModalProps) {
             description: namespace.description,
             value: namespace.name,
           })),
-          minLength: 1,
-          errorMessage: { minLength: t('Name is required') },
         }),
       }),
     [namespaces, t]
