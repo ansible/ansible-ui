@@ -6,6 +6,7 @@ export type PageFormTextInputProps = { name: string } & Omit<
   'onChange' | 'value'
 >
 
+/** PatternFly TextInput wrapper for use with react-hook-form */
 export function PageFormTextInput(props: PageFormTextInputProps) {
   const {
     control,

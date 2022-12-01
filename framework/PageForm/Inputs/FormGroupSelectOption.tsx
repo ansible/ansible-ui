@@ -2,15 +2,15 @@ import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react
 import { ChangeEvent, useCallback } from 'react'
 import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
-export interface IPageSelectOption<T> {
+export interface IFormGroupSelectOption<T> {
   group?: string
   label: string
   description?: string
   value: T
 }
 
-export type PageSelectOptionProps<T> = {
-  options: IPageSelectOption<T>[]
+export type FormGroupSelectOptionProps<T> = {
+  options: IFormGroupSelectOption<T>[]
   onSelect: (
     value: T | undefined,
     event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>
@@ -18,7 +18,7 @@ export type PageSelectOptionProps<T> = {
   value: T | undefined
 } & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
 
-export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
+export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
   const { onSelect, value } = props
 
   const onSelectHandler = useCallback(

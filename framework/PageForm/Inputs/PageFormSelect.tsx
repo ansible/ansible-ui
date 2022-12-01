@@ -6,6 +6,7 @@ export type PageFormSelectProps = { name: string } & Omit<
   'onSelect' | 'value'
 >
 
+/** PatternFly Select wrapper for use with react-hook-form */
 export function PageFormSelect(props: PageFormSelectProps) {
   const {
     control,

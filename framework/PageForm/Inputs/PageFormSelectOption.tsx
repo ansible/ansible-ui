@@ -1,13 +1,11 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { PageSelectOption, PageSelectOptionProps } from './PageSelectOption'
+import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption'
 
 export type PageFormSelectOptionProps<T> = {
   name: string
-} & Omit<PageSelectOptionProps<T>, 'onSelect' | 'value'>
+} & Omit<FormGroupSelectOptionProps<T>, 'onSelect' | 'value'>
 
-/**
- * A PageSelectOption for use in PageForms
- */
+/**  Select wrapper for use with react-hook-form */
 export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
   const {
     control,
@@ -18,7 +16,7 @@ export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
       name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <PageSelectOption
+        <FormGroupSelectOption
           {...props}
           value={value as T}
           onSelect={(_, value) => onChange(value)}

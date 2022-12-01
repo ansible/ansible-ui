@@ -6,6 +6,7 @@ export type PageFormTextAreaProps = { name: string } & Omit<
   'onChange' | 'value'
 >
 
+/** PatternFly TextArea wrapper for use with react-hook-form */
 export function PageFormTextArea(props: PageFormTextAreaProps) {
   const {
     control,
