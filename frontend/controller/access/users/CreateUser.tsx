@@ -2,6 +2,11 @@ import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
+import {
+  TypeSecretInput,
+  TypeSelect,
+  TypeTextInput,
+} from '../../../../framework/PageForm/PageFormSchema'
 import { ItemsResponse, requestGet, requestPost } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -16,31 +21,16 @@ export function CreateUser() {
   const selectOrganization = useSelectOrganization()
 
   const CreateUserSchema = Type.Object({
-    username: Type.String({
-      title: t('Username'),
-      placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      maxLength: 150,
-      errorMessage: {
-        minLength: t('Username is required'),
-        maxLength: t('Username cannot contain more than 150 characters.'),
-      },
-    }),
+    username: TypeTextInput({ title: t('Username'), maxLength: 150 }),
     organization: Type.String({
       title: t('Organization'),
-      placeholder: t('Enter the organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: { minLength: t('Organization is required') },
       variant: 'select',
       selectTitle: 'Select an organization',
       selectValue: (organization: Organization) => organization.name,
       selectOpen: selectOrganization,
     }),
-    userType: Type.String({
+    userType: TypeSelect({
       title: t('User type'),
-      placeholder: t('Select user type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      enum: [t('System administrator'), t('System auditor'), t('Normal user')],
-      variant: 'select',
       options: [
         {
           label: t('System administrator'),
@@ -63,51 +53,14 @@ export function CreateUser() {
         },
       ],
     }),
-    password: Type.String({
-      title: t('Password'),
-      placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      variant: 'secret',
-      minLength: 1,
-      errorMessage: {
-        minLength: t('Password is required'),
-      },
-    }),
-    confirmPassword: Type.String({
+    password: TypeSecretInput({ title: t('Password') }),
+    confirmPassword: TypeSecretInput({
       title: t('Confirm password'),
-      placeholder: t('Confirm password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      variant: 'secret',
-      minLength: 1,
-      errorMessage: {
-        minLength: t('Comfirmation is required'),
-      },
+      placeholder: t('Confirm password'),
     }),
-    firstName: Type.Optional(
-      Type.String({
-        title: t('First name'),
-        placeholder: t('Enter first name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        maxLength: 150,
-        errorMessage: {
-          maxLength: t('First name cannot contain more than 150 characters.'),
-        },
-      })
-    ),
-    lastName: Type.Optional(
-      Type.String({
-        title: t('Last name'),
-        placeholder: t('Enter last name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        maxLength: 150,
-        errorMessage: {
-          maxLength: t('Last name cannot contain more than 150 characters.'),
-        },
-      })
-    ),
-    email: Type.Optional(
-      Type.String({
-        title: t('Email'),
-        placeholder: t('Enter email'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        format: 'email',
-      })
-    ),
+    firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),
+    lastName: Type.Optional(TypeTextInput({ title: t('Last name'), maxLength: 150 })),
+    email: Type.Optional(TypeTextInput({ title: t('Email'), format: 'email' })),
   })
   type CreateUser = Static<typeof CreateUserSchema>
 

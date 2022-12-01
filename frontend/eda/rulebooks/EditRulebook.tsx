@@ -28,8 +28,6 @@ export function EditRulebook() {
         name: Type.String({
           title: t('Name'),
           placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          minLength: 1,
-          errorMessage: { minLength: t('Name is required') },
         }),
       }),
     [t]

@@ -31,8 +31,6 @@ export default function Login() {
     server: Type.String({
       title: t('Automation server'),
       placeholder: t('Select automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: { required: t('Server is required'), minLength: t('Server is required') },
       variant: 'select',
       options: automationServers.map((host) => ({
         label: host.name,
@@ -45,20 +43,10 @@ export default function Login() {
     username: Type.String({
       title: t('Username'),
       placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: {
-        required: t('Username is required'),
-        minLength: t('Username is required'),
-      },
     }),
     password: Type.String({
       title: t('Password'),
       placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: {
-        required: t('Password is required'),
-        minLength: t('Password is required'),
-      },
       variant: 'secret',
     }),
   })

@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
+import {
+  TypeSecretInput,
+  TypeSelect,
+  TypeTextInput,
+} from '../../../../framework/PageForm/PageFormSchema'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { User } from '../../interfaces/User'
@@ -23,21 +28,9 @@ export function EditUser() {
   )
 
   const EditUserSchema = Type.Object({
-    username: Type.String({
-      title: t('Username'),
-      placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      maxLength: 150,
-      errorMessage: {
-        minLength: t('Username is required'),
-        maxLength: t('Username cannot contain more than 150 characters.'),
-      },
-    }),
-    userType: Type.String({
+    username: TypeTextInput({ title: t('Username'), maxLength: 150 }),
+    userType: TypeSelect({
       title: t('User type'),
-      placeholder: t('Select user type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      enum: [t('System administrator'), t('System auditor'), t('Normal user')],
-      variant: 'select',
       options: [
         {
           label: t('System administrator'),
@@ -60,50 +53,17 @@ export function EditUser() {
         },
       ],
     }),
-    password: Type.Optional(
-      Type.String({
-        title: t('Password'),
-        placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        variant: 'secret',
-      })
-    ),
+    password: Type.Optional(TypeSecretInput({ title: t('Password') })),
     confirmPassword: Type.Optional(
-      Type.String({
+      TypeSecretInput({
         title: t('Confirm password'),
         placeholder: t('Confirm password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
         variant: 'secret',
       })
     ),
-    firstName: Type.Optional(
-      Type.String({
-        title: t('First name'),
-        placeholder: t('Enter first name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        maxLength: 150,
-        errorMessage: {
-          maxLength: t('First name cannot contain more than 150 characters.'),
-        },
-        section: 'Details',
-      })
-    ),
-    lastName: Type.Optional(
-      Type.String({
-        title: t('Last name'),
-        placeholder: t('Enter last name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        maxLength: 150,
-        errorMessage: {
-          maxLength: t('Last name cannot contain more than 150 characters.'),
-        },
-        section: 'Details',
-      })
-    ),
-    email: Type.Optional(
-      Type.String({
-        title: t('Email'),
-        placeholder: t('Enter email'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        format: 'email',
-        section: 'Details',
-      })
-    ),
+    firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),
+    lastName: Type.Optional(TypeTextInput({ title: t('Last name'), maxLength: 150 })),
+    email: Type.Optional(TypeTextInput({ title: t('Email'), format: 'email' })),
   })
   type EditUser = Static<typeof EditUserSchema>
 

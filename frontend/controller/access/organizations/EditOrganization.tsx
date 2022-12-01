@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
+import { TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -25,39 +26,16 @@ export function EditOrganization() {
   const EditOrganizationSchema = useMemo(
     () =>
       Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          minLength: 1,
-          errorMessage: { minLength: t('Name is required') },
-        }),
-        description: Type.Optional(
-          Type.String({
-            title: t('Description'),
-            placeholder: t('Enter the description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-            variant: 'textarea',
-          })
-        ),
+        name: TypeTextInput({ title: t('Name') }),
+        description: Type.Optional(Type.String({ title: t('Description'), variant: 'textarea' })),
         instanceGroups: Type.Optional(
-          Type.String({
-            title: t('Instance groups'),
-            placeholder: t('Select instance groups'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-            variant: 'select',
-          })
+          Type.String({ title: t('Instance groups'), variant: 'select' })
         ),
         executionEnvironments: Type.Optional(
-          Type.String({
-            title: t('Execution environment'),
-            placeholder: t('Select execution environment'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-            variant: 'select',
-          })
+          Type.String({ title: t('Execution environment'), variant: 'select' })
         ),
         galaxyCredentials: Type.Optional(
-          Type.String({
-            title: t('Galaxy credentials'),
-            placeholder: t('Select galaxy credentials'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-            variant: 'select',
-          })
+          Type.String({ title: t('Galaxy credentials'), variant: 'select' })
         ),
       }),
     [t]

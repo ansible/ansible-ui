@@ -21,23 +21,14 @@ export function AddAutomationServerDialog() {
     name: Type.String({
       title: t('Name'),
       placeholder: t('Enter a friendly name for the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: { required: t('Name is required'), minLength: t('Name is required') },
     }),
     url: Type.String({
       title: t('Url'),
       placeholder: t('Enter the url of the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: { required: t('Url is required'), minLength: t('Url is required') },
     }),
     type: Type.String({
       title: t('Automation type'),
       placeholder: t('Select automation type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      minLength: 1,
-      errorMessage: {
-        required: t('Automation type is required'),
-        minLength: t('Automation type is required'),
-      },
       variant: 'select',
       options: [
         {

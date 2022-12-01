@@ -18,6 +18,11 @@ export type FormGroupSelectOptionProps<T> = {
   value: T | undefined
 } & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
 
+/**
+ * A PatternFly FormGroup with a PatternFly Select but using IFormGroupSelectOptions for the options.
+ *
+ * This supports easy grouping and options that have values that are objects and not just strings.
+ */
 export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
   const { onSelect, value } = props
 

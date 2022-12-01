@@ -17,7 +17,7 @@ export type FormGroupTextInputProps = Pick<
 > &
   PageFormGroupProps
 
-/** Thin wrapper combining a PF FormGroup and a PF TextInput */
+/** A PatternFly FormGroup with a PatternFly TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
   const [showSecret, setShowSecret] = useState(false)
   return (
@@ -29,6 +29,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
           label={undefined}
           aria-describedby={`${props.id}-form-group`}
           validated={props.helperTextInvalid ? 'error' : undefined}
+          type={props.type === 'password' ? (showSecret ? 'text' : 'password') : props.type}
         />
         {props.type === 'password' && (
           <Button
