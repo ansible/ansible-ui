@@ -42,6 +42,7 @@ declare global {
       clickRow(name: string | RegExp): Chainable<void>
       clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
       clickPageAction(label: string | RegExp): Chainable<void>
+      typeByLabel(label: string | RegExp, text: string): Chainable<void>
     }
   }
 }
@@ -55,6 +56,10 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
         cy.get('#' + id)
       }
     })
+})
+
+Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
+  cy.getByLabel(label).type(text, { delay: 0 })
 })
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
