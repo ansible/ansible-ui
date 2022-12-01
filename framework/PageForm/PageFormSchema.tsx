@@ -1,5 +1,7 @@
+import { StringOptions, Type } from '@sinclair/typebox'
 import { JSONSchema6 } from 'json-schema'
 import { ReactNode } from 'react'
+import { IFormGroupSelectOption } from './Inputs/FormGroupSelectOption'
 import { PageFormSelectOption, PageFormSelectOptionProps } from './Inputs/PageFormSelectOption'
 import { PageFormSlider } from './Inputs/PageFormSlider'
 import { PageFormSwitch } from './Inputs/PageFormSwitch'
@@ -25,10 +27,60 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
     const title = typeof property.title === 'string' ? property.title : propertyName
     const description = typeof property.description === 'string' ? property.description : undefined
 
+    const required = Array.isArray(schema.required) && schema.required.includes(propertyName)
+
+    const prop = property as {
+      placeholder?: string
+      errorMessage?: Record<string, string>
+      variant: string
+    } & JSONSchema6
+    prop.errorMessage = prop.errorMessage ?? {}
+    switch (property.type) {
+      case 'string':
+        switch (prop.variant) {
+          case 'select':
+            {
+              if (!prop.placeholder) {
+                prop.placeholder = `Enter ${(property.title ?? propertyName).toLowerCase()}`
+              }
+              if (!prop.enum) {
+                prop.enum = (prop as unknown as TypeSelectOptions<string>).options?.map(
+                  (option) => option.value
+                )
+              }
+            }
+            break
+
+          default:
+            {
+              if (!prop.placeholder) {
+                prop.placeholder = `Enter ${(property.title ?? propertyName).toLowerCase()}`
+              }
+              if (property.minLength) {
+                if (!prop.errorMessage.minLength) {
+                  prop.errorMessage.minLength = `${
+                    property.title ?? propertyName
+                  } must be at least ${property.minLength} characters.`
+                }
+              } else if (required) {
+                property.minLength = 1
+                prop.errorMessage.minLength = `${property.title ?? propertyName} is required`
+              }
+              if (property.maxLength) {
+                if (!prop.errorMessage.maxLength) {
+                  prop.errorMessage.maxLength = `${
+                    property.title ?? propertyName
+                  } must be less than ${property.maxLength} characters.`
+                }
+              }
+            }
+            break
+        }
+        break
+    }
+
     let placeholder: string | undefined = (property as { placeholder?: string }).placeholder
     placeholder = typeof placeholder === 'string' ? placeholder : undefined
-
-    const required = Array.isArray(schema.required) && schema.required.includes(propertyName)
 
     switch (property.type) {
       case 'string': {
@@ -151,4 +203,23 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
   }
 
   return <>{p}</>
+}
+
+export type TypeTextInputOptions = StringOptions<string> & { placeholder?: string }
+
+export function TypeTextInput(options: TypeTextInputOptions) {
+  return Type.String({ ...options })
+}
+
+export function TypeSecretInput(options: TypeTextInputOptions) {
+  return Type.String({ ...options, variant: 'secret' })
+}
+
+export type TypeSelectOptions<T> = StringOptions<string> & {
+  placeholder?: string
+  options: IFormGroupSelectOption<T>[]
+}
+
+export function TypeSelect<T extends string | number>(options: TypeSelectOptions<T>) {
+  return Type.String({ ...options, variant: 'select' })
 }

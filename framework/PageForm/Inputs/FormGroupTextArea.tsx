@@ -17,7 +17,7 @@ export type FormGroupTextAreaProps = Pick<
 > &
   PageFormGroupProps
 
-/** Thin wrapper combining a PF FormGroup and a PF TextArea */
+/** A PatternFly FormGroup with a PatternFly TextArea */
 export function FormGroupTextArea(props: FormGroupTextAreaProps) {
   const [showSecret, setShowSecret] = useState(false)
   return (
