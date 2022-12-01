@@ -32,7 +32,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/)
     cy.clickRow(/^Team 001$/)
     cy.hasTitle(/^Team 001$/)
-    cy.contains('button[role="tab"]', 'Access').click()
+    cy.clickTab('Access').click()
   })
 
   it('team roles', () => {
@@ -40,7 +40,7 @@ describe('teams', () => {
     cy.clickRow(/^Team 001$/)
     cy.url().should('include', '/teams/details')
     cy.hasTitle(/^Team 001$/)
-    cy.contains('button[role="tab"]', 'Roles').click()
+    cy.clickTab('Roles').click()
   })
 
   it('team details edit team', () => {
