@@ -36,6 +36,7 @@ declare global {
       getByLabel(label: string | RegExp): Chainable<void>
       clickLink(label: string | RegExp): Chainable<void>
       clickButton(label: string | RegExp): Chainable<void>
+      clickTab(label: string | RegExp): Chainable<void>
       navigateTo(label: string | RegExp): Chainable<void>
       hasTitle(label: string | RegExp): Chainable<void>
       clickToolbarAction(label: string | RegExp): Chainable<void>
@@ -64,6 +65,10 @@ Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.contains('a', label).click()
+})
+
+Cypress.Commands.add('clickTab', (label: string | RegExp) => {
+  cy.contains('button[role="tab"]', label).click()
 })
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
