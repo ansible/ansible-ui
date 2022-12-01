@@ -21,7 +21,7 @@ export function CreateUser() {
   const selectOrganization = useSelectOrganization()
 
   const CreateUserSchema = Type.Object({
-    username: TypeTextInput({ title: t('Username'), maxLength: 150 }),
+    username: TypeTextInput({ title: t('Username'), maxLength: 150, autoComplete: 'new-username' }),
     organization: Type.String({
       title: t('Organization'),
       variant: 'select',
@@ -53,10 +53,11 @@ export function CreateUser() {
         },
       ],
     }),
-    password: TypeSecretInput({ title: t('Password') }),
+    password: TypeSecretInput({ title: t('Password'), autoComplete: 'new-password' }),
     confirmPassword: TypeSecretInput({
       title: t('Confirm password'),
       placeholder: t('Confirm password'),
+      autoComplete: 'new-password',
     }),
     firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),
     lastName: Type.Optional(TypeTextInput({ title: t('Last name'), maxLength: 150 })),
