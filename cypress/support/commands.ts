@@ -37,6 +37,8 @@ declare global {
       clickLink(label: string | RegExp): Chainable<void>
       clickButton(label: string | RegExp): Chainable<void>
       navigateTo(label: string | RegExp): Chainable<void>
+      hasTitle(label: string | RegExp): Chainable<void>
+      clickToolbarAction(label: string | RegExp): Chainable<void>
       clickRow(name: string | RegExp): Chainable<void>
       clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>
       clickPageAction(label: string | RegExp): Chainable<void>
@@ -76,6 +78,14 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
     }
   })
   // cy.contains('.pf-c-title', label)
+})
+
+Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
+  cy.contains('.pf-c-title', label)
+})
+
+Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
+  cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click()
 })
 
 Cypress.Commands.add('clickRow', (name: string | RegExp) => {
