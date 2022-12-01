@@ -1,29 +1,32 @@
-import { SelectGroup, SelectOption } from '@patternfly/react-core'
+import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core'
 import { ChangeEvent, useCallback } from 'react'
-import { PageSelect, PageSelectProps } from './PageSelect'
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
-export interface IPageSelectOption<T> {
+export interface IFormGroupSelectOption<T> {
   group?: string
   label: string
   description?: string
   value: T
 }
 
-export type PageSelectOptionProps<T> = {
-  options: IPageSelectOption<T>[]
+export type FormGroupSelectOptionProps<T> = {
+  options: IFormGroupSelectOption<T>[]
   onSelect: (
     value: T | undefined,
     event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>
   ) => void
   value: T | undefined
-} & Omit<PageSelectProps, 'onSelect' | 'value' | 'children'>
+} & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
 
-export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
+export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
   const { onSelect, value } = props
 
   const onSelectHandler = useCallback(
-    (label: string, event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>) => {
-      onSelect(props.options.find((option) => option.label === label)?.value, event)
+    (
+      event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
+      label: string | SelectOptionObject
+    ) => {
+      onSelect(props.options.find((option) => option.label === label.toString())?.value, event)
     },
     [onSelect, props.options]
   )
@@ -63,7 +66,12 @@ export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
   const selected = props.options.find((option) => option.value === value)
 
   return (
-    <PageSelect {...props} value={selected?.label} onSelect={onSelectHandler} isGrouped={isGrouped}>
+    <FormGroupSelect
+      {...props}
+      value={selected?.label}
+      onSelect={onSelectHandler}
+      isGrouped={isGrouped}
+    >
       {!isGrouped
         ? options.map((option) => (
             <SelectOption
@@ -89,6 +97,6 @@ export function PageSelectOption<T>(props: PageSelectOptionProps<T>) {
               ))}
             </SelectGroup>
           ))}
-    </PageSelect>
+    </FormGroupSelect>
   )
 }

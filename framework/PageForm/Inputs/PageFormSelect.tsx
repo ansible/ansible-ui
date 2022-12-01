@@ -1,13 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea'
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
 
-export type PageFormTextAreaProps = { name: string } & Omit<
-  FormGroupTextAreaProps,
-  'onChange' | 'value'
+export type PageFormSelectProps = { name: string } & Omit<
+  FormGroupSelectProps,
+  'onSelect' | 'value'
 >
 
-/** PatternFly TextArea wrapper for use with react-hook-form */
-export function PageFormTextArea(props: PageFormTextAreaProps) {
+/** PatternFly Select wrapper for use with react-hook-form */
+export function PageFormSelect(props: PageFormSelectProps) {
   const {
     control,
     formState: { isSubmitting },
@@ -17,10 +17,10 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
       name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupTextArea
+        <FormGroupSelect
           {...props}
           value={value as string}
-          onChange={onChange}
+          onSelect={(_, value) => onChange(value)}
           helperTextInvalid={error?.message}
           isReadOnly={props.isReadOnly || isSubmitting}
         />
