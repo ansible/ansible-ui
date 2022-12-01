@@ -3,7 +3,7 @@ import { Static, Type } from '@sinclair/typebox'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR from 'swr'
-import { FormPageSubmitHandler, PageBody, PageForm, PageHeader } from '../../../../framework'
+import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { User } from '../../interfaces/User'
@@ -107,7 +107,7 @@ export function EditUser() {
   })
   type EditUser = Static<typeof EditUserSchema>
 
-  const onSubmit: FormPageSubmitHandler<EditUser> = async (userData, setError, setFieldError) => {
+  const onSubmit: PageFormSubmitHandler<EditUser> = async (userData, setError, setFieldError) => {
     try {
       if (user) {
         user.username = userData.username

@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import {
-  FormPageSubmitHandler,
   PageBody,
   PageForm,
+  PageFormSubmitHandler,
   PageHeader,
   PageLayout,
 } from '../../../framework'
@@ -52,7 +52,7 @@ export function EditInventory() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<InventorySchema> = async (inventory, setError) => {
+  const onSubmit: PageFormSubmitHandler<InventorySchema> = async (inventory, setError) => {
     try {
       if (Number.isInteger(id)) {
         inventory = await requestPatch<EdaInventory>(`/api/inventory/${id}`, inventory)

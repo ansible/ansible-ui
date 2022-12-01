@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { FormPageSubmitHandler, PageForm } from '../../../../framework/PageForm/PageForm'
+import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Instance } from '../../interfaces/Instance'
@@ -42,7 +42,7 @@ export function EditInstance() {
 
   const { cache } = useSWRConfig()
 
-  const onSubmit: FormPageSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
+  const onSubmit: PageFormSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
     try {
       editedInstance.capacity_adjustment =
         Math.round(editedInstance.capacity_adjustment * 100) / 100
