@@ -28,7 +28,7 @@ export function EditUser() {
   )
 
   const EditUserSchema = Type.Object({
-    username: TypeTextInput({ title: t('Username'), maxLength: 150 }),
+    username: TypeTextInput({ title: t('Username'), maxLength: 150, autoComplete: 'new-username' }),
     userType: TypeSelect({
       title: t('User type'),
       options: [
@@ -53,12 +53,14 @@ export function EditUser() {
         },
       ],
     }),
-    password: Type.Optional(TypeSecretInput({ title: t('Password') })),
+    password: Type.Optional(
+      TypeSecretInput({ title: t('Password'), autoComplete: 'new-password' })
+    ),
     confirmPassword: Type.Optional(
       TypeSecretInput({
         title: t('Confirm password'),
         placeholder: t('Confirm password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        variant: 'secret',
+        autoComplete: 'new-password',
       })
     ),
     firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),

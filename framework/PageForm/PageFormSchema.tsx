@@ -143,29 +143,37 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
             )
             break
           case 'secret':
-            p.push(
-              <PageFormTextInput
-                id={base + propertyName}
-                key={base + propertyName}
-                name={base + propertyName}
-                label={title}
-                placeholder={placeholder}
-                isRequired={required}
-                type="password"
-              />
-            )
+            {
+              const typeSecretInputOptions = property as TypeSecretInputOptions
+              p.push(
+                <PageFormTextInput
+                  id={base + propertyName}
+                  key={base + propertyName}
+                  name={base + propertyName}
+                  label={title}
+                  placeholder={placeholder}
+                  isRequired={required}
+                  type="password"
+                  autoComplete={typeSecretInputOptions.autoComplete}
+                />
+              )
+            }
             break
           default:
-            p.push(
-              <PageFormTextInput
-                id={base + propertyName}
-                key={base + propertyName}
-                name={base + propertyName}
-                label={title}
-                placeholder={placeholder}
-                isRequired={required}
-              />
-            )
+            {
+              const typeTextInputOptions = property as TypeTextInputOptions
+              p.push(
+                <PageFormTextInput
+                  id={base + propertyName}
+                  key={base + propertyName}
+                  name={base + propertyName}
+                  label={title}
+                  placeholder={placeholder}
+                  isRequired={required}
+                  autoComplete={typeTextInputOptions.autoComplete}
+                />
+              )
+            }
             break
         }
         break
@@ -205,13 +213,23 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
   return <>{p}</>
 }
 
-export type TypeTextInputOptions = StringOptions<string> & { placeholder?: string }
+export type TypeTextInputOptions = StringOptions<string> & {
+  placeholder?: string
+  /** https://www.chromium.org/developers/design-documents/create-amazing-password-forms/ */
+  autoComplete?: string
+}
 
 export function TypeTextInput(options: TypeTextInputOptions) {
   return Type.String({ ...options })
 }
 
-export function TypeSecretInput(options: TypeTextInputOptions) {
+export type TypeSecretInputOptions = StringOptions<string> & {
+  placeholder?: string
+  /** https://www.chromium.org/developers/design-documents/create-amazing-password-forms/ */
+  autoComplete: string
+}
+
+export function TypeSecretInput(options: TypeSecretInputOptions) {
   return Type.String({ ...options, variant: 'secret' })
 }
 
