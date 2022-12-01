@@ -36,11 +36,11 @@ import {
 } from '@patternfly/react-icons'
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
 import { BulkSelector } from '../components/BulkSelector'
-import { PageSelect } from '../components/PageSelect'
 import { useBreakpoint } from '../components/useBreakPoint'
 import { IPageAction } from '../PageActions/PageAction'
 import { PageActions } from '../PageActions/PageActions'
 import { PageActionType } from '../PageActions/PageActionType'
+import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect'
 import { useSettings } from '../Settings'
 import { useFrameworkTranslations } from '../useFrameworkTranslations'
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
@@ -218,7 +218,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
             <ToolbarGroup variant="filter-group">
               <ToolbarItem>
-                <PageSelect onSelect={setSeletedFilter} value={selectedFilter}>
+                <FormGroupSelect
+                  id="filter"
+                  onSelect={(_, v) => setSeletedFilter(v.toString())}
+                  value={selectedFilter}
+                >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
                       <Flex
@@ -233,7 +237,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                       </Flex>
                     </SelectOption>
                   ))}
-                </PageSelect>
+                </FormGroupSelect>
               </ToolbarItem>
               <ToolbarItem>
                 <ToolbarFilterInput

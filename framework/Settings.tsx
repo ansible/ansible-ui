@@ -1,7 +1,7 @@
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { PageSelect } from './components/PageSelect'
 import { usePageDialog } from './PageDialog'
+import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect'
 import { useFrameworkTranslations } from './useFrameworkTranslations'
 
 export interface Settings {
@@ -104,21 +104,23 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       ]}
     >
       <Form isHorizontal={settings.formLayout === 'horizontal'}>
-        <PageSelect
+        <FormGroupSelect
+          id="theme"
           label="Theme"
           value={settings.theme ?? 'system'}
-          onSelect={(theme) =>
+          onSelect={(_, theme) =>
             setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
           }
         >
           <SelectOption value="system">{'System default'}</SelectOption>
           <SelectOption value="light">{'Light'}</SelectOption>
           <SelectOption value="dark">{'Dark'}</SelectOption>
-        </PageSelect>
-        <PageSelect
+        </FormGroupSelect>
+        <FormGroupSelect
+          id="table-layout"
           label="Table Layout"
           value={settings.tableLayout ?? 'comfortable'}
-          onSelect={(tableLayout) =>
+          onSelect={(_, tableLayout) =>
             setSettings({
               ...settings,
               tableLayout: tableLayout as 'compact' | 'comfortable',
@@ -127,11 +129,12 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         >
           <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
           <SelectOption value="compact">{'Compact'}</SelectOption>
-        </PageSelect>
-        <PageSelect
+        </FormGroupSelect>
+        <FormGroupSelect
+          id="form-columns"
           label="Form Columns"
           value={settings.formColumns ?? 'multiple'}
-          onSelect={(formColumns) =>
+          onSelect={(_, formColumns) =>
             setSettings({
               ...settings,
               formColumns: formColumns as 'multiple' | 'single',
@@ -140,11 +143,12 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         >
           <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
           <SelectOption value="single">{'Single column'}</SelectOption>
-        </PageSelect>
-        <PageSelect
+        </FormGroupSelect>
+        <FormGroupSelect
+          id="form-layout"
           label="Form Layout"
           value={settings.formLayout ?? 'vertical'}
-          onSelect={(formLayout) =>
+          onSelect={(_, formLayout) =>
             setSettings({
               ...settings,
               formLayout: formLayout as 'vertical' | 'horizontal',
@@ -153,15 +157,16 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         >
           <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
           <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
-        </PageSelect>
-        <PageSelect
+        </FormGroupSelect>
+        <FormGroupSelect
+          id="borders"
           label="Borders"
           value={settings.borders ? 'true' : 'false'}
-          onSelect={(value) => setSettings({ ...settings, borders: value === 'true' })}
+          onSelect={(_, value) => setSettings({ ...settings, borders: value === 'true' })}
         >
           <SelectOption value="true">{'Yes'}</SelectOption>
           <SelectOption value="false">{'No'}</SelectOption>
-        </PageSelect>
+        </FormGroupSelect>
       </Form>
     </Modal>
   )
