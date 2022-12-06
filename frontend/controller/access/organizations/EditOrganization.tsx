@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
-import { TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
+import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -97,7 +97,9 @@ export function EditOrganization() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={organization}
-            />
+            >
+              <PageFormSchema schema={EditOrganizationSchema} />
+            </PageForm>
           </PageBody>
         </>
       )
@@ -119,7 +121,9 @@ export function EditOrganization() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={EditOrganizationSchema} />
+          </PageForm>
         </PageBody>
       </>
     )

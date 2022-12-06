@@ -91,6 +91,7 @@ export enum RouteE {
 
   Collections = '/hub/collections',
   CollectionDetails = '/hub/collections/details/:id',
+  UploadCollection = '/hub/collections/upload',
 
   Repositories = '/hub/repositories',
   RepositoryDetails = '/hub/repositories/details/:id',

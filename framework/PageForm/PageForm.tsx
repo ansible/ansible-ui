@@ -24,7 +24,6 @@ import {
 import { Scrollable } from '../components/Scrollable'
 import { useBreakpoint } from '../components/useBreakPoint'
 import { SettingsContext } from '../Settings'
-import { PageFormSchema } from './PageFormSchema'
 
 export function PageForm<T extends object>(props: {
   schema?: JSONSchema6
@@ -84,7 +83,6 @@ export function PageForm<T extends object>(props: {
         {props.disableScrolling ? (
           <div style={{ maxWidth, padding: 24 }}>
             <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-              {props.schema && <PageFormSchema schema={props.schema} />}
               {props.children}
             </Grid>
           </div>
@@ -92,7 +90,6 @@ export function PageForm<T extends object>(props: {
           <Scrollable style={{ height: '100%', flexGrow: 1 }}>
             <div style={{ maxWidth, padding: 24 }}>
               <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-                {props.schema && <PageFormSchema schema={props.schema} />}
                 {props.children}
               </Grid>
             </div>

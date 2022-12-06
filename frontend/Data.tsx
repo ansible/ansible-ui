@@ -41,6 +41,23 @@ export async function requestPost<ResponseBody, RequestBody = unknown>(
   return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
 }
 
+export async function requestPostFile(
+  url: string,
+  file: string,
+  signal?: AbortSignal
+): Promise<string> {
+  const formData = new FormData()
+  const blob = new Blob([file])
+  formData.append('file', blob)
+  return ky
+    .post(url, {
+      body: formData,
+      signal,
+      credentials: 'include',
+    })
+    .text()
+}
+
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
   url: string,
   json: RequestBody

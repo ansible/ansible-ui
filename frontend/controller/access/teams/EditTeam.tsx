@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
-import { TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
+import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Organization } from '../../interfaces/Organization'
@@ -109,7 +109,9 @@ export function EditTeam() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={team}
-            />
+            >
+              <PageFormSchema schema={EditTeamSchema} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
@@ -128,7 +130,9 @@ export function EditTeam() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={EditTeamSchema} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )

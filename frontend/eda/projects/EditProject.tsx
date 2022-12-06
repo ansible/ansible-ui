@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -90,7 +91,9 @@ export function EditProject() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={project}
-            />
+            >
+              <PageFormSchema schema={ProjectSchemaType} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
@@ -112,7 +115,9 @@ export function EditProject() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={ProjectSchemaType} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )
