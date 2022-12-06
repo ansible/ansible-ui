@@ -7,7 +7,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework'
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
-import { useAddAutomationServer } from '../automation-servers/useAddAutomationServer'
 import { headers } from '../Data'
 import { RouteE } from '../Routes'
 
@@ -20,7 +19,7 @@ export default function Login() {
 
   const [searchParams] = useSearchParams()
 
-  const addAutomationHost = useAddAutomationServer()
+  // const addAutomationHost = useAddAutomationServer()
 
   const { cache } = useSWRConfig()
   useEffect(() => {
