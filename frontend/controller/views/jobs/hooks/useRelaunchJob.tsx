@@ -58,8 +58,6 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
             break
           }
           case 'job': {
-            // TODO: In the case where we're relaunching failed playbook runs
-            // the relaunch should open up the job details UI
             await requestPost<JobRelaunch>(relaunchEndpoint, {
               ...jobRelaunchParams,
             } as JobRelaunch)
@@ -78,5 +76,6 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       // TODO: Handle displaying error
       return Promise.reject(error)
     }
+    // TODO: The relaunch should open up the job details UI
   }
 }

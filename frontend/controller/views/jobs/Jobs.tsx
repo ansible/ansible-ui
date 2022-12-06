@@ -1,17 +1,12 @@
-import { IPageAction, PageActionType, TablePage } from '../../../../framework'
+import { TablePage } from '../../../../framework'
 
-import { ButtonVariant } from '@patternfly/react-core'
-import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UnifiedJob } from '../../interfaces/UnifiedJob'
 import { useControllerView } from '../../useControllerView'
-import { useCancelJobs } from './hooks/useCancelJobs'
-import { useDeleteJobs } from './hooks/useDeleteJobs'
 import { useJobsColumns } from './hooks/useJobsColumns'
 import { useJobsFilters } from './hooks/useJobsFilters'
-import { isJobRunning } from './jobUtils'
-import { useRelaunchJob } from './hooks/useRelaunchJob'
+import { useJobToolbarActions } from './hooks/useJobToolbarActions'
+import { useJobRowActions } from './hooks/useJobRowActions'
 
 export default function Jobs() {
   const { t } = useTranslation()
@@ -25,98 +20,8 @@ export default function Jobs() {
     toolbarFilters,
     tableColumns,
   })
-
-  const deleteJobs = useDeleteJobs(view.unselectItemsAndRefresh)
-
-  const cancelJobs = useCancelJobs(view.unselectItemsAndRefresh)
-
-  const relaunchJob = useRelaunchJob()
-  const relaunchAllHosts = useRelaunchJob({ hosts: 'all' })
-  const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' })
-
-  const toolbarActions = useMemo<IPageAction<UnifiedJob>[]>(
-    () => [
-      {
-        type: PageActionType.bulk,
-        icon: TrashIcon,
-        label: t('Delete selected jobs'),
-        onClick: deleteJobs,
-      },
-      {
-        type: PageActionType.bulk,
-        icon: BanIcon,
-        label: t('Cancel selected jobs'),
-        onClick: cancelJobs,
-      },
-    ],
-    [deleteJobs, cancelJobs, t]
-  )
-
-  const rowActions = useMemo<IPageAction<UnifiedJob>[]>(() => {
-    const cannotDeleteJob = (job: UnifiedJob) => {
-      if (!job.summary_fields.user_capabilities.delete)
-        return t(`The job cannot be deleted due to insufficient permission`)
-      else if (isJobRunning(job.status))
-        return t(`The job cannot be deleted due to a running job status`)
-      return ''
-    }
-
-    const cannotCancelJob = (job: UnifiedJob) => {
-      if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
-        return t(`The job cannot be canceled due to insufficient permission`)
-      else if (!isJobRunning(job.status))
-        return t(`The job cannot be canceled because it is not running`)
-      return ''
-    }
-
-    return [
-      {
-        type: PageActionType.single,
-        variant: ButtonVariant.secondary,
-        icon: RocketIcon,
-        label: t(`Relaunch job`),
-        isHidden: (job: UnifiedJob) =>
-          !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
-          (job.status === 'failed' && job.type === 'job'),
-        onClick: (job: UnifiedJob) => void relaunchJob(job),
-      },
-      {
-        type: PageActionType.dropdown,
-        variant: ButtonVariant.secondary,
-        icon: RocketIcon,
-        label: t(`Relaunch using host parameters`),
-        isHidden: (job: UnifiedJob) =>
-          !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
-          !(job.status === 'failed' && job.type === 'job'),
-        options: [
-          {
-            type: PageActionType.single,
-            label: t(`Relaunch on all hosts`),
-            onClick: (job: UnifiedJob) => void relaunchAllHosts(job),
-          },
-          {
-            type: PageActionType.single,
-            label: t(`Relaunch on failed hosts`),
-            onClick: (job: UnifiedJob) => void relaunchFailedHosts(job),
-          },
-        ],
-      },
-      {
-        type: PageActionType.single,
-        icon: TrashIcon,
-        label: t(`Delete job`),
-        isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
-        onClick: (job: UnifiedJob) => deleteJobs([job]),
-      },
-      {
-        type: PageActionType.single,
-        icon: BanIcon,
-        label: t(`Cancel job`),
-        isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
-        onClick: (job: UnifiedJob) => cancelJobs([job]),
-      },
-    ]
-  }, [deleteJobs, cancelJobs, relaunchJob, relaunchAllHosts, relaunchFailedHosts, t])
+  const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh)
+  const rowActions = useJobRowActions(view.unselectItemsAndRefresh)
 
   return (
     <TablePage
