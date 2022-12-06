@@ -44,7 +44,7 @@ export function HubRouter() {
       <Route path={RouteE.TaskDetails.replace(RouteE.Hub, '')} element={<TaskDetails />} />
       <Route path={RouteE.SignatureKeys.replace(RouteE.Hub, '')} element={<SignatureKeys />} />
       <Route path={RouteE.APIToken.replace(RouteE.Hub, '')} element={<Token />} />
-      <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
+      <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   )
 }

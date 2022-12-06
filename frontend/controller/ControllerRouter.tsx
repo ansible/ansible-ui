@@ -124,7 +124,7 @@ export function ControllerRouter() {
 
         <Route path={RouteE.ControllerDebug.replace(RouteE.Controller, '')} element={<Debug />} />
 
-        <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
+        <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
       </Routes>
     </Suspense>
   )
