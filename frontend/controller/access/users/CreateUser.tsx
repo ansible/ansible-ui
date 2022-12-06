@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
 import {
+  PageFormSchema,
   TypeSecretInput,
   TypeSelect,
   TypeTextInput,
@@ -114,7 +115,9 @@ export function CreateUser() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           defaultValue={{ userType: t('Normal user') }}
-        />
+        >
+          <PageFormSchema schema={CreateUserSchema} />
+        </PageForm>
       </PageBody>
     </>
   )

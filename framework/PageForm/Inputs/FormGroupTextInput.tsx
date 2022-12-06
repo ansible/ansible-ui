@@ -30,7 +30,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
           {...textInputProps}
           id={props.id}
           label={undefined}
-          aria-describedby={`${props.id}-form-group`}
+          aria-describedby={props.id ? `${props.id}-form-group` : undefined}
           validated={props.helperTextInvalid ? 'error' : undefined}
           type={props.type === 'password' ? (showSecret ? 'text' : 'password') : props.type}
         />

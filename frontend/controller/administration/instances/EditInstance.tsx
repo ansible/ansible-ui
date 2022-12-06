@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR, { useSWRConfig } from 'swr'
 import { PageBody, PageHeader, PageLayout } from '../../../../framework'
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
+import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema'
 import { requestGet, requestPatch, swrOptions } from '../../../Data'
 import { RouteE } from '../../../Routes'
 import { Instance } from '../../interfaces/Instance'
@@ -87,7 +88,9 @@ export function EditInstance() {
               capacity_adjustment: Number(instance.capacity_adjustment),
               enabled: instance.enabled,
             }}
-          />
+          >
+            <PageFormSchema schema={EditInstanceSchema} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )

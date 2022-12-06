@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSWRConfig } from 'swr'
 import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework'
+import { PageFormSchema } from '../../framework/PageForm/PageFormSchema'
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
 import { headers } from '../Data'
 import { RouteE } from '../Routes'
@@ -156,7 +157,9 @@ export default function Login() {
             server: searchParams.get('server') ?? localStorage.getItem('server') ?? '',
           }}
           disableScrolling
-        />
+        >
+          <PageFormSchema schema={DataType} />
+        </PageForm>
       </PageSection>
     </Page>
   )

@@ -2,14 +2,14 @@ import { ButtonVariant } from '@patternfly/react-core'
 import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { IPageAction, PageActionType } from '../../../../framework'
-import { requestPost } from '../../../Data'
+import { RouteE } from '../../../Routes'
 import { Collection } from '../Collection'
-import { useUploadCollection } from './useUploadCollection'
 
 export function useCollectionsActions(_callback?: () => void) {
   const { t } = useTranslation()
-  const uploadCollection = useUploadCollection()
+  const navigate = useNavigate()
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
@@ -17,18 +17,7 @@ export function useCollectionsActions(_callback?: () => void) {
         icon: UploadIcon,
         variant: ButtonVariant.primary,
         label: t('Upload collection'),
-        onClick: () => {
-          uploadCollection({
-            title: t('Upload collection'),
-            onClose: (data) => {
-              if (!data) return
-              void requestPost(
-                '/api/automation-hub/content/inbound-ansible/v3/artifacts/collections/',
-                data
-              )
-            },
-          })
-        },
+        onClick: () => navigate(RouteE.UploadCollection),
       },
       { type: PageActionType.seperator },
       {
@@ -48,6 +37,6 @@ export function useCollectionsActions(_callback?: () => void) {
         },
       },
     ],
-    [uploadCollection, t]
+    [t, navigate]
   )
 }

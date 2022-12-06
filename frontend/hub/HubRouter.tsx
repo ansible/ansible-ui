@@ -4,6 +4,7 @@ import { RouteE } from '../Routes'
 import { Approvals } from './approvals/Approvals'
 import { CollectionDetails } from './collections/CollectionDetails'
 import { Collections } from './collections/Collections'
+import { UploadCollection } from './collections/UploadCollection'
 import { HubDashboard } from './dashboard/Dashboard'
 import { ExecutionEnvironments } from './execution-environments/ExecutonEnvironments'
 import { Namespaces } from './namespaces/Namespaces'
@@ -22,13 +23,15 @@ export function HubRouter() {
         element={<AutomationServersPage />}
       />
       <Route path={RouteE.HubDashboard.replace(RouteE.Hub, '')} element={<HubDashboard />} />
-
       <Route path={RouteE.Collections.replace(RouteE.Hub, '')} element={<Collections />} />
+      <Route
+        path={RouteE.UploadCollection.replace(RouteE.Hub, '')}
+        element={<UploadCollection />}
+      />
       <Route
         path={RouteE.CollectionDetails.replace(RouteE.Hub, '')}
         element={<CollectionDetails />}
       />
-
       <Route path={RouteE.Namespaces.replace(RouteE.Hub, '')} element={<Namespaces />} />
       <Route path={RouteE.Repositories.replace(RouteE.Hub, '')} element={<Repositories />} />
       <Route path={RouteE.Approvals.replace(RouteE.Hub, '')} element={<Approvals />} />

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
 import {
+  PageFormSchema,
   TypeSecretInput,
   TypeSelect,
   TypeTextInput,
@@ -129,7 +130,9 @@ export function EditUser() {
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={defaultValue}
-          />
+          >
+            <PageFormSchema schema={EditUserSchema} />
+          </PageForm>
         </PageBody>
       </>
     )
