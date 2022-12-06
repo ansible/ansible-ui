@@ -111,7 +111,7 @@ export function EventDrivenRouter() {
       <Route path={RouteE.EdaRuleDetails.replace(RouteE.Eda, '')} element={<RuleDetails />} />
       <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
 
-      <Route path="*" element={<Navigate to={RouteE.Login} replace />} />
+      <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   )
 }
