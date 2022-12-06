@@ -1,5 +1,4 @@
-import { NavExpandable, NavItem, Split, SplitItem } from '@patternfly/react-core'
-import { ExternalLinkAltIcon } from '@patternfly/react-icons'
+import { NavExpandable, NavItem } from '@patternfly/react-core'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -114,22 +113,6 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           {t('API token')}
         </NavItem>
       </NavExpandable>
-
-      <NavItem
-        onClick={() =>
-          window.open(
-            'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/',
-            '_blank'
-          )
-        }
-      >
-        <Split>
-          <SplitItem isFilled>{t('Documentation')}</SplitItem>
-          <SplitItem>
-            <ExternalLinkAltIcon />
-          </SplitItem>
-        </Split>
-      </NavItem>
     </CommonSidebar>
   )
 }

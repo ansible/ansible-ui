@@ -28,7 +28,7 @@ export function FormGroupTextArea(props: FormGroupTextAreaProps) {
           {...textAreaProps}
           id={props.id}
           label={undefined}
-          aria-describedby={`${props.id}-form-group`}
+          aria-describedby={props.id ? `${props.id}-form-group` : undefined}
           validated={props.helperTextInvalid ? 'error' : undefined}
         />
         {props.type === 'password' && (

@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -101,7 +102,9 @@ export function EditInventory() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={inventory}
-            />
+            >
+              <PageFormSchema schema={InventorySchemaType} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
@@ -123,7 +126,9 @@ export function EditInventory() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={InventorySchemaType} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )

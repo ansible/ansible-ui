@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -97,7 +98,9 @@ export function EditRulebookActivation() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={rulebookActivation}
-            />
+            >
+              <PageFormSchema schema={RulebookActivationSchemaType} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
@@ -119,7 +122,9 @@ export function EditRulebookActivation() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={RulebookActivationSchemaType} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )

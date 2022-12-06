@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -78,7 +79,9 @@ export function EditRule() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={rule}
-            />
+            >
+              <PageFormSchema schema={RuleSchemaType} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
@@ -97,7 +100,9 @@ export function EditRule() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-          />
+          >
+            <PageFormSchema schema={RuleSchemaType} />
+          </PageForm>
         </PageBody>
       </PageLayout>
     )

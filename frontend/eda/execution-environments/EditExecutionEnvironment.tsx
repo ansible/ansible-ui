@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -100,7 +101,9 @@ export function EditExecutionEnvironment() {
               cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={executionEnvironment}
-            />
+            >
+              <PageFormSchema schema={ExecutionEnvironmentSchemaType} />
+            </PageForm>
           </PageBody>
         </PageLayout>
       )
