@@ -12,8 +12,8 @@ export interface IFormGroupSelectOption<T> {
 export type FormGroupSelectOptionProps<T> = {
   options: IFormGroupSelectOption<T>[]
   onSelect: (
-    value: T | undefined,
-    event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>
+    event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
+    value: T | undefined
   ) => void
   value: T | undefined
 } & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
@@ -31,7 +31,7 @@ export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
       event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
       label: string | SelectOptionObject
     ) => {
-      onSelect(props.options.find((option) => option.label === label.toString())?.value, event)
+      onSelect(event, props.options.find((option) => option.label === label.toString())?.value)
     },
     [onSelect, props.options]
   )
