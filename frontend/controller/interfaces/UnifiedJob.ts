@@ -167,6 +167,7 @@ export interface UnifiedJob {
   work_unit_id: null | string
   job_type?: string
   inventory?: number | null
+  inventory_source?: number
   project?: number
   playbook?: string
   scm_branch?: string
