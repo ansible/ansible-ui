@@ -21,9 +21,6 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true)
   }
-  const handleFileReadFinished = (_fileHandle: File) => {
-    setIsLoading(false)
-  }
   return (
     <Controller
       name={props.name}
@@ -33,9 +30,13 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
           setFilename('')
           onChange(undefined)
         }
-        const handleTextOrDataChange = (value: string) => {
-          onChange(value)
+        const handleFileReadFinished = (_fileHandle: File) => {
+          setIsLoading(false)
+          onChange(_fileHandle)
         }
+        // const handleTextOrDataChange = (value: string) => {
+        //   onChange(value)
+        // }
         return (
           <PageFormGroup
             {...props}
@@ -54,8 +55,8 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
               filename={isLoading ? 'loading...' : filename}
               filenamePlaceholder={props.placeholder}
               onFileInputChange={handleFileInputChange}
-              onDataChange={handleTextOrDataChange}
-              onTextChange={handleTextOrDataChange}
+              // onDataChange={handleTextOrDataChange}
+              // onTextChange={handleTextOrDataChange}
               onReadStarted={handleFileReadStarted}
               onReadFinished={handleFileReadFinished}
               onClearClick={handleClear}
