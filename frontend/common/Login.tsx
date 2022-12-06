@@ -38,7 +38,7 @@ export default function Login() {
         value: host.url,
         group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
       })),
-      footer: { label: t('Add automation server'), click: addAutomationHost },
+      // footer: <Button onClick={addAutomationHost}>{t('Add automation server')}</Button>,
     }),
     username: Type.String({
       title: t('Username'),
