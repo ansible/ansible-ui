@@ -43,19 +43,12 @@ export async function requestPost<ResponseBody, RequestBody = unknown>(
 
 export async function requestPostFile(
   url: string,
-  file: string,
+  file: Blob,
   signal?: AbortSignal
 ): Promise<string> {
-  const formData = new FormData()
-  const blob = new Blob([file])
-  formData.append('file', blob)
-  return ky
-    .post(url, {
-      body: formData,
-      signal,
-      credentials: 'include',
-    })
-    .text()
+  const body = new FormData()
+  body.append('file', file)
+  return ky.post(url, { body, signal, credentials: 'include' }).json()
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(

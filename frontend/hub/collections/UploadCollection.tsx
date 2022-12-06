@@ -19,7 +19,7 @@ import { useRepositories } from '../repositories/hooks/useRepositories'
 
 const UploadSchema = Type.Object({
   namespace: Type.String(),
-  file: Type.String(),
+  file: Type.Any(),
 })
 type UploadData = Static<typeof UploadSchema>
 
@@ -60,12 +60,12 @@ export function UploadCollectionByFile() {
             submitText={t('Confirm')}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            onSubmit={(data) => {
-              return requestPostFile(
+            onSubmit={(data) =>
+              requestPostFile(
                 '/api/automation-hub/content/inbound-ansible/v3/artifacts/collections/',
-                data.file
+                data.file as Blob
               )
-            }}
+            }
           >
             <PageFormSelectOption
               label={t('Namespace')}
