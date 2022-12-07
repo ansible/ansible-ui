@@ -67,9 +67,13 @@ export function PageForm<T extends object>(props: {
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit((data) => {
+        onSubmit={handleSubmit(async (data) => {
           setError('')
-          return props.onSubmit(data, setError, setFieldError)
+          try {
+            await props.onSubmit(data, setError, setFieldError)
+          } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
+          }
         })}
         isHorizontal={isHorizontal}
         style={{

@@ -48,7 +48,7 @@ export async function requestPostFile(
 ): Promise<string> {
   const body = new FormData()
   body.append('file', file)
-  return ky.post(url, { body, signal, credentials: 'include' }).json()
+  return ky.post(url, { body, signal, credentials: 'include', headers }).json()
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(

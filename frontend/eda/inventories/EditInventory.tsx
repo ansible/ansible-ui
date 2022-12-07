@@ -10,7 +10,8 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework'
-import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
+import { PageFormTextArea } from '../../../framework/PageForm/Inputs/PageFormTextArea'
+import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput'
 import { useGet } from '../../common/useItem'
 import { requestPatch, requestPost } from '../../Data'
 import { RouteE } from '../../Routes'
@@ -26,25 +27,11 @@ export function EditInventory() {
   const InventorySchemaType = useMemo(
     () =>
       Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        }),
-        description: Type.Optional(
-          Type.String({
-            title: t('Description'),
-            placeholder: t('Enter the description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
-        inventory: Type.Optional(
-          Type.String({
-            title: t('Inventory'),
-            variant: 'textarea',
-            placeholder: t('Enter the inventory'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
+        name: Type.String(),
+        description: Type.Optional(Type.String()),
+        inventory: Type.Optional(Type.String()),
       }),
-    [t]
+    []
   )
 
   type InventorySchema = Static<typeof InventorySchemaType>
@@ -103,7 +90,22 @@ export function EditInventory() {
               onCancel={onCancel}
               defaultValue={inventory}
             >
-              <PageFormSchema schema={InventorySchemaType} />
+              <PageFormTextInput
+                name="name"
+                label={t('Name')}
+                isRequired
+                placeholder={t('Enter name')}
+              />
+              <PageFormTextArea
+                name="description"
+                label={t('Description')}
+                placeholder={t('Enter description')}
+              />
+              <PageFormTextArea
+                name="inventory"
+                label={t('Inventory')}
+                placeholder={t('Enter inventory')}
+              />
             </PageForm>
           </PageBody>
         </PageLayout>
@@ -127,7 +129,9 @@ export function EditInventory() {
             cancelText={t('Cancel')}
             onCancel={onCancel}
           >
-            <PageFormSchema schema={InventorySchemaType} />
+            <PageFormTextInput name="name" label={t('Name')} isRequired />
+            <PageFormTextArea name="description" label={t('Description')} />
+            <PageFormTextArea name="inventory" label={t('Inventory')} />
           </PageForm>
         </PageBody>
       </PageLayout>

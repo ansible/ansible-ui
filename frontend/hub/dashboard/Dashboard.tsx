@@ -11,8 +11,16 @@ import {
 } from '@patternfly/react-core'
 import { ExternalLinkAltIcon } from '@patternfly/react-icons'
 import { PageHeader, PageLayout } from '../../../framework'
+import { LoadingPage } from '../../../framework/components/LoadingPage'
+import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces'
 
 export function HubDashboard() {
+  const namespaces = useNamespaces()
+
+  if (!namespaces) {
+    return <LoadingPage />
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -21,26 +29,28 @@ export function HubDashboard() {
       />
       <PageSection>
         <Stack hasGutter>
-          <Card isRounded isFlat>
-            <CardHeader>
-              <CardTitle>Create a namespace</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <Stack hasGutter>
-                <StackItem>To get started, create a namespace for your organization.</StackItem>
-                <StackItem>
-                  <Button>Create namespace</Button>
-                </StackItem>
-              </Stack>
-            </CardBody>
-          </Card>
+          {namespaces.length === 0 && (
+            <Card isRounded isFlat>
+              <CardHeader>
+                <CardTitle>Create a namespace</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Stack hasGutter>
+                  <StackItem>To get started, create a namespace for your organization.</StackItem>
+                  <StackItem>
+                    <Button>Create namespace</Button>
+                  </StackItem>
+                </Stack>
+              </CardBody>
+            </Card>
+          )}
           <Card isRounded isFlat>
             <CardHeader>
               <CardTitle>Featured collections</CardTitle>
             </CardHeader>
             <CardBody>
               <Stack hasGutter>
-                <StackItem>Sync from the featured collections below or add you own.</StackItem>
+                <StackItem>Sync from the featured collections below or add your own.</StackItem>
                 <StackItem>
                   <Button>Add your own collection</Button>
                 </StackItem>

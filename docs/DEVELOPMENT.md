@@ -23,3 +23,7 @@ In addition the frontend is broken down into the structure needed for supporting
 | /frontend/controller   | The source code for the controller UI.                |
 | /frontend/hub          | The source code for the hub UI.                       |
 | /frontend/event-driven | The source code for the event driven architecture UI. |
+
+Under each one of these, the directory structure should match the use navigation that is shown in the UI.
+
+> Example: /frontend/controller/access/users

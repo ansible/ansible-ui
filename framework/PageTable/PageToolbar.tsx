@@ -222,6 +222,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                   id="filter"
                   onSelect={(_, v) => setSeletedFilter(v.toString())}
                   value={selectedFilter}
+                  placeholderText="Select filter"
                 >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
