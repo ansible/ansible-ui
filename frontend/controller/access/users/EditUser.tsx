@@ -111,10 +111,10 @@ export function EditUser() {
       firstName: user.first_name,
       email: user.email,
       userType: user.is_superuser
-        ? t('System administrator')
+        ? 'System administrator'
         : user.is_system_auditor
-        ? t('System auditor')
-        : t('Normal user'),
+        ? 'System auditor'
+        : 'Normal user',
     }
     return (
       <>
