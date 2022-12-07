@@ -41,7 +41,7 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
           case 'select':
             {
               if (!prop.placeholder) {
-                prop.placeholder = `Enter ${(property.title ?? propertyName).toLowerCase()}`
+                prop.placeholder = `Select ${(property.title ?? propertyName).toLowerCase()}`
               }
               if (!prop.enum) {
                 prop.enum = (prop as unknown as TypeSelectOptions<string>).options?.map(

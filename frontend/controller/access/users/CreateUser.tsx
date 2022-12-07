@@ -114,7 +114,7 @@ export function CreateUser() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ userType: t('Normal user') }}
+          defaultValue={{ userType: 'Normal user' }}
         >
           <PageFormSchema schema={CreateUserSchema} />
         </PageForm>

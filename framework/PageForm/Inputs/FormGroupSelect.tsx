@@ -41,6 +41,7 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         maxHeight={280}
         validated={helperTextInvalid ? 'error' : undefined}
         isDisabled={props.isDisabled || isReadOnly}
+        placeholderText={props.placeholder ?? ''}
       >
         {children as ReactElement[]}
       </Select>
