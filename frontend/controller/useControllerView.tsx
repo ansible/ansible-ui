@@ -1,70 +1,70 @@
-import { HTTPError } from 'ky'
-import { useCallback, useMemo, useRef } from 'react'
-import useSWR from 'swr'
-import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework'
-import { IView, useView } from '../../framework/useView'
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data'
+import { HTTPError } from 'ky';
+import { useCallback, useMemo, useRef } from 'react';
+import useSWR from 'swr';
+import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
+import { IView, useView } from '../../framework/useView';
+import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data';
 
 export type IControllerView<T extends { id: number }> = IView &
   ISelected<T> & {
-    itemCount: number | undefined
-    pageItems: T[] | undefined
-    refresh: () => Promise<ItemsResponse<T> | undefined>
-    selectItemsAndRefresh: (items: T[]) => void
-    unselectItemsAndRefresh: (items: T[]) => void
-  }
+    itemCount: number | undefined;
+    pageItems: T[] | undefined;
+    refresh: () => Promise<ItemsResponse<T> | undefined>;
+    selectItemsAndRefresh: (items: T[]) => void;
+    unselectItemsAndRefresh: (items: T[]) => void;
+  };
 
 export type QueryParams = {
-  [key: string]: string
-}
+  [key: string]: string;
+};
 
 function getQueryString(queryParams: QueryParams) {
   return Object.entries(queryParams)
     .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&')
+    .join('&');
 }
 
 export function useControllerView<T extends { id: number }>(options: {
-  url: string
-  toolbarFilters?: IToolbarFilter[]
-  tableColumns?: ITableColumn<T>[]
-  queryParams?: QueryParams
-  disableQueryString?: boolean
+  url: string;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  queryParams?: QueryParams;
+  disableQueryString?: boolean;
 }): IControllerView<T> {
-  let { url } = options
-  const { toolbarFilters, tableColumns, disableQueryString } = options
+  let { url } = options;
+  const { toolbarFilters, tableColumns, disableQueryString } = options;
 
-  let defaultSort: string | undefined = undefined
-  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined
+  let defaultSort: string | undefined = undefined;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
   if (tableColumns && tableColumns.length) {
-    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0]
-    defaultSort = defaultSortColumn?.sort
-    defaultSortDirection = defaultSortColumn?.defaultSortDirection
+    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
+    defaultSort = defaultSortColumn?.sort;
+    defaultSortDirection = defaultSortColumn?.defaultSortDirection;
   }
 
   const view = useView(
     { sort: defaultSort, sortDirection: defaultSortDirection },
     disableQueryString
-  )
-  const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined })
+  );
+  const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view
+  const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : ''
+  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key)
+      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filters[key]
+        const values = filters[key];
         if (values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?')
+          queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
+            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
           } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`
+            queryString += `${toolbarFilter.query}=${values.join(',')}`;
           }
         }
       }
@@ -72,58 +72,58 @@ export function useControllerView<T extends { id: number }>(options: {
   }
 
   if (sort && !queryString.includes('order_by')) {
-    queryString ? (queryString += '&') : (queryString += '?')
+    queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `order_by=-${sort}`
+      queryString += `order_by=-${sort}`;
     } else {
-      queryString += `order_by=${sort}`
+      queryString += `order_by=${sort}`;
     }
   }
 
-  queryString ? (queryString += '&') : (queryString += '?')
-  queryString += `page=${page}`
+  queryString ? (queryString += '&') : (queryString += '?');
+  queryString += `page=${page}`;
 
-  queryString ? (queryString += '&') : (queryString += '?')
-  queryString += `page_size=${perPage}`
+  queryString ? (queryString += '&') : (queryString += '?');
+  queryString += `page_size=${perPage}`;
 
-  url += queryString
-  const fetcher = useFetcher()
-  const response = useSWR<ItemsResponse<T>>(url, fetcher)
-  const { data, mutate } = response
-  const refresh = useCallback(() => mutate(), [mutate])
+  url += queryString;
+  const fetcher = useFetcher();
+  const response = useSWR<ItemsResponse<T>>(url, fetcher);
+  const { data, mutate } = response;
+  const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions)
+  useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  let error: Error | undefined = response.error
+  let error: Error | undefined = response.error;
   if (error instanceof HTTPError) {
     if (error.response.status === 404 && view.page > 1) {
-      view.setPage(1)
-      error = undefined
+      view.setPage(1);
+      error = undefined;
     }
   }
 
-  const selection = useSelected(data?.results ?? [], getItemKey)
+  const selection = useSelected(data?.results ?? [], getItemKey);
 
   if (data?.count !== undefined) {
-    itemCountRef.current.itemCount = data?.count
+    itemCountRef.current.itemCount = data?.count;
   }
 
   const selectItemsAndRefresh = useCallback(
     (items: T[]) => {
-      selection.selectItems(items)
-      void refresh()
+      selection.selectItems(items);
+      void refresh();
     },
     [refresh, selection]
-  )
+  );
 
   const unselectItemsAndRefresh = useCallback(
     (items: T[]) => {
-      selection.unselectItems(items)
-      void refresh()
+      selection.unselectItems(items);
+      void refresh();
     },
     [refresh, selection]
-  )
+  );
 
   return useMemo(() => {
     return {
@@ -135,7 +135,7 @@ export function useControllerView<T extends { id: number }>(options: {
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
-    }
+    };
   }, [
     data?.results,
     error,
@@ -144,24 +144,24 @@ export function useControllerView<T extends { id: number }>(options: {
     selection,
     unselectItemsAndRefresh,
     view,
-  ])
+  ]);
 }
 
 export async function getControllerError(err: unknown) {
   if (err instanceof HTTPError) {
     try {
-      const response = (await err.response.json()) as { __all__?: string[] }
+      const response = (await err.response.json()) as { __all__?: string[] };
       if ('__all__' in response && Array.isArray(response.__all__)) {
-        return JSON.stringify(response.__all__[0])
+        return JSON.stringify(response.__all__[0]);
       } else {
-        return JSON.stringify(response)
+        return JSON.stringify(response);
       }
     } catch {
-      return err.message
+      return err.message;
     }
   } else if (err instanceof Error) {
-    return err.message
+    return err.message;
   } else {
-    return 'unknown error'
+    return 'unknown error';
   }
 }

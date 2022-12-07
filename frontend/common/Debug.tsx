@@ -1,19 +1,19 @@
 /* eslint-disable i18next/no-literal-string */
-import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core'
-import { useCallback, useMemo } from 'react'
-import { PageHeader } from '../../framework'
-import { useBulkActionDialog } from '../../framework/BulkActionDialog'
-import { randomString } from '../../framework/utils/random-string'
-import { Team } from '../controller/interfaces/Team'
-import { requestPost } from '../Data'
-import { RouteE } from '../Routes'
+import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core';
+import { useCallback, useMemo } from 'react';
+import { PageHeader } from '../../framework';
+import { useBulkActionDialog } from '../../framework/BulkActionDialog';
+import { randomString } from '../../framework/utils/random-string';
+import { Team } from '../controller/interfaces/Team';
+import { requestPost } from '../Data';
+import { RouteE } from '../Routes';
 
 export default function Debug() {
   const breadcrumbs = useMemo(
     () => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }],
     []
-  )
-  const createTeams = useCreateTeams()
+  );
+  const createTeams = useCreateTeams();
   return (
     <>
       <PageHeader title="Debug" breadcrumbs={breadcrumbs} />
@@ -27,16 +27,16 @@ export default function Debug() {
         </Bullseye>
       </PageSection>
     </>
-  )
+  );
 }
 
 function useCreateTeams() {
-  const openBulkProgressDialog = useBulkActionDialog()
+  const openBulkProgressDialog = useBulkActionDialog();
   const createTeams = useCallback(
     (count: number) => {
       const teams = new Array(count)
         .fill(0)
-        .map(() => ({ name: randomString(8), organization: 1 })) as Partial<Team>[]
+        .map(() => ({ name: randomString(8), organization: 1 })) as Partial<Team>[];
       openBulkProgressDialog({
         title: `Creating ${count} teams`,
         keyFn: (team: Partial<Team>) => team.name ?? '',
@@ -45,9 +45,9 @@ function useCreateTeams() {
         actionFn: (team, signal) =>
           requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
         processingText: 'Creating teams...',
-      })
+      });
     },
     [openBulkProgressDialog]
-  )
-  return createTeams
+  );
+  return createTeams;
 }

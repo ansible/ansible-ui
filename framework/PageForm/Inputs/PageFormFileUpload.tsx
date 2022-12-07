@@ -1,39 +1,39 @@
-import { FileUpload } from '@patternfly/react-core'
-import { useCallback, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup'
+import { FileUpload } from '@patternfly/react-core';
+import { useCallback, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type PageFormFileUploadProps = {
-  name: string
-  isReadOnly?: boolean
-  placeholder?: string
-} & PageFormGroupProps
+  name: string;
+  isReadOnly?: boolean;
+  placeholder?: string;
+} & PageFormGroupProps;
 
 /** PatternFly Select wrapper for use with react-hook-form */
 export function PageFormFileUpload(props: PageFormFileUploadProps) {
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext()
-  const [filename, setFilename] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const handleFileInputChange = useCallback((_, file: File) => setFilename(file.name), [])
+  } = useFormContext();
+  const [filename, setFilename] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const handleFileInputChange = useCallback((_, file: File) => setFilename(file.name), []);
   const handleFileReadStarted = (_fileHandle: File) => {
-    setIsLoading(true)
-  }
+    setIsLoading(true);
+  };
   return (
     <Controller
       name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const handleClear = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-          setFilename('')
-          onChange(undefined)
-        }
+          setFilename('');
+          onChange(undefined);
+        };
         const handleFileReadFinished = (_fileHandle: File) => {
-          setIsLoading(false)
-          onChange(_fileHandle)
-        }
+          setIsLoading(false);
+          onChange(_fileHandle);
+        };
         // const handleTextOrDataChange = (value: string) => {
         //   onChange(value)
         // }
@@ -67,8 +67,8 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
               validated={error ? 'error' : undefined}
             />
           </PageFormGroup>
-        )
+        );
       }}
     />
-  )
+  );
 }

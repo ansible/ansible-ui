@@ -15,20 +15,20 @@ import {
   Stack,
   Text,
   Title,
-} from '@patternfly/react-core'
-import { ReactNode, useCallback, useMemo } from 'react'
-import { IconWrapper } from '../components/IconWrapper'
-import { IPageAction } from '../PageActions/PageAction'
-import { PageActions } from '../PageActions/PageActions'
+} from '@patternfly/react-core';
+import { ReactNode, useCallback, useMemo } from 'react';
+import { IconWrapper } from '../components/IconWrapper';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
 import {
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
   PageTableProps,
   TableColumnCell,
-} from './PageTable'
+} from './PageTable';
 
-export type PageTableListProps<T extends object> = PageTableProps<T>
+export type PageTableListProps<T extends object> = PageTableProps<T>;
 
 export function PageTableList<T extends object>(props: PageTableListProps<T>) {
   const {
@@ -41,7 +41,7 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
     rowActions,
     defaultSubtitle: defaultCardSubtitle,
     showSelect,
-  } = props
+  } = props;
 
   const columnsToDataList = useColumnsToDataList(
     tableColumns,
@@ -52,13 +52,13 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
     rowActions,
     defaultCardSubtitle,
     showSelect
-  )
+  );
 
   return (
     <DataList aria-label="TODO" style={{ marginTop: -1, maxWidth: '100%', overflow: 'hidden' }}>
       {pageItems?.map(columnsToDataList)}
     </DataList>
-  )
+  );
 }
 
 export function useColumnsToDataList<T extends object>(
@@ -72,46 +72,46 @@ export function useColumnsToDataList<T extends object>(
   showSelect?: boolean
 ): (item: T) => ReactNode {
   const data = useMemo(() => {
-    let nameColumn: ITableColumn<T> | undefined
-    let subtitleColumn: ITableColumn<T> | undefined
-    let descriptionColumn: ITableColumn<T> | undefined
-    const countColumns: ITableColumnTypeCount<T>[] = []
-    let labelColumn: ITableColumnTypeLabels<T> | undefined
-    const primaryColumns: ITableColumn<T>[] = []
-    const secondaryColumns: ITableColumn<T>[] = []
+    let nameColumn: ITableColumn<T> | undefined;
+    let subtitleColumn: ITableColumn<T> | undefined;
+    let descriptionColumn: ITableColumn<T> | undefined;
+    const countColumns: ITableColumnTypeCount<T>[] = [];
+    let labelColumn: ITableColumnTypeLabels<T> | undefined;
+    const primaryColumns: ITableColumn<T>[] = [];
+    const secondaryColumns: ITableColumn<T>[] = [];
 
     for (const column of tableColumns) {
       switch (column.type) {
         case 'description':
-          if (!descriptionColumn) descriptionColumn = column
-          break
+          if (!descriptionColumn) descriptionColumn = column;
+          break;
         case 'labels':
-          if (!labelColumn) labelColumn = column
-          break
+          if (!labelColumn) labelColumn = column;
+          break;
         case 'count':
-          countColumns.push(column)
-          break
+          countColumns.push(column);
+          break;
         default:
           switch (column.list) {
             case 'name':
-              nameColumn = column
-              break
+              nameColumn = column;
+              break;
             case 'subtitle':
-              subtitleColumn = column
-              break
+              subtitleColumn = column;
+              break;
             case 'description':
-              descriptionColumn = column
-              break
+              descriptionColumn = column;
+              break;
             case 'hidden':
-              break
+              break;
             case 'secondary':
-              secondaryColumns.push(column)
-              break
+              secondaryColumns.push(column);
+              break;
             default:
-              primaryColumns.push(column)
-              break
+              primaryColumns.push(column);
+              break;
           }
-          break
+          break;
       }
     }
     return {
@@ -122,19 +122,19 @@ export function useColumnsToDataList<T extends object>(
       primaryColumns,
       secondaryColumns,
       labelColumn,
-    }
-  }, [tableColumns])
+    };
+  }, [tableColumns]);
 
   const onSelectClick = useCallback(
     (item: T) => {
       if (isSelected?.(item)) {
-        unselectItem?.(item)
+        unselectItem?.(item);
       } else {
-        selectItem?.(item)
+        selectItem?.(item);
       }
     },
     [isSelected, selectItem, unselectItem]
-  )
+  );
 
   const {
     nameColumn,
@@ -144,12 +144,12 @@ export function useColumnsToDataList<T extends object>(
     primaryColumns,
     secondaryColumns,
     labelColumn,
-  } = data
+  } = data;
 
   return useCallback(
     (item: T) => {
-      const key = keyFn(item)
-      const isItemSelected = isSelected?.(item)
+      const key = keyFn(item);
+      const isItemSelected = isSelected?.(item);
       return (
         <DataListItem key={key} aria-labelledby={`data-list-${key}`} isExpanded={isItemSelected}>
           <DataListItemRow>
@@ -203,7 +203,7 @@ export function useColumnsToDataList<T extends object>(
                               </DescriptionListGroup>
                             )}
                           {primaryColumns.map((column) => {
-                            if (column.value && !column.value(item)) return <></>
+                            if (column.value && !column.value(item)) return <></>;
                             return (
                               <DescriptionListGroup key={column.header}>
                                 <DescriptionListTerm>
@@ -218,7 +218,7 @@ export function useColumnsToDataList<T extends object>(
                                   <TableColumnCell column={column} item={item} />
                                 </DescriptionListDescription>
                               </DescriptionListGroup>
-                            )
+                            );
                           })}
                           {countColumns.length > 0 && (
                             <DescriptionListGroup key="counts">
@@ -260,7 +260,7 @@ export function useColumnsToDataList<T extends object>(
                   <DataListCell key="secondary">
                     <DescriptionList isCompact>
                       {secondaryColumns.map((column) => {
-                        if (column.value && !column.value(item)) return <></>
+                        if (column.value && !column.value(item)) return <></>;
                         return (
                           <DescriptionListGroup key={column.header}>
                             <DescriptionListTerm>
@@ -275,7 +275,7 @@ export function useColumnsToDataList<T extends object>(
                               <TableColumnCell column={column} item={item} />
                             </DescriptionListDescription>
                           </DescriptionListGroup>
-                        )
+                        );
                       })}
                     </DescriptionList>
                   </DataListCell>
@@ -300,7 +300,7 @@ export function useColumnsToDataList<T extends object>(
             )}
           </DataListItemRow>
         </DataListItem>
-      )
+      );
     },
     [
       keyFn,
@@ -317,5 +317,5 @@ export function useColumnsToDataList<T extends object>(
       rowActions,
       onSelectClick,
     ]
-  )
+  );
 }

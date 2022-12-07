@@ -1,30 +1,30 @@
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { TablePage } from '../../../framework'
-import { useInMemoryView } from '../../../framework/useInMemoryView'
-import { useGet } from '../../common/useItem'
-import { idKeyFn } from '../../hub/usePulpView'
-import { RouteE } from '../../Routes'
-import { EdaRule } from '../interfaces/EdaRule'
-import { useRuleActions } from './hooks/useRuleActions'
-import { useRuleColumns } from './hooks/useRuleColumns'
-import { useRuleFilters } from './hooks/useRuleFilters'
-import { useRulesActions } from './hooks/useRulesActions'
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { TablePage } from '../../../framework';
+import { useInMemoryView } from '../../../framework/useInMemoryView';
+import { useGet } from '../../common/useItem';
+import { idKeyFn } from '../../hub/usePulpView';
+import { RouteE } from '../../Routes';
+import { EdaRule } from '../interfaces/EdaRule';
+import { useRuleActions } from './hooks/useRuleActions';
+import { useRuleColumns } from './hooks/useRuleColumns';
+import { useRuleFilters } from './hooks/useRuleFilters';
+import { useRulesActions } from './hooks/useRulesActions';
 
 export function Rules() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useRuleFilters()
-  const { data: rules, mutate: refresh } = useGet<EdaRule[]>('/api/rules')
-  const tableColumns = useRuleColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useRuleFilters();
+  const { data: rules, mutate: refresh } = useGet<EdaRule[]>('/api/rules');
+  const tableColumns = useRuleColumns();
   const view = useInMemoryView<EdaRule>({
     items: rules,
     tableColumns,
     toolbarFilters,
     keyFn: idKeyFn,
-  })
-  const toolbarActions = useRulesActions(refresh)
-  const rowActions = useRuleActions(refresh)
+  });
+  const toolbarActions = useRulesActions(refresh);
+  const rowActions = useRuleActions(refresh);
   return (
     <TablePage
       title={t('Rules')}
@@ -40,5 +40,5 @@ export function Rules() {
       {...view}
       defaultSubtitle={t('Rule')}
     />
-  )
+  );
 }

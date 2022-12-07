@@ -1,15 +1,15 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn } from '../../../../../framework'
-import { useDescriptionColumn } from '../../../../common/columns'
-import { ExecutionEnvironment } from '../ExecutionEnvironment'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn } from '../../../../../framework';
+import { useDescriptionColumn } from '../../../../common/columns';
+import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
 export function useExecutionEnvironmentsColumns(_options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
-  const descriptionColumn = useDescriptionColumn()
+  const { t } = useTranslation();
+  const descriptionColumn = useDescriptionColumn();
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       {
@@ -36,6 +36,6 @@ export function useExecutionEnvironmentsColumns(_options?: {
       },
     ],
     [descriptionColumn, t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

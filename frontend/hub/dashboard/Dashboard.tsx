@@ -8,17 +8,17 @@ import {
   PageSection,
   Stack,
   StackItem,
-} from '@patternfly/react-core'
-import { ExternalLinkAltIcon } from '@patternfly/react-icons'
-import { PageHeader, PageLayout } from '../../../framework'
-import { LoadingPage } from '../../../framework/components/LoadingPage'
-import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces'
+} from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { PageHeader, PageLayout } from '../../../framework';
+import { LoadingPage } from '../../../framework/components/LoadingPage';
+import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces';
 
 export function HubDashboard() {
-  const namespaces = useNamespaces()
+  const namespaces = useNamespaces();
 
   if (!namespaces) {
-    return <LoadingPage />
+    return <LoadingPage />;
   }
 
   return (
@@ -72,5 +72,5 @@ export function HubDashboard() {
         </Stack>
       </PageSection>
     </PageLayout>
-  )
+  );
 }

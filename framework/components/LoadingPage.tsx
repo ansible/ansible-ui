@@ -1,6 +1,6 @@
-import { PageSection, Skeleton } from '@patternfly/react-core'
-import { Fragment } from 'react'
-import { ICatalogBreadcrumb, PageHeader } from '../PageHeader'
+import { PageSection, Skeleton } from '@patternfly/react-core';
+import { Fragment } from 'react';
+import { ICatalogBreadcrumb, PageHeader } from '../PageHeader';
 
 export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBreadcrumb[] }) {
   return (
@@ -17,5 +17,5 @@ export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBread
                 </Bullseye> */}
       </PageSection>
     </Fragment>
-  )
+  );
 }

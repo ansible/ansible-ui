@@ -1,16 +1,16 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption'
+import { Controller, useFormContext } from 'react-hook-form';
+import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption';
 
 export type PageFormSelectOptionProps<T> = {
-  name: string
-} & Omit<FormGroupSelectOptionProps<T>, 'onSelect' | 'value'>
+  name: string;
+} & Omit<FormGroupSelectOptionProps<T>, 'onSelect' | 'value'>;
 
 /**  Select wrapper for use with react-hook-form */
 export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext()
+  } = useFormContext();
   return (
     <Controller
       name={props.name}
@@ -26,5 +26,5 @@ export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
         />
       )}
     />
-  )
+  );
 }

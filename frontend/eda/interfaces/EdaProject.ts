@@ -6,7 +6,7 @@
  */
 
 export interface EdaProject {
-  id: number
-  url: string
-  name: string
+  id: number;
+  url: string;
+  name: string;
 }

@@ -1,11 +1,11 @@
-import { IToolbarFilter } from '../../../../../framework'
-import { useNameToolbarFilter } from '../../../common/controller-toolbar-filters'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { IToolbarFilter } from '../../../../../framework';
+import { useNameToolbarFilter } from '../../../common/controller-toolbar-filters';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function useJobsFilters() {
-  const { t } = useTranslation()
-  const nameToolbarFilter = useNameToolbarFilter()
+  const { t } = useTranslation();
+  const nameToolbarFilter = useNameToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -67,6 +67,6 @@ export function useJobsFilters() {
       },
     ],
     [nameToolbarFilter, t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }

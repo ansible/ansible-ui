@@ -1,31 +1,31 @@
-import { Select, SelectOptionObject, SelectProps, SelectVariant } from '@patternfly/react-core'
-import React, { ChangeEvent, ReactElement, useCallback, useState } from 'react'
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup'
+import { Select, SelectOptionObject, SelectProps, SelectVariant } from '@patternfly/react-core';
+import React, { ChangeEvent, ReactElement, useCallback, useState } from 'react';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type FormGroupSelectProps = Pick<
   SelectProps,
   'footer' | 'isCreatable' | 'isGrouped' | 'onSelect' | 'placeholderText' | 'value' | 'isDisabled'
 > &
-  PageFormGroupProps & { isReadOnly?: boolean; placeholderText: string | React.ReactNode }
+  PageFormGroupProps & { isReadOnly?: boolean; placeholderText: string | React.ReactNode };
 
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupSelect(props: FormGroupSelectProps) {
-  const { children, helperTextInvalid, isReadOnly, onSelect, value } = props
+  const { children, helperTextInvalid, isReadOnly, onSelect, value } = props;
 
-  const [open, setOpen] = useState(false)
-  const onToggle = useCallback(() => setOpen((open) => !open), [])
+  const [open, setOpen] = useState(false);
+  const onToggle = useCallback(() => setOpen((open) => !open), []);
 
   const onSelectHandler = useCallback(
     (
       event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
       value: string | SelectOptionObject
     ) => {
-      if (typeof value === 'string') onSelect?.(event, value)
-      else onSelect?.(event, value.toString())
-      setOpen(false)
+      if (typeof value === 'string') onSelect?.(event, value);
+      else onSelect?.(event, value.toString());
+      setOpen(false);
     },
     [onSelect]
-  )
+  );
 
   return (
     <PageFormGroup {...props}>
@@ -45,5 +45,5 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         {children as ReactElement[]}
       </Select>
     </PageFormGroup>
-  )
+  );
 }

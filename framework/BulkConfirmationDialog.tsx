@@ -1,43 +1,43 @@
-import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core'
-import { useCallback, useEffect, useState } from 'react'
-import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog'
-import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable/PageTable'
-import { usePaged } from './PageTable/useTableItems'
-import { useFrameworkTranslations } from './useFrameworkTranslations'
+import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import { useCallback, useEffect, useState } from 'react';
+import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
+import { usePageDialog } from './PageDialog';
+import { ITableColumn, PageTable } from './PageTable/PageTable';
+import { usePaged } from './PageTable/useTableItems';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface BulkConfirmationDialog<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
    */
-  title: string
+  title: string;
 
   /** The prompt that shows up under the confirmation title. */
-  prompt?: string
+  prompt?: string;
 
   /** The items to confirm for the bulk action. */
-  items: T[]
+  items: T[];
 
   /** A function that gets a unique key for each item. */
-  keyFn: (item: T) => string | number
+  keyFn: (item: T) => string | number;
 
   /** The columns to display for confirmation. */
-  confirmationColumns: ITableColumn<T>[]
+  confirmationColumns: ITableColumn<T>[];
 
   /** Callback called when the user confirms. */
-  onConfirm: () => void
+  onConfirm: () => void;
 
   /** Callback called when the dialog closes. */
-  onClose?: () => void
+  onClose?: () => void;
 
   /** The prompt to show for the user to confirm the bulk action. */
-  confirmText: string
+  confirmText: string;
 
   /** The button text to perform the action. */
-  actionButtonText: string
+  actionButtonText: string;
 
   /** Indicates if this is a destructive operation */
-  isDanger?: boolean
+  isDanger?: boolean;
 }
 
 function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<T>) {
@@ -51,15 +51,15 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     confirmText,
     actionButtonText,
     isDanger,
-  } = props
-  const [_, setDialog] = usePageDialog()
-  const [translations] = useFrameworkTranslations()
+  } = props;
+  const [_, setDialog] = usePageDialog();
+  const [translations] = useFrameworkTranslations();
   const onCloseClicked = useCallback(() => {
-    setDialog(undefined)
-    onClose?.()
-  }, [onClose, setDialog])
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(items)
-  const [confirmed, setConfirmed] = useState(!confirmText)
+    setDialog(undefined);
+    onClose?.();
+  }, [onClose, setDialog]);
+  const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
+  const [confirmed, setConfirmed] = useState(!confirmText);
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -73,8 +73,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
           key="submit"
           variant={isDanger ? 'danger' : 'primary'}
           onClick={() => {
-            onCloseClicked()
-            onConfirm()
+            onCloseClicked();
+            onConfirm();
           }}
           isAriaDisabled={!confirmed}
         >
@@ -123,29 +123,29 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
         )}
       </ModalBoxBody>
     </Modal>
-  )
+  );
 }
 
 function useBulkConfirmationDialog<T extends object>() {
-  const [_, setDialog] = usePageDialog()
-  const [props, setProps] = useState<BulkConfirmationDialog<T>>()
+  const [_, setDialog] = usePageDialog();
+  const [props, setProps] = useState<BulkConfirmationDialog<T>>();
   useEffect(() => {
     if (props) {
       const onCloseHandler = () => {
-        setProps(undefined)
-        props.onClose?.()
-      }
-      setDialog(<BulkConfirmationDialog<T> {...props} onClose={onCloseHandler} />)
+        setProps(undefined);
+        props.onClose?.();
+      };
+      setDialog(<BulkConfirmationDialog<T> {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined)
+      setDialog(undefined);
     }
-  }, [props, setDialog])
-  return setProps
+  }, [props, setDialog]);
+  return setProps;
 }
 
 export function useBulkConfirmation<T extends object>() {
-  const bulkConfirmationDialog = useBulkConfirmationDialog<T>()
-  const bulkActionDialog = useBulkActionDialog<T>()
+  const bulkConfirmationDialog = useBulkConfirmationDialog<T>();
+  const bulkActionDialog = useBulkActionDialog<T>();
   return useCallback(
     (
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
@@ -156,5 +156,5 @@ export function useBulkConfirmation<T extends object>() {
         onConfirm: () => bulkActionDialog(options),
       }),
     [bulkActionDialog, bulkConfirmationDialog]
-  )
+  );
 }

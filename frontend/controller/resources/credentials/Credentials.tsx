@@ -1,43 +1,43 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { Credential } from '../../interfaces/Credential'
-import { useControllerView } from '../../useControllerView'
-import { useDeleteCredentials } from './useDeleteCredentials'
+} from '../../common/controller-toolbar-filters';
+import { Credential } from '../../interfaces/Credential';
+import { useControllerView } from '../../useControllerView';
+import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function Credentials() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useCredentialsFilters()
-  const tableColumns = useCredentialsColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useCredentialsFilters();
+  const tableColumns = useCredentialsColumns();
   const view = useControllerView<Credential>({
     url: '/api/v2/credentials/',
     toolbarFilters,
     tableColumns,
-  })
-  const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh)
+  });
+  const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Credential>[]>(
     () => [
@@ -56,7 +56,7 @@ export function Credentials() {
       },
     ],
     [navigate, deleteCredentials, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
@@ -75,7 +75,7 @@ export function Credentials() {
       },
     ],
     [navigate, deleteCredentials, t]
-  )
+  );
 
   return (
     <TablePage<Credential>
@@ -95,14 +95,14 @@ export function Credentials() {
       emptyStateButtonClick={() => navigate(RouteE.CreateCredential)}
       {...view}
     />
-  )
+  );
 }
 
 export function useCredentialsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -111,25 +111,25 @@ export function useCredentialsFilters() {
       modifiedByToolbarFilter,
     ],
     [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (credential: Credential) =>
       navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
     [navigate]
-  )
+  );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
-  })
-  const descriptionColumn = useDescriptionColumn()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  });
+  const descriptionColumn = useDescriptionColumn();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
       nameColumn,
@@ -139,17 +139,17 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
         cell: (credential) => {
           switch (credential.credential_type) {
             case 1:
-              return t('Machine')
+              return t('Machine');
             case 18:
-              return t('Ansible Galaxy/Automation Hub API Token')
+              return t('Ansible Galaxy/Automation Hub API Token');
           }
-          return t('Unknown')
+          return t('Unknown');
         },
       },
       createdColumn,
       modifiedColumn,
     ],
     [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

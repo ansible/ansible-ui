@@ -6,11 +6,11 @@ import {
   PageSection,
   Skeleton,
   Stack,
-} from '@patternfly/react-core'
-import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+} from '@patternfly/react-core';
+import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Detail,
   DetailsList,
@@ -24,38 +24,38 @@ import {
   PageTable,
   PageTabs,
   SinceCell,
-} from '../../../../framework'
-import { DetailInfo } from '../../../../framework/components/DetailInfo'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useSettings } from '../../../../framework/Settings'
-import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { Organization } from '../../interfaces/Organization'
-import { Team } from '../../interfaces/Team'
-import { User } from '../../interfaces/User'
-import { useControllerView } from '../../useControllerView'
-import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers'
-import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
-import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations'
-import { Role } from '../roles/Role'
-import { useRolesColumns, useRolesFilters } from '../roles/Roles'
-import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers'
-import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
-import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { useDeleteUsers } from './hooks/useDeleteUsers'
-import { UserType } from './Users'
+} from '../../../../framework';
+import { DetailInfo } from '../../../../framework/components/DetailInfo';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { useSettings } from '../../../../framework/Settings';
+import { useItem } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
+import { Team } from '../../interfaces/Team';
+import { User } from '../../interfaces/User';
+import { useControllerView } from '../../useControllerView';
+import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers';
+import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
+import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations';
+import { Role } from '../roles/Role';
+import { useRolesColumns, useRolesFilters } from '../roles/Roles';
+import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers';
+import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
+import { useTeamsColumns, useTeamsFilters } from '../teams/Teams';
+import { useDeleteUsers } from './hooks/useDeleteUsers';
+import { UserType } from './Users';
 
 export function UserDetailsPage() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const user = useItem<User>('/api/v2/users', params.id ?? '0')
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const user = useItem<User>('/api/v2/users', params.id ?? '0');
+  const history = useNavigate();
 
   const deleteUsers = useDeleteUsers((deleted: User[]) => {
     if (deleted.length > 0) {
-      history(RouteE.Users)
+      history(RouteE.Users);
     }
-  })
+  });
 
   const itemActions: IPageAction<User>[] = useMemo(() => {
     const itemActions: IPageAction<User>[] = [
@@ -71,13 +71,13 @@ export function UserDetailsPage() {
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: () => {
-          if (!user) return
-          deleteUsers([user])
+          if (!user) return;
+          deleteUsers([user]);
         },
       },
-    ]
-    return itemActions
-  }, [t, history, user, deleteUsers])
+    ];
+    return itemActions;
+  }, [t, history, user, deleteUsers]);
 
   return (
     <PageLayout>
@@ -131,13 +131,13 @@ export function UserDetailsPage() {
         )}
       </PageBody>
     </PageLayout>
-  )
+  );
 }
 
 function UserDetails(props: { user: User }) {
-  const { t } = useTranslation()
-  const { user } = props
-  const settings = useSettings()
+  const { t } = useTranslation();
+  const { user } = props;
+  const settings = useSettings();
   return (
     <>
       {user.is_superuser && (
@@ -174,22 +174,22 @@ function UserDetails(props: { user: User }) {
         </PageSection>
       </Scrollable>
     </>
-  )
+  );
 }
 
 function UserOrganizations(props: { user: User }) {
-  const { user } = props
-  const { t } = useTranslation()
-  const toolbarFilters = useOrganizationsFilters()
-  const tableColumns = useOrganizationsColumns()
+  const { user } = props;
+  const { t } = useTranslation();
+  const toolbarFilters = useOrganizationsFilters();
+  const tableColumns = useOrganizationsColumns();
   const view = useControllerView<Organization>({
     url: `/api/v2/users/${user.id}/organizations/`,
     toolbarFilters,
     disableQueryString: true,
-  })
+  });
 
-  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(view.selectItemsAndRefresh)
-  const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers()
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers(view.selectItemsAndRefresh);
+  const removeOrganizationsFromUsers = useRemoveOrganizationsFromUsers();
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
@@ -215,7 +215,7 @@ function UserOrganizations(props: { user: User }) {
       view.selectedItems,
       view.unselectItemsAndRefresh,
     ]
-  )
+  );
   const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
@@ -227,7 +227,7 @@ function UserOrganizations(props: { user: User }) {
       },
     ],
     [removeOrganizationsFromUsers, t, user, view.unselectItemsAndRefresh]
-  )
+  );
   return (
     <>
       {user.is_superuser && (
@@ -257,21 +257,21 @@ function UserOrganizations(props: { user: User }) {
         {...view}
       />
     </>
-  )
+  );
 }
 
 function UserTeams(props: { user: User }) {
-  const { user } = props
-  const { t } = useTranslation()
-  const toolbarFilters = useTeamsFilters()
-  const tableColumns = useTeamsColumns()
+  const { user } = props;
+  const { t } = useTranslation();
+  const toolbarFilters = useTeamsFilters();
+  const tableColumns = useTeamsColumns();
   const view = useControllerView<Team>({
     url: `/api/v2/users/${user.id}/teams/`,
     toolbarFilters,
     disableQueryString: true,
-  })
-  const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh)
-  const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh)
+  });
+  const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
+  const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
@@ -289,7 +289,7 @@ function UserTeams(props: { user: User }) {
       },
     ],
     [t, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
-  )
+  );
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
@@ -300,7 +300,7 @@ function UserTeams(props: { user: User }) {
       },
     ],
     [removeTeamsFromUsers, t, user]
-  )
+  );
   return (
     <>
       {user.is_superuser && (
@@ -328,14 +328,14 @@ function UserTeams(props: { user: User }) {
         {...view}
       />
     </>
-  )
+  );
 }
 
 function UserRoles(props: { user: User }) {
-  const { user } = props
-  const { t } = useTranslation()
-  const toolbarFilters = useRolesFilters()
-  const tableColumns = useRolesColumns()
+  const { user } = props;
+  const { t } = useTranslation();
+  const toolbarFilters = useRolesFilters();
+  const tableColumns = useRolesColumns();
   const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
@@ -355,7 +355,7 @@ function UserRoles(props: { user: User }) {
       },
     ],
     [t]
-  )
+  );
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
@@ -366,13 +366,13 @@ function UserRoles(props: { user: User }) {
       },
     ],
     [t]
-  )
+  );
   const view = useControllerView<Role>({
     url: `/api/v2/users/${user.id}/roles/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-  })
+  });
   return (
     <>
       {user.is_superuser && (
@@ -396,5 +396,5 @@ function UserRoles(props: { user: User }) {
         {...view}
       />
     </>
-  )
+  );
 }

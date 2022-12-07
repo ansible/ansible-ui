@@ -1,13 +1,13 @@
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
-import { requestPost } from '../../../../Data'
-import { Organization } from '../../../interfaces/Organization'
-import { User } from '../../../interfaces/User'
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
+import { requestPost } from '../../../../Data';
+import { Organization } from '../../../interfaces/Organization';
+import { User } from '../../../interfaces/User';
 
 export function useRemoveOrganizationsFromUsers() {
-  const { t } = useTranslation()
-  const organizationProgressDialog = useBulkActionDialog<Organization>()
+  const { t } = useTranslation();
+  const organizationProgressDialog = useBulkActionDialog<Organization>();
   const removeUserToOrganizations = useCallback(
     (
       users: User[],
@@ -29,16 +29,16 @@ export function useRemoveOrganizationsFromUsers() {
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
-            )
+            );
           }
         },
         processingText: t('Removing user from organizations...', {
           count: organizations.length,
         }),
         onComplete,
-      })
+      });
     },
     [organizationProgressDialog, t]
-  )
-  return removeUserToOrganizations
+  );
+  return removeUserToOrganizations;
 }

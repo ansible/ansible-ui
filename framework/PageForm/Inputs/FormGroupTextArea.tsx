@@ -1,7 +1,7 @@
-import { Button, InputGroup, TextArea, TextAreaProps } from '@patternfly/react-core'
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons'
-import { useState } from 'react'
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup'
+import { Button, InputGroup, TextArea, TextAreaProps } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type FormGroupTextAreaProps = Pick<
   TextAreaProps,
@@ -15,12 +15,12 @@ export type FormGroupTextAreaProps = Pick<
   | 'type'
   | 'aria-label'
 > &
-  PageFormGroupProps
+  PageFormGroupProps;
 
 /** A PatternFly FormGroup with a PatternFly TextArea */
 export function FormGroupTextArea(props: FormGroupTextAreaProps) {
-  const [showSecret, setShowSecret] = useState(false)
-  const { helperTextInvalid: _helperTextInvalid, ...textAreaProps } = props
+  const [showSecret, setShowSecret] = useState(false);
+  const { helperTextInvalid: _helperTextInvalid, ...textAreaProps } = props;
   return (
     <PageFormGroup {...props}>
       <InputGroup>
@@ -42,5 +42,5 @@ export function FormGroupTextArea(props: FormGroupTextAreaProps) {
         )}
       </InputGroup>
     </PageFormGroup>
-  )
+  );
 }

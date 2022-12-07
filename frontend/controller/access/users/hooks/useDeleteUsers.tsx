@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { compareStrings, TextCell, useBulkConfirmation } from '../../../../../framework'
-import { getItemKey, requestDelete } from '../../../../Data'
-import { User } from '../../../interfaces/User'
-import { useUsersColumns } from '../Users'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { compareStrings, TextCell, useBulkConfirmation } from '../../../../../framework';
+import { getItemKey, requestDelete } from '../../../../Data';
+import { User } from '../../../interfaces/User';
+import { useUsersColumns } from '../Users';
 
 export function useDeleteUsers(onComplete: (users: User[]) => void) {
-  const { t } = useTranslation()
-  const confirmationColumns = useUsersColumns({ disableLinks: true, disableSort: true })
+  const { t } = useTranslation();
+  const confirmationColumns = useUsersColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
@@ -16,9 +16,9 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       maxWidth: 200,
     }),
     [t]
-  )
-  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const bulkAction = useBulkConfirmation<User>()
+  );
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+  const bulkAction = useBulkConfirmation<User>();
   const deleteUsers = (users: User[]) => {
     bulkAction({
       title: t('Permanently delete users', { count: users.length }),
@@ -33,7 +33,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (user: User) => requestDelete(`/api/v2/users/${user.id}/`),
-    })
-  }
-  return deleteUsers
+    });
+  };
+  return deleteUsers;
 }

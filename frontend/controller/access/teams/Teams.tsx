@@ -1,56 +1,56 @@
-import { ButtonVariant } from '@patternfly/react-core'
+import { ButtonVariant } from '@patternfly/react-core';
 import {
   EditIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
   TrashIcon,
-} from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+} from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { Team } from '../../interfaces/Team'
-import { useControllerView } from '../../useControllerView'
-import { AccessNav } from '../common/AccessNav'
-import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams'
-import { useSelectUsersRemoveTeams } from '../users/hooks/useSelectUsersRemoveTeams'
-import { useDeleteTeams } from './hooks/useDeleteTeams'
+} from '../../common/controller-toolbar-filters';
+import { Team } from '../../interfaces/Team';
+import { useControllerView } from '../../useControllerView';
+import { AccessNav } from '../common/AccessNav';
+import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
+import { useSelectUsersRemoveTeams } from '../users/hooks/useSelectUsersRemoveTeams';
+import { useDeleteTeams } from './hooks/useDeleteTeams';
 
 export function Teams() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const toolbarFilters = useTeamsFilters()
+  const toolbarFilters = useTeamsFilters();
 
-  const tableColumns = useTeamsColumns()
+  const tableColumns = useTeamsColumns();
 
-  const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns })
+  const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
 
-  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh)
+  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
-  const selectUsersAddTeams = useSelectUsersAddTeams()
-  const selectUsersRemoveTeams = useSelectUsersRemoveTeams()
+  const selectUsersAddTeams = useSelectUsersAddTeams();
+  const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
@@ -83,7 +83,7 @@ export function Teams() {
       },
     ],
     [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view.selectedItems]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
@@ -116,7 +116,7 @@ export function Teams() {
       },
     ],
     [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]
-  )
+  );
 
   return (
     <TablePage
@@ -138,14 +138,14 @@ export function Teams() {
       {...view}
       defaultSubtitle={t('Team')}
     />
-  )
+  );
 }
 
 export function useTeamsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const organizationToolbarFilter = useOrganizationToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const organizationToolbarFilter = useOrganizationToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -154,25 +154,25 @@ export function useTeamsFilters() {
       modifiedByToolbarFilter,
     ],
     [nameToolbarFilter, organizationToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
-  const { t } = useTranslation()
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const history = useNavigate();
   const nameColumnClick = useCallback(
     (team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
     [history]
-  )
-  const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick })
-  const descriptionColumn = useDescriptionColumn()
-  const organizationColumn = useOrganizationNameColumn(options)
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  );
+  const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
+  const descriptionColumn = useDescriptionColumn();
+  const organizationColumn = useOrganizationNameColumn(options);
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Team>[]>(
     () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
     [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

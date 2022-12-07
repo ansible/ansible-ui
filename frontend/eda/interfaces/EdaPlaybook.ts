@@ -6,8 +6,8 @@
  */
 
 export interface EdaPlaybook {
-  id: number
-  name: string
-  playbook: string
-  project_id: number
+  id: number;
+  name: string;
+  playbook: string;
+  project_id: number;
 }

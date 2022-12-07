@@ -1,15 +1,15 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { IPageAction, PageActionType } from '../../../../../framework'
-import { RouteE } from '../../../../Routes'
-import { Collection } from '../Collection'
+import { ButtonVariant } from '@patternfly/react-core';
+import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
+import { Collection } from '../Collection';
 
 export function useCollectionsActions(_callback?: () => void) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
@@ -38,5 +38,5 @@ export function useCollectionsActions(_callback?: () => void) {
       },
     ],
     [t, navigate]
-  )
+  );
 }

@@ -1,30 +1,30 @@
-import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/react-core'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { CopyCell, PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { requestPost } from '../../../Data'
+import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/react-core';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CopyCell, PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { requestPost } from '../../../Data';
 
 export function Token() {
-  const { t } = useTranslation()
-  const [working, setWorking] = useState(false)
-  const [token, setToken] = useState('')
-  const [error, setError] = useState('')
+  const { t } = useTranslation();
+  const [working, setWorking] = useState(false);
+  const [token, setToken] = useState('');
+  const [error, setError] = useState('');
   const onClick = async () => {
     try {
-      setWorking(true)
-      setError('')
-      const result = await requestPost<{ token: string }>('/api/automation-hub/v3/auth/token/', {})
-      setToken(result.token)
+      setWorking(true);
+      setError('');
+      const result = await requestPost<{ token: string }>('/api/automation-hub/v3/auth/token/', {});
+      setToken(result.token);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message)
+        setError(err.message);
       } else {
-        setError(t('An unknown error occured.'))
+        setError(t('An unknown error occured.'));
       }
     } finally {
-      setWorking(false)
+      setWorking(false);
     }
-  }
+  };
   return (
     <PageLayout>
       <PageHeader
@@ -68,5 +68,5 @@ export function Token() {
         )}
       </PageBody>
     </PageLayout>
-  )
+  );
 }

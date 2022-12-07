@@ -1,15 +1,15 @@
-import { Button, FormGroup, FormGroupProps, Popover } from '@patternfly/react-core'
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
-import { ReactNode } from 'react'
+import { Button, FormGroup, FormGroupProps, Popover } from '@patternfly/react-core';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { ReactNode } from 'react';
 
 export type PageFormGroupProps = Pick<
   FormGroupProps,
   'children' | 'label' | 'helperText' | 'helperTextInvalid' | 'isRequired'
-> & { id?: string; labelHelpTitle?: string; labelHelp?: ReactNode }
+> & { id?: string; labelHelpTitle?: string; labelHelp?: ReactNode };
 
 /** Wrapper over the PatternFly FormGroup making it optional based on if label is given. */
 export function PageFormGroup(props: PageFormGroupProps) {
-  const { children, helperText, helperTextInvalid, isRequired, label } = props
+  const { children, helperText, helperTextInvalid, isRequired, label } = props;
   return (
     <FormGroup
       id={`${props.id ?? ''}-form-group`}
@@ -36,5 +36,5 @@ export function PageFormGroup(props: PageFormGroupProps) {
     >
       {children}
     </FormGroup>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-import { TablePage } from '../../../../framework'
+import { TablePage } from '../../../../framework';
 
-import { useTranslation } from 'react-i18next'
-import { UnifiedJob } from '../../interfaces/UnifiedJob'
-import { useControllerView } from '../../useControllerView'
-import { useJobsColumns } from './hooks/useJobsColumns'
-import { useJobsFilters } from './hooks/useJobsFilters'
-import { useJobToolbarActions } from './hooks/useJobToolbarActions'
-import { useJobRowActions } from './hooks/useJobRowActions'
+import { useTranslation } from 'react-i18next';
+import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { useControllerView } from '../../useControllerView';
+import { useJobsColumns } from './hooks/useJobsColumns';
+import { useJobsFilters } from './hooks/useJobsFilters';
+import { useJobToolbarActions } from './hooks/useJobToolbarActions';
+import { useJobRowActions } from './hooks/useJobRowActions';
 
 export default function Jobs() {
-  const { t } = useTranslation()
-  const toolbarFilters = useJobsFilters()
-  const tableColumns = useJobsColumns()
+  const { t } = useTranslation();
+  const toolbarFilters = useJobsFilters();
+  const tableColumns = useJobsColumns();
   const view = useControllerView<UnifiedJob>({
     url: '/api/v2/unified_jobs/',
     queryParams: {
@@ -19,9 +19,9 @@ export default function Jobs() {
     },
     toolbarFilters,
     tableColumns,
-  })
-  const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh)
-  const rowActions = useJobRowActions(view.unselectItemsAndRefresh)
+  });
+  const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
 
   return (
     <TablePage
@@ -39,5 +39,5 @@ export default function Jobs() {
       emptyStateDescription={t('Please run a job to populate this list.')}
       {...view}
     />
-  )
+  );
 }

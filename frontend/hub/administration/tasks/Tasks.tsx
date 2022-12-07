@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ElapsedTimeCell,
   ITableColumn,
@@ -8,26 +8,26 @@ import {
   SinceCell,
   TablePage,
   TextCell,
-} from '../../../../framework'
-import { useInMemoryView } from '../../../../framework/useInMemoryView'
-import { StatusCell } from '../../../common/StatusCell'
-import { useGet } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { pulpHRefKeyFn } from '../../useHubView'
-import { getIdFromPulpHref } from '../../usePulpView'
-import { Task } from './Task'
+} from '../../../../framework';
+import { useInMemoryView } from '../../../../framework/useInMemoryView';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { pulpHRefKeyFn } from '../../useHubView';
+import { getIdFromPulpHref } from '../../usePulpView';
+import { Task } from './Task';
 
 export function Tasks() {
-  const { t } = useTranslation()
-  const toolbarFilters = useTaskFilters()
-  const tableColumns = useTasksColumns()
-  const { data: tasks } = useGet<{ results: Task[] }>('/api/automation-hub/pulp/api/v3/tasks/')
+  const { t } = useTranslation();
+  const toolbarFilters = useTaskFilters();
+  const tableColumns = useTasksColumns();
+  const { data: tasks } = useGet<{ results: Task[] }>('/api/automation-hub/pulp/api/v3/tasks/');
   const view = useInMemoryView<Task>({
     items: tasks?.results,
     keyFn: pulpHRefKeyFn,
     tableColumns,
     toolbarFilters,
-  })
+  });
   // const view = usePulpView<Task>(
   //   '/api/automation-hub/pulp/api/v3/tasks/',
   //   pulpHRefKeyFn,
@@ -46,12 +46,12 @@ export function Tasks() {
         defaultSubtitle={t('Task')}
       />
     </>
-  )
+  );
 }
 
 export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const tableColumns = useMemo<ITableColumn<Task>[]>(
     () => [
       {
@@ -99,18 +99,18 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
       },
     ],
     [navigate, t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }
 
 export function useTaskFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       { key: 'name', label: t('Task name'), type: 'string', query: 'name__contains' },
       { key: 'status', label: t('Status'), type: 'string', query: 'state' },
     ],
     [t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }

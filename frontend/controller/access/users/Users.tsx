@@ -1,14 +1,14 @@
-import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core'
+import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core';
 import {
   EditIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
   TrashIcon,
-} from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+} from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -18,38 +18,38 @@ import {
   SinceCell,
   TablePage,
   TextCell,
-} from '../../../../framework'
-import { RouteE } from '../../../Routes'
+} from '../../../../framework';
+import { RouteE } from '../../../Routes';
 import {
   useFirstNameToolbarFilter,
   useLastNameToolbarFilter,
   useUsernameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { User } from '../../interfaces/User'
-import { useControllerView } from '../../useControllerView'
-import { AccessNav } from '../common/AccessNav'
-import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers'
-import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers'
-import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers'
-import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers'
-import { useDeleteUsers } from './hooks/useDeleteUsers'
+} from '../../common/controller-toolbar-filters';
+import { User } from '../../interfaces/User';
+import { useControllerView } from '../../useControllerView';
+import { AccessNav } from '../common/AccessNav';
+import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
+import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
+import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
+import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers';
+import { useDeleteUsers } from './hooks/useDeleteUsers';
 
 export function Users() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const toolbarFilters = useUsersFilters()
+  const toolbarFilters = useUsersFilters();
 
-  const tableColumns = useUsersColumns()
+  const tableColumns = useUsersColumns();
 
-  const view = useControllerView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns })
+  const view = useControllerView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns });
 
-  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh)
+  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
-  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers()
-  const selectTeamsAddUsers = useSelectTeamsAddUsers()
-  const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers()
-  const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers()
+  const selectOrganizationsAddUsers = useSelectOrganizationsAddUsers();
+  const selectTeamsAddUsers = useSelectTeamsAddUsers();
+  const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers();
+  const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers();
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -104,7 +104,7 @@ export function Users() {
       selectOrganizationsAddUsers,
       selectOrganizationsRemoveUsers,
     ]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -158,7 +158,7 @@ export function Users() {
       selectTeamsRemoveUsers,
       t,
     ]
-  )
+  );
 
   return (
     <TablePage<User>
@@ -179,22 +179,22 @@ export function Users() {
       emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
       {...view}
     />
-  )
+  );
 }
 
 export function AccessTable(props: { url: string }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const toolbarFilters = useUsersFilters()
+  const toolbarFilters = useUsersFilters();
 
-  const tableColumns = useUsersColumns()
+  const tableColumns = useUsersColumns();
 
   const view = useControllerView<User>({
     url: props.url,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-  })
+  });
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -217,7 +217,7 @@ export function AccessTable(props: { url: string }) {
       },
     ],
     [t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -229,9 +229,9 @@ export function AccessTable(props: { url: string }) {
       },
     ],
     [t]
-  )
+  );
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <PageTable<User>
@@ -246,14 +246,14 @@ export function AccessTable(props: { url: string }) {
       emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
       {...view}
     />
-  )
+  );
 }
 
 export function useUsersFilters() {
-  const { t } = useTranslation()
-  const usernameToolbarFilter = useUsernameToolbarFilter()
-  const firstnameByToolbarFilter = useFirstNameToolbarFilter()
-  const lastnameToolbarFilter = useLastNameToolbarFilter()
+  const { t } = useTranslation();
+  const usernameToolbarFilter = useUsernameToolbarFilter();
+  const firstnameByToolbarFilter = useFirstNameToolbarFilter();
+  const lastnameToolbarFilter = useLastNameToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       usernameToolbarFilter,
@@ -267,12 +267,12 @@ export function useUsersFilters() {
       },
     ],
     [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<User>[]>(
     () => [
       {
@@ -317,25 +317,25 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }
 
 export function UserType(props: { user: User }) {
-  const { user } = props
-  const { t } = useTranslation()
-  if (user.is_superuser) return <Text> {t('System administrator')}</Text>
-  if (user.is_system_auditor) return <Text>{t('System auditor')}</Text>
-  return <Text>{t('Normal user')}</Text>
+  const { user } = props;
+  const { t } = useTranslation();
+  if (user.is_superuser) return <Text> {t('System administrator')}</Text>;
+  if (user.is_system_auditor) return <Text>{t('System auditor')}</Text>;
+  return <Text>{t('Normal user')}</Text>;
 }
 
 export function UserRoles(props: { user: User }) {
-  const { user } = props
-  const { t } = useTranslation()
+  const { user } = props;
+  const { t } = useTranslation();
   return (
     <ChipGroup>
       {user.is_superuser && <Chip isReadOnly>{t('System administrator')}</Chip>}
       {!user.is_superuser && <Chip isReadOnly>{t('Normal user')}</Chip>}
     </ChipGroup>
-  )
+  );
 }

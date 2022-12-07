@@ -1,5 +1,5 @@
-import { PageSection } from '@patternfly/react-core'
-import { ReactNode } from 'react'
+import { PageSection } from '@patternfly/react-core';
+import { ReactNode } from 'react';
 
 export function DetailInfo(props: { children: ReactNode; disablePaddingTop?: boolean }) {
   return (
@@ -12,5 +12,5 @@ export function DetailInfo(props: { children: ReactNode; disablePaddingTop?: boo
     >
       {props.children}
     </PageSection>
-  )
+  );
 }

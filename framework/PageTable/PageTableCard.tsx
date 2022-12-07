@@ -17,45 +17,45 @@ import {
   Popover,
   Text,
   Truncate,
-} from '@patternfly/react-core'
-import { ReactNode, useCallback, useMemo } from 'react'
-import { Detail } from '../components/Details'
-import { IconWrapper } from '../components/IconWrapper'
-import { LabelColor } from '../components/pfcolors'
-import { IPageAction } from '../PageActions/PageAction'
-import { PageActions } from '../PageActions/PageActions'
+} from '@patternfly/react-core';
+import { ReactNode, useCallback, useMemo } from 'react';
+import { Detail } from '../components/Details';
+import { IconWrapper } from '../components/IconWrapper';
+import { LabelColor } from '../components/pfcolors';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
 import {
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
   TableColumnCell,
-} from './PageTable'
+} from './PageTable';
 
 export interface IPageTableCard {
-  id: string | number
-  icon?: ReactNode
-  title: ReactNode
-  subtitle?: ReactNode
-  cardBody: ReactNode
-  labels?: { label: string; color?: LabelColor }[] // TODO - disable/enable auto generated filters
-  badge?: string
-  badgeColor?: LabelColor
-  badgeTooltip?: string
-  badgeTooltipTitle?: string
-  alertTitle?: string
-  alertContent?: ReactNode
-  alertVariant?: 'success' | 'danger' | 'warning' | 'info' | 'default'
+  id: string | number;
+  icon?: ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  cardBody: ReactNode;
+  labels?: { label: string; color?: LabelColor }[]; // TODO - disable/enable auto generated filters
+  badge?: string;
+  badgeColor?: LabelColor;
+  badgeTooltip?: string;
+  badgeTooltipTitle?: string;
+  alertTitle?: string;
+  alertContent?: ReactNode;
+  alertVariant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
 }
 
 export function PageTableCard<T extends object>(props: {
-  item: T
-  itemToCardFn: (item: T) => IPageTableCard
-  isSelected?: (item: T) => boolean
-  selectItem?: (item: T) => void
-  unselectItem?: (item: T) => void
-  itemActions?: IPageAction<T>[]
-  showSelect?: boolean
-  defaultCardSubtitle?: ReactNode
+  item: T;
+  itemToCardFn: (item: T) => IPageTableCard;
+  isSelected?: (item: T) => boolean;
+  selectItem?: (item: T) => void;
+  unselectItem?: (item: T) => void;
+  itemActions?: IPageAction<T>[];
+  showSelect?: boolean;
+  defaultCardSubtitle?: ReactNode;
 }) {
   const {
     item,
@@ -66,22 +66,22 @@ export function PageTableCard<T extends object>(props: {
     itemActions,
     showSelect,
     defaultCardSubtitle,
-  } = props
+  } = props;
 
-  const card = useMemo(() => itemToCardFn(item), [item, itemToCardFn])
+  const card = useMemo(() => itemToCardFn(item), [item, itemToCardFn]);
 
-  const isItemSelected = !!isSelected?.(item)
+  const isItemSelected = !!isSelected?.(item);
 
   const onSelectClick = useCallback(() => {
     if (isSelected?.(item)) {
-      unselectItem?.(item)
+      unselectItem?.(item);
     } else {
-      selectItem?.(item)
+      selectItem?.(item);
     }
-  }, [isSelected, item, selectItem, unselectItem])
+  }, [isSelected, item, selectItem, unselectItem]);
 
-  const showDropdown = itemActions !== undefined && itemActions.length > 0
-  const showActions = showSelect || showDropdown
+  const showDropdown = itemActions !== undefined && itemActions.length > 0;
+  const showActions = showSelect || showDropdown;
 
   return (
     <Card
@@ -209,7 +209,7 @@ export function PageTableCard<T extends object>(props: {
         </Alert>
       )}
     </Card>
-  )
+  );
 }
 
 export function useColumnsToTableCardFn<T extends object>(
@@ -217,42 +217,42 @@ export function useColumnsToTableCardFn<T extends object>(
   keyFn: (item: T) => string | number
 ): (item: T) => IPageTableCard {
   const data = useMemo(() => {
-    let nameColumn: ITableColumn<T> | undefined
-    let subtitleColumn: ITableColumn<T> | undefined
-    let descriptionColumn: ITableColumn<T> | undefined
-    const countColumns: ITableColumnTypeCount<T>[] = []
-    let labelColumn: ITableColumnTypeLabels<T> | undefined
-    const cardColumns: ITableColumn<T>[] = []
+    let nameColumn: ITableColumn<T> | undefined;
+    let subtitleColumn: ITableColumn<T> | undefined;
+    let descriptionColumn: ITableColumn<T> | undefined;
+    const countColumns: ITableColumnTypeCount<T>[] = [];
+    let labelColumn: ITableColumnTypeLabels<T> | undefined;
+    const cardColumns: ITableColumn<T>[] = [];
 
     for (const column of columns) {
       switch (column.type) {
         case 'description':
-          if (!descriptionColumn) descriptionColumn = column
-          break
+          if (!descriptionColumn) descriptionColumn = column;
+          break;
         case 'labels':
-          if (!labelColumn) labelColumn = column
-          break
+          if (!labelColumn) labelColumn = column;
+          break;
         case 'count':
-          countColumns.push(column)
-          break
+          countColumns.push(column);
+          break;
         default:
           switch (column.card) {
             case 'name':
-              nameColumn = column
-              break
+              nameColumn = column;
+              break;
             case 'subtitle':
-              subtitleColumn = column
-              break
+              subtitleColumn = column;
+              break;
             case 'description':
-              descriptionColumn = column
-              break
+              descriptionColumn = column;
+              break;
             case 'hidden':
-              break
+              break;
             default:
-              cardColumns.push(column)
-              break
+              cardColumns.push(column);
+              break;
           }
-          break
+          break;
       }
     }
     return {
@@ -262,11 +262,11 @@ export function useColumnsToTableCardFn<T extends object>(
       countColumns,
       cardColumns,
       labelColumn,
-    }
-  }, [columns])
+    };
+  }, [columns]);
 
   const { nameColumn, subtitleColumn, descriptionColumn, countColumns, cardColumns, labelColumn } =
-    data
+    data;
 
   return useMemo<(item: T) => IPageTableCard>(() => {
     return (item: T) => {
@@ -312,11 +312,19 @@ export function useColumnsToTableCardFn<T extends object>(
           </CardBody>
         ),
         labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
-      }
+      };
       if (!descriptionColumn && cardColumns.length === 0 && countColumns.length === 0) {
-        pageTableCard.cardBody = undefined
+        pageTableCard.cardBody = undefined;
       }
-      return pageTableCard
-    }
-  }, [cardColumns, countColumns, descriptionColumn, labelColumn, nameColumn, subtitleColumn, keyFn])
+      return pageTableCard;
+    };
+  }, [
+    cardColumns,
+    countColumns,
+    descriptionColumn,
+    labelColumn,
+    nameColumn,
+    subtitleColumn,
+    keyFn,
+  ]);
 }

@@ -1,7 +1,7 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import { cpus, totalmem } from 'os'
-import { logger } from './logger'
-import { start, stop } from './proxy'
+import { cpus, totalmem } from 'os';
+import { logger } from './logger';
+import { start, stop } from './proxy';
 
 logger.info({
   msg: `proxy start`,
@@ -10,26 +10,26 @@ logger.info({
   memory: `${(totalmem() / (1024 * 1024 * 1024)).toPrecision(2).toString()}GB`,
   node: process.versions.node,
   version: process.env.VERSION,
-})
+});
 
 process.on('exit', function processExit(code) {
   if (code !== 0) {
-    logger.error({ msg: `process exit`, code: code })
+    logger.error({ msg: `process exit`, code: code });
   } else {
-    logger.debug({ msg: `process exit`, code: code })
+    logger.debug({ msg: `process exit`, code: code });
   }
-})
+});
 
 process.on('SIGINT', () => {
   // eslint-disable-next-line no-console
-  if (process.env.NODE_ENV === 'development') console.log()
-  logger.debug({ msg: 'process SIGINT' })
-  void stop()
-})
+  if (process.env.NODE_ENV === 'development') console.log();
+  logger.debug({ msg: 'process SIGINT' });
+  void stop();
+});
 
 process.on('SIGTERM', () => {
-  logger.debug({ msg: 'process SIGTERM' })
-  void stop()
-})
+  logger.debug({ msg: 'process SIGTERM' });
+  void stop();
+});
 
-void start()
+void start();

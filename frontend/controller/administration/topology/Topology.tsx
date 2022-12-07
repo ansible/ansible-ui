@@ -9,11 +9,11 @@ import {
   useModel,
   VisualizationProvider,
   VisualizationSurface,
-} from '@patternfly/react-topology'
-import { ComponentType, useMemo } from 'react'
-import useSWR from 'swr'
-import { swrOptions, useFetcher } from '../../../Data'
-import { DefaultEdge } from './Edge'
+} from '@patternfly/react-topology';
+import { ComponentType, useMemo } from 'react';
+import useSWR from 'swr';
+import { swrOptions, useFetcher } from '../../../Data';
+import { DefaultEdge } from './Edge';
 
 export default function Topology() {
   return (
@@ -21,25 +21,25 @@ export default function Topology() {
       <TopologyInternal />
       <VisualizationSurface />
     </VisualizationProvider>
-  )
+  );
 }
 
 function TopologyInternal() {
-  const fetcher = useFetcher()
+  const fetcher = useFetcher();
   const { data } = useSWR<{
     nodes: {
-      id: number
-      hostname: string
-      node_state: 'healthy'
-      node_type: 'hybrid'
-    }[]
+      id: number;
+      hostname: string;
+      node_state: 'healthy';
+      node_type: 'hybrid';
+    }[];
     links: {
-      source: string
-      target: string
-    }[]
-  }>(`/api/v2/mesh_visualizer/`, fetcher, swrOptions)
+      source: string;
+      target: string;
+    }[];
+  }>(`/api/v2/mesh_visualizer/`, fetcher, swrOptions);
 
-  useComponentFactory(defaultComponentFactory)
+  useComponentFactory(defaultComponentFactory);
   const model = useMemo<Model>(
     () => ({
       graph: {
@@ -68,7 +68,7 @@ function TopologyInternal() {
       })),
     }),
     [data?.links, data?.nodes]
-  )
+  );
   // const model2 = useMemo<Model>(
   //   () => ({
   //     graph: {
@@ -88,8 +88,8 @@ function TopologyInternal() {
   //   }),
   //   []
   // )
-  useModel(model)
-  return null
+  useModel(model);
+  return null;
 }
 
 const defaultComponentFactory: ComponentFactory = (
@@ -100,13 +100,13 @@ const defaultComponentFactory: ComponentFactory = (
     default:
       switch (kind) {
         case ModelKind.graph:
-          return GraphComponent as unknown as ComponentType<{ element: GraphElement }>
+          return GraphComponent as unknown as ComponentType<{ element: GraphElement }>;
         case ModelKind.node:
-          return DefaultNode as unknown as ComponentType<{ element: GraphElement }>
+          return DefaultNode as unknown as ComponentType<{ element: GraphElement }>;
         case ModelKind.edge:
-          return DefaultEdge as unknown as ComponentType<{ element: GraphElement }>
+          return DefaultEdge as unknown as ComponentType<{ element: GraphElement }>;
         default:
-          return undefined as unknown as ComponentType<{ element: GraphElement }>
+          return undefined as unknown as ComponentType<{ element: GraphElement }>;
       }
   }
-}
+};

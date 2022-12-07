@@ -1,23 +1,23 @@
-import './styles.css'
+import './styles.css';
 
-import { useTranslation } from 'react-i18next'
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import { PageFramework } from '../framework'
-import ErrorBoundary from '../framework/components/ErrorBoundary'
+import { useTranslation } from 'react-i18next';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { PageFramework } from '../framework';
+import ErrorBoundary from '../framework/components/ErrorBoundary';
 import {
   AutomationServersProvider,
   useAutomationServers,
-} from './automation-servers/AutomationServerProvider'
-import { AutomationServers } from './automation-servers/AutomationServers'
-import { AccessCode } from './common/AccessCode'
-import Login from './common/Login'
-import { Controller } from './controller/Controller'
-import { EventDriven } from './eda/EventDriven'
-import { Hub } from './hub/Hub'
-import { RouteE } from './Routes'
+} from './automation-servers/AutomationServerProvider';
+import { AutomationServers } from './automation-servers/AutomationServers';
+import { AccessCode } from './common/AccessCode';
+import Login from './common/Login';
+import { Controller } from './controller/Controller';
+import { EventDriven } from './eda/EventDriven';
+import { Hub } from './hub/Hub';
+import { RouteE } from './Routes';
 
 export default function Main() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     // <StrictMode>
     <ErrorBoundary message={t('An error occured')}>
@@ -30,12 +30,12 @@ export default function Main() {
       </AccessCode>
     </ErrorBoundary>
     // </StrictMode>
-  )
+  );
 }
 
 function Routing() {
-  const { automationServer } = useAutomationServers()
-  const navigate = useNavigate()
+  const { automationServer } = useAutomationServers();
+  const navigate = useNavigate();
   return (
     <PageFramework navigate={navigate}>
       <Routes>
@@ -60,5 +60,5 @@ function Routing() {
         />
       </Routes>
     </PageFramework>
-  )
+  );
 }

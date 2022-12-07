@@ -1,19 +1,19 @@
-import { useCallback } from 'react'
-import { usePageDialog } from '../../../../../framework'
-import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog'
-import { User } from '../../../interfaces/User'
-import { useControllerView } from '../../../useControllerView'
-import { useUsersColumns, useUsersFilters } from '../Users'
+import { useCallback } from 'react';
+import { usePageDialog } from '../../../../../framework';
+import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
+import { User } from '../../../interfaces/User';
+import { useControllerView } from '../../../useControllerView';
+import { useUsersColumns, useUsersFilters } from '../Users';
 
 function SelectUsers(props: { title: string; onSelect: (users: User[]) => void }) {
-  const toolbarFilters = useUsersFilters()
-  const tableColumns = useUsersColumns({ disableLinks: true })
+  const toolbarFilters = useUsersFilters();
+  const tableColumns = useUsersColumns({ disableLinks: true });
   const view = useControllerView<User>({
     url: '/api/v2/users/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-  })
+  });
   return (
     <SelectMultipleDialog
       {...props}
@@ -21,16 +21,16 @@ function SelectUsers(props: { title: string; onSelect: (users: User[]) => void }
       tableColumns={tableColumns}
       view={view}
     />
-  )
+  );
 }
 
 export function useSelectUsers() {
-  const [_, setDialog] = usePageDialog()
+  const [_, setDialog] = usePageDialog();
   const openSelectUsers = useCallback(
     (title: string, onSelect: (users: User[]) => void) => {
-      setDialog(<SelectUsers title={title} onSelect={onSelect} />)
+      setDialog(<SelectUsers title={title} onSelect={onSelect} />);
     },
     [setDialog]
-  )
-  return openSelectUsers
+  );
+  return openSelectUsers;
 }

@@ -1,25 +1,25 @@
-import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core'
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { usePageDialog } from './PageDialog'
-import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect'
-import { useFrameworkTranslations } from './useFrameworkTranslations'
+import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { usePageDialog } from './PageDialog';
+import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface Settings {
-  theme?: 'system' | 'light' | 'dark'
-  tableLayout?: 'compact' | 'comfortable'
-  formColumns?: 'single' | 'multiple'
-  formLayout?: 'vertical' | 'horizontal'
-  borders?: boolean
+  theme?: 'system' | 'light' | 'dark';
+  tableLayout?: 'compact' | 'comfortable';
+  formColumns?: 'single' | 'multiple';
+  formLayout?: 'vertical' | 'horizontal';
+  borders?: boolean;
 }
 
 export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([
   {},
   () => null,
-])
+]);
 
 export function useSettings() {
-  const [settings] = useContext(SettingsContext)
-  return settings
+  const [settings] = useContext(SettingsContext);
+  return settings;
 }
 
 export function SettingsProvider(props: { children?: ReactNode }) {
@@ -30,66 +30,66 @@ export function SettingsProvider(props: { children?: ReactNode }) {
       formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
       formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
       borders: localStorage.getItem('borders') !== 'false',
-    }
+    };
     const activeTheme =
       settings.theme !== 'dark' && settings.theme !== 'light'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'
-        : settings.theme
+        : settings.theme;
     if (activeTheme === 'dark') {
-      document.documentElement.classList.add('pf-theme-dark')
+      document.documentElement.classList.add('pf-theme-dark');
     } else {
-      document.documentElement.classList.remove('pf-theme-dark')
+      document.documentElement.classList.remove('pf-theme-dark');
     }
-    return settings
-  })
+    return settings;
+  });
 
   const setSettings = useCallback((settings: Settings) => {
-    localStorage.setItem('theme', settings.theme ?? 'system')
-    localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable')
-    localStorage.setItem('formColumns', settings.formColumns ?? 'multiple')
-    localStorage.setItem('formLayout', settings.formLayout ?? 'vertical')
-    localStorage.setItem('borders', settings.borders ? 'true' : 'false')
-    setSettingsState(settings)
+    localStorage.setItem('theme', settings.theme ?? 'system');
+    localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable');
+    localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
+    localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
+    localStorage.setItem('borders', settings.borders ? 'true' : 'false');
+    setSettingsState(settings);
     const activeTheme =
       settings.theme === 'system'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'
-        : settings.theme
+        : settings.theme;
     if (activeTheme === 'dark') {
-      document.documentElement.classList.add('pf-theme-dark')
+      document.documentElement.classList.add('pf-theme-dark');
     } else {
-      document.documentElement.classList.remove('pf-theme-dark')
+      document.documentElement.classList.remove('pf-theme-dark');
     }
-  }, [])
+  }, []);
 
   return (
     <SettingsContext.Provider value={[settings, setSettings]}>
       {props.children}
     </SettingsContext.Provider>
-  )
+  );
 }
 
 export function useSettingsDialog(t: (t: string) => string) {
-  const [open, setOpen] = useState(false)
-  const openSetting = useCallback(() => setOpen(true), [])
-  const [_, setDialog] = usePageDialog()
+  const [open, setOpen] = useState(false);
+  const openSetting = useCallback(() => setOpen(true), []);
+  const [_, setDialog] = usePageDialog();
   useEffect(() => {
     if (open) {
-      setDialog(<SettingsDialog open={open} setOpen={setOpen} />)
+      setDialog(<SettingsDialog open={open} setOpen={setOpen} />);
     } else {
-      setDialog(undefined)
+      setDialog(undefined);
     }
-  }, [open, setDialog, t])
-  return openSetting
+  }, [open, setDialog, t]);
+  return openSetting;
 }
 
 export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void }) {
-  const onClose = () => props.setOpen(false)
-  const [settings, setSettings] = useContext(SettingsContext)
-  const [translations] = useFrameworkTranslations()
+  const onClose = () => props.setOpen(false);
+  const [settings, setSettings] = useContext(SettingsContext);
+  const [translations] = useFrameworkTranslations();
   return (
     <Modal
       title="Settings"
@@ -174,5 +174,5 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         </FormGroupSelect>
       </Form>
     </Modal>
-  )
+  );
 }

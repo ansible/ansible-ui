@@ -7,15 +7,15 @@ import {
   WithRemoveConnectorProps,
   WithSourceDragProps,
   WithTargetDragProps,
-} from '@patternfly/react-topology'
-import * as React from 'react'
+} from '@patternfly/react-topology';
+import * as React from 'react';
 
 type EdgeProps = {
-  element: Edge
-  dragging?: boolean
+  element: Edge;
+  dragging?: boolean;
 } & WithSourceDragProps &
   WithTargetDragProps &
-  WithRemoveConnectorProps
+  WithRemoveConnectorProps;
 
 // interface BendpointProps {
 //   point: Point
@@ -46,12 +46,12 @@ export const DefaultEdge: React.FunctionComponent<EdgeProps> = ({
   onShowRemoveConnector,
   onHideRemoveConnector,
 }) => {
-  const startPoint = element.getStartPoint()
-  const endPoint = element.getEndPoint()
-  const bendpoints = element.getBendpoints()
+  const startPoint = element.getStartPoint();
+  const endPoint = element.getEndPoint();
+  const bendpoints = element.getBendpoints();
   const d = `M${startPoint.x} ${startPoint.y} ${bendpoints
     .map((b: Point) => `L${b.x} ${b.y} `)
-    .join('')}L${endPoint.x} ${endPoint.y}`
+    .join('')}L${endPoint.x} ${endPoint.y}`;
 
   return (
     <>
@@ -75,7 +75,7 @@ export const DefaultEdge: React.FunctionComponent<EdgeProps> = ({
       </Layer>
       {/* {bendpoints && bendpoints.map((p, i) => <Bendpoint point={p} key={i.toString()} />)} */}
     </>
-  )
-}
+  );
+};
 
 // export default observer(DefaultEdge)

@@ -9,14 +9,14 @@ import {
   PageSection,
   Stack,
   StackItem,
-} from '@patternfly/react-core'
-import { Fragment } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { PageHeader } from '../../../framework'
-import { RouteE } from '../../Routes'
+} from '@patternfly/react-core';
+import { Fragment } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PageHeader } from '../../../framework';
+import { RouteE } from '../../Routes';
 
 export default function Dashboard() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Fragment>
@@ -71,5 +71,5 @@ export default function Dashboard() {
         </Gallery>
       </PageSection>
     </Fragment>
-  )
+  );
 }

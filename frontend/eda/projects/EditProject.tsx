@@ -1,27 +1,27 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import {
   PageBody,
   PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-} from '../../../framework'
-import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
-import { useGet } from '../../common/useItem'
-import { requestPatch, requestPost } from '../../Data'
-import { RouteE } from '../../Routes'
-import { EdaProject } from '../interfaces/EdaProject'
+} from '../../../framework';
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
+import { useGet } from '../../common/useItem';
+import { requestPatch, requestPost } from '../../Data';
+import { RouteE } from '../../Routes';
+import { EdaProject } from '../interfaces/EdaProject';
 
 export function EditProject() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
-  const { data: project } = useGet<EdaProject>(`/api/projects/${id.toString()}`)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: project } = useGet<EdaProject>(`/api/projects/${id.toString()}`);
 
   const ProjectSchemaType = useMemo(
     () =>
@@ -38,28 +38,28 @@ export function EditProject() {
         ),
       }),
     [t]
-  )
+  );
 
-  type ProjectSchema = Static<typeof ProjectSchemaType>
+  type ProjectSchema = Static<typeof ProjectSchemaType>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
       if (Number.isInteger(id)) {
-        project = await requestPatch<EdaProject>(`/api/projects/${id}`, project)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(-1)
+        project = await requestPatch<EdaProject>(`/api/projects/${id}`, project);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(-1);
       } else {
-        const newProject = await requestPost<EdaProject>('/api/projects', project)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()))
+        const newProject = await requestPost<EdaProject>('/api/projects', project);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }
     } catch (err) {
-      setError('TODO')
+      setError('TODO');
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
     if (!project) {
@@ -72,7 +72,7 @@ export function EditProject() {
             ]}
           />
         </PageLayout>
-      )
+      );
     } else {
       return (
         <PageLayout>
@@ -96,7 +96,7 @@ export function EditProject() {
             </PageForm>
           </PageBody>
         </PageLayout>
-      )
+      );
     }
   } else {
     return (
@@ -120,6 +120,6 @@ export function EditProject() {
           </PageForm>
         </PageBody>
       </PageLayout>
-    )
+    );
   }
 }

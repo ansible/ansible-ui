@@ -1,23 +1,23 @@
-import { Split, SplitItem } from '@patternfly/react-core'
-import { ReactNode } from 'react'
-import { IconWrapper } from '../components/IconWrapper'
-import { getPatternflyColor, PFColor } from '../components/pfcolors'
-import { usePageNavigate } from '../components/usePageNavigate'
+import { Split, SplitItem } from '@patternfly/react-core';
+import { ReactNode } from 'react';
+import { IconWrapper } from '../components/IconWrapper';
+import { getPatternflyColor, PFColor } from '../components/pfcolors';
+import { usePageNavigate } from '../components/usePageNavigate';
 
 export interface TextCellProps {
-  icon?: ReactNode
-  iconSize?: 'sm' | 'md' | 'lg'
-  text?: string
-  to?: string
-  onClick?: () => void
-  color?: PFColor
-  iconColor?: PFColor
-  maxWidth?: number
-  disableLinks?: boolean
+  icon?: ReactNode;
+  iconSize?: 'sm' | 'md' | 'lg';
+  text?: string;
+  to?: string;
+  onClick?: () => void;
+  color?: PFColor;
+  iconColor?: PFColor;
+  maxWidth?: number;
+  disableLinks?: boolean;
 }
 
 export function TextCell(props: TextCellProps) {
-  const navigate = usePageNavigate()
+  const navigate = usePageNavigate();
   return (
     <Split style={{ maxWidth: '100%' }}>
       {props.icon && (
@@ -46,11 +46,11 @@ export function TextCell(props: TextCellProps) {
               <a
                 href={props.to}
                 onClick={(e) => {
-                  e.preventDefault()
+                  e.preventDefault();
                   if (props.onClick) {
-                    props.onClick()
+                    props.onClick();
                   } else {
-                    navigate(props.to)
+                    navigate(props.to);
                   }
                 }}
               >
@@ -63,5 +63,5 @@ export function TextCell(props: TextCellProps) {
         </SplitItem>
       )}
     </Split>
-  )
+  );
 }

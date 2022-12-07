@@ -6,6 +6,6 @@
  */
 
 export interface EdaExecutionEnvironment {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }

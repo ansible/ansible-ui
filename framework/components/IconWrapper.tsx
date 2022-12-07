@@ -1,51 +1,51 @@
-import { Children, cloneElement, isValidElement, ReactNode } from 'react'
-import { getPatternflyColor, PFColor } from './pfcolors'
+import { Children, cloneElement, isValidElement, ReactNode } from 'react';
+import { getPatternflyColor, PFColor } from './pfcolors';
 
 export function IconWrapper(props: {
-  children: ReactNode
-  color?: PFColor
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  padRight?: boolean
+  children: ReactNode;
+  color?: PFColor;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  padRight?: boolean;
 }) {
   const newProps: {
-    color?: string
-    size?: string
-    marginRight?: number
-  } = {}
+    color?: string;
+    size?: string;
+    marginRight?: number;
+  } = {};
 
   if (props.color) {
-    newProps.color = getPatternflyColor(props.color)
+    newProps.color = getPatternflyColor(props.color);
   }
 
   if (props.size) {
-    newProps.size = props.size
+    newProps.size = props.size;
   }
 
-  let paddingRight = 0
+  let paddingRight = 0;
   if (props.padRight) {
     switch (props.size) {
       case 'sm':
-        paddingRight = 4
-        break
+        paddingRight = 4;
+        break;
       case 'md':
-        paddingRight = 6
-        break
+        paddingRight = 6;
+        break;
       case 'lg':
-        paddingRight = 8
-        break
+        paddingRight = 8;
+        break;
       case 'xl':
-        paddingRight = 12
-        break
+        paddingRight = 12;
+        break;
     }
   }
 
   const newChildren = Children.toArray(props.children).map((child) => {
     if (isValidElement(child)) {
-      return cloneElement(child, newProps)
+      return cloneElement(child, newProps);
     } else {
-      return child
+      return child;
     }
-  })
+  });
 
-  return <div style={{ paddingRight }}>{newChildren}</div>
+  return <div style={{ paddingRight }}>{newChildren}</div>;
 }

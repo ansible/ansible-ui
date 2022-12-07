@@ -1,17 +1,17 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
+import { Controller, useFormContext } from 'react-hook-form';
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect';
 
 export type PageFormSelectProps = { name: string } & Omit<
   FormGroupSelectProps,
   'onSelect' | 'value'
->
+>;
 
 /** PatternFly Select wrapper for use with react-hook-form */
 export function PageFormSelect(props: PageFormSelectProps) {
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext()
+  } = useFormContext();
   return (
     <Controller
       name={props.name}
@@ -26,5 +26,5 @@ export function PageFormSelect(props: PageFormSelectProps) {
         />
       )}
     />
-  )
+  );
 }

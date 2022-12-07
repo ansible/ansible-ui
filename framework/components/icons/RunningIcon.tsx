@@ -1,5 +1,5 @@
-import { SyncAltIcon } from '@patternfly/react-icons'
-import styled, { Keyframes, keyframes } from 'styled-components'
+import { SyncAltIcon } from '@patternfly/react-icons';
+import styled, { Keyframes, keyframes } from 'styled-components';
 
 const Spin: Keyframes = keyframes`
   from {
@@ -8,10 +8,10 @@ const Spin: Keyframes = keyframes`
   to {
     transform: rotate(1turn);
   }
-`
+`;
 
 export const RunningIcon = styled(SyncAltIcon)`
   animation: ${Spin} 1.75s linear infinite;
-`
+`;
 
-RunningIcon.displayName = 'RunningIcon'
+RunningIcon.displayName = 'RunningIcon';

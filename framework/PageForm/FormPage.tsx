@@ -1,47 +1,47 @@
-import { Form, FormSection, PageSection } from '@patternfly/react-core'
-import { Children, isValidElement, ReactNode, useContext } from 'react'
-import { FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form'
-import { PartialDeep } from 'type-fest'
-import { Scrollable } from '../components/Scrollable'
-import { PageHeader, PageHeaderProps } from '../PageHeader'
-import { SettingsContext } from '../Settings'
-import { PageFormAlerts } from './PageFormAlerts'
-import { PageFormButtons } from './PageFormButtons'
+import { Form, FormSection, PageSection } from '@patternfly/react-core';
+import { Children, isValidElement, ReactNode, useContext } from 'react';
+import { FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { PartialDeep } from 'type-fest';
+import { Scrollable } from '../components/Scrollable';
+import { PageHeader, PageHeaderProps } from '../PageHeader';
+import { SettingsContext } from '../Settings';
+import { PageFormAlerts } from './PageFormAlerts';
+import { PageFormButtons } from './PageFormButtons';
 
 export type FormPageProps<T extends object> = PageHeaderProps & {
-  children?: ReactNode
-  defaultValues?: PartialDeep<T>
-  onSubmit: SubmitHandler<PartialDeep<T>>
-  schema?: unknown
-  isVertical?: boolean
-  onCancel?: () => void
-  submitText?: string
-  hideHeader?: boolean
-  noPadding?: boolean
-  form: UseFormReturn
-}
+  children?: ReactNode;
+  defaultValues?: PartialDeep<T>;
+  onSubmit: SubmitHandler<PartialDeep<T>>;
+  schema?: unknown;
+  isVertical?: boolean;
+  onCancel?: () => void;
+  submitText?: string;
+  hideHeader?: boolean;
+  noPadding?: boolean;
+  form: UseFormReturn;
+};
 export function FormPage<T extends object>(props: FormPageProps<T>) {
   // const methods = useForm<PartialDeep<T>>({
   //     defaultValues: props.defaultValues,
   //     resolver: ajvResolver(props.schema, { strict: false }),
   // })
 
-  const children = Children.toArray(props.children)
+  const children = Children.toArray(props.children);
 
   const inputs = children.filter((child) => {
-    if (!isValidElement(child)) return false
-    if (child.type === PageFormAlerts) return false
-    if (child.type === PageFormButtons) return false
-    return true
-  })
+    if (!isValidElement(child)) return false;
+    if (child.type === PageFormAlerts) return false;
+    if (child.type === PageFormButtons) return false;
+    return true;
+  });
 
   const buttons = children.find((child) => {
-    if (!isValidElement(child)) return false
-    if (child.type === PageFormButtons) return true
-    return false
-  })
+    if (!isValidElement(child)) return false;
+    if (child.type === PageFormButtons) return true;
+    return false;
+  });
 
-  const [settings] = useContext(SettingsContext)
+  const [settings] = useContext(SettingsContext);
 
   return (
     <>
@@ -70,5 +70,5 @@ export function FormPage<T extends object>(props: FormPageProps<T>) {
       </Form>
       {/* </FormProvider> */}
     </>
-  )
+  );
 }
