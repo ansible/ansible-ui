@@ -111,6 +111,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           onSelect={(_, theme) =>
             setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
           }
+          placeholderText="Select theme"
         >
           <SelectOption value="system">{'System default'}</SelectOption>
           <SelectOption value="light">{'Light'}</SelectOption>
@@ -126,6 +127,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
               tableLayout: tableLayout as 'compact' | 'comfortable',
             })
           }
+          placeholderText="Select table layout"
         >
           <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
           <SelectOption value="compact">{'Compact'}</SelectOption>
@@ -140,6 +142,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
               formColumns: formColumns as 'multiple' | 'single',
             })
           }
+          placeholderText="Select form columns"
         >
           <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
           <SelectOption value="single">{'Single column'}</SelectOption>
@@ -154,6 +157,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
               formLayout: formLayout as 'vertical' | 'horizontal',
             })
           }
+          placeholderText="Select form layout"
         >
           <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
           <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
@@ -163,6 +167,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           label="Borders"
           value={settings.borders ? 'true' : 'false'}
           onSelect={(_, value) => setSettings({ ...settings, borders: value === 'true' })}
+          placeholderText="Select borders"
         >
           <SelectOption value="true">{'Yes'}</SelectOption>
           <SelectOption value="false">{'No'}</SelectOption>

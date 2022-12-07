@@ -4,9 +4,9 @@ import { PageFormGroup, PageFormGroupProps } from './PageFormGroup'
 
 export type FormGroupSelectProps = Pick<
   SelectProps,
-  'footer' | 'isCreatable' | 'isGrouped' | 'onSelect' | 'placeholder' | 'value' | 'isDisabled'
+  'footer' | 'isCreatable' | 'isGrouped' | 'onSelect' | 'placeholderText' | 'value' | 'isDisabled'
 > &
-  PageFormGroupProps & { isReadOnly?: boolean }
+  PageFormGroupProps & { isReadOnly?: boolean; placeholderText: string | React.ReactNode }
 
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupSelect(props: FormGroupSelectProps) {
@@ -41,7 +41,6 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         maxHeight={280}
         validated={helperTextInvalid ? 'error' : undefined}
         isDisabled={props.isDisabled || isReadOnly}
-        placeholderText={props.placeholder ?? ''}
       >
         {children as ReactElement[]}
       </Select>
