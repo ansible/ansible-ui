@@ -1,18 +1,18 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { ITableColumn, SinceCell, TextCell } from '../../framework'
-import { RouteE } from '../Routes'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn, SinceCell, TextCell } from '../../framework';
+import { RouteE } from '../Routes';
 
 export function useNameColumn<T extends { name: string; id: number }>(options?: {
-  header?: string
-  url?: string
-  onClick?: (item: T) => void
-  disableSort?: boolean
-  disableLinks?: boolean
+  header?: string;
+  url?: string;
+  onClick?: (item: T) => void;
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { url, onClick, disableSort, disableLinks } = options ?? {}
-  const { t } = useTranslation()
+  const { url, onClick, disableSort, disableLinks } = options ?? {};
+  const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: options?.header ?? t('Name'),
@@ -29,12 +29,12 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       list: 'name',
     }),
     [disableLinks, disableSort, onClick, options?.header, t, url]
-  )
-  return column
+  );
+  return column;
 }
 
 export function useDescriptionColumn<T extends { description?: string | undefined }>() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Description'),
@@ -43,13 +43,13 @@ export function useDescriptionColumn<T extends { description?: string | undefine
       list: 'secondary',
     }),
     [t]
-  )
-  return column
+  );
+  return column;
 }
 
 export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const column: ITableColumn<
     | { created?: string }
     | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
@@ -57,7 +57,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
     () => ({
       header: t('Created'),
       cell: (item) => {
-        if (!item.created) return <></>
+        if (!item.created) return <></>;
         return (
           <SinceCell
             value={item.created}
@@ -76,7 +76,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
                     )
             }
           />
-        )
+        );
       },
       sort: options?.disableSort ? undefined : 'created',
       defaultSortDirection: 'desc',
@@ -84,24 +84,24 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       list: 'secondary',
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
-  )
-  return column
+  );
+  return column;
 }
 
 export function useModifiedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const history = useNavigate();
   const column: ITableColumn<
     | { modified?: string }
     | {
-        modified?: string
-        summary_fields?: { modified_by?: { id?: number; username?: string } }
+        modified?: string;
+        summary_fields?: { modified_by?: { id?: number; username?: string } };
       }
   > = useMemo(
     () => ({
       header: t('Modified'),
       cell: (item) => {
-        if (!item.modified) return <></>
+        if (!item.modified) return <></>;
         return (
           <SinceCell
             value={item.modified}
@@ -120,7 +120,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
                     )
             }
           />
-        )
+        );
       },
       sort: options?.disableSort ? undefined : 'modified',
       defaultSortDirection: 'desc',
@@ -128,22 +128,22 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       list: 'secondary',
     }),
     [history, options?.disableLinks, options?.disableSort, t]
-  )
-  return column
+  );
+  return column;
 }
 
 export function useOrganizationNameColumn(options?: {
-  disableLinks?: boolean
-  disableSort?: boolean
+  disableLinks?: boolean;
+  disableSort?: boolean;
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const column: ITableColumn<{
     summary_fields?: {
       organization?: {
-        id: number
-        name: string
-      }
-    }
+        id: number;
+        name: string;
+      };
+    };
   }> = useMemo(
     () => ({
       header: t('Organization'),
@@ -160,6 +160,6 @@ export function useOrganizationNameColumn(options?: {
       sort: options?.disableSort ? undefined : 'organization',
     }),
     [options?.disableLinks, options?.disableSort, t]
-  )
-  return column
+  );
+  return column;
 }

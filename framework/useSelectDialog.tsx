@@ -6,33 +6,33 @@ import {
   Skeleton,
   Split,
   SplitItem,
-} from '@patternfly/react-core'
-import { useCallback, useEffect, useState } from 'react'
-import { Collapse } from './components/Collapse'
-import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable, TableColumnCell } from './PageTable/PageTable'
-import { IToolbarFilter } from './PageTable/PageToolbar'
-import { ISelected } from './PageTable/useTableItems'
-import { IView } from './useView'
+} from '@patternfly/react-core';
+import { useCallback, useEffect, useState } from 'react';
+import { Collapse } from './components/Collapse';
+import { usePageDialog } from './PageDialog';
+import { ITableColumn, PageTable, TableColumnCell } from './PageTable/PageTable';
+import { IToolbarFilter } from './PageTable/PageToolbar';
+import { ISelected } from './PageTable/useTableItems';
+import { IView } from './useView';
 
 interface ISelectDialogOptions<T extends object> {
-  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined }
-  tableColumns: ITableColumn<T>[]
-  toolbarFilters: IToolbarFilter[]
-  confirm: string
-  cancel: string
-  selected: string
+  view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
+  tableColumns: ITableColumn<T>[];
+  toolbarFilters: IToolbarFilter[];
+  confirm: string;
+  cancel: string;
+  selected: string;
 }
 
 export function useSelectDialog<T extends { id: number }>(options: ISelectDialogOptions<T>) {
-  const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options
-  const [title, setTitle] = useState('')
-  const [onSelect, setOnSelect] = useState<(item: T) => void>()
+  const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options;
+  const [title, setTitle] = useState('');
+  const [onSelect, setOnSelect] = useState<(item: T) => void>();
   const openSetting = useCallback((onSelect?: (item: T) => void, title?: string) => {
-    setTitle(title ?? '')
-    setOnSelect(() => onSelect)
-  }, [])
-  const [_, setDialog] = usePageDialog()
+    setTitle(title ?? '');
+    setOnSelect(() => onSelect);
+  }, []);
+  const [_, setDialog] = usePageDialog();
   useEffect(() => {
     if (onSelect !== undefined) {
       setDialog(
@@ -49,22 +49,22 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
           selected={selected}
           keyFn={view.keyFn}
         />
-      )
+      );
     } else {
-      setDialog(undefined)
-      view.unselectAll()
+      setDialog(undefined);
+      view.unselectAll();
     }
-  }, [cancel, confirm, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view])
-  return openSetting
+  }, [cancel, confirm, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view]);
+  return openSetting;
 }
 
 export type SelectDialogProps<T extends object> = {
-  title: string
-  open: boolean
-  setOpen: (open: boolean) => void
-  onSelect: (item: T) => void
-  keyFn: (item: T) => string | number
-} & ISelectDialogOptions<T>
+  title: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onSelect: (item: T) => void;
+  keyFn: (item: T) => string | number;
+} & ISelectDialogOptions<T>;
 
 export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {
   const {
@@ -78,8 +78,8 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
     confirm,
     cancel,
     selected,
-  } = props
-  const onClose = () => setOpen(false)
+  } = props;
+  const onClose = () => setOpen(false);
   return (
     <Modal
       title={title}
@@ -93,9 +93,9 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
           variant="primary"
           onClick={() => {
             if (view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0])
+              onSelect(view.selectedItems[0]);
             }
-            onClose()
+            onClose();
           }}
           isAriaDisabled={view.selectedItems.length === 0}
         >
@@ -115,9 +115,9 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
           <b>
             {view.selectedItems.map((item, i) => {
               if (tableColumns && tableColumns.length > 0) {
-                return <TableColumnCell key={i} item={item} column={tableColumns[0]} />
+                return <TableColumnCell key={i} item={item} column={tableColumns[0]} />;
               }
-              return <></>
+              return <></>;
             })}
             <></>
           </b>
@@ -146,5 +146,5 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
         </div>
       </Collapse>
     </Modal>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import { Flex, FlexItem } from '@patternfly/react-core'
-import { useSettings } from '../Settings'
-import { useFrameworkTranslations } from '../useFrameworkTranslations'
+import { Flex, FlexItem } from '@patternfly/react-core';
+import { useSettings } from '../Settings';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export function CapacityCell(props: { format?: string; used: number; capacity: number }) {
-  const [translations] = useFrameworkTranslations()
-  const settings = useSettings()
-  const ratio = props.used / props.capacity
-  if (props.capacity === 0) return <></>
+  const [translations] = useFrameworkTranslations();
+  const settings = useSettings();
+  const ratio = props.used / props.capacity;
+  if (props.capacity === 0) return <></>;
   const base =
     ratio >= 0.8
       ? 'var(--pf-global--palette--red'
       : ratio >= 0.5
       ? 'var(--pf-global--palette--gold'
-      : 'var(--pf-global--palette--green'
-  const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`
-  const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`
-  const borderColor = settings.theme === 'light' ? `#0002` : `#fff2`
+      : 'var(--pf-global--palette--green';
+  const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`;
+  const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`;
+  const borderColor = settings.theme === 'light' ? `#0002` : `#fff2`;
   return (
     <Flex alignItems={{ default: 'alignItemsBaseline' }} spaceItems={{ default: 'spaceItemsSm' }}>
       {props.capacity > 0 && (
@@ -59,5 +59,5 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
         </FlexItem>
       )}
     </Flex>
-  )
+  );
 }

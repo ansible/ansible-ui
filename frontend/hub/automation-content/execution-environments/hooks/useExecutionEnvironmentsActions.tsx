@@ -1,12 +1,12 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { PlusIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { IPageAction, PageActionType } from '../../../../../framework'
-import { ExecutionEnvironment } from '../ExecutionEnvironment'
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
 export function useExecutionEnvironmentsActions() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
@@ -20,5 +20,5 @@ export function useExecutionEnvironmentsActions() {
       },
     ],
     [t]
-  )
+  );
 }

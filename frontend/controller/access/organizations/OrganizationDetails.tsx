@@ -4,11 +4,11 @@ import {
   PageSection,
   Skeleton,
   Stack,
-} from '@patternfly/react-core'
-import { EditIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+} from '@patternfly/react-core';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Detail,
   DetailsList,
@@ -22,28 +22,28 @@ import {
   PageTable,
   PageTabs,
   SinceCell,
-} from '../../../../framework'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { Organization } from '../../interfaces/Organization'
-import { Team } from '../../interfaces/Team'
-import { useControllerView } from '../../useControllerView'
-import { useTeamsColumns, useTeamsFilters } from '../teams/Teams'
-import { AccessTable } from '../users/Users'
-import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { useItem } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
+import { Team } from '../../interfaces/Team';
+import { useControllerView } from '../../useControllerView';
+import { useTeamsColumns, useTeamsFilters } from '../teams/Teams';
+import { AccessTable } from '../users/Users';
+import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 
 export function OrganizationDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const organization = useItem<Organization>('/api/v2/organizations', params.id ?? '0')
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const organization = useItem<Organization>('/api/v2/organizations', params.id ?? '0');
+  const history = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
     if (deleted.length > 0) {
-      history(RouteE.Organizations)
+      history(RouteE.Organizations);
     }
-  })
+  });
 
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
@@ -60,13 +60,13 @@ export function OrganizationDetails() {
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: () => {
-          if (!organization) return
-          deleteOrganizations([organization])
+          if (!organization) return;
+          deleteOrganizations([organization]);
         },
       },
-    ]
-    return itemActions
-  }, [deleteOrganizations, history, organization, t])
+    ];
+    return itemActions;
+  }, [deleteOrganizations, history, organization, t]);
 
   return (
     <PageLayout>
@@ -115,13 +115,13 @@ export function OrganizationDetails() {
         )}
       </PageBody>
     </PageLayout>
-  )
+  );
 }
 
 function OrganizationDetailsTab(props: { organization: Organization }) {
-  const { t } = useTranslation()
-  const { organization } = props
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const { organization } = props;
+  const history = useNavigate();
   return (
     <>
       <Scrollable>
@@ -161,12 +161,12 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
         </PageSection>
       </Scrollable>
     </>
-  )
+  );
 }
 
 function OrganizationAccessTab(props: { organization: Organization }) {
-  const { organization } = props
-  const { t } = useTranslation()
+  const { organization } = props;
+  const { t } = useTranslation();
   return (
     <PageTabs>
       <PageTab title={t('Users')}>
@@ -176,21 +176,21 @@ function OrganizationAccessTab(props: { organization: Organization }) {
         <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
       </PageTab>
     </PageTabs>
-  )
+  );
 }
 
 function OrganizationTeamsTab(props: { organization: Organization }) {
-  const { organization } = props
-  const { t } = useTranslation()
-  const history = useNavigate()
-  const toolbarFilters = useTeamsFilters()
-  const tableColumns = useTeamsColumns()
+  const { organization } = props;
+  const { t } = useTranslation();
+  const history = useNavigate();
+  const toolbarFilters = useTeamsFilters();
+  const tableColumns = useTeamsColumns();
   const view = useControllerView<Team>({
     url: `/api/v2/organizations/${organization.id}/teams/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-  })
+  });
   return (
     <PageTable<Team>
       toolbarFilters={toolbarFilters}
@@ -202,9 +202,9 @@ function OrganizationTeamsTab(props: { organization: Organization }) {
       emptyStateButtonClick={() => history(RouteE.CreateTeam)}
       {...view}
     />
-  )
+  );
 }
 
 function Todo() {
-  return <PageSection variant="light">TODO</PageSection>
+  return <PageSection variant="light">TODO</PageSection>;
 }

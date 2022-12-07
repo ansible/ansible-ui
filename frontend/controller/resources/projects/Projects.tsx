@@ -1,46 +1,46 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../common/columns'
-import { ScmType } from '../../../common/scm'
-import { StatusCell } from '../../../common/StatusCell'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { ScmType } from '../../../common/scm';
+import { StatusCell } from '../../../common/StatusCell';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { Project } from '../../interfaces/Project'
-import { useControllerView } from '../../useControllerView'
-import { useDeleteProjects } from './useDeleteProjects'
+} from '../../common/controller-toolbar-filters';
+import { Project } from '../../interfaces/Project';
+import { useControllerView } from '../../useControllerView';
+import { useDeleteProjects } from './useDeleteProjects';
 
 export function Projects() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useProjectsFilters()
-  const tableColumns = useProjectsColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useProjectsFilters();
+  const tableColumns = useProjectsColumns();
   const view = useControllerView<Project>({
     url: '/api/v2/projects/',
     toolbarFilters,
     tableColumns,
-  })
-  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh)
+  });
+  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Project>[]>(
     () => [
@@ -59,7 +59,7 @@ export function Projects() {
       },
     ],
     [navigate, deleteProjects, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Project>[]>(
     () => [
@@ -84,7 +84,7 @@ export function Projects() {
       },
     ],
     [navigate, deleteProjects, t]
-  )
+  );
 
   return (
     <TablePage<Project>
@@ -108,15 +108,15 @@ export function Projects() {
       emptyStateButtonClick={() => navigate(RouteE.CreateProject)}
       {...view}
     />
-  )
+  );
 }
 
 export function useProjectsFilters() {
-  const { t } = useTranslation()
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const { t } = useTranslation();
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -145,22 +145,22 @@ export function useProjectsFilters() {
       createdByToolbarFilter,
       modifiedByToolbarFilter,
     ]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())),
     [navigate]
-  )
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick })
-  const descriptionColumn = useDescriptionColumn()
-  const organizationColumn = useOrganizationNameColumn(options)
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  );
+  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const descriptionColumn = useDescriptionColumn();
+  const organizationColumn = useOrganizationNameColumn(options);
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
@@ -182,6 +182,6 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
     ],
     [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

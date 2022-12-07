@@ -1,23 +1,23 @@
-import { DropdownPosition, PageSection } from '@patternfly/react-core'
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
-import { PageActions, PageHeader, PageLayout } from '../../../framework'
-import { Scrollable } from '../../../framework/components/Scrollable'
-import { TableDetails } from '../../../framework/PageTable/PageTableDetails'
-import { useSettings } from '../../../framework/Settings'
-import { useGet } from '../../common/useItem'
-import { RouteE } from '../../Routes'
-import { EdaRule } from '../interfaces/EdaRule'
-import { useRuleActions } from './hooks/useRuleActions'
-import { useRuleColumns } from './hooks/useRuleColumns'
+import { DropdownPosition, PageSection } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { PageActions, PageHeader, PageLayout } from '../../../framework';
+import { Scrollable } from '../../../framework/components/Scrollable';
+import { TableDetails } from '../../../framework/PageTable/PageTableDetails';
+import { useSettings } from '../../../framework/Settings';
+import { useGet } from '../../common/useItem';
+import { RouteE } from '../../Routes';
+import { EdaRule } from '../interfaces/EdaRule';
+import { useRuleActions } from './hooks/useRuleActions';
+import { useRuleColumns } from './hooks/useRuleColumns';
 
 export function RuleDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const { data: rule, mutate: refresh } = useGet<EdaRule>(`/api/rules/${params.id ?? ''}`)
-  const settings = useSettings()
-  const tableColumns = useRuleColumns()
-  const itemActions = useRuleActions(refresh)
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const { data: rule, mutate: refresh } = useGet<EdaRule>(`/api/rules/${params.id ?? ''}`);
+  const settings = useSettings();
+  const tableColumns = useRuleColumns();
+  const itemActions = useRuleActions(refresh);
   return (
     <PageLayout>
       <PageHeader
@@ -43,5 +43,5 @@ export function RuleDetails() {
         </PageSection>
       </Scrollable>
     </PageLayout>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import debounce from 'debounce'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import debounce from 'debounce';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function useTableItems<T extends object>(
   items: T[],
@@ -14,17 +14,17 @@ export function useTableItems<T extends object>(
     selectItems,
     unselectAll,
     allSelected,
-  } = useSelected(items, keyFn)
-  const { sorted, sort, setSort } = useSorted(items)
-  const { filtered, setFilterFn } = useFiltered(sorted, keyFn)
+  } = useSelected(items, keyFn);
+  const { sorted, sort, setSort } = useSorted(items);
+  const { filtered, setFilterFn } = useFiltered(sorted, keyFn);
   const { searched, search, setSearch, setSearchFn } = useSearched(
     filtered,
     keyFn,
     defaults?.search
-  )
-  const { paged, page, setPage, perPage, setPerPage } = usePaged(searched)
-  const selectPage = useCallback(() => selectItems(paged), [paged, selectItems])
-  const selectAll = useCallback(() => selectItems(searched), [searched, selectItems])
+  );
+  const { paged, page, setPage, perPage, setPerPage } = usePaged(searched);
+  const selectPage = useCallback(() => selectItems(paged), [paged, selectItems]);
+  const selectAll = useCallback(() => selectItems(searched), [searched, selectItems]);
   return useMemo(
     () => ({
       allSelected,
@@ -74,119 +74,119 @@ export function useTableItems<T extends object>(
       unselectAll,
       unselectItem,
     ]
-  )
+  );
 }
 
 export interface ISelected<T extends object> {
-  selectedItems: T[]
-  selectItem: (item: T) => void
-  selectItems: (items: T[]) => void
-  unselectItem: (item: T) => void
-  unselectItems: (items: T[]) => void
-  isSelected: (item: T) => boolean
-  selectAll: () => void
-  unselectAll: () => void
-  allSelected: boolean
-  keyFn: (item: T) => string | number
+  selectedItems: T[];
+  selectItem: (item: T) => void;
+  selectItems: (items: T[]) => void;
+  unselectItem: (item: T) => void;
+  unselectItems: (items: T[]) => void;
+  isSelected: (item: T) => boolean;
+  selectAll: () => void;
+  unselectAll: () => void;
+  allSelected: boolean;
+  keyFn: (item: T) => string | number;
 }
 
 export function useSelected<T extends object>(
   items: T[],
   keyFn: (item: T) => string | number
 ): ISelected<T> {
-  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
+  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({});
 
   useEffect(() => {
     setSelectedMap((selectedMap) => {
-      let changed = false
+      let changed = false;
       items.forEach((item) => {
-        const key = keyFn(item)
+        const key = keyFn(item);
         if (selectedMap[key] && selectedMap[key] !== item) {
-          changed = true
-          selectedMap[key] = item
+          changed = true;
+          selectedMap[key] = item;
         }
-      })
-      return changed ? { ...selectedMap } : selectedMap
-    })
-  }, [items, keyFn])
+      });
+      return changed ? { ...selectedMap } : selectedMap;
+    });
+  }, [items, keyFn]);
 
   const selectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item)
-        const existing = selectedMap[itemKey]
+        const itemKey = keyFn(item);
+        const existing = selectedMap[itemKey];
         if (existing !== item) {
-          selectedMap = { ...selectedMap }
-          selectedMap[itemKey] = item
+          selectedMap = { ...selectedMap };
+          selectedMap[itemKey] = item;
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
   const unselectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item)
-        const existing = selectedMap[itemKey]
+        const itemKey = keyFn(item);
+        const existing = selectedMap[itemKey];
         if (existing) {
-          selectedMap = { ...selectedMap }
-          delete selectedMap[itemKey]
+          selectedMap = { ...selectedMap };
+          delete selectedMap[itemKey];
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
   const isSelected = useCallback(
     (item: T) => {
-      const itemKey = keyFn(item)
-      return selectedMap[itemKey] !== undefined
+      const itemKey = keyFn(item);
+      return selectedMap[itemKey] !== undefined;
     },
     [keyFn, selectedMap]
-  )
+  );
 
   const selectItems = useCallback(
     (items: T[]) => {
       setSelectedMap((selectedMap) => {
-        selectedMap = { ...selectedMap }
+        selectedMap = { ...selectedMap };
         for (const item of items) {
-          const itemKey = keyFn(item)
-          selectedMap[itemKey] = item
+          const itemKey = keyFn(item);
+          selectedMap[itemKey] = item;
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
-  const selectAll = useCallback(() => selectItems(items), [items, selectItems])
+  const selectAll = useCallback(() => selectItems(items), [items, selectItems]);
 
   const unselectItems = useCallback(
     (items: T[]) => {
       for (const item of items) {
-        unselectItem(item)
+        unselectItem(item);
       }
     },
     [unselectItem]
-  )
+  );
 
   const unselectAll = useCallback(() => {
     setSelectedMap((selectedMap) => {
       if (Object.keys(selectedMap).length > 0) {
-        return {}
+        return {};
       }
-      return selectedMap
-    })
-  }, [])
+      return selectedMap;
+    });
+  }, []);
 
-  const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
+  const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap]);
   const allSelected = useMemo(
     () => selectedItems.length === items.length,
     [items.length, selectedItems.length]
-  )
+  );
 
   return useMemo(
     () => ({
@@ -213,129 +213,129 @@ export function useSelected<T extends object>(
       unselectItem,
       unselectItems,
     ]
-  )
+  );
 }
 
 export function useSelectedInMemory<T extends object>(
   items: T[] | undefined,
   keyFn: (item: T) => string | number
 ) {
-  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({})
+  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({});
 
   useEffect(() => {
     setSelectedMap((selectedMap) => {
-      let changed = false
+      let changed = false;
 
       const itemsKeys = !items
         ? {}
         : items.reduce((itemsKeys, item) => {
-            const key = keyFn(item)
-            itemsKeys[key] = item
+            const key = keyFn(item);
+            itemsKeys[key] = item;
             if (selectedMap[key] && selectedMap[key] !== item) {
-              changed = true
-              selectedMap[key] = item
+              changed = true;
+              selectedMap[key] = item;
             }
-            return itemsKeys
-          }, {} as Record<string | number, T>)
+            return itemsKeys;
+          }, {} as Record<string | number, T>);
 
-      const removeKeyMap: Record<string | number, true> = {}
+      const removeKeyMap: Record<string | number, true> = {};
       for (const key in selectedMap) {
         if (!itemsKeys[key]) {
-          removeKeyMap[key] = true
+          removeKeyMap[key] = true;
         }
       }
 
-      const removeKeys = Object.keys(removeKeyMap)
+      const removeKeys = Object.keys(removeKeyMap);
       if (removeKeys.length) {
-        changed = true
+        changed = true;
         for (const key of removeKeys) {
-          delete selectedMap[key]
+          delete selectedMap[key];
         }
       }
 
-      return changed ? { ...selectedMap } : selectedMap
-    })
-  }, [items, keyFn])
+      return changed ? { ...selectedMap } : selectedMap;
+    });
+  }, [items, keyFn]);
 
   const selectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item)
-        const existing = selectedMap[itemKey]
+        const itemKey = keyFn(item);
+        const existing = selectedMap[itemKey];
         if (existing !== item) {
-          selectedMap = { ...selectedMap }
-          selectedMap[itemKey] = item
+          selectedMap = { ...selectedMap };
+          selectedMap[itemKey] = item;
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
   const unselectItem = useCallback(
     (item: T) => {
       setSelectedMap((selectedMap) => {
-        const itemKey = keyFn(item)
-        const existing = selectedMap[itemKey]
+        const itemKey = keyFn(item);
+        const existing = selectedMap[itemKey];
         if (existing) {
-          selectedMap = { ...selectedMap }
-          delete selectedMap[itemKey]
+          selectedMap = { ...selectedMap };
+          delete selectedMap[itemKey];
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
   const unselectItems = useCallback(
     (items: T[]) => {
       for (const item of items) {
-        unselectItem(item)
+        unselectItem(item);
       }
     },
     [unselectItem]
-  )
+  );
 
   const isSelected = useCallback(
     (item: T) => {
-      const itemKey = keyFn(item)
-      return selectedMap[itemKey] !== undefined
+      const itemKey = keyFn(item);
+      return selectedMap[itemKey] !== undefined;
     },
     [keyFn, selectedMap]
-  )
+  );
 
   const selectItems = useCallback(
     (items: T[]) => {
       setSelectedMap((selectedMap) => {
-        selectedMap = { ...selectedMap }
+        selectedMap = { ...selectedMap };
         for (const item of items) {
-          const itemKey = keyFn(item)
-          selectedMap[itemKey] = item
+          const itemKey = keyFn(item);
+          selectedMap[itemKey] = item;
         }
-        return selectedMap
-      })
+        return selectedMap;
+      });
     },
     [keyFn]
-  )
+  );
 
   const selectAll = useCallback(() => {
-    selectItems(items ?? [])
-  }, [items, selectItems])
+    selectItems(items ?? []);
+  }, [items, selectItems]);
 
   const unselectAll = useCallback(() => {
     setSelectedMap((selectedMap) => {
       if (Object.keys(selectedMap).length > 0) {
-        return {}
+        return {};
       }
-      return selectedMap
-    })
-  }, [])
+      return selectedMap;
+    });
+  }, []);
 
-  const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap])
+  const selectedItems = useMemo(() => Object.values(selectedMap), [selectedMap]);
   const allSelected = useMemo(
     () => selectedItems.length === items?.length ?? 0,
     [items, selectedItems.length]
-  )
+  );
 
   return useMemo(
     () => ({
@@ -362,80 +362,80 @@ export function useSelectedInMemory<T extends object>(
       unselectItem,
       unselectItems,
     ]
-  )
+  );
 }
 
 export interface ISort<T extends object> {
-  id: string
-  sortFn: (l: T, r: T) => number
-  direction: 'asc' | 'desc'
+  id: string;
+  sortFn: (l: T, r: T) => number;
+  direction: 'asc' | 'desc';
 }
 export function useSorted<T extends object>(items: T[] | undefined) {
-  const [sort, setSort] = useState<ISort<T>>()
+  const [sort, setSort] = useState<ISort<T>>();
 
-  const { direction, sortFn } = sort ?? {}
+  const { direction, sortFn } = sort ?? {};
 
   const sorted = useMemo(() => {
-    if (!items) return []
+    if (!items) return [];
     if (sortFn) {
       if (direction === 'asc') {
-        return [...items.sort(sortFn)]
+        return [...items.sort(sortFn)];
       } else {
-        return [...items.sort(sortFn).reverse()]
+        return [...items.sort(sortFn).reverse()];
       }
     } else {
-      return items
+      return items;
     }
-  }, [direction, items, sortFn])
+  }, [direction, items, sortFn]);
 
-  return useMemo(() => ({ sorted, sort, setSort }), [sort, sorted])
+  return useMemo(() => ({ sorted, sort, setSort }), [sort, sorted]);
 }
 
 export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => string | number) {
   const filterMapRef = useRef<{ map: Record<string | number, { item: T; passes: boolean }> }>({
     map: {},
-  })
-  const [filterFn, setFilterFnState] = useState<(item: T) => boolean>()
+  });
+  const [filterFn, setFilterFnState] = useState<(item: T) => boolean>();
   const setFilterFn = useCallback(
     (filterFn: ((item: T) => boolean) | undefined) => setFilterFnState(() => filterFn),
     []
-  )
-  const [filtered, setFiltered] = useState<T[]>([])
+  );
+  const [filtered, setFiltered] = useState<T[]>([]);
 
   useEffect(() => {
-    filterMapRef.current.map = {}
-  }, [filterFn])
+    filterMapRef.current.map = {};
+  }, [filterFn]);
 
   const cachedFilterFn = useCallback(
     (item: T) => {
-      const key = keyFn(item)
-      let cached = filterMapRef.current.map[key]
+      const key = keyFn(item);
+      let cached = filterMapRef.current.map[key];
       if (!cached) {
-        cached = { item, passes: filterFn ? filterFn(item) : true }
-        filterMapRef.current.map[key] = cached
+        cached = { item, passes: filterFn ? filterFn(item) : true };
+        filterMapRef.current.map[key] = cached;
       } else if (cached.item !== item) {
-        cached.item = item
-        cached.passes = filterFn ? filterFn(item) : true
+        cached.item = item;
+        cached.passes = filterFn ? filterFn(item) : true;
       }
-      return cached.passes
+      return cached.passes;
     },
     [filterFn, keyFn]
-  )
+  );
 
   useEffect(() => {
     if (filterFn) {
-      setFiltered(items.filter(cachedFilterFn))
+      setFiltered(items.filter(cachedFilterFn));
     } else {
-      setFiltered(items)
+      setFiltered(items);
     }
-  }, [items, filterFn, cachedFilterFn])
+  }, [items, filterFn, cachedFilterFn]);
 
   return useMemo(
     function memoFiltered() {
-      return { filtered, setFilterFn }
+      return { filtered, setFilterFn };
     },
     [filtered, setFilterFn]
-  )
+  );
 }
 
 function useSearched<T extends object>(
@@ -445,39 +445,39 @@ function useSearched<T extends object>(
 ) {
   const searchMapRef = useRef<{ map: Record<string | number, { item: T; score: number }> }>({
     map: {},
-  })
-  const [searchFn, setSearchFnState] = useState<(item: T, search: string) => number>()
+  });
+  const [searchFn, setSearchFnState] = useState<(item: T, search: string) => number>();
   const setSearchFn = useCallback(
     (searchFn: (item: T, search: string) => number) => setSearchFnState(() => searchFn),
     []
-  )
-  const [searched, setSearched] = useState<T[]>([])
-  const [search, setSearchState] = useState(defaultSearch ?? '')
+  );
+  const [searched, setSearched] = useState<T[]>([]);
+  const [search, setSearchState] = useState(defaultSearch ?? '');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setSearch = useCallback(
     debounce((search: string) => setSearchState(search), 200),
     []
-  )
+  );
 
   useEffect(() => {
-    searchMapRef.current.map = {}
-  }, [search, searchFn])
+    searchMapRef.current.map = {};
+  }, [search, searchFn]);
 
   const cachedSearchFn = useCallback(
     (item: T) => {
-      const key = keyFn(item)
-      let cached = searchMapRef.current.map[key]
+      const key = keyFn(item);
+      let cached = searchMapRef.current.map[key];
       if (!cached) {
-        cached = { item, score: searchFn ? searchFn(item, search) : 0 }
-        searchMapRef.current.map[key] = cached
+        cached = { item, score: searchFn ? searchFn(item, search) : 0 };
+        searchMapRef.current.map[key] = cached;
       } else if (cached.item !== item) {
-        cached.item = item
-        cached.score = searchFn ? searchFn(item, search) : 0
+        cached.item = item;
+        cached.score = searchFn ? searchFn(item, search) : 0;
       }
-      return cached
+      return cached;
     },
     [keyFn, searchFn, search]
-  )
+  );
 
   useEffect(() => {
     if (searchFn && search) {
@@ -487,44 +487,44 @@ function useSearched<T extends object>(
           .filter((cached) => cached.score < 0.5)
           .sort((l, r) => l.score - r.score)
           .map((cached) => cached.item)
-      )
+      );
     } else {
-      setSearched(items)
+      setSearched(items);
     }
-  }, [search, items, searchFn, cachedSearchFn])
+  }, [search, items, searchFn, cachedSearchFn]);
 
   return useMemo(
     function memoFiltered() {
-      return { searched, search, setSearch, setSearchFn }
+      return { searched, search, setSearch, setSearchFn };
     },
     [searched, search, setSearch, setSearchFn]
-  )
+  );
 }
 
 export function usePaged<T extends object>(source: T[]) {
-  const [paged, setPaged] = useState<T[]>([])
-  const [page, setPage] = useState(1)
-  const [perPage, setPerPage] = useState(10)
+  const [paged, setPaged] = useState<T[]>([]);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   useEffect(() => {
     setPaged((paged) => {
-      const newPaged = source.slice((page - 1) * perPage, page * perPage)
+      const newPaged = source.slice((page - 1) * perPage, page * perPage);
       if (paged.length !== newPaged.length) {
-        return newPaged
+        return newPaged;
       }
-      let index = 0
+      let index = 0;
       for (const item of newPaged) {
         if (paged[index++] !== item) {
-          return newPaged
+          return newPaged;
         }
       }
-      return paged
-    })
-  }, [page, perPage, source])
+      return paged;
+    });
+  }, [page, perPage, source]);
   useEffect(() => {
     if (page > Math.ceil(source.length / perPage)) {
-      setPage(1)
+      setPage(1);
     }
-  }, [page, perPage, source.length])
+  }, [page, perPage, source.length]);
 
-  return useMemo(() => ({ paged, page, setPage, perPage, setPerPage }), [page, paged, perPage])
+  return useMemo(() => ({ paged, page, setPage, perPage, setPerPage }), [page, paged, perPage]);
 }

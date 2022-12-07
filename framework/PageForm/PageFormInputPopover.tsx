@@ -1,5 +1,5 @@
 export interface PageFormInputPopover {
-  title?: string
-  body?: string[]
-  link?: { label: string; url: string }
+  title?: string;
+  body?: string[];
+  link?: { label: string; url: string };
 }

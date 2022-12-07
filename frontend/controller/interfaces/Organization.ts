@@ -6,133 +6,133 @@
  */
 
 export interface Organization {
-  id: number
-  type: string
-  url: string
+  id: number;
+  type: string;
+  url: string;
   related: {
-    created_by: string
-    modified_by: string
-    execution_environments: string
-    projects: string
-    inventories: string
-    job_templates: string
-    workflow_job_templates: string
-    users: string
-    admins: string
-    teams: string
-    credentials: string
-    applications: string
-    activity_stream: string
-    notification_templates: string
-    notification_templates_started: string
-    notification_templates_success: string
-    notification_templates_error: string
-    notification_templates_approvals: string
-    object_roles: string
-    access_list: string
-    instance_groups: string
-    galaxy_credentials: string
-  }
+    created_by: string;
+    modified_by: string;
+    execution_environments: string;
+    projects: string;
+    inventories: string;
+    job_templates: string;
+    workflow_job_templates: string;
+    users: string;
+    admins: string;
+    teams: string;
+    credentials: string;
+    applications: string;
+    activity_stream: string;
+    notification_templates: string;
+    notification_templates_started: string;
+    notification_templates_success: string;
+    notification_templates_error: string;
+    notification_templates_approvals: string;
+    object_roles: string;
+    access_list: string;
+    instance_groups: string;
+    galaxy_credentials: string;
+  };
   summary_fields: {
     created_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     modified_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     object_roles: {
       admin_role: {
-        description: string
-        name: string
-        id: number
-        user_only: boolean
-      }
+        description: string;
+        name: string;
+        id: number;
+        user_only: boolean;
+      };
       execute_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       project_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       inventory_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       credential_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       workflow_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       notification_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       job_template_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       execution_environment_admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       auditor_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       member_role: {
-        description: string
-        name: string
-        id: number
-        user_only: boolean
-      }
+        description: string;
+        name: string;
+        id: number;
+        user_only: boolean;
+      };
       read_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       approval_role: {
-        description: string
-        name: string
-        id: number
-      }
-    }
+        description: string;
+        name: string;
+        id: number;
+      };
+    };
     user_capabilities: {
-      edit: boolean
-      delete: boolean
-    }
+      edit: boolean;
+      delete: boolean;
+    };
     related_field_counts: {
-      inventories: number
-      teams: number
-      users: number
-      job_templates: number
-      admins: number
-      projects: number
-    }
-  }
-  created: string
-  modified: string
-  name: string
-  description: string
-  max_hosts: number
-  custom_virtualenv: null
-  default_environment: null
+      inventories: number;
+      teams: number;
+      users: number;
+      job_templates: number;
+      admins: number;
+      projects: number;
+    };
+  };
+  created: string;
+  modified: string;
+  name: string;
+  description: string;
+  max_hosts: number;
+  custom_virtualenv: null;
+  default_environment: null;
 }

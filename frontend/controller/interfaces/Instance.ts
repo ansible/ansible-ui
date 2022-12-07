@@ -6,44 +6,44 @@
  */
 
 export interface Instance {
-  id: number
-  hostname: string
-  type: string
-  url: string
+  id: number;
+  hostname: string;
+  type: string;
+  url: string;
   related: {
-    jobs: string
-    instance_groups: string
-    peers: string
-    health_check?: string
-  }
+    jobs: string;
+    instance_groups: string;
+    peers: string;
+    health_check?: string;
+  };
   summary_fields: {
     user_capabilities: {
-      edit: boolean
-    }
-  }
-  uuid: string
-  created: string
-  modified: string
-  last_seen: string
-  health_check_started: null | string
-  health_check_pending: boolean
-  last_health_check: null | string
-  errors: string
-  capacity_adjustment: string
-  version: string
-  capacity: number
-  consumed_capacity: number
-  percent_capacity_remaining: number
-  jobs_running: number
-  jobs_total: number
-  cpu: string
-  memory: number
-  cpu_capacity: number
-  mem_capacity: number
-  enabled: boolean
-  managed_by_policy: boolean
-  node_type: string
-  node_state: string
-  ip_address: null
-  listener_port: number
+      edit: boolean;
+    };
+  };
+  uuid: string;
+  created: string;
+  modified: string;
+  last_seen: string;
+  health_check_started: null | string;
+  health_check_pending: boolean;
+  last_health_check: null | string;
+  errors: string;
+  capacity_adjustment: string;
+  version: string;
+  capacity: number;
+  consumed_capacity: number;
+  percent_capacity_remaining: number;
+  jobs_running: number;
+  jobs_total: number;
+  cpu: string;
+  memory: number;
+  cpu_capacity: number;
+  mem_capacity: number;
+  enabled: boolean;
+  managed_by_policy: boolean;
+  node_type: string;
+  node_state: string;
+  ip_address: null;
+  listener_port: number;
 }

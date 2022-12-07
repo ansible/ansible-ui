@@ -1,16 +1,16 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { IPageAction, PageActionType } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { EdaInventory } from '../../interfaces/EdaInventory'
-import { useDeleteInventories } from './useDeleteInventories'
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { IPageAction, PageActionType } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { EdaInventory } from '../../interfaces/EdaInventory';
+import { useDeleteInventories } from './useDeleteInventories';
 
 export function useInventoryRowActions(refresh: () => Promise<unknown>) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const deleteInventories = useDeleteInventories(() => void refresh())
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const deleteInventories = useDeleteInventories(() => void refresh());
   const rowActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
@@ -28,6 +28,6 @@ export function useInventoryRowActions(refresh: () => Promise<unknown>) {
       },
     ],
     [deleteInventories, navigate, t]
-  )
-  return rowActions
+  );
+  return rowActions;
 }

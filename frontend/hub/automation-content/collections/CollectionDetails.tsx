@@ -26,12 +26,12 @@ import {
   Stack,
   StackItem,
   Title,
-} from '@patternfly/react-core'
-import { BarsIcon } from '@patternfly/react-icons'
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+} from '@patternfly/react-core';
+import { BarsIcon } from '@patternfly/react-icons';
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   CopyCell,
   Detail,
@@ -44,28 +44,28 @@ import {
   PageTabs,
   PFColorE,
   useBreakpoint,
-} from '../../../../framework'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { TableDetails } from '../../../../framework/PageTable/PageTableDetails'
-import { StatusCell } from '../../../common/StatusCell'
-import { useGet } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { HubItemsResponse } from '../../useHubView'
-import { Collection } from './Collection'
-import { useCollectionActions } from './hooks/useCollectionActions'
-import { useCollectionColumns } from './hooks/useCollectionColumns'
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { TableDetails } from '../../../../framework/PageTable/PageTableDetails';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { HubItemsResponse } from '../../useHubView';
+import { Collection } from './Collection';
+import { useCollectionActions } from './hooks/useCollectionActions';
+import { useCollectionColumns } from './hooks/useCollectionColumns';
 
 export function CollectionDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
   const { data, mutate: refresh } = useGet<HubItemsResponse<Collection>>(
     `/api/automation-hub/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
-  )
-  let collection: Collection | undefined = undefined
+  );
+  let collection: Collection | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
-    collection = data.data[0]
+    collection = data.data[0];
   }
-  const itemActions = useCollectionActions(() => void refresh())
+  const itemActions = useCollectionActions(() => void refresh());
   return (
     <PageLayout>
       <PageHeader
@@ -103,24 +103,24 @@ export function CollectionDetails() {
         </PageTab>
       </PageTabs>
     </PageLayout>
-  )
+  );
 }
 
 function CollectionDetailsTab(props: { collection?: Collection }) {
-  const { collection } = props
-  const tableColumns = useCollectionColumns()
+  const { collection } = props;
+  const tableColumns = useCollectionColumns();
   return (
     <Scrollable>
       <PageSection variant="light">
         <TableDetails item={collection} columns={tableColumns} />
       </PageSection>
     </Scrollable>
-  )
+  );
 }
 
 function CollectionInstallTab(props: { collection?: Collection }) {
-  const { t } = useTranslation()
-  const { collection } = props
+  const { t } = useTranslation();
+  const { collection } = props;
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -144,40 +144,40 @@ function CollectionInstallTab(props: { collection?: Collection }) {
         </DetailsList>
       </PageSection>
     </Scrollable>
-  )
+  );
 }
 
 function CollectionDocumentationTab(props: { collection?: Collection }) {
-  const { collection } = props
+  const { collection } = props;
 
-  const [content, setContent] = useState<IContents>()
+  const [content, setContent] = useState<IContents>();
 
   const { data } = useGet<CollectionDocs>(
     `/api/automation-hub/_ui/v1/repo/published/${collection?.namespace.name ?? ''}/${
       collection?.name ?? ''
     }/?include_related=my_permissions`
-  )
+  );
 
   const groups = useMemo(() => {
-    const groups: Record<string, { name: string; contents: IContents[] }> = {}
+    const groups: Record<string, { name: string; contents: IContents[] }> = {};
     if (data?.latest_version.docs_blob.contents) {
       for (const content of data.latest_version.docs_blob.contents) {
-        let group = groups[content.content_type]
+        let group = groups[content.content_type];
         if (!group) {
-          group = { name: content.content_type, contents: [] }
-          groups[content.content_type] = group
+          group = { name: content.content_type, contents: [] };
+          groups[content.content_type] = group;
         }
-        group.contents.push(content)
+        group.contents.push(content);
       }
     }
     for (const group of Object.values(groups)) {
-      group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name))
+      group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name));
     }
-    return Object.values(groups)
-  }, [data?.latest_version.docs_blob.contents])
+    return Object.values(groups);
+  }, [data?.latest_version.docs_blob.contents]);
 
-  const [isDrawerOpen, setDrawerOpen] = useState(true)
-  const lg = useBreakpoint('lg')
+  const [isDrawerOpen, setDrawerOpen] = useState(true);
+  const lg = useBreakpoint('lg');
 
   return (
     <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
@@ -202,20 +202,20 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
         </DrawerContentBody>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 function CollectionDocumentationTabPanel(props: {
-  setDrawerOpen: Dispatch<SetStateAction<boolean>>
-  content: IContents | undefined
-  setContent: Dispatch<SetStateAction<IContents | undefined>>
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
+  content: IContents | undefined;
+  setContent: Dispatch<SetStateAction<IContents | undefined>>;
   groups: {
-    name: string
-    contents: IContents[]
-  }[]
+    name: string;
+    contents: IContents[];
+  }[];
 }) {
-  const { content, setContent, groups, setDrawerOpen } = props
-  const { t } = useTranslation()
+  const { content, setContent, groups, setDrawerOpen } = props;
+  const { t } = useTranslation();
   return (
     <DrawerPanelContent>
       <DrawerHead style={{ gap: 16 }}>
@@ -252,16 +252,16 @@ function CollectionDocumentationTabPanel(props: {
         </Nav>
       </DrawerPanelBody>
     </DrawerPanelContent>
-  )
+  );
 }
 
 function CollectionDocumentationTabContent(props: {
-  content: IContents | undefined
-  isDrawerOpen: boolean
-  setDrawerOpen: Dispatch<SetStateAction<boolean>>
+  content: IContents | undefined;
+  isDrawerOpen: boolean;
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const { t } = useTranslation()
-  const { content, isDrawerOpen, setDrawerOpen } = props
+  const { t } = useTranslation();
+  const { content, isDrawerOpen, setDrawerOpen } = props;
   return (
     <>
       <PageSection variant="light" sticky="top">
@@ -387,7 +387,7 @@ function CollectionDocumentationTabContent(props: {
         </>
       )}
     </>
-  )
+  );
 }
 
 function CollectionContentsTab(_props: { collection?: Collection }) {
@@ -395,26 +395,26 @@ function CollectionContentsTab(_props: { collection?: Collection }) {
     <Scrollable>
       <PageSection variant="light">TODO</PageSection>
     </Scrollable>
-  )
+  );
 }
 
 function CollectionImportLogTab(props: { collection?: Collection }) {
-  const { collection } = props
-  const { t } = useTranslation()
+  const { collection } = props;
+  const { t } = useTranslation();
   const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
     collection
       ? `/api/automation-hub/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
       : ''
-  )
+  );
 
   const { data: collectionImport } = useGet<CollectionImport>(
     collectionImportsResponse && collectionImportsResponse.data.length
       ? `/api/automation-hub/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
       : ''
-  )
+  );
   // http://ec2-54-147-146-116.compute-1.amazonaws.com:8002/api/automation-hub/_ui/v1/imports/collections/ef7849bd-17f5-434f-b35a-3c1877884d12/
 
-  if (!collection) return <></>
+  if (!collection) return <></>;
   // &sort=-created&offset=0&limit=10
 
   return (
@@ -468,27 +468,27 @@ function CollectionImportLogTab(props: { collection?: Collection }) {
         </Stack>
       </PageSection>
     </Scrollable>
-  )
+  );
 }
 
 interface CollectionImport {
-  created_at: string
-  finished_at: string
-  id: string
-  name: string
-  namespace: string
-  started_at: string
-  state: string
-  updated_at: string
-  version: string
-  error?: { traceback: string; description: string }
-  messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[]
+  created_at: string;
+  finished_at: string;
+  id: string;
+  name: string;
+  namespace: string;
+  started_at: string;
+  state: string;
+  updated_at: string;
+  version: string;
+  error?: { traceback: string; description: string };
+  messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[];
 }
 
 function CollectionDependenciesTab(props: { collection?: Collection }) {
-  const { collection } = props
-  const { t } = useTranslation()
-  if (!collection) return <></>
+  const { collection } = props;
+  const { t } = useTranslation();
+  if (!collection) return <></>;
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -503,156 +503,156 @@ function CollectionDependenciesTab(props: { collection?: Collection }) {
                     {collection.latest_version.metadata.dependencies[key]}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
-              )
+              );
             })}
           </DescriptionList>
         </Stack>
       </PageSection>
     </Scrollable>
-  )
+  );
 }
 
 export interface CollectionDocs {
-  id: string
+  id: string;
   namespace: {
-    pulp_href: string
-    id: number
-    name: string
-    company: string
-    email: string
-    avatar_url: string
-    description: string
-    groups: unknown[]
+    pulp_href: string;
+    id: number;
+    name: string;
+    company: string;
+    email: string;
+    avatar_url: string;
+    description: string;
+    groups: unknown[];
     related_fields: {
-      my_permissions: string[]
-    }
-  }
-  name: string
-  download_count: number
+      my_permissions: string[];
+    };
+  };
+  name: string;
+  download_count: number;
   latest_version: {
-    id: string
-    namespace: string
-    name: string
-    version: string
-    requires_ansible: string
-    created_at: string
+    id: string;
+    namespace: string;
+    name: string;
+    version: string;
+    requires_ansible: string;
+    created_at: string;
     metadata: {
       dependencies: {
-        'ansible.utils': string
-      }
+        'ansible.utils': string;
+      };
       contents: {
-        name: string
-        description: null | string
-        content_type: string
-      }[]
-      documentation: string
-      homepage: string
-      issues: string
-      repository: string
-      description: string
-      authors: string[]
-      license: unknown[]
-      tags: string[]
-      signatures: unknown[]
-    }
+        name: string;
+        description: null | string;
+        content_type: string;
+      }[];
+      documentation: string;
+      homepage: string;
+      issues: string;
+      repository: string;
+      description: string;
+      authors: string[];
+      license: unknown[];
+      tags: string[];
+      signatures: unknown[];
+    };
     contents: {
-      name: string
-      content_type: string
-      description: null | string
-    }[]
-    sign_state: string
+      name: string;
+      content_type: string;
+      description: null | string;
+    }[];
+    sign_state: string;
     docs_blob: {
-      contents: IContents[]
+      contents: IContents[];
       collection_readme: {
-        html: string
-        name: string
-      }
-      documentation_files: unknown[]
-    }
-  }
+        html: string;
+        name: string;
+      };
+      documentation_files: unknown[];
+    };
+  };
   all_versions: {
-    id: string
-    version: string
-    created: string
-    sign_state: string
-  }[]
-  sign_state: string
+    id: string;
+    version: string;
+    created: string;
+    sign_state: string;
+  }[];
+  sign_state: string;
 }
 
 interface IContents {
   doc_strings: null | {
     doc: {
-      notes?: string[]
-      author: string | string[]
-      module?: string
+      notes?: string[];
+      author: string | string[];
+      module?: string;
       options?: {
-        name: string
-        type?: string
-        description: string | string[]
-        choices?: string[]
-        default?: (boolean | number | string) | string[]
-        required?: boolean
-        aliases?: string[]
-        elements?: string
+        name: string;
+        type?: string;
+        description: string | string[];
+        choices?: string[];
+        default?: (boolean | number | string) | string[];
+        required?: boolean;
+        aliases?: string[];
+        elements?: string;
         suboptions?: {
-          name: string
-          type: string
-          description: string[]
-        }[]
+          name: string;
+          type: string;
+          description: string[];
+        }[];
         env?: {
-          name: string
-        }[]
+          name: string;
+        }[];
         ini?: {
-          key: string
-          section: string
-        }[]
+          key: string;
+          section: string;
+        }[];
         vars?: {
-          name: string
-        }[]
-        version_added?: string
-        version_added_collection?: string
+          name: string;
+        }[];
+        version_added?: string;
+        version_added_collection?: string;
         cli?: {
-          name: string
-        }[]
-      }[]
-      filename: string
-      collection: string
-      has_action?: boolean
-      description: string[]
-      version_added: string
-      short_description: string
-      version_added_collection: string
-      requirements?: string[]
-      name?: string
-    }
+          name: string;
+        }[];
+      }[];
+      filename: string;
+      collection: string;
+      has_action?: boolean;
+      description: string[];
+      version_added: string;
+      short_description: string;
+      version_added_collection: string;
+      requirements?: string[];
+      name?: string;
+    };
     return:
       | null
       | {
-          name: string
-          type: string
+          name: string;
+          type: string;
           sample?:
             | (number | string)
             | string[]
             | {
-                avg?: number
-                max?: number
-                min?: number
-                after?: string
-                before?: string
-              }
-          returned: string
-          description: string
+                avg?: number;
+                max?: number;
+                min?: number;
+                after?: string;
+                before?: string;
+              };
+          returned: string;
+          description: string;
           contains?: {
-            name: string
-            type: string
-            description: string[]
-          }[]
-        }[]
-    examples: null | string
-    metadata: null
-  }
-  readme_file: null
-  readme_html: null
-  content_name: string
-  content_type: string
+            name: string;
+            type: string;
+            description: string[];
+          }[];
+        }[];
+    examples: null | string;
+    metadata: null;
+  };
+  readme_file: null;
+  readme_html: null;
+  content_name: string;
+  content_type: string;
 }

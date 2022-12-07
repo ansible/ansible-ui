@@ -1,31 +1,31 @@
-import { Page, PageSection, Title } from '@patternfly/react-core'
-import { Static, Type } from '@sinclair/typebox'
-import ky, { HTTPError } from 'ky'
-import { useCallback, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
-import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework'
-import { PageFormSchema } from '../../framework/PageForm/PageFormSchema'
-import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
-import { headers } from '../Data'
-import { RouteE } from '../Routes'
+import { Page, PageSection, Title } from '@patternfly/react-core';
+import { Static, Type } from '@sinclair/typebox';
+import ky, { HTTPError } from 'ky';
+import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
+import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework';
+import { PageFormSchema } from '../../framework/PageForm/PageFormSchema';
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
+import { headers } from '../Data';
+import { RouteE } from '../Routes';
 
 export default function Login() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { automationServers, setAutomationServer } = useAutomationServers()
+  const { automationServers, setAutomationServer } = useAutomationServers();
 
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
 
   // const addAutomationHost = useAddAutomationServer()
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
   useEffect(() => {
-    ;(cache as unknown as { clear: () => void }).clear?.()
-  }, [cache])
+    (cache as unknown as { clear: () => void }).clear?.();
+  }, [cache]);
 
   const DataType = Type.Object({
     server: Type.String({
@@ -49,21 +49,21 @@ export default function Login() {
       placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       variant: 'secret',
     }),
-  })
+  });
 
-  type Data = Static<typeof DataType>
+  type Data = Static<typeof DataType>;
 
   const onSubmit = useCallback<PageFormSubmitHandler<Data>>(
     async (data, setError) => {
       try {
-        const automationServer = automationServers.find((server) => server.url === data.server)
-        if (!automationServer) return
+        const automationServer = automationServers.find((server) => server.url === data.server);
+        if (!automationServer) return;
         const loginPageUrl =
           automationServer.type === 'controller'
             ? '/api/login/'
             : automationServer.type === 'hub'
             ? '/api/automation-hub/_ui/v1/auth/login/'
-            : undefined
+            : undefined;
 
         if (loginPageUrl !== undefined) {
           let loginPage = await ky
@@ -71,60 +71,60 @@ export default function Login() {
               credentials: 'include',
               headers: { 'x-server': data.server },
             })
-            .text()
-          loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '))
-          loginPage = loginPage.substring(loginPage.indexOf('"') + 1)
-          const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'))
+            .text();
+          loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '));
+          loginPage = loginPage.substring(loginPage.indexOf('"') + 1);
+          const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'));
 
-          const searchParams = new URLSearchParams()
-          searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken)
-          searchParams.set('username', data.username)
-          searchParams.set('password', data.password)
+          const searchParams = new URLSearchParams();
+          searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
+          searchParams.set('username', data.username);
+          searchParams.set('password', data.password);
           try {
             await ky.post(loginPageUrl, {
               credentials: 'include',
               headers: { 'x-server': data.server },
               body: searchParams,
               redirect: 'manual',
-            })
+            });
           } catch (err) {
             if (err instanceof HTTPError && err.response.status === 0) {
               // Do nothing
             } else {
-              throw err
+              throw err;
             }
           }
         }
 
-        localStorage.setItem('server', data.server)
-        setAutomationServer(automationServer)
-        headers['x-server'] = data.server
+        localStorage.setItem('server', data.server);
+        setAutomationServer(automationServer);
+        headers['x-server'] = data.server;
         switch (automationServer.type) {
           case 'eda':
-            navigate(RouteE.EdaProjects)
-            break
+            navigate(RouteE.EdaProjects);
+            break;
           case 'hub':
-            navigate(RouteE.HubDashboard)
-            break
+            navigate(RouteE.HubDashboard);
+            break;
           default:
-            navigate(RouteE.Dashboard)
-            break
+            navigate(RouteE.Dashboard);
+            break;
         }
       } catch (err) {
         if (err instanceof Error) {
-          setError(err.message)
+          setError(err.message);
         } else {
-          setError(t('Invalid username or password. Please try again.'))
+          setError(t('Invalid username or password. Please try again.'));
         }
       }
     },
     [automationServers, navigate, setAutomationServer, t]
-  )
+  );
 
-  const sm = useBreakpoint('sm')
-  const md = useBreakpoint('md')
+  const sm = useBreakpoint('sm');
+  const md = useBreakpoint('md');
 
-  const padding = md ? 48 : sm ? 32 : 16
+  const padding = md ? 48 : sm ? 32 : 16;
 
   return (
     <Page style={{ backgroundColor: sm ? '#222' : 'white' }}>
@@ -162,5 +162,5 @@ export default function Login() {
         </PageForm>
       </PageSection>
     </Page>
-  )
+  );
 }

@@ -1,15 +1,15 @@
 /* istanbul ignore file */
 
-import { Bullseye, FormGroup, Page, PageSection, TextInput } from '@patternfly/react-core'
-import { Fragment, ReactNode, useEffect, useState } from 'react'
+import { Bullseye, FormGroup, Page, PageSection, TextInput } from '@patternfly/react-core';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 
 export function AccessCode(props: { children: ReactNode }) {
-  const [hasAccess, setHasAccess] = useState(() => localStorage.getItem('access') === 'true')
+  const [hasAccess, setHasAccess] = useState(() => localStorage.getItem('access') === 'true');
   useEffect(() => {
     if (hasAccess) {
-      localStorage.setItem('access', 'true')
+      localStorage.setItem('access', 'true');
     }
-  }, [hasAccess])
+  }, [hasAccess]);
   if (!hasAccess)
     return (
       <Page>
@@ -25,7 +25,7 @@ export function AccessCode(props: { children: ReactNode }) {
           </Bullseye>
         </PageSection>
       </Page>
-    )
+    );
 
-  return <Fragment>{props.children}</Fragment>
+  return <Fragment>{props.children}</Fragment>;
 }

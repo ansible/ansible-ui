@@ -1,8 +1,8 @@
-import { ButtonVariant, DropdownPosition, PageSection } from '@patternfly/react-core'
-import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+import { ButtonVariant, DropdownPosition, PageSection } from '@patternfly/react-core';
+import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
@@ -16,21 +16,21 @@ import {
   PageHeader,
   PageLayout,
   SinceCell,
-} from '../../../../framework'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useSettings } from '../../../../framework/Settings'
-import { StatusCell } from '../../../common/StatusCell'
-import { useItem } from '../../../common/useItem'
-import { requestPost } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Instance } from '../../interfaces/Instance'
-import { NodeTypeCell } from './Instances'
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { useSettings } from '../../../../framework/Settings';
+import { StatusCell } from '../../../common/StatusCell';
+import { useItem } from '../../../common/useItem';
+import { requestPost } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Instance } from '../../interfaces/Instance';
+import { NodeTypeCell } from './Instances';
 
 export function InstanceDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const instance = useItem<Instance>('/api/v2/instances', params.id ?? '0')
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const instance = useItem<Instance>('/api/v2/instances', params.id ?? '0');
+  const history = useNavigate();
 
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
@@ -50,12 +50,12 @@ export function InstanceDetails() {
           requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
             // eslint-disable-next-line no-console
             console.error
-          )
+          );
         },
       },
-    ]
-    return itemActions
-  }, [t, history, instance])
+    ];
+    return itemActions;
+  }, [t, history, instance]);
 
   return (
     <PageLayout>
@@ -79,14 +79,14 @@ export function InstanceDetails() {
         )}
       </PageBody>
     </PageLayout>
-  )
+  );
 }
 
 function InstanceDetailsTab(props: { instance: Instance }) {
-  const { t } = useTranslation()
-  const { instance } = props
+  const { t } = useTranslation();
+  const { instance } = props;
   // const history = useNavigate()
-  const settings = useSettings()
+  const settings = useSettings();
   return (
     <>
       <Scrollable>
@@ -131,5 +131,5 @@ function InstanceDetailsTab(props: { instance: Instance }) {
         </PageSection>
       </Scrollable>
     </>
-  )
+  );
 }

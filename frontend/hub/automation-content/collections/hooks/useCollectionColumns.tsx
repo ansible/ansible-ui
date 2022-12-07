@@ -1,13 +1,17 @@
-import { Label } from '@patternfly/react-core'
-import { AnsibleTowerIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, TextCell } from '../../../../../framework'
-import { RouteE } from '../../../../Routes'
-import { Collection } from '../Collection'
+import { Label } from '@patternfly/react-core';
+import {
+  AnsibleTowerIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, TextCell } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
+import { Collection } from '../Collection';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<ITableColumn<Collection>[]>(
     () => [
       {
@@ -84,15 +88,15 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
                 <Label icon={<CheckCircleIcon />} variant="outline" color="green">
                   {t('Signed')}
                 </Label>
-              )
+              );
             case 'unsigned':
               return (
                 <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
                   {t('Unsigned')}
                 </Label>
-              )
+              );
             default:
-              return <></>
+              return <></>;
           }
         },
         list: 'secondary',
@@ -105,5 +109,5 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       },
     ],
     [t]
-  )
+  );
 }

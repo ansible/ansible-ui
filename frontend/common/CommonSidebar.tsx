@@ -1,34 +1,34 @@
-import { Nav, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core'
-import { ReactNode, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useBreakpoint } from '../../framework'
-import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
-import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher'
-import { RouteE } from '../Routes'
-import { isRouteActive } from './Masthead'
+import { Nav, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
+import { ReactNode, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useBreakpoint } from '../../framework';
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
+import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher';
+import { RouteE } from '../Routes';
+import { isRouteActive } from './Masthead';
 
 export function CommonSidebar(props: {
-  isNavOpen: boolean
-  setNavOpen: (open: boolean) => void
-  children?: ReactNode
+  isNavOpen: boolean;
+  setNavOpen: (open: boolean) => void;
+  children?: ReactNode;
 }) {
-  const { t } = useTranslation()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { automationServer } = useAutomationServers()
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { automationServer } = useAutomationServers();
 
-  const isXl = useBreakpoint('xl')
-  const { isNavOpen, setNavOpen } = props
+  const isXl = useBreakpoint('xl');
+  const { isNavOpen, setNavOpen } = props;
   const onClick = useCallback(
     (route: RouteE) => {
-      navigate(route)
+      navigate(route);
       if (!isXl) {
-        setNavOpen(false)
+        setNavOpen(false);
       }
     },
     [navigate, isXl, setNavOpen]
-  )
+  );
   return (
     <PageSidebar
       isNavOpen={isNavOpen}
@@ -68,5 +68,5 @@ export function CommonSidebar(props: {
         </Nav>
       }
     />
-  )
+  );
 }

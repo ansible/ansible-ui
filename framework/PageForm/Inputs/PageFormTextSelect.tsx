@@ -1,31 +1,31 @@
-import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core'
-import { SearchIcon } from '@patternfly/react-icons'
-import { Fragment } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
+import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core';
+import { SearchIcon } from '@patternfly/react-icons';
+import { Fragment } from 'react';
+import { useController, useFormContext } from 'react-hook-form';
 
 export function FormTextSelect<T>(props: {
-  id?: string
-  label: string
-  name: string
-  helperText?: string
-  required?: boolean
-  secret?: boolean
-  autoFocus?: boolean
-  placeholder?: string
-  selectTitle?: string
-  selectValue?: (item: T) => string | number
-  selectOpen?: (callback: (item: T) => void, title: string) => void
+  id?: string;
+  label: string;
+  name: string;
+  helperText?: string;
+  required?: boolean;
+  secret?: boolean;
+  autoFocus?: boolean;
+  placeholder?: string;
+  selectTitle?: string;
+  selectValue?: (item: T) => string | number;
+  selectOpen?: (callback: (item: T) => void, title: string) => void;
 }) {
   const {
     register,
     setValue,
     formState: { isSubmitting },
-  } = useFormContext()
-  const registration = register(props.name)
-  const { fieldState } = useController({ name: props.name })
-  const error = fieldState.error
-  let id = props.id ?? props.name
-  id = id.split('.').join('-')
+  } = useFormContext();
+  const registration = register(props.name);
+  const { fieldState } = useController({ name: props.name });
+  const error = fieldState.error;
+  let id = props.id ?? props.name;
+  id = id.split('.').join('-');
   return (
     <Fragment>
       <FormGroup
@@ -48,7 +48,7 @@ export function FormTextSelect<T>(props: {
             placeholder={props.placeholder}
             {...registration}
             onChange={(v, e) => {
-              void registration.onChange(e)
+              void registration.onChange(e);
             }}
             // innerRef={registration.ref}
             isReadOnly={isSubmitting}
@@ -58,8 +58,8 @@ export function FormTextSelect<T>(props: {
             onClick={() =>
               props.selectOpen?.((item: T) => {
                 if (props.selectValue) {
-                  const value = props.selectValue(item)
-                  setValue(props.name, value, { shouldValidate: true })
+                  const value = props.selectValue(item);
+                  setValue(props.name, value, { shouldValidate: true });
                 }
               }, props.selectTitle as string)
             }
@@ -78,5 +78,5 @@ export function FormTextSelect<T>(props: {
                 }}
             /> */}
     </Fragment>
-  )
+  );
 }

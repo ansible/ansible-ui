@@ -1,27 +1,27 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import {
   PageBody,
   PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-} from '../../../framework'
-import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
-import { useGet } from '../../common/useItem'
-import { requestPatch, requestPost } from '../../Data'
-import { RouteE } from '../../Routes'
-import { EdaRule } from '../interfaces/EdaRule'
+} from '../../../framework';
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
+import { useGet } from '../../common/useItem';
+import { requestPatch, requestPost } from '../../Data';
+import { RouteE } from '../../Routes';
+import { EdaRule } from '../interfaces/EdaRule';
 
 export function EditRule() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
-  const { data: rule } = useGet<EdaRule>(`/api/rules/${id.toString()}`)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: rule } = useGet<EdaRule>(`/api/rules/${id.toString()}`);
 
   const RuleSchemaType = useMemo(
     () =>
@@ -32,28 +32,28 @@ export function EditRule() {
         }),
       }),
     [t]
-  )
+  );
 
-  type RuleSchema = Static<typeof RuleSchemaType>
+  type RuleSchema = Static<typeof RuleSchemaType>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<RuleSchema> = async (rule, setError) => {
     try {
       if (Number.isInteger(id)) {
-        rule = await requestPatch<EdaRule>(`/api/rules/${id}`, rule)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(-1)
+        rule = await requestPatch<EdaRule>(`/api/rules/${id}`, rule);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(-1);
       } else {
-        const newRule = await requestPost<EdaRule>('/api/rules', rule)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(RouteE.EdaRuleDetails.replace(':id', newRule.id.toString()))
+        const newRule = await requestPost<EdaRule>('/api/rules', rule);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(RouteE.EdaRuleDetails.replace(':id', newRule.id.toString()));
       }
     } catch (err) {
-      setError('TODO')
+      setError('TODO');
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
     if (!rule) {
@@ -63,7 +63,7 @@ export function EditRule() {
             breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Edit rule') }]}
           />
         </PageLayout>
-      )
+      );
     } else {
       return (
         <PageLayout>
@@ -84,7 +84,7 @@ export function EditRule() {
             </PageForm>
           </PageBody>
         </PageLayout>
-      )
+      );
     }
   } else {
     return (
@@ -105,6 +105,6 @@ export function EditRule() {
           </PageForm>
         </PageBody>
       </PageLayout>
-    )
+    );
   }
 }

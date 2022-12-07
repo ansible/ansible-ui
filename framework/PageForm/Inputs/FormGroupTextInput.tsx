@@ -1,7 +1,7 @@
-import { Button, InputGroup, TextInput, TextInputProps } from '@patternfly/react-core'
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons'
-import { useState } from 'react'
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup'
+import { Button, InputGroup, TextInput, TextInputProps } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type FormGroupTextInputProps = Pick<
   TextInputProps,
@@ -17,12 +17,12 @@ export type FormGroupTextInputProps = Pick<
   | 'autoComplete'
   | 'autoFocus'
 > &
-  PageFormGroupProps
+  PageFormGroupProps;
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
-  const [showSecret, setShowSecret] = useState(false)
-  const { helperTextInvalid: _helperTextInvalid, ...textInputProps } = props
+  const [showSecret, setShowSecret] = useState(false);
+  const { helperTextInvalid: _helperTextInvalid, ...textInputProps } = props;
   return (
     <PageFormGroup {...props}>
       <InputGroup>
@@ -45,5 +45,5 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
         )}
       </InputGroup>
     </PageFormGroup>
-  )
+  );
 }

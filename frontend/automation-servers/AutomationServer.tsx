@@ -1,13 +1,13 @@
-import { Static, Type } from '@sinclair/typebox'
+import { Static, Type } from '@sinclair/typebox';
 
 export const AutomationServerType = Type.Object({
   name: Type.String(),
   url: Type.String(),
   type: Type.String(),
-})
+});
 
-export type AutomationServer = Static<typeof AutomationServerType>
+export type AutomationServer = Static<typeof AutomationServerType>;
 
 export function automationServerKeyFn(automationServer: AutomationServer) {
-  return automationServer.name
+  return automationServer.name;
 }

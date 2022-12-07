@@ -1,19 +1,19 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage'
-import { RouteE } from '../Routes'
-import { Token } from './access/token/Token'
-import { Approvals } from './administration/approvals/Approvals'
-import { RemoteRegistries } from './administration/remote-registries/RemoteRegistries'
-import { Repositories } from './administration/repositories/Repositories'
-import { TaskDetails } from './administration/tasks/TaskDetails'
-import { Tasks } from './administration/tasks/Tasks'
-import { CollectionDetails } from './automation-content/collections/CollectionDetails'
-import { Collections } from './automation-content/collections/Collections'
-import { UploadCollection } from './automation-content/collections/UploadCollection'
-import { ExecutionEnvironments } from './automation-content/execution-environments/ExecutonEnvironments'
-import { Namespaces } from './automation-content/namespaces/Namespaces'
-import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys'
-import { HubDashboard } from './dashboard/Dashboard'
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { RouteE } from '../Routes';
+import { Token } from './access/token/Token';
+import { Approvals } from './administration/approvals/Approvals';
+import { RemoteRegistries } from './administration/remote-registries/RemoteRegistries';
+import { Repositories } from './administration/repositories/Repositories';
+import { TaskDetails } from './administration/tasks/TaskDetails';
+import { Tasks } from './administration/tasks/Tasks';
+import { CollectionDetails } from './automation-content/collections/CollectionDetails';
+import { Collections } from './automation-content/collections/Collections';
+import { UploadCollection } from './automation-content/collections/UploadCollection';
+import { ExecutionEnvironments } from './automation-content/execution-environments/ExecutonEnvironments';
+import { Namespaces } from './automation-content/namespaces/Namespaces';
+import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys';
+import { HubDashboard } from './dashboard/Dashboard';
 
 export function HubRouter() {
   return (
@@ -49,5 +49,5 @@ export function HubRouter() {
       <Route path={RouteE.APIToken.replace(RouteE.Hub, '')} element={<Token />} />
       <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
-  )
+  );
 }

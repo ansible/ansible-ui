@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { Role } from './Role'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { Role } from './Role';
 
 export function useRolesFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -16,12 +16,12 @@ export function useRolesFilters() {
       },
     ],
     [t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useRolesColumns() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
@@ -60,6 +60,6 @@ export function useRolesColumns() {
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

@@ -1,17 +1,17 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea'
+import { Controller, useFormContext } from 'react-hook-form';
+import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea';
 
 export type PageFormTextAreaProps = { name: string } & Omit<
   FormGroupTextAreaProps,
   'onChange' | 'value'
->
+>;
 
 /** PatternFly TextArea wrapper for use with react-hook-form */
 export function PageFormTextArea(props: PageFormTextAreaProps) {
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext()
+  } = useFormContext();
   return (
     <Controller
       name={props.name}
@@ -26,5 +26,5 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
         />
       )}
     />
-  )
+  );
 }

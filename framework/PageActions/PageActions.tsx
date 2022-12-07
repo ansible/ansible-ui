@@ -1,10 +1,10 @@
-import { ButtonVariant, DropdownPosition, Split, SplitItem } from '@patternfly/react-core'
-import { ComponentClass, FunctionComponent, useMemo } from 'react'
-import { useBreakpoint, WindowSize } from '../components/useBreakPoint'
-import { IPageAction } from './PageAction'
-import { PageActionType } from './PageActionType'
-import { PageDropdownAction } from './PageDropdownAction'
-import { PagePinnedActions } from './PagePinnedActions'
+import { ButtonVariant, DropdownPosition, Split, SplitItem } from '@patternfly/react-core';
+import { ComponentClass, FunctionComponent, useMemo } from 'react';
+import { useBreakpoint, WindowSize } from '../components/useBreakPoint';
+import { IPageAction } from './PageAction';
+import { PageActionType } from './PageActionType';
+import { PageDropdownAction } from './PageDropdownAction';
+import { PagePinnedActions } from './PagePinnedActions';
 
 /**
  * Page actions represent actions used in table rows, toolbars, and page headers.
@@ -12,52 +12,52 @@ import { PagePinnedActions } from './PagePinnedActions'
  */
 export function PageActions<T extends object>(props: {
   /** An array of PageActions */
-  actions: IPageAction<T>[]
+  actions: IPageAction<T>[];
 
   /** The currently selected item for single actions */
-  selectedItem?: T
+  selectedItem?: T;
 
   /** The currently selected items for bulk actions */
-  selectedItems?: T[]
+  selectedItems?: T[];
 
   /** The wrapper for each item
    * @example Wrapping each button in a ToolbarItem
    */
-  wrapper?: ComponentClass | FunctionComponent
+  wrapper?: ComponentClass | FunctionComponent;
 
   /** When to collapse the primary and secondary items into the dropdown menu */
-  collapse?: WindowSize | 'always'
+  collapse?: WindowSize | 'always';
 
   /** The position for the dropdown */
-  position?: DropdownPosition
+  position?: DropdownPosition;
 
   /** Indicates if only to show the icon when not collapsed */
-  iconOnly?: boolean
+  iconOnly?: boolean;
 }) {
-  const { actions, selectedItem, selectedItems, iconOnly } = props
+  const { actions, selectedItem, selectedItems, iconOnly } = props;
 
   const collapseBreakpoint = useBreakpoint(
     props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg'
-  )
-  const collapseButtons = props.collapse === 'always' || !collapseBreakpoint
+  );
+  const collapseButtons = props.collapse === 'always' || !collapseBreakpoint;
 
   /** Actions that are visible */
   const visibleActions = useMemo(
     () => actions.filter((action) => !isHiddenAction(action, selectedItem)),
     [actions, selectedItem]
-  )
+  );
 
   /** Actions that show up outside the dropdown */
   const pinnedActions: IPageAction<T>[] = useMemo(() => {
-    if (collapseButtons) return []
-    return visibleActions?.filter(isPinnedAction)
-  }, [collapseButtons, visibleActions])
+    if (collapseButtons) return [];
+    return visibleActions?.filter(isPinnedAction);
+  }, [collapseButtons, visibleActions]);
 
   /** Actions that are not pinned and show up inside the dropdown */
   const dropdownActions: IPageAction<T>[] = useMemo(() => {
-    if (collapseButtons) return visibleActions
-    return visibleActions?.filter((action) => !isPinnedAction(action)) ?? []
-  }, [collapseButtons, visibleActions])
+    if (collapseButtons) return visibleActions;
+    return visibleActions?.filter((action) => !isPinnedAction(action)) ?? [];
+  }, [collapseButtons, visibleActions]);
 
   return (
     <Split
@@ -74,7 +74,7 @@ export function PageActions<T extends object>(props: {
         </SplitItem>
       )}
     </Split>
-  )
+  );
 }
 
 function isPinnedAction<T extends object>(action: IPageAction<T>) {
@@ -82,8 +82,8 @@ function isPinnedAction<T extends object>(action: IPageAction<T>) {
     ButtonVariant.primary,
     ButtonVariant.secondary,
     ButtonVariant.danger,
-  ]
-  return action.type !== PageActionType.seperator && actionVariants.includes(action.variant)
+  ];
+  return action.type !== PageActionType.seperator && actionVariants.includes(action.variant);
 }
 
 export function isHiddenAction<T extends object>(
@@ -93,10 +93,10 @@ export function isHiddenAction<T extends object>(
   switch (action.type) {
     case PageActionType.single:
     case PageActionType.dropdown:
-      return action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false
+      return action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false;
     case PageActionType.bulk:
     case PageActionType.seperator:
     case PageActionType.button:
-      return false
+      return false;
   }
 }

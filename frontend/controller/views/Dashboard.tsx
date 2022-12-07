@@ -11,9 +11,9 @@ import {
   Stack,
   StackItem,
   Text,
-} from '@patternfly/react-core'
-import { Fragment } from 'react'
-import { Help, PageHeader } from '../../../framework'
+} from '@patternfly/react-core';
+import { Fragment } from 'react';
+import { Help, PageHeader } from '../../../framework';
 
 export default function Dashboard() {
   return (
@@ -306,5 +306,5 @@ export default function Dashboard() {
         </PageSection>
       </Scrollable> */}
     </Fragment>
-  )
+  );
 }

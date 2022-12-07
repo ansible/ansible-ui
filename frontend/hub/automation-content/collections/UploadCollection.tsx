@@ -1,28 +1,28 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { Static, Type } from '@sinclair/typebox';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   PageBody,
   PageForm,
   PageFormSelectOption,
   PageHeader,
   PageLayout,
-} from '../../../../framework'
-import { LoadingPage } from '../../../../framework/components/LoadingPage'
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload'
-import { requestPostFile } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { useRepositories } from '../../administration/repositories/hooks/useRepositories'
-import { useNamespaces } from '../namespaces/hooks/useNamespaces'
+} from '../../../../framework';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { requestPostFile } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { useRepositories } from '../../administration/repositories/hooks/useRepositories';
+import { useNamespaces } from '../namespaces/hooks/useNamespaces';
 
 const UploadSchema = Type.Object({
   namespace: Type.String(),
   file: Type.Any(),
-})
-type UploadData = Static<typeof UploadSchema>
+});
+type UploadData = Static<typeof UploadSchema>;
 
 export function UploadCollection() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <PageLayout>
       <PageHeader
@@ -34,15 +34,15 @@ export function UploadCollection() {
       />
       <UploadCollectionByFile />
     </PageLayout>
-  )
+  );
 }
 
 export function UploadCollectionByFile() {
-  const { t } = useTranslation()
-  const namespaces = useNamespaces()
-  const repositories = useRepositories()
-  const navigate = useNavigate()
-  const onCancel = () => navigate(-1)
+  const { t } = useTranslation();
+  const namespaces = useNamespaces();
+  const repositories = useRepositories();
+  const navigate = useNavigate();
+  const onCancel = () => navigate(-1);
   return (
     <>
       {namespaces === undefined || repositories === undefined ? (
@@ -77,5 +77,5 @@ export function UploadCollectionByFile() {
         </PageBody>
       )}
     </>
-  )
+  );
 }

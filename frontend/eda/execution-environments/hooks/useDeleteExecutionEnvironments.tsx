@@ -1,18 +1,18 @@
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../../../framework'
-import { requestDelete } from '../../../Data'
-import { idKeyFn } from '../../../hub/useHubView'
-import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment'
-import { useExecutionEnvironmentColumns } from './useExecutionEnvironmentColumns'
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestDelete } from '../../../Data';
+import { idKeyFn } from '../../../hub/useHubView';
+import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
+import { useExecutionEnvironmentColumns } from './useExecutionEnvironmentColumns';
 
 export function useDeleteExecutionEnvironments(
   onComplete: (executionEnvironments: EdaExecutionEnvironment[]) => void
 ) {
-  const { t } = useTranslation()
-  const confirmationColumns = useExecutionEnvironmentColumns()
-  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns])
-  const bulkAction = useBulkConfirmation<EdaExecutionEnvironment>()
+  const { t } = useTranslation();
+  const confirmationColumns = useExecutionEnvironmentColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useBulkConfirmation<EdaExecutionEnvironment>();
   return useCallback(
     (executionEnvironments: EdaExecutionEnvironment[]) => {
       bulkAction({
@@ -36,8 +36,8 @@ export function useDeleteExecutionEnvironments(
         onComplete,
         actionFn: (executionEnvironment: EdaExecutionEnvironment) =>
           requestDelete(`/api/executionEnvironments/${executionEnvironment.id}`),
-      })
+      });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
-  )
+  );
 }

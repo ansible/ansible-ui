@@ -4,4 +4,4 @@ export enum PageTableViewTypeE {
   Cards = 'cards',
 }
 
-export type PageTableViewType = 'table' | 'list' | 'cards'
+export type PageTableViewType = 'table' | 'list' | 'cards';

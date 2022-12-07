@@ -1,22 +1,22 @@
-import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core'
-import { ChangeEvent, useCallback } from 'react'
-import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect'
+import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core';
+import { ChangeEvent, useCallback } from 'react';
+import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect';
 
 export interface IFormGroupSelectOption<T> {
-  group?: string
-  label: string
-  description?: string
-  value: T
+  group?: string;
+  label: string;
+  description?: string;
+  value: T;
 }
 
 export type FormGroupSelectOptionProps<T> = {
-  options: IFormGroupSelectOption<T>[]
+  options: IFormGroupSelectOption<T>[];
   onSelect: (
     event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
     value: T | undefined
-  ) => void
-  value: T | undefined
-} & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>
+  ) => void;
+  value: T | undefined;
+} & Omit<FormGroupSelectProps, 'onSelect' | 'value' | 'children'>;
 
 /**
  * A PatternFly FormGroup with a PatternFly Select but using IFormGroupSelectOptions for the options.
@@ -24,51 +24,51 @@ export type FormGroupSelectOptionProps<T> = {
  * This supports easy grouping and options that have values that are objects and not just strings.
  */
 export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
-  const { onSelect, value } = props
+  const { onSelect, value } = props;
 
   const onSelectHandler = useCallback(
     (
       event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
       label: string | SelectOptionObject
     ) => {
-      onSelect(event, props.options.find((option) => option.label === label.toString())?.value)
+      onSelect(event, props.options.find((option) => option.label === label.toString())?.value);
     },
     [onSelect, props.options]
-  )
+  );
 
-  const { options } = props
+  const { options } = props;
   options.sort((l, r) => {
-    if ((l.group ?? '') < (r.group ?? '')) return -1
-    if ((l.group ?? '') > (r.group ?? '')) return 1
-    if (l.label < r.label) return -1
-    if (l.label > r.label) return 1
-    return 0
-  })
+    if ((l.group ?? '') < (r.group ?? '')) return -1;
+    if ((l.group ?? '') > (r.group ?? '')) return 1;
+    if (l.label < r.label) return -1;
+    if (l.label > r.label) return 1;
+    return 0;
+  });
   const groups = options.reduce<
     Record<
       string,
       {
-        group?: string
-        label: string
-        description?: string
-        value: T
+        group?: string;
+        label: string;
+        description?: string;
+        value: T;
       }[]
     >
   >((groups, option) => {
-    const group = option.group ?? ''
-    let optionsArray = groups[group]
+    const group = option.group ?? '';
+    let optionsArray = groups[group];
     if (!optionsArray) {
-      optionsArray = []
-      groups[group] = optionsArray
+      optionsArray = [];
+      groups[group] = optionsArray;
     }
-    optionsArray.push(option)
-    return groups
-  }, {})
+    optionsArray.push(option);
+    return groups;
+  }, {});
   const isGrouped =
     Object.keys(groups).length > 1 ||
-    (Object.keys(groups).length === 1 && Object.keys(groups)[0] !== '')
+    (Object.keys(groups).length === 1 && Object.keys(groups)[0] !== '');
 
-  const selected = props.options.find((option) => option.value === value)
+  const selected = props.options.find((option) => option.value === value);
 
   return (
     <FormGroupSelect
@@ -103,5 +103,5 @@ export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
             </SelectGroup>
           ))}
     </FormGroupSelect>
-  )
+  );
 }

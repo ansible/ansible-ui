@@ -6,8 +6,8 @@
  */
 
 export interface EdaRulebook {
-  id: number
-  name: string
-  ruleset_count: number
-  fire_count: number
+  id: number;
+  name: string;
+  ruleset_count: number;
+  fire_count: number;
 }

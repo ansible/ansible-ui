@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Detail, DetailsList } from '../components/Details'
-import { ITableColumn, TableColumnCell } from './PageTable'
+import { Detail, DetailsList } from '../components/Details';
+import { ITableColumn, TableColumnCell } from './PageTable';
 
 export function TableDetails<T extends object>(props: {
-  item: T | undefined
-  columns: ITableColumn<T>[]
+  item: T | undefined;
+  columns: ITableColumn<T>[];
 }) {
-  const { item, columns } = props
-  if (!item) return <></>
+  const { item, columns } = props;
+  if (!item) return <></>;
   return (
     <DetailsList>
       {columns.map((column) => (
@@ -17,5 +17,5 @@ export function TableDetails<T extends object>(props: {
         </Detail>
       ))}
     </DetailsList>
-  )
+  );
 }

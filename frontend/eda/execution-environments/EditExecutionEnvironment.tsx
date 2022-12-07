@@ -1,29 +1,29 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useSWRConfig } from 'swr'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import {
   PageBody,
   PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-} from '../../../framework'
-import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema'
-import { useGet } from '../../common/useItem'
-import { requestPatch, requestPost } from '../../Data'
-import { RouteE } from '../../Routes'
-import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment'
+} from '../../../framework';
+import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
+import { useGet } from '../../common/useItem';
+import { requestPatch, requestPost } from '../../Data';
+import { RouteE } from '../../Routes';
+import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 
 export function EditExecutionEnvironment() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
   const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
     `/api/executionEnvironments/${id.toString()}`
-  )
+  );
 
   const ExecutionEnvironmentSchemaType = useMemo(
     () =>
@@ -34,11 +34,11 @@ export function EditExecutionEnvironment() {
         }),
       }),
     [t]
-  )
+  );
 
-  type ExecutionEnvironmentSchema = Static<typeof ExecutionEnvironmentSchemaType>
+  type ExecutionEnvironmentSchema = Static<typeof ExecutionEnvironmentSchemaType>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentSchema> = async (
     executionEnvironment,
@@ -49,27 +49,27 @@ export function EditExecutionEnvironment() {
         executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
           `/api/executionEnvironments/${id}`,
           executionEnvironment
-        )
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(-1)
+        );
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(-1);
       } else {
         const newExecutionEnvironment = await requestPost<EdaExecutionEnvironment>(
           '/api/executionEnvironments',
           executionEnvironment
-        )
-        ;(cache as unknown as { clear: () => void }).clear?.()
+        );
+        (cache as unknown as { clear: () => void }).clear?.();
         navigate(
           RouteE.EdaExecutionEnvironmentDetails.replace(
             ':id',
             newExecutionEnvironment.id.toString()
           )
-        )
+        );
       }
     } catch (err) {
-      setError('TODO')
+      setError('TODO');
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
     if (!executionEnvironment) {
@@ -82,7 +82,7 @@ export function EditExecutionEnvironment() {
             ]}
           />
         </PageLayout>
-      )
+      );
     } else {
       return (
         <PageLayout>
@@ -106,7 +106,7 @@ export function EditExecutionEnvironment() {
             </PageForm>
           </PageBody>
         </PageLayout>
-      )
+      );
     }
   } else {
     return (
@@ -128,6 +128,6 @@ export function EditExecutionEnvironment() {
           />
         </PageBody>
       </PageLayout>
-    )
+    );
   }
 }

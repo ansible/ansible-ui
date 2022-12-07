@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { ITableColumn, TextCell } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { EdaProject } from '../../interfaces/EdaProject'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn, TextCell } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { EdaProject } from '../../interfaces/EdaProject';
 
 export function useProjectColumns() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
@@ -39,5 +39,5 @@ export function useProjectColumns() {
       },
     ],
     [navigate, t]
-  )
+  );
 }

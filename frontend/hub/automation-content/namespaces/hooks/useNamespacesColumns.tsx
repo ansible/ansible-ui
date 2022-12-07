@@ -1,11 +1,11 @@
-import { RedhatIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, TextCell } from '../../../../../framework'
-import { Namespace } from '../Namespace'
+import { RedhatIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, TextCell } from '../../../../../framework';
+import { Namespace } from '../Namespace';
 
 export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<Namespace>[]>(
     () => [
       {
@@ -36,6 +36,6 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

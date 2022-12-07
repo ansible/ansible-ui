@@ -1,19 +1,19 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react'
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
 
 export interface IFrameworkTranslations {
-  cancelText: string
-  canceledText: string
-  closeText: string
-  confirmText: string
-  errorText: string
-  noItemsFound: string
-  ofText: string
-  pendingText: string
-  processingText: string
-  selectedText: string
-  submitText: string
-  submittingText: string
-  successText: string
+  cancelText: string;
+  canceledText: string;
+  closeText: string;
+  confirmText: string;
+  errorText: string;
+  noItemsFound: string;
+  ofText: string;
+  pendingText: string;
+  processingText: string;
+  selectedText: string;
+  submitText: string;
+  submittingText: string;
+  successText: string;
 }
 
 const defaultTranslations: IFrameworkTranslations = {
@@ -30,24 +30,24 @@ const defaultTranslations: IFrameworkTranslations = {
   submitText: 'Submit',
   submittingText: 'Submitting',
   successText: 'Success',
-}
+};
 
 const FrameworkTranslationsContext = createContext<
   [
     translations: IFrameworkTranslations,
     setTranslations: Dispatch<SetStateAction<IFrameworkTranslations>>
   ]
->([defaultTranslations, () => alert('Use FrameworkTranslationsProvider')])
+>([defaultTranslations, () => alert('Use FrameworkTranslationsProvider')]);
 
 export function FrameworkTranslationsProvider(props: { children: ReactNode }) {
-  const state = useState<IFrameworkTranslations>(defaultTranslations)
+  const state = useState<IFrameworkTranslations>(defaultTranslations);
   return (
     <FrameworkTranslationsContext.Provider value={state}>
       {props.children}
     </FrameworkTranslationsContext.Provider>
-  )
+  );
 }
 
 export function useFrameworkTranslations() {
-  return useContext(FrameworkTranslationsContext)
+  return useContext(FrameworkTranslationsContext);
 }

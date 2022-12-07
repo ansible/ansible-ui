@@ -1,13 +1,13 @@
-import { ReactNode } from 'react'
-import ErrorBoundary from './components/ErrorBoundary'
-import { useBreakpoint } from './components/useBreakPoint'
-import { useSettings } from './Settings'
-import { useFrameworkTranslations } from './useFrameworkTranslations'
+import { ReactNode } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useBreakpoint } from './components/useBreakPoint';
+import { useSettings } from './Settings';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export function PageBody(props: { children?: ReactNode; disablePadding?: boolean }) {
-  const usePadding = useBreakpoint('xxl') && props.disablePadding !== true
-  const settings = useSettings()
-  const [translations] = useFrameworkTranslations()
+  const usePadding = useBreakpoint('xxl') && props.disablePadding !== true;
+  const settings = useSettings();
+  const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
       <div
@@ -39,5 +39,5 @@ export function PageBody(props: { children?: ReactNode; disablePadding?: boolean
         </div>
       </div>
     </ErrorBoundary>
-  )
+  );
 }

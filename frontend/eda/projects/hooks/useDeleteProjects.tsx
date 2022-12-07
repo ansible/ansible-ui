@@ -1,16 +1,16 @@
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../../../framework'
-import { requestDelete } from '../../../Data'
-import { idKeyFn } from '../../../hub/useHubView'
-import { EdaProject } from '../../interfaces/EdaProject'
-import { useProjectColumns } from './useProjectColumns'
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestDelete } from '../../../Data';
+import { idKeyFn } from '../../../hub/useHubView';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { useProjectColumns } from './useProjectColumns';
 
 export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) {
-  const { t } = useTranslation()
-  const confirmationColumns = useProjectColumns()
-  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns])
-  const bulkAction = useBulkConfirmation<EdaProject>()
+  const { t } = useTranslation();
+  const confirmationColumns = useProjectColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useBulkConfirmation<EdaProject>();
   return useCallback(
     (projects: EdaProject[]) => {
       bulkAction({
@@ -26,8 +26,8 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
         actionColumns,
         onComplete,
         actionFn: (project: EdaProject) => requestDelete(`/api/projects/${project.id}`),
-      })
+      });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
-  )
+  );
 }

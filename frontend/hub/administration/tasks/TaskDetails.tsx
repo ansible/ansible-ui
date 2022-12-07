@@ -1,6 +1,6 @@
-import { PageSection } from '@patternfly/react-core'
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { PageSection } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   Detail,
   DetailsList,
@@ -8,19 +8,19 @@ import {
   PageHeader,
   PageLayout,
   SinceCell,
-} from '../../../../framework'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useSettings } from '../../../../framework/Settings'
-import { StatusCell } from '../../../common/StatusCell'
-import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { Task } from './Task'
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { useSettings } from '../../../../framework/Settings';
+import { StatusCell } from '../../../common/StatusCell';
+import { useItem } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { Task } from './Task';
 
 export function TaskDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const settings = useSettings()
-  const task = useItem<Task>('/api/automation-hub/pulp/api/v3/tasks', params.id ?? '0')
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const settings = useSettings();
+  const task = useItem<Task>('/api/automation-hub/pulp/api/v3/tasks', params.id ?? '0');
   return (
     <PageLayout>
       <PageHeader
@@ -55,5 +55,5 @@ export function TaskDetails() {
         </Scrollable>
       </PageBody>
     </PageLayout>
-  )
+  );
 }

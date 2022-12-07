@@ -1,5 +1,5 @@
-import { Grid, GridItem, gridSpans, Stack } from '@patternfly/react-core'
-import useResizeObserver from '@react-hook/resize-observer'
+import { Grid, GridItem, gridSpans, Stack } from '@patternfly/react-core';
+import useResizeObserver from '@react-hook/resize-observer';
 import {
   Children,
   Dispatch,
@@ -9,70 +9,70 @@ import {
   useMemo,
   useRef,
   useState,
-} from 'react'
+} from 'react';
 
 export function Masonry(props: { minSize: number; maxColumns?: number; children?: ReactNode }) {
-  const target = useRef(null)
-  const [columns, setColumns] = useState(1)
+  const target = useRef(null);
+  const [columns, setColumns] = useState(1);
   useResizeObserver(target, (entry) => {
     setColumns(
       Math.min(
         props.maxColumns ?? 12,
         Math.max(Math.floor(entry.contentRect.width / props.minSize), 1)
       )
-    )
-  })
-  const [span, setSpan] = useState<gridSpans>(12)
+    );
+  });
+  const [span, setSpan] = useState<gridSpans>(12);
 
-  const [sizes, setSizes] = useState<Record<number, number>>({})
+  const [sizes, setSizes] = useState<Record<number, number>>({});
   useLayoutEffect(() => {
     switch (columns) {
       case 1:
-        setSpan(12)
-        break
+        setSpan(12);
+        break;
       case 2:
-        setSpan(6)
-        break
+        setSpan(6);
+        break;
       case 3:
-        setSpan(4)
-        break
+        setSpan(4);
+        break;
       case 4:
-        setSpan(3)
-        break
+        setSpan(3);
+        break;
       case 5:
-        setSpan(2)
-        break
+        setSpan(2);
+        break;
       case 6:
-        setSpan(2)
-        break
+        setSpan(2);
+        break;
       default:
-        setSpan(1)
-        break
+        setSpan(1);
+        break;
     }
-  }, [columns])
+  }, [columns]);
 
-  const realColumns = 12 / span
+  const realColumns = 12 / span;
 
   const itemColumns = useMemo(() => {
-    const itemColumns: ReactNode[][] = new Array(realColumns).fill(0).map(() => [])
-    const columnHeights: number[] = new Array(realColumns).fill(0) as number[]
+    const itemColumns: ReactNode[][] = new Array(realColumns).fill(0).map(() => []);
+    const columnHeights: number[] = new Array(realColumns).fill(0) as number[];
     Children.forEach(props.children, (child, index) => {
-      const smallest = Math.min(...columnHeights)
-      const columnIndex = columnHeights.findIndex((column) => column === smallest)
+      const smallest = Math.min(...columnHeights);
+      const columnIndex = columnHeights.findIndex((column) => column === smallest);
       if (columnIndex !== undefined && columnIndex !== -1) {
         itemColumns[columnIndex].push(
           <MasonryItem key={index} index={index} sizes={sizes} setSizes={setSizes}>
             {child}
           </MasonryItem>
-        )
-        const height = sizes[index]
+        );
+        const height = sizes[index];
         if (height !== undefined) {
-          columnHeights[columnIndex] += height + 16
+          columnHeights[columnIndex] += height + 16;
         }
       }
-    })
-    return itemColumns
-  }, [props.children, realColumns, sizes])
+    });
+    return itemColumns;
+  }, [props.children, realColumns, sizes]);
 
   return (
     <div ref={target}>
@@ -84,24 +84,24 @@ export function Masonry(props: { minSize: number; maxColumns?: number; children?
         ))}
       </Grid>
     </div>
-  )
+  );
 }
 
 function MasonryItem(props: {
-  children?: ReactNode
-  index: number
-  sizes: Record<number, number>
-  setSizes: Dispatch<SetStateAction<Record<number, number>>>
+  children?: ReactNode;
+  index: number;
+  sizes: Record<number, number>;
+  setSizes: Dispatch<SetStateAction<Record<number, number>>>;
 }) {
-  const target = useRef(null)
+  const target = useRef(null);
   useResizeObserver(target, (entry) => {
     props.setSizes((sizes) => {
       if (props.sizes[props.index] !== entry.contentRect.height) {
-        sizes = { ...sizes }
-        sizes[props.index] = entry.contentRect.height
+        sizes = { ...sizes };
+        sizes[props.index] = entry.contentRect.height;
       }
-      return sizes
-    })
-  })
-  return <div ref={target}>{props.children}</div>
+      return sizes;
+    });
+  });
+  return <div ref={target}>{props.children}</div>;
 }

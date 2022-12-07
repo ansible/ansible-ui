@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { idKeyFn, useHubView } from '../../useHubView'
-import { useNamespaceFilters } from './hooks/useNamespaceFilters'
-import { useNamespacesColumns } from './hooks/useNamespacesColumns'
-import { Namespace } from './Namespace'
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { idKeyFn, useHubView } from '../../useHubView';
+import { useNamespaceFilters } from './hooks/useNamespaceFilters';
+import { useNamespacesColumns } from './hooks/useNamespacesColumns';
+import { Namespace } from './Namespace';
 
 export function Namespaces() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <PageLayout>
       <PageHeader
@@ -31,20 +31,20 @@ export function Namespaces() {
         </PageTab>
       </PageTabs>
     </PageLayout>
-  )
+  );
 }
 
 export function AllNamespaces() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useNamespaceFilters()
-  const tableColumns = useNamespacesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useNamespaceFilters();
+  const tableColumns = useNamespacesColumns();
   const view = useHubView<Namespace>(
     '/api/automation-hub/_ui/v1/namespaces/',
     idKeyFn,
     toolbarFilters,
     tableColumns
-  )
+  );
   return (
     <PageTable<Namespace>
       toolbarFilters={toolbarFilters}
@@ -58,20 +58,20 @@ export function AllNamespaces() {
       defaultSubtitle={t('Namespace')}
       defaultTableView="cards"
     />
-  )
+  );
 }
 
 export function MyNamespaces() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useNamespaceFilters()
-  const tableColumns = useNamespacesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useNamespaceFilters();
+  const tableColumns = useNamespacesColumns();
   const view = useHubView<Namespace>(
     '/api/automation-hub/_ui/v1/my-namespaces/',
     idKeyFn,
     toolbarFilters,
     tableColumns
-  )
+  );
   return (
     <PageTable<Namespace>
       toolbarFilters={toolbarFilters}
@@ -84,5 +84,5 @@ export function MyNamespaces() {
       {...view}
       defaultSubtitle={t('Namespace')}
     />
-  )
+  );
 }

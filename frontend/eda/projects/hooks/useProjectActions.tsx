@@ -1,16 +1,16 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { IPageAction, PageActionType } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { EdaProject } from '../../interfaces/EdaProject'
-import { useDeleteProjects } from './useDeleteProjects'
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { IPageAction, PageActionType } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectActions(refresh: () => Promise<unknown>) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const deleteProjects = useDeleteProjects(() => void refresh())
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const deleteProjects = useDeleteProjects(() => void refresh());
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
@@ -28,5 +28,5 @@ export function useProjectActions(refresh: () => Promise<unknown>) {
       },
     ],
     [deleteProjects, navigate, t]
-  )
+  );
 }

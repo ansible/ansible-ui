@@ -1,20 +1,20 @@
-import { FormGroup, Switch } from '@patternfly/react-core'
-import { useController, useFormContext } from 'react-hook-form'
+import { FormGroup, Switch } from '@patternfly/react-core';
+import { useController, useFormContext } from 'react-hook-form';
 
 export function PageFormSwitch(props: {
-  id?: string
-  label: string
-  name: string
-  helperText?: string
-  required?: boolean
-  autoFocus?: boolean
+  id?: string;
+  label: string;
+  name: string;
+  helperText?: string;
+  required?: boolean;
+  autoFocus?: boolean;
 }) {
   const {
     formState: { isSubmitting },
-  } = useFormContext()
-  const { field, fieldState } = useController({ name: props.name })
-  const error = fieldState.error
-  const id = props.id ?? props.name
+  } = useFormContext();
+  const { field, fieldState } = useController({ name: props.name });
+  const error = fieldState.error;
+  const id = props.id ?? props.name;
   return (
     <FormGroup
       id={`${id}-form-group`}
@@ -39,5 +39,5 @@ export function PageFormSwitch(props: {
         isDisabled={isSubmitting}
       />
     </FormGroup>
-  )
+  );
 }

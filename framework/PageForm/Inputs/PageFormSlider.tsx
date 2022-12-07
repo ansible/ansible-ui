@@ -1,26 +1,26 @@
-import { Flex, FlexItem, FormGroup, Slider } from '@patternfly/react-core'
-import { useController, useFormContext } from 'react-hook-form'
+import { Flex, FlexItem, FormGroup, Slider } from '@patternfly/react-core';
+import { useController, useFormContext } from 'react-hook-form';
 
 export function PageFormSlider(props: {
-  id?: string
-  label: string
-  name: string
-  helperText?: string
-  required?: boolean
-  autoFocus?: boolean
-  min?: number
-  max?: number
-  valueLabel?: string
+  id?: string;
+  label: string;
+  name: string;
+  helperText?: string;
+  required?: boolean;
+  autoFocus?: boolean;
+  min?: number;
+  max?: number;
+  valueLabel?: string;
 }) {
   const {
     formState: { isSubmitting },
-  } = useFormContext()
-  const { field, fieldState } = useController({ name: props.name })
-  const error = fieldState.error
-  const id = props.id ?? props.name
-  const max = props.max ?? 100
-  const min = props.min ?? 1
-  const value = Number(field.value)
+  } = useFormContext();
+  const { field, fieldState } = useController({ name: props.name });
+  const error = fieldState.error;
+  const id = props.id ?? props.name;
+  const max = props.max ?? 100;
+  const min = props.min ?? 1;
+  const value = Number(field.value);
   return (
     <FormGroup
       id={`${id}-form-group`}
@@ -62,5 +62,5 @@ export function PageFormSlider(props: {
         </FlexItem>
       </Flex>
     </FormGroup>
-  )
+  );
 }

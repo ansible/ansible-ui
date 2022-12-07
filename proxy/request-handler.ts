@@ -1,22 +1,22 @@
-import { Http2ServerRequest, Http2ServerResponse } from 'http2'
-import { HTTP_STATUS_INTERNAL_SERVER_ERROR } from './constants'
-import { logger } from './logger'
-import { proxyHandler } from './proxy-handler'
-import { serve } from './serve'
+import { Http2ServerRequest, Http2ServerResponse } from 'http2';
+import { HTTP_STATUS_INTERNAL_SERVER_ERROR } from './constants';
+import { logger } from './logger';
+import { proxyHandler } from './proxy-handler';
+import { serve } from './serve';
 
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
   try {
-    const target = req.headers['x-server']
+    const target = req.headers['x-server'];
     if (target) {
-      proxyHandler(req, res)
+      proxyHandler(req, res);
     } else {
-      void serve(req, res)
+      void serve(req, res);
     }
   } catch (err) {
-    logger.error(err)
+    logger.error(err);
     if (!res.headersSent) {
-      res.writeHead(HTTP_STATUS_INTERNAL_SERVER_ERROR).end()
-      return
+      res.writeHead(HTTP_STATUS_INTERNAL_SERVER_ERROR).end();
+      return;
     }
   }
 }

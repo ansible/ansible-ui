@@ -6,64 +6,64 @@
  */
 
 export interface Team {
-  id: number
-  type: string
-  url: string
+  id: number;
+  type: string;
+  url: string;
   related: {
-    created_by: string
-    modified_by: string
-    projects: string
-    users: string
-    credentials: string
-    roles: string
-    object_roles: string
-    activity_stream: string
-    access_list: string
-    organization: string
-  }
+    created_by: string;
+    modified_by: string;
+    projects: string;
+    users: string;
+    credentials: string;
+    roles: string;
+    object_roles: string;
+    activity_stream: string;
+    access_list: string;
+    organization: string;
+  };
   summary_fields: {
     organization: {
-      id: number
-      name: string
-      description: string
-    }
+      id: number;
+      name: string;
+      description: string;
+    };
     created_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     modified_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     object_roles: {
       admin_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       member_role: {
-        description: string
-        name: string
-        id: number
-      }
+        description: string;
+        name: string;
+        id: number;
+      };
       read_role: {
-        description: string
-        name: string
-        id: number
-      }
-    }
+        description: string;
+        name: string;
+        id: number;
+      };
+    };
     user_capabilities: {
-      edit: boolean
-      delete: boolean
-    }
-  }
-  created: string
-  modified: string
-  name: string
-  description: string
-  organization: number
+      edit: boolean;
+      delete: boolean;
+    };
+  };
+  created: string;
+  modified: string;
+  name: string;
+  description: string;
+  organization: number;
 }

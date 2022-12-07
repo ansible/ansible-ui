@@ -6,20 +6,20 @@ import {
   PageSection,
   Text,
   Title,
-} from '@patternfly/react-core'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { useSettings } from '../../framework/Settings'
-import { RouteE } from '../Routes'
-import { useAutomationServers } from './AutomationServerProvider'
+} from '@patternfly/react-core';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useSettings } from '../../framework/Settings';
+import { RouteE } from '../Routes';
+import { useAutomationServers } from './AutomationServerProvider';
 
 export function AutomationServerSwitcher() {
-  const { t } = useTranslation()
-  const settings = useSettings()
-  const { automationServer, automationServers } = useAutomationServers()
-  const [open, setOpen] = useState(false)
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const settings = useSettings();
+  const { automationServer, automationServers } = useAutomationServers();
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <PageSection
       variant="dark"
@@ -64,8 +64,8 @@ export function AutomationServerSwitcher() {
                   ? navigate(RouteE.ControllerAutomationServers)
                   : automationServer?.type === 'hub'
                   ? navigate(RouteE.HubAutomationServers)
-                  : navigate(RouteE.AutomationServers)
-                setOpen(false)
+                  : navigate(RouteE.AutomationServers);
+                setOpen(false);
               }}
             >
               {t('Manage automation servers')}
@@ -98,5 +98,5 @@ export function AutomationServerSwitcher() {
         ))}
       </ContextSelector>
     </PageSection>
-  )
+  );
 }

@@ -6,6 +6,6 @@
  */
 
 export interface EdaJob {
-  id: number
-  uuid: string
+  id: number;
+  uuid: string;
 }

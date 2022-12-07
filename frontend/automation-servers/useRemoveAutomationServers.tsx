@@ -1,14 +1,17 @@
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../framework'
-import { AutomationServer, automationServerKeyFn } from './AutomationServer'
-import { useAutomationServers } from './AutomationServerProvider'
-import { useAutomationServersColumns } from './AutomationServersPage'
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../framework';
+import { AutomationServer, automationServerKeyFn } from './AutomationServer';
+import { useAutomationServers } from './AutomationServerProvider';
+import { useAutomationServersColumns } from './AutomationServersPage';
 
 export function useRemoveAutomationServers() {
-  const { t } = useTranslation()
-  const a = useAutomationServers()
-  const confirmationColumns = useAutomationServersColumns({ disableLinks: true, disableSort: true })
-  const bulkAction = useBulkConfirmation<AutomationServer>()
+  const { t } = useTranslation();
+  const a = useAutomationServers();
+  const confirmationColumns = useAutomationServersColumns({
+    disableLinks: true,
+    disableSort: true,
+  });
+  const bulkAction = useBulkConfirmation<AutomationServer>();
   const deleteAutomationServers = (servers: AutomationServer[]) => {
     bulkAction({
       title: t('Permanently delete servers', { count: servers.length }),
@@ -22,10 +25,10 @@ export function useRemoveAutomationServers() {
       confirmationColumns,
       actionColumns: confirmationColumns,
       actionFn: (automationServer: AutomationServer) => {
-        a.setAutomationServers(a.automationServers.filter((a) => a !== automationServer))
-        return Promise.resolve()
+        a.setAutomationServers(a.automationServers.filter((a) => a !== automationServer));
+        return Promise.resolve();
       },
-    })
-  }
-  return deleteAutomationServers
+    });
+  };
+  return deleteAutomationServers;
 }

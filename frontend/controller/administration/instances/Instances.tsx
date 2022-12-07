@@ -1,8 +1,8 @@
-import { ButtonVariant, Tooltip } from '@patternfly/react-core'
-import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
@@ -13,28 +13,28 @@ import {
   SinceCell,
   TablePage,
   TextCell,
-} from '../../../../framework'
-import { Dotted } from '../../../../framework/components/Dotted'
-import { AlertToasterProps, usePageAlertToaster } from '../../../../framework/PageAlertToaster'
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
-import { StatusCell } from '../../../common/StatusCell'
-import { requestPost } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Instance } from '../../interfaces/Instance'
-import { useControllerView } from '../../useControllerView'
+} from '../../../../framework';
+import { Dotted } from '../../../../framework/components/Dotted';
+import { AlertToasterProps, usePageAlertToaster } from '../../../../framework/PageAlertToaster';
+import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { StatusCell } from '../../../common/StatusCell';
+import { requestPost } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Instance } from '../../interfaces/Instance';
+import { useControllerView } from '../../useControllerView';
 
 export function Instances() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useInstancesFilters()
-  const tableColumns = useInstancesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useInstancesFilters();
+  const tableColumns = useInstancesColumns();
   const view = useControllerView<Instance>({
     url: '/api/v2/instances/',
     toolbarFilters,
     tableColumns,
-  })
+  });
 
-  const alertToaster = usePageAlertToaster()
+  const alertToaster = usePageAlertToaster();
 
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
@@ -50,13 +50,13 @@ export function Instances() {
               .catch(
                 // eslint-disable-next-line no-console
                 console.error
-              )
+              );
           }
         },
       },
     ],
     [t, view]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
@@ -69,24 +69,24 @@ export function Instances() {
           const alert: AlertToasterProps = {
             variant: 'info',
             title: t('Health check running'),
-          }
-          alertToaster.addAlert(alert)
+          };
+          alertToaster.addAlert(alert);
           void requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
             .catch((err) => {
               alertToaster.replaceAlert(alert, {
                 variant: 'danger',
                 title: t('Health check failed'),
                 children: err instanceof Error && err.message,
-              })
+              });
             })
             .then(() => {
-              void view.refresh()
+              void view.refresh();
               alertToaster.replaceAlert(alert, {
                 variant: 'success',
                 title: t('Health check success'),
                 timeout: 2000,
-              })
-            })
+              });
+            });
         },
       },
       {
@@ -97,7 +97,7 @@ export function Instances() {
       },
     ],
     [alertToaster, navigate, t, view]
-  )
+  );
 
   return (
     <TablePage<Instance>
@@ -116,11 +116,11 @@ export function Instances() {
       emptyStateButtonClick={() => navigate(RouteE.CreateInstance)}
       {...view}
     />
-  )
+  );
 }
 
 export function useInstancesFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -145,15 +145,15 @@ export function useInstancesFilters() {
       },
     ],
     [t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Instance>[]>(
     () => [
       {
@@ -216,12 +216,12 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       modifiedColumn,
     ],
     [t, createdColumn, modifiedColumn, navigate]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }
 
 export function NodeTypeCell(props: { node_type: string }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   switch (props.node_type) {
     case 'hybrid':
       return (
@@ -232,7 +232,7 @@ export function NodeTypeCell(props: { node_type: string }) {
         >
           <Dotted>{t('Hybrid node')}</Dotted>
         </Tooltip>
-      )
+      );
     case 'control':
       return (
         <Tooltip
@@ -242,7 +242,7 @@ export function NodeTypeCell(props: { node_type: string }) {
         >
           <Dotted>{t('Control node')}</Dotted>
         </Tooltip>
-      )
+      );
     case 'execution':
       return (
         <Tooltip
@@ -252,7 +252,7 @@ export function NodeTypeCell(props: { node_type: string }) {
         >
           <Dotted>{t('Execution node')}</Dotted>
         </Tooltip>
-      )
+      );
     case 'hop':
       return (
         <Tooltip
@@ -262,8 +262,8 @@ export function NodeTypeCell(props: { node_type: string }) {
         >
           <Dotted>{t('HOP node')}</Dotted>
         </Tooltip>
-      )
+      );
     default:
-      return <>{props.node_type}</>
+      return <>{props.node_type}</>;
   }
 }

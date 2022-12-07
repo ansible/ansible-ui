@@ -1,26 +1,26 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage'
-import { RouteE } from '../Routes'
-import Dashboard from './dashboard/Dashboard'
-import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment'
-import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails'
-import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments'
-import { EditInventory } from './inventories/EditInventory'
-import { Inventories } from './inventories/Inventories'
-import { InventoryDetails } from './inventories/InventoryDetails'
-import { EditProject } from './projects/EditProject'
-import { ProjectDetails } from './projects/ProjectDetails'
-import { Projects } from './projects/Projects'
-import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation'
-import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails'
-import { RulebookActivations } from './rulebook-activations/RulebookActivations'
-import { EditRulebook } from './rulebooks/EditRulebook'
-import { RulebookDetails } from './rulebooks/RulebookDetails'
-import { Rulebooks } from './rulebooks/Rulebooks'
-import { EditRule } from './rules/EditRule'
-import { RuleDetails } from './rules/RuleDetails'
-import { Rules } from './rules/Rules'
-import { UnderDevelopment } from './under-development/UnderDevelopment'
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { RouteE } from '../Routes';
+import Dashboard from './dashboard/Dashboard';
+import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
+import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails';
+import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
+import { EditInventory } from './inventories/EditInventory';
+import { Inventories } from './inventories/Inventories';
+import { InventoryDetails } from './inventories/InventoryDetails';
+import { EditProject } from './projects/EditProject';
+import { ProjectDetails } from './projects/ProjectDetails';
+import { Projects } from './projects/Projects';
+import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
+import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
+import { RulebookActivations } from './rulebook-activations/RulebookActivations';
+import { EditRulebook } from './rulebooks/EditRulebook';
+import { RulebookDetails } from './rulebooks/RulebookDetails';
+import { Rulebooks } from './rulebooks/Rulebooks';
+import { EditRule } from './rules/EditRule';
+import { RuleDetails } from './rules/RuleDetails';
+import { Rules } from './rules/Rules';
+import { UnderDevelopment } from './under-development/UnderDevelopment';
 
 export function EventDrivenRouter() {
   return (
@@ -113,5 +113,5 @@ export function EventDrivenRouter() {
 
       <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
-  )
+  );
 }

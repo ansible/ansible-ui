@@ -1,4 +1,4 @@
-import { ajvResolver } from '@hookform/resolvers/ajv'
+import { ajvResolver } from '@hookform/resolvers/ajv';
 
 import {
   ActionGroup,
@@ -8,10 +8,10 @@ import {
   Grid,
   gridItemSpanValueShape,
   Tooltip,
-} from '@patternfly/react-core'
-import * as Ajv from 'ajv'
-import { JSONSchema6 } from 'json-schema'
-import { CSSProperties, ReactNode, useContext, useState } from 'react'
+} from '@patternfly/react-core';
+import * as Ajv from 'ajv';
+import { JSONSchema6 } from 'json-schema';
+import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
   DeepPartial,
   ErrorOption,
@@ -20,24 +20,24 @@ import {
   FormProvider,
   useForm,
   useFormState,
-} from 'react-hook-form'
-import { Scrollable } from '../components/Scrollable'
-import { useBreakpoint } from '../components/useBreakPoint'
-import { SettingsContext } from '../Settings'
+} from 'react-hook-form';
+import { Scrollable } from '../components/Scrollable';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { SettingsContext } from '../Settings';
 
 export function PageForm<T extends object>(props: {
-  schema?: JSONSchema6
-  children?: ReactNode
-  submitText: string
-  onSubmit: PageFormSubmitHandler<T>
-  cancelText: string
-  onCancel?: () => void
-  defaultValue?: DeepPartial<T>
-  isVertical?: boolean
-  singleColumn?: boolean
-  disableScrolling?: boolean
+  schema?: JSONSchema6;
+  children?: ReactNode;
+  submitText: string;
+  onSubmit: PageFormSubmitHandler<T>;
+  cancelText: string;
+  onCancel?: () => void;
+  defaultValue?: DeepPartial<T>;
+  isVertical?: boolean;
+  singleColumn?: boolean;
+  disableScrolling?: boolean;
 }) {
-  const { schema, defaultValue } = props
+  const { schema, defaultValue } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
     resolver: schema
@@ -46,21 +46,21 @@ export function PageForm<T extends object>(props: {
           { strict: false, addFormats: true } as Ajv.Options
         )
       : undefined,
-  })
+  });
 
-  const { handleSubmit, setError: setFieldError } = form
-  const [error, setError] = useState('')
-  const isMd = useBreakpoint('md')
-  const [settings] = useContext(SettingsContext)
-  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal'
-  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple'
+  const { handleSubmit, setError: setFieldError } = form;
+  const [error, setError] = useState('');
+  const isMd = useBreakpoint('md');
+  const [settings] = useContext(SettingsContext);
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
-  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12
-  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12
-  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
-  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12
-  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12
-  const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800
+  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
+  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
+  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
+  const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800;
 
   return (
     // <PageBody>
@@ -68,11 +68,11 @@ export function PageForm<T extends object>(props: {
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(async (data) => {
-          setError('')
+          setError('');
           try {
-            await props.onSubmit(data, setError, setFieldError)
+            await props.onSubmit(data, setError, setFieldError);
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error')
+            setError(err instanceof Error ? err.message : 'Unknown error');
           }
         })}
         isHorizontal={isHorizontal}
@@ -130,18 +130,18 @@ export function PageForm<T extends object>(props: {
       </Form>
     </FormProvider>
     // </PageBody>
-  )
+  );
 }
 
 export type PageFormSubmitHandler<T extends FieldValues> = (
   data: T,
   setError: (error: string) => void,
   setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
-) => Promise<unknown>
+) => Promise<unknown>;
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
-  const { isSubmitting, errors } = useFormState()
-  const hasErrors = errors && Object.keys(errors).length > 0
+  const { isSubmitting, errors } = useFormState();
+  const hasErrors = errors && Object.keys(errors).length > 0;
   return (
     <Tooltip content="Please fix errors" trigger={hasErrors ? undefined : 'manual'}>
       <Button
@@ -155,7 +155,7 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
         {props.children}
       </Button>
     </Tooltip>
-  )
+  );
 }
 
 export function PageFormCancelButton(props: { onCancel: () => void; children: ReactNode }) {
@@ -163,5 +163,5 @@ export function PageFormCancelButton(props: { onCancel: () => void; children: Re
     <Button type="button" variant="link" onClick={props.onCancel}>
       {props.children}
     </Button>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -12,25 +12,25 @@ import {
   PageTable,
   TextCell,
   useSelected,
-} from '../../framework'
-import { PageTableViewTypeE } from '../../framework/PageTable/PageTableViewType'
-import { useView } from '../../framework/useView'
-import { RouteE } from '../Routes'
-import { AutomationServer, automationServerKeyFn } from './AutomationServer'
-import { useAutomationServers } from './AutomationServerProvider'
-import { useAddAutomationServer } from './useAddAutomationServer'
-import { useRemoveAutomationServers } from './useRemoveAutomationServers'
+} from '../../framework';
+import { PageTableViewTypeE } from '../../framework/PageTable/PageTableViewType';
+import { useView } from '../../framework/useView';
+import { RouteE } from '../Routes';
+import { AutomationServer, automationServerKeyFn } from './AutomationServer';
+import { useAutomationServers } from './AutomationServerProvider';
+import { useAddAutomationServer } from './useAddAutomationServer';
+import { useRemoveAutomationServers } from './useRemoveAutomationServers';
 
 export function AutomationServersPage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const tableColumns = useAutomationServersColumns()
-  const { automationServers } = useAutomationServers()
-  const view = useView()
-  const selected = useSelected(automationServers, automationServerKeyFn)
+  const tableColumns = useAutomationServersColumns();
+  const { automationServers } = useAutomationServers();
+  const view = useView();
+  const selected = useSelected(automationServers, automationServerKeyFn);
 
-  const addAutomationServer = useAddAutomationServer()
-  const removeAutomationServers = useRemoveAutomationServers()
+  const addAutomationServer = useAddAutomationServer();
+  const removeAutomationServers = useRemoveAutomationServers();
 
   const toolbarActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
@@ -49,7 +49,7 @@ export function AutomationServersPage() {
       },
     ],
     [addAutomationServer, removeAutomationServers, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
@@ -69,7 +69,7 @@ export function AutomationServersPage() {
       },
     ],
     [removeAutomationServers, t]
-  )
+  );
 
   return (
     <PageLayout>
@@ -90,15 +90,15 @@ export function AutomationServersPage() {
         defaultTableView={PageTableViewTypeE.Cards}
       />
     </PageLayout>
-  )
+  );
 }
 
 export function useAutomationServersColumns(_options?: {
-  disableLinks?: boolean
-  disableSort?: boolean
+  disableLinks?: boolean;
+  disableSort?: boolean;
 }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const tableColumns = useMemo<ITableColumn<AutomationServer>[]>(
     () => [
@@ -118,13 +118,13 @@ export function useAutomationServersColumns(_options?: {
         cell: (server) => {
           switch (server.type) {
             case 'controller':
-              return <TextCell text="Automation controller" />
+              return <TextCell text="Automation controller" />;
             case 'hub':
-              return <TextCell text="Automation hub" />
+              return <TextCell text="Automation hub" />;
             case 'eda':
-              return <TextCell text="Event driven automation" />
+              return <TextCell text="Event driven automation" />;
             default:
-              return <TextCell text="Unknown" />
+              return <TextCell text="Unknown" />;
           }
         },
         card: 'subtitle',
@@ -138,6 +138,6 @@ export function useAutomationServersColumns(_options?: {
       },
     ],
     [navigate, t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

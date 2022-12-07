@@ -1,13 +1,13 @@
-import { ActionGroup, Button, PageSection, Tooltip } from '@patternfly/react-core'
-import { useFormState } from 'react-hook-form'
-import { PageFormAlerts } from './PageFormAlerts'
+import { ActionGroup, Button, PageSection, Tooltip } from '@patternfly/react-core';
+import { useFormState } from 'react-hook-form';
+import { PageFormAlerts } from './PageFormAlerts';
 
 export function PageFormButtons(props: {
-  submitText: string
-  cancelText: string
-  onCancel: () => void
+  submitText: string;
+  cancelText: string;
+  onCancel: () => void;
 }) {
-  const { errors } = useFormState()
+  const { errors } = useFormState();
 
   return (
     <div>
@@ -39,5 +39,5 @@ export function PageFormButtons(props: {
         </ActionGroup>
       </PageSection>
     </div>
-  )
+  );
 }

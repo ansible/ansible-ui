@@ -6,7 +6,7 @@
  */
 
 export interface EdaExtraVars {
-  name: string
-  extra_var: string
-  id: number
+  name: string;
+  extra_var: string;
+  id: number;
 }

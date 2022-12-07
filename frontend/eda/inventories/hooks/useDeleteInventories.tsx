@@ -1,15 +1,15 @@
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../../../framework'
-import { requestDelete } from '../../../Data'
-import { idKeyFn } from '../../../hub/useHubView'
-import { EdaInventory } from '../../interfaces/EdaInventory'
-import { useInventoriesColumns } from './useInventoryColumns'
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestDelete } from '../../../Data';
+import { idKeyFn } from '../../../hub/useHubView';
+import { EdaInventory } from '../../interfaces/EdaInventory';
+import { useInventoriesColumns } from './useInventoryColumns';
 
 export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) => void) {
-  const { t } = useTranslation()
-  const confirmationColumns = useInventoriesColumns()
-  const actionColumns = [confirmationColumns[0]]
-  const bulkAction = useBulkConfirmation<EdaInventory>()
+  const { t } = useTranslation();
+  const confirmationColumns = useInventoriesColumns();
+  const actionColumns = [confirmationColumns[0]];
+  const bulkAction = useBulkConfirmation<EdaInventory>();
   const deleteInventories = (items: EdaInventory[]) => {
     bulkAction({
       title: t('Permanently delete inventories', { count: items.length }),
@@ -24,7 +24,7 @@ export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) =
       actionColumns,
       onComplete,
       isDanger: true,
-    })
-  }
-  return deleteInventories
+    });
+  };
+  return deleteInventories;
 }

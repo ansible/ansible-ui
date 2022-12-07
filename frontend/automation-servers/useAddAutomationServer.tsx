@@ -1,22 +1,22 @@
-import { Modal, ModalVariant } from '@patternfly/react-core'
-import { Static, Type } from '@sinclair/typebox'
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { PageForm, usePageDialog } from '../../framework'
-import { PageFormSchema } from '../../framework/PageForm/PageFormSchema'
-import { useAutomationServers } from './AutomationServerProvider'
+import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Static, Type } from '@sinclair/typebox';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PageForm, usePageDialog } from '../../framework';
+import { PageFormSchema } from '../../framework/PageForm/PageFormSchema';
+import { useAutomationServers } from './AutomationServerProvider';
 
 export function useAddAutomationServer() {
-  const [_, setDialog] = usePageDialog()
+  const [_, setDialog] = usePageDialog();
   const addAutomationServer = useCallback(
     () => setDialog(<AddAutomationServerDialog />),
     [setDialog]
-  )
-  return addAutomationServer
+  );
+  return addAutomationServer;
 }
 
 export function AddAutomationServerDialog() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const DataType = Type.Object({
     name: Type.String({
@@ -49,19 +49,19 @@ export function AddAutomationServerDialog() {
         },
       ],
     }),
-  })
+  });
 
-  type Data = Static<typeof DataType>
+  type Data = Static<typeof DataType>;
 
-  const { setAutomationServers } = useAutomationServers()
+  const { setAutomationServers } = useAutomationServers();
 
-  const [_, setDialog] = usePageDialog()
-  const onClose = () => setDialog(undefined)
+  const [_, setDialog] = usePageDialog();
+  const onClose = () => setDialog(undefined);
   const onSubmit = (data: Data) => {
-    setAutomationServers((servers) => [...servers.filter((a) => a.url !== data.url), data])
-    onClose()
-    return Promise.resolve()
-  }
+    setAutomationServers((servers) => [...servers.filter((a) => a.url !== data.url), data]);
+    onClose();
+    return Promise.resolve();
+  };
 
   return (
     <Modal title={t('Add automation server')} isOpen onClose={onClose} variant={ModalVariant.small}>
@@ -77,5 +77,5 @@ export function AddAutomationServerDialog() {
         <PageFormSchema schema={DataType} />
       </PageForm>
     </Modal>
-  )
+  );
 }

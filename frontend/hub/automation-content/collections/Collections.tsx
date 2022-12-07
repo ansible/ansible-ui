@@ -15,37 +15,37 @@ import {
   Split,
   SplitItem,
   Stack,
-} from '@patternfly/react-core'
+} from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   CircleIcon,
   ExternalLinkAltIcon,
   RedhatIcon,
-} from '@patternfly/react-icons'
-import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router-dom'
-import { PageHeader, PageLayout, PageTable } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { idKeyFn, useHubView } from '../../useHubView'
-import { Collection } from './Collection'
-import { useCollectionActions } from './hooks/useCollectionActions'
-import { useCollectionColumns } from './hooks/useCollectionColumns'
-import { useCollectionFilters } from './hooks/useCollectionFilters'
-import { useCollectionsActions } from './hooks/useCollectionsActions'
+} from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { idKeyFn, useHubView } from '../../useHubView';
+import { Collection } from './Collection';
+import { useCollectionActions } from './hooks/useCollectionActions';
+import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { useCollectionFilters } from './hooks/useCollectionFilters';
+import { useCollectionsActions } from './hooks/useCollectionsActions';
 
 export function Collections() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useCollectionFilters()
-  const tableColumns = useCollectionColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useCollectionFilters();
+  const tableColumns = useCollectionColumns();
   const view = useHubView<Collection>(
     '/api/automation-hub/_ui/v1/repo/published/',
     idKeyFn,
     toolbarFilters
-  )
-  const toolbarActions = useCollectionsActions()
-  const rowActions = useCollectionActions()
-  const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0
+  );
+  const toolbarActions = useCollectionsActions();
+  const rowActions = useCollectionActions();
+  const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;
   return (
     <PageLayout>
       <PageHeader
@@ -75,11 +75,11 @@ export function Collections() {
         defaultSubtitle={t('Collection')}
       />
     </PageLayout>
-  )
+  );
 }
 
 function FeaturedCollections() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <>
       <PageSection>
@@ -150,5 +150,5 @@ function FeaturedCollections() {
       </PageSection>
       <Divider />
     </>
-  )
+  );
 }

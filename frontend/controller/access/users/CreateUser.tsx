@@ -1,25 +1,25 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
+import { Static, Type } from '@sinclair/typebox';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework';
 import {
   PageFormSchema,
   TypeSecretInput,
   TypeSelect,
   TypeTextInput,
-} from '../../../../framework/PageForm/PageFormSchema'
-import { ItemsResponse, requestGet, requestPost } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Organization } from '../../interfaces/Organization'
-import { User } from '../../interfaces/User'
-import { getControllerError } from '../../useControllerView'
-import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
+} from '../../../../framework/PageForm/PageFormSchema';
+import { ItemsResponse, requestGet, requestPost } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
+import { User } from '../../interfaces/User';
+import { getControllerError } from '../../useControllerView';
+import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
 
 export function CreateUser() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const selectOrganization = useSelectOrganization()
+  const selectOrganization = useSelectOrganization();
 
   const CreateUserSchema = Type.Object({
     username: TypeTextInput({ title: t('Username'), maxLength: 150, autoComplete: 'new-username' }),
@@ -63,22 +63,22 @@ export function CreateUser() {
     firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),
     lastName: Type.Optional(TypeTextInput({ title: t('Last name'), maxLength: 150 })),
     email: Type.Optional(TypeTextInput({ title: t('Email'), format: 'email' })),
-  })
-  type CreateUser = Static<typeof CreateUserSchema>
+  });
+  type CreateUser = Static<typeof CreateUserSchema>;
 
   const onSubmit: PageFormSubmitHandler<CreateUser> = async (userData, setError, setFieldError) => {
     try {
       const result = await requestGet<ItemsResponse<Organization>>(
         `/api/v2/organizations/?name=${userData.organization}`
-      )
+      );
       if (result.results.length === 0) {
-        setFieldError('organization', { message: t('Organization not found') })
-        return false
+        setFieldError('organization', { message: t('Organization not found') });
+        return false;
       }
-      const organization = result.results[0]
+      const organization = result.results[0];
       if (userData.confirmPassword !== userData.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') })
-        return false
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
       }
       const newUser: Partial<User> = {
         username: userData.username,
@@ -88,18 +88,18 @@ export function CreateUser() {
         password: userData.password,
         is_superuser: userData.userType === t('System administrator'),
         is_system_auditor: userData.userType === t('System auditor'),
-      }
+      };
       const user = await requestPost<User>(
         `/api/v2/organizations/${organization.id.toString()}/users/`,
         newUser
-      )
-      navigate(RouteE.UserDetails.replace(':id', user.id.toString()))
+      );
+      navigate(RouteE.UserDetails.replace(':id', user.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err))
+      setError(await getControllerError(err));
     }
-  }
+  };
 
-  const onCancel = () => navigate(-1)
+  const onCancel = () => navigate(-1);
 
   return (
     <>
@@ -120,5 +120,5 @@ export function CreateUser() {
         </PageForm>
       </PageBody>
     </>
-  )
+  );
 }

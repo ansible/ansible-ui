@@ -1,17 +1,17 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput'
+import { Controller, useFormContext } from 'react-hook-form';
+import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
 export type PageFormTextInputProps = { name: string } & Omit<
   FormGroupTextInputProps,
   'onChange' | 'value'
->
+>;
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
 export function PageFormTextInput(props: PageFormTextInputProps) {
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext()
+  } = useFormContext();
   return (
     <Controller
       name={props.name}
@@ -32,5 +32,5 @@ export function PageFormTextInput(props: PageFormTextInputProps) {
         />
       )}
     />
-  )
+  );
 }

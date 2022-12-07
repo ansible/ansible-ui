@@ -1,13 +1,13 @@
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
-import { requestPost } from '../../../../Data'
-import { Team } from '../../../interfaces/Team'
-import { User } from '../../../interfaces/User'
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
+import { requestPost } from '../../../../Data';
+import { Team } from '../../../interfaces/Team';
+import { User } from '../../../interfaces/User';
 
 export function useAddUsersToTeams() {
-  const { t } = useTranslation()
-  const userProgressDialog = useBulkActionDialog<User>()
+  const { t } = useTranslation();
+  const userProgressDialog = useBulkActionDialog<User>();
   const addUserToTeams = useCallback(
     (users: User[], teams: Team[], onComplete?: (users: User[]) => void) => {
       userProgressDialog({
@@ -23,14 +23,14 @@ export function useAddUsersToTeams() {
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id },
               signal
-            )
+            );
           }
         },
         processingText: t('Adding users to teams...', { count: teams.length }),
         onComplete,
-      })
+      });
     },
     [userProgressDialog, t]
-  )
-  return addUserToTeams
+  );
+  return addUserToTeams;
 }

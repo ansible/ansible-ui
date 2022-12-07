@@ -7,7 +7,7 @@
 Each table uses a view using a React hook. The view handles the state for the table. Sorting, filtering, pagination, etc...
 
 ```tsx
-const view = useView()
+const view = useView();
 ```
 
 For different backends, the view can be wrapped to make a specific view hook for the API.
@@ -44,7 +44,7 @@ The PageTable component takes in the properties from the view and shows a table 
 
 ```tsx
 export function Users() {
-  const view = useMyApiView<IUser>({ url: '/api/users' })
+  const view = useMyApiView<IUser>({ url: '/api/users' });
   const tableColumns = useMemo<ITableColumn<IUser>[]>(
     () => [
       {
@@ -54,7 +54,7 @@ export function Users() {
       },
     ],
     []
-  )
+  );
   return (
     <PageLayout>
       <PageHeader title="Users" />
@@ -62,7 +62,7 @@ export function Users() {
         <PageTable<IUser> tableColumns={tableColumns} {...view} />
       </PageBody>
     </PageLayout>
-  )
+  );
 }
 ```
 
