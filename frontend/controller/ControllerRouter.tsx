@@ -1,35 +1,35 @@
-import { Bullseye, Spinner } from '@patternfly/react-core'
-import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage'
-import Debug from '../common/Debug'
-import { RouteE } from '../Routes'
-import { EditOrganization } from './access/organizations/EditOrganization'
-import { OrganizationDetails } from './access/organizations/OrganizationDetails'
-import { Organizations } from './access/organizations/Organizations'
-import { EditTeam } from './access/teams/EditTeam'
-import { TeamDetails } from './access/teams/TeamDetails'
-import { Teams } from './access/teams/Teams'
-import { CreateUser } from './access/users/CreateUser'
-import { EditUser } from './access/users/EditUser'
-import { UserDetailsPage } from './access/users/UserDetails'
-import { Users } from './access/users/Users'
-import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments'
-import { InstanceGroups } from './administration/instance-groups/InstanceGroups'
-import { EditInstance } from './administration/instances/EditInstance'
-import { InstanceDetails } from './administration/instances/InstanceDetails'
-import { Instances } from './administration/instances/Instances'
-import { Credentials } from './resources/credentials/Credentials'
-import { Hosts } from './resources/hosts/Hosts'
-import { Inventories } from './resources/inventories/Inventories'
-import { Projects } from './resources/projects/Projects'
-import { Templates } from './resources/templates/Templates'
-import Settings from './settings/Settings'
-import Dashboard from './views/Dashboard'
-import Jobs from './views/jobs/Jobs'
+import { Bullseye, Spinner } from '@patternfly/react-core';
+import { lazy, Suspense } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import Debug from '../common/Debug';
+import { RouteE } from '../Routes';
+import { EditOrganization } from './access/organizations/EditOrganization';
+import { OrganizationDetails } from './access/organizations/OrganizationDetails';
+import { Organizations } from './access/organizations/Organizations';
+import { EditTeam } from './access/teams/EditTeam';
+import { TeamDetails } from './access/teams/TeamDetails';
+import { Teams } from './access/teams/Teams';
+import { CreateUser } from './access/users/CreateUser';
+import { EditUser } from './access/users/EditUser';
+import { UserDetailsPage } from './access/users/UserDetails';
+import { Users } from './access/users/Users';
+import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
+import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
+import { EditInstance } from './administration/instances/EditInstance';
+import { InstanceDetails } from './administration/instances/InstanceDetails';
+import { Instances } from './administration/instances/Instances';
+import { Credentials } from './resources/credentials/Credentials';
+import { Hosts } from './resources/hosts/Hosts';
+import { Inventories } from './resources/inventories/Inventories';
+import { Projects } from './resources/projects/Projects';
+import { Templates } from './resources/templates/Templates';
+import Settings from './settings/Settings';
+import Dashboard from './views/Dashboard';
+import Jobs from './views/jobs/Jobs';
 
 // Lazy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
-const Topology = lazy(() => import('./administration/topology/Topology'))
+const Topology = lazy(() => import('./administration/topology/Topology'));
 
 export function ControllerRouter() {
   return (
@@ -127,5 +127,5 @@ export function ControllerRouter() {
         <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
       </Routes>
     </Suspense>
-  )
+  );
 }

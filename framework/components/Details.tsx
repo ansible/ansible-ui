@@ -5,51 +5,51 @@ import {
   DescriptionListTerm,
   Skeleton,
   Stack,
-} from '@patternfly/react-core'
-import { ComponentClass, ReactNode } from 'react'
-import { useSettings } from '../Settings'
+} from '@patternfly/react-core';
+import { ComponentClass, ReactNode } from 'react';
+import { useSettings } from '../Settings';
 
 export interface IDetailText {
-  label: string
-  icon?: ComponentClass
-  text?: string
-  helpTitle?: string
-  help?: ReactNode
-  to?: string
-  link?: string
-  color?: string
-  copy?: boolean
-  since?: boolean
+  label: string;
+  icon?: ComponentClass;
+  text?: string;
+  helpTitle?: string;
+  help?: ReactNode;
+  to?: string;
+  link?: string;
+  color?: string;
+  copy?: boolean;
+  since?: boolean;
 }
 
 export function isDetailText(detail: IDetail): detail is IDetailText {
-  return 'label' in detail && !('items' in detail)
+  return 'label' in detail && !('items' in detail);
 }
 
 export interface IDetailList {
-  label: string
-  icon?: ComponentClass
-  items: IDetailListItem[]
+  label: string;
+  icon?: ComponentClass;
+  items: IDetailListItem[];
 }
 
 export function isDetailList(detail: IDetail): detail is IDetailList {
-  return 'items' in detail && 'label' in detail
+  return 'items' in detail && 'label' in detail;
 }
 
 export interface IDetailListItem {
-  icon?: ComponentClass
-  text: string
-  helpTitle?: string
-  help?: ReactNode
+  icon?: ComponentClass;
+  text: string;
+  helpTitle?: string;
+  help?: ReactNode;
 }
 
-export type IDetail = IDetailText | IDetailList
+export type IDetail = IDetailText | IDetailList;
 
 export function DetailsList(props: { children?: ReactNode }) {
-  const settings = useSettings()
-  const orientation = settings.formLayout
-  const columns = settings.formColumns
-  const isCompact = false
+  const settings = useSettings();
+  const orientation = settings.formLayout;
+  const columns = settings.formColumns;
+  const isCompact = false;
   return (
     <DescriptionList
       orientation={{
@@ -76,11 +76,11 @@ export function DetailsList(props: { children?: ReactNode }) {
     >
       {props.children}
     </DescriptionList>
-  )
+  );
 }
 
 export function Detail(props: { label?: string; children?: ReactNode }) {
-  if (!props.children) return <></>
+  if (!props.children) return <></>;
   return (
     <DescriptionListGroup>
       {props.label && (
@@ -94,7 +94,7 @@ export function Detail(props: { label?: string; children?: ReactNode }) {
         {props.children}
       </DescriptionListDescription>
     </DescriptionListGroup>
-  )
+  );
 }
 
 export function DetailsSkeleton() {
@@ -105,5 +105,5 @@ export function DetailsSkeleton() {
       <Skeleton />
       <Skeleton />
     </Stack>
-  )
+  );
 }

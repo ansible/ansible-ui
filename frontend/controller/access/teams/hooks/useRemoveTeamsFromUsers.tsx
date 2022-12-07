@@ -1,13 +1,13 @@
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog'
-import { requestPost } from '../../../../Data'
-import { Team } from '../../../interfaces/Team'
-import { User } from '../../../interfaces/User'
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
+import { requestPost } from '../../../../Data';
+import { Team } from '../../../interfaces/Team';
+import { User } from '../../../interfaces/User';
 
 export function useRemoveTeamsFromUsers(onComplete?: (team: Team[]) => void) {
-  const { t } = useTranslation()
-  const bulkProgressDialog = useBulkActionDialog<Team>()
+  const { t } = useTranslation();
+  const bulkProgressDialog = useBulkActionDialog<Team>();
   const removeUserToTeams = useCallback(
     (users: User[], teams: Team[]) => {
       bulkProgressDialog({
@@ -23,16 +23,16 @@ export function useRemoveTeamsFromUsers(onComplete?: (team: Team[]) => void) {
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
-            )
+            );
           }
         },
         processingText: t('Removing user from teams...', {
           count: teams.length,
         }),
         onComplete,
-      })
+      });
     },
     [onComplete, bulkProgressDialog, t]
-  )
-  return removeUserToTeams
+  );
+  return removeUserToTeams;
 }

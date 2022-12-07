@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, SinceCell, TextCell } from '../../../../../framework'
-import { RemoteRegistry } from '../RemoteRegistry'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
+import { RemoteRegistry } from '../RemoteRegistry';
 
 export function useRemoteRegistriesColumns(_options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<RemoteRegistry>[]>(
     () => [
       {
@@ -24,6 +24,6 @@ export function useRemoteRegistriesColumns(_options?: {
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

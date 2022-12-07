@@ -1,16 +1,16 @@
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../../../framework'
-import { requestDelete } from '../../../Data'
-import { idKeyFn } from '../../../hub/useHubView'
-import { EdaRulebook } from '../../interfaces/EdaRulebook'
-import { useRulebookColumns } from './useRulebookColumns'
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestDelete } from '../../../Data';
+import { idKeyFn } from '../../../hub/useHubView';
+import { EdaRulebook } from '../../interfaces/EdaRulebook';
+import { useRulebookColumns } from './useRulebookColumns';
 
 export function useDeleteRulebooks(onComplete: (rulebooks: EdaRulebook[]) => void) {
-  const { t } = useTranslation()
-  const confirmationColumns = useRulebookColumns()
-  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns])
-  const bulkAction = useBulkConfirmation<EdaRulebook>()
+  const { t } = useTranslation();
+  const confirmationColumns = useRulebookColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useBulkConfirmation<EdaRulebook>();
   return useCallback(
     (rulebooks: EdaRulebook[]) => {
       bulkAction({
@@ -26,8 +26,8 @@ export function useDeleteRulebooks(onComplete: (rulebooks: EdaRulebook[]) => voi
         actionColumns,
         onComplete,
         actionFn: (rulebook: EdaRulebook) => requestDelete(`/api/rulebooks/${rulebook.id}`),
-      })
+      });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
-  )
+  );
 }

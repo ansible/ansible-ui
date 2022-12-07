@@ -1,43 +1,43 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { useControllerView } from '../../useControllerView'
-import { Inventory } from './Inventory'
-import { useDeleteInventories } from './useDeleteInventories'
+} from '../../common/controller-toolbar-filters';
+import { useControllerView } from '../../useControllerView';
+import { Inventory } from './Inventory';
+import { useDeleteInventories } from './useDeleteInventories';
 
 export function Inventories() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useInventoriesFilters()
-  const tableColumns = useInventoriesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useInventoriesFilters();
+  const tableColumns = useInventoriesColumns();
   const view = useControllerView<Inventory>({
     url: '/api/v2/inventories/',
     toolbarFilters,
     tableColumns,
-  })
-  const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh)
+  });
+  const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Inventory>[]>(
     () => [
@@ -56,7 +56,7 @@ export function Inventories() {
       },
     ],
     [navigate, deleteInventories, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Inventory>[]>(
     () => [
@@ -75,7 +75,7 @@ export function Inventories() {
       },
     ],
     [navigate, deleteInventories, t]
-  )
+  );
 
   return (
     <TablePage<Inventory>
@@ -99,14 +99,14 @@ export function Inventories() {
       emptyStateButtonClick={() => navigate(RouteE.CreateInventory)}
       {...view}
     />
-  )
+  );
 }
 
 export function useInventoriesFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -115,27 +115,27 @@ export function useInventoriesFilters() {
       modifiedByToolbarFilter,
     ],
     [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (inventory: Inventory) =>
       navigate(RouteE.InventoryDetails.replace(':id', inventory.id.toString())),
     [navigate]
-  )
+  );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
-  })
-  const descriptionColumn = useDescriptionColumn()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  });
+  const descriptionColumn = useDescriptionColumn();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Inventory>[]>(
     () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
     [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

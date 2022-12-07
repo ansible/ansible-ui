@@ -6,18 +6,18 @@
  */
 
 export interface EdaRule {
-  id: number
-  name: string
+  id: number;
+  name: string;
   action: {
     run_playbook?: {
-      name: string
-      copy_files: boolean
-      post_events: boolean
-    }
-    debug?: null
-  }
+      name: string;
+      copy_files: boolean;
+      post_events: boolean;
+    };
+    debug?: null;
+  };
   ruleset: {
-    id: number
-    name: string
-  }
+    id: number;
+    name: string;
+  };
 }

@@ -4,11 +4,11 @@ import {
   ChipGroup,
   DropdownPosition,
   PageSection,
-} from '@patternfly/react-core'
-import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+} from '@patternfly/react-core';
+import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Detail,
   DetailsList,
@@ -23,27 +23,27 @@ import {
   PageTabs,
   SinceCell,
   TextCell,
-} from '../../../../framework'
-import { Scrollable } from '../../../../framework/components/Scrollable'
-import { useSettings } from '../../../../framework/Settings'
-import { useItem } from '../../../common/useItem'
-import { RouteE } from '../../../Routes'
-import { Team } from '../../interfaces/Team'
-import { User } from '../../interfaces/User'
-import { useControllerView } from '../../useControllerView'
-import { useUsersColumns, useUsersFilters } from '../users/Users'
-import { useDeleteTeams } from './hooks/useDeleteTeams'
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework/components/Scrollable';
+import { useSettings } from '../../../../framework/Settings';
+import { useItem } from '../../../common/useItem';
+import { RouteE } from '../../../Routes';
+import { Team } from '../../interfaces/Team';
+import { User } from '../../interfaces/User';
+import { useControllerView } from '../../useControllerView';
+import { useUsersColumns, useUsersFilters } from '../users/Users';
+import { useDeleteTeams } from './hooks/useDeleteTeams';
 
 export function TeamDetails() {
-  const { t } = useTranslation()
-  const params = useParams<{ id: string }>()
-  const team = useItem<Team>('/api/v2/teams', params.id ?? '0')
-  const history = useNavigate()
+  const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
+  const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
+  const history = useNavigate();
   const deleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
     if (deletedTeams.length > 0) {
-      history(RouteE.Teams)
+      history(RouteE.Teams);
     }
-  })
+  });
 
   const itemActions: IPageAction<Team>[] = useMemo(() => {
     const itemActions: IPageAction<Team>[] = [
@@ -59,13 +59,13 @@ export function TeamDetails() {
         icon: TrashIcon,
         label: t('Delete team'),
         onClick: () => {
-          if (!team) return
-          deleteTeams([team])
+          if (!team) return;
+          deleteTeams([team]);
         },
       },
-    ]
-    return itemActions
-  }, [t, history, team, deleteTeams])
+    ];
+    return itemActions;
+  }, [t, history, team, deleteTeams]);
 
   return (
     <PageLayout>
@@ -104,14 +104,14 @@ export function TeamDetails() {
       )}
       {/* </PageBody> */}
     </PageLayout>
-  )
+  );
 }
 
 function TeamDetailsTab(props: { team: Team }) {
-  const { t } = useTranslation()
-  const { team } = props
-  const history = useNavigate()
-  const settings = useSettings()
+  const { t } = useTranslation();
+  const { team } = props;
+  const history = useNavigate();
+  const settings = useSettings();
   return (
     <>
       <Scrollable>
@@ -166,14 +166,14 @@ function TeamDetailsTab(props: { team: Team }) {
         </PageSection>
       </Scrollable>
     </>
-  )
+  );
 }
 
 function TeamAccessTab(props: { team: Team }) {
-  const { team } = props
-  const { t } = useTranslation()
+  const { team } = props;
+  const { t } = useTranslation();
 
-  const toolbarFilters = useUsersFilters()
+  const toolbarFilters = useUsersFilters();
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -195,10 +195,10 @@ function TeamAccessTab(props: { team: Team }) {
       },
     ],
     [t]
-  )
+  );
 
   // Table Columns
-  const tableColumns = useUsersColumns()
+  const tableColumns = useUsersColumns();
   tableColumns.splice(1, 0, {
     header: t('Roles'),
     cell: (user) => (
@@ -210,7 +210,7 @@ function TeamAccessTab(props: { team: Team }) {
         ))}
       </ChipGroup>
     ),
-  })
+  });
 
   // Row Actions
   const rowActions = useMemo<IPageAction<User>[]>(
@@ -223,16 +223,16 @@ function TeamAccessTab(props: { team: Team }) {
       },
     ],
     [t]
-  )
+  );
 
   const view = useControllerView<User>({
     url: `/api/v2/teams/${team.id}/access_list/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
-  })
+  });
 
-  const history = useNavigate()
+  const history = useNavigate();
 
   return (
     <PageTable<User>
@@ -247,5 +247,5 @@ function TeamAccessTab(props: { team: Team }) {
       emptyStateButtonClick={() => history(RouteE.CreateUser)}
       {...view}
     />
-  )
+  );
 }

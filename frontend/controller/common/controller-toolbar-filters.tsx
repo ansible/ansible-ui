@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { IToolbarFilter } from '../../../framework'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IToolbarFilter } from '../../../framework';
 
 export function useNameToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'name',
@@ -12,11 +12,11 @@ export function useNameToolbarFilter() {
       query: 'name__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useDescriptionToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'description',
@@ -25,11 +25,11 @@ export function useDescriptionToolbarFilter() {
       query: 'description__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useOrganizationToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'organization',
@@ -38,11 +38,11 @@ export function useOrganizationToolbarFilter() {
       query: 'organization__name__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useCreatedByToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'created-by',
@@ -51,11 +51,11 @@ export function useCreatedByToolbarFilter() {
       query: 'created_by__username__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useModifiedByToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'modified-by',
@@ -64,11 +64,11 @@ export function useModifiedByToolbarFilter() {
       query: 'modified_by__username__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useUsernameToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'username',
@@ -77,11 +77,11 @@ export function useUsernameToolbarFilter() {
       query: 'username__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useFirstNameToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'firstname',
@@ -90,11 +90,11 @@ export function useFirstNameToolbarFilter() {
       query: 'first_name__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useLastNameToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'lastname',
@@ -103,11 +103,11 @@ export function useLastNameToolbarFilter() {
       query: 'last_name__icontains',
     }),
     [t]
-  )
+  );
 }
 
 export function useEmailToolbarFilter() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'email',
@@ -116,5 +116,5 @@ export function useEmailToolbarFilter() {
       query: 'email__icontains',
     }),
     [t]
-  )
+  );
 }

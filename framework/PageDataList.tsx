@@ -13,22 +13,22 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Title,
-} from '@patternfly/react-core'
-import { ExclamationCircleIcon, PlusCircleIcon } from '@patternfly/react-icons'
-import { Dispatch, Fragment, ReactNode, SetStateAction } from 'react'
-import { Scrollable } from './components/Scrollable'
-import { IPageAction } from './PageActions/PageAction'
-import { PageActions } from './PageActions/PageActions'
-import { PageActionType } from './PageActions/PageActionType'
-import { PageBody } from './PageBody'
-import { PageHeader, PageHeaderProps } from './PageHeader'
-import { PageLayout } from './PageLayout'
-import { PagePagination } from './PageTable/PagePagination'
-import { IToolbarFilter } from './PageTable/PageToolbar'
-import { useSettings } from './Settings'
+} from '@patternfly/react-core';
+import { ExclamationCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { Dispatch, Fragment, ReactNode, SetStateAction } from 'react';
+import { Scrollable } from './components/Scrollable';
+import { IPageAction } from './PageActions/PageAction';
+import { PageActions } from './PageActions/PageActions';
+import { PageActionType } from './PageActions/PageActionType';
+import { PageBody } from './PageBody';
+import { PageHeader, PageHeaderProps } from './PageHeader';
+import { PageLayout } from './PageLayout';
+import { PagePagination } from './PageTable/PagePagination';
+import { IToolbarFilter } from './PageTable/PageToolbar';
+import { useSettings } from './Settings';
 
 export type DataListPageProps<T extends object> = PageHeaderProps &
-  PageDataListProps<T> & { error?: Error }
+  PageDataListProps<T> & { error?: Error };
 
 export function DataListPage<T extends object>(props: DataListPageProps<T>) {
   return (
@@ -40,56 +40,56 @@ export function DataListPage<T extends object>(props: DataListPageProps<T>) {
         </PageBody>
       </PageLayout>
     </>
-  )
+  );
 }
 
 export type PageDataListProps<T extends object> = {
-  keyFn: (item: T) => string | number
+  keyFn: (item: T) => string | number;
 
-  itemCount?: number
-  pageItems: T[] | undefined
+  itemCount?: number;
+  pageItems: T[] | undefined;
 
-  toolbarActions?: IPageAction<T>[]
+  toolbarActions?: IPageAction<T>[];
 
-  dataCells: ((item: T) => ReactNode)[]
-  actions: IPageAction<T>[]
+  dataCells: ((item: T) => ReactNode)[];
+  actions: IPageAction<T>[];
 
-  toolbarFilters?: IToolbarFilter[]
-  filters?: Record<string, string[]>
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>
-  clearAllFilters?: () => void
+  toolbarFilters?: IToolbarFilter[];
+  filters?: Record<string, string[]>;
+  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  clearAllFilters?: () => void;
 
-  sort?: string
-  setSort?: (sort: string) => void
-  sortDirection?: 'asc' | 'desc'
-  setSortDirection?: (sortDirection: 'asc' | 'desc') => void
-  compact?: boolean
+  sort?: string;
+  setSort?: (sort: string) => void;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
+  compact?: boolean;
 
-  page: number
-  perPage: number
-  setPage: (page: number) => void
-  setPerPage: (perPage: number) => void
-  autoHidePagination?: boolean
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
+  autoHidePagination?: boolean;
 
-  isSelected?: (item: T) => boolean
-  selectedItems?: T[]
-  selectItem?: (item: T) => void
-  unselectItem?: (item: T) => void
-  selectItems?: (items: T[]) => void
-  unselectAll?: () => void
-  onSelect?: (item: T) => void
-  selectNoneText?: string
+  isSelected?: (item: T) => boolean;
+  selectedItems?: T[];
+  selectItem?: (item: T) => void;
+  unselectItem?: (item: T) => void;
+  selectItems?: (items: T[]) => void;
+  unselectAll?: () => void;
+  onSelect?: (item: T) => void;
+  selectNoneText?: string;
 
-  errorStateTitle: string
-  error?: Error
+  errorStateTitle: string;
+  error?: Error;
 
-  emptyStateTitle: string
-  emptyStateDescription?: string
-  emptyStateButtonText?: string
-  emptyStateButtonClick?: () => void
+  emptyStateTitle: string;
+  emptyStateDescription?: string;
+  emptyStateButtonText?: string;
+  emptyStateButtonClick?: () => void;
 
-  t?: (t: string) => string
-}
+  t?: (t: string) => string;
+};
 
 export function PageDataList<T extends object>(props: PageDataListProps<T>) {
   const {
@@ -105,11 +105,11 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
     filters,
     error,
     dataCells,
-  } = props
+  } = props;
   const showSelect =
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-    undefined
-  const settings = useSettings()
+    undefined;
+  const settings = useSettings();
 
   if (error) {
     return (
@@ -138,7 +138,7 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
           <EmptyStateBody>{error.message}</EmptyStateBody>
         </EmptyState>
       </div>
-    )
+    );
   }
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
@@ -157,7 +157,7 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
           </Button>
         )}
       </EmptyState>
-    )
+    );
   }
 
   return (
@@ -174,9 +174,9 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
                     isChecked={isSelected?.(item)}
                     onClick={() => {
                       if (isSelected?.(item)) {
-                        selectItem?.(item)
+                        selectItem?.(item);
                       } else {
-                        unselectItem?.(item)
+                        unselectItem?.(item);
                       }
                     }}
                   />
@@ -196,7 +196,7 @@ export function PageDataList<T extends object>(props: PageDataListProps<T>) {
       </Scrollable>
       {(!props.autoHidePagination || (itemCount ?? 0) > perPage) && <PagePagination {...props} />}
     </Fragment>
-  )
+  );
 }
 
 function DataListActions<T extends object>(props: { actions: IPageAction<T>[] }) {
@@ -210,5 +210,5 @@ function DataListActions<T extends object>(props: { actions: IPageAction<T>[] })
     >
       <PageActions actions={props.actions} position={DropdownPosition.right}></PageActions>
     </DataListAction>
-  )
+  );
 }

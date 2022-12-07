@@ -24,7 +24,7 @@ import {
   ToolbarItem,
   ToolbarToggleGroup,
   Tooltip,
-} from '@patternfly/react-core'
+} from '@patternfly/react-core';
 import {
   ArrowRightIcon,
   ColumnsIcon,
@@ -33,94 +33,94 @@ import {
   TableIcon,
   ThLargeIcon,
   TimesIcon,
-} from '@patternfly/react-icons'
-import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react'
-import { BulkSelector } from '../components/BulkSelector'
-import { useBreakpoint } from '../components/useBreakPoint'
-import { IPageAction } from '../PageActions/PageAction'
-import { PageActions } from '../PageActions/PageActions'
-import { PageActionType } from '../PageActions/PageActionType'
-import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect'
-import { useSettings } from '../Settings'
-import { useFrameworkTranslations } from '../useFrameworkTranslations'
-import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
+} from '@patternfly/react-icons';
+import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
+import { BulkSelector } from '../components/BulkSelector';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
+import { PageActionType } from '../PageActions/PageActionType';
+import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
+import { useSettings } from '../Settings';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 
 export interface IItemFilter<T extends object> {
-  label: string
-  type?: 'search' | 'filter'
+  label: string;
+  type?: 'search' | 'filter';
   options: {
-    label: string
-    value: string
-  }[]
-  filter: (item: T, values: string[]) => boolean
+    label: string;
+    value: string;
+  }[];
+  filter: (item: T, values: string[]) => boolean;
 }
 
-export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void
+export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values: string[]) => void;
 
 export function toolbarActionsHaveBulkActions<T extends object>(actions?: IPageAction<T>[]) {
-  if (!actions) return false
+  if (!actions) return false;
   for (const action of actions) {
-    if (action.type === 'bulk') return true
+    if (action.type === 'bulk') return true;
   }
-  return false
+  return false;
 }
 
 export interface IToolbarStringFilter {
-  key: string
-  label: string
-  type: 'string'
-  query: string
-  placeholder?: string
+  key: string;
+  label: string;
+  type: 'string';
+  query: string;
+  placeholder?: string;
 }
 
 export interface IToolbarSelectFilter {
-  key: string
-  label: string
-  type: 'select'
+  key: string;
+  label: string;
+  type: 'select';
   options: {
-    label: string
-    value: string
-  }[]
-  query: string
-  placeholder?: string
+    label: string;
+    value: string;
+  }[];
+  query: string;
+  placeholder?: string;
 }
 
-export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter
+export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter;
 
-export type IFilterState = Record<string, string[] | undefined>
+export type IFilterState = Record<string, string[] | undefined>;
 
 export type PagetableToolbarProps<T extends object> = {
-  openColumnModal?: () => void
-  keyFn: (item: T) => string | number
+  openColumnModal?: () => void;
+  keyFn: (item: T) => string | number;
 
-  itemCount?: number
+  itemCount?: number;
 
-  toolbarActions?: IPageAction<T>[]
+  toolbarActions?: IPageAction<T>[];
 
-  toolbarFilters?: IToolbarFilter[]
-  filters?: Record<string, string[]>
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>
-  clearAllFilters?: () => void
+  toolbarFilters?: IToolbarFilter[];
+  filters?: Record<string, string[]>;
+  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  clearAllFilters?: () => void;
 
-  page: number
-  perPage: number
-  setPage: (page: number) => void
-  setPerPage: (perPage: number) => void
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
 
-  isSelected?: (item: T) => boolean
-  selectedItems?: T[]
-  selectItem?: (item: T) => void
-  unselectItem?: (item: T) => void
-  selectItems?: (items: T[]) => void
-  unselectAll?: () => void
-  onSelect?: (item: T) => void
-  disableBorderBottom?: boolean
+  isSelected?: (item: T) => boolean;
+  selectedItems?: T[];
+  selectItem?: (item: T) => void;
+  unselectItem?: (item: T) => void;
+  selectItems?: (items: T[]) => void;
+  unselectAll?: () => void;
+  onSelect?: (item: T) => void;
+  disableBorderBottom?: boolean;
 
-  showSelect?: boolean
+  showSelect?: boolean;
 
-  viewType: PageTableViewType
-  setViewType: (viewType: PageTableViewType) => void
-}
+  viewType: PageTableViewType;
+  setViewType: (viewType: PageTableViewType) => void;
+};
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
   const {
@@ -136,39 +136,39 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     clearAllFilters,
     openColumnModal,
     disableBorderBottom,
-  } = props
+  } = props;
 
-  const sm = useBreakpoint('md')
+  const sm = useBreakpoint('md');
 
-  const { viewType, setViewType } = props
-  let { toolbarActions } = props
-  toolbarActions = toolbarActions ?? []
+  const { viewType, setViewType } = props;
+  let { toolbarActions } = props;
+  toolbarActions = toolbarActions ?? [];
 
-  const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage])
+  const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage]);
   const onPerPageSelect = useCallback<OnPerPageSelect>(
     (_event, perPage) => setPerPage(perPage),
     [setPerPage]
-  )
+  );
 
-  const showSearchAndFilters = toolbarFilters !== undefined
-  const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0
+  const showSearchAndFilters = toolbarFilters !== undefined;
+  const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0;
 
   const showSelect =
     props.showSelect === true ||
     (selectedItems !== undefined &&
       toolbarActions &&
-      toolbarActions.find((toolbarAction) => PageActionType.bulk === toolbarAction.type))
+      toolbarActions.find((toolbarAction) => PageActionType.bulk === toolbarAction.type));
 
-  const showToolbar = showSelect || showSearchAndFilters || showToolbarActions
+  const showToolbar = showSelect || showSearchAndFilters || showToolbarActions;
 
   const [selectedFilter, setSeletedFilter] = useState(() =>
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
-  )
+  );
 
-  const settings = useSettings()
+  const settings = useSettings();
 
   if (!showToolbar) {
-    return <Fragment />
+    return <Fragment />;
   }
 
   if (itemCount === undefined) {
@@ -190,7 +190,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-    )
+    );
   }
 
   return (
@@ -244,22 +244,22 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                 <ToolbarFilterInput
                   filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
                   addFilter={(value: string) => {
-                    let values = filters?.[selectedFilter]
-                    if (!values) values = []
-                    if (!values.includes(value)) values.push(value)
-                    setFilters?.({ ...filters, [selectedFilter]: values })
+                    let values = filters?.[selectedFilter];
+                    if (!values) values = [];
+                    if (!values.includes(value)) values.push(value);
+                    setFilters?.({ ...filters, [selectedFilter]: values });
                   }}
                   removeFilter={(value: string) => {
-                    let values = filters?.[selectedFilter]
-                    if (!values) values = []
-                    values = values.filter((v) => v !== value)
-                    setFilters?.({ ...filters, [selectedFilter]: values })
+                    let values = filters?.[selectedFilter];
+                    if (!values) values = [];
+                    values = values.filter((v) => v !== value);
+                    setFilters?.({ ...filters, [selectedFilter]: values });
                   }}
                   values={filters?.[selectedFilter] ?? []}
                 />
               </ToolbarItem>
               {toolbarFilters.map((filter) => {
-                const values = filters?.[filter.key] ?? []
+                const values = filters?.[filter.key] ?? [];
                 return (
                   <ToolbarFilter
                     key={filter.label}
@@ -267,37 +267,37 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                     chips={values.map((value) => {
                       return 'options' in filter
                         ? filter.options.find((o) => o.value === value)?.label ?? value
-                        : value
+                        : value;
                     })}
                     deleteChip={(_group, value) => {
                       setFilters?.((filters) => {
                         //TODO bug here where value is actually select filter option label... need to map
-                        const newState = { ...filters }
-                        value = typeof value === 'string' ? value : value.key
-                        let values = filters[filter.key]
+                        const newState = { ...filters };
+                        value = typeof value === 'string' ? value : value.key;
+                        let values = filters[filter.key];
                         if (values) {
-                          values = values.filter((v) => v !== value)
+                          values = values.filter((v) => v !== value);
                           if (values.length === 0) {
-                            delete newState[filter.key]
+                            delete newState[filter.key];
                           } else {
-                            newState[filter.key] = values
+                            newState[filter.key] = values;
                           }
                         }
-                        return newState
-                      })
+                        return newState;
+                      });
                     }}
                     deleteChipGroup={() => {
                       setFilters?.((filters) => {
-                        const newState = { ...filters }
-                        delete newState[filter.key]
-                        return newState
-                      })
+                        const newState = { ...filters };
+                        delete newState[filter.key];
+                        return newState;
+                      });
                     }}
                     showToolbarItem={false}
                   >
                     <></>
                   </ToolbarFilter>
-                )
+                );
               })}
             </ToolbarGroup>
           </ToolbarToggleGroup>
@@ -366,7 +366,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             aria-label="card view"
                           />
                         </Tooltip>
-                      )
+                      );
                     case PageTableViewTypeE.List:
                       return (
                         <Tooltip
@@ -382,7 +382,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             aria-label="list view"
                           />
                         </Tooltip>
-                      )
+                      );
                     case PageTableViewTypeE.Table:
                       return (
                         <Tooltip
@@ -398,7 +398,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                             aria-label="table view"
                           />
                         </Tooltip>
-                      )
+                      );
                   }
                 })}
             </ToggleGroup>
@@ -423,29 +423,29 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         </ToolbarItem>
       </ToolbarContent>
     </Toolbar>
-  )
+  );
 }
 
 function ToolbarFilterInput(props: {
-  filter?: IToolbarFilter
-  addFilter: (value: string) => void
-  values: string[]
-  removeFilter: (value: string) => void
+  filter?: IToolbarFilter;
+  addFilter: (value: string) => void;
+  values: string[];
+  removeFilter: (value: string) => void;
 }) {
-  const { filter } = props
+  const { filter } = props;
   switch (filter?.type) {
     case 'string':
-      return <ToolbarTextFilter {...props} placeholder={filter.placeholder} />
+      return <ToolbarTextFilter {...props} placeholder={filter.placeholder} />;
     case 'select':
       return (
         <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
-      )
+      );
   }
-  return <></>
+  return <></>;
 }
 
 function ToolbarTextFilter(props: { addFilter: (value: string) => void; placeholder?: string }) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('');
   return (
     <InputGroup>
       <TextInputGroup style={{ minWidth: 220 }}>
@@ -455,8 +455,8 @@ function ToolbarTextFilter(props: { addFilter: (value: string) => void; placehol
           onChange={setValue}
           onKeyUp={(event) => {
             if (value && event.key === 'Enter') {
-              props.addFilter(value)
-              setValue('')
+              props.addFilter(value);
+              setValue('');
               // ref.current?.focus() // Does not work because PF does not expose ref
             }
           }}
@@ -488,38 +488,38 @@ function ToolbarTextFilter(props: { addFilter: (value: string) => void; placehol
           variant={value ? 'primary' : 'control'}
           aria-label="add filter"
           onClick={() => {
-            props.addFilter(value)
-            setValue('')
+            props.addFilter(value);
+            setValue('');
           }}
         >
           <ArrowRightIcon />
         </Button>
       )}
     </InputGroup>
-  )
+  );
 }
 
 function ToolbarSelectFilter(props: {
-  addFilter: (value: string) => void
-  removeFilter: (value: string) => void
-  options: { label: string; value: string }[]
-  values: string[]
-  placeholder?: string
+  addFilter: (value: string) => void;
+  removeFilter: (value: string) => void;
+  options: { label: string; value: string }[];
+  values: string[];
+  placeholder?: string;
 }) {
-  const [translations] = useFrameworkTranslations()
-  const { addFilter, removeFilter, options, values } = props
-  const [open, setOpen] = useState(false)
+  const [translations] = useFrameworkTranslations();
+  const { addFilter, removeFilter, options, values } = props;
+  const [open, setOpen] = useState(false);
   const onSelect = useCallback(
     (e: unknown, value: string | SelectOptionObject) => {
       if (values.includes(value.toString())) {
-        removeFilter(value.toString())
+        removeFilter(value.toString());
       } else {
-        addFilter(value.toString())
+        addFilter(value.toString());
       }
     },
     [addFilter, removeFilter, values]
-  )
-  const selections = values
+  );
+  const selections = values;
   return (
     <>
       <Select
@@ -543,5 +543,5 @@ function ToolbarSelectFilter(props: {
         ))}
       </Select>
     </>
-  )
+  );
 }

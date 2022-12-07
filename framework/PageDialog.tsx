@@ -1,25 +1,25 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react'
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
 
-export const DialogContext = createContext<ReactNode | undefined>(undefined)
-export const SetDialogContext = createContext<(dialog?: ReactNode) => void>(() => null)
+export const DialogContext = createContext<ReactNode | undefined>(undefined);
+export const SetDialogContext = createContext<(dialog?: ReactNode) => void>(() => null);
 
 const PageDialogContext = createContext<
   [dialog: ReactNode | undefined, setDialog: Dispatch<SetStateAction<ReactNode | undefined>>]
->([undefined, () => alert('Use PageDialogProvider')])
+>([undefined, () => alert('Use PageDialogProvider')]);
 
 export function PageDialogProvider(props: { children: ReactNode }) {
-  const state = useState<ReactNode | undefined>()
+  const state = useState<ReactNode | undefined>();
   return (
     <PageDialogContext.Provider value={state}>
       {state[0] !== undefined && state[0]}
       {props.children}
     </PageDialogContext.Provider>
-  )
+  );
 }
 
 export function usePageDialog(): [
   dialog: ReactNode | undefined,
   setDialog: Dispatch<SetStateAction<ReactNode | undefined>>
 ] {
-  return useContext(PageDialogContext)
+  return useContext(PageDialogContext);
 }

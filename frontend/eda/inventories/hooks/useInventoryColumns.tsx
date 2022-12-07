@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { ITableColumn, TextCell } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { EdaInventory } from '../../interfaces/EdaInventory'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn, TextCell } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { EdaInventory } from '../../interfaces/EdaInventory';
 
 export function useInventoriesColumns() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const tableColumns = useMemo<ITableColumn<EdaInventory>[]>(
     () => [
       {
@@ -42,6 +42,6 @@ export function useInventoriesColumns() {
       },
     ],
     [navigate, t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

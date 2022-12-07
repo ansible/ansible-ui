@@ -1,36 +1,36 @@
 /* eslint-disable no-console */
-import ky, { HTTPError, ResponsePromise } from 'ky'
-import { Input, Options } from 'ky/distribution/types/options'
-import { SWRConfiguration } from 'swr'
-import { RouteE } from './Routes'
+import ky, { HTTPError, ResponsePromise } from 'ky';
+import { Input, Options } from 'ky/distribution/types/options';
+import { SWRConfiguration } from 'swr';
+import { RouteE } from './Routes';
 
-export const headers: Record<string, string> = {}
+export const headers: Record<string, string> = {};
 
 function initHeaders() {
-  const server = localStorage.getItem('server')
+  const server = localStorage.getItem('server');
   if (typeof server === 'string') {
-    headers['x-server'] = server
+    headers['x-server'] = server;
   }
 }
-initHeaders()
+initHeaders();
 
 export async function requestHead<ResponseBody>(url: string): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, {}, ky.head)
+  return requestCommon<ResponseBody>(url, {}, ky.head);
 }
 
 export async function requestOptions<ResponseBody>(url: string): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get)
+  return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get);
 }
 
 export async function requestGet<ResponseBody>(url: string): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, {}, ky.get)
+  return requestCommon<ResponseBody>(url, {}, ky.get);
 }
 
 export async function requestPut<ResponseBody, RequestBody = unknown>(
   url: string,
   json: RequestBody
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { json }, ky.put)
+  return requestCommon<ResponseBody>(url, { json }, ky.put);
 }
 
 export async function requestPost<ResponseBody, RequestBody = unknown>(
@@ -38,7 +38,7 @@ export async function requestPost<ResponseBody, RequestBody = unknown>(
   json: RequestBody,
   signal?: AbortSignal
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { json, signal }, ky.post)
+  return requestCommon<ResponseBody>(url, { json, signal }, ky.post);
 }
 
 export async function requestPostFile(
@@ -46,23 +46,23 @@ export async function requestPostFile(
   file: Blob,
   signal?: AbortSignal
 ): Promise<string> {
-  const body = new FormData()
-  body.append('file', file)
-  return ky.post(url, { body, signal, credentials: 'include', headers }).json()
+  const body = new FormData();
+  body.append('file', file);
+  return ky.post(url, { body, signal, credentials: 'include', headers }).json();
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
   url: string,
   json: RequestBody
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { json }, ky.patch)
+  return requestCommon<ResponseBody>(url, { json }, ky.patch);
 }
 
 export async function requestDelete<ResponseBody>(
   url: string,
   signal?: AbortSignal
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { signal }, ky.delete)
+  return requestCommon<ResponseBody>(url, { signal }, ky.delete);
 }
 
 async function requestCommon<ResponseBody>(
@@ -71,17 +71,17 @@ async function requestCommon<ResponseBody>(
   methodFn: (input: Input, options: Options) => ResponsePromise
 ) {
   if (process.env.DELAY)
-    await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)))
+    await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)));
   try {
     const result = await methodFn(url, {
       ...options,
       credentials: 'include',
       headers: { ...headers, ...(options.headers ?? {}) },
-    }).json<ResponseBody>()
+    }).json<ResponseBody>();
     // if (process.env.NODE_ENV === 'development') {
     //     console.debug(result)
     // }
-    return result
+    return result;
   } catch (err) {
     // if (process.env.NODE_ENV === 'development') {
     //     console.error(err)
@@ -89,29 +89,29 @@ async function requestCommon<ResponseBody>(
     if (err instanceof HTTPError) {
       switch (err.response.status) {
         case 401:
-          location.replace(RouteE.Login)
-          break
+          location.replace(RouteE.Login);
+          break;
       }
     }
-    throw err
+    throw err;
   }
 }
 
 export function useFetcher() {
-  return requestGet
+  return requestGet;
 }
 
 export interface ItemsResponse<T> {
-  count: number
-  next?: string | null
-  previous?: string | null
-  results: T[]
+  count: number;
+  next?: string | null;
+  previous?: string | null;
+  results: T[];
 }
 
 export function getItemKey(item: { id: number }) {
-  return item.id.toString()
+  return item.id.toString();
 }
 
 export const swrOptions: SWRConfiguration = {
   dedupingInterval: 0,
-}
+};

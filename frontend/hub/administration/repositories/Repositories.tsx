@@ -1,7 +1,7 @@
-import { CogIcon, EditIcon, SyncIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { CogIcon, EditIcon, SyncIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -13,13 +13,13 @@ import {
   PageTabs,
   SinceCell,
   TextCell,
-} from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView'
-import { RemoteRepository, Repository } from './Repository'
+} from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView';
+import { RemoteRepository, Repository } from './Repository';
 
 export function Repositories() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <PageLayout>
       <PageHeader title={t('Repository management')} />
@@ -32,19 +32,19 @@ export function Repositories() {
         </PageTab>
       </PageTabs>
     </PageLayout>
-  )
+  );
 }
 
 export function LocalRepositories() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   // const navigate = useNavigate()
-  const tableColumns = useLocalRepositoriesColumns()
+  const tableColumns = useLocalRepositoriesColumns();
   const view = useHubView<Repository>(
     '/api/automation-hub/_ui/v1/distributions/',
     hubKeyFn,
     undefined,
     tableColumns
-  )
+  );
   return (
     <PageTable<Repository>
       // toolbarFilters={toolbarFilters}
@@ -56,12 +56,12 @@ export function LocalRepositories() {
       // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
       {...view}
     />
-  )
+  );
 }
 
 export function useLocalRepositoriesColumns(_options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
@@ -84,20 +84,20 @@ export function useLocalRepositoriesColumns(_options?: {
       },
     ],
     []
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }
 
 export function RemoteRepositories() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const tableColumns = useRemoteRepositoriesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const tableColumns = useRemoteRepositoriesColumns();
   const view = useHubView<RemoteRepository>(
     '/api/automation-hub/_ui/v1/remotes/',
     pulpHRefKeyFn,
     undefined,
     tableColumns
-  )
+  );
   const rowActions = useMemo<IPageAction<RemoteRepository>[]>(
     () => [
       {
@@ -123,7 +123,7 @@ export function RemoteRepositories() {
       },
     ],
     [navigate, t]
-  )
+  );
   return (
     <PageTable<RemoteRepository>
       rowActions={rowActions}
@@ -135,14 +135,14 @@ export function RemoteRepositories() {
       // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
       {...view}
     />
-  )
+  );
 }
 
 export function useRemoteRepositoriesColumns(_options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<RemoteRepository>[]>(
     () => [
       { header: t('Name'), cell: (repository) => <TextCell text={repository.name} /> },
@@ -164,6 +164,6 @@ export function useRemoteRepositoriesColumns(_options?: {
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

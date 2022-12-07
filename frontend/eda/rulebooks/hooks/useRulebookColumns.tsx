@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { ITableColumn, TextCell } from '../../../../framework'
-import { RouteE } from '../../../Routes'
-import { EdaRulebook } from '../../interfaces/EdaRulebook'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn, TextCell } from '../../../../framework';
+import { RouteE } from '../../../Routes';
+import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
 export function useRulebookColumns() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRulebook>[]>(
     () => [
       {
@@ -35,5 +35,5 @@ export function useRulebookColumns() {
       },
     ],
     [navigate, t]
-  )
+  );
 }

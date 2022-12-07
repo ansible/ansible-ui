@@ -1,45 +1,45 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { useControllerView } from '../../useControllerView'
-import { ExecutionEnvironment } from './ExecutionEnvironment'
-import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments'
+} from '../../common/controller-toolbar-filters';
+import { useControllerView } from '../../useControllerView';
+import { ExecutionEnvironment } from './ExecutionEnvironment';
+import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironments() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useExecutionEnvironmentsFilters()
-  const tableColumns = useExecutionEnvironmentsColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useExecutionEnvironmentsFilters();
+  const tableColumns = useExecutionEnvironmentsColumns();
   const view = useControllerView<ExecutionEnvironment>({
     url: '/api/v2/execution_environments/',
     toolbarFilters,
     tableColumns,
-  })
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh)
+  });
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -58,7 +58,7 @@ export function ExecutionEnvironments() {
       },
     ],
     [navigate, deleteExecutionEnvironments, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -79,7 +79,7 @@ export function ExecutionEnvironments() {
       },
     ],
     [navigate, deleteExecutionEnvironments, t]
-  )
+  );
 
   return (
     <TablePage<ExecutionEnvironment>
@@ -99,15 +99,15 @@ export function ExecutionEnvironments() {
       emptyStateButtonClick={() => navigate(RouteE.CreateExecutionEnvironment)}
       {...view}
     />
-  )
+  );
 }
 
 export function useExecutionEnvironmentsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const organizationToolbarFilter = useOrganizationToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const organizationToolbarFilter = useOrganizationToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -123,31 +123,31 @@ export function useExecutionEnvironmentsFilters() {
       createdByToolbarFilter,
       modifiedByToolbarFilter,
     ]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useExecutionEnvironmentsColumns(options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (executionEnvironment: ExecutionEnvironment) =>
       navigate(
         RouteE.ExecutionEnvironmentDetails.replace(':id', executionEnvironment.id.toString())
       ),
     [navigate]
-  )
+  );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
-  })
-  const descriptionColumn = useDescriptionColumn()
-  const organizationColumn = useOrganizationNameColumn(options)
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  });
+  const descriptionColumn = useDescriptionColumn();
+  const organizationColumn = useOrganizationNameColumn(options);
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       nameColumn,
@@ -161,6 +161,6 @@ export function useExecutionEnvironmentsColumns(options?: {
       modifiedColumn,
     ],
     [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

@@ -1,59 +1,59 @@
-import { ButtonVariant } from '@patternfly/react-core'
+import { ButtonVariant } from '@patternfly/react-core';
 import {
   EditIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
   TrashIcon,
-} from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+} from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { Organization } from '../../interfaces/Organization'
-import { useControllerView } from '../../useControllerView'
-import { AccessNav } from '../common/AccessNav'
-import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations'
-import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations'
-import { useDeleteOrganizations } from './hooks/useDeleteOrganizations'
+} from '../../common/controller-toolbar-filters';
+import { Organization } from '../../interfaces/Organization';
+import { useControllerView } from '../../useControllerView';
+import { AccessNav } from '../common/AccessNav';
+import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
+import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
+import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 
 export function Organizations() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const toolbarFilters = useOrganizationsFilters()
+  const toolbarFilters = useOrganizationsFilters();
 
-  const tableColumns = useOrganizationsColumns()
+  const tableColumns = useOrganizationsColumns();
 
   const view = useControllerView<Organization>({
     url: '/api/v2/organizations/',
     toolbarFilters,
     tableColumns,
-  })
+  });
 
-  const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh)
+  const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh);
 
-  const selectUsersAddOrganizations = useSelectUsersAddOrganizations()
-  const selectUsersRemoveOrganizations = useSelectUsersRemoveOrganizations()
+  const selectUsersAddOrganizations = useSelectUsersAddOrganizations();
+  const selectUsersRemoveOrganizations = useSelectUsersRemoveOrganizations();
 
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
@@ -93,7 +93,7 @@ export function Organizations() {
       view.selectedItems,
       selectUsersRemoveOrganizations,
     ]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
@@ -126,7 +126,7 @@ export function Organizations() {
       },
     ],
     [t, navigate, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]
-  )
+  );
 
   return (
     <TablePage<Organization>
@@ -148,14 +148,14 @@ export function Organizations() {
       {...view}
       defaultSubtitle={t('Organization')}
     />
-  )
+  );
 }
 
 export function useOrganizationsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -164,28 +164,28 @@ export function useOrganizationsFilters() {
       modifiedByToolbarFilter,
     ],
     [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useOrganizationsColumns(options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (organization: Organization) =>
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
     [navigate]
-  )
+  );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
-  })
-  const descriptionColumn = useDescriptionColumn()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  });
+  const descriptionColumn = useDescriptionColumn();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Organization>[]>(
     () => [
       nameColumn,
@@ -204,6 +204,6 @@ export function useOrganizationsColumns(options?: {
       modifiedColumn,
     ],
     [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

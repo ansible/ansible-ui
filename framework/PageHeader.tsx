@@ -14,28 +14,28 @@ import {
   Text,
   Title,
   Truncate,
-} from '@patternfly/react-core'
-import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons'
-import { CSSProperties, Fragment, ReactNode } from 'react'
-import { useBreakpoint } from './components/useBreakPoint'
-import { usePageNavigate } from './components/usePageNavigate'
-import { useSettings } from './Settings'
+} from '@patternfly/react-core';
+import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { CSSProperties, Fragment, ReactNode } from 'react';
+import { useBreakpoint } from './components/useBreakPoint';
+import { usePageNavigate } from './components/usePageNavigate';
+import { useSettings } from './Settings';
 
 export interface ICatalogBreadcrumb {
-  id?: string
-  label?: string
-  to?: string
-  target?: string
-  component?: React.ElementType
+  id?: string;
+  label?: string;
+  to?: string;
+  target?: string;
+  component?: React.ElementType;
 }
 
 function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
-  const navigate = usePageNavigate()
-  if (!props.breadcrumbs) return <Fragment />
+  const navigate = usePageNavigate();
+  if (!props.breadcrumbs) return <Fragment />;
   return (
     <Breadcrumb style={props.style}>
       {props.breadcrumbs.map((breadcrumb) => {
-        if (!breadcrumb.label) return <></>
+        if (!breadcrumb.label) return <></>;
         return (
           <BreadcrumbItem
             id={breadcrumb.id}
@@ -47,8 +47,8 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
               <a
                 href={breadcrumb.to}
                 onClick={(e) => {
-                  e.preventDefault()
-                  navigate(breadcrumb.to)
+                  e.preventDefault();
+                  navigate(breadcrumb.to);
                 }}
               >
                 {breadcrumb.label}
@@ -57,24 +57,24 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
               breadcrumb.label
             )}
           </BreadcrumbItem>
-        )
+        );
       })}
     </Breadcrumb>
-  )
+  );
 }
 
 export interface PageHeaderProps {
-  navigation?: ReactNode
-  breadcrumbs?: ICatalogBreadcrumb[]
-  title?: string
-  titleHelpTitle?: string
-  titleHelp?: string | string[]
-  titleDocLink?: string
-  description?: string | string[]
-  controls?: ReactNode
-  headerActions?: ReactNode
-  t?: (t: string) => string
-  disableBorderBottom?: boolean
+  navigation?: ReactNode;
+  breadcrumbs?: ICatalogBreadcrumb[];
+  title?: string;
+  titleHelpTitle?: string;
+  titleHelp?: string | string[];
+  titleDocLink?: string;
+  description?: string | string[];
+  controls?: ReactNode;
+  headerActions?: ReactNode;
+  t?: (t: string) => string;
+  disableBorderBottom?: boolean;
 }
 
 /**
@@ -102,13 +102,13 @@ export interface PageHeaderProps {
  * <Page>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const { navigation, breadcrumbs, title, description, controls, headerActions } = props
-  const lg = useBreakpoint('lg')
-  const xl = useBreakpoint('xl')
-  const isMdOrLarger = useBreakpoint('md')
-  const settings = useSettings()
-  let { t } = props
-  t = t ? t : (t: string) => t
+  const { navigation, breadcrumbs, title, description, controls, headerActions } = props;
+  const lg = useBreakpoint('lg');
+  const xl = useBreakpoint('xl');
+  const isMdOrLarger = useBreakpoint('md');
+  const settings = useSettings();
+  let { t } = props;
+  t = t ? t : (t: string) => t;
   return (
     <>
       {navigation && (
@@ -259,5 +259,5 @@ export function PageHeader(props: PageHeaderProps) {
         </PageSection>
       )}
     </>
-  )
+  );
 }

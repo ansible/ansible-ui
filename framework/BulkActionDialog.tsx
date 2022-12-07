@@ -6,47 +6,47 @@ import {
   Progress,
   ProgressSize,
   ProgressVariant,
-} from '@patternfly/react-core'
-import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons'
-import pLimit from 'p-limit'
-import { useCallback, useEffect, useState } from 'react'
-import { pfDanger, pfInfo, pfSuccess } from './components/pfcolors'
-import { usePageDialog } from './PageDialog'
-import { ITableColumn, PageTable } from './PageTable/PageTable'
-import { usePaged } from './PageTable/useTableItems'
-import { useFrameworkTranslations } from './useFrameworkTranslations'
+} from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
+import pLimit from 'p-limit';
+import { useCallback, useEffect, useState } from 'react';
+import { pfDanger, pfInfo, pfSuccess } from './components/pfcolors';
+import { usePageDialog } from './PageDialog';
+import { ITableColumn, PageTable } from './PageTable/PageTable';
+import { usePaged } from './PageTable/useTableItems';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
    */
-  title: string
+  title: string;
 
   /** The items to confirm for the bulk action. */
-  items: T[]
+  items: T[];
 
   /** A function that gets a unique key for each item. */
-  keyFn: (item: T) => string | number
+  keyFn: (item: T) => string | number;
 
   /** The columns to display when processing the actions. */
-  actionColumns: ITableColumn<T>[]
+  actionColumns: ITableColumn<T>[];
 
   /** The action function to perform on each item. */
-  actionFn: (item: T, signal: AbortSignal) => Promise<unknown>
+  actionFn: (item: T, signal: AbortSignal) => Promise<unknown>;
 
   /** Callback when all the actions are complete. Returns the successful items. */
-  onComplete?: (successfulItems: T[]) => void
+  onComplete?: (successfulItems: T[]) => void;
 
   /** Callback called when the dialog closes. */
-  onClose?: () => void
+  onClose?: () => void;
 
   /** The text to show for each item when the action is happening.
    * @example Deleting jobs...
    */
-  processingText?: string
+  processingText?: string;
 
   /** Indicates if this is a destructive operation */
-  isDanger?: boolean
+  isDanger?: boolean;
 }
 
 /**
@@ -76,86 +76,86 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
     onClose,
     processingText,
     isDanger,
-  } = props
-  const [translations] = useFrameworkTranslations()
-  const [isProcessing, setProcessing] = useState(true)
-  const [isCanceled, setCanceled] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [error, setError] = useState('')
-  const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>()
-  const [abortController] = useState(() => new AbortController())
-  const [_, setDialog] = usePageDialog()
+  } = props;
+  const [translations] = useFrameworkTranslations();
+  const [isProcessing, setProcessing] = useState(true);
+  const [isCanceled, setCanceled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState('');
+  const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>();
+  const [abortController] = useState(() => new AbortController());
+  const [_, setDialog] = usePageDialog();
 
   const onCancelClicked = useCallback(() => {
-    setCanceled(true)
-    abortController.abort()
-    setProcessing(false)
+    setCanceled(true);
+    abortController.abort();
+    setProcessing(false);
     setStatuses((statuses) => {
-      const newStatuses = { ...statuses }
+      const newStatuses = { ...statuses };
       for (const item of items) {
-        const key = keyFn(item)
+        const key = keyFn(item);
         if (newStatuses[key] === undefined) {
-          newStatuses[key] = 'Cancelled'
+          newStatuses[key] = 'Cancelled';
         }
       }
-      return newStatuses
-    })
-  }, [abortController, items, keyFn])
+      return newStatuses;
+    });
+  }, [abortController, items, keyFn]);
 
   const onCloseClicked = useCallback(() => {
-    setDialog(undefined)
-    onClose?.()
-  }, [onClose, setDialog])
+    setDialog(undefined);
+    onClose?.();
+  }, [onClose, setDialog]);
 
   useEffect(() => {
     async function process() {
-      const limit = pLimit(5)
-      let progress = 0
-      const successfulItems: T[] = []
+      const limit = pLimit(5);
+      let progress = 0;
+      const successfulItems: T[] = [];
       await Promise.all(
         items.map((item: T) =>
           limit(async () => {
-            if (abortController.signal.aborted) return
-            const key = keyFn(item)
+            if (abortController.signal.aborted) return;
+            const key = keyFn(item);
             try {
-              await actionFn(item, abortController.signal)
+              await actionFn(item, abortController.signal);
               if (!abortController.signal.aborted) {
-                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }))
+                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }));
               }
-              successfulItems.push(item)
+              successfulItems.push(item);
             } catch (err) {
               if (!abortController.signal.aborted) {
                 if (err instanceof Error) {
-                  const message = err.message
+                  const message = err.message;
                   setStatuses((statuses) => ({
                     ...(statuses ?? {}),
                     [key]: message,
-                  }))
+                  }));
                 } else {
                   setStatuses((statuses) => ({
                     ...(statuses ?? {}),
                     [key]: `Unknown error`,
-                  }))
+                  }));
                 }
-                setError(translations.errorText)
+                setError(translations.errorText);
               }
             } finally {
               if (!abortController.signal.aborted) {
-                setProgress(++progress)
+                setProgress(++progress);
               }
             }
           })
         )
-      )
+      );
       if (!abortController.signal.aborted) {
-        setProcessing(false)
+        setProcessing(false);
       }
-      onComplete?.(successfulItems)
+      onComplete?.(successfulItems);
     }
-    void process()
-  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText])
+    void process();
+  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText]);
 
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(items)
+  const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
 
   return (
     <Modal
@@ -164,8 +164,8 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
       variant={ModalVariant.medium}
       isOpen
       onClose={() => {
-        onCancelClicked()
-        onCloseClicked()
+        onCancelClicked();
+        onCloseClicked();
       }}
       actions={
         isProcessing
@@ -201,27 +201,27 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
               {
                 header: 'Status',
                 cell: (item) => {
-                  const key = keyFn(item)
-                  const status = statuses?.[key]
+                  const key = keyFn(item);
+                  const status = statuses?.[key];
                   if (status === undefined) {
                     return (
                       <span style={{ color: pfInfo }}>
                         {<PendingIcon />}&nbsp; {translations.pendingText}
                       </span>
-                    )
+                    );
                   }
                   if (status === null) {
                     return (
                       <span style={{ color: pfSuccess }}>
                         {<CheckCircleIcon />}&nbsp; {translations.successText}
                       </span>
-                    )
+                    );
                   }
                   return (
                     <span style={{ color: pfDanger }}>
                       {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
                     </span>
-                  )
+                  );
                 },
               },
             ]}
@@ -259,7 +259,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
         />
       </ModalBoxBody>
     </Modal>
-  )
+  );
 }
 
 /**
@@ -270,18 +270,18 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
  * openBulkActionDialog(...) // Pass BulkActionDialogProps
  */
 export function useBulkActionDialog<T extends object>() {
-  const [_, setDialog] = usePageDialog()
-  const [props, setProps] = useState<BulkActionDialogProps<T>>()
+  const [_, setDialog] = usePageDialog();
+  const [props, setProps] = useState<BulkActionDialogProps<T>>();
   useEffect(() => {
     if (props) {
       const onCloseHandler = () => {
-        setProps(undefined)
-        props.onClose?.()
-      }
-      setDialog(<BulkActionDialog<T> {...props} onClose={onCloseHandler} />)
+        setProps(undefined);
+        props.onClose?.();
+      };
+      setDialog(<BulkActionDialog<T> {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined)
+      setDialog(undefined);
     }
-  }, [props, setDialog])
-  return setProps
+  }, [props, setDialog]);
+  return setProps;
 }

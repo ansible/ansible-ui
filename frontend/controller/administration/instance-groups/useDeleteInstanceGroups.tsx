@@ -1,17 +1,17 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { compareStrings, useBulkConfirmation } from '../../../../framework'
-import { useNameColumn } from '../../../common/columns'
-import { getItemKey, requestDelete } from '../../../Data'
-import { InstanceGroup } from './InstanceGroup'
-import { useInstanceGroupsColumns } from './InstanceGroups'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { useNameColumn } from '../../../common/columns';
+import { getItemKey, requestDelete } from '../../../Data';
+import { InstanceGroup } from './InstanceGroup';
+import { useInstanceGroupsColumns } from './InstanceGroups';
 
 export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGroup[]) => void) {
-  const { t } = useTranslation()
-  const confirmationColumns = useInstanceGroupsColumns({ disableLinks: true, disableSort: true })
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true })
-  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn])
-  const bulkAction = useBulkConfirmation<InstanceGroup>()
+  const { t } = useTranslation();
+  const confirmationColumns = useInstanceGroupsColumns({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+  const bulkAction = useBulkConfirmation<InstanceGroup>();
   const deleteInstanceGroups = (instanceGroups: InstanceGroup[]) => {
     bulkAction({
       title:
@@ -30,7 +30,7 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
       onComplete,
       actionFn: (instanceGroup: InstanceGroup) =>
         requestDelete(`/api/v2/instance-groups/${instanceGroup.id}/`),
-    })
-  }
-  return deleteInstanceGroups
+    });
+  };
+  return deleteInstanceGroups;
 }

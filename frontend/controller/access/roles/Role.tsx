@@ -1,4 +1,4 @@
-import { Static, Type } from '@sinclair/typebox'
+import { Static, Type } from '@sinclair/typebox';
 
 export const RoleType = Type.Object({
   type: Type.Literal('role'),
@@ -10,6 +10,6 @@ export const RoleType = Type.Object({
     resource_type: Type.Optional(Type.String()),
     resource_type_display_name: Type.Optional(Type.String()),
   }),
-})
+});
 
-export type Role = Static<typeof RoleType>
+export type Role = Static<typeof RoleType>;

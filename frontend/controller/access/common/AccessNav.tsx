@@ -1,11 +1,11 @@
-import { Nav, NavItem, NavList } from '@patternfly/react-core'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { RouteE } from '../../../Routes'
+import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { RouteE } from '../../../Routes';
 
 export function AccessNav(props: { active: 'organizations' | 'teams' | 'users' }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <Nav aria-label="TODO" variant="tertiary">
       <NavList>
@@ -23,5 +23,5 @@ export function AccessNav(props: { active: 'organizations' | 'teams' | 'users' }
         </NavItem>
       </NavList>
     </Nav>
-  )
+  );
 }

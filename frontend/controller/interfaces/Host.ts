@@ -6,95 +6,95 @@
  */
 
 export interface Host {
-  id: number
-  type: string
-  url: string
+  id: number;
+  type: string;
+  url: string;
   related: {
-    created_by: string
-    modified_by: string
-    variable_data: string
-    groups: string
-    all_groups: string
-    job_events: string
-    job_host_summaries: string
-    activity_stream: string
-    inventory_sources: string
-    smart_inventories: string
-    ad_hoc_commands: string
-    ad_hoc_command_events: string
-    ansible_facts: string
-    inventory: string
-    last_job: string
-    last_job_host_summary: string
-  }
+    created_by: string;
+    modified_by: string;
+    variable_data: string;
+    groups: string;
+    all_groups: string;
+    job_events: string;
+    job_host_summaries: string;
+    activity_stream: string;
+    inventory_sources: string;
+    smart_inventories: string;
+    ad_hoc_commands: string;
+    ad_hoc_command_events: string;
+    ansible_facts: string;
+    inventory: string;
+    last_job: string;
+    last_job_host_summary: string;
+  };
   summary_fields: {
     inventory: {
-      id: number
-      name: string
-      description: string
-      has_active_failures: boolean
-      total_hosts: number
-      hosts_with_active_failures: number
-      total_groups: number
-      has_inventory_sources: boolean
-      total_inventory_sources: number
-      inventory_sources_with_failures: number
-      organization_id: number
-      kind: string
-    }
+      id: number;
+      name: string;
+      description: string;
+      has_active_failures: boolean;
+      total_hosts: number;
+      hosts_with_active_failures: number;
+      total_groups: number;
+      has_inventory_sources: boolean;
+      total_inventory_sources: number;
+      inventory_sources_with_failures: number;
+      organization_id: number;
+      kind: string;
+    };
     last_job: {
-      id: number
-      name: string
-      description: string
-      finished: string
-      status: string
-      failed: boolean
-      job_template_id: number
-      job_template_name: string
-    }
+      id: number;
+      name: string;
+      description: string;
+      finished: string;
+      status: string;
+      failed: boolean;
+      job_template_id: number;
+      job_template_name: string;
+    };
     last_job_host_summary: {
-      id: number
-      failed: boolean
-    }
+      id: number;
+      failed: boolean;
+    };
     created_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     modified_by: {
-      id: number
-      username: string
-      first_name: string
-      last_name: string
-    }
+      id: number;
+      username: string;
+      first_name: string;
+      last_name: string;
+    };
     user_capabilities: {
-      edit: boolean
-      delete: boolean
-    }
+      edit: boolean;
+      delete: boolean;
+    };
     groups: {
-      count: number
-      results: unknown[]
-    }
+      count: number;
+      results: unknown[];
+    };
     recent_jobs: {
-      id: number
-      name: string
-      type: string
-      status: string
-      finished: string
-    }[]
-  }
-  created: string
-  modified: string
-  name: string
-  description: string
-  inventory: number
-  enabled: boolean
-  instance_id: string
-  variables: string
-  has_active_failures: boolean
-  has_inventory_sources: boolean
-  last_job: number
-  last_job_host_summary: number
-  ansible_facts_modified: null
+      id: number;
+      name: string;
+      type: string;
+      status: string;
+      finished: string;
+    }[];
+  };
+  created: string;
+  modified: string;
+  name: string;
+  description: string;
+  inventory: number;
+  enabled: boolean;
+  instance_id: string;
+  variables: string;
+  has_active_failures: boolean;
+  has_inventory_sources: boolean;
+  last_job: number;
+  last_job_host_summary: number;
+  ansible_facts_modified: null;
 }

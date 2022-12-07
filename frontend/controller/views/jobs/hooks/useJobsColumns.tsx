@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, SinceCell, TextCell } from '../../../../../framework'
-import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell'
-import { StatusCell } from '../../../../common/StatusCell'
-import { RouteE } from '../../../../Routes'
-import { UnifiedJob } from '../../../interfaces/UnifiedJob'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
+import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
+import { StatusCell } from '../../../../common/StatusCell';
+import { RouteE } from '../../../../Routes';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
       {
@@ -46,8 +46,8 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             ad_hoc_command: t`Command`,
             system_job: t`Management Job`,
             workflow_job: t`Workflow Job`,
-          }
-          return <TextCell text={jobTypes[job.type]} />
+          };
+          return <TextCell text={jobTypes[job.type]} />;
         },
         sort: 'type',
         card: 'description',
@@ -76,6 +76,6 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
     ],
     [options?.disableLinks, t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

@@ -6,7 +6,7 @@
  */
 
 export interface EdaRuleSet {
-  id: number
-  name: string
-  rule_count: number
+  id: number;
+  name: string;
+  rule_count: number;
 }

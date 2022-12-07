@@ -1,38 +1,38 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { IPageAction, PageActionType } from '../../../../../framework'
-import { UnifiedJob } from '../../../interfaces/UnifiedJob'
-import { isJobRunning } from '../jobUtils'
-import { useCancelJobs } from './useCancelJobs'
-import { useDeleteJobs } from './useDeleteJobs'
-import { useRelaunchJob } from './useRelaunchJob'
+import { ButtonVariant } from '@patternfly/react-core';
+import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { isJobRunning } from '../jobUtils';
+import { useCancelJobs } from './useCancelJobs';
+import { useDeleteJobs } from './useDeleteJobs';
+import { useRelaunchJob } from './useRelaunchJob';
 
 export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
-  const { t } = useTranslation()
-  const deleteJobs = useDeleteJobs(onComplete)
-  const cancelJobs = useCancelJobs(onComplete)
-  const relaunchJob = useRelaunchJob()
-  const relaunchAllHosts = useRelaunchJob({ hosts: 'all' })
-  const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' })
+  const { t } = useTranslation();
+  const deleteJobs = useDeleteJobs(onComplete);
+  const cancelJobs = useCancelJobs(onComplete);
+  const relaunchJob = useRelaunchJob();
+  const relaunchAllHosts = useRelaunchJob({ hosts: 'all' });
+  const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' });
 
   return useMemo<IPageAction<UnifiedJob>[]>(() => {
     const cannotDeleteJob = (job: UnifiedJob) => {
       if (!job.summary_fields.user_capabilities.delete)
-        return t(`The job cannot be deleted due to insufficient permission`)
+        return t(`The job cannot be deleted due to insufficient permission`);
       else if (isJobRunning(job.status))
-        return t(`The job cannot be deleted due to a running job status`)
-      return ''
-    }
+        return t(`The job cannot be deleted due to a running job status`);
+      return '';
+    };
 
     const cannotCancelJob = (job: UnifiedJob) => {
       if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
-        return t(`The job cannot be canceled due to insufficient permission`)
+        return t(`The job cannot be canceled due to insufficient permission`);
       else if (!isJobRunning(job.status))
-        return t(`The job cannot be canceled because it is not running`)
-      return ''
-    }
+        return t(`The job cannot be canceled because it is not running`);
+      return '';
+    };
 
     return [
       {
@@ -80,6 +80,6 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
-    ]
-  }, [deleteJobs, cancelJobs, relaunchJob, relaunchAllHosts, relaunchFailedHosts, t])
+    ];
+  }, [deleteJobs, cancelJobs, relaunchJob, relaunchAllHosts, relaunchFailedHosts, t]);
 }

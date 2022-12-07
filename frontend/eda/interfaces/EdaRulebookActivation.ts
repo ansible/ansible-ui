@@ -6,12 +6,12 @@
  */
 
 export interface EdaRulebookActivation {
-  name: string
-  rulebook_id: number
-  inventory_id: number
-  extra_var_id: number
-  working_directory: string
-  execution_environment: string
-  project_id: number | null
-  id: number
+  name: string;
+  rulebook_id: number;
+  inventory_id: number;
+  extra_var_id: number;
+  working_directory: string;
+  execution_environment: string;
+  project_id: number | null;
+  id: number;
 }

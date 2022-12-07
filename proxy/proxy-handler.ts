@@ -1,9 +1,9 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import cookie from 'cookie'
-import http from 'http'
-import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2'
-import { request, RequestOptions } from 'https'
-import { pipeline } from 'stream'
+import cookie from 'cookie';
+import http from 'http';
+import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2';
+import { request, RequestOptions } from 'https';
+import { pipeline } from 'stream';
 import {
   HTTP2_HEADER_CACHE_CONTROL,
   HTTP2_HEADER_CONNECTION,
@@ -21,39 +21,39 @@ import {
   HTTP_STATUS_NOT_FOUND,
   HTTP_STATUS_SERVICE_UNAVAILABLE,
   HTTP_STATUS_UNAUTHORIZED,
-} from './constants'
-import { logger } from './logger'
+} from './constants';
+import { logger } from './logger';
 
 export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
-  const target = req.headers['x-server']
+  const target = req.headers['x-server'];
   if (!target || typeof target !== 'string') {
-    res.writeHead(HTTP_STATUS_UNAUTHORIZED).end()
-    return
+    res.writeHead(HTTP_STATUS_UNAUTHORIZED).end();
+    return;
   }
 
-  const url = req.url
+  const url = req.url;
 
-  const headers: OutgoingHttpHeaders = {}
+  const headers: OutgoingHttpHeaders = {};
 
-  const cookieHeader = req.headers[HTTP2_HEADER_COOKIE]
+  const cookieHeader = req.headers[HTTP2_HEADER_COOKIE];
   if (typeof cookieHeader === 'string') {
-    const cookies = cookie.parse(cookieHeader)
+    const cookies = cookie.parse(cookieHeader);
     if (cookies['csrftoken']) {
-      headers['X-CSRFToken'] = cookies['csrftoken']
+      headers['X-CSRFToken'] = cookies['csrftoken'];
     }
   }
 
   for (const header in req.headers) {
-    if (header.startsWith(':')) continue
-    headers[header] = req.headers[header]
+    if (header.startsWith(':')) continue;
+    headers[header] = req.headers[header];
   }
 
-  const proxyUrl = new URL(target)
+  const proxyUrl = new URL(target);
 
   if (proxyUrl.hostname !== 'localhost') {
-    headers[HTTP2_HEADER_HOST] = proxyUrl.hostname
-    headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname
-    headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname
+    headers[HTTP2_HEADER_HOST] = proxyUrl.hostname;
+    headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname;
+    headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname;
   }
 
   const requestOptions: RequestOptions = {
@@ -65,15 +65,15 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
     path: url,
     headers,
     rejectUnauthorized: false,
-  }
+  };
 
-  const r = requestOptions.protocol === 'http:' ? http.request : request
+  const r = requestOptions.protocol === 'http:' ? http.request : request;
   pipeline(
     req,
     r(requestOptions, (response) => {
       if (!response) {
-        res.writeHead(HTTP_STATUS_NOT_FOUND).end()
-        return
+        res.writeHead(HTTP_STATUS_NOT_FOUND).end();
+        return;
       }
       // Remove hop-by-hop headers
       const {
@@ -86,20 +86,20 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
         [HTTP2_HEADER_UPGRADE]: _upgrade,
         trailer: _trailer,
         ...responseHeaders
-      } = response.headers
+      } = response.headers;
 
       // Force no caching
-      responseHeaders[HTTP2_HEADER_CACHE_CONTROL] = 'no-store'
-      delete responseHeaders[HTTP2_HEADER_VARY]
+      responseHeaders[HTTP2_HEADER_CACHE_CONTROL] = 'no-store';
+      delete responseHeaders[HTTP2_HEADER_VARY];
 
-      const statusCode = response.statusCode ?? 500
-      res.writeHead(statusCode, responseHeaders)
+      const statusCode = response.statusCode ?? 500;
+      res.writeHead(statusCode, responseHeaders);
       pipeline(response, res as unknown as NodeJS.WritableStream, (err) =>
         handlePipelineError(err, res)
-      )
+      );
     }),
     (err) => handleRequestError(err, res)
-  )
+  );
 }
 
 function handleRequestError(err: NodeJS.ErrnoException | null, res: Http2ServerResponse) {
@@ -107,21 +107,21 @@ function handleRequestError(err: NodeJS.ErrnoException | null, res: Http2ServerR
     switch (err.code) {
       case 'ECONNREFUSED':
         if (!res.headersSent) {
-          res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE)
+          res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE);
         }
         if (!res.closed) {
-          res.end()
+          res.end();
         }
-        break
+        break;
       default:
-        logger.error(err)
+        logger.error(err);
         if (!res.headersSent) {
-          res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE)
+          res.writeHead(HTTP_STATUS_SERVICE_UNAVAILABLE);
         }
         if (!res.closed) {
-          res.end()
+          res.end();
         }
-        break
+        break;
     }
   }
 }
@@ -130,14 +130,14 @@ function handlePipelineError(err: NodeJS.ErrnoException | null, res: Http2Server
   if (err) {
     switch (err.code) {
       default:
-        logger.error(err)
+        logger.error(err);
         if (!res.headersSent) {
-          res.writeHead(HTTP_STATUS_BAD_GATEWAY)
+          res.writeHead(HTTP_STATUS_BAD_GATEWAY);
         }
         if (!res.closed) {
-          res.end()
+          res.end();
         }
-        break
+        break;
     }
   }
 }

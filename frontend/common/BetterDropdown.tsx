@@ -1,18 +1,18 @@
-import { Dropdown, DropdownPosition, DropdownToggle, KebabToggle } from '@patternfly/react-core'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { Dropdown, DropdownPosition, DropdownToggle, KebabToggle } from '@patternfly/react-core';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 export function BetterDropdown(props: {
-  label?: string
-  children?: ReactNode
-  position?: DropdownPosition | 'right' | 'left'
+  label?: string;
+  children?: ReactNode;
+  position?: DropdownPosition | 'right' | 'left';
 }) {
-  const [open, setOpen] = useState(false)
-  const onToggle = useCallback(() => setOpen((open) => !open), [])
+  const [open, setOpen] = useState(false);
+  const onToggle = useCallback(() => setOpen((open) => !open), []);
 
   const items = useMemo(() => {
-    if (!open) return []
-    return props.children
-  }, [open, props.children])
+    if (!open) return [];
+    return props.children;
+  }, [open, props.children]);
 
   const toggle = props.label ? (
     <DropdownToggle toggleVariant="secondary" onToggle={onToggle}>
@@ -20,7 +20,7 @@ export function BetterDropdown(props: {
     </DropdownToggle>
   ) : (
     <KebabToggle onToggle={onToggle} />
-  )
+  );
 
   return (
     <Dropdown
@@ -30,5 +30,5 @@ export function BetterDropdown(props: {
       dropdownItems={items as unknown[]}
       position={props.position}
     />
-  )
+  );
 }

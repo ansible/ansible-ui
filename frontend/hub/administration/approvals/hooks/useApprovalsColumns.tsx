@@ -1,11 +1,11 @@
-import { ExclamationTriangleIcon, ThumbsUpIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ITableColumn, PFColorE, SinceCell, TextCell } from '../../../../../framework'
-import { Approval } from '../Approval'
+import { ExclamationTriangleIcon, ThumbsUpIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ITableColumn, PFColorE, SinceCell, TextCell } from '../../../../../framework';
+import { Approval } from '../Approval';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<Approval>[]>(
     () => [
       {
@@ -24,11 +24,11 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
                 text={t('Needs review')}
                 color={PFColorE.Warning}
               />
-            )
+            );
           } else {
             return (
               <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
-            )
+            );
           }
         },
       },
@@ -49,6 +49,6 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
       },
     ],
     [t]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

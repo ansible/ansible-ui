@@ -1,8 +1,8 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   CapacityCell,
   IPageAction,
@@ -11,25 +11,25 @@ import {
   PageActionType,
   TablePage,
   TextCell,
-} from '../../../../framework'
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns'
-import { RouteE } from '../../../Routes'
-import { useControllerView } from '../../useControllerView'
-import { InstanceGroup } from './InstanceGroup'
-import { useDeleteInstanceGroups } from './useDeleteInstanceGroups'
+} from '../../../../framework';
+import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { RouteE } from '../../../Routes';
+import { useControllerView } from '../../useControllerView';
+import { InstanceGroup } from './InstanceGroup';
+import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 
 export function InstanceGroups() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useInstanceGroupsFilters()
-  const tableColumns = useInstanceGroupsColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useInstanceGroupsFilters();
+  const tableColumns = useInstanceGroupsColumns();
   const view = useControllerView({
     url: '/api/v2/instance_groups/',
     toolbarFilters,
     tableColumns,
-  })
+  });
 
-  const deleteInstanceGroups = useDeleteInstanceGroups(view.unselectItemsAndRefresh)
+  const deleteInstanceGroups = useDeleteInstanceGroups(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
@@ -60,7 +60,7 @@ export function InstanceGroups() {
       },
     ],
     [deleteInstanceGroups, navigate, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
@@ -79,7 +79,7 @@ export function InstanceGroups() {
       },
     ],
     [deleteInstanceGroups, navigate, t]
-  )
+  );
 
   return (
     <TablePage<InstanceGroup>
@@ -98,11 +98,11 @@ export function InstanceGroups() {
       emptyStateButtonClick={() => navigate(RouteE.CreateInstanceGroup)}
       {...view}
     />
-  )
+  );
 }
 
 export function useInstanceGroupsFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -114,17 +114,17 @@ export function useInstanceGroupsFilters() {
       },
     ],
     [t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useInstanceGroupsColumns(options?: {
-  disableSort?: boolean
-  disableLinks?: boolean
+  disableSort?: boolean;
+  disableLinks?: boolean;
 }) {
-  const { t } = useTranslation()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  const { t } = useTranslation();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<InstanceGroup>[]>(
     () => [
       {
@@ -165,6 +165,6 @@ export function useInstanceGroupsColumns(options?: {
       modifiedColumn,
     ],
     [t, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }

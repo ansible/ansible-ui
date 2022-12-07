@@ -1,11 +1,11 @@
-import { Alert } from '@patternfly/react-core'
-import { Fragment } from 'react'
-import { useFormState } from 'react-hook-form'
-import { useBreakpoint } from '../components/useBreakPoint'
+import { Alert } from '@patternfly/react-core';
+import { Fragment } from 'react';
+import { useFormState } from 'react-hook-form';
+import { useBreakpoint } from '../components/useBreakPoint';
 
 export function PageFormAlerts() {
-  const { errors } = useFormState()
-  const isMd = useBreakpoint('md')
+  const { errors } = useFormState();
+  const isMd = useBreakpoint('md');
   return (
     <Fragment>
       {errors && Object.keys(errors).length > 0 && (
@@ -19,5 +19,5 @@ export function PageFormAlerts() {
         </Alert>
       )}
     </Fragment>
-  )
+  );
 }

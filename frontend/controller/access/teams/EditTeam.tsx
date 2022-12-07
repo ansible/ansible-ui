@@ -1,31 +1,31 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import useSWR, { useSWRConfig } from 'swr'
-import { PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
-import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
-import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Organization } from '../../interfaces/Organization'
-import { Team } from '../../interfaces/Team'
-import { getControllerError } from '../../useControllerView'
-import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
+import { PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema';
+import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
+import { Team } from '../../interfaces/Team';
+import { getControllerError } from '../../useControllerView';
+import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
 
 export function EditTeam() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
 
   const { data: team } = useSWR<Team>(
     Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined,
     requestGet,
     swrOptions
-  )
+  );
 
-  const selectOrganization = useSelectOrganization()
+  const selectOrganization = useSelectOrganization();
 
   const EditTeamSchema = useMemo(
     () =>
@@ -46,11 +46,11 @@ export function EditTeam() {
         }),
       }),
     [selectOrganization, t]
-  )
+  );
 
-  type CreateTeam = Static<typeof EditTeamSchema>
+  type CreateTeam = Static<typeof EditTeamSchema>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<CreateTeam> = async (
     editedTeam,
@@ -60,30 +60,30 @@ export function EditTeam() {
     try {
       const result = await requestGet<ItemsResponse<Organization>>(
         `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
-      )
+      );
       if (result.results.length === 0) {
         setFieldError('summary_fields.organization.name', {
           message: t('Organization not found'),
-        })
-        return false
+        });
+        return false;
       }
-      const organization = result.results[0]
-      ;(editedTeam as unknown as { organization: number }).organization = organization.id
-      let team: Team
+      const organization = result.results[0];
+      (editedTeam as unknown as { organization: number }).organization = organization.id;
+      let team: Team;
       if (Number.isInteger(id)) {
-        team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(-1)
+        team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(-1);
       } else {
-        team = await requestPost<Team>('/api/v2/teams/', editedTeam)
-        ;(cache as unknown as { clear: () => void }).clear?.()
-        navigate(RouteE.TeamDetails.replace(':id', team.id.toString()))
+        team = await requestPost<Team>('/api/v2/teams/', editedTeam);
+        (cache as unknown as { clear: () => void }).clear?.();
+        navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
       }
     } catch (err) {
-      setError(await getControllerError(err))
+      setError(await getControllerError(err));
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
     if (!team) {
@@ -93,7 +93,7 @@ export function EditTeam() {
             breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
           />
         </PageLayout>
-      )
+      );
     } else {
       return (
         <PageLayout>
@@ -114,7 +114,7 @@ export function EditTeam() {
             </PageForm>
           </PageBody>
         </PageLayout>
-      )
+      );
     }
   } else {
     return (
@@ -135,6 +135,6 @@ export function EditTeam() {
           </PageForm>
         </PageBody>
       </PageLayout>
-    )
+    );
   }
 }

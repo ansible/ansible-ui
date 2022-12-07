@@ -1,4 +1,4 @@
-import { Label, LabelGroup } from '@patternfly/react-core'
+import { Label, LabelGroup } from '@patternfly/react-core';
 
 export function LabelsCell(props: { labels: string[] }) {
   return (
@@ -7,5 +7,5 @@ export function LabelsCell(props: { labels: string[] }) {
         <Label key={label}>{label}</Label>
       ))}
     </LabelGroup>
-  )
+  );
 }

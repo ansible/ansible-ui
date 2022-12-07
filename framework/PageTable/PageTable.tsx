@@ -11,11 +11,19 @@ import {
   Skeleton,
   Spinner,
   Title,
-} from '@patternfly/react-core'
-import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons'
-import { SortByDirection, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table'
-import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base'
-import useResizeObserver from '@react-hook/resize-observer'
+} from '@patternfly/react-core';
+import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
+import {
+  SortByDirection,
+  TableComposable,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@patternfly/react-table';
+import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base';
+import useResizeObserver from '@react-hook/resize-observer';
 import {
   Dispatch,
   Fragment,
@@ -27,28 +35,28 @@ import {
   useEffect,
   useRef,
   useState,
-} from 'react'
-import { Scrollable } from '../components/Scrollable'
-import { useBreakpoint } from '../components/useBreakPoint'
-import { IPageAction } from '../PageActions/PageAction'
-import { PageActions } from '../PageActions/PageActions'
-import { PageActionType } from '../PageActions/PageActionType'
-import { PageBody } from '../PageBody'
-import { SinceCell } from '../PageCells/DateTimeCell'
-import { LabelsCell } from '../PageCells/LabelsCell'
-import { TextCell } from '../PageCells/TextCell'
-import { useColumnModal } from '../PageColumnModal'
-import { PageHeader, PageHeaderProps } from '../PageHeader'
-import { PageLayout } from '../PageLayout'
-import { useSettings } from '../Settings'
-import { PagePagination } from './PagePagination'
-import { PageTableCards } from './PageTableCards'
-import { PageTableList } from './PageTableList'
-import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType'
-import { IToolbarFilter, PageTableToolbar } from './PageToolbar'
+} from 'react';
+import { Scrollable } from '../components/Scrollable';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
+import { PageActionType } from '../PageActions/PageActionType';
+import { PageBody } from '../PageBody';
+import { SinceCell } from '../PageCells/DateTimeCell';
+import { LabelsCell } from '../PageCells/LabelsCell';
+import { TextCell } from '../PageCells/TextCell';
+import { useColumnModal } from '../PageColumnModal';
+import { PageHeader, PageHeaderProps } from '../PageHeader';
+import { PageLayout } from '../PageLayout';
+import { useSettings } from '../Settings';
+import { PagePagination } from './PagePagination';
+import { PageTableCards } from './PageTableCards';
+import { PageTableList } from './PageTableList';
+import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
+import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
 
 export type TablePageProps<T extends object> = PageHeaderProps &
-  PageTableProps<T> & { error?: Error }
+  PageTableProps<T> & { error?: Error };
 
 export function TablePage<T extends object>(props: TablePageProps<T>) {
   return (
@@ -56,69 +64,69 @@ export function TablePage<T extends object>(props: TablePageProps<T>) {
       <PageHeader {...props} />
       <PageTable {...props} />
     </PageLayout>
-  )
+  );
 }
 
 export type PageTableProps<T extends object> = {
-  keyFn: (item: T) => string | number
+  keyFn: (item: T) => string | number;
 
-  itemCount?: number
-  pageItems: T[] | undefined
+  itemCount?: number;
+  pageItems: T[] | undefined;
 
-  toolbarActions?: IPageAction<T>[]
+  toolbarActions?: IPageAction<T>[];
 
-  tableColumns: ITableColumn<T>[]
+  tableColumns: ITableColumn<T>[];
 
-  rowActions?: IPageAction<T>[]
+  rowActions?: IPageAction<T>[];
 
-  toolbarFilters?: IToolbarFilter[]
-  filters?: Record<string, string[]>
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>
-  clearAllFilters?: () => void
+  toolbarFilters?: IToolbarFilter[];
+  filters?: Record<string, string[]>;
+  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  clearAllFilters?: () => void;
 
-  sort?: string
-  setSort?: (sort: string) => void
-  sortDirection?: 'asc' | 'desc'
-  setSortDirection?: (sortDirection: 'asc' | 'desc') => void
-  compact?: boolean
+  sort?: string;
+  setSort?: (sort: string) => void;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
+  compact?: boolean;
 
-  page: number
-  perPage: number
-  setPage: (page: number) => void
-  setPerPage: (perPage: number) => void
-  autoHidePagination?: boolean
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
+  autoHidePagination?: boolean;
 
-  isSelected?: (item: T) => boolean
-  selectedItems?: T[]
-  selectItem?: (item: T) => void
-  unselectItem?: (item: T) => void
-  selectItems?: (items: T[]) => void
-  unselectAll?: () => void
-  onSelect?: (item: T) => void
-  selectNoneText?: string
+  isSelected?: (item: T) => boolean;
+  selectedItems?: T[];
+  selectItem?: (item: T) => void;
+  unselectItem?: (item: T) => void;
+  selectItems?: (items: T[]) => void;
+  unselectAll?: () => void;
+  onSelect?: (item: T) => void;
+  selectNoneText?: string;
 
-  errorStateTitle: string
-  error?: Error
+  errorStateTitle: string;
+  error?: Error;
 
-  emptyStateTitle: string
-  emptyStateDescription?: string
-  emptyStateButtonText?: string
-  emptyStateButtonClick?: () => void
+  emptyStateTitle: string;
+  emptyStateDescription?: string;
+  emptyStateButtonText?: string;
+  emptyStateButtonClick?: () => void;
 
-  t?: (t: string) => string
+  t?: (t: string) => string;
 
-  showSelect?: boolean
+  showSelect?: boolean;
 
-  disableTableView?: boolean
-  disableListView?: boolean
-  disableCardView?: boolean
+  disableTableView?: boolean;
+  disableListView?: boolean;
+  disableCardView?: boolean;
 
-  defaultTableView?: PageTableViewType
+  defaultTableView?: PageTableViewType;
 
-  disableBodyPadding?: boolean
+  disableBodyPadding?: boolean;
 
-  defaultSubtitle?: ReactNode
-}
+  defaultSubtitle?: ReactNode;
+};
 
 /**
  * The PageTable component is used for adding a table to a page.
@@ -137,14 +145,14 @@ export type PageTableProps<T extends object> = {
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   // const { disableBodyPadding } = props
-  const { toolbarActions, filters, error, itemCount } = props
-  const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns)
+  const { toolbarActions, filters, error, itemCount } = props;
+  const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const showSelect =
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-    undefined
+    undefined;
 
-  const hasTableViewType = !props.disableTableView
-  const hasListViewType = !props.disableListView
+  const hasTableViewType = !props.disableTableView;
+  const hasListViewType = !props.disableListView;
   // const hasCardViewType = !props.disableCardView
 
   const [viewType, setViewType] = useState<PageTableViewType>(
@@ -155,11 +163,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         : hasListViewType
         ? PageTableViewTypeE.List
         : PageTableViewTypeE.Cards)
-  )
+  );
 
-  const settings = useSettings()
+  const settings = useSettings();
 
-  const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true
+  const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true;
 
   if (error) {
     return (
@@ -188,7 +196,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <EmptyStateBody>{error.message}</EmptyStateBody>
         </EmptyState>
       </div>
-    )
+    );
   }
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
@@ -207,7 +215,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           </Button>
         )}
       </EmptyState>
-    )
+    );
   }
 
   if (itemCount === undefined) {
@@ -217,7 +225,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <Spinner />
         </Bullseye>
       </PageSection>
-    )
+    );
   }
 
   return (
@@ -262,7 +270,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {columnModal}
     </>
-  )
+  );
 }
 
 function PageTableView<T extends object>(props: PageTableProps<T>) {
@@ -280,42 +288,42 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     clearAllFilters,
     onSelect,
     unselectAll,
-  } = props
-  let { t } = props
-  t = t ? t : (t: string) => t
+  } = props;
+  let { t } = props;
+  t = t ? t : (t: string) => t;
   const showSelect =
     props.showSelect ||
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-      undefined
-  const containerRef = useRef<HTMLDivElement>(null)
+      undefined;
+  const containerRef = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState<{
-    left: number
-    right: number
-    top: number
-    bottom: number
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
   }>({
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-  })
+  });
   const updateScroll = useCallback((div: HTMLDivElement | null) => {
-    if (!div) return
+    if (!div) return;
     setScroll({
       top: div.scrollTop,
       bottom: div.scrollHeight - div.clientHeight - div.scrollTop,
       left: div.scrollLeft,
       right: div.scrollWidth - div.clientWidth - div.scrollLeft,
-    })
-  }, [])
+    });
+  }, []);
   const onScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => updateScroll(event.currentTarget),
     [updateScroll]
-  )
-  useResizeObserver(containerRef, () => updateScroll(containerRef.current))
-  useEffect(() => updateScroll(containerRef.current), [updateScroll])
+  );
+  useResizeObserver(containerRef, () => updateScroll(containerRef.current));
+  useEffect(() => updateScroll(containerRef.current), [updateScroll]);
 
-  const settings = useSettings()
+  const settings = useSettings();
 
   return (
     <div
@@ -412,20 +420,20 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function TableHead<T extends object>(props: {
-  tableColumns: ITableColumn<T>[]
-  rowActions?: IPageAction<T>[]
-  sort?: string
-  setSort?: (sort: string) => void
-  sortDirection?: 'asc' | 'desc'
-  setSortDirection?: (sortDirection: 'asc' | 'desc') => void
-  showSelect?: boolean
-  scrollLeft?: boolean
-  scrollRight?: boolean
-  onSelect?: (item: T) => void
+  tableColumns: ITableColumn<T>[];
+  rowActions?: IPageAction<T>[];
+  sort?: string;
+  setSort?: (sort: string) => void;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
+  showSelect?: boolean;
+  scrollLeft?: boolean;
+  scrollRight?: boolean;
+  onSelect?: (item: T) => void;
 }) {
   const {
     tableColumns: columns,
@@ -436,19 +444,19 @@ function TableHead<T extends object>(props: {
     setSortDirection,
     showSelect,
     onSelect,
-  } = props
-  const settings = useSettings()
+  } = props;
+  const settings = useSettings();
 
   const getColumnSort = useCallback<
     (columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined
   >(
     (columnIndex: number, column: ITableColumn<T>) => {
-      if (!column.sort) return undefined
+      if (!column.sort) return undefined;
       return {
         onSort: (_event: MouseEvent, _columnIndex: number, sortByDirection: SortByDirection) => {
           if (column.sort) {
-            setSort?.(column.sort)
-            setSortDirection?.(sortByDirection)
+            setSort?.(column.sort);
+            setSortDirection?.(sortByDirection);
           }
         },
         sortBy: {
@@ -457,10 +465,10 @@ function TableHead<T extends object>(props: {
           defaultDirection: column.defaultSortDirection,
         },
         columnIndex,
-      }
+      };
     },
     [setSort, setSortDirection, sort, sortDirection]
-  )
+  );
 
   return (
     <Thead>
@@ -499,7 +507,7 @@ function TableHead<T extends object>(props: {
               >
                 {column.header}
               </Th>
-            )
+            );
           })}
         {itemActions !== undefined && (
           <Th
@@ -520,22 +528,22 @@ function TableHead<T extends object>(props: {
         )}
       </Tr>
     </Thead>
-  )
+  );
 }
 
 function TableRow<T extends object>(props: {
-  columns: ITableColumn<T>[]
-  item: T
-  isItemSelected?: boolean
-  selectItem?: (item: T) => void
-  unselectItem?: (item: T) => void
-  rowActions?: IPageAction<T>[]
-  rowIndex: number
-  showSelect: boolean
-  scrollLeft?: boolean
-  scrollRight?: boolean
-  onSelect?: (item: T) => void
-  unselectAll?: () => void
+  columns: ITableColumn<T>[];
+  item: T;
+  isItemSelected?: boolean;
+  selectItem?: (item: T) => void;
+  unselectItem?: (item: T) => void;
+  rowActions?: IPageAction<T>[];
+  rowIndex: number;
+  showSelect: boolean;
+  scrollLeft?: boolean;
+  scrollRight?: boolean;
+  onSelect?: (item: T) => void;
+  unselectAll?: () => void;
 }) {
   const {
     columns,
@@ -548,8 +556,8 @@ function TableRow<T extends object>(props: {
     rowIndex,
     showSelect,
     onSelect,
-  } = props
-  const md = useBreakpoint('xl')
+  } = props;
+  const md = useBreakpoint('xl');
   return (
     <Tr
       className={isItemSelected ? 'selected' : undefined}
@@ -565,9 +573,9 @@ function TableRow<T extends object>(props: {
               ? {
                   onSelect: (_event, isSelecting) => {
                     if (isSelecting) {
-                      selectItem?.(item)
+                      selectItem?.(item);
                     } else {
-                      unselectItem?.(item)
+                      unselectItem?.(item);
                     }
                   },
                   isSelected: isItemSelected,
@@ -585,9 +593,9 @@ function TableRow<T extends object>(props: {
           select={{
             rowIndex,
             onSelect: () => {
-              unselectAll?.()
-              selectItem?.(item)
-              onSelect?.(item)
+              unselectAll?.();
+              selectItem?.(item);
+              onSelect?.(item);
             },
             isSelected: isItemSelected ?? false,
             // disable: !isRepoSelectable(repo),
@@ -612,18 +620,18 @@ function TableRow<T extends object>(props: {
         scrollRight={props.scrollRight}
       />
     </Tr>
-  )
+  );
 }
 
 function TableCells<T extends object>(props: {
-  rowIndex: number
-  columns: ITableColumn<T>[]
-  item: T
-  rowActions?: IPageAction<T>[]
-  scrollLeft?: boolean
-  scrollRight?: boolean
+  rowIndex: number;
+  columns: ITableColumn<T>[];
+  item: T;
+  rowActions?: IPageAction<T>[];
+  scrollLeft?: boolean;
+  scrollRight?: boolean;
 }) {
-  const { columns, item, rowActions, rowIndex } = props
+  const { columns, item, rowActions, rowIndex } = props;
   return (
     <Fragment>
       {columns
@@ -633,7 +641,7 @@ function TableCells<T extends object>(props: {
             <Td key={column.header} dataLabel={column.header} modifier="nowrap">
               <TableColumnCell item={item} column={column} />
             </Td>
-          )
+          );
         })}
       {rowActions !== undefined && rowActions.length > 0 && (
         <Th
@@ -657,22 +665,22 @@ function TableCells<T extends object>(props: {
         </Th>
       )}
     </Fragment>
-  )
+  );
 }
 
-type CellFn<T extends object, R> = (item: T) => R
+type CellFn<T extends object, R> = (item: T) => R;
 
 export interface ITableColumnCommon<T extends object> {
-  id?: string
-  header: string
-  minWidth?: number
-  maxWidth?: number
-  enabled?: boolean
-  isIdColumn?: boolean
+  id?: string;
+  header: string;
+  minWidth?: number;
+  maxWidth?: number;
+  enabled?: boolean;
+  isIdColumn?: boolean;
 
-  sort?: string
-  defaultSortDirection?: 'asc' | 'desc'
-  defaultSort?: boolean
+  sort?: string;
+  defaultSortDirection?: 'asc' | 'desc';
+  defaultSort?: boolean;
 
   // card?: 'description' | 'hidden' | 'count'
 
@@ -682,9 +690,9 @@ export interface ITableColumnCommon<T extends object> {
 
   // primary?: boolean
 
-  icon?: (item: T) => ReactNode
-  card?: 'name' | 'subtitle' | 'description' | 'hidden'
-  list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary'
+  icon?: (item: T) => ReactNode;
+  card?: 'name' | 'subtitle' | 'description' | 'hidden';
+  list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
 }
 
 export enum TableColumnSomething {
@@ -700,34 +708,34 @@ export enum TableColumnCardType {
 }
 
 export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
-  type?: undefined
-  value?: CellFn<T, string | string[] | number | boolean>
-  cell: CellFn<T, ReactNode | undefined>
+  type?: undefined;
+  value?: CellFn<T, string | string[] | number | boolean>;
+  cell: CellFn<T, ReactNode | undefined>;
 }
 
 export interface ITableColumnTypeCount<T extends object> extends ITableColumnCommon<T> {
-  type: 'count'
-  value: CellFn<T, number | undefined>
+  type: 'count';
+  value: CellFn<T, number | undefined>;
 }
 
 export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
-  type: 'labels'
-  value: CellFn<T, string[] | undefined>
+  type: 'labels';
+  value: CellFn<T, string[] | undefined>;
 }
 
 export interface ITableColumnTypeDateTime<T extends object> extends ITableColumnCommon<T> {
-  type: 'datetime'
-  value: CellFn<T, number | string | undefined>
+  type: 'datetime';
+  value: CellFn<T, number | string | undefined>;
 }
 
 export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
-  type: 'description'
-  value: CellFn<T, string | undefined>
+  type: 'description';
+  value: CellFn<T, string | undefined>;
 }
 
 export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
-  type: 'text'
-  value: CellFn<T, string | undefined>
+  type: 'text';
+  value: CellFn<T, string | undefined>;
 }
 
 export type ITableColumn<T extends object> =
@@ -736,23 +744,23 @@ export type ITableColumn<T extends object> =
   | ITableColumnTypeLabels<T>
   | ITableColumnTypeCount<T>
   | ITableColumnTypeText<T>
-  | ITableColumnTypeDescription<T>
+  | ITableColumnTypeDescription<T>;
 
 export function TableColumnCell<T extends object>(props: { item: T; column?: ITableColumn<T> }) {
-  const { item, column } = props
-  if (!column) return <></>
+  const { item, column } = props;
+  if (!column) return <></>;
   switch (column.type) {
     case 'text':
-      return <TextCell text={column.value(item)} />
+      return <TextCell text={column.value(item)} />;
     case 'labels':
-      return <LabelsCell labels={column.value(item) ?? []} />
+      return <LabelsCell labels={column.value(item) ?? []} />;
     case 'description':
-      return <TextCell text={column.value(item)} />
+      return <TextCell text={column.value(item)} />;
     case 'count':
-      return <>{column.value(item) ?? '-'}</>
+      return <>{column.value(item) ?? '-'}</>;
     case 'datetime':
-      return <SinceCell value={column.value(item)} />
+      return <SinceCell value={column.value(item)} />;
     default:
-      return <>{column.cell(item)}</>
+      return <>{column.cell(item)}</>;
   }
 }

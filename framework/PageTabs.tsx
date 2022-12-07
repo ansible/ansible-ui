@@ -7,7 +7,7 @@ import {
   Skeleton,
   Tab,
   Tabs,
-} from '@patternfly/react-core'
+} from '@patternfly/react-core';
 import {
   Children,
   Dispatch,
@@ -16,35 +16,35 @@ import {
   SetStateAction,
   useCallback,
   useState,
-} from 'react'
+} from 'react';
 
 export function PageTabs(props: {
-  children: ReactNode
-  preComponents?: ReactNode
-  postComponents?: ReactNode
+  children: ReactNode;
+  preComponents?: ReactNode;
+  postComponents?: ReactNode;
 }) {
-  const [activeKey, setActiveKey] = useState<number>(0)
+  const [activeKey, setActiveKey] = useState<number>(0);
   const onSelect = useCallback(
     (_, key: string | number) => setActiveKey(key as number),
     [setActiveKey]
-  )
-  const children = Children.toArray(props.children)
+  );
+  const children = Children.toArray(props.children);
   const tabs = children.map((child, index) => {
     if (isValidElement(child)) {
       if (child.type === PageTab) {
-        const title = (child.props as { title: string }).title
+        const title = (child.props as { title: string }).title;
         return (
           <Tab
             key={title ?? index}
             title={title ? title : <Skeleton width="60px" />}
             eventKey={index}
           />
-        )
+        );
       }
     }
-    return child
-  })
-  const content = children[activeKey]
+    return child;
+  });
+  const content = children[activeKey];
   return (
     <>
       <PageSection type={PageSectionTypes.tabs}>
@@ -91,20 +91,20 @@ export function PageTabs(props: {
       <Divider />
       {content}
     </>
-  )
+  );
 }
 
 export function PageTab(props: { title?: string; children: ReactNode }) {
-  return <>{props.children}</>
+  return <>{props.children}</>;
 }
 
 export function PageTabsOld(props: {
-  activeKey: string | number
-  setActiveKey: Dispatch<SetStateAction<string | number>>
-  children: ReactNode
+  activeKey: string | number;
+  setActiveKey: Dispatch<SetStateAction<string | number>>;
+  children: ReactNode;
 }) {
-  const { activeKey, setActiveKey } = props
-  const onSelect = useCallback((_, key: string | number) => setActiveKey(key), [setActiveKey])
+  const { activeKey, setActiveKey } = props;
+  const onSelect = useCallback((_, key: string | number) => setActiveKey(key), [setActiveKey]);
   return (
     <PageSection type={PageSectionTypes.tabs} style={{ flexGrow: 1 }}>
       <Tabs
@@ -122,5 +122,5 @@ export function PageTabsOld(props: {
         {props.children}
       </Tabs>
     </PageSection>
-  )
+  );
 }

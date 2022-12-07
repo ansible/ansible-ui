@@ -1,10 +1,10 @@
-import { PageSection } from '@patternfly/react-core'
-import { useMemo } from 'react'
-import { Grid } from '../components/Grid'
-import { PageTableProps } from './PageTable'
-import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard'
+import { PageSection } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { Grid } from '../components/Grid';
+import { PageTableProps } from './PageTable';
+import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard';
 
-export type PageTableCardsProps<T extends object> = PageTableProps<T>
+export type PageTableCardsProps<T extends object> = PageTableProps<T>;
 
 export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) {
   const {
@@ -17,9 +17,9 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
     rowActions,
     showSelect,
     defaultSubtitle: defaultCardSubtitle,
-  } = props
+  } = props;
 
-  const itemToCardFn = useColumnsToTableCardFn(tableColumns, keyFn)
+  const itemToCardFn = useColumnsToTableCardFn(tableColumns, keyFn);
 
   const catalogCards = useMemo(() => {
     return (
@@ -38,7 +38,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
           />
         ))}
       </Grid>
-    )
+    );
   }, [
     items,
     keyFn,
@@ -49,7 +49,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
     rowActions,
     showSelect,
     defaultCardSubtitle,
-  ])
+  ]);
 
-  return <PageSection style={{ flexGrow: 1 }}>{catalogCards}</PageSection>
+  return <PageSection style={{ flexGrow: 1 }}>{catalogCards}</PageSection>;
 }

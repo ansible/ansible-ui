@@ -10,21 +10,21 @@ import {
   DataListItemRow,
   Modal,
   ModalVariant,
-} from '@patternfly/react-core'
-import { FormEvent, useCallback, useEffect, useState } from 'react'
-import { ITableColumn } from './PageTable/PageTable'
+} from '@patternfly/react-core';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { ITableColumn } from './PageTable/PageTable';
 
 export function useColumnModal<T extends object>(
   columns: ITableColumn<T>[],
   t?: (t: string) => string
 ) {
-  t = t ? t : (t: string) => t
+  t = t ? t : (t: string) => t;
 
-  const [columnModalOpen, setColumnModalOpen] = useState(false)
+  const [columnModalOpen, setColumnModalOpen] = useState(false);
   const openColumnModal = useCallback(() => {
-    setColumnModalOpen(true)
-  }, [])
-  const [managedColumns, setManagedColumns] = useState<ITableColumn<T>[]>(() => columns)
+    setColumnModalOpen(true);
+  }, []);
+  const [managedColumns, setManagedColumns] = useState<ITableColumn<T>[]>(() => columns);
 
   useEffect(() => {
     setManagedColumns((managedColumns) =>
@@ -32,12 +32,12 @@ export function useColumnModal<T extends object>(
         (managedColumn) =>
           columns.find((column) => column.header === managedColumn.header) ?? managedColumn
       )
-    )
-  }, [columns])
+    );
+  }, [columns]);
 
   const onClose = useCallback(() => {
-    setColumnModalOpen(false)
-  }, [])
+    setColumnModalOpen(false);
+  }, []);
   // const selectAllColumns = useCallback(() => {
   //     setManagedColumns((managedColumns) => {
   //         for (const column of managedColumns) {
@@ -50,21 +50,21 @@ export function useColumnModal<T extends object>(
     setManagedColumns((managedColumns) => {
       return itemOrder.map((header) =>
         managedColumns.find((column) => column.header === header)
-      ) as ITableColumn<T>[]
-    })
-  }, [])
+      ) as ITableColumn<T>[];
+    });
+  }, []);
   const handleChange = useCallback((checked: boolean, event: FormEvent<HTMLInputElement>) => {
-    const columnHeader = (event.target as unknown as { name?: string }).name
+    const columnHeader = (event.target as unknown as { name?: string }).name;
     if (columnHeader) {
       setManagedColumns((managedColumns) => {
         for (const column of managedColumns) {
-          if (column.header !== columnHeader) continue
-          column.enabled = checked
+          if (column.header !== columnHeader) continue;
+          column.enabled = checked;
         }
-        return [...managedColumns]
-      })
+        return [...managedColumns];
+      });
     }
-  }, [])
+  }, []);
   const columnModal = (
     <Modal
       variant={ModalVariant.medium}
@@ -132,10 +132,10 @@ export function useColumnModal<T extends object>(
                 />
               </DataListItemRow>
             </DataListItem>
-          )
+          );
         })}
       </DataList>
     </Modal>
-  )
-  return { openColumnModal, columnModal, managedColumns }
+  );
+  return { openColumnModal, columnModal, managedColumns };
 }

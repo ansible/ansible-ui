@@ -1,27 +1,27 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import useSWR, { useSWRConfig } from 'swr'
-import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework'
-import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema'
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Organization } from '../../interfaces/Organization'
-import { getControllerError } from '../../useControllerView'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
+import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework';
+import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
+import { getControllerError } from '../../useControllerView';
 
 export function EditOrganization() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
 
   const { data: organization } = useSWR<Organization>(
     Number.isInteger(id) ? `/api/v2/organizations/${id.toString()}/` : undefined,
     requestGet,
     swrOptions
-  )
+  );
 
   const EditOrganizationSchema = useMemo(
     () =>
@@ -39,33 +39,36 @@ export function EditOrganization() {
         ),
       }),
     [t]
-  )
+  );
 
-  type CreateOrganization = Static<typeof EditOrganizationSchema>
+  type CreateOrganization = Static<typeof EditOrganizationSchema>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<CreateOrganization> = async (
     editedOrganization,
     setError
   ) => {
     try {
-      let organization: Organization
+      let organization: Organization;
       if (Number.isInteger(id)) {
         organization = await requestPatch<Organization>(
           `/api/v2/organizations/${id}/`,
           editedOrganization
-        )
+        );
       } else {
-        organization = await requestPost<Organization>('/api/v2/organizations/', editedOrganization)
+        organization = await requestPost<Organization>(
+          '/api/v2/organizations/',
+          editedOrganization
+        );
       }
-      ;(cache as unknown as { clear: () => void }).clear?.()
-      navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()))
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err))
+      setError(await getControllerError(err));
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
     if (!organization) {
@@ -78,7 +81,7 @@ export function EditOrganization() {
             ]}
           />
         </>
-      )
+      );
     } else {
       return (
         <>
@@ -102,7 +105,7 @@ export function EditOrganization() {
             </PageForm>
           </PageBody>
         </>
-      )
+      );
     }
   } else {
     return (
@@ -126,6 +129,6 @@ export function EditOrganization() {
           </PageForm>
         </PageBody>
       </>
-    )
+    );
   }
 }

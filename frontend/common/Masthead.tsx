@@ -27,7 +27,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
   Truncate,
-} from '@patternfly/react-core'
+} from '@patternfly/react-core';
 import {
   BarsIcon,
   CogIcon,
@@ -35,26 +35,26 @@ import {
   QuestionCircleIcon,
   RedhatIcon,
   UserCircleIcon,
-} from '@patternfly/react-icons'
-import { Children, ReactNode, Suspense, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import useSWR from 'swr'
-import { useBreakpoint } from '../../framework'
-import { useSettingsDialog } from '../../framework/Settings'
-import { useAutomationServers } from '../automation-servers/AutomationServerProvider'
-import { swrOptions, useFetcher } from '../Data'
-import { RouteE } from '../Routes'
-import { useAnsibleAboutModal } from './AboutModal'
+} from '@patternfly/react-icons';
+import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
+import { useBreakpoint } from '../../framework';
+import { useSettingsDialog } from '../../framework/Settings';
+import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
+import { swrOptions, useFetcher } from '../Data';
+import { RouteE } from '../Routes';
+import { useAnsibleAboutModal } from './AboutModal';
 
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const onToggle = (isOpen: boolean) => setIsOpen(isOpen)
-  const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false);
+  const onToggle = (isOpen: boolean) => setIsOpen(isOpen);
+  const navigate = useNavigate();
 
-  const { automationServers } = useAutomationServers()
-  const controllers = automationServers.filter((server) => server.type === 'controller')
-  const hubs = automationServers.filter((server) => server.type === 'hub')
+  const { automationServers } = useAutomationServers();
+  const controllers = automationServers.filter((server) => server.type === 'controller');
+  const hubs = automationServers.filter((server) => server.type === 'hub');
   return (
     <ApplicationLauncher
       onToggle={onToggle}
@@ -109,19 +109,19 @@ export const ApplicationLauncherBasic: React.FunctionComponent = () => {
       ].filter(Boolean)}
       position="right"
     />
-  )
-}
+  );
+};
 
 export function AnsibleMasthead(props: {
-  isNavOpen: boolean
-  setNavOpen: (open: boolean) => void
-  hideLogin?: boolean
+  isNavOpen: boolean;
+  setNavOpen: (open: boolean) => void;
+  hideLogin?: boolean;
 }) {
-  const { hideLogin } = props
-  const isSmallOrLarger = useBreakpoint('sm')
-  const { t } = useTranslation()
-  const openSettings = useSettingsDialog(t)
-  const openAnsibleAboutModal = useAnsibleAboutModal()
+  const { hideLogin } = props;
+  const isSmallOrLarger = useBreakpoint('sm');
+  const { t } = useTranslation();
+  const openSettings = useSettingsDialog(t);
+  const openAnsibleAboutModal = useAnsibleAboutModal();
   return (
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
@@ -219,7 +219,7 @@ export function AnsibleMasthead(props: {
                           open(
                             'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
                             '_blank'
-                          )
+                          );
                         }}
                         icon={<ExternalLinkAltIcon />}
                       >
@@ -240,27 +240,27 @@ export function AnsibleMasthead(props: {
         </MastheadContent>
       )}
     </Masthead>
-  )
+  );
 }
 
 export function isRouteActive(route: RouteE | RouteE[], location: { pathname: string }) {
   if (Array.isArray(route)) {
     for (const r of route) {
-      if (location.pathname.startsWith(r)) return true
+      if (location.pathname.startsWith(r)) return true;
     }
-    return false
+    return false;
   }
-  return location.pathname.includes(route)
+  return location.pathname.includes(route);
 }
 
 function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
-    setOpen((open) => !open)
-  }, [])
+    setOpen((open) => !open);
+  }, []);
   const onToggle = useCallback(() => {
-    setOpen((open) => !open)
-  }, [])
+    setOpen((open) => !open);
+  }, []);
   return (
     <Dropdown
       onSelect={onSelect}
@@ -274,7 +274,7 @@ function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
       dropdownItems={open ? Children.toArray(props.children) : undefined}
       position="right"
     />
-  )
+  );
 }
 
 function AccountDropdown() {
@@ -290,27 +290,27 @@ function AccountDropdown() {
     >
       <AccountDropdownInternal />
     </Suspense>
-  )
+  );
 }
 
 function AccountDropdownInternal() {
-  const isSmallOrLarger = useBreakpoint('sm')
-  const fetcher = useFetcher()
-  const { automationServer } = useAutomationServers()
+  const isSmallOrLarger = useBreakpoint('sm');
+  const fetcher = useFetcher();
+  const { automationServer } = useAutomationServers();
   const meResponse = useSWR<{ results: { username: string }[] }>(
     automationServer ? (automationServer.type !== 'eda' ? '/api/v2/me/' : undefined) : undefined,
     fetcher,
     swrOptions
-  )
-  const history = useNavigate()
-  const [open, setOpen] = useState(false)
+  );
+  const history = useNavigate();
+  const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
-    setOpen((open) => !open)
-  }, [])
+    setOpen((open) => !open);
+  }, []);
   const onToggle = useCallback(() => {
-    setOpen((open) => !open)
-  }, [])
-  const { t } = useTranslation()
+    setOpen((open) => !open);
+  }, []);
+  const { t } = useTranslation();
   return (
     <Dropdown
       onSelect={onSelect}
@@ -336,7 +336,7 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            history(RouteE.Users)
+            history(RouteE.Users);
           }}
         >
           {t('User details')}
@@ -345,10 +345,10 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              await fetch('/api/logout')
-              history(RouteE.AutomationServers)
+              await fetch('/api/logout');
+              history(RouteE.AutomationServers);
             }
-            void logout()
+            void logout();
           }}
         >
           {t('Logout')}
@@ -357,7 +357,7 @@ function AccountDropdownInternal() {
       position="right"
       // style={{ marginTop: 4 }}
     />
-  )
+  );
 }
 
 function Notifications() {
@@ -365,12 +365,12 @@ function Notifications() {
     <Suspense fallback={<></>}>
       <NotificationsInternal />
     </Suspense>
-  )
+  );
 }
 
 function NotificationsInternal() {
   // const workflowApprovals = useWorkflowApprovals()
-  const workflowApprovals = []
+  const workflowApprovals = [];
   // const history = useNavigate()
   return (
     <NotificationBadge
@@ -379,5 +379,5 @@ function NotificationsInternal() {
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteE.WorkflowApprovals)}
     />
-  )
+  );
 }

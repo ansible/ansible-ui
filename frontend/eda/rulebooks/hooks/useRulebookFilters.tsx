@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { IToolbarFilter } from '../../../../framework'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IToolbarFilter } from '../../../../framework';
 
 export function useRulebookFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -15,5 +15,5 @@ export function useRulebookFilters() {
       },
     ],
     [t]
-  )
+  );
 }

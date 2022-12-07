@@ -1,21 +1,21 @@
-import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { usePageDialog } from '../../framework'
+import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../framework';
 
 export interface AnsibleAboutModalProps {
-  onClose?: () => void
+  onClose?: () => void;
 }
 
 function AnsibleAboutModal(props: AnsibleAboutModalProps) {
-  const [_dialog, setDialog] = usePageDialog()
-  const { t } = useTranslation()
+  const [_dialog, setDialog] = usePageDialog();
+  const { t } = useTranslation();
   return (
     <AboutModal
       isOpen
       onClose={() => {
-        setDialog(undefined)
-        props.onClose?.()
+        setDialog(undefined);
+        props.onClose?.();
       }}
       trademark="Trademark and copyright information here"
       brandImageSrc="Ansible.svg"
@@ -29,22 +29,22 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         </TextList>
       </TextContent>
     </AboutModal>
-  )
+  );
 }
 
 export function useAnsibleAboutModal() {
-  const [_, setDialog] = usePageDialog()
-  const [props, setProps] = useState<AnsibleAboutModalProps>()
+  const [_, setDialog] = usePageDialog();
+  const [props, setProps] = useState<AnsibleAboutModalProps>();
   useEffect(() => {
     if (props) {
       const onCloseHandler = () => {
-        setProps(undefined)
-        props.onClose?.()
-      }
-      setDialog(<AnsibleAboutModal {...props} onClose={onCloseHandler} />)
+        setProps(undefined);
+        props.onClose?.();
+      };
+      setDialog(<AnsibleAboutModal {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined)
+      setDialog(undefined);
     }
-  }, [props, setDialog])
-  return setProps
+  }, [props, setDialog]);
+  return setProps;
 }

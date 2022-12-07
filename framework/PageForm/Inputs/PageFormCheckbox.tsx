@@ -1,18 +1,18 @@
-import { Checkbox } from '@patternfly/react-core'
-import { ReactNode } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
+import { Checkbox } from '@patternfly/react-core';
+import { ReactNode } from 'react';
+import { useController, useFormContext } from 'react-hook-form';
 
 export function PageFormCheckbox(props: {
-  label: string
-  name: string
-  helperText?: string
-  required?: boolean
-  description?: ReactNode
-  body?: ReactNode
+  label: string;
+  name: string;
+  helperText?: string;
+  required?: boolean;
+  description?: ReactNode;
+  body?: ReactNode;
 }) {
-  const { control } = useFormContext()
-  const { field } = useController({ control, name: props.name })
-  const id = props.name
+  const { control } = useFormContext();
+  const { field } = useController({ control, name: props.name });
+  const id = props.name;
   return (
     <Checkbox
       label={props.label}
@@ -23,5 +23,5 @@ export function PageFormCheckbox(props: {
       {...field}
       isChecked={!!field.value}
     />
-  )
+  );
 }

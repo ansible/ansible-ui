@@ -1,27 +1,27 @@
-import { Static, Type } from '@sinclair/typebox'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
-import useSWR, { useSWRConfig } from 'swr'
-import { PageBody, PageHeader, PageLayout } from '../../../../framework'
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm'
-import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema'
-import { requestGet, requestPatch, swrOptions } from '../../../Data'
-import { RouteE } from '../../../Routes'
-import { Instance } from '../../interfaces/Instance'
-import { getControllerError } from '../../useControllerView'
+import { Static, Type } from '@sinclair/typebox';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
+import { PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import { requestGet, requestPatch, swrOptions } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { Instance } from '../../interfaces/Instance';
+import { getControllerError } from '../../useControllerView';
 
 export function EditInstance() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const params = useParams<{ id?: string }>()
-  const id = Number(params.id)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
 
   const { data: instance } = useSWR<Instance>(
     `/api/v2/instances/${id.toString()}/`,
     requestGet,
     swrOptions
-  )
+  );
 
   const EditInstanceSchema = useMemo(
     () =>
@@ -37,24 +37,24 @@ export function EditInstance() {
         }),
       }),
     [instance?.cpu_capacity, t]
-  )
+  );
 
-  type CreateInstance = Static<typeof EditInstanceSchema>
+  type CreateInstance = Static<typeof EditInstanceSchema>;
 
-  const { cache } = useSWRConfig()
+  const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
     try {
       editedInstance.capacity_adjustment =
-        Math.round(editedInstance.capacity_adjustment * 100) / 100
-      await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance)
-      ;(cache as unknown as { clear: () => void }).clear?.()
-      navigate(-1)
+        Math.round(editedInstance.capacity_adjustment * 100) / 100;
+      await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
     } catch (err) {
-      setError(await getControllerError(err))
+      setError(await getControllerError(err));
     }
-  }
-  const onCancel = () => navigate(-1)
+  };
+  const onCancel = () => navigate(-1);
 
   if (!instance) {
     return (
@@ -66,7 +66,7 @@ export function EditInstance() {
           ]}
         />
       </PageLayout>
-    )
+    );
   } else {
     return (
       <PageLayout>
@@ -93,6 +93,6 @@ export function EditInstance() {
           </PageForm>
         </PageBody>
       </PageLayout>
-    )
+    );
   }
 }

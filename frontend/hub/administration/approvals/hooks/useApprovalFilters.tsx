@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { IToolbarFilter } from '../../../../../framework'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IToolbarFilter } from '../../../../../framework';
 
 export function useApprovalFilters() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -34,6 +34,6 @@ export function useApprovalFilters() {
       },
     ],
     [t]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }

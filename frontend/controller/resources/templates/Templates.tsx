@@ -1,44 +1,44 @@
-import { ButtonVariant } from '@patternfly/react-core'
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons'
-import { useCallback, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
   PageActionType,
   TablePage,
-} from '../../../../framework'
+} from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
-} from '../../../common/columns'
-import { RouteE } from '../../../Routes'
+} from '../../../common/columns';
+import { RouteE } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters'
-import { useControllerView } from '../../useControllerView'
-import { Template } from './Template'
-import { useDeleteTemplates } from './useDeleteTemplates'
+} from '../../common/controller-toolbar-filters';
+import { useControllerView } from '../../useControllerView';
+import { Template } from './Template';
+import { useDeleteTemplates } from './useDeleteTemplates';
 
 export function Templates() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const toolbarFilters = useTemplateFilters()
-  const tableColumns = useTemplatesColumns()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toolbarFilters = useTemplateFilters();
+  const tableColumns = useTemplatesColumns();
   const view = useControllerView<Template>({
     url: '/api/v2/unified_job_templates/',
     toolbarFilters,
     tableColumns,
-  })
+  });
 
-  const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh)
+  const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Template>[]>(
     () => [
@@ -70,7 +70,7 @@ export function Templates() {
       },
     ],
     [deleteTemplates, navigate, t]
-  )
+  );
 
   const rowActions = useMemo<IPageAction<Template>[]>(
     () => [
@@ -89,7 +89,7 @@ export function Templates() {
       },
     ],
     [navigate, deleteTemplates, t]
-  )
+  );
   return (
     <TablePage<Template>
       title={t('Job templates')}
@@ -112,14 +112,14 @@ export function Templates() {
       emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
       {...view}
     />
-  )
+  );
 }
 
 export function useTemplateFilters() {
-  const nameToolbarFilter = useNameToolbarFilter()
-  const descriptionToolbarFilter = useDescriptionToolbarFilter()
-  const createdByToolbarFilter = useCreatedByToolbarFilter()
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter()
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       nameToolbarFilter,
@@ -128,27 +128,27 @@ export function useTemplateFilters() {
       modifiedByToolbarFilter,
     ],
     [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  )
-  return toolbarFilters
+  );
+  return toolbarFilters;
 }
 
 export function useTemplatesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const nameClick = useCallback(
     (template: Template) =>
       navigate(RouteE.InventoryDetails.replace(':id', template.id.toString())),
     [navigate]
-  )
+  );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
-  })
-  const descriptionColumn = useDescriptionColumn()
-  const createdColumn = useCreatedColumn(options)
-  const modifiedColumn = useModifiedColumn(options)
+  });
+  const descriptionColumn = useDescriptionColumn();
+  const createdColumn = useCreatedColumn(options);
+  const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Template>[]>(
     () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
     [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
-  )
-  return tableColumns
+  );
+  return tableColumns;
 }
