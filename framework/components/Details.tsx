@@ -5,7 +5,6 @@ import {
   DescriptionListTerm,
   Skeleton,
   Stack,
-  Text,
 } from '@patternfly/react-core'
 import { ComponentClass, ReactNode } from 'react'
 import { useSettings } from '../Settings'
@@ -86,9 +85,9 @@ export function Detail(props: { label?: string; children?: ReactNode }) {
     <DescriptionListGroup>
       {props.label && (
         <DescriptionListTerm>
-          <Text component="small" style={{ opacity: 0.7 }}>
-            {props.label}
-          </Text>
+          {/* <Text component="small" style={{ opacity: 0.7 }}> */}
+          {props.label}
+          {/* </Text> */}
         </DescriptionListTerm>
       )}
       <DescriptionListDescription id={props.label?.toLowerCase().split(' ').join('-')}>

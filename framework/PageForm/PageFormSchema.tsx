@@ -94,7 +94,7 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
                   key={base + propertyName}
                   name={base + propertyName}
                   label={title}
-                  placeholder={placeholder}
+                  placeholderText={placeholder}
                   isRequired={required}
                   options={formSelectProps.options}
                   footer={formSelectProps.footer}

@@ -17,21 +17,19 @@ export function PageFormTextInput(props: PageFormTextInputProps) {
       name={props.name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <>
-          <FormGroupTextInput
-            {...props}
-            value={value as string}
-            onChange={onChange}
-            helperTextInvalid={
-              error?.type === 'required'
-                ? typeof props.label === 'string'
-                  ? `${props.label} is required`
-                  : 'Required'
-                : error?.message
-            }
-            isReadOnly={props.isReadOnly || isSubmitting}
-          />
-        </>
+        <FormGroupTextInput
+          {...props}
+          value={value as string}
+          onChange={onChange}
+          helperTextInvalid={
+            error?.type === 'required'
+              ? typeof props.label === 'string'
+                ? `${props.label} is required`
+                : 'Required'
+              : error?.message
+          }
+          isReadOnly={props.isReadOnly || isSubmitting}
+        />
       )}
     />
   )
