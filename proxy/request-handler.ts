@@ -7,7 +7,6 @@ import { serve } from './serve'
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
   try {
     const target = req.headers['x-server']
-    console.log(target)
     if (target) {
       proxyHandler(req, res)
     } else {
