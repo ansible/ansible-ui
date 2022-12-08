@@ -7,8 +7,8 @@ import {
   CardHeaderMain,
   CardTitle,
   Divider,
-  Gallery,
-  GalleryItem,
+  Grid,
+  GridItem,
   Label,
   LabelGroup,
   PageSection,
@@ -22,6 +22,7 @@ import {
   ExternalLinkAltIcon,
   RedhatIcon,
 } from '@patternfly/react-icons';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
@@ -43,8 +44,8 @@ export function Collections() {
     idKeyFn,
     toolbarFilters
   );
-  const toolbarActions = useCollectionsActions();
-  const rowActions = useCollectionActions();
+  const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
+  const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;
   return (
     <PageLayout>
@@ -59,7 +60,7 @@ export function Collections() {
         )}
         titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
       />
-      {showFeaturedCollections && <FeaturedCollections />}
+      {showFeaturedCollections && <FeaturedCollections collectionCount={view.itemCount} />}
       <PageTable<Collection>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
@@ -78,7 +79,7 @@ export function Collections() {
   );
 }
 
-function FeaturedCollections() {
+function FeaturedCollections(props: { collectionCount?: number }) {
   const { t } = useTranslation();
   return (
     <>
@@ -88,10 +89,10 @@ function FeaturedCollections() {
             <CardTitle>{t('Featured Collections')}</CardTitle>
           </CardHeader>
           <CardBody>
-            <Gallery>
+            <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>
               {new Array(3).fill(0).map((_, index) => (
-                <GalleryItem key={index}>
-                  <Card isPlain isCompact>
+                <GridItem key={index}>
+                  <Card isFlat isRounded isLarge>
                     <CardHeader>
                       <Stack hasGutter style={{ width: '100%' }}>
                         <Split hasGutter>
@@ -128,9 +129,9 @@ function FeaturedCollections() {
                       </LabelGroup>
                     </CardFooter>
                   </Card>
-                </GalleryItem>
+                </GridItem>
               ))}
-            </Gallery>
+            </Grid>
           </CardBody>
           <CardFooter>
             <Split>
@@ -138,7 +139,11 @@ function FeaturedCollections() {
               <Button
                 icon={<ExternalLinkAltIcon />}
                 iconPosition="right"
-                component={Link}
+                component={(props: { children: ReactNode }) => (
+                  <a href="https://galaxy.ansible.com/" target="_blank" rel="noreferrer" {...props}>
+                    {props.children}
+                  </a>
+                )}
                 variant="link"
                 isInline
               >
@@ -148,7 +153,7 @@ function FeaturedCollections() {
           </CardFooter>
         </Card>
       </PageSection>
-      <Divider />
+      {props.collectionCount !== 0 && <Divider />}
     </>
   );
 }

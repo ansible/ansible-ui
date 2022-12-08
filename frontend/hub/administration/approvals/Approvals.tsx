@@ -18,7 +18,7 @@ export function Approvals() {
     tableColumns
   );
   const toolbarActions = useApprovalsActions();
-  const rowActions = useApprovalActions();
+  const rowActions = useApprovalActions(() => void view.refresh());
   return (
     <TablePage<Approval>
       title={t('Collection approvals')}
