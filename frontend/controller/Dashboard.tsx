@@ -13,7 +13,7 @@ import {
   Text,
 } from '@patternfly/react-core';
 import { Fragment } from 'react';
-import { Help, PageHeader } from '../../../framework';
+import { Help, PageHeader } from '../../framework';
 
 export default function Dashboard() {
   return (
