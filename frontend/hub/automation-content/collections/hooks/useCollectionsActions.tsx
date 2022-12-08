@@ -6,10 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteE } from '../../../../Routes';
 import { Collection } from '../Collection';
+import { useDeleteCollections } from './useDeleteCollections';
 
-export function useCollectionsActions(_callback?: () => void) {
+export function useCollectionsActions(callback: (collections: Collection[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const deleteCollections = useDeleteCollections(callback);
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
@@ -24,9 +26,7 @@ export function useCollectionsActions(_callback?: () => void) {
         type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected collections'),
-        onClick: () => {
-          /**/
-        },
+        onClick: deleteCollections,
       },
       {
         type: PageActionType.bulk,
@@ -37,6 +37,6 @@ export function useCollectionsActions(_callback?: () => void) {
         },
       },
     ],
-    [t, navigate]
+    [t, navigate, deleteCollections]
   );
 }

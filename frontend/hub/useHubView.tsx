@@ -40,6 +40,7 @@ export type IHubView<T extends object> = IView &
     itemCount: number | undefined;
     pageItems: T[] | undefined;
     refresh: () => Promise<HubItemsResponse<T> | undefined>;
+    unselectItemsAndRefresh: (items: T[]) => void;
   };
 
 export function useHubView<T extends object>(
@@ -114,6 +115,14 @@ export function useHubView<T extends object>(
     itemCountRef.current.itemCount = data?.meta.count;
   }
 
+  const unselectItemsAndRefresh = useCallback(
+    (items: T[]) => {
+      selection.unselectItems(items);
+      void refresh();
+    },
+    [refresh, selection]
+  );
+
   return useMemo(() => {
     return {
       refresh,
@@ -122,8 +131,9 @@ export function useHubView<T extends object>(
       error,
       ...view,
       ...selection,
+      unselectItemsAndRefresh,
     };
-  }, [data, error, refresh, selection, view]);
+  }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
 }
 
 export async function getControllerError(err: unknown) {

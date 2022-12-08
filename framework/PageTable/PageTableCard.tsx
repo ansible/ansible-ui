@@ -270,6 +270,9 @@ export function useColumnsToTableCardFn<T extends object>(
 
   return useMemo<(item: T) => IPageTableCard>(() => {
     return (item: T) => {
+      const hasDescription =
+        descriptionColumn && (!descriptionColumn.value || descriptionColumn.value(item));
+
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
         icon: nameColumn?.icon?.(item),
@@ -280,7 +283,7 @@ export function useColumnsToTableCardFn<T extends object>(
         cardBody: (
           <CardBody>
             <DescriptionList isCompact>
-              {descriptionColumn && (!descriptionColumn.value || descriptionColumn.value(item)) && (
+              {hasDescription && (
                 <Detail key={descriptionColumn.id}>
                   {descriptionColumn.type === 'description' ? (
                     <div>{descriptionColumn.value(item)}</div>
@@ -313,7 +316,7 @@ export function useColumnsToTableCardFn<T extends object>(
         ),
         labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
       };
-      if (!descriptionColumn && cardColumns.length === 0 && countColumns.length === 0) {
+      if (!hasDescription && cardColumns.length === 0 && countColumns.length === 0) {
         pageTableCard.cardBody = undefined;
       }
       return pageTableCard;

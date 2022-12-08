@@ -1,15 +1,17 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteE } from '../../../../Routes';
 import { Collection } from '../Collection';
+import { useDeleteCollections } from './useDeleteCollections';
 
-export function useCollectionActions(_callback?: () => void) {
+export function useCollectionActions(callback?: (collections: Collection[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const deleteCollections = useDeleteCollections(callback);
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
@@ -21,22 +23,20 @@ export function useCollectionActions(_callback?: () => void) {
       },
       { type: PageActionType.seperator },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete entire collection'),
-        onClick: () => {
-          /**/
-        },
+        onClick: (collection) => deleteCollections([collection]),
       },
-      {
-        type: PageActionType.button,
-        icon: BanIcon,
-        label: t('Deprecate collection'),
-        onClick: () => {
-          /**/
-        },
-      },
+      // {
+      //   type: PageActionType.button,
+      //   icon: BanIcon,
+      //   label: t('Deprecate collection'),
+      //   onClick: () => {
+      //     /**/
+      //   },
+      // },
     ],
-    [t, navigate]
+    [t, navigate, deleteCollections]
   );
 }

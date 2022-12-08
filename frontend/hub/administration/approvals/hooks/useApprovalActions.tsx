@@ -2,13 +2,13 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
 import { requestPost } from '../../../../Data';
 import { Approval } from '../Approval';
 
-export function useApprovalActions() {
+export function useApprovalActions(callback: (approval: Approval[]) => void) {
   const { t } = useTranslation();
-
+  const alertToaster = usePageAlertToaster();
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
@@ -20,9 +20,11 @@ export function useApprovalActions() {
           void requestPost(
             `/api/automation-hub/v3/collections/${approval.namespace}/${approval.name}/versions/${approval.version}/move/staging/published/`,
             {}
-          ),
-        isDisabled: (item) =>
-          item.repository_list.includes('published') ? 'Already approved' : '',
+          ).then(() => {
+            alertToaster.addAlert({ title: t(`Collection "${approval.name}" approved.`) });
+            callback([approval]);
+          }),
+        isHidden: (item) => item.repository_list.includes('published'),
       },
       {
         type: PageActionType.single,
@@ -32,10 +34,9 @@ export function useApprovalActions() {
         onClick: () => {
           alert('TODO');
         },
-        isDisabled: (item) =>
-          item.repository_list.includes('published') ? 'Already approved' : '',
+        isHidden: (item) => item.repository_list.includes('published'),
       },
     ],
-    [t]
+    [alertToaster, callback, t]
   );
 }

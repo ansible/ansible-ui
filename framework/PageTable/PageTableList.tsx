@@ -206,13 +206,8 @@ export function useColumnsToDataList<T extends object>(
                             if (column.value && !column.value(item)) return <></>;
                             return (
                               <DescriptionListGroup key={column.header}>
-                                <DescriptionListTerm>
-                                  <Text
-                                    component="small"
-                                    style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
-                                  >
-                                    {column.header}
-                                  </Text>
+                                <DescriptionListTerm style={{ whiteSpace: 'nowrap' }}>
+                                  {column.header}
                                 </DescriptionListTerm>
                                 <DescriptionListDescription>
                                   <TableColumnCell column={column} item={item} />
@@ -263,13 +258,8 @@ export function useColumnsToDataList<T extends object>(
                         if (column.value && !column.value(item)) return <></>;
                         return (
                           <DescriptionListGroup key={column.header}>
-                            <DescriptionListTerm>
-                              <Text
-                                component="small"
-                                style={{ opacity: 0.7, whiteSpace: 'nowrap' }}
-                              >
-                                {column.header}
-                              </Text>
+                            <DescriptionListTerm style={{ whiteSpace: 'nowrap' }}>
+                              {column.header}
                             </DescriptionListTerm>
                             <DescriptionListDescription>
                               <TableColumnCell column={column} item={item} />
