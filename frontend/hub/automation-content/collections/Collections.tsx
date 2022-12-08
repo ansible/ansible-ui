@@ -60,7 +60,7 @@ export function Collections() {
         )}
         titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
       />
-      {showFeaturedCollections && <FeaturedCollections collectionCount={view.itemCount} />}
+      {showFeaturedCollections && <FeaturedCollections />}
       <PageTable<Collection>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
