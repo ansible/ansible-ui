@@ -24,7 +24,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-export function FeaturedCollections(props: { collectionCount?: number }) {
+export function FeaturedCollections() {
   const { t } = useTranslation();
   return (
     <>

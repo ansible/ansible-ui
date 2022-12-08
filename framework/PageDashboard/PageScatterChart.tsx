@@ -1,7 +1,6 @@
 import { Chart, ChartAxis, ChartScatter, ChartVoronoiContainer } from '@patternfly/react-charts';
 import { ReactNode, useMemo, useState } from 'react';
 import { PageChartContainer } from './PageChartContainer';
-import { PageDashboardCard } from './PageDashboardCard';
 
 export function PageScatterChart() {
   const [padding] = useState(() => ({
@@ -36,6 +35,7 @@ export function PageScatterChart() {
           // ariaTitle="Stack chart example"
           containerComponent={
             <ChartVoronoiContainer
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
               labels={({ datum }) => `${datum.name}: ${datum.y}`}
               constrainToVisibleArea
             />
