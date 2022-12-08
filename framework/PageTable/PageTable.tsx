@@ -178,12 +178,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           height: '100%',
         }}
       >
-        <EmptyState
-          variant={EmptyStateVariant.small}
-          style={{
-            paddingTop: 64,
-          }}
-        >
+        <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
             icon={ExclamationCircleIcon}
             color="var(--pf-global--danger-color--100)"
@@ -201,20 +196,22 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 64 }}>
-        <EmptyStateIcon icon={PlusCircleIcon} />
-        <Title headingLevel="h4" size="lg">
-          {props.emptyStateTitle}
-        </Title>
-        {props.emptyStateDescription && (
-          <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
-        )}
-        {props.emptyStateButtonClick && (
-          <Button variant="primary" onClick={props.emptyStateButtonClick}>
-            {props.emptyStateButtonText}
-          </Button>
-        )}
-      </EmptyState>
+      <PageSection>
+        <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
+          <EmptyStateIcon icon={PlusCircleIcon} />
+          <Title headingLevel="h4" size="lg">
+            {props.emptyStateTitle}
+          </Title>
+          {props.emptyStateDescription && (
+            <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+          )}
+          {props.emptyStateButtonClick && (
+            <Button variant="primary" onClick={props.emptyStateButtonClick}>
+              {props.emptyStateButtonText}
+            </Button>
+          )}
+        </EmptyState>
+      </PageSection>
     );
   }
 
@@ -400,24 +397,22 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         </Tbody>
       </TableComposable>
       {itemCount === 0 && (
-        <div style={{ margin: 'auto' }}>
-          <EmptyState>
-            <EmptyStateIcon icon={SearchIcon} />
-            <Title headingLevel="h2" size="lg">
-              {t('No results found')}
-            </Title>
-            <EmptyStateBody>
-              {t('No results match this filter criteria. Adjust your filters and try again.')}
-            </EmptyStateBody>
-            {clearAllFilters && (
-              <EmptyStateSecondaryActions>
-                <Button variant="link" onClick={clearAllFilters}>
-                  {t('Clear all filters')}
-                </Button>
-              </EmptyStateSecondaryActions>
-            )}
-          </EmptyState>
-        </div>
+        <EmptyState style={{ paddingTop: 48 }}>
+          <EmptyStateIcon icon={SearchIcon} />
+          <Title headingLevel="h2" size="lg">
+            {t('No results found')}
+          </Title>
+          <EmptyStateBody>
+            {t('No results match this filter criteria. Adjust your filters and try again.')}
+          </EmptyStateBody>
+          {clearAllFilters && (
+            <EmptyStateSecondaryActions>
+              <Button variant="link" onClick={clearAllFilters}>
+                {t('Clear all filters')}
+              </Button>
+            </EmptyStateSecondaryActions>
+          )}
+        </EmptyState>
       )}
     </div>
   );

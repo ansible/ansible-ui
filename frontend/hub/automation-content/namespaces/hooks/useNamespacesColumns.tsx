@@ -2,6 +2,7 @@ import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
 import { Namespace } from '../Namespace';
 
 export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -10,7 +11,12 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
     () => [
       {
         header: t('Namespace'),
-        cell: (namespace) => <TextCell text={namespace.name} />,
+        cell: (namespace) => (
+          <TextCell
+            text={namespace.name}
+            to={RouteE.NamespaceDetails.replace(':id', namespace.name)}
+          />
+        ),
         value: (namespace) => namespace.name,
         sort: 'name',
         card: 'name',
@@ -20,18 +26,10 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Description'),
         type: 'description',
-        value: (namespace) => namespace.company,
+        value: (namespace) => namespace.description,
         sort: 'description',
         card: 'description',
         list: 'description',
-        icon: () => <RedhatIcon />,
-      },
-      {
-        header: t('Company'),
-        type: 'text',
-        value: (namespace) => namespace.company,
-        sort: 'company',
-        list: 'secondary',
         icon: () => <RedhatIcon />,
       },
     ],

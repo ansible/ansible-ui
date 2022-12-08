@@ -11,6 +11,7 @@ import { CollectionDetails } from './automation-content/collections/CollectionDe
 import { Collections } from './automation-content/collections/Collections';
 import { UploadCollection } from './automation-content/collections/UploadCollection';
 import { ExecutionEnvironments } from './automation-content/execution-environments/ExecutonEnvironments';
+import { NamespaceDetails } from './automation-content/namespaces/NamespaceDetails';
 import { Namespaces } from './automation-content/namespaces/Namespaces';
 import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys';
 import { HubDashboard } from './dashboard/Dashboard';
@@ -32,7 +33,13 @@ export function HubRouter() {
         path={RouteE.CollectionDetails.replace(RouteE.Hub, '')}
         element={<CollectionDetails />}
       />
+
       <Route path={RouteE.Namespaces.replace(RouteE.Hub, '')} element={<Namespaces />} />
+      <Route
+        path={RouteE.NamespaceDetails.replace(RouteE.Hub, '')}
+        element={<NamespaceDetails />}
+      />
+
       <Route path={RouteE.Repositories.replace(RouteE.Hub, '')} element={<Repositories />} />
       <Route path={RouteE.Approvals.replace(RouteE.Hub, '')} element={<Approvals />} />
       <Route

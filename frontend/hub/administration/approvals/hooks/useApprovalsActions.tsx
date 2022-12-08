@@ -1,4 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
 import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +10,6 @@ export function useApprovalsActions() {
     () => [
       {
         type: PageActionType.bulk,
-        variant: ButtonVariant.primary,
         icon: ThumbsUpIcon,
         label: t('Approve collections'),
         onClick: () => {
