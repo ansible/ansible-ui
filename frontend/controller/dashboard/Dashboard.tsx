@@ -5,6 +5,7 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
+  Grid,
   PageSection,
   Split,
   SplitItem,
@@ -13,7 +14,8 @@ import {
   Text,
 } from '@patternfly/react-core';
 import { Fragment } from 'react';
-import { Help, PageHeader } from '../../framework';
+import { Help, PageHeader } from '../../../framework';
+import { DashboardJobsCard } from './DashboardJobsCard';
 
 export default function Dashboard() {
   return (
@@ -25,8 +27,8 @@ export default function Dashboard() {
       />
       <PageSection>
         <Stack hasGutter>
-          {/* <Grid hasGutter span={12}>
-            <PageDashboardCard>
+          <Grid hasGutter span={12}>
+            {/* <PageDashboardCard>
               <CardHeader>
                 <Flex style={{ width: '100%' }}>
                   <FlexItem grow={{ default: 'grow' }}>
@@ -51,8 +53,10 @@ export default function Dashboard() {
               <CardBody>
                 <PageScatterChart />
               </CardBody>
-            </PageDashboardCard>
-          </Grid> */}
+            </PageDashboardCard> */}
+
+            <DashboardJobsCard />
+          </Grid>
           <Card isRounded isFlat>
             <CardTitle>
               <Split>

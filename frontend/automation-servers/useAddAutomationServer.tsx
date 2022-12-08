@@ -2,8 +2,8 @@ import { Modal, ModalVariant } from '@patternfly/react-core';
 import { Static, Type } from '@sinclair/typebox';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageForm, usePageDialog } from '../../framework';
-import { PageFormSchema } from '../../framework/PageForm/PageFormSchema';
+import { PageForm, PageFormSelectOption, usePageDialog } from '../../framework';
+import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from './AutomationServerProvider';
 
 export function useAddAutomationServer() {
@@ -15,43 +15,11 @@ export function useAddAutomationServer() {
   return addAutomationServer;
 }
 
+const DataType = Type.Object({ name: Type.String(), url: Type.String(), type: Type.String() });
+type Data = Static<typeof DataType>;
+
 export function AddAutomationServerDialog() {
   const { t } = useTranslation();
-
-  const DataType = Type.Object({
-    name: Type.String({
-      title: t('Name'),
-      placeholder: t('Enter a friendly name for the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    }),
-    url: Type.String({
-      title: t('Url'),
-      placeholder: t('Enter the url of the automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    }),
-    type: Type.String({
-      title: t('Automation type'),
-      placeholder: t('Select automation type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      variant: 'select',
-      options: [
-        {
-          label: t('Automation controller'),
-          description: t('Define, operate, scale, and delegate automation across your enterprise.'),
-          value: 'controller',
-        },
-        {
-          label: t('Automation hub'),
-          description: t('Discover, publish, and manage your Ansible Collections.'),
-          value: 'hub',
-        },
-        {
-          label: t('Event driven'),
-          // description: t('Discover, publish, and manage your Ansible Collections.'),
-          value: 'eda',
-        },
-      ],
-    }),
-  });
-
-  type Data = Static<typeof DataType>;
 
   const { setAutomationServers } = useAutomationServers();
 
@@ -74,7 +42,43 @@ export function AddAutomationServerDialog() {
         singleColumn
         disableScrolling
       >
-        <PageFormSchema schema={DataType} />
+        <PageFormTextInput
+          name="name"
+          label={t('Name')}
+          placeholder={t('Enter a friendly name for the automation server')}
+          isRequired
+        />
+        <PageFormTextInput
+          name="url"
+          label={t('Url')}
+          placeholder={t('Enter the url of the automation server')}
+          isRequired
+        />
+        <PageFormSelectOption
+          name="type"
+          label={t('Type')}
+          placeholderText={t('Enter the url of the automation server')}
+          isRequired
+          options={[
+            {
+              label: t('Automation controller'),
+              description: t(
+                'Define, operate, scale, and delegate automation across your enterprise.'
+              ),
+              value: 'controller',
+            },
+            {
+              label: t('Automation hub'),
+              description: t('Discover, publish, and manage your Ansible Collections.'),
+              value: 'hub',
+            },
+            {
+              label: t('Event driven'),
+              // description: t('Discover, publish, and manage your Ansible Collections.'),
+              value: 'eda',
+            },
+          ]}
+        />
       </PageForm>
     </Modal>
   );
