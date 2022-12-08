@@ -25,6 +25,34 @@ export default function Dashboard() {
       />
       <PageSection>
         <Stack hasGutter>
+          {/* <Grid hasGutter span={12}>
+            <PageDashboardCard>
+              <CardHeader>
+                <Flex style={{ width: '100%' }}>
+                  <FlexItem grow={{ default: 'grow' }}>
+                    <CardTitle>Job History</CardTitle>
+                  </FlexItem>
+                  <Flex>
+                    <span>From</span>
+                    <DatePicker />
+                  </Flex>
+                  <Flex>
+                    <span>To</span>
+                    <DatePicker />
+                  </Flex>
+                  <ToggleGroup>
+                    <ToggleGroupItem text="Scatter plot" isSelected>
+                      ddd
+                    </ToggleGroupItem>
+                    <ToggleGroupItem text="Line graph">ddd</ToggleGroupItem>
+                  </ToggleGroup>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <PageScatterChart />
+              </CardBody>
+            </PageDashboardCard>
+          </Grid> */}
           <Card isRounded isFlat>
             <CardTitle>
               <Split>

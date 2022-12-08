@@ -1,0 +1,335 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Chart, ChartAxis, ChartBar, ChartLabel, ChartStack } from '@patternfly/react-charts'
+import { Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core'
+import { useMemo, useState } from 'react'
+import { ContainerSizeContext, SizeContainer } from './SizeContainer'
+
+interface IOrgRuns {
+  org_id: number
+  org_name: string
+  tempalteRuns: ITemplateRun[]
+}
+
+interface ITemplateRun {
+  org_id: number
+  org_name: string
+  template_id: number
+  template_name: string
+  elapsed: number
+  template_count: number
+}
+
+const templateRuns = DATA as ITemplateRun[]
+
+export function TemplateRunsPerOrganization() {
+  const [padding] = useState(() => ({
+    bottom: 0,
+    left: 35,
+    right: 14 + 16 + 8 + 50, // Adjusted to accommodate legend
+    top: 5,
+  }))
+
+  const orgRuns = useMemo<IOrgRuns[]>(() => {
+    const map: Record<string, IOrgRuns> = {}
+    for (const templateRun of templateRuns) {
+      let orgRun = map[templateRun.org_name]
+      if (!orgRun) {
+        orgRun = {
+          org_id: templateRun.org_id,
+          org_name: templateRun.org_name,
+          tempalteRuns: [],
+        }
+        map[templateRun.org_name] = orgRun
+      }
+      orgRun.tempalteRuns.push(templateRun)
+    }
+    return Object.values(map).map((orgRun) => {
+      orgRun.tempalteRuns = orgRun.tempalteRuns.sort((l, r) => l.elapsed - r.elapsed)
+      return orgRun
+    })
+  }, [])
+
+  return (
+    <SizeContainer>
+      <ContainerSizeContext.Consumer>
+        {(size) => (
+          <Chart
+            // title="Organization Jobs"
+            ariaDesc="Job template runs per organization"
+            // ariaTitle="Stack chart example"
+            minDomain={{ y: 0 }}
+            // maxDomain={{ y: 70 }}
+            domainPadding={{ x: [40, 20] }}
+            legendComponent={<HeatMapLegend />}
+            legendData={[]}
+            name="chart1"
+            width={size.width}
+            height={size.height}
+            padding={padding}
+            animate
+          >
+            <ChartAxis style={{ tickLabels: { fill: 'none' } }} />
+            <ChartAxis dependentAxis showGrid />
+            <ChartStack>
+              <ChartBar
+                data={orgRuns.map((orgRun) => ({
+                  x: orgRun.org_name,
+                  y: orgRun.tempalteRuns.length,
+                  label: orgRun.org_name,
+                  values: orgRun.tempalteRuns,
+                }))}
+                dataComponent={<HeatmapDataComponent />}
+                labelComponent={<HeatmapColumnLabel />}
+              />
+            </ChartStack>
+          </Chart>
+        )}
+      </ContainerSizeContext.Consumer>
+    </SizeContainer>
+  )
+}
+
+function HeatmapDataComponent(props: {
+  x?: number
+  y?: number
+  y0?: number
+  barWidth?: number
+  datum?: {
+    name: string
+    values: ITemplateRun[]
+  }
+}) {
+  let { barWidth } = props
+  barWidth = 16
+  const { x, y, y0, datum } = props
+  const tempalteRuns: ITemplateRun[] = datum!.values
+  let bottom = y0!
+  const stackHeight = y0! - y!
+  const left = Math.round(x! - barWidth / 2)
+  const barHeight = stackHeight / tempalteRuns.length
+  const barHeightPlusSome = barHeight + 0.5
+
+  // https://www.patternfly.org/v4/charts/colors-for-charts
+  const hotColor = stringToColor('#C9190B')
+  const coldColor = stringToColor('#0066CC')
+  return (
+    <>
+      {tempalteRuns.map((tempalteRun, index) => {
+        const fill = colorToString(
+          linearInterpolate(hotColor, coldColor, tempalteRun.elapsed / 35000)
+        )
+        bottom -= barHeight
+        const height = index === 0 ? barHeight : barHeightPlusSome
+        return (
+          <Tooltip
+            key={tempalteRun.template_id}
+            content={
+              <Stack>
+                <StackItem>
+                  <span style={{ fontSize: 'larger' }}>{tempalteRun.template_name}</span>
+                </StackItem>
+                <StackItem>
+                  <span>{`${Math.round(tempalteRun.elapsed)} ms`}</span>
+                </StackItem>
+              </Stack>
+            }
+            position={TooltipPosition.right}
+            enableFlip
+          >
+            <rect x={left} y={bottom} height={height} width={barWidth} fill={fill} />
+          </Tooltip>
+        )
+      })}
+    </>
+  )
+}
+
+interface IColor {
+  r: number
+  g: number
+  b: number
+}
+
+function linearInterpolate(color1: IColor, color2: IColor, percent: number) {
+  percent = Math.max(0, Math.min(1, percent))
+  return {
+    r: color1.r * percent + color2.r * (1 - percent),
+    g: color1.g * percent + color2.g * (1 - percent),
+    b: color1.b * percent + color2.b * (1 - percent),
+  }
+}
+
+function stringToColor(colorString: string) {
+  if (colorString.startsWith('#')) colorString = colorString.substring(1)
+  return {
+    r: parseInt(colorString[0] + colorString[1], 16) / 255,
+    g: parseInt(colorString[2] + colorString[3], 16) / 255,
+    b: parseInt(colorString[4] + colorString[5], 16) / 255,
+  }
+}
+
+function colorToString(color: IColor) {
+  return (
+    '#' +
+    colorValueToHexString(color.r) +
+    colorValueToHexString(color.g) +
+    colorValueToHexString(color.b)
+  )
+}
+
+function colorValueToHexString(value: number) {
+  return Math.round(Math.max(0, Math.min(1, value)) * 255)
+    .toString(16)
+    .padStart(2, '0')
+}
+
+function HeatmapColumnLabel(props: any) {
+  return (
+    <ChartLabel
+      {...props}
+      angle={270}
+      textAnchor="start"
+      style={{ fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)' }}
+      y={props.height - 4}
+      x={props.x - 0}
+    />
+  )
+}
+
+function HeatMapLegend(props: any) {
+  const topLabel = 10 + 6 + 25
+  const bottomLabel = props.height + 5 - 10
+  return (
+    <>
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#C9190B" />
+          <stop offset="100%" stopColor="#0066CC" />
+        </linearGradient>
+      </defs>
+      <rect
+        x={props.width - (16 + 8 + 50)}
+        y={10 + 25}
+        width={16}
+        height={props.height - 10 - 10 - 25}
+        fill="url('#grad1')"
+      />
+      <rect
+        x={props.width - (16 + 8 + 50)}
+        // y={props.y}
+        y={10 + 25}
+        width={20}
+        height={2}
+        fill="#C9190B"
+        // fill="linear-gradient(#C9190B, #0066CC)"
+      />
+      <rect
+        x={props.width - (16 + 8 + 50)}
+        y={props.height - 10}
+        width={20}
+        height={2}
+        fill="#0066CC"
+      />
+      <text
+        x={props.width - 50 - 16 - 8}
+        y={15}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '16px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        Elapsed
+      </text>
+      <text
+        x={props.width - 50}
+        y={topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        35K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 1 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        30K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 2 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        25K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 3 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        20K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 4 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        15K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 5 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        10K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={((bottomLabel - topLabel) / 7) * 6 + topLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        5K ms
+      </text>
+      <text
+        x={props.width - 50}
+        y={bottomLabel}
+        style={{
+          fontFamily: 'RedHatText, Overpass, overpass, helvetica, arial, sans-serif',
+          fontSize: '14px',
+          fill: 'var(--pf-chart-axis--tick-label--Fill, #4f5255)',
+        }}
+      >
+        0 ms
+      </text>
+    </>
+  )
+}
