@@ -19,13 +19,13 @@ import { InstanceGroups } from './administration/instance-groups/InstanceGroups'
 import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
 import { Instances } from './administration/instances/Instances';
+import Dashboard from './Dashboard';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { Projects } from './resources/projects/Projects';
 import { Templates } from './resources/templates/Templates';
 import Settings from './settings/Settings';
-import Dashboard from './views/Dashboard';
 import Jobs from './views/jobs/Jobs';
 
 // Lazy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
