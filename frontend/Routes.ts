@@ -169,4 +169,11 @@ export enum RouteE {
   EdaRuleDetails = '/eda/rules/details/:id',
   CreateEdaRule = '/eda/rules/create',
   EditEdaRule = '/eda/rules/edit/:id',
+
+  EdaUsers = '/eda/users',
+  EdaGroups = '/eda/groups',
+  EdaRoles = '/eda/roles',
+  CreateEdaUser = '/eda/users/create',
+  EdaUserDetails = '/eda/user/details/:id',
+  EditEdaUser = '/eda/user/edit/:id',
 }
