@@ -3,9 +3,9 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
-import { EdaInventory } from '../../interfaces/EdaInventory';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
+import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 
 export function useInventoriesToolbarActions(refresh: () => Promise<unknown>) {

@@ -9,12 +9,12 @@ import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-} from '../../../framework';
-import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
-import { useGet } from '../../common/useItem';
-import { requestPatch, requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
-import { EdaProject } from '../interfaces/EdaProject';
+} from '../../../../framework';
+import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import { useGet } from '../../../common/useItem';
+import { requestPatch, requestPost } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { EdaProject } from '../../interfaces/EdaProject';
 
 export function EditProject() {
   const { t } = useTranslation();
