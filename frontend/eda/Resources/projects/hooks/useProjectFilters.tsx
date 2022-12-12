@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../framework';
+import { IToolbarFilter } from '../../../../../framework';
 
-export function useInventoriesFilters() {
+export function useProjectFilters() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -11,7 +11,7 @@ export function useInventoriesFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: 'Filter by name',
+        placeholder: t('Filter by name'),
       },
     ],
     [t]

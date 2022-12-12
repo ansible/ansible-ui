@@ -9,13 +9,13 @@ import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-} from '../../../framework';
-import { PageFormTextArea } from '../../../framework/PageForm/Inputs/PageFormTextArea';
-import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
-import { useGet } from '../../common/useItem';
-import { requestPatch, requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
-import { EdaInventory } from '../interfaces/EdaInventory';
+} from '../../../../framework';
+import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { useGet } from '../../../common/useItem';
+import { requestPatch, requestPost } from '../../../Data';
+import { RouteE } from '../../../Routes';
+import { EdaInventory } from '../../interfaces/EdaInventory';
 
 export function EditInventory() {
   const { t } = useTranslation();

@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
-import { EdaInventory } from '../../interfaces/EdaInventory';
+import { ITableColumn, TextCell } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
+import { EdaProject } from '../../../interfaces/EdaProject';
 
-export function useInventoriesColumns() {
+export function useProjectColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const tableColumns = useMemo<ITableColumn<EdaInventory>[]>(
+  return useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
         header: t('ID'),
@@ -20,12 +20,10 @@ export function useInventoriesColumns() {
       },
       {
         header: t('Name'),
-        cell: (inventory) => (
+        cell: (project) => (
           <TextCell
-            text={inventory.name}
-            onClick={() =>
-              navigate(RouteE.EdaInventoryDetails.replace(':id', inventory.id.toString()))
-            }
+            text={project.name}
+            onClick={() => navigate(RouteE.EdaProjectDetails.replace(':id', project.id.toString()))}
           />
         ),
         sort: 'name',
@@ -34,14 +32,12 @@ export function useInventoriesColumns() {
         defaultSort: true,
       },
       {
-        header: t('Description'),
-        type: 'description',
-        value: (inventory) => inventory.description,
+        header: t('Url'),
+        cell: (project) => project.url && <TextCell text={project.url} />,
         card: 'description',
         list: 'description',
       },
     ],
     [navigate, t]
   );
-  return tableColumns;
 }

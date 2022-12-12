@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
-import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
-import { RouteE } from '../../Routes';
-import { EdaInventory } from '../interfaces/EdaInventory';
+import { TablePage } from '../../../../framework';
+import { useInMemoryView } from '../../../../framework/useInMemoryView';
+import { useGet } from '../../../common/useItem';
+import { idKeyFn } from '../../../hub/usePulpView';
+import { RouteE } from '../../../Routes';
+import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './hooks/useInventoryColumns';
 import { useInventoriesFilters } from './hooks/useInventoryFilters';
 import { useInventoryRowActions } from './hooks/useInventoryRowActions';

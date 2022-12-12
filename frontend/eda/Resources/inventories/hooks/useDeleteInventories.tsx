@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../Data';
-import { idKeyFn } from '../../../hub/useHubView';
-import { EdaInventory } from '../../interfaces/EdaInventory';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { requestDelete } from '../../../../Data';
+import { idKeyFn } from '../../../../hub/useHubView';
+import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './useInventoryColumns';
 
 export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) => void) {

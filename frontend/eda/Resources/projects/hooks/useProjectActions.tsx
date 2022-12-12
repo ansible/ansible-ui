@@ -2,9 +2,9 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
-import { EdaProject } from '../../interfaces/EdaProject';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { RouteE } from '../../../../Routes';
+import { EdaProject } from '../../../interfaces/EdaProject';
 import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectActions(refresh: () => Promise<unknown>) {
