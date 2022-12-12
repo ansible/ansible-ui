@@ -20,6 +20,7 @@ import { Rulebooks } from './rulebooks/Rulebooks';
 import { EditRule } from './rules/EditRule';
 import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
+import { Users } from './UserAccess/Users/Users';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
 
 export function EventDrivenRouter() {
@@ -111,6 +112,7 @@ export function EventDrivenRouter() {
       <Route path={RouteE.EdaRuleDetails.replace(RouteE.Eda, '')} element={<RuleDetails />} />
       <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
 
+      <Route path={RouteE.EdaUsers.replace(RouteE.Eda, '')} element={<Users />} />
       <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   );
