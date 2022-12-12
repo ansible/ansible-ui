@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../Data';
-import { idKeyFn } from '../../../hub/useHubView';
-import { EdaProject } from '../../interfaces/EdaProject';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { requestDelete } from '../../../../Data';
+import { idKeyFn } from '../../../../hub/useHubView';
+import { EdaProject } from '../../../interfaces/EdaProject';
 import { useProjectColumns } from './useProjectColumns';
 
 export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) {
