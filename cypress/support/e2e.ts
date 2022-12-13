@@ -13,5 +13,5 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import 'cypress-axe';
+// import 'cypress-axe';
 import './commands';
