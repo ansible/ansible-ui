@@ -12,7 +12,7 @@ npm install @ansible/ansible-ui-framework
 
 ## Add the PageFramework to your application
 
-Near the top of your application add the [PageFramework](../componentsPageFramework.md) component.
+Near the top of your application add the [PageFramework](../components/PageFramework.md) component.
 
 This component adds the state management needed by the framework.
 
@@ -33,7 +33,7 @@ The [PageLayout](../components/PageLayout.md) is used as the container for the c
 
 ### Use PageHeader for the heading of your pages
 
-The [PageHeader](../componentsPageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
+The [PageHeader](../components/PageHeader.md) is used at the top of each page. It provides a consistent layout of header elements.
 
 ```tsx
 <Page>
@@ -48,7 +48,7 @@ The [PageHeader](../componentsPageHeader.md) is used at the top of each page. It
 
 #### Table Pages
 
-For pages containing a table, use the [PageTable](../componentsPageTable.md) component. The PageTable support table, list, and card views of the data.
+For pages containing a table, use the [PageTable](../components/PageTable.md) component. The PageTable support table, list, and card views of the data.
 
 ```tsx
 <Page>
@@ -84,7 +84,7 @@ TODO -->
 
 <!-- - [PageAlertToaster](../componentsPageAlertToaster.md) -->
 
-- [BulkActionDialog](../componentsBulkActionDialog.md)
+- [BulkActionDialog](../components/BulkActionDialog.md)
   <!-- - [BulkConfirmationDialog](../componentsBulkConfirmationDialog.md) -->
   <!-- - [SelectDialog](../componentsSelectDialog.md) -->
   <!-- - [SelectMultipleDialog](../componentsSelectMultipleDialog.md) -->
