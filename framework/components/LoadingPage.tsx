@@ -1,4 +1,5 @@
-import { PageSection, Skeleton } from '@patternfly/react-core';
+import { Bullseye, PageSection, Skeleton, Spinner } from '@patternfly/react-core';
+
 import { Fragment } from 'react';
 import { ICatalogBreadcrumb, PageHeader } from '../PageHeader';
 
@@ -12,9 +13,9 @@ export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBread
       <PageSection
       // variant={theme === ThemeE.Dark ? undefined : 'light'}
       >
-        {/* <Bullseye style={{ paddingTop: 32 }}>
+         <Bullseye style={{ paddingTop: 32 }}>
                     <Spinner />
-                </Bullseye> */}
+                </Bullseye>
       </PageSection>
     </Fragment>
   );
