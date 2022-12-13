@@ -1,5 +1,5 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
 import Debug from '../common/Debug';
@@ -27,9 +27,6 @@ import { Projects } from './resources/projects/Projects';
 import { Templates } from './resources/templates/Templates';
 import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
-
-// Lazy loading Topology so that pf-topology and it dependencies can be bundled into a chunk
-const Topology = lazy(() => import('./administration/topology/Topology'));
 
 export function ControllerRouter() {
   return (
@@ -117,8 +114,6 @@ export function ControllerRouter() {
           path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')}
           element={<ExecutionEnvironments />}
         />
-
-        <Route path={RouteE.TopologyView.replace(RouteE.Controller, '')} element={<Topology />} />
 
         <Route path={RouteE.Settings.replace(RouteE.Controller, '')} element={<Settings />} />
 
