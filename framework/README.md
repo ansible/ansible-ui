@@ -10,14 +10,14 @@ For development you may use Storybook. It allows you to try some of the existing
 
 Install dependencies:
 
-``npm ci``
+`npm ci`
 
 Build Storybook:
 
-``npm run build-storybook`` 
+`npm run build-storybook`
 
 Start Storybook:
 
-``npm run storybook``
+`npm run storybook`
 
-Storybook will run at http://localhost:6006/ 
+Storybook will run at http://localhost:6006/

@@ -13,9 +13,9 @@ export function LoadingPage(props: { title?: string; breadcrumbs?: ICatalogBread
       <PageSection
       // variant={theme === ThemeE.Dark ? undefined : 'light'}
       >
-         <Bullseye style={{ paddingTop: 32 }}>
-                    <Spinner />
-                </Bullseye>
+        <Bullseye style={{ paddingTop: 32 }}>
+          <Spinner />
+        </Bullseye>
       </PageSection>
     </Fragment>
   );
