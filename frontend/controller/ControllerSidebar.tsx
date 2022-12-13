@@ -175,12 +175,12 @@ export function ControllerSidebar(props: {
         >
           {t('Execution Environments')}
         </NavItem>
-        <NavItem
+        {/* <NavItem
           isActive={isRouteActive(RouteE.TopologyView, location)}
           onClick={() => onClick(RouteE.TopologyView)}
         >
           {t('Topology view')}
-        </NavItem>
+        </NavItem> */}
       </NavExpandable>
       {/* <NavGroup>
                             <NavItem isActive={isRouteActive(RouteE.Settings, location)}>
