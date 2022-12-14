@@ -123,14 +123,6 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
               }
             }
 
-            if (typeof req.headers['x-server'] === 'string') {
-              try {
-                msg.server = req.headers['x-server'];
-              } catch {
-                // DO nothing
-              }
-            }
-
             if (res.statusCode >= 500) {
               logger.error(msg);
             } else {

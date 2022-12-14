@@ -8,7 +8,7 @@ import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework';
 import { PageFormSchema } from '../../framework/PageForm/PageFormSchema';
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
-import { headers } from '../Data';
+import { setCookie } from '../Data';
 import { RouteE } from '../Routes';
 
 export default function Login() {
@@ -66,12 +66,8 @@ export default function Login() {
             : undefined;
 
         if (loginPageUrl !== undefined) {
-          let loginPage = await ky
-            .get(loginPageUrl, {
-              credentials: 'include',
-              headers: { 'x-server': data.server },
-            })
-            .text();
+          setCookie('server', data.server);
+          let loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
           loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '));
           loginPage = loginPage.substring(loginPage.indexOf('"') + 1);
           const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'));
@@ -83,7 +79,6 @@ export default function Login() {
           try {
             await ky.post(loginPageUrl, {
               credentials: 'include',
-              headers: { 'x-server': data.server },
               body: searchParams,
               redirect: 'manual',
             });
@@ -98,7 +93,6 @@ export default function Login() {
 
         localStorage.setItem('server', data.server);
         setAutomationServer(automationServer);
-        headers['x-server'] = data.server;
         switch (automationServer.type) {
           case 'eda':
             navigate(RouteE.EdaProjects);

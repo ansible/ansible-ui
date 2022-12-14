@@ -72,9 +72,8 @@ Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: P
   if (!Cypress.env('server')) {
     return cy.wrap<T>(handleControllerPost(url, body as unknown as ICollectionMockItem) as T);
   } else {
-    return cy
-      .request<T>({ method: 'POST', url, body, headers: { 'x-server': 'https://localhost:8043' } })
-      .then((response) => response.body);
+    cy.setCookie('server', Cypress.env('server') as string);
+    return cy.request<T>({ method: 'POST', url, body }).then((response) => response.body);
   }
 });
 
@@ -82,9 +81,8 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   if (!Cypress.env('server')) {
     return cy.wrap<T>(handleControllerGet(url) as T);
   } else {
-    return cy
-      .request<T>({ method: 'GET', url, headers: { 'x-server': 'https://localhost:8043' } })
-      .then((response) => response.body);
+    cy.setCookie('server', Cypress.env('server') as string);
+    return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
   }
 });
 
@@ -92,7 +90,8 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
   if (!Cypress.env('server')) {
     return cy.wrap(handleControllerDelete(url));
   } else {
-    return cy.request({ method: 'Delete', url, headers: { 'x-server': 'https://localhost:8043' } });
+    cy.setCookie('server', Cypress.env('server') as string);
+    return cy.request({ method: 'Delete', url });
   }
 });
 
