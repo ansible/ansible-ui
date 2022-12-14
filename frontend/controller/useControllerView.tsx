@@ -1,5 +1,5 @@
 import { HTTPError } from 'ky';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
@@ -12,6 +12,7 @@ export type IControllerView<T extends { id: number }> = IView &
     refresh: () => Promise<ItemsResponse<T> | undefined>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
+    refreshing: boolean;
   };
 
 export type QueryParams = {
@@ -90,7 +91,13 @@ export function useControllerView<T extends { id: number }>(options: {
   const fetcher = useFetcher();
   const response = useSWR<ItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
-  const refresh = useCallback(() => mutate(), [mutate]);
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(() => {
+    setRefreshing(true);
+    return mutate().finally(() => {
+      setRefreshing(false);
+    });
+  }, [mutate]);
 
   useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
@@ -135,11 +142,13 @@ export function useControllerView<T extends { id: number }>(options: {
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
+      refreshing,
     };
   }, [
     data?.results,
     error,
     refresh,
+    refreshing,
     selectItemsAndRefresh,
     selection,
     unselectItemsAndRefresh,

@@ -5,31 +5,27 @@ export function mockController() {
   cy.intercept('POST', '/api/login/', { statusCode: 200 });
   cy.fixture('me.json').then((json: string) => cy.intercept('GET', '/api/v2/me/', json));
 
-  cy.intercept('GET', `/api/**`, (req) => {
+  cy.requestPost<Organization>('/api/v2/organizations/', { name: 'Default' });
+
+  cy.intercept('GET', `/api/v2/**`, (req) => {
     const result = handleControllerGet(req.url);
-    if (Array.isArray(result)) {
-      req.reply(200, { count: result.length, results: result });
-    } else {
-      req.reply(result ? 200 : 404, result);
-    }
+    req.reply(result ? 200 : 404, result);
   });
 
-  cy.intercept('POST', `/api/**`, (req) => {
+  cy.intercept('POST', `/api/v2/**`, (req) => {
     const result = handleControllerPost(req.url, req.body as ICollectionMockItem);
     req.reply(201, result);
   });
 
-  cy.intercept('PATCH', `/api/**`, (req) => {
+  cy.intercept('PATCH', `/api/v2/**`, (req) => {
     const result = handleControllerPatch(req.url, req.body as ICollectionMockItem);
     req.reply(result ? 200 : 404);
   });
 
-  cy.intercept('DELETE', `/api/**`, (req) => {
+  cy.intercept('DELETE', `/api/v2/**`, (req) => {
     const result = handleControllerDelete(req.url);
     req.reply(result ? 200 : 404);
   });
-
-  cy.requestPost<Organization>('/api/v2/organizations/', { name: 'Default' });
 }
 
 export function handleControllerRequest(method: string, url: string, body: ICollectionMockItem) {
@@ -75,7 +71,7 @@ export function handleControllerGet(url: string) {
     const item = collection[itemIndex];
     return { ...item };
   } else {
-    return [...collection];
+    return { count: collection.length, results: [...collection] };
   }
 }
 

@@ -68,27 +68,31 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add('requestPost', function requestPost<T>(url: string, data: Partial<T>) {
-  if (Cypress.env('mock')) {
-    return cy.wrap<T>(handleControllerPost(url, data as unknown as ICollectionMockItem) as T);
+Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
+  if (!Cypress.env('server')) {
+    return cy.wrap<T>(handleControllerPost(url, body as unknown as ICollectionMockItem) as T);
   } else {
-    return cy.request<T>('POST', url, data).then((response) => response.body);
+    return cy
+      .request<T>({ method: 'POST', url, body, headers: { 'x-server': 'https://localhost:8043' } })
+      .then((response) => response.body);
   }
 });
 
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
-  if (Cypress.env('mock')) {
+  if (!Cypress.env('server')) {
     return cy.wrap<T>(handleControllerGet(url) as T);
   } else {
-    return cy.request<T>('GET', url).then((response) => response.body);
+    return cy
+      .request<T>({ method: 'GET', url, headers: { 'x-server': 'https://localhost:8043' } })
+      .then((response) => response.body);
   }
 });
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
-  if (Cypress.env('mock')) {
+  if (!Cypress.env('server')) {
     return cy.wrap(handleControllerDelete(url));
   } else {
-    return cy.request('Delete', url);
+    return cy.request({ method: 'Delete', url, headers: { 'x-server': 'https://localhost:8043' } });
   }
 });
 
