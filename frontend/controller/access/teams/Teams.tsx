@@ -4,10 +4,11 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
+  SyncAltIcon,
   SyncIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { ComponentClass, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -19,6 +20,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  RunningIcon,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -134,8 +136,8 @@ export function Teams() {
       {
         type: PageActionType.button,
         variant: ButtonVariant.primary,
-        icon: SyncIcon,
-        label: 'Refresh',
+        icon: view.refreshing ? (RunningIcon as unknown as ComponentClass) : SyncAltIcon,
+        label: view.refreshing ? 'Refreshing' : 'Refresh',
         onClick: () => void view.refresh(),
       },
     ],
