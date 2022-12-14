@@ -25,7 +25,13 @@ import {
 import { logger } from './logger';
 
 export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
-  const target = req.headers['x-server'];
+  const cookieHeader = req.headers[HTTP2_HEADER_COOKIE];
+  let cookies: Record<string, string> | undefined;
+  if (typeof cookieHeader === 'string') {
+    cookies = cookie.parse(cookieHeader);
+  }
+
+  const target = cookies?.['server'];
   if (!target || typeof target !== 'string') {
     res.writeHead(HTTP_STATUS_UNAUTHORIZED).end();
     return;
@@ -35,12 +41,8 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   const headers: OutgoingHttpHeaders = {};
 
-  const cookieHeader = req.headers[HTTP2_HEADER_COOKIE];
-  if (typeof cookieHeader === 'string') {
-    const cookies = cookie.parse(cookieHeader);
-    if (cookies['csrftoken']) {
-      headers['X-CSRFToken'] = cookies['csrftoken'];
-    }
+  if (cookies?.['csrftoken']) {
+    headers['X-CSRFToken'] = cookies['csrftoken'];
   }
 
   for (const header in req.headers) {
