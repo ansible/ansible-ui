@@ -78,7 +78,7 @@ export function PagePinnedAction<T extends object>(props: {
             (selectedItems !== undefined && selectedItems.length !== 0) ||
             selectedItem !== undefined
           }
-          // iconOnly={props.iconOnly}
+          iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
       );
