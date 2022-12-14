@@ -4,6 +4,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
+  SyncIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -13,8 +14,11 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActions,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -81,8 +85,15 @@ export function Teams() {
         label: t('Delete selected teams'),
         onClick: deleteTeams,
       },
+      { type: PageActionType.seperator },
+      {
+        type: PageActionType.button,
+        icon: SyncIcon,
+        label: t('Refresh'),
+        onClick: () => void view.refresh(),
+      },
     ],
-    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view.selectedItems]
+    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view]
   );
 
   const rowActions = useMemo<IPageAction<Team>[]>(
@@ -118,26 +129,44 @@ export function Teams() {
     [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]
   );
 
+  const headerActions = useMemo<IPageAction<Team>[]>(
+    () => [
+      {
+        type: PageActionType.button,
+        variant: ButtonVariant.primary,
+        icon: SyncIcon,
+        label: 'Refresh',
+        onClick: () => void view.refresh(),
+      },
+    ],
+    [view]
+  );
+
   return (
-    <TablePage
-      title={t('Teams')}
-      titleHelpTitle={t('Team')}
-      titleHelp={t('teams.title.help')}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
-      description={t('teams.title.description')}
-      navigation={<AccessNav active="teams" />}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading teams')}
-      emptyStateTitle={t('No teams yet')}
-      emptyStateDescription={t('To get started, create a team.')}
-      emptyStateButtonText={t('Create team')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
-      {...view}
-      defaultSubtitle={t('Team')}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Teams')}
+        titleHelpTitle={t('Team')}
+        titleHelp={t('teams.title.help')}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
+        description={t('teams.title.description')}
+        navigation={<AccessNav active="teams" />}
+        headerActions={<PageActions actions={headerActions} iconOnly collapse="never" />}
+      />
+      <PageTable
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading teams')}
+        emptyStateTitle={t('No teams yet')}
+        emptyStateDescription={t('To get started, create a team.')}
+        emptyStateButtonText={t('Create team')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
+        {...view}
+        defaultSubtitle={t('Team')}
+      />
+    </PageLayout>
   );
 }
 
