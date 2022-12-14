@@ -1,17 +1,43 @@
-// ***********************************************************
-// This example support/e2e.ts is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
 // import 'cypress-axe';
 import './commands';
+import { mockController } from './mock-controller';
+
+before(() => {
+  window.localStorage.setItem('access', 'true');
+  window.localStorage.setItem('theme', 'light');
+
+  if (Cypress.env('mock')) {
+    mockController();
+  }
+
+  cy.visit(`/controller/debug`);
+  // cy.injectAxe()
+
+  // cy.visit(`/login`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
+  // cy.get('#server').type('https://localhost:8043')
+  // cy.get('#username').type('test')
+  // cy.get('#password').type('test')
+  // cy.get('button[type=submit]').click()
+
+  // Cypress.Cookies.preserveOnce(names...)
+
+  // Cypress.Cookies.defaults({
+  //     preserve: ['_csrf', '_oauth_proxy', 'acm-access-token-cookie'],
+  // })
+  // cy.login()
+  // cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true })
+  // cy.get('.pf-c-page__main').contains('Red Hat', { timeout: 5 * 60 * 1000 })
+});
+
+beforeEach(() => {
+  window.localStorage.setItem('access', 'true');
+  window.localStorage.setItem('theme', 'light');
+
+  if (Cypress.env('mock')) {
+    mockController();
+  }
+});
+
+afterEach(() => {
+  // cy.checkA11y()
+});
