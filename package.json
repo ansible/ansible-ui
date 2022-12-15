@@ -110,7 +110,7 @@
     "concurrently": "7.6.0",
     "copy-webpack-plugin": "11.0.0",
     "coverage-istanbul-loader": "3.0.5",
-    "css-loader": "6.7.2",
+    "css-loader": "6.7.3",
     "css-minimizer-webpack-plugin": "4.2.2",
     "cypress": "11.2.0",
     "eslint": "8.29.0",
