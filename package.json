@@ -28,7 +28,6 @@
     "docker:build": "docker build --tag ansible/console .",
     "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
     "cypress": "npm run clean && concurrently npm:cypress:frontend npm:cypress:run --prefix-colors cyan,blue --kill-others --success first",
-    "cypress:live": "npm run clean && concurrently npm:cypress:frontend npm:cypress:run:live --prefix-colors cyan,blue --kill-others --success first",
     "cypress:run": "wait-on -i 1000 https-get://localhost:3002 && cypress run --config video=false",
     "cypress:run:live": "wait-on -i 1000 https-get://localhost:3002 && cypress run --config video=false --env server=https://localhost:8043,username=admin,password=password",
     "cypress:open": "cypress open --e2e --browser chrome",

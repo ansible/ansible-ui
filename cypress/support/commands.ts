@@ -47,8 +47,10 @@ declare global {
       clickToolbarAction(label: string | RegExp): Chainable<void>;
       clickRow(name: string | RegExp): Chainable<void>;
       clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>;
+      selectRow(name: string | RegExp): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
+      filterByText(text: string): Chainable<void>;
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
       requestGet<T>(url: string): Chainable<T>;
@@ -66,6 +68,11 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
         cy.get('#' + id);
       }
     });
+});
+
+Cypress.Commands.add('filterByText', (text: string) => {
+  cy.get('#filter-input').type(text, { delay: 0 });
+  cy.get('[aria-label="apply filter"]').click();
 });
 
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
@@ -108,7 +115,7 @@ Cypress.Commands.add('clickTab', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('button:not(:disabled)', label).click();
+  cy.contains('button:not(:disabled):not(:hidden)', label).click();
 });
 
 Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) => {
@@ -148,6 +155,14 @@ Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | R
     .within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
       cy.get('.pf-c-dropdown__menu-item').contains(label).click();
+    });
+});
+
+Cypress.Commands.add('selectRow', (name: string | RegExp) => {
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('input[type=checkbox]').click();
     });
 });
 
