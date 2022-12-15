@@ -45,9 +45,13 @@ declare global {
       navigateTo(label: string | RegExp, refresh?: boolean): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
-      clickRow(name: string | RegExp): Chainable<void>;
-      clickRowAction(name: string | RegExp, label: string | RegExp): Chainable<void>;
-      selectRow(name: string | RegExp): Chainable<void>;
+      clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      clickRowAction(
+        name: string | RegExp,
+        label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+      selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
@@ -143,22 +147,34 @@ Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
   cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
 
-Cypress.Commands.add('clickRow', (name: string | RegExp) => {
+Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterByText(name);
+  }
   cy.contains('td', name).within(() => {
     cy.get('a').click();
   });
 });
 
-Cypress.Commands.add('clickRowAction', (name: string | RegExp, label: string | RegExp) => {
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('.pf-c-dropdown__toggle').click();
-      cy.get('.pf-c-dropdown__menu-item').contains(label).click();
-    });
-});
+Cypress.Commands.add(
+  'clickRowAction',
+  (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
+    if (filter !== false && typeof name === 'string') {
+      cy.filterByText(name);
+    }
+    cy.contains('td', name)
+      .parent()
+      .within(() => {
+        cy.get('.pf-c-dropdown__toggle').click();
+        cy.get('.pf-c-dropdown__menu-item').contains(label).click();
+      });
+  }
+);
 
-Cypress.Commands.add('selectRow', (name: string | RegExp) => {
+Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterByText(name);
+  }
   cy.contains('td', name)
     .parent()
     .within(() => {
