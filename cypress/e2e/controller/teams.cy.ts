@@ -38,7 +38,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.clickButton(/^Edit team$/);
       cy.hasTitle(/^Edit team$/);
@@ -55,7 +54,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickButton(/^Details$/);
@@ -70,7 +68,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickTab(/^Access$/);
@@ -97,7 +94,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickButton(/^Edit team$/);
@@ -115,7 +111,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickPageAction(/^Delete team/);
@@ -131,7 +126,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRowAction(team.name, /^Edit team$/);
       cy.hasTitle(/^Edit team$/);
       cy.requestDelete(`/api/v2/teams/${team.id}/`);
@@ -144,7 +138,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.filterByText(team.name);
       cy.clickRowAction(team.name, /^Delete team$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
@@ -160,8 +153,6 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.get('#refresh');
-      cy.filterByText(team.name);
       cy.selectRow(team.name);
       cy.clickToolbarAction(/^Delete selected teams$/);
       cy.get('#confirm').click();
