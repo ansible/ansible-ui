@@ -136,7 +136,7 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   const navigate = useNavigate();
   const nameClick = useCallback(
     (template: Template) =>
-      navigate(RouteE.InventoryDetails.replace(':id', template.id.toString())),
+      navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({
