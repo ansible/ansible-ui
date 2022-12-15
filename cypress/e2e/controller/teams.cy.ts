@@ -12,7 +12,7 @@ describe('teams', () => {
   beforeEach(() => {
     cy.requestGet<ItemsResponse<Organization>>(
       '/api/v2/organizations/?name__contains=Default'
-    ).then((result) => (organization = result.results[0]));
+    ).then((response) => (organization = response.results[0]));
   });
 
   it('create team', () => {
@@ -23,6 +23,13 @@ describe('teams', () => {
     cy.typeByLabel(/^Organization$/, 'Default');
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName);
+    cy.requestGet<ItemsResponse<Team>>(`/api/v2/teams/?name__contains=${teamName}`).then(
+      (response) => {
+        if (response.results.length > 0) {
+          cy.requestDelete(`/api/v2/teams/${response.results[0].id}/`);
+        }
+      }
+    );
   });
 
   it('edit team', () => {
@@ -31,6 +38,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.clickButton(/^Edit team$/);
       cy.hasTitle(/^Edit team$/);
@@ -47,6 +55,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickButton(/^Details$/);
@@ -61,6 +70,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickTab(/^Access$/);
@@ -87,6 +97,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickButton(/^Edit team$/);
@@ -104,6 +115,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRow(team.name);
       cy.hasTitle(team.name);
       cy.clickPageAction(/^Delete team/);
@@ -119,6 +131,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRowAction(team.name, /^Edit team$/);
       cy.hasTitle(/^Edit team$/);
       cy.requestDelete(`/api/v2/teams/${team.id}/`);
@@ -131,11 +144,13 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
+      cy.filterByText(team.name);
       cy.clickRowAction(team.name, /^Delete team$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 
@@ -143,16 +158,17 @@ describe('teams', () => {
     cy.requestPost<Team>('/api/v2/teams/', {
       name: 'Team ' + randomString(4),
       organization: organization.id,
-    }).then(() => {
+    }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
       cy.get('#refresh');
-      cy.get('#select-all').click();
+      cy.filterByText(team.name);
+      cy.selectRow(team.name);
       cy.clickToolbarAction(/^Delete selected teams$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.contains(/^No teams yet$/);
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

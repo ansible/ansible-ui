@@ -242,6 +242,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
               </ToolbarItem>
               <ToolbarItem>
                 <ToolbarFilterInput
+                  id="filter-input"
                   filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
                   addFilter={(value: string) => {
                     let values = filters?.[selectedFilter];
@@ -314,19 +315,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         <div style={{ flexGrow: 1 }} />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
-          {/* <ToolbarItem>
-            <ToggleGroup>
-              <Tooltip content={'Table view'}>
-                <ToggleGroupItem icon={<TableIcon />} isSelected />
-              </Tooltip>
-              <Tooltip content={'List view'}>
-                <ToggleGroupItem icon={<ListIcon />} />
-              </Tooltip>
-              <Tooltip content={'Card view'}>
-                <ToggleGroupItem icon={<ThLargeIcon />} />
-              </Tooltip>
-            </ToggleGroup>
-          </ToolbarItem> */}
           {openColumnModal && viewType === 'table' && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>
@@ -336,20 +324,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           )}
           <ToolbarItem>
             <ToggleGroup aria-label="table view toggle">
-              {[PageTableViewTypeE.Table, PageTableViewTypeE.List, PageTableViewTypeE.Cards]
-                // .filter((vt) => {
-                //   switch (vt) {
-                //     case PageTableViewTypeE.Cards:
-                //       return props.itemToCardFn !== undefined
-                //     case PageTableViewTypeE.list:
-                //       return false
-                //     case PageTableViewTypeE.table:
-                //       return props.tableColumns !== undefined
-                //     default:
-                //       return false
-                //   }
-                // })
-                .map((vt) => {
+              {[PageTableViewTypeE.Table, PageTableViewTypeE.List, PageTableViewTypeE.Cards].map(
+                (vt) => {
                   switch (vt) {
                     case PageTableViewTypeE.Cards:
                       return (
@@ -400,7 +376,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                         </Tooltip>
                       );
                   }
-                })}
+                }
+              )}
             </ToggleGroup>
           </ToolbarItem>
         </ToolbarGroup>
@@ -427,6 +404,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 }
 
 function ToolbarFilterInput(props: {
+  id?: string;
   filter?: IToolbarFilter;
   addFilter: (value: string) => void;
   values: string[];
@@ -444,12 +422,17 @@ function ToolbarFilterInput(props: {
   return <></>;
 }
 
-function ToolbarTextFilter(props: { addFilter: (value: string) => void; placeholder?: string }) {
+function ToolbarTextFilter(props: {
+  id?: string;
+  addFilter: (value: string) => void;
+  placeholder?: string;
+}) {
   const [value, setValue] = useState('');
   return (
     <InputGroup>
       <TextInputGroup style={{ minWidth: 220 }}>
         <TextInputGroupMain
+          id={props.id}
           // ref={ref}
           value={value}
           onChange={setValue}
@@ -466,7 +449,7 @@ function ToolbarTextFilter(props: { addFilter: (value: string) => void; placehol
           <TextInputGroupUtilities>
             <Button
               variant="plain"
-              aria-label="add filter"
+              aria-label="clear filter"
               onClick={() => setValue('')}
               style={{ opacity: value ? undefined : 0 }}
               // tabIndex={value ? undefined : -1}
@@ -481,16 +464,14 @@ function ToolbarTextFilter(props: { addFilter: (value: string) => void; placehol
       {!value ? (
         <></>
       ) : (
-        // <Button variant={'control'} aria-label="add filter">
-        //     <SearchIcon />
-        // </Button>
         <Button
           variant={value ? 'primary' : 'control'}
-          aria-label="add filter"
+          aria-label="apply filter"
           onClick={() => {
             props.addFilter(value);
             setValue('');
           }}
+          tabIndex={-1}
         >
           <ArrowRightIcon />
         </Button>
