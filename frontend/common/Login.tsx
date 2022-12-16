@@ -95,6 +95,7 @@ export default function Login() {
         setAutomationServer(automationServer);
         switch (automationServer.type) {
           case 'eda':
+            setCookie('server', data.server);
             navigate(RouteE.EdaProjects);
             break;
           case 'hub':
