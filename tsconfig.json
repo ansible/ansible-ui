@@ -4,7 +4,6 @@
     "module": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020", "DOM"],
-    "types": ["cypress"],
     "allowSyntheticDefaultImports": true,
     "allowJs": false,
     "sourceMap": true,
@@ -25,14 +24,5 @@
     // "isolatedModules": true
     // "strictNullChecks": true
   },
-  "include": [
-    "frontend",
-    "framework",
-    "proxy",
-    "cypress",
-    "rollup.config.ts",
-    "cypress.config.ts",
-    "cypress.d.ts",
-    "i18next-parser.config.cjs"
-  ]
+  "include": ["frontend", "framework", "proxy", "rollup.config.ts", "i18next-parser.config.cjs"]
 }

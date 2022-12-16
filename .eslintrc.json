@@ -1,34 +1,39 @@
 {
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": ["./tsconfig.json"]
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:jsx-a11y/recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:prettier/recommended",
-        "plugin:i18next/recommended"
-    ],
-    "rules": {
-        "react/react-in-jsx-scope": "off",
-        "no-console": "error",
-        "jsx-a11y/no-autofocus": "off",
-        "@typescript-eslint/no-unused-vars": [
-            "error",
-            { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_", "ignoreRestSiblings": true, "destructuredArrayIgnorePattern": "^_" }
-        ]
-    },
-    "root": true,
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["./tsconfig.json", "./cypress/tsconfig.json"]
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "plugin:i18next/recommended"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "no-console": "error",
+    "jsx-a11y/no-autofocus": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ]
+  },
+  "root": true,
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  }
 }

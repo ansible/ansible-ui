@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // be explicit about types included
+    // to avoid clashing with Jest types
+    "types": ["cypress"]
+  },
+  "include": [
+    "../frontend",
+    "../framework",
+    "../proxy",
+    "../rollup.config.ts",
+    "../i18next-parser.config.cjs",
+    "../cypress",
+    "../cypress.config.ts",
+    "../cypress.d.ts"
+  ]
+}
