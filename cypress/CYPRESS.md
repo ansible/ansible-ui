@@ -28,7 +28,7 @@ To facilitate this, there are functions to setup state using the REST api.
 
 Example
 
-``` ts
+```ts
 cy.requestPost<Team>('/api/v2/teams/', {
   name: 'Team ' + randomString(4),
   organization: organization.id,
