@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../common/columns';
 import { getItemKey, requestDelete } from '../../../Data';
-import { Template } from './Template';
+import { Template } from '../../interfaces/Template';
 import { useTemplatesColumns } from './Templates';
 
 export function useDeleteTemplates(onComplete: (templates: Template[]) => void) {
@@ -28,7 +28,7 @@ export function useDeleteTemplates(onComplete: (templates: Template[]) => void) 
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (template: Template) => requestDelete(`/api/v2/templates/${template.id}/`),
+      actionFn: (template: Template) => requestDelete(`/api/v2/job_templates/${template.id}/`),
     });
   };
   return deleteTemplates;

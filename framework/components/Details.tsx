@@ -79,17 +79,17 @@ export function DetailsList(props: { children?: ReactNode }) {
   );
 }
 
-export function Detail(props: { label?: string; children?: ReactNode }) {
-  if (!props.children) return <></>;
+export function Detail(props: { label?: string; children?: ReactNode; isEmpty?: boolean }) {
+  if (props.children === null || typeof props.children === 'undefined' || props.children === '') {
+    return <></>;
+  }
+  if (props.isEmpty) {
+    return <></>;
+  }
+
   return (
     <DescriptionListGroup>
-      {props.label && (
-        <DescriptionListTerm>
-          {/* <Text component="small" style={{ opacity: 0.7 }}> */}
-          {props.label}
-          {/* </Text> */}
-        </DescriptionListTerm>
-      )}
+      {props.label && <DescriptionListTerm>{props.label}</DescriptionListTerm>}
       <DescriptionListDescription id={props.label?.toLowerCase().split(' ').join('-')}>
         {props.children}
       </DescriptionListDescription>
