@@ -9,7 +9,7 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { EditIcon } from '@patternfly/react-icons';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -30,6 +30,7 @@ import { UserDateDetail } from '../../common/UserDateDetail';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Template } from '../../interfaces/Template';
+import { useDeleteTemplates } from './useDeleteTemplates';
 
 export function TemplateDetail() {
   const { t } = useTranslation();
@@ -37,11 +38,11 @@ export function TemplateDetail() {
   const template = useItem<Template>('/api/v2/job_templates', params.id ?? '0');
   const history = useNavigate();
 
-  // const deleteTemplates = useDeleteTemplates((deleted: Template[]) => {
-  //   if (deleted.length > 0) {
-  //     history(RouteE.Templates);
-  //   }
-  // });
+  const deleteTemplates = useDeleteTemplates((deleted: Template[]) => {
+    if (deleted.length > 0) {
+      history(RouteE.Templates);
+    }
+  });
 
   const itemActions: IPageAction<Template>[] = useMemo(() => {
     const itemActions: IPageAction<Template>[] = [
@@ -52,18 +53,18 @@ export function TemplateDetail() {
         label: t('Edit template'),
         onClick: () => history(RouteE.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
-      // {
-      //   type: PageActionType.button,
-      //   icon: TrashIcon,
-      //   label: t('Delete template'),
-      //   onClick: () => {
-      //     if (!template) return;
-      //     deleteTemplates([template]);
-      //   },
-      // },
+      {
+        type: PageActionType.button,
+        icon: TrashIcon,
+        label: t('Delete template'),
+        onClick: () => {
+          if (!template) return;
+          deleteTemplates([template]);
+        },
+      },
     ];
     return itemActions;
-  }, [/* deleteTemplates */ history, template, t]);
+  }, [deleteTemplates, history, template, t]);
 
   return (
     <PageLayout>
@@ -195,12 +196,6 @@ function TemplateDetailsTab(props: { template: Template }) {
           </Detail>
           <Detail label={t('Webhook service')} isEmpty={!template.webhook_service}>
             {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
-          </Detail>
-          <Detail label={t('Webhook URL')} isEmpty={!template.related?.webhook_receiver}>
-            {`${document.location.origin}${template.related?.webhook_receiver}`}
-          </Detail>
-          <Detail label={t('Webhook key')} isEmpty={!template.related?.webhook_key}>
-            {template.related?.webhook_key}
           </Detail>
           <Detail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
             <Link

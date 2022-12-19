@@ -24,7 +24,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters';
 import { useControllerView } from '../../useControllerView';
-import { Template } from './Template';
+import { Template } from '../../interfaces/Template';
 import { useDeleteTemplates } from './useDeleteTemplates';
 
 export function Templates() {
@@ -36,6 +36,9 @@ export function Templates() {
     url: '/api/v2/unified_job_templates/',
     toolbarFilters,
     tableColumns,
+    queryParams: {
+      type: 'job_template,workflow_job_template',
+    },
   });
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
@@ -134,6 +137,7 @@ export function useTemplateFilters() {
 
 export function useTemplatesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
+  // TODO: URL should be dependant on template type
   const nameClick = useCallback(
     (template: Template) =>
       navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString())),
