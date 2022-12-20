@@ -15,7 +15,7 @@ export function Inventories() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useInventoriesFilters();
-  const { data: inventories, mutate: refresh } = useGet<EdaInventory[]>('/api/inventories/');
+  const { data: inventories, mutate: refresh } = useGet<EdaInventory[]>('/api/inventories');
   const tableColumns = useInventoriesColumns();
   const view = useInMemoryView<EdaInventory>({
     items: inventories,

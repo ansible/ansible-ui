@@ -1,23 +1,52 @@
-import { DropdownPosition, PageSection } from '@patternfly/react-core';
+import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../framework';
-import { Scrollable } from '../../../../framework/components/Scrollable';
-import { TableDetails } from '../../../../framework/PageTable/PageTableDetails';
-import { useSettings } from '../../../../framework/Settings';
+import {
+  Detail,
+  DetailsList,
+  PageActions,
+  PageBody,
+  PageHeader,
+  PageLayout,
+  PageTab,
+  PageTabs,
+} from '../../../../framework';
+import { Scrollable } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
-import { EdaProject } from '../../interfaces/EdaProject';
 import { useProjectActions } from './hooks/useProjectActions';
-import { useProjectColumns } from './hooks/useProjectColumns';
+import { EdaProject } from '../../interfaces/EdaProject';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: project, mutate: refresh } = useGet<EdaProject>(`/api/projects/${params.id ?? ''}`);
-  const settings = useSettings();
-  const tableColumns = useProjectColumns();
   const itemActions = useProjectActions(refresh);
+
+  const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {
+    return (
+      <Scrollable>
+        <PageSection variant="light">
+          <DetailsList>
+            <Detail label={t('Name')}>{project?.name || ''}</Detail>
+            <Detail label={t('Description')}>{project?.description || ''}</Detail>
+            <Detail label={t('SCM type')}>{project?.type || 'Git'}</Detail>
+            <Detail label={t('SCM URL')}>{project?.type || ''}</Detail>
+            <Detail label={t('SCM token')}>{project?.token || ''}</Detail>
+            <Detail label={t('Git hash')}>{project?.git_hash || ''}</Detail>
+            <Detail label={t('Created')}>
+              {project?.created_at ? formatDateString(project.created_at) : ''}
+            </Detail>
+            <Detail label={t('Modified')}>
+              {project?.modified_at ? formatDateString(project.modified_at) : ''}
+            </Detail>
+          </DetailsList>
+        </PageSection>
+      </Scrollable>
+    );
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -32,15 +61,26 @@ export function ProjectDetails() {
         }
       />
       <Scrollable>
-        <PageSection
-          variant="light"
-          style={{
-            backgroundColor:
-              settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          }}
-        >
-          <TableDetails item={project} columns={tableColumns} />
-        </PageSection>
+        <PageBody>
+          {project ? (
+            <PageTabs>
+              <PageTab title={t('Details')}>{renderProjectDetailsTab(project)}</PageTab>
+            </PageTabs>
+          ) : (
+            <PageTabs>
+              <PageTab>
+                <PageSection variant="light">
+                  <Stack hasGutter>
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                  </Stack>
+                </PageSection>
+              </PageTab>
+            </PageTabs>
+          )}
+        </PageBody>
       </Scrollable>
     </PageLayout>
   );

@@ -47,7 +47,7 @@ export function EditProject() {
   const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
       if (Number.isInteger(id)) {
-        project = await requestPatch<EdaProject>(`/api/projects/${id}`, project);
+        await requestPatch<EdaProject>(`/api/projects/${id}`, project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
