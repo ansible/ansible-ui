@@ -27,3 +27,7 @@ In addition the frontend is broken down into the structure needed for supporting
 Under each one of these, the directory structure should match the use navigation that is shown in the UI.
 
 > Example: /frontend/controller/access/users
+
+## Testing
+
+See: [CYPRESS.md](../cypress/CYPRESS.md)

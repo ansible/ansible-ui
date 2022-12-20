@@ -19,8 +19,6 @@
    npm run cypress:open
    ```
 
-3. Run the tests from the Cypress UI.
-
 ## NPM E2E Commands
 
 | Command                     | Description                                                            |
@@ -45,7 +43,9 @@ This is so that it can run against not only a mock server but also a live server
 
 To facilitate this, there are functions to setup state using the REST api.
 
-Example
+#### Example
+
+Creating a team that does not exist for use in a test.
 
 ```ts
 cy.requestPost<Team>('/api/v2/teams/', {

@@ -9,10 +9,6 @@ before(() => {
   window.localStorage.setItem('access', 'true');
   window.localStorage.setItem('theme', 'light');
 
-  if (!Cypress.env('server')) {
-    mockController();
-  }
-
   if (Cypress.env('server')) {
     const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
     const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
@@ -39,6 +35,7 @@ before(() => {
 
     cy.contains(/^Welcome to Automation Controller$/);
   } else {
+    mockController();
     cy.visit(`/controller/debug`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
   }
 });
