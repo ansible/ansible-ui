@@ -16,6 +16,7 @@ import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { useProjectActions } from './hooks/useProjectActions';
 import { EdaProject } from '../../interfaces/EdaProject';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -35,14 +36,10 @@ export function ProjectDetails() {
             <Detail label={t('SCM token')}>{project?.token || ''}</Detail>
             <Detail label={t('Git hash')}>{project?.git_hash || ''}</Detail>
             <Detail label={t('Created')}>
-              {new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'long' }).format(
-                new Date(project?.created_at || 0)
-              )}
+              {project?.created_at ? formatDateString(project.created_at) : ''}
             </Detail>
             <Detail label={t('Modified')}>
-              {new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'long' }).format(
-                new Date(project?.modified_at || 0)
-              )}
+              {project?.modified_at ? formatDateString(project.modified_at) : ''}
             </Detail>
           </DetailsList>
         </PageSection>
