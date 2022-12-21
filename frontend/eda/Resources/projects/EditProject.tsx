@@ -28,12 +28,31 @@ export function EditProject() {
       Type.Object({
         name: Type.String({
           title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          placeholder: t('Insert name here'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
         }),
+        description: Type.Optional(
+          Type.String({
+            title: t('Description'),
+            placeholder: t('Insert description here '), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          })
+        ),
+        type: Type.Optional(
+          Type.String({
+            title: t('SCM type'),
+            default: 'Git',
+            placeholder: t('Select type'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          })
+        ),
         url: Type.Optional(
           Type.String({
-            title: t('URL'),
+            title: t('SCM URL'),
             placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          })
+        ),
+        token: Type.Optional(
+          Type.String({
+            title: t('SCM token'),
+            placeholder: t('Insert token here'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
           })
         ),
       }),
