@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
-import { useDeleteRulebooks } from './useDeleteRulebooks';
+import { useDisableRulebook } from './useDisableRulebook';
 
 export function useRulebookActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteRulebooks = useDeleteRulebooks(() => void refresh());
+  const disableRulebook = useDisableRulebook(() => void refresh());
   return useMemo<IPageAction<EdaRulebook>[]>(
     () => [
       {
@@ -24,9 +24,9 @@ export function useRulebookActions(refresh: () => Promise<unknown>) {
         type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete rulebook'),
-        onClick: (rulebook: EdaRulebook) => deleteRulebooks([rulebook]),
+        onClick: (rulebook: EdaRulebook) => disableRulebook(rulebook),
       },
     ],
-    [deleteRulebooks, navigate, t]
+    [navigate, t]
   );
 }
