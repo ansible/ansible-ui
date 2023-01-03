@@ -1,11 +1,11 @@
-import { Static, Type } from '@sinclair/typebox';
-import { useMemo } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSchema, TypeTextInput } from '../../../../framework/PageForm/PageFormSchema';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -25,50 +25,10 @@ export function EditTeam() {
     swrOptions
   );
 
-  const selectOrganization = useSelectOrganization();
-
-  const EditTeamSchema = useMemo(
-    () =>
-      Type.Object({
-        name: TypeTextInput({ title: t('Name') }),
-        description: Type.Optional(Type.String({ title: t('Description'), variant: 'textarea' })),
-        summary_fields: Type.Object({
-          organization: Type.Object({
-            name: Type.String({
-              title: t('Organization'),
-              placeholder: t('Enter the organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-              variant: 'select',
-              selectTitle: t('Select an organization'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-              selectValue: (organization: Organization) => organization.name,
-              selectOpen: selectOrganization,
-            }),
-          }),
-        }),
-      }),
-    [selectOrganization, t]
-  );
-
-  type CreateTeam = Static<typeof EditTeamSchema>;
-
   const { cache } = useSWRConfig();
 
-  const onSubmit: PageFormSubmitHandler<CreateTeam> = async (
-    editedTeam,
-    setError,
-    setFieldError
-  ) => {
+  const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
-      const result = await requestGet<ItemsResponse<Organization>>(
-        `/api/v2/organizations/?name=${editedTeam.summary_fields.organization.name}`
-      );
-      if (result.results.length === 0) {
-        setFieldError('summary_fields.organization.name', {
-          message: t('Organization not found'),
-        });
-        return false;
-      }
-      const organization = result.results[0];
-      (editedTeam as unknown as { organization: number }).organization = organization.id;
       let team: Team;
       if (Number.isInteger(id)) {
         team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
@@ -103,14 +63,12 @@ export function EditTeam() {
           />
           <PageBody>
             <PageForm
-              schema={EditTeamSchema}
               submitText={t('Save team')}
               onSubmit={onSubmit}
-              cancelText={t('Cancel')}
               onCancel={onCancel}
               defaultValue={team}
             >
-              <PageFormSchema schema={EditTeamSchema} />
+              <EditTeamInputs />
             </PageForm>
           </PageBody>
         </PageLayout>
@@ -124,17 +82,45 @@ export function EditTeam() {
           breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
         />
         <PageBody>
-          <PageForm
-            schema={EditTeamSchema}
-            submitText={t('Create team')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          >
-            <PageFormSchema schema={EditTeamSchema} />
+          <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
+            <EditTeamInputs />
           </PageForm>
         </PageBody>
       </PageLayout>
     );
   }
+}
+
+function EditTeamInputs() {
+  const { setValue } = useFormContext();
+  const { t } = useTranslation();
+  const selectOrganization = useSelectOrganization();
+  return (
+    <>
+      <PageFormTextInput label="Name" name="name" placeholder="Enter name" isRequired />
+      <PageFormTextArea label="Description" name="description" placeholder="Enter description" />
+      <PageFormTextInput
+        label="Organization"
+        name="summary_fields.organization.name"
+        placeholder="Enter organization"
+        selectTitle={t('Select an organization')}
+        selectValue={(organization: Organization) => organization.name}
+        selectOpen={selectOrganization}
+        validate={async (organizationName: string) => {
+          try {
+            const itemsResponse = await requestGet<ItemsResponse<Organization>>(
+              `/api/v2/organizations/?name=${organizationName}`
+            );
+            if (itemsResponse.results.length === 0) return t('Organization not found.');
+            setValue('organization', itemsResponse.results[0].id);
+          } catch (err) {
+            if (err instanceof Error) return err.message;
+            else return 'Unknown error';
+          }
+          return undefined;
+        }}
+        isRequired
+      />
+    </>
+  );
 }

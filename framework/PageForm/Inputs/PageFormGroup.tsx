@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 
 export type PageFormGroupProps = Pick<
   FormGroupProps,
-  'children' | 'label' | 'helperText' | 'helperTextInvalid' | 'isRequired'
-> & { id?: string; labelHelpTitle?: string; labelHelp?: ReactNode };
+  'children' | 'helperText' | 'helperTextInvalid' | 'isRequired'
+> & { id?: string; labelHelpTitle?: string; label: string; labelHelp?: ReactNode };
 
 /** Wrapper over the PatternFly FormGroup making it optional based on if label is given. */
 export function PageFormGroup(props: PageFormGroupProps) {
