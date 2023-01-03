@@ -1,6 +1,6 @@
 import { Button, InputGroup, TextInput, TextInputProps } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type FormGroupTextInputProps = Pick<
@@ -16,23 +16,37 @@ export type FormGroupTextInputProps = Pick<
   | 'aria-label'
   | 'autoComplete'
   | 'autoFocus'
+  | 'innerRef'
+  | 'minLength'
+  | 'maxLength'
 > &
-  PageFormGroupProps;
+  PageFormGroupProps & { children?: ReactNode };
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
   const [showSecret, setShowSecret] = useState(false);
-  const { helperTextInvalid: _helperTextInvalid, ...textInputProps } = props;
+  const {
+    helperTextInvalid: _helperTextInvalid,
+    children: _children,
+    isReadOnly,
+    ...textInputProps
+  } = props;
+  const id = props.id
+    ? props.id
+    : typeof props.label === 'string'
+    ? props.label.toLowerCase().split(' ').join('-')
+    : undefined;
   return (
-    <PageFormGroup {...props}>
+    <PageFormGroup {...props} id={id}>
       <InputGroup>
         <TextInput
           {...textInputProps}
-          id={props.id}
+          id={id}
           label={undefined}
-          aria-describedby={props.id ? `${props.id}-form-group` : undefined}
+          aria-describedby={id ? `${id}-form-group` : undefined}
           validated={props.helperTextInvalid ? 'error' : undefined}
           type={props.type === 'password' ? (showSecret ? 'text' : 'password') : props.type}
+          readOnlyVariant={isReadOnly ? 'default' : undefined}
         />
         {props.type === 'password' && (
           <Button
@@ -43,6 +57,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
             {showSecret ? <EyeIcon /> : <EyeSlashIcon />}
           </Button>
         )}
+        {props.children}
       </InputGroup>
     </PageFormGroup>
   );
