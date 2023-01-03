@@ -24,13 +24,14 @@ import {
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export function PageForm<T extends object>(props: {
   schema?: JSONSchema6;
   children?: ReactNode;
   submitText: string;
   onSubmit: PageFormSubmitHandler<T>;
-  cancelText: string;
+  cancelText?: string;
   onCancel?: () => void;
   defaultValue?: DeepPartial<T>;
   isVertical?: boolean;
@@ -47,6 +48,8 @@ export function PageForm<T extends object>(props: {
         )
       : undefined,
   });
+
+  const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState('');
@@ -119,7 +122,7 @@ export function PageForm<T extends object>(props: {
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
-                  {props.cancelText}
+                  {props.cancelText ?? frameworkTranslations.cancelText}
                 </PageFormCancelButton>
               )}
             </ActionGroup>

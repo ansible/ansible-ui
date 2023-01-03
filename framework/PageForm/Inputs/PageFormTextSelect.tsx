@@ -47,9 +47,7 @@ export function FormTextSelect<T>(props: {
             autoFocus={props.autoFocus}
             placeholder={props.placeholder}
             {...registration}
-            onChange={(v, e) => {
-              void registration.onChange(e);
-            }}
+            onChange={(v, e) => void registration.onChange(e)}
             // innerRef={registration.ref}
             isReadOnly={isSubmitting}
           />
