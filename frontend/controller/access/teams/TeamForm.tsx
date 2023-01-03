@@ -38,7 +38,7 @@ export function CreateTeam() {
       />
       <PageBody>
         <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
-          <EditTeamInputs />
+          <TeamInputs />
         </PageForm>
       </PageBody>
     </PageLayout>
@@ -92,7 +92,7 @@ export function EditTeam() {
             onCancel={onCancel}
             defaultValue={team}
           >
-            <EditTeamInputs />
+            <TeamInputs />
           </PageForm>
         </PageBody>
       </PageLayout>
@@ -100,17 +100,17 @@ export function EditTeam() {
   }
 }
 
-function EditTeamInputs() {
+function TeamInputs() {
   const { setValue } = useFormContext();
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
   return (
     <>
-      <PageFormTextInput label="Name" name="name" placeholder="Enter name" isRequired />
-      <PageFormTextArea label="Description" name="description" placeholder="Enter description" />
+      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired />
+      <PageFormTextArea name="description" label="Description" placeholder="Enter description" />
       <PageFormTextInput
-        label="Organization"
         name="summary_fields.organization.name"
+        label="Organization"
         placeholder="Enter organization"
         selectTitle={t('Select an organization')}
         selectValue={(organization: Organization) => organization.name}
