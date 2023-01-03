@@ -13,6 +13,38 @@ import { Team } from '../../interfaces/Team';
 import { getControllerError } from '../../useControllerView';
 import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
 
+export function CreateTeam() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const { cache } = useSWRConfig();
+
+  const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
+    try {
+      const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
+    } catch (err) {
+      setError(await getControllerError(err));
+    }
+  };
+  const onCancel = () => navigate(-1);
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create team')}
+        breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
+      />
+      <PageBody>
+        <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
+          <EditTeamInputs />
+        </PageForm>
+      </PageBody>
+    </PageLayout>
+  );
+}
+
 export function EditTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,60 +61,37 @@ export function EditTeam() {
 
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
-      let team: Team;
-      if (Number.isInteger(id)) {
-        team = await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        team = await requestPost<Team>('/api/v2/teams/', editedTeam);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
-      }
+      await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
     } catch (err) {
       setError(await getControllerError(err));
     }
   };
   const onCancel = () => navigate(-1);
 
-  if (Number.isInteger(id)) {
-    if (!team) {
-      return (
-        <PageLayout>
-          <PageHeader
-            breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
-          />
-        </PageLayout>
-      );
-    } else {
-      return (
-        <PageLayout>
-          <PageHeader
-            title={t('Edit team')}
-            breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
-          />
-          <PageBody>
-            <PageForm
-              submitText={t('Save team')}
-              onSubmit={onSubmit}
-              onCancel={onCancel}
-              defaultValue={team}
-            >
-              <EditTeamInputs />
-            </PageForm>
-          </PageBody>
-        </PageLayout>
-      );
-    }
+  if (!team) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
+        />
+      </PageLayout>
+    );
   } else {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create team')}
-          breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
+          title={t('Edit team')}
+          breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
         />
         <PageBody>
-          <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
+          <PageForm
+            submitText={t('Save team')}
+            onSubmit={onSubmit}
+            onCancel={onCancel}
+            defaultValue={team}
+          >
             <EditTeamInputs />
           </PageForm>
         </PageBody>
