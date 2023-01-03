@@ -31,7 +31,11 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
     isReadOnly,
     ...textInputProps
   } = props;
-  const id = props.id ?? props.label.toLowerCase().split(' ').join('-');
+  const id = props.id
+    ? props.id
+    : typeof props.label === 'string'
+    ? props.label.toLowerCase().split(' ').join('-')
+    : undefined;
   return (
     <PageFormGroup {...props} id={id}>
       <InputGroup>

@@ -24,6 +24,7 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupTextArea
           {...props}
+          id={props.id ?? name}
           value={value as string}
           onChange={onChange}
           helperTextInvalid={error?.message}
@@ -34,7 +35,7 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
       )}
       rules={{
         required:
-          typeof isRequired === 'boolean'
+          typeof label === 'string' && typeof isRequired === 'boolean'
             ? {
                 value: true,
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
@@ -42,7 +43,7 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
             : isRequired,
 
         minLength:
-          typeof minLength === 'number'
+          typeof label === 'string' && typeof minLength === 'number'
             ? {
                 value: minLength,
                 message: `${capitalizeFirstLetter(
@@ -52,7 +53,7 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
             : minLength,
 
         maxLength:
-          typeof maxLength === 'number'
+          typeof label === 'string' && typeof maxLength === 'number'
             ? {
                 value: maxLength,
                 message: `${capitalizeFirstLetter(

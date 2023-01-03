@@ -5,7 +5,7 @@ import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
 export type PageFormTextInputProps<T> = {
-  name?: string;
+  name: string;
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
@@ -17,9 +17,17 @@ export type PageFormTextInputProps<T> = {
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
 export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>) {
-  const { label, isReadOnly, isRequired, minLength, maxLength, pattern, validate, selectTitle } =
-    props;
-  const name = props.name ?? props.label.split(' ').join('');
+  const {
+    label,
+    name,
+    isReadOnly,
+    isRequired,
+    minLength,
+    maxLength,
+    pattern,
+    validate,
+    selectTitle,
+  } = props;
   const {
     control,
     setValue,
@@ -34,6 +42,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
         return (
           <FormGroupTextInput
             {...props}
+            id={props.id ?? name}
             value={value as string}
             onChange={onChange}
             helperTextInvalid={!(validate && isValidating) && error?.message}
@@ -63,7 +72,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
       }}
       rules={{
         required:
-          typeof isRequired === 'boolean'
+          typeof label === 'string' && typeof isRequired === 'boolean'
             ? {
                 value: true,
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
@@ -71,7 +80,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
             : isRequired,
 
         minLength:
-          typeof minLength === 'number'
+          typeof label === 'string' && typeof minLength === 'number'
             ? {
                 value: minLength,
                 message: `${capitalizeFirstLetter(
@@ -81,7 +90,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
             : minLength,
 
         maxLength:
-          typeof maxLength === 'number'
+          typeof label === 'string' && typeof maxLength === 'number'
             ? {
                 value: maxLength,
                 message: `${capitalizeFirstLetter(
