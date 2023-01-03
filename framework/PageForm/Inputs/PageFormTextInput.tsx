@@ -42,7 +42,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
         return (
           <FormGroupTextInput
             {...props}
-            id={props.id ?? name}
+            id={props.id ?? name.split('.').join('-')}
             value={value as string}
             onChange={onChange}
             helperTextInvalid={!(validate && isValidating) && error?.message}
