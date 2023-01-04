@@ -106,7 +106,7 @@ function TeamInputs() {
   const selectOrganization = useSelectOrganization();
   return (
     <>
-      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired pattern={} />
+      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired />
       <PageFormTextArea name="description" label="Description" placeholder="Enter description" />
       <PageFormTextInput
         name="summary_fields.organization.name"
