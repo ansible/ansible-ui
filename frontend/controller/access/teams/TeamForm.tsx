@@ -38,7 +38,7 @@ export function CreateTeam() {
       />
       <PageBody>
         <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
-          {/* <TeamInputs /> */}
+          <TeamInputs />
         </PageForm>
       </PageBody>
     </PageLayout>
