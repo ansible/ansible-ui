@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
 import { idKeyFn } from '../../hub/usePulpView';
@@ -33,18 +33,20 @@ export function ExecutionEnvironments() {
     [navigate]
   );
   return (
-    <TablePage
-      title={t('Execution environments')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading execution environments')}
-      emptyStateTitle={t('No execution environments yet')}
-      emptyStateDescription={t('To get started, create a execution evironment.')}
-      emptyStateButtonText={t('Create execution environment')}
-      emptyStateButtonClick={emptyStateButtonClick}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader title={t('Execution environments')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading execution environments')}
+        emptyStateTitle={t('No execution environments yet')}
+        emptyStateDescription={t('To get started, create a execution evironment.')}
+        emptyStateButtonText={t('Create execution environment')}
+        emptyStateButtonClick={emptyStateButtonClick}
+        {...view}
+      />
+    </PageLayout>
   );
 }

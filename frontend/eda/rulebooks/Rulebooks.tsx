@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
 import { idKeyFn } from '../../hub/usePulpView';
@@ -26,19 +26,21 @@ export function Rulebooks() {
   const toolbarActions = useRulebooksActions(refresh);
   const rowActions = useRulebookActions(refresh);
   return (
-    <TablePage
-      title={t('Rulebooks')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading rulebooks')}
-      emptyStateTitle={t('No rulebooks yet')}
-      emptyStateDescription={t('To get started, create a rulebook.')}
-      emptyStateButtonText={t('Create rulebook')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebook)}
-      {...view}
-      defaultSubtitle={t('Rulebook')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Rulebooks')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading rulebooks')}
+        emptyStateTitle={t('No rulebooks yet')}
+        emptyStateDescription={t('To get started, create a rulebook.')}
+        emptyStateButtonText={t('Create rulebook')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebook)}
+        {...view}
+        defaultSubtitle={t('Rulebook')}
+      />
+    </PageLayout>
   );
 }

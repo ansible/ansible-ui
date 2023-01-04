@@ -14,9 +14,10 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
+  PageHeader,
+  PageLayout,
   PageTable,
   SinceCell,
-  TablePage,
   TextCell,
 } from '../../../../framework';
 import { RouteE } from '../../../Routes';
@@ -161,24 +162,28 @@ export function Users() {
   );
 
   return (
-    <TablePage<User>
-      title={t('Users')}
-      titleHelpTitle={t('User')}
-      titleHelp={t('users.title.help')}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
-      description={t('users.title.description')}
-      navigation={<AccessNav active="users" />}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading users')}
-      emptyStateTitle={t('No users yet')}
-      emptyStateDescription={t('To get started, create a user.')}
-      emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Users')}
+        titleHelpTitle={t('User')}
+        titleHelp={t('users.title.help')}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
+        description={t('users.title.description')}
+        navigation={<AccessNav active="users" />}
+      />
+      <PageTable<User>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading users')}
+        emptyStateTitle={t('No users yet')}
+        emptyStateDescription={t('To get started, create a user.')}
+        emptyStateButtonText={t('Create user')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

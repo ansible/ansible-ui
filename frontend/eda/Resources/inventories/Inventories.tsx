@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
 import { useGet } from '../../../common/useItem';
 import { idKeyFn } from '../../../hub/usePulpView';
@@ -26,19 +26,21 @@ export function Inventories() {
   const toolbarActions = useInventoriesToolbarActions(refresh);
   const rowActions = useInventoryRowActions(refresh);
   return (
-    <TablePage
-      title={t('Inventories')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading inventories')}
-      emptyStateTitle={t('No inventories yet')}
-      emptyStateDescription={t('To get started, create a inventory.')}
-      emptyStateButtonText={t('Create inventory')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaInventory)}
-      {...view}
-      defaultSubtitle={t('Inventory')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Inventories')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading inventories')}
+        emptyStateTitle={t('No inventories yet')}
+        emptyStateDescription={t('To get started, create a inventory.')}
+        emptyStateButtonText={t('Create inventory')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaInventory)}
+        {...view}
+        defaultSubtitle={t('Inventory')}
+      />
+    </PageLayout>
   );
 }

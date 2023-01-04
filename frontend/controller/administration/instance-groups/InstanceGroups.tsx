@@ -9,7 +9,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
   TextCell,
 } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
@@ -82,22 +84,26 @@ export function InstanceGroups() {
   );
 
   return (
-    <TablePage<InstanceGroup>
-      title={t('Instance groups')}
-      description={t(
-        'An Instance Group provides the ability to group instances in a clustered environment.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading instance groups')}
-      emptyStateTitle={t('No instance groups yet')}
-      emptyStateDescription={t('To get started, create an instance group.')}
-      emptyStateButtonText={t('Create instance group')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateInstanceGroup)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Instance groups')}
+        description={t(
+          'An Instance Group provides the ability to group instances in a clustered environment.'
+        )}
+      />
+      <PageTable<InstanceGroup>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading instance groups')}
+        emptyStateTitle={t('No instance groups yet')}
+        emptyStateDescription={t('To get started, create an instance group.')}
+        emptyStateButtonText={t('Create instance group')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateInstanceGroup)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

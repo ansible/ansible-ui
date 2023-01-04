@@ -14,7 +14,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -129,25 +131,29 @@ export function Organizations() {
   );
 
   return (
-    <TablePage<Organization>
-      title={t('Organizations')}
-      titleHelpTitle={t('Organizations')}
-      titleHelp={t('organizations.title.help')}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
-      description={t('organizations.title.description')}
-      navigation={<AccessNav active="organizations" />}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading organizations')}
-      emptyStateTitle={t('No organizations yet')}
-      emptyStateDescription={t('To get started, create an organization.')}
-      emptyStateButtonText={t('Create organization')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
-      {...view}
-      defaultSubtitle={t('Organization')}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Organizations')}
+        titleHelpTitle={t('Organizations')}
+        titleHelp={t('organizations.title.help')}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
+        description={t('organizations.title.description')}
+        navigation={<AccessNav active="organizations" />}
+      />
+      <PageTable<Organization>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading organizations')}
+        emptyStateTitle={t('No organizations yet')}
+        emptyStateDescription={t('To get started, create an organization.')}
+        emptyStateButtonText={t('Create organization')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
+        {...view}
+        defaultSubtitle={t('Organization')}
+      />
+    </PageLayout>
   );
 }
 
