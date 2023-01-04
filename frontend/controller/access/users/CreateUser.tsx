@@ -1,13 +1,14 @@
-import { Static, Type } from '@sinclair/typebox';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework';
 import {
-  PageFormSchema,
-  TypeSecretInput,
-  TypeSelect,
-  TypeTextInput,
-} from '../../../../framework/PageForm/PageFormSchema';
+  PageBody,
+  PageForm,
+  PageFormSelectOption,
+  PageFormSubmitHandler,
+  PageHeader,
+} from '../../../../framework';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet, requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -19,63 +20,8 @@ export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const selectOrganization = useSelectOrganization();
-
-  const CreateUserSchema = Type.Object({
-    username: TypeTextInput({ title: t('Username'), maxLength: 150, autoComplete: 'new-username' }),
-    organization: Type.String({
-      title: t('Organization'),
-      variant: 'select',
-      selectTitle: 'Select an organization',
-      selectValue: (organization: Organization) => organization.name,
-      selectOpen: selectOrganization,
-    }),
-    userType: TypeSelect({
-      title: t('User type'),
-      options: [
-        {
-          label: t('System administrator'),
-          description: t('can edit, change, and update any inventory or automation definition'),
-          value: 'System administrator',
-        },
-        {
-          label: t('System auditor'),
-          description: t(
-            'can see all aspects of the systems automation, but has no permission to run or change automation'
-          ),
-          value: 'System auditor',
-        },
-        {
-          label: t('Normal user'),
-          description: t(
-            'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
-          ),
-          value: 'Normal user',
-        },
-      ],
-    }),
-    password: TypeSecretInput({ title: t('Password'), autoComplete: 'new-password' }),
-    confirmPassword: TypeSecretInput({
-      title: t('Confirm password'),
-      placeholder: t('Confirm password'),
-      autoComplete: 'new-password',
-    }),
-    firstName: Type.Optional(TypeTextInput({ title: t('First name'), maxLength: 150 })),
-    lastName: Type.Optional(TypeTextInput({ title: t('Last name'), maxLength: 150 })),
-    email: Type.Optional(TypeTextInput({ title: t('Email'), format: 'email' })),
-  });
-  type CreateUser = Static<typeof CreateUserSchema>;
-
-  const onSubmit: PageFormSubmitHandler<CreateUser> = async (userData, setError, setFieldError) => {
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userData, setError, setFieldError) => {
     try {
-      const result = await requestGet<ItemsResponse<Organization>>(
-        `/api/v2/organizations/?name=${userData.organization}`
-      );
-      if (result.results.length === 0) {
-        setFieldError('organization', { message: t('Organization not found') });
-        return false;
-      }
-      const organization = result.results[0];
       if (userData.confirmPassword !== userData.password) {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
         return false;
@@ -90,7 +36,7 @@ export function CreateUser() {
         is_system_auditor: userData.userType === t('System auditor'),
       };
       const user = await requestPost<User>(
-        `/api/v2/organizations/${organization.id.toString()}/users/`,
+        `/api/v2/organizations/${userData.organization.toString()}/users/`,
         newUser
       );
       navigate(RouteE.UserDetails.replace(':id', user.id.toString()));
@@ -109,16 +55,122 @@ export function CreateUser() {
       />
       <PageBody>
         <PageForm
-          schema={CreateUserSchema}
           submitText={t('Create user')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
           defaultValue={{ userType: 'Normal user' }}
         >
-          <PageFormSchema schema={CreateUserSchema} />
+          <UserInputs />
         </PageForm>
       </PageBody>
+    </>
+  );
+}
+
+interface IUserInput {
+  organization: string;
+  password: string;
+  confirmPassword: string;
+  username: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  userType: string;
+}
+
+function UserInputs() {
+  const { setValue } = useFormContext();
+  const { t } = useTranslation();
+  const selectOrganization = useSelectOrganization();
+  return (
+    <>
+      <PageFormTextInput
+        name="username"
+        label={t('Username')}
+        placeholder={t('Enter username')}
+        isRequired
+        maxLength={150}
+        autoComplete="new-username"
+      />
+      <PageFormSelectOption
+        name="userType"
+        label={t('User type')}
+        placeholderText={t('Select user type')}
+        options={[
+          {
+            label: t('System administrator'),
+            description: t('can edit, change, and update any inventory or automation definition'),
+            value: 'System administrator',
+          },
+          {
+            label: t('System auditor'),
+            description: t(
+              'can see all aspects of the systems automation, but has no permission to run or change automation'
+            ),
+            value: 'System auditor',
+          },
+          {
+            label: t('Normal user'),
+            description: t(
+              'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
+            ),
+            value: 'Normal user',
+          },
+        ]}
+        isRequired
+      />
+      <PageFormTextInput
+        label="Organization"
+        name="summary_fields.organization.name"
+        placeholder="Enter organization"
+        selectTitle={t('Select an organization')}
+        selectValue={(organization: Organization) => organization.name}
+        selectOpen={selectOrganization}
+        validate={async (organizationName: string) => {
+          try {
+            const itemsResponse = await requestGet<ItemsResponse<Organization>>(
+              `/api/v2/organizations/?name=${organizationName}`
+            );
+            if (itemsResponse.results.length === 0) return t('Organization not found.');
+            setValue('organization', itemsResponse.results[0].id);
+          } catch (err) {
+            if (err instanceof Error) return err.message;
+            else return 'Unknown error';
+          }
+          return undefined;
+        }}
+        isRequired
+      />
+      <PageFormTextInput
+        name="password"
+        label={t('Password')}
+        placeholder={t('Enter password')}
+        type="password"
+        autoComplete="new-password"
+        isRequired
+      />
+      <PageFormTextInput
+        name="confirmPassword"
+        label={t('Confirm password')}
+        placeholder={t('Enter password')}
+        type="password"
+        autoComplete="new-password"
+        isRequired
+      />
+      <PageFormTextInput
+        name="firstName"
+        label={t('First name')}
+        placeholder={t('Enter first name')}
+        maxLength={150}
+      />
+      <PageFormTextInput
+        name="lastName"
+        label={t('Last name')}
+        placeholder={t('Enter last name')}
+        maxLength={150}
+      />
+      <PageFormTextInput name="email" label={t('Email')} placeholder={t('Enter email')} />
     </>
   );
 }

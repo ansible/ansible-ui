@@ -1,12 +1,16 @@
 import { Page, PageSection, Title } from '@patternfly/react-core';
-import { Static, Type } from '@sinclair/typebox';
 import ky, { HTTPError } from 'ky';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageFormSubmitHandler, useBreakpoint } from '../../framework';
-import { PageFormSchema } from '../../framework/PageForm/PageFormSchema';
+import {
+  PageForm,
+  PageFormSelectOption,
+  PageFormSubmitHandler,
+  useBreakpoint,
+} from '../../framework';
+import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
 import { setCookie } from '../Data';
 import { RouteE } from '../Routes';
@@ -27,33 +31,9 @@ export default function Login() {
     (cache as unknown as { clear: () => void }).clear?.();
   }, [cache]);
 
-  const DataType = Type.Object({
-    server: Type.String({
-      title: t('Automation server'),
-      placeholder: t('Select automation server'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      variant: 'select',
-      options: automationServers.map((host) => ({
-        label: host.name,
-        description: host.url,
-        value: host.url,
-        group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
-      })),
-      // footer: <Button onClick={addAutomationHost}>{t('Add automation server')}</Button>,
-    }),
-    username: Type.String({
-      title: t('Username'),
-      placeholder: t('Enter username'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    }),
-    password: Type.String({
-      title: t('Password'),
-      placeholder: t('Enter password'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-      variant: 'secret',
-    }),
-  });
-
-  type Data = Static<typeof DataType>;
-
-  const onSubmit = useCallback<PageFormSubmitHandler<Data>>(
+  const onSubmit = useCallback<
+    PageFormSubmitHandler<{ server: string; username: string; password: string }>
+  >(
     async (data, setError) => {
       try {
         const automationServer = automationServers.find((server) => server.url === data.server);
@@ -142,7 +122,6 @@ export default function Login() {
           {t('Ansible Automation Platform')}
         </Title>
         <PageForm
-          schema={DataType}
           submitText={t('Log In')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -153,7 +132,32 @@ export default function Login() {
           }}
           disableScrolling
         >
-          <PageFormSchema schema={DataType} />
+          <PageFormSelectOption
+            name="server"
+            label={t('Automation server')}
+            placeholderText={t('Select automation server')}
+            options={automationServers.map((host) => ({
+              label: host.name,
+              description: host.url,
+              value: host.url,
+              group:
+                host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+            }))}
+            isRequired
+          />
+          <PageFormTextInput
+            name="username"
+            label={t('Username')}
+            placeholder={t('Enter username')}
+            isRequired
+          />
+          <PageFormTextInput
+            name="password"
+            label={t('Password')}
+            placeholder={t('Enter password')}
+            type="password"
+            isRequired
+          />
         </PageForm>
       </PageSection>
     </Page>
