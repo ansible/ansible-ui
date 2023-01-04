@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -23,8 +25,8 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters';
-import { useControllerView } from '../../useControllerView';
 import { Template } from '../../interfaces/Template';
+import { useControllerView } from '../../useControllerView';
 import { useDeleteTemplates } from './useDeleteTemplates';
 
 export function Templates() {
@@ -94,27 +96,31 @@ export function Templates() {
     [navigate, deleteTemplates, t]
   );
   return (
-    <TablePage<Template>
-      title={t('Job templates')}
-      titleHelpTitle={t('Job templates')}
-      titleHelp={t(
-        'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
-      )}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
-      description={t(
-        'A job template is a definition and set of parameters for running an Ansible job.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading templates')}
-      emptyStateTitle={t('No Templates yet')}
-      emptyStateDescription={t('To get started, create a template.')}
-      emptyStateButtonText={t('Create template')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Job templates')}
+        titleHelpTitle={t('Job templates')}
+        titleHelp={t(
+          'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
+        )}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
+        description={t(
+          'A job template is a definition and set of parameters for running an Ansible job.'
+        )}
+      />
+      <PageTable<Template>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading templates')}
+        emptyStateTitle={t('No Templates yet')}
+        emptyStateDescription={t('To get started, create a template.')}
+        emptyStateButtonText={t('Create template')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

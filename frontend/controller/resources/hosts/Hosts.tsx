@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -73,32 +75,36 @@ export function Hosts() {
   );
 
   return (
-    <TablePage<Host>
-      title={t('Hosts')}
-      description={t(
-        'A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.'
-      )}
-      titleHelpTitle={t('Hosts')}
-      titleHelp={[
-        t(
-          'A system managed by Tower, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.'
-        ),
-        t(
-          'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
-        ),
-      ]}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading hosts')}
-      emptyStateTitle={t('No hosts yet')}
-      emptyStateDescription={t('To get started, create an host.')}
-      emptyStateButtonText={t('Create host')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateHost)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Hosts')}
+        description={t(
+          'A system managed by Ansible, which may include a physical, virtual, cloud-based server, or other device.'
+        )}
+        titleHelpTitle={t('Hosts')}
+        titleHelp={[
+          t(
+            'A system managed by Tower, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.'
+          ),
+          t(
+            'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
+          ),
+        ]}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
+      />
+      <PageTable<Host>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading hosts')}
+        emptyStateTitle={t('No hosts yet')}
+        emptyStateDescription={t('To get started, create an host.')}
+        emptyStateButtonText={t('Create host')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateHost)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

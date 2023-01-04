@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
 import { useGet } from '../../../common/useItem';
 import { idKeyFn } from '../../../hub/usePulpView';
@@ -26,19 +26,21 @@ export function Users() {
   const toolbarActions = useUsersActions(refresh);
   const rowActions = useUserActions(refresh);
   return (
-    <TablePage
-      title={t('Users')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading users')}
-      emptyStateTitle={t('No users yet')}
-      emptyStateDescription={t('To get started, create a user.')}
-      emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaUser)}
-      {...view}
-      defaultSubtitle={t('User')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Users')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading users')}
+        emptyStateTitle={t('No users yet')}
+        emptyStateDescription={t('To get started, create a user.')}
+        emptyStateButtonText={t('Create user')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaUser)}
+        {...view}
+        defaultSubtitle={t('User')}
+      />
+    </PageLayout>
   );
 }

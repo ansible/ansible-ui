@@ -10,8 +10,10 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
+  PageHeader,
+  PageLayout,
+  PageTable,
   SinceCell,
-  TablePage,
   TextCell,
 } from '../../../../framework';
 import { Dotted } from '../../../../framework/components/Dotted';
@@ -100,22 +102,26 @@ export function Instances() {
   );
 
   return (
-    <TablePage<Instance>
-      title={t('Node instances')}
-      description={t(
-        'Ansible node instances dedicated for a particular purpose indicated by node type.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading instances')}
-      emptyStateTitle={t('No instances yet')}
-      emptyStateDescription={t('To get started, create an instance.')}
-      emptyStateButtonText={t('Create instance')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateInstance)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Node instances')}
+        description={t(
+          'Ansible node instances dedicated for a particular purpose indicated by node type.'
+        )}
+      />
+      <PageTable<Instance>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading instances')}
+        emptyStateTitle={t('No instances yet')}
+        emptyStateDescription={t('To get started, create an instance.')}
+        emptyStateButtonText={t('Create instance')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateInstance)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

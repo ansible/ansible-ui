@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
 import { useGet } from '../../../common/useItem';
 import { idKeyFn } from '../../../hub/usePulpView';
@@ -26,19 +26,21 @@ export function Projects() {
   const toolbarActions = useProjectsActions(refresh);
   const rowActions = useProjectActions(refresh);
   return (
-    <TablePage
-      title={t('Projects')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading projects')}
-      emptyStateTitle={t('No projects yet')}
-      emptyStateDescription={t('To get started, create a project.')}
-      emptyStateButtonText={t('Create project')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
-      {...view}
-      defaultSubtitle={t('Project')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Projects')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading projects')}
+        emptyStateTitle={t('No projects yet')}
+        emptyStateDescription={t('To get started, create a project.')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        {...view}
+        defaultSubtitle={t('Project')}
+      />
+    </PageLayout>
   );
 }
