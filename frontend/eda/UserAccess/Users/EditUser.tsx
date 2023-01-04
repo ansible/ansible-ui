@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import {
-  PageBody,
-  PageForm,
-  PageFormSubmitHandler,
-  PageHeader,
-  PageLayout,
-} from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
@@ -77,18 +71,16 @@ export function EditUser() {
             title={t('Edit User')}
             breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: t('Edit User') }]}
           />
-          <PageBody>
-            <PageForm
-              schema={UserSchemaType}
-              submitText={t('Save User')}
-              onSubmit={onSubmit}
-              cancelText={t('Cancel')}
-              onCancel={onCancel}
-              defaultValue={User}
-            >
-              <PageFormSchema schema={UserSchemaType} />
-            </PageForm>
-          </PageBody>
+          <PageForm
+            schema={UserSchemaType}
+            submitText={t('Save User')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={User}
+          >
+            <PageFormSchema schema={UserSchemaType} />
+          </PageForm>
         </PageLayout>
       );
     }
@@ -99,17 +91,15 @@ export function EditUser() {
           title={t('Create User')}
           breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: t('Create User') }]}
         />
-        <PageBody>
-          <PageForm
-            schema={UserSchemaType}
-            submitText={t('Create User')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          >
-            <PageFormSchema schema={UserSchemaType} />
-          </PageForm>
-        </PageBody>
+        <PageForm
+          schema={UserSchemaType}
+          submitText={t('Create User')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        >
+          <PageFormSchema schema={UserSchemaType} />
+        </PageForm>
       </PageLayout>
     );
   }

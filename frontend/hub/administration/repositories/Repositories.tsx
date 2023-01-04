@@ -24,10 +24,10 @@ export function Repositories() {
     <PageLayout>
       <PageHeader title={t('Repository management')} />
       <PageTabs>
-        <PageTab title={t('Local')}>
+        <PageTab label={t('Local')}>
           <LocalRepositories />
         </PageTab>
-        <PageTab title={t('Remote')}>
+        <PageTab label={t('Remote')}>
           <RemoteRepositories />
         </PageTab>
       </PageTabs>

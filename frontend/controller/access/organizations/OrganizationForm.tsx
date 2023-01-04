@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
-import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
@@ -28,7 +28,7 @@ export function CreateOrganization() {
   const onCancel = () => navigate(-1);
 
   return (
-    <>
+    <PageLayout>
       <PageHeader
         title={t('Create organization')}
         breadcrumbs={[
@@ -36,12 +36,10 @@ export function CreateOrganization() {
           { label: t('Create organization') },
         ]}
       />
-      <PageBody>
-        <PageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
-          <OrganizationInputs />
-        </PageForm>
-      </PageBody>
-    </>
+      <PageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
+        <OrganizationInputs />
+      </PageForm>
+    </PageLayout>
   );
 }
 
@@ -76,18 +74,18 @@ export function EditOrganization() {
 
   if (!organization) {
     return (
-      <>
+      <PageLayout>
         <PageHeader
           breadcrumbs={[
             { label: t('Organizations'), to: RouteE.Organizations },
             { label: t('Edit organization') },
           ]}
         />
-      </>
+      </PageLayout>
     );
   } else {
     return (
-      <>
+      <PageLayout>
         <PageHeader
           title={t('Edit organization')}
           breadcrumbs={[
@@ -95,17 +93,15 @@ export function EditOrganization() {
             { label: t('Edit organization') },
           ]}
         />
-        <PageBody>
-          <PageForm
-            submitText={t('Save organization')}
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            defaultValue={organization}
-          >
-            <OrganizationInputs />
-          </PageForm>
-        </PageBody>
-      </>
+        <PageForm
+          submitText={t('Save organization')}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          defaultValue={organization}
+        >
+          <OrganizationInputs />
+        </PageForm>
+      </PageLayout>
     );
   }
 }

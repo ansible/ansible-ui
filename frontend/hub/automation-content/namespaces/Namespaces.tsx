@@ -23,10 +23,10 @@ export function Namespaces() {
         titleDocLink="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.2/html/curating_collections_using_namespaces_in_automation_hub/index"
       />
       <PageTabs>
-        <PageTab title={t('All')}>
+        <PageTab label={t('All')}>
           <AllNamespaces />
         </PageTab>
-        <PageTab title={t('My namespaces')}>
+        <PageTab label={t('My namespaces')}>
           <MyNamespaces />
         </PageTab>
       </PageTabs>

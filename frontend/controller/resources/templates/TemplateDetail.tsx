@@ -12,23 +12,22 @@ import {
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Detail,
   DetailsList,
   IPageAction,
   PageActions,
   PageActionType,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
 } from '../../../../framework';
 import { Scrollable } from '../../../../framework/components/Scrollable';
-import { UserDateDetail } from '../../common/UserDateDetail';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
+import { UserDateDetail } from '../../common/UserDateDetail';
 import { Template } from '../../interfaces/Template';
 import { useDeleteTemplates } from './useDeleteTemplates';
 
@@ -75,31 +74,29 @@ export function TemplateDetail() {
           <PageActions<Template> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      <PageBody>
-        {template ? (
-          <PageTabs>
-            <PageTab title={t('Details')}>
-              <TemplateDetailsTab template={template} />
-            </PageTab>
-            <PageTab title={t('Access')}>
-              <TemplateAccessTab template={template} />
-            </PageTab>
-          </PageTabs>
-        ) : (
-          <PageTabs>
-            <PageTab>
-              <PageSection variant="light">
-                <Stack hasGutter>
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                </Stack>
-              </PageSection>
-            </PageTab>
-          </PageTabs>
-        )}
-      </PageBody>
+      {template ? (
+        <PageTabs>
+          <PageTab label={t('Details')}>
+            <TemplateDetailsTab template={template} />
+          </PageTab>
+          <PageTab label={t('Access')}>
+            <TemplateAccessTab template={template} />
+          </PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }

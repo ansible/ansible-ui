@@ -2,7 +2,6 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  PageBody,
   PageForm,
   PageFormSelectOption,
   PageFormSubmitHandler,
@@ -53,17 +52,15 @@ export function CreateUser() {
         title={t('Create user')}
         breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create user') }]}
       />
-      <PageBody>
-        <PageForm
-          submitText={t('Create user')}
-          onSubmit={onSubmit}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          defaultValue={{ userType: 'Normal user' }}
-        >
-          <UserInputs />
-        </PageForm>
-      </PageBody>
+      <PageForm
+        submitText={t('Create user')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={{ userType: 'Normal user' }}
+      >
+        <UserInputs />
+      </PageForm>
     </>
   );
 }

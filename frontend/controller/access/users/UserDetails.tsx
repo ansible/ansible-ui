@@ -17,7 +17,6 @@ import {
   IPageAction,
   PageActions,
   PageActionType,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
@@ -88,48 +87,46 @@ export function UserDetailsPage() {
           <PageActions<User> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      <PageBody>
-        {user ? (
-          <PageTabs
-          // preComponents={
-          //     <Button variant="plain">
-          //         <CaretLeftIcon /> &nbsp;Back to users
-          //     </Button>
-          // }
-          // postComponents={
-          //     <Button variant="plain">
-          //         <CaretLeftIcon /> &nbsp;Back to users
-          //     </Button>
-          // }
-          >
-            <PageTab title={t('Details')}>
-              <UserDetails user={user} />
-            </PageTab>
-            <PageTab title={t('Organizations')}>
-              <UserOrganizations user={user} />
-            </PageTab>
-            <PageTab title={t('Teams')}>
-              <UserTeams user={user} />
-            </PageTab>
-            <PageTab title={t('Roles')}>
-              <UserRoles user={user} />
-            </PageTab>
-          </PageTabs>
-        ) : (
-          <PageTabs>
-            <PageTab>
-              <PageSection variant="light">
-                <Stack hasGutter>
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                </Stack>
-              </PageSection>
-            </PageTab>
-          </PageTabs>
-        )}
-      </PageBody>
+      {user ? (
+        <PageTabs
+        // preComponents={
+        //     <Button variant="plain">
+        //         <CaretLeftIcon /> &nbsp;Back to users
+        //     </Button>
+        // }
+        // postComponents={
+        //     <Button variant="plain">
+        //         <CaretLeftIcon /> &nbsp;Back to users
+        //     </Button>
+        // }
+        >
+          <PageTab label={t('Details')}>
+            <UserDetails user={user} />
+          </PageTab>
+          <PageTab label={t('Organizations')}>
+            <UserOrganizations user={user} />
+          </PageTab>
+          <PageTab label={t('Teams')}>
+            <UserTeams user={user} />
+          </PageTab>
+          <PageTab label={t('Roles')}>
+            <UserRoles user={user} />
+          </PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }

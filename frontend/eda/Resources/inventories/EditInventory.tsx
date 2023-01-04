@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import {
-  PageBody,
-  PageForm,
-  PageFormSubmitHandler,
-  PageHeader,
-  PageLayout,
-} from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useGet } from '../../../common/useItem';
@@ -81,33 +75,31 @@ export function EditInventory() {
               { label: t('Edit inventory') },
             ]}
           />
-          <PageBody>
-            <PageForm
-              schema={InventorySchemaType}
-              submitText={t('Save inventory')}
-              onSubmit={onSubmit}
-              cancelText={t('Cancel')}
-              onCancel={onCancel}
-              defaultValue={inventory}
-            >
-              <PageFormTextInput
-                name="name"
-                label={t('Name')}
-                isRequired
-                placeholder={t('Enter name')}
-              />
-              <PageFormTextArea
-                name="description"
-                label={t('Description')}
-                placeholder={t('Enter description')}
-              />
-              <PageFormTextArea
-                name="inventory"
-                label={t('Inventory')}
-                placeholder={t('Enter inventory')}
-              />
-            </PageForm>
-          </PageBody>
+          <PageForm
+            schema={InventorySchemaType}
+            submitText={t('Save inventory')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={inventory}
+          >
+            <PageFormTextInput
+              name="name"
+              label={t('Name')}
+              isRequired
+              placeholder={t('Enter name')}
+            />
+            <PageFormTextArea
+              name="description"
+              label={t('Description')}
+              placeholder={t('Enter description')}
+            />
+            <PageFormTextArea
+              name="inventory"
+              label={t('Inventory')}
+              placeholder={t('Enter inventory')}
+            />
+          </PageForm>
         </PageLayout>
       );
     }
@@ -121,19 +113,17 @@ export function EditInventory() {
             { label: t('Create inventory') },
           ]}
         />
-        <PageBody>
-          <PageForm
-            schema={InventorySchemaType}
-            submitText={t('Create inventory')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          >
-            <PageFormTextInput name="name" label={t('Name')} isRequired />
-            <PageFormTextArea name="description" label={t('Description')} />
-            <PageFormTextArea name="inventory" label={t('Inventory')} />
-          </PageForm>
-        </PageBody>
+        <PageForm
+          schema={InventorySchemaType}
+          submitText={t('Create inventory')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        >
+          <PageFormTextInput name="name" label={t('Name')} isRequired />
+          <PageFormTextArea name="description" label={t('Description')} />
+          <PageFormTextArea name="inventory" label={t('Inventory')} />
+        </PageForm>
       </PageLayout>
     );
   }

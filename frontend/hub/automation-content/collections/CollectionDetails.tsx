@@ -83,22 +83,22 @@ export function CollectionDetails() {
         }
       />
       <PageTabs>
-        <PageTab title={t('Details')}>
+        <PageTab label={t('Details')}>
           <CollectionDetailsTab collection={collection} />
         </PageTab>
-        <PageTab title={t('Install')}>
+        <PageTab label={t('Install')}>
           <CollectionInstallTab collection={collection} />
         </PageTab>
-        <PageTab title={t('Documentation')}>
+        <PageTab label={t('Documentation')}>
           <CollectionDocumentationTab collection={collection} />
         </PageTab>
-        <PageTab title={t('Contents')}>
+        <PageTab label={t('Contents')}>
           <CollectionContentsTab collection={collection} />
         </PageTab>
-        <PageTab title={t('Import log')}>
+        <PageTab label={t('Import log')}>
           <CollectionImportLogTab collection={collection} />
         </PageTab>
-        <PageTab title={t('Dependencies')}>
+        <PageTab label={t('Dependencies')}>
           <CollectionDependenciesTab collection={collection} />
         </PageTab>
       </PageTabs>

@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import {
-  PageBody,
-  PageForm,
-  PageFormSubmitHandler,
-  PageHeader,
-  PageLayout,
-} from '../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../common/useItem';
 import { requestPatch, requestPost } from '../../Data';
@@ -93,18 +87,16 @@ export function EditExecutionEnvironment() {
               { label: t('Edit execution environment') },
             ]}
           />
-          <PageBody>
-            <PageForm
-              schema={ExecutionEnvironmentSchemaType}
-              submitText={t('Save execution environment')}
-              onSubmit={onSubmit}
-              cancelText={t('Cancel')}
-              onCancel={onCancel}
-              defaultValue={executionEnvironment}
-            >
-              <PageFormSchema schema={ExecutionEnvironmentSchemaType} />
-            </PageForm>
-          </PageBody>
+          <PageForm
+            schema={ExecutionEnvironmentSchemaType}
+            submitText={t('Save execution environment')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={executionEnvironment}
+          >
+            <PageFormSchema schema={ExecutionEnvironmentSchemaType} />
+          </PageForm>
         </PageLayout>
       );
     }
@@ -118,15 +110,13 @@ export function EditExecutionEnvironment() {
             { label: t('Create execution environment') },
           ]}
         />
-        <PageBody>
-          <PageForm
-            schema={ExecutionEnvironmentSchemaType}
-            submitText={t('Create execution environment')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          />
-        </PageBody>
+        <PageForm
+          schema={ExecutionEnvironmentSchemaType}
+          submitText={t('Create execution environment')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        />
       </PageLayout>
     );
   }

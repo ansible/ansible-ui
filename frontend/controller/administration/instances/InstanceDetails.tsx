@@ -12,7 +12,6 @@ import {
   IPageAction,
   PageActions,
   PageActionType,
-  PageBody,
   PageHeader,
   PageLayout,
   SinceCell,
@@ -69,15 +68,13 @@ export function InstanceDetails() {
           <PageActions<Instance> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      <PageBody>
-        {instance ? (
-          <InstanceDetailsTab instance={instance} />
-        ) : (
-          <PageSection variant="light">
-            <DetailsSkeleton />
-          </PageSection>
-        )}
-      </PageBody>
+      {instance ? (
+        <InstanceDetailsTab instance={instance} />
+      ) : (
+        <PageSection variant="light">
+          <DetailsSkeleton />
+        </PageSection>
+      )}
     </PageLayout>
   );
 }

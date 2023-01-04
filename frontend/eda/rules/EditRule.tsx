@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import {
-  PageBody,
-  PageForm,
-  PageFormSubmitHandler,
-  PageHeader,
-  PageLayout,
-} from '../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../common/useItem';
 import { requestPatch, requestPost } from '../../Data';
@@ -71,18 +65,16 @@ export function EditRule() {
             title={t('Edit rule')}
             breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Edit rule') }]}
           />
-          <PageBody>
-            <PageForm
-              schema={RuleSchemaType}
-              submitText={t('Save rule')}
-              onSubmit={onSubmit}
-              cancelText={t('Cancel')}
-              onCancel={onCancel}
-              defaultValue={rule}
-            >
-              <PageFormSchema schema={RuleSchemaType} />
-            </PageForm>
-          </PageBody>
+          <PageForm
+            schema={RuleSchemaType}
+            submitText={t('Save rule')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={rule}
+          >
+            <PageFormSchema schema={RuleSchemaType} />
+          </PageForm>
         </PageLayout>
       );
     }
@@ -93,17 +85,15 @@ export function EditRule() {
           title={t('Create rule')}
           breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Create rule') }]}
         />
-        <PageBody>
-          <PageForm
-            schema={RuleSchemaType}
-            submitText={t('Create rule')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          >
-            <PageFormSchema schema={RuleSchemaType} />
-          </PageForm>
-        </PageBody>
+        <PageForm
+          schema={RuleSchemaType}
+          submitText={t('Create rule')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        >
+          <PageFormSchema schema={RuleSchemaType} />
+        </PageForm>
       </PageLayout>
     );
   }

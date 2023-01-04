@@ -37,6 +37,8 @@ export function AddAutomationServerDialog() {
         isVertical
         singleColumn
         disableScrolling
+        disableBody
+        disablePadding
       >
         <PageFormTextInput
           label={t('Name')}

@@ -2,14 +2,7 @@ import { Alert } from '@patternfly/react-core';
 import { Static, Type } from '@sinclair/typebox';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  Detail,
-  DetailsList,
-  PageBody,
-  PageForm,
-  PageHeader,
-  PageLayout,
-} from '../../../../framework';
+import { Detail, DetailsList, PageForm, PageHeader, PageLayout } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Inputs/PageFormWatch';
@@ -48,48 +41,46 @@ export function UploadCollectionByFile() {
       {namespaces === undefined || repositories === undefined ? (
         <LoadingPage />
       ) : (
-        <PageBody>
-          <PageForm<UploadData>
-            schema={UploadSchema}
-            submitText={t('Confirm')}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            onSubmit={(data) => {
-              const namespace = (data.file as File).name.split('-')[0];
-              return requestPostFile(
-                `/api/automation-hub/content/inbound-${namespace}/v3/artifacts/collections/`,
-                data.file as Blob
-              ).then(() => navigate(RouteE.Approvals + '?status=staging'));
+        <PageForm<UploadData>
+          schema={UploadSchema}
+          submitText={t('Confirm')}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          onSubmit={(data) => {
+            const namespace = (data.file as File).name.split('-')[0];
+            return requestPostFile(
+              `/api/automation-hub/content/inbound-${namespace}/v3/artifacts/collections/`,
+              data.file as Blob
+            ).then(() => navigate(RouteE.Approvals + '?status=staging'));
+          }}
+        >
+          <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+          <PageFormWatch<File | undefined> watch="file">
+            {(file) => {
+              const namespace = file?.name.split('-')[0] ?? '';
+              return (
+                <>
+                  {namespace && !namespaces.find((ns) => ns.name === namespace) && (
+                    <Alert
+                      variant="danger"
+                      isInline
+                      title={t(`Namespace "${namespace}" not found`)}
+                    >
+                      {t(
+                        'The collection cannot be imported. Please create namespace before importing.'
+                      )}
+                    </Alert>
+                  )}
+                  {namespace && (
+                    <DetailsList>
+                      <Detail label={t('Namespace')}>{namespace}</Detail>
+                    </DetailsList>
+                  )}
+                </>
+              );
             }}
-          >
-            <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
-            <PageFormWatch<File | undefined> watch="file">
-              {(file) => {
-                const namespace = file?.name.split('-')[0] ?? '';
-                return (
-                  <>
-                    {namespace && !namespaces.find((ns) => ns.name === namespace) && (
-                      <Alert
-                        variant="danger"
-                        isInline
-                        title={t(`Namespace "${namespace}" not found`)}
-                      >
-                        {t(
-                          'The collection cannot be imported. Please create namespace before importing.'
-                        )}
-                      </Alert>
-                    )}
-                    {namespace && (
-                      <DetailsList>
-                        <Detail label={t('Namespace')}>{namespace}</Detail>
-                      </DetailsList>
-                    )}
-                  </>
-                );
-              }}
-            </PageFormWatch>
-          </PageForm>
-        </PageBody>
+          </PageFormWatch>
+        </PageForm>
       )}
     </>
   );

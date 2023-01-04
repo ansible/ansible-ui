@@ -1,7 +1,7 @@
 import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CopyCell, PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { CopyCell, PageHeader, PageLayout } from '../../../../framework';
 import { requestPost } from '../../../Data';
 
 export function Token() {
@@ -31,42 +31,40 @@ export function Token() {
         title={t('API token')}
         description={t('An API token can be used to authenticate the ansible-galaxy client.')}
       />
-      <PageBody>
-        {token ? (
-          <Stack>
-            <Alert
-              variant="warning"
-              isInline
-              title={t('Copy this token now. This is the only time you will ever see it.')}
-            />
-            <PageSection variant="light">
-              <CopyCell text={token} />
-            </PageSection>
-          </Stack>
-        ) : (
-          <Stack>
-            <Alert
-              variant="warning"
-              isInline
-              title={t('Generating a new token will delete your old token.')}
-            />
-            <PageSection variant="light">
-              <Stack hasGutter>
-                <ActionGroup>
-                  <Button
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    onClick={onClick}
-                    isDisabled={working}
-                  >
-                    {t('Generate token')}
-                  </Button>
-                </ActionGroup>
-                {error && <Alert variant="danger" isInline title={error} />}
-              </Stack>
-            </PageSection>
-          </Stack>
-        )}
-      </PageBody>
+      {token ? (
+        <Stack>
+          <Alert
+            variant="warning"
+            isInline
+            title={t('Copy this token now. This is the only time you will ever see it.')}
+          />
+          <PageSection variant="light">
+            <CopyCell text={token} />
+          </PageSection>
+        </Stack>
+      ) : (
+        <Stack>
+          <Alert
+            variant="warning"
+            isInline
+            title={t('Generating a new token will delete your old token.')}
+          />
+          <PageSection variant="light">
+            <Stack hasGutter>
+              <ActionGroup>
+                <Button
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onClick={onClick}
+                  isDisabled={working}
+                >
+                  {t('Generate token')}
+                </Button>
+              </ActionGroup>
+              {error && <Alert variant="danger" isInline title={error} />}
+            </Stack>
+          </PageSection>
+        </Stack>
+      )}
     </PageLayout>
   );
 }

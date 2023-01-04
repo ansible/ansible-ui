@@ -15,7 +15,6 @@ import {
   IPageAction,
   PageActions,
   PageActionType,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
@@ -80,40 +79,38 @@ export function OrganizationDetails() {
           <PageActions<Organization> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      <PageBody>
-        {organization ? (
-          <PageTabs>
-            <PageTab title={t('Details')}>
-              <OrganizationDetailsTab organization={organization} />
-            </PageTab>
-            <PageTab title={t('Access')}>
-              <OrganizationAccessTab organization={organization} />
-            </PageTab>
-            <PageTab title={t('Teams')}>
-              <OrganizationTeamsTab organization={organization} />
-            </PageTab>
-            <PageTab title={t('Execution environments')}>
-              <Todo />
-            </PageTab>
-            <PageTab title={t('Notifications')}>
-              <Todo />
-            </PageTab>
-          </PageTabs>
-        ) : (
-          <PageTabs>
-            <PageTab>
-              <PageSection variant="light">
-                <Stack hasGutter>
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                </Stack>
-              </PageSection>
-            </PageTab>
-          </PageTabs>
-        )}
-      </PageBody>
+      {organization ? (
+        <PageTabs>
+          <PageTab label={t('Details')}>
+            <OrganizationDetailsTab organization={organization} />
+          </PageTab>
+          <PageTab label={t('Access')}>
+            <OrganizationAccessTab organization={organization} />
+          </PageTab>
+          <PageTab label={t('Teams')}>
+            <OrganizationTeamsTab organization={organization} />
+          </PageTab>
+          <PageTab label={t('Execution environments')}>
+            <Todo />
+          </PageTab>
+          <PageTab label={t('Notifications')}>
+            <Todo />
+          </PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }
@@ -169,10 +166,10 @@ function OrganizationAccessTab(props: { organization: Organization }) {
   const { t } = useTranslation();
   return (
     <PageTabs>
-      <PageTab title={t('Users')}>
+      <PageTab label={t('Users')}>
         <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
       </PageTab>
-      <PageTab title={t('Teams')}>
+      <PageTab label={t('Teams')}>
         <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
       </PageTab>
     </PageTabs>

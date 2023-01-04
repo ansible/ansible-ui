@@ -30,7 +30,7 @@ export function NamespaceDetails() {
         ]}
       />
       <PageTabs>
-        <PageTab title={t('Details')}>
+        <PageTab label={t('Details')}>
           <NamespaceDetailsTab namespace={namespace} />
         </PageTab>
       </PageTabs>
