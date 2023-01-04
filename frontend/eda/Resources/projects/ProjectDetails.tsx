@@ -2,15 +2,15 @@ import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/reac
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
-  Detail,
-  DetailsList,
   PageActions,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
   Scrollable,
 } from '../../../../framework';
+import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
@@ -27,20 +27,20 @@ export function ProjectDetails() {
     return (
       <Scrollable>
         <PageSection variant="light">
-          <DetailsList>
-            <Detail label={t('Name')}>{project?.name || ''}</Detail>
-            <Detail label={t('Description')}>{project?.description || ''}</Detail>
-            <Detail label={t('SCM type')}>{project?.type || 'Git'}</Detail>
-            <Detail label={t('SCM URL')}>{project?.type || ''}</Detail>
-            <Detail label={t('SCM token')}>{project?.token || ''}</Detail>
-            <Detail label={t('Git hash')}>{project?.git_hash || ''}</Detail>
-            <Detail label={t('Created')}>
+          <PageDetails>
+            <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
+            <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
+            <PageDetail label={t('SCM type')}>{project?.type || 'Git'}</PageDetail>
+            <PageDetail label={t('SCM URL')}>{project?.type || ''}</PageDetail>
+            <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
+            <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
+            <PageDetail label={t('Created')}>
               {project?.created_at ? formatDateString(project.created_at) : ''}
-            </Detail>
-            <Detail label={t('Modified')}>
+            </PageDetail>
+            <PageDetail label={t('Modified')}>
               {project?.modified_at ? formatDateString(project.modified_at) : ''}
-            </Detail>
-          </DetailsList>
+            </PageDetail>
+          </PageDetails>
         </PageSection>
       </Scrollable>
     );

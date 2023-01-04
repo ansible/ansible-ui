@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   ButtonVariant,
   Chip,
@@ -5,17 +6,16 @@ import {
   DropdownPosition,
   PageSection,
 } from '@patternfly/react-core';
-import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Detail,
-  DetailsList,
-  DetailsSkeleton,
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
@@ -32,75 +32,35 @@ import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { useControllerView } from '../../useControllerView';
 import { useUsersColumns, useUsersFilters } from '../users/Users';
-import { useDeleteTeams } from './hooks/useDeleteTeams';
+import { useTeamActions } from './hooks/useTeamActions';
 
 export function TeamDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
-  const history = useNavigate();
-  const deleteTeams = useDeleteTeams((deletedTeams: Team[]) => {
-    if (deletedTeams.length > 0) {
-      history(RouteE.Teams);
-    }
-  });
-
-  const itemActions: IPageAction<Team>[] = useMemo(() => {
-    const itemActions: IPageAction<Team>[] = [
-      {
-        type: PageActionType.button,
-        variant: ButtonVariant.primary,
-        icon: EditIcon,
-        label: t('Edit team'),
-        onClick: () => history(RouteE.EditTeam.replace(':id', team?.id.toString() ?? '')),
-      },
-      {
-        type: PageActionType.button,
-        icon: TrashIcon,
-        label: t('Delete team'),
-        onClick: () => {
-          if (!team) return;
-          deleteTeams([team]);
-        },
-      },
-    ];
-    return itemActions;
-  }, [t, history, team, deleteTeams]);
-
+  const itemActions = useTeamActions();
   return (
     <PageLayout>
       <PageHeader
         title={team?.name}
         breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
         headerActions={
-          <PageActions<Team> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Team>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={team}
+          />
         }
       />
-      {team ? (
-        <PageTabs
-        // preComponents={
-        //     <Button variant="plain">
-        //         <CaretLeftIcon /> &nbsp;Back to teams
-        //     </Button>
-        // }
-        >
-          <PageTab label={t('Details')}>
-            <TeamDetailsTab team={team} />
-          </PageTab>
-          <PageTab label={t('Access')}>
-            <TeamAccessTab team={team} />
-          </PageTab>
-          <PageTab label={t('Roles')}>TODO</PageTab>
-        </PageTabs>
-      ) : (
-        <PageTabs>
-          <PageTab>
-            <PageSection variant="light">
-              <DetailsSkeleton />
-            </PageSection>
-          </PageTab>
-        </PageTabs>
-      )}
+      <PageTabs loading={!team}>
+        <PageTab label={t('Details')}>
+          <TeamDetailsTab team={team!} />
+        </PageTab>
+        <PageTab label={t('Access')}>
+          <TeamAccessTab team={team!} />
+        </PageTab>
+        <PageTab label={t('Roles')}>TODO</PageTab>
+      </PageTabs>
     </PageLayout>
   );
 }
@@ -111,59 +71,57 @@ function TeamDetailsTab(props: { team: Team }) {
   const history = useNavigate();
   const settings = useSettings();
   return (
-    <>
-      <Scrollable>
-        <PageSection
-          variant="light"
-          style={{
-            backgroundColor:
-              settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          }}
-        >
-          <DetailsList>
-            <Detail label={t('Name')}>{team.name}</Detail>
-            <Detail label={t('Description')}>{team.description}</Detail>
-            <Detail label={t('Organization')}>
-              <TextCell
-                text={team.summary_fields?.organization?.name}
-                to={RouteE.OrganizationDetails.replace(
-                  ':id',
-                  (team.summary_fields?.organization?.id ?? '').toString()
-                )}
-              />
-            </Detail>
-            <Detail label={t('Created')}>
-              <SinceCell
-                value={team.created}
-                author={team.summary_fields?.created_by?.username}
-                onClick={() =>
-                  history(
-                    RouteE.UserDetails.replace(
-                      ':id',
-                      (team.summary_fields?.created_by?.id ?? 0).toString()
-                    )
+    <Scrollable>
+      <PageSection
+        variant="light"
+        style={{
+          backgroundColor:
+            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+        }}
+      >
+        <PageDetails>
+          <PageDetail label={t('Name')}>{team.name}</PageDetail>
+          <PageDetail label={t('Description')}>{team.description}</PageDetail>
+          <PageDetail label={t('Organization')}>
+            <TextCell
+              text={team.summary_fields?.organization?.name}
+              to={RouteE.OrganizationDetails.replace(
+                ':id',
+                (team.summary_fields?.organization?.id ?? '').toString()
+              )}
+            />
+          </PageDetail>
+          <PageDetail label={t('Created')}>
+            <SinceCell
+              value={team.created}
+              author={team.summary_fields?.created_by?.username}
+              onClick={() =>
+                history(
+                  RouteE.UserDetails.replace(
+                    ':id',
+                    (team.summary_fields?.created_by?.id ?? 0).toString()
                   )
-                }
-              />
-            </Detail>
-            <Detail label={t('Last modified')}>
-              <SinceCell
-                value={team.modified}
-                author={team.summary_fields?.modified_by?.username}
-                onClick={() =>
-                  history(
-                    RouteE.UserDetails.replace(
-                      ':id',
-                      (team.summary_fields?.modified_by?.id ?? 0).toString()
-                    )
+                )
+              }
+            />
+          </PageDetail>
+          <PageDetail label={t('Last modified')}>
+            <SinceCell
+              value={team.modified}
+              author={team.summary_fields?.modified_by?.username}
+              onClick={() =>
+                history(
+                  RouteE.UserDetails.replace(
+                    ':id',
+                    (team.summary_fields?.modified_by?.id ?? 0).toString()
                   )
-                }
-              />
-            </Detail>
-          </DetailsList>
-        </PageSection>
-      </Scrollable>
-    </>
+                )
+              }
+            />
+          </PageDetail>
+        </PageDetails>
+      </PageSection>
+    </Scrollable>
   );
 }
 

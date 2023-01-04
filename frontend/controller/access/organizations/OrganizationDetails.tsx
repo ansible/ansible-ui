@@ -10,11 +10,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Detail,
-  DetailsList,
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
@@ -28,7 +28,8 @@ import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
 import { useControllerView } from '../../useControllerView';
-import { useTeamsColumns, useTeamsFilters } from '../teams/Teams';
+import { useTeamsColumns } from '../teams/hooks/useTeamsColumns';
+import { useTeamsFilters } from '../teams/hooks/useTeamsFilters';
 import { AccessTable } from '../users/Users';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 
@@ -123,10 +124,10 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
     <>
       <Scrollable>
         <PageSection variant="light">
-          <DetailsList>
-            <Detail label={t('Name')}>{organization.name}</Detail>
-            <Detail label={t('Description')}>{organization.description}</Detail>
-            <Detail label={t('Created')}>
+          <PageDetails>
+            <PageDetail label={t('Name')}>{organization.name}</PageDetail>
+            <PageDetail label={t('Description')}>{organization.description}</PageDetail>
+            <PageDetail label={t('Created')}>
               <SinceCell
                 value={organization.created}
                 author={organization.summary_fields?.created_by?.username}
@@ -139,8 +140,8 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                   )
                 }
               />
-            </Detail>
-            <Detail label={t('Last modified')}>
+            </PageDetail>
+            <PageDetail label={t('Last modified')}>
               <SinceCell
                 value={organization.modified}
                 author={organization.summary_fields?.modified_by?.username}
@@ -153,8 +154,8 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
                   )
                 }
               />
-            </Detail>
-          </DetailsList>
+            </PageDetail>
+          </PageDetails>
         </PageSection>
       </Scrollable>
     </>
