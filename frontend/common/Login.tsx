@@ -130,6 +130,8 @@ export default function Login() {
           defaultValue={{
             server: searchParams.get('server') ?? localStorage.getItem('server') ?? '',
           }}
+          disableBody
+          disablePadding
           disableScrolling
         >
           <PageFormSelectOption

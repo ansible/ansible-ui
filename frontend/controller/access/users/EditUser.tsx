@@ -3,7 +3,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
-import { PageBody, PageForm, PageFormSubmitHandler, PageHeader } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import {
   PageFormSchema,
   TypeSecretInput,
@@ -98,11 +98,11 @@ export function EditUser() {
 
   if (!user) {
     return (
-      <>
+      <PageLayout>
         <PageHeader
           breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
         />
-      </>
+      </PageLayout>
     );
   } else {
     const defaultValue: EditUser = {
@@ -117,24 +117,22 @@ export function EditUser() {
         : 'Normal user',
     };
     return (
-      <>
+      <PageLayout>
         <PageHeader
           title={t('Edit user')}
           breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
         />
-        <PageBody>
-          <PageForm
-            schema={EditUserSchema}
-            submitText={t('Save user')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={defaultValue}
-          >
-            <PageFormSchema schema={EditUserSchema} />
-          </PageForm>
-        </PageBody>
-      </>
+        <PageForm
+          schema={EditUserSchema}
+          submitText={t('Save user')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={defaultValue}
+        >
+          <PageFormSchema schema={EditUserSchema} />
+        </PageForm>
+      </PageLayout>
     );
   }
 }

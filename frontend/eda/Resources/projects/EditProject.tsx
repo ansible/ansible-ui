@@ -3,13 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import {
-  PageBody,
-  PageForm,
-  PageFormSubmitHandler,
-  PageHeader,
-  PageLayout,
-} from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
@@ -102,18 +96,16 @@ export function EditProject() {
               { label: t('Edit project') },
             ]}
           />
-          <PageBody>
-            <PageForm
-              schema={ProjectSchemaType}
-              submitText={t('Save project')}
-              onSubmit={onSubmit}
-              cancelText={t('Cancel')}
-              onCancel={onCancel}
-              defaultValue={project}
-            >
-              <PageFormSchema schema={ProjectSchemaType} />
-            </PageForm>
-          </PageBody>
+          <PageForm
+            schema={ProjectSchemaType}
+            submitText={t('Save project')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={project}
+          >
+            <PageFormSchema schema={ProjectSchemaType} />
+          </PageForm>
         </PageLayout>
       );
     }
@@ -127,17 +119,15 @@ export function EditProject() {
             { label: t('Create project') },
           ]}
         />
-        <PageBody>
-          <PageForm
-            schema={ProjectSchemaType}
-            submitText={t('Create project')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-          >
-            <PageFormSchema schema={ProjectSchemaType} />
-          </PageForm>
-        </PageBody>
+        <PageForm
+          schema={ProjectSchemaType}
+          submitText={t('Create project')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+        >
+          <PageFormSchema schema={ProjectSchemaType} />
+        </PageForm>
       </PageLayout>
     );
   }

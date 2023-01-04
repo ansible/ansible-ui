@@ -1,11 +1,12 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSWR, { useSWRConfig } from 'swr';
-import { PageBody, PageHeader, PageLayout } from '../../../../framework';
+import useSWR from 'swr';
+import { PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -17,12 +18,11 @@ export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { cache } = useSWRConfig();
+  useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
-      (cache as unknown as { clear: () => void }).clear?.();
       navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
@@ -36,11 +36,9 @@ export function CreateTeam() {
         title={t('Create team')}
         breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
       />
-      <PageBody>
-        <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
-          <TeamInputs />
-        </PageForm>
-      </PageBody>
+      <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
+        <TeamInputs />
+      </PageForm>
     </PageLayout>
   );
 }
@@ -50,19 +48,13 @@ export function EditTeam() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data: team } = useSWR<Team>(`/api/v2/teams/${id.toString()}/`, requestGet, swrOptions);
 
-  const { data: team } = useSWR<Team>(
-    Number.isInteger(id) ? `/api/v2/teams/${id.toString()}/` : undefined,
-    requestGet,
-    swrOptions
-  );
-
-  const { cache } = useSWRConfig();
+  useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
-      (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } catch (err) {
       setError(await getControllerError(err));
@@ -78,26 +70,24 @@ export function EditTeam() {
         />
       </PageLayout>
     );
-  } else {
-    return (
-      <PageLayout>
-        <PageHeader
-          title={t('Edit team')}
-          breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
-        />
-        <PageBody>
-          <PageForm
-            submitText={t('Save team')}
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            defaultValue={team}
-          >
-            <TeamInputs />
-          </PageForm>
-        </PageBody>
-      </PageLayout>
-    );
   }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit team')}
+        breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
+      />
+      <PageForm
+        submitText={t('Save team')}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        defaultValue={team}
+      >
+        <TeamInputs />
+      </PageForm>
+    </PageLayout>
+  );
 }
 
 function TeamInputs() {

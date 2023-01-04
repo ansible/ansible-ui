@@ -32,11 +32,11 @@ export function PageTabs(props: {
   const tabs = children.map((child, index) => {
     if (isValidElement(child)) {
       if (child.type === PageTab) {
-        const title = (child.props as { title: string }).title;
+        const label = (child.props as { label: string }).label;
         return (
           <Tab
-            key={title ?? index}
-            title={title ? title : <Skeleton width="60px" />}
+            key={label ?? index}
+            title={label ? label : <Skeleton width="60px" />}
             eventKey={index}
           />
         );
@@ -94,7 +94,7 @@ export function PageTabs(props: {
   );
 }
 
-export function PageTab(props: { title?: string; children: ReactNode }) {
+export function PageTab(props: { label?: string; children: ReactNode }) {
   return <>{props.children}</>;
 }
 
