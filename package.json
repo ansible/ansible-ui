@@ -39,8 +39,7 @@
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
     "build:mjs": "npx tsc -p tsconfig.mjs.json",
-    "build:cjs": "npx tsc -p tsconfig.cjs.json",
-    "gendocs": "./scripts/gendocs.sh"
+    "build:cjs": "npx tsc -p tsconfig.cjs.json"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.10",
@@ -122,8 +121,6 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "html-webpack-plugin": "5.5.0",
     "husky": "8.0.2",
-    "jsdoc-babel": "0.5.0",
-    "jsdoc-to-markdown": "7.1.1",
     "merge-jsons-webpack-plugin": "2.0.1",
     "mini-css-extract-plugin": "2.7.2",
     "nodemon": "2.0.20",
