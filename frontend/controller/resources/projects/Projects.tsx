@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -87,27 +89,31 @@ export function Projects() {
   );
 
   return (
-    <TablePage<Project>
-      title={t('Projects')}
-      titleHelpTitle={t('Projects')}
-      titleHelp={t(
-        'A Project is a logical collection of Ansible playbooks, represented in Tower. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your Tower server, or by placing your playbooks into a source code management (SCM) system supported by Tower, including Git, Subversion, Mercurial, and Red Hat Insights.'
-      )}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
-      description={t(
-        'A Project is a logical collection of Ansible playbooks, represented in Tower.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading projects')}
-      emptyStateTitle={t('No projects yet')}
-      emptyStateDescription={t('To get started, create an project.')}
-      emptyStateButtonText={t('Create project')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateProject)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Projects')}
+        titleHelpTitle={t('Projects')}
+        titleHelp={t(
+          'A Project is a logical collection of Ansible playbooks, represented in Tower. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your Tower server, or by placing your playbooks into a source code management (SCM) system supported by Tower, including Git, Subversion, Mercurial, and Red Hat Insights.'
+        )}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
+        description={t(
+          'A Project is a logical collection of Ansible playbooks, represented in Tower.'
+        )}
+      />
+      <PageTable<Project>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading projects')}
+        emptyStateTitle={t('No projects yet')}
+        emptyStateDescription={t('To get started, create an project.')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateProject)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

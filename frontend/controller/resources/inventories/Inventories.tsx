@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -78,27 +80,31 @@ export function Inventories() {
   );
 
   return (
-    <TablePage<Inventory>
-      title={t('Inventories')}
-      titleHelpTitle={t('Inventories')}
-      titleHelp={t(
-        'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
-      )}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/inventories.html"
-      description={t(
-        'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading inventories')}
-      emptyStateTitle={t('No inventories yet')}
-      emptyStateDescription={t('To get started, create an inventory.')}
-      emptyStateButtonText={t('Create inventory')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateInventory)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Inventories')}
+        titleHelpTitle={t('Inventories')}
+        titleHelp={t(
+          'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        )}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/inventories.html"
+        description={t(
+          'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
+        )}
+      />
+      <PageTable<Inventory>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading inventories')}
+        emptyStateTitle={t('No inventories yet')}
+        emptyStateDescription={t('To get started, create an inventory.')}
+        emptyStateButtonText={t('Create inventory')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateInventory)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

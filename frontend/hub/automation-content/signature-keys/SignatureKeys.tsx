@@ -8,8 +8,10 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
+  PageHeader,
+  PageLayout,
+  PageTable,
   SinceCell,
-  TablePage,
   TextCell,
 } from '../../../../framework';
 import { downloadTextFile } from '../../../../framework/utils/download-file';
@@ -40,15 +42,17 @@ export function SignatureKeys() {
     [t]
   );
   return (
-    <TablePage<SignatureKey>
-      title={t('SignatureKeys')}
-      toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading signature keys')}
-      emptyStateTitle={t('No signature keys yet')}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader title={t('Signature Keys')} />
+      <PageTable<SignatureKey>
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading signature keys')}
+        emptyStateTitle={t('No signature keys yet')}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { pkKeyFn, useHubView } from '../../useHubView';
 import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
@@ -20,15 +20,17 @@ export function RemoteRegistries() {
   const toolbarActions = useRemoteRegistriesActions();
   const rowActions = useRemoteRegistryActions();
   return (
-    <TablePage<RemoteRegistry>
-      title={t('Remote registries')}
-      toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading remote registries')}
-      emptyStateTitle={t('No remote registries yet')}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader title={t('Remote registries')} />
+      <PageTable<RemoteRegistry>
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading remote registries')}
+        emptyStateTitle={t('No remote registries yet')}
+        {...view}
+      />
+    </PageLayout>
   );
 }

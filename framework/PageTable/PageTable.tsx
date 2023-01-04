@@ -46,26 +46,12 @@ import { SinceCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
 import { useColumnModal } from '../PageColumnModal';
-import { PageHeader, PageHeaderProps } from '../PageHeader';
-import { PageLayout } from '../PageLayout';
 import { useSettings } from '../Settings';
 import { PagePagination } from './PagePagination';
 import { PageTableCards } from './PageTableCards';
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
-
-export type TablePageProps<T extends object> = PageHeaderProps &
-  PageTableProps<T> & { error?: Error };
-
-export function TablePage<T extends object>(props: TablePageProps<T>) {
-  return (
-    <PageLayout>
-      <PageHeader {...props} />
-      <PageTable {...props} />
-    </PageLayout>
-  );
-}
 
 export type PageTableProps<T extends object> = {
   keyFn: (item: T) => string | number;

@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -82,23 +84,27 @@ export function ExecutionEnvironments() {
   );
 
   return (
-    <TablePage<ExecutionEnvironment>
-      title={t('Execution environments')}
-      titleHelpTitle={t('Execution environments')}
-      titleHelp={t('executionEnvironments.title.help')}
-      titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
-      description={t('executionEnvironments.title.description')}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading execution environments')}
-      emptyStateTitle={t('No execution environments yet')}
-      emptyStateDescription={t('To get started, create an execution environment.')}
-      emptyStateButtonText={t('Create execution environment')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateExecutionEnvironment)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Execution environments')}
+        titleHelpTitle={t('Execution environments')}
+        titleHelp={t('executionEnvironments.title.help')}
+        titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
+        description={t('executionEnvironments.title.description')}
+      />
+      <PageTable<ExecutionEnvironment>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading execution environments')}
+        emptyStateTitle={t('No execution environments yet')}
+        emptyStateDescription={t('To get started, create an execution environment.')}
+        emptyStateButtonText={t('Create execution environment')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateExecutionEnvironment)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 

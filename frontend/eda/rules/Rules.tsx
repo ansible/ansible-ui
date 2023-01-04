@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
 import { idKeyFn } from '../../hub/usePulpView';
@@ -26,19 +26,21 @@ export function Rules() {
   const toolbarActions = useRulesActions(refresh);
   const rowActions = useRuleActions(refresh);
   return (
-    <TablePage
-      title={t('Rules')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading rules')}
-      emptyStateTitle={t('No rules yet')}
-      emptyStateDescription={t('To get started, create a rule.')}
-      emptyStateButtonText={t('Create rule')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaRule)}
-      {...view}
-      defaultSubtitle={t('Rule')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Rules')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading rules')}
+        emptyStateTitle={t('No rules yet')}
+        emptyStateDescription={t('To get started, create a rule.')}
+        emptyStateButtonText={t('Create rule')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaRule)}
+        {...view}
+        defaultSubtitle={t('Rule')}
+      />
+    </PageLayout>
   );
 }
