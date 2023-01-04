@@ -18,7 +18,7 @@ export function Teams() {
   const tableColumns = useTeamsColumns();
   const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
-  const rowActions = useTeamActions(view);
+  const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
   const headerActions = useRefreshAction(view.refreshing, view.refresh);
   return (
     <PageLayout>

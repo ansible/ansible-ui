@@ -38,7 +38,8 @@ export function TeamDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
-  const itemActions = useTeamActions();
+  const navigate = useNavigate();
+  const itemActions = useTeamActions({ onTeamsDeleted: () => navigate(RouteE.Teams) });
   return (
     <PageLayout>
       <PageHeader
