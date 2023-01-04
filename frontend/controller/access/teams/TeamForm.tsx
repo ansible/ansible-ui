@@ -38,7 +38,7 @@ export function CreateTeam() {
       />
       <PageBody>
         <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
-          <TeamInputs />
+          {/* <TeamInputs /> */}
         </PageForm>
       </PageBody>
     </PageLayout>
@@ -106,7 +106,7 @@ function TeamInputs() {
   const selectOrganization = useSelectOrganization();
   return (
     <>
-      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired />
+      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired pattern={} />
       <PageFormTextArea name="description" label="Description" placeholder="Enter description" />
       <PageFormTextInput
         name="summary_fields.organization.name"
