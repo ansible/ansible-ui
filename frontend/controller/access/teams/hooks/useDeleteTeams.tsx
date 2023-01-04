@@ -4,7 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../Data';
 import { Team } from '../../../interfaces/Team';
-import { useTeamsColumns } from '../Teams';
+import { useTeamsColumns } from './useTeamsColumns';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();

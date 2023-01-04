@@ -1,8 +1,8 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { RouteE } from '../../Routes';
-import { Detail } from '../../../framework';
+import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../framework/utils/formatDateString';
+import { RouteE } from '../../Routes';
 
 interface User {
   id: number;
@@ -19,7 +19,7 @@ export function UserDateDetail(props: { label: string; date: string; user: User 
   const username = user?.username || '';
 
   return (
-    <Detail label={label}>
+    <PageDetail label={label}>
       {user ? (
         <Trans t={t}>
           {dateStr} by{' '}
@@ -28,6 +28,6 @@ export function UserDateDetail(props: { label: string; date: string; user: User 
       ) : (
         dateStr
       )}
-    </Detail>
+    </PageDetail>
   );
 }

@@ -75,12 +75,12 @@ export function handleControllerGet(url: string) {
   }
 }
 
+let id = 1;
 export function handleControllerPost(url: string, body: ICollectionMockItem) {
   url = sanitizeUrl(url);
   const parts = url.split('/');
   const collectionName = parts[0];
   const collection = getMockCollection(collectionName);
-  let id = 1;
   while (collection.find((item) => item.id == id)) id++;
   body.id = id;
   if (body.organization !== undefined && body.organization !== undefined) {

@@ -19,11 +19,11 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { Detail } from '../components/Details';
 import { IconWrapper } from '../components/IconWrapper';
 import { LabelColor } from '../components/pfcolors';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
+import { PageDetail } from '../PageDetails/PageDetail';
 import {
   ITableColumn,
   ITableColumnTypeCount,
@@ -284,23 +284,23 @@ export function useColumnsToTableCardFn<T extends object>(
           <CardBody>
             <DescriptionList isCompact>
               {hasDescription && (
-                <Detail key={descriptionColumn.id}>
+                <PageDetail key={descriptionColumn.id}>
                   {descriptionColumn.type === 'description' ? (
                     <div>{descriptionColumn.value(item)}</div>
                   ) : (
                     <TableColumnCell column={descriptionColumn} item={item} />
                   )}
-                </Detail>
+                </PageDetail>
               )}
               {cardColumns
                 .filter((column) => !column.value || column.value(item))
                 .map((column) => (
-                  <Detail key={column.id} label={column.header}>
+                  <PageDetail key={column.id} label={column.header}>
                     <TableColumnCell column={column} item={item} />
-                  </Detail>
+                  </PageDetail>
                 ))}
               {countColumns.length > 0 && (
-                <Detail>
+                <PageDetail>
                   <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
                     {countColumns.map((column, i) => (
                       <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
@@ -309,7 +309,7 @@ export function useColumnsToTableCardFn<T extends object>(
                       </div>
                     ))}
                   </div>
-                </Detail>
+                </PageDetail>
               )}
             </DescriptionList>
           </CardBody>

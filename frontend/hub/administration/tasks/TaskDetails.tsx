@@ -1,15 +1,9 @@
 import { PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  Detail,
-  DetailsList,
-  PageBody,
-  PageHeader,
-  PageLayout,
-  SinceCell,
-} from '../../../../framework';
+import { PageBody, PageDetails, PageHeader, PageLayout, SinceCell } from '../../../../framework';
 import { Scrollable } from '../../../../framework/components/Scrollable';
+import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { useSettings } from '../../../../framework/Settings';
 import { StatusCell } from '../../../common/StatusCell';
 import { useItem } from '../../../common/useItem';
@@ -36,21 +30,21 @@ export function TaskDetails() {
                 settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
             }}
           >
-            <DetailsList>
-              <Detail label={t('Name')}>{task?.name}</Detail>
-              <Detail label={t('Status')}>
+            <PageDetails>
+              <PageDetail label={t('Name')}>{task?.name}</PageDetail>
+              <PageDetail label={t('Status')}>
                 <StatusCell status={task?.state} />
-              </Detail>
-              <Detail label={t('Started')}>
+              </PageDetail>
+              <PageDetail label={t('Started')}>
                 <SinceCell value={task?.finished_at} />
-              </Detail>
-              <Detail label={t('Finished')}>
+              </PageDetail>
+              <PageDetail label={t('Finished')}>
                 <SinceCell value={task?.finished_at} />
-              </Detail>
-              <Detail label={t('Created')}>
+              </PageDetail>
+              <PageDetail label={t('Created')}>
                 <SinceCell value={task?.pulp_created} />
-              </Detail>
-            </DetailsList>
+              </PageDetail>
+            </PageDetails>
           </PageSection>
         </Scrollable>
       </PageBody>

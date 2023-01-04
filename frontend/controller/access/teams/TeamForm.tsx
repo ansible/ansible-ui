@@ -17,9 +17,7 @@ import { useSelectOrganization } from '../organizations/hooks/useSelectOrganizat
 export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
   useInvalidateCacheOnUnmount();
-
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
@@ -28,15 +26,13 @@ export function CreateTeam() {
       setError(await getControllerError(err));
     }
   };
-  const onCancel = () => navigate(-1);
-
   return (
     <PageLayout>
       <PageHeader
         title={t('Create team')}
         breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
       />
-      <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={onCancel}>
+      <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
       </PageForm>
     </PageLayout>
@@ -49,9 +45,7 @@ export function EditTeam() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: team } = useSWR<Team>(`/api/v2/teams/${id.toString()}/`, requestGet, swrOptions);
-
   useInvalidateCacheOnUnmount();
-
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
@@ -60,8 +54,6 @@ export function EditTeam() {
       setError(await getControllerError(err));
     }
   };
-  const onCancel = () => navigate(-1);
-
   if (!team) {
     return (
       <PageLayout>
@@ -71,7 +63,6 @@ export function EditTeam() {
       </PageLayout>
     );
   }
-
   return (
     <PageLayout>
       <PageHeader
@@ -81,7 +72,7 @@ export function EditTeam() {
       <PageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
-        onCancel={onCancel}
+        onCancel={() => navigate(-1)}
         defaultValue={team}
       >
         <TeamInputs />

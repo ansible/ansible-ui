@@ -3,7 +3,8 @@ import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { Team } from '../../../interfaces/Team';
 import { useControllerView } from '../../../useControllerView';
-import { useTeamsColumns, useTeamsFilters } from '../Teams';
+import { useTeamsColumns } from './useTeamsColumns';
+import { useTeamsFilters } from './useTeamsFilters';
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
   const toolbarFilters = useTeamsFilters();
