@@ -76,7 +76,6 @@ export function TeamDetails() {
           <PageActions<Team> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      {/* <PageBody> */}
       {team ? (
         <PageTabs
         // preComponents={
@@ -85,13 +84,13 @@ export function TeamDetails() {
         //     </Button>
         // }
         >
-          <PageTab title={t('Details')}>
+          <PageTab label={t('Details')}>
             <TeamDetailsTab team={team} />
           </PageTab>
-          <PageTab title={t('Access')}>
+          <PageTab label={t('Access')}>
             <TeamAccessTab team={team} />
           </PageTab>
-          <PageTab title={t('Roles')}>TODO</PageTab>
+          <PageTab label={t('Roles')}>TODO</PageTab>
         </PageTabs>
       ) : (
         <PageTabs>
@@ -102,7 +101,6 @@ export function TeamDetails() {
           </PageTab>
         </PageTabs>
       )}
-      {/* </PageBody> */}
     </PageLayout>
   );
 }

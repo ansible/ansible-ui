@@ -5,18 +5,17 @@ import {
   Detail,
   DetailsList,
   PageActions,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
+  Scrollable,
 } from '../../../../framework';
-import { Scrollable } from '../../../../framework';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
-import { useProjectActions } from './hooks/useProjectActions';
 import { EdaProject } from '../../interfaces/EdaProject';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { useProjectActions } from './hooks/useProjectActions';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -60,28 +59,24 @@ export function ProjectDetails() {
           />
         }
       />
-      <Scrollable>
-        <PageBody>
-          {project ? (
-            <PageTabs>
-              <PageTab title={t('Details')}>{renderProjectDetailsTab(project)}</PageTab>
-            </PageTabs>
-          ) : (
-            <PageTabs>
-              <PageTab>
-                <PageSection variant="light">
-                  <Stack hasGutter>
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                  </Stack>
-                </PageSection>
-              </PageTab>
-            </PageTabs>
-          )}
-        </PageBody>
-      </Scrollable>
+      {project ? (
+        <PageTabs>
+          <PageTab label={t('Details')}>{renderProjectDetailsTab(project)}</PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }

@@ -23,6 +23,7 @@ import {
 } from 'react-hook-form';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
+import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
@@ -37,8 +38,9 @@ export function PageForm<T extends object>(props: {
   isVertical?: boolean;
   singleColumn?: boolean;
   disableScrolling?: boolean;
+  disableBody?: boolean;
 }) {
-  const { schema, defaultValue } = props;
+  const { schema, defaultValue, disableBody } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
     resolver: schema
@@ -65,8 +67,7 @@ export function PageForm<T extends object>(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
   const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800;
 
-  return (
-    // <PageBody>
+  let Component = (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -132,8 +133,13 @@ export function PageForm<T extends object>(props: {
         )}
       </Form>
     </FormProvider>
-    // </PageBody>
   );
+
+  if (!disableBody) {
+    Component = <PageBody>{Component}</PageBody>;
+  }
+
+  return Component;
 }
 
 export type PageFormSubmitHandler<T extends FieldValues> = (
