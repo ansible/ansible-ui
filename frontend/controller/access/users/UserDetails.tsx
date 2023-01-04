@@ -12,11 +12,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Detail,
-  DetailsList,
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
@@ -40,7 +40,8 @@ import { Role } from '../roles/Role';
 import { useRolesColumns, useRolesFilters } from '../roles/Roles';
 import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
-import { useTeamsColumns, useTeamsFilters } from '../teams/Teams';
+import { useTeamsColumns } from '../teams/hooks/useTeamsColumns';
+import { useTeamsFilters } from '../teams/hooks/useTeamsFilters';
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { UserType } from './Users';
 
@@ -153,21 +154,21 @@ function UserDetails(props: { user: User }) {
               settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           }}
         >
-          <DetailsList>
-            <Detail label={t('Username')}>{user.username}</Detail>
-            <Detail label={t('First name')}>{user.first_name}</Detail>
-            <Detail label={t('Last name')}>{user.last_name}</Detail>
-            <Detail label={t('Email')}>{user.email}</Detail>
-            <Detail label={t('User type')}>
+          <PageDetails>
+            <PageDetail label={t('Username')}>{user.username}</PageDetail>
+            <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
+            <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
+            <PageDetail label={t('Email')}>{user.email}</PageDetail>
+            <PageDetail label={t('User type')}>
               <UserType user={user} />
-            </Detail>
-            <Detail label={t('Created')}>
+            </PageDetail>
+            <PageDetail label={t('Created')}>
               <SinceCell value={user.created} />
-            </Detail>
-            <Detail label={t('Modified')}>
+            </PageDetail>
+            <PageDetail label={t('Modified')}>
               {user.modified && <SinceCell value={user.modified} />}
-            </Detail>
-          </DetailsList>
+            </PageDetail>
+          </PageDetails>
         </PageSection>
       </Scrollable>
     </>

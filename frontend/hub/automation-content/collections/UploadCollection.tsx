@@ -2,8 +2,9 @@ import { Alert } from '@patternfly/react-core';
 import { Static, Type } from '@sinclair/typebox';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Detail, DetailsList, PageForm, PageHeader, PageLayout } from '../../../../framework';
+import { PageDetails, PageForm, PageHeader, PageLayout } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Inputs/PageFormWatch';
 import { requestPostFile } from '../../../Data';
@@ -72,9 +73,9 @@ export function UploadCollectionByFile() {
                     </Alert>
                   )}
                   {namespace && (
-                    <DetailsList>
-                      <Detail label={t('Namespace')}>{namespace}</Detail>
-                    </DetailsList>
+                    <PageDetails>
+                      <PageDetail label={t('Namespace')}>{namespace}</PageDetail>
+                    </PageDetails>
                   )}
                 </>
               );

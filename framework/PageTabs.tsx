@@ -22,7 +22,9 @@ export function PageTabs(props: {
   children: ReactNode;
   preComponents?: ReactNode;
   postComponents?: ReactNode;
+  loading?: boolean;
 }) {
+  const { loading } = props;
   const [activeKey, setActiveKey] = useState<number>(0);
   const onSelect = useCallback(
     (_, key: string | number) => setActiveKey(key as number),
@@ -45,6 +47,19 @@ export function PageTabs(props: {
     return child;
   });
   const content = children[activeKey];
+
+  if (loading) {
+    return (
+      <PageTabs>
+        <PageTab>
+          <PageSection variant="light">
+            <Skeleton />
+          </PageSection>
+        </PageTab>
+      </PageTabs>
+    );
+  }
+
   return (
     <>
       <PageSection type={PageSectionTypes.tabs}>

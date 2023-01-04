@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Detail, DetailsList } from '../components/Details';
+import { PageDetail } from '../PageDetails/PageDetail';
+import { PageDetails } from '../PageDetails/PageDetails';
 import { ITableColumn, TableColumnCell } from './PageTable';
 
 export function TableDetails<T extends object>(props: {
@@ -10,12 +11,12 @@ export function TableDetails<T extends object>(props: {
   const { item, columns } = props;
   if (!item) return <></>;
   return (
-    <DetailsList>
+    <PageDetails>
       {columns.map((column) => (
-        <Detail key={column.id} label={column.header}>
+        <PageDetail key={column.id} label={column.header}>
           <TableColumnCell column={column} item={item} />
-        </Detail>
+        </PageDetail>
       ))}
-    </DetailsList>
+    </PageDetails>
   );
 }

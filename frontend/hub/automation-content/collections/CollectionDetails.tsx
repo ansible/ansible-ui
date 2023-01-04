@@ -34,10 +34,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   CopyCell,
-  Detail,
-  DetailsList,
   getPatternflyColor,
   PageActions,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
@@ -46,6 +45,7 @@ import {
   useBreakpoint,
 } from '../../../../framework';
 import { Scrollable } from '../../../../framework/components/Scrollable';
+import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { TableDetails } from '../../../../framework/PageTable/PageTableDetails';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
@@ -124,24 +124,24 @@ function CollectionInstallTab(props: { collection?: Collection }) {
   return (
     <Scrollable>
       <PageSection variant="light">
-        <DetailsList>
-          <Detail label={t('License')}>
+        <PageDetails>
+          <PageDetail label={t('License')}>
             {collection?.latest_version?.metadata?.license &&
               collection.latest_version.metadata.license?.length > 0 &&
               collection.latest_version.metadata.license[0]}
-          </Detail>
-          <Detail label={t('Installation')}>
+          </PageDetail>
+          <PageDetail label={t('Installation')}>
             <CopyCell
               text={`ansible-galaxy collection install ${collection?.namespace?.name ?? ''}.${
                 collection?.name ?? ''
               }`}
             />
-          </Detail>
-          <Detail label={t('Requires')}>
+          </PageDetail>
+          <PageDetail label={t('Requires')}>
             {collection?.latest_version.requires_ansible &&
               `${t('Ansible')} ${collection.latest_version.requires_ansible}`}
-          </Detail>
-        </DetailsList>
+          </PageDetail>
+        </PageDetails>
       </PageSection>
     </Scrollable>
   );
@@ -421,14 +421,14 @@ function CollectionImportLogTab(props: { collection?: Collection }) {
     <Scrollable>
       <PageSection variant="light">
         <Stack hasGutter>
-          <DetailsList>
-            <Detail label={t('Status')}>
+          <PageDetails>
+            <PageDetail label={t('Status')}>
               <StatusCell status={collectionImport?.state} />
-            </Detail>
+            </PageDetail>
             {/* <Detail label={t('Approval Status')}>
             </Detail> */}
-            <Detail label={t('Version')}>{collectionImport?.version}</Detail>
-          </DetailsList>
+            <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
+          </PageDetails>
           {collectionImport?.error && (
             <Alert
               variant="danger"

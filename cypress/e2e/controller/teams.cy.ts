@@ -126,7 +126,7 @@ describe('teams', () => {
       organization: organization.id,
     }).then((team) => {
       cy.navigateTo(/^Teams$/, true);
-      cy.clickRowAction(team.name, /^Edit team$/);
+      cy.get('#edit-team').click();
       cy.hasTitle(/^Edit team$/);
       cy.requestDelete(`/api/v2/teams/${team.id}/`);
     });

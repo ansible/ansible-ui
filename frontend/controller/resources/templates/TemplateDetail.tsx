@@ -14,11 +14,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  Detail,
-  DetailsList,
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
@@ -137,11 +137,11 @@ function TemplateDetailsTab(props: { template: Template }) {
   return (
     <Scrollable>
       <PageSection variant="light">
-        <DetailsList>
-          <Detail label={t('Name')}>{template.name}</Detail>
-          <Detail label={t('Description')}>{template.description}</Detail>
-          <Detail label={t('Job type')}>{template.job_type}</Detail>
-          <Detail label={t('Organization')} isEmpty={!summaryFields.organization}>
+        <PageDetails>
+          <PageDetail label={t('Name')}>{template.name}</PageDetail>
+          <PageDetail label={t('Description')}>{template.description}</PageDetail>
+          <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
+          <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
             <Link
               to={RouteE.OrganizationDetails.replace(
                 ':id',
@@ -150,8 +150,8 @@ function TemplateDetailsTab(props: { template: Template }) {
             >
               {summaryFields.organization?.name}
             </Link>
-          </Detail>
-          <Detail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
+          </PageDetail>
+          <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
             <Link
               to={RouteE.InventoryDetails.replace(
                 ':id',
@@ -160,16 +160,19 @@ function TemplateDetailsTab(props: { template: Template }) {
             >
               {summaryFields.inventory?.name}
             </Link>
-          </Detail>
-          <Detail label={t`Project`} isEmpty={!summaryFields.project}>
+          </PageDetail>
+          <PageDetail label={t`Project`} isEmpty={!summaryFields.project}>
             <Link
               to={RouteE.ProjectDetails.replace(':id', summaryFields.project?.id.toString() ?? '')}
             >
               {summaryFields.project?.name}
             </Link>
-          </Detail>
+          </PageDetail>
           {/* TODO: more flushed out ExecutionEnvironmentDetail ? */}
-          <Detail label={t`Execution environment`} isEmpty={!summaryFields.resolved_environment}>
+          <PageDetail
+            label={t`Execution environment`}
+            isEmpty={!summaryFields.resolved_environment}
+          >
             <Link
               to={RouteE.ExecutionEnvironmentDetails.replace(
                 ':id',
@@ -178,23 +181,23 @@ function TemplateDetailsTab(props: { template: Template }) {
             >
               {summaryFields.resolved_environment?.name}
             </Link>
-          </Detail>
-          <Detail label={t('Source control branch')}>{template.scm_branch}</Detail>
-          <Detail label={t('Playbook')}>{template.playbook}</Detail>
-          <Detail label={t('Forks')}>{template.forks || 0}</Detail>
-          <Detail label={t('Limit')}>{template.limit}</Detail>
-          <Detail label={t('Verbosity')}>{VERBOSITY(t, template.verbosity)}</Detail>
-          <Detail label={t('Timeout')}>{template.timeout || 0}</Detail>
-          <Detail label={t('Show changes')}>{template.diff_mode ? t`On` : t`Off`}</Detail>
-          <Detail label={t('Job slicing')}>{template.job_slice_count}</Detail>
-          <Detail label={t('Host config key')}>{template.host_config_key}</Detail>
-          <Detail label={t('Provisioning callback URL')} isEmpty={!template.host_config_key}>
+          </PageDetail>
+          <PageDetail label={t('Source control branch')}>{template.scm_branch}</PageDetail>
+          <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>
+          <PageDetail label={t('Forks')}>{template.forks || 0}</PageDetail>
+          <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
+          <PageDetail label={t('Verbosity')}>{VERBOSITY(t, template.verbosity)}</PageDetail>
+          <PageDetail label={t('Timeout')}>{template.timeout || 0}</PageDetail>
+          <PageDetail label={t('Show changes')}>{template.diff_mode ? t`On` : t`Off`}</PageDetail>
+          <PageDetail label={t('Job slicing')}>{template.job_slice_count}</PageDetail>
+          <PageDetail label={t('Host config key')}>{template.host_config_key}</PageDetail>
+          <PageDetail label={t('Provisioning callback URL')} isEmpty={!template.host_config_key}>
             {`${window.location.origin} ${template.url}callback/`}
-          </Detail>
-          <Detail label={t('Webhook service')} isEmpty={!template.webhook_service}>
+          </PageDetail>
+          <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
             {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
-          </Detail>
-          <Detail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
+          </PageDetail>
+          <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
             <Link
               to={RouteE.CredentialDetails.replace(
                 ':id',
@@ -203,10 +206,10 @@ function TemplateDetailsTab(props: { template: Template }) {
             >
               {summaryFields.webhook_credential?.name}
             </Link>
-          </Detail>
-          <Detail label={t('Prevent instance group fallback')}>
+          </PageDetail>
+          <PageDetail label={t('Prevent instance group fallback')}>
             {template.prevent_instance_group_fallback ? t`On` : ''}
-          </Detail>
+          </PageDetail>
           <UserDateDetail
             label={t('Created')}
             date={template.created}
@@ -217,7 +220,7 @@ function TemplateDetailsTab(props: { template: Template }) {
             date={template.modified}
             user={template.summary_fields.modified_by}
           />
-          <Detail label={t('Enabled options')} isEmpty={!showOptionsField}>
+          <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
             <TextList component={TextListVariants.ul}>
               {template.become_enabled && (
                 <TextListItem component={TextListItemVariants.li}>
@@ -246,8 +249,8 @@ function TemplateDetailsTab(props: { template: Template }) {
                 </TextListItem>
               )}
             </TextList>
-          </Detail>
-        </DetailsList>
+          </PageDetail>
+        </PageDetails>
       </PageSection>
     </Scrollable>
   );

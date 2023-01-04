@@ -1,4 +1,4 @@
-import { ButtonVariant, DropdownPosition, PageSection } from '@patternfly/react-core';
+import { ButtonVariant, DropdownPosition, PageSection, Skeleton } from '@patternfly/react-core';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,12 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
-  Detail,
-  DetailsList,
-  DetailsSkeleton,
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
   SinceCell,
@@ -72,7 +71,7 @@ export function InstanceDetails() {
         <InstanceDetailsTab instance={instance} />
       ) : (
         <PageSection variant="light">
-          <DetailsSkeleton />
+          <Skeleton />
         </PageSection>
       )}
     </PageLayout>
@@ -94,37 +93,37 @@ function InstanceDetailsTab(props: { instance: Instance }) {
               settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           }}
         >
-          <DetailsList>
-            <Detail label={t('Name')}>{instance.hostname}</Detail>
-            <Detail label={t('Node type')}>
+          <PageDetails>
+            <PageDetail label={t('Name')}>{instance.hostname}</PageDetail>
+            <PageDetail label={t('Node type')}>
               <NodeTypeCell node_type={instance.node_type} />
-            </Detail>
-            <Detail label={t('Status')}>
+            </PageDetail>
+            <PageDetail label={t('Status')}>
               <StatusCell
                 status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'}
               />
-            </Detail>
-            <Detail label={t('Used capacity')}>
+            </PageDetail>
+            <PageDetail label={t('Used capacity')}>
               <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
-            </Detail>
-            <Detail label={t('Running jobs')}>{instance.jobs_running.toString()}</Detail>
-            <Detail label={t('Total jobs')}>{instance.jobs_total.toString()}</Detail>
-            <Detail label={t('Policy type')}>
+            </PageDetail>
+            <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
+            <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
+            <PageDetail label={t('Policy type')}>
               {instance.managed_by_policy ? t('Auto') : t('Manual')}
-            </Detail>
-            <Detail label={t('Memory')}>
+            </PageDetail>
+            <PageDetail label={t('Memory')}>
               <BytesCell bytes={instance.memory} />
-            </Detail>
-            <Detail label={t('Last health check')}>
+            </PageDetail>
+            <PageDetail label={t('Last health check')}>
               <SinceCell value={instance.last_health_check} />
-            </Detail>
-            <Detail label={t('Created')}>
+            </PageDetail>
+            <PageDetail label={t('Created')}>
               <SinceCell value={instance.created} />
-            </Detail>
-            <Detail label={t('Modified')}>
+            </PageDetail>
+            <PageDetail label={t('Modified')}>
               <SinceCell value={instance.modified} />
-            </Detail>
-          </DetailsList>
+            </PageDetail>
+          </PageDetails>
         </PageSection>
       </Scrollable>
     </>
