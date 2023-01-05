@@ -37,6 +37,7 @@ import {
   getPatternflyColor,
   PageActions,
   PageDetails,
+  PageDetailsFromColumns,
   PageHeader,
   PageLayout,
   PageTab,
@@ -46,7 +47,6 @@ import {
 } from '../../../../framework';
 import { Scrollable } from '../../../../framework/components/Scrollable';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
-import { TableDetails } from '../../../../framework/PageTable/PageTableDetails';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
@@ -109,13 +109,7 @@ export function CollectionDetails() {
 function CollectionDetailsTab(props: { collection?: Collection }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
-  return (
-    <Scrollable>
-      <PageSection variant="light">
-        <TableDetails item={collection} columns={tableColumns} />
-      </PageSection>
-    </Scrollable>
-  );
+  return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
 }
 
 function CollectionInstallTab(props: { collection?: Collection }) {

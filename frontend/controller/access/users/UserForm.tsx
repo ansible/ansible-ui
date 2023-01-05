@@ -1,14 +1,17 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import {
   PageForm,
   PageFormSelectOption,
   PageFormSubmitHandler,
   PageHeader,
+  PageLayout,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet, requestPost } from '../../../Data';
+import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
@@ -59,9 +62,82 @@ export function CreateUser() {
         onCancel={onCancel}
         defaultValue={{ userType: 'Normal user' }}
       >
-        <UserInputs />
+        <UserInputs mode="create" />
       </PageForm>
     </>
+  );
+}
+
+export function EditUser() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: user } = useSWR<User>(`/api/v2/users/${id.toString()}/`, requestGet, swrOptions);
+
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userData, setError, setFieldError) => {
+    try {
+      if (user) {
+        user.username = userData.username;
+        user.first_name = userData.firstName!;
+        user.last_name = userData.lastName!;
+        user.email = userData.email!;
+        user.is_superuser = userData.userType === t('System administrator');
+        user.is_system_auditor = userData.userType === t('System auditor');
+        if (userData.password) {
+          if (userData.confirmPassword !== userData.password) {
+            setFieldError('confirmPassword', { message: t('Password does not match.') });
+            return false;
+          }
+          user.password = userData.password!;
+        }
+        const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
+        navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()));
+      }
+    } catch (err) {
+      setError(await getControllerError(err));
+    }
+  };
+
+  const onCancel = () => navigate(-1);
+
+  if (!user) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
+        />
+      </PageLayout>
+    );
+  }
+
+  const defaultValue: Partial<IUserInput> = {
+    username: user.username,
+    lastName: user.last_name,
+    firstName: user.first_name,
+    email: user.email,
+    userType: user.is_superuser
+      ? 'System administrator'
+      : user.is_system_auditor
+      ? 'System auditor'
+      : 'Normal user',
+  };
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit user')}
+        breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
+      />
+      <PageForm<IUserInput>
+        submitText={t('Save user')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={defaultValue}
+      >
+        <UserInputs mode="edit" />
+      </PageForm>
+    </PageLayout>
   );
 }
 
@@ -76,7 +152,8 @@ interface IUserInput {
   userType: string;
 }
 
-function UserInputs() {
+function UserInputs(props: { mode: 'create' | 'edit' }) {
+  const { mode } = props;
   const { setValue } = useFormContext();
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
@@ -89,6 +166,15 @@ function UserInputs() {
         isRequired
         maxLength={150}
         autoComplete="new-username"
+        validate={(username) => {
+          for (const c of username) {
+            if (
+              !'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890@.+-_'.includes(c)
+            ) {
+              return t('Username  may contain only letters, numbers, and @.+-_ characters.');
+            }
+          }
+        }}
       />
       <PageFormSelectOption
         name="userType"
@@ -117,35 +203,37 @@ function UserInputs() {
         ]}
         isRequired
       />
-      <PageFormTextInput
-        label="Organization"
-        name="summary_fields.organization.name"
-        placeholder="Enter organization"
-        selectTitle={t('Select an organization')}
-        selectValue={(organization: Organization) => organization.name}
-        selectOpen={selectOrganization}
-        validate={async (organizationName: string) => {
-          try {
-            const itemsResponse = await requestGet<ItemsResponse<Organization>>(
-              `/api/v2/organizations/?name=${organizationName}`
-            );
-            if (itemsResponse.results.length === 0) return t('Organization not found.');
-            setValue('organization', itemsResponse.results[0].id);
-          } catch (err) {
-            if (err instanceof Error) return err.message;
-            else return 'Unknown error';
-          }
-          return undefined;
-        }}
-        isRequired
-      />
+      {mode === 'create' && (
+        <PageFormTextInput
+          label="Organization"
+          name="summary_fields.organization.name"
+          placeholder="Enter organization"
+          selectTitle={t('Select an organization')}
+          selectValue={(organization: Organization) => organization.name}
+          selectOpen={selectOrganization}
+          validate={async (organizationName: string) => {
+            try {
+              const itemsResponse = await requestGet<ItemsResponse<Organization>>(
+                `/api/v2/organizations/?name=${organizationName}`
+              );
+              if (itemsResponse.results.length === 0) return t('Organization not found.');
+              setValue('organization', itemsResponse.results[0].id);
+            } catch (err) {
+              if (err instanceof Error) return err.message;
+              else return 'Unknown error';
+            }
+            return undefined;
+          }}
+          isRequired
+        />
+      )}
       <PageFormTextInput
         name="password"
         label={t('Password')}
         placeholder={t('Enter password')}
         type="password"
         autoComplete="new-password"
-        isRequired
+        isRequired={mode === 'create'}
       />
       <PageFormTextInput
         name="confirmPassword"
@@ -153,7 +241,7 @@ function UserInputs() {
         placeholder={t('Enter password')}
         type="password"
         autoComplete="new-password"
-        isRequired
+        isRequired={mode === 'create'}
       />
       <PageFormTextInput
         name="firstName"

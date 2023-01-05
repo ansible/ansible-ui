@@ -1,4 +1,4 @@
-import { ButtonVariant, Chip, ChipGroup, Text } from '@patternfly/react-core';
+import { ButtonVariant, Chip, ChipGroup, Label } from '@patternfly/react-core';
 import {
   EditIcon,
   MinusCircleIcon,
@@ -329,9 +329,9 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
 export function UserType(props: { user: User }) {
   const { user } = props;
   const { t } = useTranslation();
-  if (user.is_superuser) return <Text> {t('System administrator')}</Text>;
-  if (user.is_system_auditor) return <Text>{t('System auditor')}</Text>;
-  return <Text>{t('Normal user')}</Text>;
+  if (user.is_superuser) return <Label color="orange">{t('System administrator')}</Label>;
+  if (user.is_system_auditor) return <Label color="orange">{t('System auditor')}</Label>;
+  return <Label>{t('Normal user')}</Label>;
 }
 
 export function UserRoles(props: { user: User }) {

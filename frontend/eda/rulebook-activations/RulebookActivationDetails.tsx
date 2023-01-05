@@ -1,10 +1,8 @@
-import { DropdownPosition, PageSection } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../framework';
-import { Scrollable } from '../../../framework/components/Scrollable';
-import { TableDetails } from '../../../framework/PageTable/PageTableDetails';
-import { useSettings } from '../../../framework/Settings';
+import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../common/useItem';
 import { RouteE } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -17,7 +15,6 @@ export function RulebookActivationDetails() {
   const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
     `/api/activation_instances/${params.id ?? ''}`
   );
-  const settings = useSettings();
   const tableColumns = useRulebookActivationColumns();
   const itemActions = useRulebookActivationActions(refresh);
   return (
@@ -36,17 +33,7 @@ export function RulebookActivationDetails() {
           />
         }
       />
-      <Scrollable>
-        <PageSection
-          variant="light"
-          style={{
-            backgroundColor:
-              settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          }}
-        >
-          <TableDetails item={rulebookActivation} columns={tableColumns} />
-        </PageSection>
-      </Scrollable>
+      <PageDetailsFromColumns item={rulebookActivation} columns={tableColumns} />
     </PageLayout>
   );
 }

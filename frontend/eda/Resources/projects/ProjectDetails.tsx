@@ -8,7 +8,6 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
-  Scrollable,
 } from '../../../../framework';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
@@ -25,24 +24,20 @@ export function ProjectDetails() {
 
   const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {
     return (
-      <Scrollable>
-        <PageSection variant="light">
-          <PageDetails>
-            <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
-            <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
-            <PageDetail label={t('SCM type')}>{project?.type || 'Git'}</PageDetail>
-            <PageDetail label={t('SCM URL')}>{project?.type || ''}</PageDetail>
-            <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
-            <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
-            <PageDetail label={t('Created')}>
-              {project?.created_at ? formatDateString(project.created_at) : ''}
-            </PageDetail>
-            <PageDetail label={t('Modified')}>
-              {project?.modified_at ? formatDateString(project.modified_at) : ''}
-            </PageDetail>
-          </PageDetails>
-        </PageSection>
-      </Scrollable>
+      <PageDetails>
+        <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
+        <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
+        <PageDetail label={t('SCM type')}>{project?.type || 'Git'}</PageDetail>
+        <PageDetail label={t('SCM URL')}>{project?.type || ''}</PageDetail>
+        <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
+        <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
+        <PageDetail label={t('Created')}>
+          {project?.created_at ? formatDateString(project.created_at) : ''}
+        </PageDetail>
+        <PageDetail label={t('Modified')}>
+          {project?.modified_at ? formatDateString(project.modified_at) : ''}
+        </PageDetail>
+      </PageDetails>
     );
   };
 

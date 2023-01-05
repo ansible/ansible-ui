@@ -22,7 +22,6 @@ import {
   PageTabs,
   SinceCell,
 } from '../../../../framework';
-import { Scrollable } from '../../../../framework/components/Scrollable';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -121,44 +120,38 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
   const { organization } = props;
   const history = useNavigate();
   return (
-    <>
-      <Scrollable>
-        <PageSection variant="light">
-          <PageDetails>
-            <PageDetail label={t('Name')}>{organization.name}</PageDetail>
-            <PageDetail label={t('Description')}>{organization.description}</PageDetail>
-            <PageDetail label={t('Created')}>
-              <SinceCell
-                value={organization.created}
-                author={organization.summary_fields?.created_by?.username}
-                onClick={() =>
-                  history(
-                    RouteE.UserDetails.replace(
-                      ':id',
-                      (organization.summary_fields?.created_by?.id ?? 0).toString()
-                    )
-                  )
-                }
-              />
-            </PageDetail>
-            <PageDetail label={t('Last modified')}>
-              <SinceCell
-                value={organization.modified}
-                author={organization.summary_fields?.modified_by?.username}
-                onClick={() =>
-                  history(
-                    RouteE.UserDetails.replace(
-                      ':id',
-                      (organization.summary_fields?.modified_by?.id ?? 0).toString()
-                    )
-                  )
-                }
-              />
-            </PageDetail>
-          </PageDetails>
-        </PageSection>
-      </Scrollable>
-    </>
+    <PageDetails>
+      <PageDetail label={t('Name')}>{organization.name}</PageDetail>
+      <PageDetail label={t('Description')}>{organization.description}</PageDetail>
+      <PageDetail label={t('Created')}>
+        <SinceCell
+          value={organization.created}
+          author={organization.summary_fields?.created_by?.username}
+          onClick={() =>
+            history(
+              RouteE.UserDetails.replace(
+                ':id',
+                (organization.summary_fields?.created_by?.id ?? 0).toString()
+              )
+            )
+          }
+        />
+      </PageDetail>
+      <PageDetail label={t('Last modified')}>
+        <SinceCell
+          value={organization.modified}
+          author={organization.summary_fields?.modified_by?.username}
+          onClick={() =>
+            history(
+              RouteE.UserDetails.replace(
+                ':id',
+                (organization.summary_fields?.modified_by?.id ?? 0).toString()
+              )
+            )
+          }
+        />
+      </PageDetail>
+    </PageDetails>
   );
 }
 

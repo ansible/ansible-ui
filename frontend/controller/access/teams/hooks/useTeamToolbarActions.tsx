@@ -51,6 +51,7 @@ export function useTeamToolbarActions(view: IControllerView<Team>) {
         icon: TrashIcon,
         label: t('Delete selected teams'),
         onClick: deleteTeams,
+        isDanger: true,
       },
       { type: PageActionType.seperator },
       {

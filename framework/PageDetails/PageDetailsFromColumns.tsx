@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { PageDetail } from '../PageDetails/PageDetail';
-import { PageDetails } from '../PageDetails/PageDetails';
-import { ITableColumn, TableColumnCell } from './PageTable';
+import { ITableColumn, TableColumnCell } from '../PageTable/PageTable';
+import { PageDetail } from './PageDetail';
+import { PageDetails } from './PageDetails';
 
-export function TableDetails<T extends object>(props: {
+export function PageDetailsFromColumns<T extends object>(props: {
   item: T | undefined;
   columns: ITableColumn<T>[];
 }) {
