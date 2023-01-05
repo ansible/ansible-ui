@@ -69,7 +69,7 @@ export function EditProject() {
         navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);
