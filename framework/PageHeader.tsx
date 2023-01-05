@@ -97,7 +97,7 @@ export interface PageHeaderProps {
  *       description='Page description'
  *       headerActions={<TypedActions actions={actions} />}
  *     />
- *     <PageBody />...</PageBody>
+ *     ...
  *   </PageLayout>
  * <Page>
  */

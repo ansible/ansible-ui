@@ -19,7 +19,6 @@ export * from './PageCells/DateTimeCell';
 export * from './PageCells/ElapsedTimeCell';
 export * from './PageCells/LabelsCell';
 export * from './PageCells/TextCell';
-export * from './PageDataList';
 export * from './PageDetails/PageDetail';
 export * from './PageDetails/PageDetails';
 export * from './PageDetails/PageDetailsFromColumns';
