@@ -16,6 +16,12 @@ The generated files are meant to be used as a starting point to help with creati
 
 For example, to create an interface for `UnifiedJob`:
 
-1. Refer to the api.ts file and look up the interface you're interested in (UnifiedJobTemplate).
-2. Create a file `UnifiedJob.ts` under `controller/interfaces/*` and copy the specific interface into it.
-3. Based on API responses seen during testing make manual edits to `UnifiedJob.ts` if necessary.
+1. Create a file `UnifiedJob.ts` under `controller/interfaces/*`
+2. Extend the interface from `./generated-from-swagger/api.ts`'
+```
+import { UnifiedJobTemplate } from './generated-from-swagger/api.ts'
+
+export interface IUnifiedJob extends UnifiedJobTemplate {
+  // customize
+}
+```
