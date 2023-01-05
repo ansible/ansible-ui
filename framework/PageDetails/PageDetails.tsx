@@ -2,7 +2,8 @@ import { DescriptionList } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useSettings } from '../Settings';
 
-export function PageDetails(props: { children?: ReactNode }) {
+export function PageDetails(props: { children?: ReactNode; disablePadding?: boolean }) {
+  const { disablePadding } = props;
   const settings = useSettings();
   const orientation = settings.formLayout;
   const columns = settings.formColumns;
@@ -28,7 +29,7 @@ export function PageDetails(props: { children?: ReactNode }) {
             }
           : undefined
       }
-      style={{ maxWidth: 1200, padding: isCompact ? undefined : 8 }}
+      style={{ maxWidth: 1200, padding: disablePadding ? undefined : 24 }}
       isCompact={isCompact}
     >
       {props.children}

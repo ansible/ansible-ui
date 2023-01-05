@@ -37,7 +37,7 @@ export type IPageSingleAction<T extends object> = IPageActionCommon & {
   type: PageActionType.single;
   variant?: ButtonVariant;
   onClick: (item: T) => void;
-  isDisabled?: (item: T) => string;
+  isDisabled?: (item: T) => string | undefined;
   isHidden?: (item: T) => boolean;
 };
 

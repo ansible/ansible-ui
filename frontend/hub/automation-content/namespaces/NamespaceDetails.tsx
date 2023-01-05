@@ -1,9 +1,7 @@
-import { PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework';
-import { Scrollable } from '../../../../framework/components/Scrollable';
-import { TableDetails } from '../../../../framework/PageTable/PageTableDetails';
+import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { HubItemsResponse } from '../../useHubView';
@@ -41,11 +39,5 @@ export function NamespaceDetails() {
 function NamespaceDetailsTab(props: { namespace?: Namespace }) {
   const { namespace } = props;
   const tableColumns = useNamespacesColumns();
-  return (
-    <Scrollable>
-      <PageSection variant="light">
-        <TableDetails item={namespace} columns={tableColumns} />
-      </PageSection>
-    </Scrollable>
-  );
+  return <PageDetailsFromColumns item={namespace} columns={tableColumns} />;
 }

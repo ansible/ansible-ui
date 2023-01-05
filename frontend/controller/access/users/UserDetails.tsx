@@ -25,8 +25,6 @@ import {
   SinceCell,
 } from '../../../../framework';
 import { DetailInfo } from '../../../../framework/components/DetailInfo';
-import { Scrollable } from '../../../../framework/components/Scrollable';
-import { useSettings } from '../../../../framework/Settings';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -135,7 +133,6 @@ export function UserDetailsPage() {
 function UserDetails(props: { user: User }) {
   const { t } = useTranslation();
   const { user } = props;
-  const settings = useSettings();
   return (
     <>
       {user.is_superuser && (
@@ -146,31 +143,22 @@ function UserDetails(props: { user: User }) {
           style={{ border: 0 }}
         />
       )}
-      <Scrollable>
-        <PageSection
-          variant="light"
-          style={{
-            backgroundColor:
-              settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          }}
-        >
-          <PageDetails>
-            <PageDetail label={t('Username')}>{user.username}</PageDetail>
-            <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
-            <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
-            <PageDetail label={t('Email')}>{user.email}</PageDetail>
-            <PageDetail label={t('User type')}>
-              <UserType user={user} />
-            </PageDetail>
-            <PageDetail label={t('Created')}>
-              <SinceCell value={user.created} />
-            </PageDetail>
-            <PageDetail label={t('Modified')}>
-              {user.modified && <SinceCell value={user.modified} />}
-            </PageDetail>
-          </PageDetails>
-        </PageSection>
-      </Scrollable>
+
+      <PageDetails>
+        <PageDetail label={t('Username')}>{user.username}</PageDetail>
+        <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
+        <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
+        <PageDetail label={t('Email')}>{user.email}</PageDetail>
+        <PageDetail label={t('User type')}>
+          <UserType user={user} />
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          <SinceCell value={user.created} />
+        </PageDetail>
+        <PageDetail label={t('Modified')}>
+          {user.modified && <SinceCell value={user.modified} />}
+        </PageDetail>
+      </PageDetails>
     </>
   );
 }

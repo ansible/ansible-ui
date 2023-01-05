@@ -15,8 +15,6 @@ import {
   PageLayout,
   SinceCell,
 } from '../../../../framework';
-import { Scrollable } from '../../../../framework/components/Scrollable';
-import { useSettings } from '../../../../framework/Settings';
 import { StatusCell } from '../../../common/StatusCell';
 import { useItem } from '../../../common/useItem';
 import { requestPost } from '../../../Data';
@@ -81,51 +79,37 @@ export function InstanceDetails() {
 function InstanceDetailsTab(props: { instance: Instance }) {
   const { t } = useTranslation();
   const { instance } = props;
-  // const history = useNavigate()
-  const settings = useSettings();
   return (
-    <>
-      <Scrollable>
-        <PageSection
-          variant="light"
-          style={{
-            backgroundColor:
-              settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          }}
-        >
-          <PageDetails>
-            <PageDetail label={t('Name')}>{instance.hostname}</PageDetail>
-            <PageDetail label={t('Node type')}>
-              <NodeTypeCell node_type={instance.node_type} />
-            </PageDetail>
-            <PageDetail label={t('Status')}>
-              <StatusCell
-                status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'}
-              />
-            </PageDetail>
-            <PageDetail label={t('Used capacity')}>
-              <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
-            </PageDetail>
-            <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
-            <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
-            <PageDetail label={t('Policy type')}>
-              {instance.managed_by_policy ? t('Auto') : t('Manual')}
-            </PageDetail>
-            <PageDetail label={t('Memory')}>
-              <BytesCell bytes={instance.memory} />
-            </PageDetail>
-            <PageDetail label={t('Last health check')}>
-              <SinceCell value={instance.last_health_check} />
-            </PageDetail>
-            <PageDetail label={t('Created')}>
-              <SinceCell value={instance.created} />
-            </PageDetail>
-            <PageDetail label={t('Modified')}>
-              <SinceCell value={instance.modified} />
-            </PageDetail>
-          </PageDetails>
-        </PageSection>
-      </Scrollable>
-    </>
+    <PageDetails>
+      <PageDetail label={t('Name')}>{instance.hostname}</PageDetail>
+      <PageDetail label={t('Node type')}>
+        <NodeTypeCell node_type={instance.node_type} />
+      </PageDetail>
+      <PageDetail label={t('Status')}>
+        <StatusCell
+          status={!instance.enabled ? 'disabled' : instance.errors ? 'error' : 'healthy'}
+        />
+      </PageDetail>
+      <PageDetail label={t('Used capacity')}>
+        <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
+      </PageDetail>
+      <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
+      <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
+      <PageDetail label={t('Policy type')}>
+        {instance.managed_by_policy ? t('Auto') : t('Manual')}
+      </PageDetail>
+      <PageDetail label={t('Memory')}>
+        <BytesCell bytes={instance.memory} />
+      </PageDetail>
+      <PageDetail label={t('Last health check')}>
+        <SinceCell value={instance.last_health_check} />
+      </PageDetail>
+      <PageDetail label={t('Created')}>
+        <SinceCell value={instance.created} />
+      </PageDetail>
+      <PageDetail label={t('Modified')}>
+        <SinceCell value={instance.modified} />
+      </PageDetail>
+    </PageDetails>
   );
 }

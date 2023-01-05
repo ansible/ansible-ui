@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-  ButtonVariant,
-  Chip,
-  ChipGroup,
-  DropdownPosition,
-  PageSection,
-} from '@patternfly/react-core';
+import { ButtonVariant, DropdownPosition, Label, LabelGroup } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,13 +18,13 @@ import {
   SinceCell,
   TextCell,
 } from '../../../../framework';
-import { Scrollable } from '../../../../framework/components/Scrollable';
-import { useSettings } from '../../../../framework/Settings';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { useControllerView } from '../../useControllerView';
+import { useRemoveUsersFromTeams } from '../users/hooks/useRemoveUsersFromTeams';
+import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersColumns, useUsersFilters } from '../users/Users';
 import { useTeamActions } from './hooks/useTeamActions';
 
@@ -70,59 +64,48 @@ function TeamDetailsTab(props: { team: Team }) {
   const { t } = useTranslation();
   const { team } = props;
   const history = useNavigate();
-  const settings = useSettings();
   return (
-    <Scrollable>
-      <PageSection
-        variant="light"
-        style={{
-          backgroundColor:
-            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-        }}
-      >
-        <PageDetails>
-          <PageDetail label={t('Name')}>{team.name}</PageDetail>
-          <PageDetail label={t('Description')}>{team.description}</PageDetail>
-          <PageDetail label={t('Organization')}>
-            <TextCell
-              text={team.summary_fields?.organization?.name}
-              to={RouteE.OrganizationDetails.replace(
+    <PageDetails>
+      <PageDetail label={t('Name')}>{team.name}</PageDetail>
+      <PageDetail label={t('Description')}>{team.description}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        <TextCell
+          text={team.summary_fields?.organization?.name}
+          to={RouteE.OrganizationDetails.replace(
+            ':id',
+            (team.summary_fields?.organization?.id ?? '').toString()
+          )}
+        />
+      </PageDetail>
+      <PageDetail label={t('Created')}>
+        <SinceCell
+          value={team.created}
+          author={team.summary_fields?.created_by?.username}
+          onClick={() =>
+            history(
+              RouteE.UserDetails.replace(
                 ':id',
-                (team.summary_fields?.organization?.id ?? '').toString()
-              )}
-            />
-          </PageDetail>
-          <PageDetail label={t('Created')}>
-            <SinceCell
-              value={team.created}
-              author={team.summary_fields?.created_by?.username}
-              onClick={() =>
-                history(
-                  RouteE.UserDetails.replace(
-                    ':id',
-                    (team.summary_fields?.created_by?.id ?? 0).toString()
-                  )
-                )
-              }
-            />
-          </PageDetail>
-          <PageDetail label={t('Last modified')}>
-            <SinceCell
-              value={team.modified}
-              author={team.summary_fields?.modified_by?.username}
-              onClick={() =>
-                history(
-                  RouteE.UserDetails.replace(
-                    ':id',
-                    (team.summary_fields?.modified_by?.id ?? 0).toString()
-                  )
-                )
-              }
-            />
-          </PageDetail>
-        </PageDetails>
-      </PageSection>
-    </Scrollable>
+                (team.summary_fields?.created_by?.id ?? 0).toString()
+              )
+            )
+          }
+        />
+      </PageDetail>
+      <PageDetail label={t('Last modified')}>
+        <SinceCell
+          value={team.modified}
+          author={team.summary_fields?.modified_by?.username}
+          onClick={() =>
+            history(
+              RouteE.UserDetails.replace(
+                ':id',
+                (team.summary_fields?.modified_by?.id ?? 0).toString()
+              )
+            )
+          }
+        />
+      </PageDetail>
+    </PageDetails>
   );
 }
 
@@ -132,55 +115,22 @@ function TeamAccessTab(props: { team: Team }) {
 
   const toolbarFilters = useUsersFilters();
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
-    () => [
-      {
-        type: PageActionType.button,
-        variant: ButtonVariant.primary,
-        icon: PlusIcon,
-        label: t('Add users'),
-        shortLabel: t('Add'),
-        onClick: () => null,
-      },
-      {
-        type: PageActionType.bulk,
-        variant: ButtonVariant.primary,
-        icon: MinusCircleIcon,
-        label: t('Remove selected users'),
-        shortLabel: t('Remove'),
-        onClick: () => null,
-      },
-    ],
-    [t]
-  );
-
-  // Table Columns
   const tableColumns = useUsersColumns();
   tableColumns.splice(1, 0, {
     header: t('Roles'),
     cell: (user) => (
-      <ChipGroup>
+      <LabelGroup>
         {user.summary_fields?.indirect_access?.map((access) => (
-          <Chip key={access.role.id} isReadOnly>
+          <Label
+            key={access.role.id}
+            color={user.is_superuser || user.is_system_auditor ? 'orange' : undefined}
+          >
             {access.role.name}
-          </Chip>
+          </Label>
         ))}
-      </ChipGroup>
+      </LabelGroup>
     ),
   });
-
-  // Row Actions
-  const rowActions = useMemo<IPageAction<User>[]>(
-    () => [
-      {
-        type: PageActionType.single,
-        icon: MinusCircleIcon,
-        label: t('Remove user'),
-        onClick: () => alert('TODO'),
-      },
-    ],
-    [t]
-  );
 
   const view = useControllerView<User>({
     url: `/api/v2/teams/${team.id}/access_list/`,
@@ -188,6 +138,50 @@ function TeamAccessTab(props: { team: Team }) {
     tableColumns,
     disableQueryString: true,
   });
+
+  const selectUsersAddTeams = useSelectUsersAddTeams(() => void view.refresh());
+  const removeUsersFromTeams = useRemoveUsersFromTeams();
+
+  const toolbarActions = useMemo<IPageAction<User>[]>(
+    () => [
+      {
+        type: PageActionType.button,
+        variant: ButtonVariant.primary,
+        icon: PlusIcon,
+        label: t('Add users'),
+        onClick: () => selectUsersAddTeams([team]),
+      },
+      {
+        type: PageActionType.bulk,
+        variant: ButtonVariant.primary,
+        icon: MinusCircleIcon,
+        label: t('Remove users'),
+        onClick: (users) => removeUsersFromTeams(users, [team], view.unselectItemsAndRefresh),
+      },
+    ],
+    [t, selectUsersAddTeams, team, removeUsersFromTeams, view.unselectItemsAndRefresh]
+  );
+
+  const rowActions = useMemo<IPageAction<User>[]>(
+    () => [
+      {
+        type: PageActionType.single,
+        icon: MinusCircleIcon,
+        label: t('Remove user'),
+        onClick: (user) => removeUsersFromTeams([user], [team], view.unselectItemsAndRefresh),
+        isDisabled: (user: User) => {
+          if (user.is_superuser) {
+            return t('System administrators have unrestricted access to all resources.');
+          }
+          if (user.is_system_auditor) {
+            return t('System auditors have read access to all resources.');
+          }
+          return undefined;
+        },
+      },
+    ],
+    [removeUsersFromTeams, t, team, view.unselectItemsAndRefresh]
+  );
 
   const history = useNavigate();
 
