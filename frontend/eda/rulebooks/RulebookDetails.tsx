@@ -1,13 +1,22 @@
-import { DropdownPosition } from '@patternfly/react-core';
+import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../framework';
-import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
+import {
+  PageDetail,
+  PageDetails,
+  PageActions,
+  PageBody,
+  PageHeader,
+  PageLayout,
+  PageTab,
+  PageTabs,
+} from '../../../framework';
+import { Scrollable } from '../../../framework';
 import { useGet } from '../../common/useItem';
 import { RouteE } from '../../Routes';
-import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { useRulebookActions } from './hooks/useRulebookActions';
-import { useRulebookColumns } from './hooks/useRulebookColumns';
+import { EdaRulebook } from '../interfaces/EdaRulebook';
+import { formatDateString } from '../../../framework/utils/formatDateString';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
@@ -15,8 +24,31 @@ export function RulebookDetails() {
   const { data: rulebook, mutate: refresh } = useGet<EdaRulebook>(
     `/api/rulebooks/${params.id ?? ''}`
   );
-  const tableColumns = useRulebookColumns();
-  const itemActions = useRulebookActions(refresh);
+  const itemActions = useRulebookActions(rulebook, refresh);
+
+  const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
+    return (
+      <Scrollable>
+        <PageSection variant="light">
+          <PageDetails>
+            <PageDetail label={t('Name')}>{rulebook?.name || ''}</PageDetail>
+            <PageDetail label={t('Description')}>{rulebook?.description || ''}</PageDetail>
+            <PageDetail label={t('Number of rule sets')}>
+              {rulebook?.ruleset_count || 'Git'}
+            </PageDetail>
+            <PageDetail label={t('Fire count')}>{rulebook?.fire_count || ''}</PageDetail>
+            <PageDetail label={t('Created')}>
+              {rulebook?.created_at ? formatDateString(rulebook.created_at) : ''}
+            </PageDetail>
+            <PageDetail label={t('Modified')}>
+              {rulebook?.modified_at ? formatDateString(rulebook.modified_at) : ''}
+            </PageDetail>
+          </PageDetails>
+        </PageSection>
+      </Scrollable>
+    );
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -33,7 +65,28 @@ export function RulebookDetails() {
           />
         }
       />
-      <PageDetailsFromColumns item={rulebook} columns={tableColumns} />
+      <Scrollable>
+        <PageBody>
+          {rulebook ? (
+            <PageTabs>
+              <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
+            </PageTabs>
+          ) : (
+            <PageTabs>
+              <PageTab>
+                <PageSection variant="light">
+                  <Stack hasGutter>
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                  </Stack>
+                </PageSection>
+              </PageTab>
+            </PageTabs>
+          )}
+        </PageBody>
+      </Scrollable>
     </PageLayout>
   );
 }

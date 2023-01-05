@@ -14,7 +14,6 @@ import { Projects } from './Resources/projects/Projects';
 import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
-import { EditRulebook } from './rulebooks/EditRulebook';
 import { RulebookDetails } from './rulebooks/RulebookDetails';
 import { Rulebooks } from './rulebooks/Rulebooks';
 import { EditRule } from './rules/EditRule';
@@ -98,9 +97,6 @@ export function EventDrivenRouter() {
         element={<UnderDevelopment />}
       />
       <Route path={RouteE.EdaActivities.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-
-      <Route path={RouteE.CreateEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
-      <Route path={RouteE.EditEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
       <Route
         path={RouteE.EdaRulebookDetails.replace(RouteE.Eda, '')}
         element={<RulebookDetails />}
