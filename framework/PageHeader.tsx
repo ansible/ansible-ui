@@ -89,17 +89,15 @@ export interface PageHeaderProps {
  * @param {ReactNode} headerActions - The actions for the page.
  *
  * @example
- * <Page>
- *   <PageLayout>
- *     <PageHeader
- *       breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
- *       title='Page title'
- *       description='Page description'
- *       headerActions={<TypedActions actions={actions} />}
- *     />
- *     <PageBody />...</PageBody>
- *   </PageLayout>
- * <Page>
+ * <PageLayout>
+ *   <PageHeader
+ *     breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
+ *     title='Page title'
+ *     description='Page description'
+ *     headerActions={<TypedActions actions={actions} />}
+ *   />
+ *   ...
+ * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
   const { navigation, breadcrumbs, title, description, controls, headerActions } = props;

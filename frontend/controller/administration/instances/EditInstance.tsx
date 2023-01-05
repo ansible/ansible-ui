@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
-import { PageBody, PageHeader, PageLayout } from '../../../../framework';
+import { PageHeader, PageLayout } from '../../../../framework';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { requestGet, requestPatch, swrOptions } from '../../../Data';
@@ -77,21 +77,19 @@ export function EditInstance() {
             { label: instance.hostname },
           ]}
         />
-        <PageBody>
-          <PageForm
-            schema={EditInstanceSchema}
-            submitText={t('Save instance')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={{
-              capacity_adjustment: Number(instance.capacity_adjustment),
-              enabled: instance.enabled,
-            }}
-          >
-            <PageFormSchema schema={EditInstanceSchema} />
-          </PageForm>
-        </PageBody>
+        <PageForm
+          schema={EditInstanceSchema}
+          submitText={t('Save instance')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={{
+            capacity_adjustment: Number(instance.capacity_adjustment),
+            enabled: instance.enabled,
+          }}
+        >
+          <PageFormSchema schema={EditInstanceSchema} />
+        </PageForm>
       </PageLayout>
     );
   }
