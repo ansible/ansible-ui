@@ -1,0 +1,2 @@
+# Ignore generated interfaces
+frontend/controller/interfaces/generated-from-swagger
