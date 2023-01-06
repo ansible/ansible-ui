@@ -5,7 +5,6 @@ import { useController, useFormContext } from 'react-hook-form';
 export function PageFormCheckbox(props: {
   label: string;
   name: string;
-  helperText?: string;
   required?: boolean;
   description?: ReactNode;
   body?: ReactNode;

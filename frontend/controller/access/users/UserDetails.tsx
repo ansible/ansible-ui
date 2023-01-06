@@ -1,12 +1,5 @@
-import {
-  Alert,
-  ButtonVariant,
-  Divider,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Stack,
-} from '@patternfly/react-core';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Alert, ButtonVariant, Divider, DropdownPosition } from '@patternfly/react-core';
 import { EditIcon, MinusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +28,7 @@ import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemov
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations';
 import { Role } from '../roles/Role';
+import { RolesForm } from '../roles/RoleForm';
 import { useRolesColumns, useRolesFilters } from '../roles/Roles';
 import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
@@ -86,46 +80,23 @@ export function UserDetailsPage() {
           <PageActions<User> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      {user ? (
-        <PageTabs
-        // preComponents={
-        //     <Button variant="plain">
-        //         <CaretLeftIcon /> &nbsp;Back to users
-        //     </Button>
-        // }
-        // postComponents={
-        //     <Button variant="plain">
-        //         <CaretLeftIcon /> &nbsp;Back to users
-        //     </Button>
-        // }
-        >
-          <PageTab label={t('Details')}>
-            <UserDetails user={user} />
-          </PageTab>
-          <PageTab label={t('Organizations')}>
-            <UserOrganizations user={user} />
-          </PageTab>
-          <PageTab label={t('Teams')}>
-            <UserTeams user={user} />
-          </PageTab>
-          <PageTab label={t('Roles')}>
-            <UserRoles user={user} />
-          </PageTab>
-        </PageTabs>
-      ) : (
-        <PageTabs>
-          <PageTab>
-            <PageSection variant="light">
-              <Stack hasGutter>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-              </Stack>
-            </PageSection>
-          </PageTab>
-        </PageTabs>
-      )}
+      <PageTabs loading={!user}>
+        <PageTab label={t('Details')}>
+          <UserDetails user={user!} />
+        </PageTab>
+        <PageTab label={t('Organizations')}>
+          <UserOrganizations user={user!} />
+        </PageTab>
+        <PageTab label={t('Teams')}>
+          <UserTeams user={user!} />
+        </PageTab>
+        <PageTab label={t('Roles')}>
+          <UserRoles user={user!} />
+        </PageTab>
+        <PageTab label="TEST">
+          <RolesForm />
+        </PageTab>
+      </PageTabs>
     </PageLayout>
   );
 }

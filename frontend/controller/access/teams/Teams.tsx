@@ -25,9 +25,21 @@ export function Teams() {
       <PageHeader
         title={t('Teams')}
         titleHelpTitle={t('Team')}
-        titleHelp={t('teams.title.help')}
+        titleHelp={[
+          t(
+            'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+          ),
+          t(
+            'Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations.'
+          ),
+          t(
+            'For instance, permissions may be granted to a whole Team rather than each user on the Team.'
+          ),
+        ]}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
-        description={t('teams.title.description')}
+        description={t(
+          'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+        )}
         navigation={<AccessNav active="teams" />}
         headerActions={<PageActions actions={headerActions} iconOnly collapse="never" />}
       />
