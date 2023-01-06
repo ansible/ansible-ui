@@ -146,9 +146,9 @@ interface IUserInput {
   password: string;
   confirmPassword: string;
   username: string;
-  lastName: string;
-  firstName: string;
-  email: string;
+  lastName: string | null;
+  firstName: string | null;
+  email: string | null;
   userType: string;
 }
 
