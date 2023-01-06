@@ -21,13 +21,13 @@ import { DetailInfo } from '../../../../framework/components/DetailInfo';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
+import { Role } from '../../interfaces/Role';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { useControllerView } from '../../useControllerView';
 import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations';
-import { Role } from '../roles/Role';
 import { RolesForm } from '../roles/RoleForm';
 import { useRolesColumns, useRolesFilters } from '../roles/Roles';
 import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers';
@@ -195,7 +195,7 @@ function UserOrganizations(props: { user: User }) {
           style={{ border: 0 }}
         />
       )}
-      <DetailInfo disablePaddingTop={user.is_superuser}>
+      <DetailInfo disablePaddingTop={user.is_superuser === true}>
         {t(
           'Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.'
         )}
@@ -268,7 +268,7 @@ function UserTeams(props: { user: User }) {
           style={{ border: 0 }}
         />
       )}
-      <DetailInfo disablePaddingTop={user.is_superuser}>
+      <DetailInfo disablePaddingTop={user.is_superuser === true}>
         {t('Being a team member grants the user all the permissions of the team.')}
       </DetailInfo>
       <Divider />
