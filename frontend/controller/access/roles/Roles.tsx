@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
 import { RouteE } from '../../../Routes';
-import { Role } from './Role';
+import { Role } from '../../interfaces/Role';
 
 export function useRolesFilters() {
   const { t } = useTranslation();
