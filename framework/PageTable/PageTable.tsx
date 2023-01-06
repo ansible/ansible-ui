@@ -711,7 +711,7 @@ export interface ITableColumnTypeDateTime<T extends object> extends ITableColumn
 
 export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
   type: 'description';
-  value: CellFn<T, string | undefined>;
+  value: CellFn<T, string | undefined | null>;
 }
 
 export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {

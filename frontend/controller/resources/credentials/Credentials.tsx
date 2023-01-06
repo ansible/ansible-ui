@@ -133,6 +133,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
     ...options,
     onClick: nameClick,
   });
+
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);

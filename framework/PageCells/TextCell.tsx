@@ -7,7 +7,7 @@ import { usePageNavigate } from '../components/usePageNavigate';
 export interface TextCellProps {
   icon?: ReactNode;
   iconSize?: 'sm' | 'md' | 'lg';
-  text?: string;
+  text?: string | null;
   to?: string;
   onClick?: () => void;
   color?: PFColor;
