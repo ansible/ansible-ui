@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageForm, PageFormSelectOption } from '../../../../framework';
+import { PageForm, PageFormSelectOption, useBulkActionDialog } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -10,33 +10,58 @@ import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
+interface UserRole {
+  index: number;
+  user: User;
+  resource: { name: string };
+  roleId: number;
+  roleName: string;
+}
+
 export function AddRolesToUsersForm(props: { users: User[]; onClose?: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  // const openBulkActionDialog = useBulkActionDialog();
+  const openBulkActionDialog = useBulkActionDialog<UserRole>();
   return (
     <PageForm
-      onSubmit={async (input: Record<string, boolean>, setError) => {
-        // openBulkActionDialog({ items: [] });
-        try {
-          for (const key in input) {
-            if (!key.endsWith('_role')) continue;
-            const enabled = (input as unknown as Record<string, boolean>)[key];
-            if (!enabled === true) continue;
-            for (const user of props.users)
-              await requestPost(`/api/v2/users/${user.id}/roles/`, {
-                id: (
-                  input.resource.summary_fields.object_roles as unknown as Record<
-                    string,
-                    { id: number }
-                  >
-                )[key].id,
-              });
-          }
-          props.onClose?.();
-        } catch (err) {
-          setError(err instanceof Error ? err.message : t('Unknown error'));
+      onSubmit={(
+        input: Record<string, boolean> & {
+          resource: { summary_fields: { object_roles: Record<string, { id: number }> } };
         }
+      ) => {
+        const userRoles: UserRole[] = [];
+        let index = 0;
+        for (const key in input) {
+          if (!key.endsWith('_role')) continue;
+          const enabled = (input as unknown as Record<string, boolean>)[key];
+          if (!enabled === true) continue;
+          for (const user of props.users)
+            userRoles.push({
+              index: index++,
+              user,
+              resource: input.resource as unknown as { name: string },
+              roleId: input.resource.summary_fields.object_roles[key].id,
+              roleName: key,
+            });
+        }
+
+        openBulkActionDialog({
+          title: t('Adding roles'),
+          items: userRoles,
+          keyFn: (userRole) => userRole.index,
+          actionColumns: [
+            { header: t('User'), cell: (userRole) => userRole.user.username },
+            { header: t('Resource'), cell: (userRole) => userRole.resource.name },
+            { header: t('Role'), cell: (userRole) => userRole.roleName },
+          ],
+          actionFn: (userRole) =>
+            requestPost(`/api/v2/users/${userRole.user.id}/roles/`, {
+              id: userRole.roleId,
+            }),
+          onClose: props.onClose,
+        });
+
+        return Promise.resolve();
       }}
       onCancel={() => navigate(-1)}
       submitText={t('Submit')}
