@@ -4,15 +4,16 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
 import Debug from '../common/Debug';
 import { RouteE } from '../Routes';
-import { OrganizationDetails } from './access/organizations/OrganizationDetails';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
+import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
-import { TeamDetails } from './access/teams/TeamDetails';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
+import { AddRolesToTeam } from './access/teams/TeamPage/AddRolesToTeam';
+import { TeamPage } from './access/teams/TeamPage/TeamPage';
 import { Teams } from './access/teams/Teams';
-import { AddRolesToUser } from './access/users/AddRolesToUser';
-import { UserDetailsPage } from './access/users/UserDetails';
 import { CreateUser, EditUser } from './access/users/UserForm';
+import { AddRolesToUser } from './access/users/UserPage/AddRolesToUser';
+import { UserPage } from './access/users/UserPage/UserPage';
 import { Users } from './access/users/Users';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
@@ -71,7 +72,7 @@ export function ControllerRouter() {
         />
         <Route
           path={RouteE.OrganizationDetails.replace(RouteE.Controller, '')}
-          element={<OrganizationDetails />}
+          element={<OrganizationPage />}
         />
         <Route
           path={RouteE.CreateOrganization.replace(RouteE.Controller, '')}
@@ -83,21 +84,21 @@ export function ControllerRouter() {
         />
 
         <Route path={RouteE.Users.replace(RouteE.Controller, '')} element={<Users />} />
-        <Route
-          path={RouteE.UserDetails.replace(RouteE.Controller, '')}
-          element={<UserDetailsPage />}
-        />
+        <Route path={RouteE.UserDetails.replace(RouteE.Controller, '')} element={<UserPage />} />
         <Route path={RouteE.CreateUser.replace(RouteE.Controller, '')} element={<CreateUser />} />
         <Route path={RouteE.EditUser.replace(RouteE.Controller, '')} element={<EditUser />} />
-
-        <Route path={RouteE.Teams.replace(RouteE.Controller, '')} element={<Teams />} />
-        <Route path={RouteE.TeamDetails.replace(RouteE.Controller, '')} element={<TeamDetails />} />
-        <Route path={RouteE.CreateTeam.replace(RouteE.Controller, '')} element={<CreateTeam />} />
-        <Route path={RouteE.EditTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
-
         <Route
           path={RouteE.AddRolesToUser.replace(RouteE.Controller, '')}
           element={<AddRolesToUser />}
+        />
+
+        <Route path={RouteE.Teams.replace(RouteE.Controller, '')} element={<Teams />} />
+        <Route path={RouteE.TeamDetails.replace(RouteE.Controller, '')} element={<TeamPage />} />
+        <Route path={RouteE.CreateTeam.replace(RouteE.Controller, '')} element={<CreateTeam />} />
+        <Route path={RouteE.EditTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
+        <Route
+          path={RouteE.AddRolesToTeam.replace(RouteE.Controller, '')}
+          element={<AddRolesToTeam />}
         />
 
         {/* <Route path={RouteE.CredentialTypes} element={<CredentialTypes />} /> */}
