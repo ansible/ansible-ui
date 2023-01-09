@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, TextCell, useBulkConfirmation } from '../../../../../framework';
 import { getItemKey, requestDelete } from '../../../../Data';
 import { User } from '../../../interfaces/User';
-import { useUsersColumns } from '../Users';
+import { useUsersColumns } from './useUsersColumns';
 
 export function useDeleteUsers(onComplete: (users: User[]) => void) {
   const { t } = useTranslation();

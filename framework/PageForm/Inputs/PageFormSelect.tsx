@@ -16,6 +16,7 @@ export function PageFormSelect(props: PageFormSelectProps) {
     <Controller
       name={props.name}
       control={control}
+      shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupSelect
           {...props}

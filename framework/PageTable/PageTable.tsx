@@ -716,7 +716,7 @@ export interface ITableColumnTypeDescription<T extends object> extends ITableCol
 
 export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
   type: 'text';
-  value: CellFn<T, string | undefined>;
+  value: CellFn<T, string | null | undefined>;
 }
 
 export type ITableColumn<T extends object> =

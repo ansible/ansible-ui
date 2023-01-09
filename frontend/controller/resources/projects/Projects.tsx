@@ -30,7 +30,7 @@ import {
 } from '../../common/controller-toolbar-filters';
 import { Project } from '../../interfaces/Project';
 import { useControllerView } from '../../useControllerView';
-import { useDeleteProjects } from './useDeleteProjects';
+import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function Projects() {
   const { t } = useTranslation();

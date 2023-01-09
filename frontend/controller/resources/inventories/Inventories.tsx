@@ -25,9 +25,9 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters';
+import { Inventory } from '../../interfaces/Inventory';
 import { useControllerView } from '../../useControllerView';
-import { Inventory } from './Inventory';
-import { useDeleteInventories } from './useDeleteInventories';
+import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function Inventories() {
   const { t } = useTranslation();
