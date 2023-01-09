@@ -11,6 +11,7 @@ import {
   Http2ServerResponse,
 } from 'http2';
 import { Socket } from 'net';
+import { exit } from 'process';
 import selfsigned from 'selfsigned';
 import { TLSSocket } from 'tls';
 import { HTTP2_HEADER_CONTENT_LENGTH } from './constants';
@@ -172,23 +173,18 @@ export async function stopServer(): Promise<void> {
 
   if (server?.listening) {
     logger.debug({ msg: 'closing server' });
-    // if (process.env.NODE_ENV === 'production') {
-    //     logger.info({ msg: 'waiting 25 seconds before closing the server' })
-    //     await new Promise<void>((resolve) =>
-    //         setTimeout(
-    //             () =>
-    //                 server?.close((err: Error | undefined) => {
-    //                     if (err) {
-    //                         logger.error({ msg: 'server close error', name: err.name, error: err.message })
-    //                     } else {
-    //                         logger.debug({ msg: 'server closed' })
-    //                     }
-    //                     resolve()
-    //                 }),
-    //             25 * 1000
-    //         )
-    //     )
-    // } else {
+
+    setTimeout(() => {
+      logger.error({ msg: 'server did not close after 60 seconds. killing process' });
+      exit(1);
+    }, 60 * 1000).unref();
+
+    const delay = Number(process.env.CLOSE_DELAY);
+    if (Number.isInteger(delay) && delay > 0) {
+      logger.info({ msg: `waiting ${delay} seconds before closing the server` });
+      await new Promise<void>((resolve) => setTimeout(resolve, delay * 1000));
+    }
+
     await new Promise<void>((resolve) =>
       server?.close((err: Error | undefined) => {
         if (err) {
@@ -199,6 +195,5 @@ export async function stopServer(): Promise<void> {
         resolve();
       })
     );
-    // }
   }
 }
