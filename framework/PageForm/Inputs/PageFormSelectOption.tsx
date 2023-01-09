@@ -1,14 +1,15 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, Validate } from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption';
 
 export type PageFormSelectOptionProps<T> = {
   name: string;
+  validate?: Validate<string> | Record<string, Validate<string>>;
 } & Omit<FormGroupSelectOptionProps<T>, 'onSelect' | 'value'>;
 
 /**  Select wrapper for use with react-hook-form */
 export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
-  const { label, isRequired } = props;
+  const { label, isRequired, validate } = props;
   const {
     control,
     formState: { isSubmitting },
@@ -36,6 +37,7 @@ export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
             : isRequired,
+        validate: validate,
       }}
     />
   );
