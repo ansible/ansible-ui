@@ -28,8 +28,9 @@ import {
   useOrganizationToolbarFilter,
 } from '../../common/controller-toolbar-filters';
 import { useControllerView } from '../../useControllerView';
-import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
+import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
+
+import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
