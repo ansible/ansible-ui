@@ -4,7 +4,7 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { useItem } from '../../../common/useItem';
 import { User } from '../../interfaces/User';
-import { AddRolesToUsersForm } from '../roles/UserRolesForm';
+import { AddRolesToUsersForm } from '../roles/AddRolesToUsersForm';
 
 export function AddRolesToUser() {
   const { t } = useTranslation();

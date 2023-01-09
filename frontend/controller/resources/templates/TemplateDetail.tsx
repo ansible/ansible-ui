@@ -28,7 +28,7 @@ import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { Template } from '../../interfaces/Template';
-import { useDeleteTemplates } from './useDeleteTemplates';
+import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function TemplateDetail() {
   const { t } = useTranslation();

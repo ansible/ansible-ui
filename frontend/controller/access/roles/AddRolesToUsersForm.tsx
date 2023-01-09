@@ -8,6 +8,9 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { requestPost } from '../../../Data';
 import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
+import { PageFormInventorySelect } from '../../resources/inventories/components/PageFormInventorySelect';
+import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
+import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
 interface UserRole {
@@ -120,7 +123,7 @@ function UserJobTemplateRole() {
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'job-template'}>
-      <PageFormCredentialSelect name="jobTemplateName" credentialPath="resource" />
+      <PageFormJobTemplateSelect name="jobTemplateName" jobTemplatePath="resource" />
       <PageFormSection title={t('Permissions')}>
         <PageFormCheckbox
           name="admin_role"
@@ -146,7 +149,7 @@ function UserWorkflowJobTemplateRole() {
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'workflow-job-template'}>
-      <PageFormCredentialSelect name="workflowJobTemplateName" credentialPath="resource" />
+      <PageFormJobTemplateSelect name="workflowJobTemplateName" jobTemplatePath="resource" />
       <PageFormSection title={t('Permissions')}>
         <PageFormCheckbox
           name="admin_role"
@@ -177,7 +180,7 @@ function UserInventoryRole() {
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'inventory'}>
-      <PageFormCredentialSelect name="inventoryName" credentialPath="resource" />
+      <PageFormInventorySelect name="inventoryName" inventoryPath="resource" />
       <PageFormSection title={t('Permissions')}>
         <PageFormCheckbox
           name="admin_role"
@@ -213,7 +216,7 @@ function UserProjectRole() {
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'project'}>
-      <PageFormCredentialSelect name="projectName" credentialPath="resource" />
+      <PageFormProjectSelect name="projectName" projectPath="resource" />
       <PageFormSection title={t('Permissions')}>
         <PageFormCheckbox
           name="admin_role"
