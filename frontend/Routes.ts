@@ -49,16 +49,17 @@ export enum RouteE {
   CreateOrganization = '/controller/organizations/create',
   EditOrganization = '/controller/organizations/edit/:id',
 
+  Teams = '/controller/teams',
+  TeamDetails = '/controller/teams/:id/details',
+  CreateTeam = '/controller/teams/create',
+  EditTeam = '/controller/teams/:id/edit',
+  AddRolesToTeam = '/controller/teams/:id/roles/add',
+
   Users = '/controller/users',
   UserDetails = '/controller/users/:id/details',
   CreateUser = '/controller/users/create',
   EditUser = '/controller/users/:id/edit',
   AddRolesToUser = '/controller/users/:id/roles/add',
-
-  Teams = '/controller/teams',
-  TeamDetails = '/controller/teams/details/:id',
-  CreateTeam = '/controller/teams/create',
-  EditTeam = '/controller/teams/edit/:id',
 
   // Administration
   CredentialTypes = '/controller/credential-types',

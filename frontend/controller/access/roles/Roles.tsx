@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { Role } from '../../interfaces/Role';
+import { IRoles, useRolesMetadata } from './useRoleMetadata';
 
 export function useRolesFilters() {
   const { t } = useTranslation();
@@ -22,6 +23,8 @@ export function useRolesFilters() {
 
 export function useRolesColumns() {
   const { t } = useTranslation();
+  const rolesMetadata = useRolesMetadata();
+
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
       {
@@ -51,43 +54,31 @@ export function useRolesColumns() {
         list: 'subtitle',
       },
       {
-        header: t('User role'),
+        header: t('Role'),
         cell: (role) => <TextCell text={role.name} />,
         list: 'secondary',
       },
       {
         header: t('Description'),
         cell: (role) => {
-          switch (role.summary_fields.resource_type) {
-            case 'credential':
-              switch (role.name) {
-                case 'Admin':
-                  return <TextCell text={t('Can manage all aspects of the credential')} />;
-                case 'Read':
-                  return <TextCell text={t('May view settings for the credential')} />;
-                case 'Use':
-                  return <TextCell text={t('Can use the credential in a job template')} />;
-              }
-              break;
-            case 'organization':
-              switch (role.name) {
-                case 'Member':
-                  return <TextCell text={t('Has all the permissions of the organization')} />;
-              }
-              break;
-            case 'team':
-              switch (role.name) {
-                case 'Member':
-                  return <TextCell text={t('Has all the permissions of the team')} />;
-              }
-              break;
+          if (!role.summary_fields.resource_type) return;
+          const roles = (rolesMetadata as Record<string, IRoles>)[
+            role.summary_fields.resource_type
+          ];
+          if (roles) {
+            const roleMetadata = Object.values(roles).find(
+              (roleMetadata) => roleMetadata.id === role.name
+            );
+            if (roleMetadata) {
+              return <TextCell text={roleMetadata.description} />;
+            }
           }
         },
         card: 'description',
         list: 'description',
       },
     ],
-    [t]
+    [rolesMetadata, t]
   );
   return tableColumns;
 }
