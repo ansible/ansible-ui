@@ -1,28 +1,165 @@
-import { DropdownPosition } from '@patternfly/react-core';
+import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../framework';
-import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
+import {
+  PageActions,
+  PageBody,
+  PageDetail,
+  PageDetails,
+  PageHeader,
+  PageLayout,
+  PageTab,
+  PageTable,
+  PageTabs,
+  Scrollable,
+  useInMemoryView,
+} from '../../../framework';
 import { useGet } from '../../common/useItem';
 import { RouteE } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
-import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
+import { useActivationActionColumns } from './hooks/useActivationActionColumns';
+import { formatDateString } from '../../../framework/utils/formatDateString';
+import { EdaJob } from '../interfaces/EdaJob';
+import { useActivationActionsActions } from './hooks/useActivationActionsActions';
+import { useActivationActionFilters } from './hooks/useActivationActionFilters';
+import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
-    `/api/activation_instances/${params.id ?? ''}`
+    `/api/activations/${params.id ?? ''}`
   );
-  const tableColumns = useRulebookActivationColumns();
   const itemActions = useRulebookActivationActions(refresh);
+
+  const renderActivationDetailsTab = (
+    rulebookActivation: EdaRulebookActivation | undefined
+  ): JSX.Element => {
+    return (
+      <Scrollable>
+        <PageSection variant="light">
+          <PageDetails>
+            <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
+            <PageDetail label={t('Description')}>
+              {rulebookActivation?.description || ''}
+            </PageDetail>
+            <PageDetail label={t('Inventory')}>{rulebookActivation?.inventory?.name}</PageDetail>
+            <PageDetail label={t('Execution environment')}>
+              {rulebookActivation?.execution_environment || ''}
+            </PageDetail>
+            <PageDetail label={t('Rulebook')}>{rulebookActivation?.rulebook?.name}</PageDetail>
+            <PageDetail label={t('Restart policy')}>
+              {rulebookActivation?.restart_policy || ''}
+            </PageDetail>
+            <PageDetail label={t('Project')}>{rulebookActivation?.project?.name || ''}</PageDetail>
+            <PageDetail label={t('Working directory')}>
+              {rulebookActivation?.working_directory || ''}
+            </PageDetail>
+            <PageDetail label={t('Activation status')}>
+              {rulebookActivation?.status || ''}
+            </PageDetail>
+            <PageDetail label={t('Throttle')}>{rulebookActivation?.throttle || ''}</PageDetail>
+            <PageDetail label={t('Variables template')}>
+              {rulebookActivation?.variables_template || ''}
+            </PageDetail>
+            <PageDetail label={t('Last restarted')}>
+              {rulebookActivation?.last_restarted
+                ? formatDateString(rulebookActivation.last_restarted)
+                : ''}
+            </PageDetail>
+            <PageDetail label={t('Restarted count')}>
+              {rulebookActivation?.restarted_count || 0}
+            </PageDetail>
+            <PageDetail label={t('Created')}>
+              {rulebookActivation?.created_at
+                ? formatDateString(rulebookActivation?.created_at)
+                : ''}
+            </PageDetail>
+            <PageDetail label={t('Modified')}>
+              {rulebookActivation?.modified_at
+                ? formatDateString(rulebookActivation?.modified_at)
+                : ''}
+            </PageDetail>
+          </PageDetails>
+        </PageSection>
+      </Scrollable>
+    );
+  };
+
+  function ActivationActionsTab() {
+    const _params = useParams<{ id: string }>();
+    const { t } = useTranslation();
+    const toolbarFilters = useActivationActionFilters();
+    const tableColumns = useActivationActionColumns();
+
+    function useGetActivationActions(id: string) {
+      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+    }
+
+    const { data: actions } = useGetActivationActions('8' || '');
+
+    const view = useInMemoryView<EdaJob>({
+      items: actions,
+      tableColumns,
+      toolbarFilters,
+      keyFn: (item) => item?.id,
+    });
+
+    const rowActions = useActivationActionsActions();
+    return (
+      <PageLayout>
+        <PageTable
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading actions')}
+          emptyStateTitle={t('No actions yet')}
+          emptyStateDescription={t('No actions for this rulebook activation')}
+          {...view}
+          defaultSubtitle={t('Rulebook activation')}
+        />
+      </PageLayout>
+    );
+  }
+
+  function ActivationHistoryTab() {
+    const params = useParams<{ id: string }>();
+    const { t } = useTranslation();
+    const toolbarFilters = useActivationActionFilters();
+
+    function useGetActivationHistory(id: string) {
+      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+    }
+    const { data: actions } = useGetActivationHistory(params?.id || '');
+    const tableColumns = useActivationHistoryColumns();
+    const view = useInMemoryView<EdaJob>({
+      items: actions,
+      tableColumns,
+      toolbarFilters,
+      keyFn: (item) => item?.id,
+    });
+    return (
+      <PageLayout>
+        <PageTable
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          errorStateTitle={t('Error loading history')}
+          emptyStateTitle={t('No actions history')}
+          emptyStateDescription={t('No actions history  for this rulebook activation')}
+          {...view}
+          defaultSubtitle={t('Rulebook activation history')}
+        />
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout>
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteE.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={
@@ -33,7 +170,36 @@ export function RulebookActivationDetails() {
           />
         }
       />
-      <PageDetailsFromColumns item={rulebookActivation} columns={tableColumns} />
+      <Scrollable>
+        <PageBody>
+          {rulebookActivation ? (
+            <PageTabs>
+              <PageTab label={t('Details')}>
+                {renderActivationDetailsTab(rulebookActivation)}
+              </PageTab>
+              <PageTab label={t('Actions')}>
+                <ActivationActionsTab />
+              </PageTab>
+              <PageTab label={t('History')}>
+                <ActivationHistoryTab />
+              </PageTab>
+            </PageTabs>
+          ) : (
+            <PageTabs>
+              <PageTab>
+                <PageSection variant="light">
+                  <Stack hasGutter>
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                  </Stack>
+                </PageSection>
+              </PageTab>
+            </PageTabs>
+          )}
+        </PageBody>
+      </Scrollable>
     </PageLayout>
   );
 }

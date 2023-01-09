@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../Data';
-import { idKeyFn } from '../../../hub/useHubView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
@@ -25,13 +24,13 @@ export function useDeleteRulebookActivations(
         ),
         actionButtonText: t('Delete rulebookActivations', { count: rulebookActivations.length }),
         items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
-        keyFn: idKeyFn,
+        keyFn: (item) => item?.id,
         isDanger: true,
         confirmationColumns,
         actionColumns,
         onComplete,
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          requestDelete(`/api/activation_instances/${rulebookActivation.id}`),
+          requestDelete(`/api/activations/${rulebookActivation.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
