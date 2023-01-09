@@ -1,26 +1,40 @@
-import { Checkbox } from '@patternfly/react-core';
-import { ReactNode } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { Checkbox, CheckboxProps } from '@patternfly/react-core';
+import { Controller, useFormContext, Validate } from 'react-hook-form';
 
-export function PageFormCheckbox(props: {
-  label: string;
+export type PageFormCheckboxProps = {
+  id?: string;
   name: string;
-  required?: boolean;
-  description?: ReactNode;
-  body?: ReactNode;
-}) {
-  const { control } = useFormContext();
-  const { field } = useController({ control, name: props.name });
-  const id = props.name;
+  validate?: Validate<string> | Record<string, Validate<string>>;
+} & Omit<CheckboxProps, 'id' | 'onChange' | 'value'>;
+
+/** PatternFly Checkbox wrapper for use with react-hook-form */
+export function PageFormCheckbox(props: PageFormCheckboxProps) {
+  const { name, readOnly, validate } = props;
+  const {
+    control,
+    formState: { isSubmitting },
+  } = useFormContext();
+
   return (
-    <Checkbox
-      label={props.label}
-      id={id}
-      aria-describedby={`${id}-helper`}
-      description={props.description}
-      body={field.value ? props.body : undefined}
-      {...field}
-      isChecked={!!field.value}
+    <Controller
+      name={name}
+      control={control}
+      shouldUnregister
+      render={({ field: { onChange, value } }) => {
+        return (
+          <Checkbox
+            {...props}
+            id={props.id ?? name.split('.').join('-')}
+            isChecked={!!value}
+            onChange={onChange}
+            readOnly={readOnly || isSubmitting}
+            minLength={undefined}
+            maxLength={undefined}
+            ref={undefined}
+          />
+        );
+      }}
+      rules={{ validate }}
     />
   );
 }

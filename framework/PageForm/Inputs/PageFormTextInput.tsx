@@ -38,6 +38,7 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
     <Controller
       name={name}
       control={control}
+      shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <FormGroupTextInput

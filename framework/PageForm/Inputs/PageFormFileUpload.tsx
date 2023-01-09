@@ -25,6 +25,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
     <Controller
       name={props.name}
       control={control}
+      shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const handleClear = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           setFilename('');

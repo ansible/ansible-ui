@@ -53,6 +53,7 @@ export enum RouteE {
   UserDetails = '/controller/users/details/:id',
   CreateUser = '/controller/users/create',
   EditUser = '/controller/users/edit/:id',
+  AddRolesToUser = '/controller/users/:id/roles/add',
 
   Teams = '/controller/teams',
   TeamDetails = '/controller/teams/details/:id',

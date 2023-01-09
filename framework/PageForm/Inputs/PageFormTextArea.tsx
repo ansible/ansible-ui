@@ -21,6 +21,7 @@ export function PageFormTextArea(props: PageFormTextAreaProps) {
     <Controller
       name={name}
       control={control}
+      shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupTextArea
           {...props}

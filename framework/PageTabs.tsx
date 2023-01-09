@@ -17,6 +17,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+import { useSettings } from './Settings';
 
 export function PageTabs(props: {
   children: ReactNode;
@@ -30,6 +31,7 @@ export function PageTabs(props: {
     (_, key: string | number) => setActiveKey(key as number),
     [setActiveKey]
   );
+  const settings = useSettings();
   const children = Children.toArray(props.children);
   const tabs = children.map((child, index) => {
     if (isValidElement(child)) {

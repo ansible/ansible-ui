@@ -22,7 +22,6 @@ export function useRolesFilters() {
 
 export function useRolesColumns() {
   const { t } = useTranslation();
-
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
       {
@@ -41,22 +40,54 @@ export function useRolesColumns() {
             }
           />
         ),
-        sort: 'role.summary_fields.resource_name',
+        sort: 'id',
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Resource type'),
         cell: (role) => <TextCell text={role.summary_fields.resource_type_display_name} />,
         sort: 'role.summary_fields.resource_type_display_name',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('User role'),
-        cell: (role) => (
-          <TextCell
-            text={role.name}
-            // to={RouteE.OrganizationDetails.replace(':id', role.summary_fields.resource_id.toString())}
-          />
-        ),
+        cell: (role) => <TextCell text={role.name} />,
         sort: 'name',
+        list: 'secondary',
+      },
+      {
+        header: t('Description'),
+        cell: (role) => {
+          switch (role.summary_fields.resource_type) {
+            case 'credential':
+              switch (role.name) {
+                case 'Admin':
+                  return <TextCell text={t('Can manage all aspects of the credential')} />;
+                case 'Read':
+                  return <TextCell text={t('May view settings for the credential')} />;
+                case 'Use':
+                  return <TextCell text={t('Can use the credential in a job template')} />;
+              }
+              break;
+            case 'organization':
+              switch (role.name) {
+                case 'Member':
+                  return <TextCell text={t('Has all the permissions of the organization')} />;
+              }
+              break;
+            case 'team':
+              switch (role.name) {
+                case 'Member':
+                  return <TextCell text={t('Has all the permissions of the team')} />;
+              }
+              break;
+          }
+        },
+        sort: 'name',
+        card: 'description',
+        list: 'description',
       },
     ],
     [t]

@@ -1,4 +1,4 @@
-import { ButtonVariant, Chip, ChipGroup, Label } from '@patternfly/react-core';
+import { ButtonVariant } from '@patternfly/react-core';
 import {
   EditIcon,
   MinusCircleIcon,
@@ -11,21 +11,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
-  ITableColumn,
-  IToolbarFilter,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
-  SinceCell,
-  TextCell,
 } from '../../../../framework';
 import { RouteE } from '../../../Routes';
-import {
-  useFirstNameToolbarFilter,
-  useLastNameToolbarFilter,
-  useUsernameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
 import { User } from '../../interfaces/User';
 import { useControllerView } from '../../useControllerView';
 import { AccessNav } from '../common/AccessNav';
@@ -34,6 +25,8 @@ import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSel
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
 import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUsers';
 import { useDeleteUsers } from './hooks/useDeleteUsers';
+import { useUsersColumns } from './hooks/useUsersColumns';
+import { useUsersFilters } from './hooks/useUsersFilters';
 
 export function Users() {
   const { t } = useTranslation();
@@ -251,96 +244,5 @@ export function AccessTable(props: { url: string }) {
       emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
       {...view}
     />
-  );
-}
-
-export function useUsersFilters() {
-  const { t } = useTranslation();
-  const usernameToolbarFilter = useUsernameToolbarFilter();
-  const firstnameByToolbarFilter = useFirstNameToolbarFilter();
-  const lastnameToolbarFilter = useLastNameToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      usernameToolbarFilter,
-      firstnameByToolbarFilter,
-      lastnameToolbarFilter,
-      {
-        key: 'email',
-        label: t('Email'),
-        type: 'string',
-        query: 'email__icontains',
-      },
-    ],
-    [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, t]
-  );
-  return toolbarFilters;
-}
-
-export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort?: boolean }) {
-  const { t } = useTranslation();
-  const tableColumns = useMemo<ITableColumn<User>[]>(
-    () => [
-      {
-        header: t('Username'),
-        cell: (user) => (
-          <TextCell
-            text={user.username}
-            to={RouteE.UserDetails.replace(':id', user.id.toString())}
-          />
-        ),
-        card: 'name',
-        list: 'name',
-        sort: 'username',
-        maxWidth: 200,
-      },
-      {
-        header: t('User type'),
-        cell: (user) => <UserType user={user} />,
-        card: 'subtitle',
-        list: 'subtitle',
-      },
-      {
-        header: t('First name'),
-        cell: (user) => user.first_name && <TextCell text={user.first_name} />,
-        sort: 'first_name',
-      },
-      {
-        header: t('Last name'),
-        cell: (user) => user.last_name && <TextCell text={user.last_name} />,
-        sort: 'last_name',
-      },
-      {
-        header: t('Email'),
-        cell: (user) => user.email && <TextCell text={user.email} />,
-        sort: 'email',
-      },
-      {
-        header: t('Created'),
-        cell: (item) => <SinceCell value={item.created} />,
-        card: 'hidden',
-        list: 'secondary',
-      },
-    ],
-    [t]
-  );
-  return tableColumns;
-}
-
-export function UserType(props: { user: User }) {
-  const { user } = props;
-  const { t } = useTranslation();
-  if (user.is_superuser) return <Label color="orange">{t('System administrator')}</Label>;
-  if (user.is_system_auditor) return <Label color="orange">{t('System auditor')}</Label>;
-  return <Label>{t('Normal user')}</Label>;
-}
-
-export function UserRoles(props: { user: User }) {
-  const { user } = props;
-  const { t } = useTranslation();
-  return (
-    <ChipGroup>
-      {user.is_superuser && <Chip isReadOnly>{t('System administrator')}</Chip>}
-      {!user.is_superuser && <Chip isReadOnly>{t('Normal user')}</Chip>}
-    </ChipGroup>
   );
 }

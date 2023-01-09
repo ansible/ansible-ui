@@ -28,14 +28,13 @@ import { useControllerView } from '../../useControllerView';
 import { useRemoveOrganizationsFromUsers } from '../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../organizations/Organizations';
-import { RolesForm } from '../roles/RoleForm';
 import { useRolesColumns, useRolesFilters } from '../roles/Roles';
 import { useRemoveTeamsFromUsers } from '../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../teams/hooks/useTeamsFilters';
+import { UserType } from './components/UserType';
 import { useDeleteUsers } from './hooks/useDeleteUsers';
-import { UserType } from './Users';
 
 export function UserDetailsPage() {
   const { t } = useTranslation();
@@ -93,9 +92,6 @@ export function UserDetailsPage() {
         <PageTab label={t('Roles')}>
           <UserRoles user={user!} />
         </PageTab>
-        <PageTab label="TEST">
-          <RolesForm />
-        </PageTab>
       </PageTabs>
     </PageLayout>
   );
@@ -127,7 +123,7 @@ function UserDetails(props: { user: User }) {
           <SinceCell value={user.created} />
         </PageDetail>
         <PageDetail label={t('Modified')}>
-          {user.modified && <SinceCell value={user.modified} />}
+          <SinceCell value={user.modified} />
         </PageDetail>
       </PageDetails>
     </>
@@ -293,6 +289,13 @@ function UserRoles(props: { user: User }) {
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
   const tableColumns = useRolesColumns();
+  const navigate = useNavigate();
+  const view = useControllerView<Role>({
+    url: `/api/v2/users/${user.id}/roles/`,
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+  });
   const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
@@ -301,22 +304,23 @@ function UserRoles(props: { user: User }) {
         icon: PlusIcon,
         label: t('Add role to user'),
         shortLabel: t('Add role'),
-        onClick: () => alert('TODO'),
+        onClick: () => navigate(RouteE.AddRolesToUser.replace(':id', user.id.toString())),
       },
-      {
-        type: PageActionType.bulk,
-        icon: TrashIcon,
-        label: t('Remove selected roles from user'),
-        shortLabel: t('Remove roles'),
-        onClick: () => alert('TODO'),
-      },
+      // {
+      //   type: PageActionType.bulk,
+      //   icon: TrashIcon,
+      //   label: t('Remove selected roles from user'),
+      //   shortLabel: t('Remove roles'),
+      //   onClick: () => alert('TODO'),
+      // },
     ],
-    [t]
+    [navigate, t, user.id]
   );
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
         type: PageActionType.single,
+        variant: ButtonVariant.primary,
         icon: TrashIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),
@@ -324,18 +328,20 @@ function UserRoles(props: { user: User }) {
     ],
     [t]
   );
-  const view = useControllerView<Role>({
-    url: `/api/v2/users/${user.id}/roles/`,
-    toolbarFilters,
-    tableColumns,
-    disableQueryString: true,
-  });
   return (
     <>
       {user.is_superuser && (
         <Alert
-          variant="info"
+          variant="warning"
           title={t('System administrators have unrestricted access to all resources.')}
+          isInline
+          style={{ border: 0 }}
+        />
+      )}
+      {user.is_system_auditor && (
+        <Alert
+          variant="warning"
+          title={t('System auditor have unrestricted access to all resources.')}
           isInline
           style={{ border: 0 }}
         />
