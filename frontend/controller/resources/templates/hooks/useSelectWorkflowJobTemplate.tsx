@@ -4,12 +4,12 @@ import { Template } from '../../../interfaces/Template';
 import { useControllerView } from '../../../useControllerView';
 import { useTemplateFilters, useTemplatesColumns } from '../Templates';
 
-export function useSelectJobTemplate() {
+export function useSelectWorkflowJobTemplate() {
   const { t } = useTranslation();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplatesColumns({ disableLinks: true });
   const view = useControllerView<Template>({
-    url: '/api/v2/job_templates/',
+    url: '/api/v2/workflow_job_templates/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

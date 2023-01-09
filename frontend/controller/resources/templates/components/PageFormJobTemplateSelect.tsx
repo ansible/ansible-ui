@@ -24,7 +24,7 @@ export function PageFormJobTemplateSelect(props: {
       validate={async (jobTemplateName: string) => {
         try {
           const itemsResponse = await requestGet<ItemsResponse<Template>>(
-            `/api/v2/unified_job_templates/?name=${jobTemplateName}`
+            `/api/v2/job_templates/?name=${jobTemplateName}`
           );
           if (itemsResponse.results.length === 0) return t('Job template not found.');
           if (props.jobTemplatePath) setValue(props.jobTemplatePath, itemsResponse.results[0]);

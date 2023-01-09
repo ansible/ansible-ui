@@ -11,6 +11,7 @@ import { PageFormCredentialSelect } from '../../resources/credentials/components
 import { PageFormInventorySelect } from '../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
+import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
 interface UserRole {
@@ -136,8 +137,8 @@ function UserJobTemplateRole() {
           description={t('May view settings for the job template')}
         />
         <PageFormCheckbox
-          name="use_role"
-          label={t('Use')}
+          name="execute_role"
+          label={t('Execute')}
           description={t('May run the job template')}
         />
       </PageFormSection>
@@ -149,7 +150,10 @@ function UserWorkflowJobTemplateRole() {
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'workflow-job-template'}>
-      <PageFormJobTemplateSelect name="workflowJobTemplateName" jobTemplatePath="resource" />
+      <PageFormWorkflowJobTemplateSelect
+        name="workflowJobTemplateName"
+        workflowJobTemplatePath="resource"
+      />
       <PageFormSection title={t('Permissions')}>
         <PageFormCheckbox
           name="admin_role"

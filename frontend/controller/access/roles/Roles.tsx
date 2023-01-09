@@ -47,14 +47,12 @@ export function useRolesColumns() {
       {
         header: t('Resource type'),
         cell: (role) => <TextCell text={role.summary_fields.resource_type_display_name} />,
-        sort: 'role.summary_fields.resource_type_display_name',
         card: 'subtitle',
         list: 'subtitle',
       },
       {
         header: t('User role'),
         cell: (role) => <TextCell text={role.name} />,
-        sort: 'name',
         list: 'secondary',
       },
       {
@@ -85,7 +83,6 @@ export function useRolesColumns() {
               break;
           }
         },
-        sort: 'name',
         card: 'description',
         list: 'description',
       },
