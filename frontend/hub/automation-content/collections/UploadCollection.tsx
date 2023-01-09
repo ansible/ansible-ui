@@ -6,7 +6,7 @@ import { PageDetails, PageForm, PageHeader, PageLayout } from '../../../../frame
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormWatch } from '../../../../framework/PageForm/Inputs/PageFormWatch';
+import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { requestPostFile } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { useRepositories } from '../../administration/repositories/hooks/useRepositories';

@@ -1,4 +1,3 @@
-import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -7,12 +6,11 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
-import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
 import { getControllerError } from '../../useControllerView';
-import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
+import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {
   const { t } = useTranslation();
@@ -82,34 +80,18 @@ export function EditTeam() {
 }
 
 function TeamInputs() {
-  const { setValue } = useFormContext();
   const { t } = useTranslation();
-  const selectOrganization = useSelectOrganization();
   return (
     <>
-      <PageFormTextInput name="name" label="Name" placeholder="Enter name" isRequired />
-      <PageFormTextArea name="description" label="Description" placeholder="Enter description" />
-      <PageFormTextInput
+      <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
+      <PageFormTextArea
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
+      <PageFormOrganizationSelect
         name="summary_fields.organization.name"
-        label="Organization"
-        placeholder="Enter organization"
-        selectTitle={t('Select an organization')}
-        selectValue={(organization: Organization) => organization.name}
-        selectOpen={selectOrganization}
-        validate={async (organizationName: string) => {
-          try {
-            const itemsResponse = await requestGet<ItemsResponse<Organization>>(
-              `/api/v2/organizations/?name=${organizationName}`
-            );
-            if (itemsResponse.results.length === 0) return t('Organization not found.');
-            setValue('organization', itemsResponse.results[0].id);
-          } catch (err) {
-            if (err instanceof Error) return err.message;
-            else return 'Unknown error';
-          }
-          return undefined;
-        }}
-        isRequired
+        organizationIdPath="organization"
       />
     </>
   );

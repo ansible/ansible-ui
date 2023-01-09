@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { useNameColumn } from '../../../common/columns';
-import { getItemKey, requestDelete } from '../../../Data';
-import { useInventoriesColumns } from './Inventories';
-import { Inventory } from './Inventory';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { useNameColumn } from '../../../../common/columns';
+import { getItemKey, requestDelete } from '../../../../Data';
+import { Inventory } from '../../../interfaces/Inventory';
+import { useInventoriesColumns } from '../Inventories';
 
 export function useDeleteInventories(onComplete: (inventories: Inventory[]) => void) {
   const { t } = useTranslation();

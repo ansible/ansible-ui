@@ -25,7 +25,8 @@ import { User } from '../../interfaces/User';
 import { useControllerView } from '../../useControllerView';
 import { useRemoveUsersFromTeams } from '../users/hooks/useRemoveUsersFromTeams';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
-import { useUsersColumns, useUsersFilters } from '../users/Users';
+import { useUsersColumns } from '../users/hooks/useUsersColumns';
+import { useUsersFilters } from '../users/hooks/useUsersFilters';
 import { useTeamActions } from './hooks/useTeamActions';
 
 export function TeamDetails() {

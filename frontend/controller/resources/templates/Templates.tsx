@@ -27,7 +27,7 @@ import {
 } from '../../common/controller-toolbar-filters';
 import { Template } from '../../interfaces/Template';
 import { useControllerView } from '../../useControllerView';
-import { useDeleteTemplates } from './useDeleteTemplates';
+import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function Templates() {
   const { t } = useTranslation();

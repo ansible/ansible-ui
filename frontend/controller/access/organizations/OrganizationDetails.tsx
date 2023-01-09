@@ -1,10 +1,5 @@
-import {
-  ButtonVariant,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Stack,
-} from '@patternfly/react-core';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { ButtonVariant, DropdownPosition, PageSection } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,38 +74,23 @@ export function OrganizationDetails() {
           <PageActions<Organization> actions={itemActions} position={DropdownPosition.right} />
         }
       />
-      {organization ? (
-        <PageTabs>
-          <PageTab label={t('Details')}>
-            <OrganizationDetailsTab organization={organization} />
-          </PageTab>
-          <PageTab label={t('Access')}>
-            <OrganizationAccessTab organization={organization} />
-          </PageTab>
-          <PageTab label={t('Teams')}>
-            <OrganizationTeamsTab organization={organization} />
-          </PageTab>
-          <PageTab label={t('Execution environments')}>
-            <Todo />
-          </PageTab>
-          <PageTab label={t('Notifications')}>
-            <Todo />
-          </PageTab>
-        </PageTabs>
-      ) : (
-        <PageTabs>
-          <PageTab>
-            <PageSection variant="light">
-              <Stack hasGutter>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-              </Stack>
-            </PageSection>
-          </PageTab>
-        </PageTabs>
-      )}
+      <PageTabs loading={!organization}>
+        <PageTab label={t('Details')}>
+          <OrganizationDetailsTab organization={organization!} />
+        </PageTab>
+        <PageTab label={t('Access')}>
+          <OrganizationAccessTab organization={organization!} />
+        </PageTab>
+        <PageTab label={t('Teams')}>
+          <OrganizationTeamsTab organization={organization!} />
+        </PageTab>
+        <PageTab label={t('Execution environments')}>
+          <Todo />
+        </PageTab>
+        <PageTab label={t('Notifications')}>
+          <Todo />
+        </PageTab>
+      </PageTabs>
     </PageLayout>
   );
 }

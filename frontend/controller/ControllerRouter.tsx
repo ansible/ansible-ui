@@ -10,6 +10,7 @@ import { Organizations } from './access/organizations/Organizations';
 import { TeamDetails } from './access/teams/TeamDetails';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { Teams } from './access/teams/Teams';
+import { AddRolesToUser } from './access/users/AddRolesToUser';
 import { UserDetailsPage } from './access/users/UserDetails';
 import { CreateUser, EditUser } from './access/users/UserForm';
 import { Users } from './access/users/Users';
@@ -93,6 +94,11 @@ export function ControllerRouter() {
         <Route path={RouteE.TeamDetails.replace(RouteE.Controller, '')} element={<TeamDetails />} />
         <Route path={RouteE.CreateTeam.replace(RouteE.Controller, '')} element={<CreateTeam />} />
         <Route path={RouteE.EditTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
+
+        <Route
+          path={RouteE.AddRolesToUser.replace(RouteE.Controller, '')}
+          element={<AddRolesToUser />}
+        />
 
         {/* <Route path={RouteE.CredentialTypes} element={<CredentialTypes />} /> */}
         {/* <Route path={RouteE.Notifications} element={<Notifications />} /> */}
