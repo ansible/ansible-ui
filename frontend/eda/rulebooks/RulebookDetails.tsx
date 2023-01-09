@@ -10,6 +10,8 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useInMemoryView,
+  PageTable,
 } from '../../../framework';
 import { Scrollable } from '../../../framework';
 import { useGet } from '../../common/useItem';
@@ -17,6 +19,11 @@ import { RouteE } from '../../Routes';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { formatDateString } from '../../../framework/utils/formatDateString';
+import { useRulesetFilters } from './hooks/useRulesetFilters';
+import { useRulesetColumns } from './hooks/useRulesetColumns';
+import { idKeyFn } from '../../hub/usePulpView';
+import { EdaRuleset } from '../interfaces/EdaRuleset';
+import { useRulesetActions } from './hooks/useRulesetActions';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
@@ -49,6 +56,39 @@ export function RulebookDetails() {
     );
   };
 
+  // eslint-disable-next-line react/prop-types
+  function RulesetsTab() {
+    const params = useParams<{ id: string }>();
+    const { t } = useTranslation();
+    const toolbarFilters = useRulesetFilters();
+    const { data: rulesets, mutate: refresh } = useGet<EdaRuleset[]>(
+      `/api/rulebooks/${params?.id || ''}/rulesets`
+    );
+    const tableColumns = useRulesetColumns();
+    const view = useInMemoryView<EdaRuleset>({
+      items: rulesets,
+      tableColumns,
+      toolbarFilters,
+      keyFn: idKeyFn,
+    });
+
+    const rowActions = useRulesetActions(undefined, refresh);
+    return (
+      <PageLayout>
+        <PageTable
+          tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
+          rowActions={rowActions}
+          errorStateTitle={t('Error loading rulesets')}
+          emptyStateTitle={t('No rulesets yet')}
+          emptyStateDescription={t('No rule sets in this rulebook')}
+          {...view}
+          defaultSubtitle={t('Rulebook')}
+        />
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -70,6 +110,9 @@ export function RulebookDetails() {
           {rulebook ? (
             <PageTabs>
               <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
+              <PageTab label={t('Rule Sets')}>
+                <RulesetsTab />
+              </PageTab>
             </PageTabs>
           ) : (
             <PageTabs>
