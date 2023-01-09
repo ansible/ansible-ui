@@ -165,6 +165,7 @@ export enum RouteE {
 
   EdaRulebooks = '/eda/rulebooks',
   EdaRulebookDetails = '/eda/rulebooks/details/:id',
+  EdaRulesetDetails = '/eda/rulesets/details/:id',
   CreateEdaRulebook = '/eda/rulebooks/create',
   EditEdaRulebook = '/eda/rulebooks/edit/:id',
 

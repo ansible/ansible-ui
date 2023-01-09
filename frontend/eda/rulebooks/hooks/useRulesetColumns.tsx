@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteE } from '../../../Routes';
-import { EdaRulebook } from '../../interfaces/EdaRulebook';
+import { EdaRuleset } from '../../interfaces/EdaRuleset';
 
-export function useRulebookColumns() {
+export function useRulesetColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  return useMemo<ITableColumn<EdaRulebook>[]>(
+  return useMemo<ITableColumn<EdaRuleset>[]>(
     () => [
       {
         header: t('ID'),
-        cell: (rulebook) => rulebook.id,
+        cell: (ruleset) => ruleset.id,
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
@@ -20,12 +20,10 @@ export function useRulebookColumns() {
       },
       {
         header: t('Name'),
-        cell: (rulebook) => (
+        cell: (ruleset) => (
           <TextCell
-            text={rulebook.name}
-            onClick={() =>
-              navigate(RouteE.EdaRulebookDetails.replace(':id', rulebook.id.toString()))
-            }
+            text={ruleset.name}
+            onClick={() => navigate(RouteE.EdaRulesetDetails.replace(':id', ruleset.id.toString()))}
           />
         ),
         sort: 'name',
