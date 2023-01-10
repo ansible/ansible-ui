@@ -27,10 +27,10 @@ export function PageDashboardChart(props: {
           colorScale={groups.map((group) => group.color)}
           width={size.width}
           height={size.height}
+          animate
         >
           <ChartAxis
             fixLabelOverlap
-            label="ssddd"
             tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
             //  tickFormat={(n) => `${Math.round(n)}`}
           />

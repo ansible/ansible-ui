@@ -1,75 +1,115 @@
-import { DateTime } from 'luxon';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
+import { ItemsResponse, requestGet } from '../../../Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useControllerView } from '../../useControllerView';
 
-export function JobsChart(props: { height?: number }) {
-  const jobsView = useControllerView<UnifiedJob>({
-    url: '/api/v2/unified_jobs/',
-    queryParams: {
-      not__launch_type: 'sync',
-      order_by: '-created',
-      page_size: '200',
-    },
-    disableQueryString: true,
-  });
+function useJobsRange(addJob: (jobs: UnifiedJob[]) => void) {
   useEffect(() => {
-    jobsView.setSort('created');
-    jobsView.setSortDirection('desc');
-    jobsView.setPerPage(200);
-  }, [jobsView]);
-  const jobs = jobsView.pageItems;
-  const jobHistory = useMemo(() => {
-    const success: Record<string, number> = {};
-    const failure: Record<string, number> = {};
-    const now = DateTime.now();
-    const monthAgo = now.minus({ months: 1 });
+    const abortController = new AbortController();
+    async function update() {
+      try {
+        let itemsResponse = await requestGet<ItemsResponse<UnifiedJob>>(
+          `/api/v2/unified_jobs/` +
+            `?not__launch_type=sync` +
+            `&order_by=-finished` +
+            `&page_size=200`
+        );
+        if (!abortController.signal.aborted) {
+          addJob(itemsResponse.results);
+        }
 
-    for (
-      let iterator = now.minus({ months: 1 });
-      iterator < now;
-      iterator = iterator.plus({ day: 1 })
-    ) {
-      if (!iterator.isValid) continue;
-      const label = iterator.toISODate();
-      if (!success[label]) success[label] = 0;
-      if (!failure[label]) failure[label] = 0;
-    }
+        while (itemsResponse.next) {
+          itemsResponse = await requestGet<ItemsResponse<UnifiedJob>>(
+            itemsResponse.next,
+            abortController.signal
+          );
+          if (!abortController.signal.aborted) {
+            addJob(itemsResponse.results);
+          }
 
-    for (const job of jobs ?? []) {
-      const dateTime = DateTime.fromISO(job.finished);
-      if (dateTime < monthAgo) continue;
-      const date = DateTime.fromISO(job.finished);
-      if (!date.isValid) continue;
-      const label = date.toISODate();
-      if (!success[label]) success[label] = 0;
-      if (!failure[label]) failure[label] = 0;
-      if (!job.failed) {
-        success[label]++;
-      } else {
-        failure[label]++;
+          if (!itemsResponse.results.length) break;
+          const lastCreated = new Date(
+            itemsResponse.results[itemsResponse.results.length - 1].created
+          );
+          if (lastCreated.valueOf() < Date.now() - 31 * 24 * 60 * 60 * 1000) break;
+        }
+      } catch {
+        /* Do nothing */
       }
     }
-    return {
-      successful: Object.keys(success)
-        .sort()
-        .map((label) => ({ label: label, value: success[label] })),
-      failed: Object.keys(failure)
-        .sort()
-        .map((label) => ({
-          label: label,
-          value: failure[label],
-        })),
-    };
-  }, [jobs]);
+    void update();
+    return () => abortController.abort('component unmounted');
+  }, [addJob]);
+}
+
+export function JobsChart(props: { height?: number }) {
+  const [data, setData] = useState<{
+    jobs: { [id: number]: UnifiedJob };
+    history: { [date: string]: { success: number; failure: number } };
+  }>({
+    jobs: {},
+    history: {},
+  });
+
+  useEffect(() => {
+    setData((data) => {
+      let now = Date.now();
+      for (let i = 0; i <= 31; i++) {
+        const date = new Date(now);
+        const label = new Date(date.toDateString()).toISOString();
+        if (!data.history[label]) data.history[label] = { success: 0, failure: 0 };
+        now -= 24 * 60 * 60 * 1000;
+      }
+      return { ...data };
+    });
+  }, []);
+
+  const updateJobs = useCallback((jobs: UnifiedJob[]) => {
+    setData((data) => {
+      for (const job of jobs) {
+        const existingJob = data.jobs[job.id];
+        if (existingJob) {
+          const existingDate = new Date(existingJob.finished).toLocaleDateString();
+          if (!data.history[existingDate]) data.history[existingDate] = { success: 0, failure: 0 };
+          if (existingJob.failed) {
+            data.history[existingDate].failure--;
+          } else if (existingJob.finished) {
+            data.history[existingDate].success--;
+          }
+        }
+
+        if (new Date(job.finished).valueOf() < Date.now() - 31 * 24 * 60 * 60 * 1000) continue;
+        data.jobs[job.id] = job;
+        const label = new Date(new Date(job.finished).toDateString()).toISOString();
+        if (!data.history[label]) data.history[label] = { success: 0, failure: 0 };
+        if (job.failed) {
+          data.history[label].failure++;
+        } else if (job.finished) {
+          data.history[label].success++;
+        }
+      }
+
+      return { ...data };
+    });
+  }, []);
+
+  useJobsRange(updateJobs);
+
+  const failedHistory = Object.keys(data.history)
+    .sort()
+    .map((label) => ({ label, value: data.history[label].failure }));
+
+  const successHistory = Object.keys(data.history)
+    .sort()
+    .map((label) => ({ label, value: data.history[label].success }));
+
   return (
     <div style={{ height: props.height ?? '100%' }}>
       <PageDashboardChart
         groups={[
-          { color: pfDanger, values: jobHistory.failed },
-          { color: pfSuccess, values: jobHistory.successful },
+          { color: pfDanger, values: failedHistory },
+          { color: pfSuccess, values: successHistory },
         ]}
       />
     </div>

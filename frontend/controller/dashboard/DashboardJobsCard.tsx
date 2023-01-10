@@ -9,7 +9,7 @@ export function DashboardJobsCard() {
   return (
     <PageDashboardCard to={RouteE.Jobs}>
       <CardHeader>
-        <CardTitle>{t('Jobs')}</CardTitle>
+        <CardTitle>{t('Job runs in the last 30 days')}</CardTitle>
       </CardHeader>
       <CardBody>
         <JobsChart />
