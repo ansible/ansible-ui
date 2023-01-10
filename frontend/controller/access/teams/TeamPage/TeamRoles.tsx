@@ -56,19 +56,19 @@ export function TeamRoles(props: { team: Team }) {
     [t]
   );
   return (
-    <>
-      <PageTable<Role>
-        toolbarFilters={toolbarFilters}
-        tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading roles')}
-        emptyStateTitle={t('Team does not have any roles.')}
-        emptyStateDescription={t('To get started, add roles to the team.')}
-        emptyStateButtonText={t('Add role to team')}
-        // emptyStateButtonClick={() => history(RouteE.CreateTeam)}
-        {...view}
-      />
-    </>
+    <PageTable<Role>
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading roles')}
+      emptyStateTitle={t('Team does not have any roles.')}
+      emptyStateDescription={t('To get started, add roles to the team.')}
+      emptyStateButtonText={t('Add role to team')}
+      emptyStateButtonClick={() =>
+        navigate(RouteE.AddRolesToTeam.replace(':id', team.id.toString()))
+      }
+      {...view}
+    />
   );
 }

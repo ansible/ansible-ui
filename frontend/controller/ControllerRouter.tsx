@@ -8,11 +8,11 @@ import { CreateOrganization, EditOrganization } from './access/organizations/Org
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
-import { AddRolesToTeam } from './access/teams/TeamPage/AddRolesToTeam';
+import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
 import { Teams } from './access/teams/Teams';
 import { CreateUser, EditUser } from './access/users/UserForm';
-import { AddRolesToUser } from './access/users/UserPage/AddRolesToUser';
+import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { UserPage } from './access/users/UserPage/UserPage';
 import { Users } from './access/users/Users';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
