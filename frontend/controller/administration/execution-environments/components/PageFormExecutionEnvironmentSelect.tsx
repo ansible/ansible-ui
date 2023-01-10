@@ -17,17 +17,17 @@ export function PageFormExecutionEnvironmentSelect(props: {
   return (
     <PageFormTextInput
       name={props.name}
-      label={t('Inventory')}
-      placeholder="Enter executionEnvironment"
-      selectTitle={t('Select an inventory')}
+      label={t('Execution environment')}
+      placeholder="Enter execution environment"
+      selectTitle={t('Select an execution environment')}
       selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
       selectOpen={selectExecutionEnvironment}
-      validate={async (inventoryName: string) => {
+      validate={async (executionEnvironmentName: string) => {
         try {
           const itemsResponse = await requestGet<ItemsResponse<Inventory>>(
-            `/api/v2/inventories/?name=${inventoryName}`
+            `/api/v2/execution_environments/?name=${executionEnvironmentName}`
           );
-          if (itemsResponse.results.length === 0) return t('Job inventory not found.');
+          if (itemsResponse.results.length === 0) return t('Execution environment not found.');
           if (props.executionEnvironmentPath)
             setValue(props.executionEnvironmentPath, itemsResponse.results[0]);
           if (props.executionEnvironmentIdPath)
