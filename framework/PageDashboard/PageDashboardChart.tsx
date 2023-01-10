@@ -23,12 +23,17 @@ export function PageDashboardChart(props: {
     <PageChartContainer>
       {(size) => (
         <Chart
-          padding={{ bottom: 30, left: 30, right: 15, top: 5 }}
+          padding={{ bottom: 27, left: 40, right: 0, top: 5 }}
           colorScale={groups.map((group) => group.color)}
           width={size.width}
           height={size.height}
         >
-          <ChartAxis />
+          <ChartAxis
+            fixLabelOverlap
+            label="ssddd"
+            tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
+            //  tickFormat={(n) => `${Math.round(n)}`}
+          />
           <ChartAxis dependentAxis showGrid />
           <ChartStack>
             {groups.map((group, index) => (
