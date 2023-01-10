@@ -1,5 +1,4 @@
 import {
-  Button,
   ContextSelector,
   ContextSelectorItem,
   Flex,
@@ -9,17 +8,16 @@ import {
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useSettings } from '../../framework/Settings';
-import { RouteE } from '../Routes';
-import { useAutomationServers } from './AutomationServerProvider';
+import { useSettings } from '../../../framework/Settings';
+import { useLoginModal } from '../../common/LoginModal';
+import { useAutomationServers } from '../contexts/AutomationServerProvider';
 
 export function AutomationServerSwitcher() {
   const { t } = useTranslation();
   const settings = useSettings();
   const { automationServer, automationServers } = useAutomationServers();
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const openLoginModal = useLoginModal();
   return (
     <PageSection
       variant="dark"
@@ -51,33 +49,38 @@ export function AutomationServerSwitcher() {
         isOpen={open}
         // searchInputValue={searchValue}
         onToggle={() => setOpen((open) => !open)}
-        screenReaderLabel="Selected Project:"
+        // screenReaderLabel="Selected Project:"
         isPlain
-        footer={
-          <div style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
-            <Button
-              variant="link"
-              isInline
-              style={{ margin: 16 }}
-              onClick={() => {
-                automationServer?.type === 'controller'
-                  ? navigate(RouteE.ControllerAutomationServers)
-                  : automationServer?.type === 'hub'
-                  ? navigate(RouteE.HubAutomationServers)
-                  : navigate(RouteE.AutomationServers);
-                setOpen(false);
-              }}
-            >
-              {t('Manage automation servers')}
-            </Button>
-          </div>
-        }
+        // footer={
+        //   <div style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
+        //     <Button
+        //       variant="link"
+        //       isInline
+        //       style={{ margin: 16 }}
+        //       onClick={() => {
+        //         automationServer?.type === 'controller'
+        //           ? navigate(RouteE.ControllerAutomationServers)
+        //           : automationServer?.type === 'hub'
+        //           ? navigate(RouteE.HubAutomationServers)
+        //           : navigate(RouteE.AutomationServers);
+        //         setOpen(false);
+        //       }}
+        //     >
+        //       {t('Manage automation servers')}
+        //     </Button>
+        //   </div>
+        // }
+        className="ansible-context-selector"
       >
         {automationServers.map((automationServer, index) => (
           <ContextSelectorItem
             key={index}
-            onClick={() =>
-              navigate(RouteE.Login + '?server=' + encodeURIComponent(automationServer.url))
+            onClick={
+              () => {
+                setOpen(false);
+                openLoginModal(automationServer.url);
+              }
+              // navigate(RouteE.Login + '?server=' + encodeURIComponent(automationServer.url))
             }
           >
             <Flex

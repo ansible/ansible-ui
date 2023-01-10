@@ -1,18 +1,18 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
 import { RouteE } from '../Routes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
-import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
+import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
 import { Teams } from './access/teams/Teams';
-import { CreateUser, EditUser } from './access/users/UserForm';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
+import { CreateUser, EditUser } from './access/users/UserForm';
 import { UserPage } from './access/users/UserPage/UserPage';
 import { Users } from './access/users/Users';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
@@ -43,7 +43,7 @@ export function ControllerRouter() {
       <Routes>
         <Route
           path={RouteE.ControllerAutomationServers.replace(RouteE.Controller, '')}
-          element={<AutomationServersPage />}
+          element={<AutomationServers />}
         />
         <Route path={RouteE.Dashboard.replace(RouteE.Controller, '')} element={<Dashboard />} />
         <Route path={RouteE.Jobs.replace(RouteE.Controller, '')} element={<Jobs />} />
