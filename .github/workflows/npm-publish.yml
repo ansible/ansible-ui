@@ -23,7 +23,6 @@ jobs:
           npm run build:cjs
           cp -f LICENSE publish
           cp -f framework/README.md publish/README.md
-          cp -rf framework/docs publish/docs
           cd publish
           VERSION=`cat ../package.json | jq -r '.version'` && cat ../framework/package.json | jq --arg version $VERSION '. +{version: $version}' > package.json
           npm publish
