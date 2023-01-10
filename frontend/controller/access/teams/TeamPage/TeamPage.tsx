@@ -6,6 +6,7 @@ import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../..
 import { useItem } from '../../../../common/useItem';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
+import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
 import { TeamAccess } from './TeamAccess';
 import { TeamDetails } from './TeamDetails';
@@ -17,6 +18,8 @@ export function TeamPage() {
   const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
   const navigate = useNavigate();
   const itemActions = useTeamActions({ onTeamsDeleted: () => navigate(RouteE.Teams) });
+  const viewActivityStreamAction = useViewActivityStream('team');
+  const pageActions = [...viewActivityStreamAction, ...itemActions];
   return (
     <PageLayout>
       <PageHeader
@@ -24,7 +27,7 @@ export function TeamPage() {
         breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
         headerActions={
           <PageActions<Team>
-            actions={itemActions}
+            actions={pageActions}
             position={DropdownPosition.right}
             selectedItem={team}
           />
