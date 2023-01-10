@@ -67,15 +67,27 @@ async function requestCommon<ResponseBody>(
       ...options,
       credentials: 'include',
       headers: options.headers,
+      hooks: {
+        beforeError: [
+          async (error) => {
+            const { response } = error;
+            const body: unknown = await response?.json();
+            if (
+              typeof body === 'object' &&
+              body !== null &&
+              'msg' in body &&
+              typeof body.msg === 'string'
+            ) {
+              error.name = 'Controller Error';
+              error.message = body.msg;
+            }
+            return error;
+          },
+        ],
+      },
     }).json<ResponseBody>();
-    // if (process.env.NODE_ENV === 'development') {
-    //     console.debug(result)
-    // }
     return result;
   } catch (err) {
-    // if (process.env.NODE_ENV === 'development') {
-    //     console.error(err)
-    // }
     if (err instanceof HTTPError) {
       switch (err.response.status) {
         case 401:

@@ -62,7 +62,11 @@ export function UserPage() {
         title={user?.username}
         breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: user?.username }]}
         headerActions={
-          <PageActions<User> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<User>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={user}
+          />
         }
       />
       <PageTabs loading={!user}>

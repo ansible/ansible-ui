@@ -44,7 +44,7 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
     const pems = selfsigned.generate();
     cert = Buffer.from(pems.cert);
     key = Buffer.from(pems.private);
-    logger.warn({ msg: 'using self signed certificates' });
+    logger.info({ msg: 'using self signed certificates' });
   }
 
   try {
