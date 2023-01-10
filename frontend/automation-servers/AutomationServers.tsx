@@ -17,7 +17,6 @@ import { useView } from '../../framework/useView';
 import { useLoginModal } from '../common/LoginModal';
 import { useAutomationServers } from './contexts/AutomationServerProvider';
 import { useAddAutomationServer } from './hooks/useAddAutomationServer';
-import { useRemoveAutomationServers } from './hooks/useRemoveAutomationServers';
 import { AutomationServer, automationServerKeyFn } from './interfaces/AutomationServer';
 
 export function AutomationServers() {
@@ -29,7 +28,7 @@ export function AutomationServers() {
   const selected = useSelected(automationServers, automationServerKeyFn);
 
   const addAutomationServer = useAddAutomationServer();
-  const removeAutomationServers = useRemoveAutomationServers();
+  // const removeAutomationServers = useRemoveAutomationServers();
 
   const toolbarActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
@@ -40,14 +39,14 @@ export function AutomationServers() {
         label: t('Add automation server'),
         onClick: addAutomationServer,
       },
-      {
-        type: PageActionType.bulk,
-        icon: MinusCircleIcon,
-        label: t('Remove selected automation servers'),
-        onClick: (servers) => removeAutomationServers(servers),
-      },
+      // {
+      //   type: PageActionType.bulk,
+      //   icon: MinusCircleIcon,
+      //   label: t('Remove selected automation servers'),
+      //   onClick: (servers) => removeAutomationServers(servers),
+      // },
     ],
-    [addAutomationServer, removeAutomationServers, t]
+    [addAutomationServer, t]
   );
 
   const rowActions = useMemo<IPageAction<AutomationServer>[]>(
