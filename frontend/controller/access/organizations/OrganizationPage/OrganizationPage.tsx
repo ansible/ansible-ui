@@ -51,6 +51,7 @@ export function OrganizationPage() {
           if (!organization) return;
           deleteOrganizations([organization]);
         },
+        isDanger: true,
       },
     ];
     return itemActions;
@@ -65,7 +66,11 @@ export function OrganizationPage() {
           { label: organization?.name },
         ]}
         headerActions={
-          <PageActions<Organization> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<Organization>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={organization}
+          />
         }
       />
       <PageTabs loading={!organization}>

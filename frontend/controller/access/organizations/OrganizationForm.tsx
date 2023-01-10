@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -11,7 +12,7 @@ import { getControllerError } from '../../useControllerView';
 export function CreateOrganization() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { cache } = useSWRConfig();
+  useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
     try {
@@ -19,7 +20,6 @@ export function CreateOrganization() {
         '/api/v2/organizations/',
         editedOrganization
       );
-      (cache as unknown as { clear: () => void }).clear?.();
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
@@ -56,7 +56,7 @@ export function EditOrganization() {
     swrOptions
   );
 
-  const { cache } = useSWRConfig();
+  useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
     try {
@@ -64,7 +64,6 @@ export function EditOrganization() {
         `/api/v2/organizations/${id}/`,
         editedOrganization
       );
-      (cache as unknown as { clear: () => void }).clear?.();
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
@@ -83,27 +82,27 @@ export function EditOrganization() {
         />
       </PageLayout>
     );
-  } else {
-    return (
-      <PageLayout>
-        <PageHeader
-          title={t('Edit organization')}
-          breadcrumbs={[
-            { label: t('Organizations'), to: RouteE.Organizations },
-            { label: t('Edit organization') },
-          ]}
-        />
-        <PageForm
-          submitText={t('Save organization')}
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          defaultValue={organization}
-        >
-          <OrganizationInputs />
-        </PageForm>
-      </PageLayout>
-    );
   }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit organization')}
+        breadcrumbs={[
+          { label: t('Organizations'), to: RouteE.Organizations },
+          { label: t('Edit organization') },
+        ]}
+      />
+      <PageForm
+        submitText={t('Save organization')}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        defaultValue={organization}
+      >
+        <OrganizationInputs />
+      </PageForm>
+    </PageLayout>
+  );
 }
 
 function OrganizationInputs() {

@@ -2,9 +2,9 @@ import { Static, Type } from '@sinclair/typebox';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
@@ -36,17 +36,15 @@ export function EditUser() {
 
   type UserSchema = Static<typeof UserSchemaType>;
 
-  const { cache } = useSWRConfig();
+  useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<UserSchema> = async (User, setError) => {
     try {
       if (Number.isInteger(id)) {
         User = await requestPatch<EdaUser>(`/api/users/${id}`, User);
-        (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
         const newUser = await requestPost<EdaUser>('/api/users', User);
-        (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteE.EdaUserDetails.replace(':id', newUser.id.toString()));
       }
     } catch (err) {
