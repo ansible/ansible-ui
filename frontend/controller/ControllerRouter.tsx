@@ -26,6 +26,7 @@ import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { Projects } from './resources/projects/Projects';
 import { TemplateDetail } from './resources/templates/TemplateDetail';
+import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
 import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
@@ -54,6 +55,10 @@ export function ControllerRouter() {
         <Route
           path={RouteE.JobTemplateDetails.replace(RouteE.Controller, '')}
           element={<TemplateDetail />}
+        />
+        <Route
+          path={RouteE.CreateJobTemplate.replace(RouteE.Controller, '')}
+          element={<CreateJobTemplate />}
         />
 
         <Route path={RouteE.Credentials.replace(RouteE.Controller, '')} element={<Credentials />} />
