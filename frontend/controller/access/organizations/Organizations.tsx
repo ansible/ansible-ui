@@ -125,6 +125,7 @@ export function Organizations() {
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => deleteOrganizations([organization]),
+        isDanger: true,
       },
     ],
     [t, navigate, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]
