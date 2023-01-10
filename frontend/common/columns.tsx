@@ -179,3 +179,27 @@ export function useOrganizationNameColumn(options?: {
   );
   return column;
 }
+export function useTypeColumn(options?: {
+  header?: string;
+  url?: string;
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  makeReadable: (type: string) => string;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<{ type?: string }> = useMemo(
+    () => ({
+      header: t('Type'),
+      cell: (item) => {
+        if (!item.type) return <></>;
+        return <TextCell text={options?.makeReadable(item.type)} />;
+      },
+      sort: options?.disableSort ? undefined : 'type',
+      defaultSortDirection: 'desc',
+      card: 'hidden',
+      list: 'secondary',
+    }),
+    [t, options]
+  );
+  return column;
+}
