@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { idKeyFn, useHubView } from '../../useHubView';
 import { Approval } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';
@@ -20,16 +20,18 @@ export function Approvals() {
   const toolbarActions = useApprovalsActions();
   const rowActions = useApprovalActions(() => void view.refresh());
   return (
-    <TablePage<Approval>
-      title={t('Collection approvals')}
-      toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading approvals')}
-      emptyStateTitle={t('No approvals yet')}
-      {...view}
-      defaultSubtitle={t('Collection approval')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Collection approvals')} />
+      <PageTable<Approval>
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading approvals')}
+        emptyStateTitle={t('No approvals yet')}
+        {...view}
+        defaultSubtitle={t('Collection approval')}
+      />
+    </PageLayout>
   );
 }

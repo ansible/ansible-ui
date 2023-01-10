@@ -21,6 +21,7 @@ export enum RouteE {
   JobTemplateEdit = '/controller/job_template/edit/:id',
   CreateWorkflowJobTemplate = '/controller/workflow_job_template/create',
   CreateJobTemplate = '/controller/job_template/create',
+  EditTemplate = '/controller/templates/edit/:id',
 
   Credentials = '/controller/credentials',
   CredentialDetails = '/controller/credentials/details/:id',
@@ -48,15 +49,17 @@ export enum RouteE {
   CreateOrganization = '/controller/organizations/create',
   EditOrganization = '/controller/organizations/edit/:id',
 
-  Users = '/controller/users',
-  UserDetails = '/controller/users/details/:id',
-  CreateUser = '/controller/users/create',
-  EditUser = '/controller/users/edit/:id',
-
   Teams = '/controller/teams',
-  TeamDetails = '/controller/teams/details/:id',
+  TeamDetails = '/controller/teams/:id/details',
   CreateTeam = '/controller/teams/create',
-  EditTeam = '/controller/teams/edit/:id',
+  EditTeam = '/controller/teams/:id/edit',
+  AddRolesToTeam = '/controller/teams/:id/roles/add',
+
+  Users = '/controller/users',
+  UserDetails = '/controller/users/:id/details',
+  CreateUser = '/controller/users/create',
+  EditUser = '/controller/users/:id/edit',
+  AddRolesToUser = '/controller/users/:id/roles/add',
 
   // Administration
   CredentialTypes = '/controller/credential-types',
@@ -162,6 +165,7 @@ export enum RouteE {
 
   EdaRulebooks = '/eda/rulebooks',
   EdaRulebookDetails = '/eda/rulebooks/details/:id',
+  EdaRulesetDetails = '/eda/rulesets/details/:id',
   CreateEdaRulebook = '/eda/rulebooks/create',
   EditEdaRulebook = '/eda/rulebooks/edit/:id',
 
@@ -169,4 +173,11 @@ export enum RouteE {
   EdaRuleDetails = '/eda/rules/details/:id',
   CreateEdaRule = '/eda/rules/create',
   EditEdaRule = '/eda/rules/edit/:id',
+
+  EdaUsers = '/eda/users',
+  EdaGroups = '/eda/groups',
+  EdaRoles = '/eda/roles',
+  CreateEdaUser = '/eda/users/create',
+  EdaUserDetails = '/eda/user/details/:id',
+  EditEdaUser = '/eda/user/edit/:id',
 }

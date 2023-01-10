@@ -23,21 +23,25 @@ import {
 } from 'react-hook-form';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
+import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export function PageForm<T extends object>(props: {
   schema?: JSONSchema6;
   children?: ReactNode;
   submitText: string;
   onSubmit: PageFormSubmitHandler<T>;
-  cancelText: string;
+  cancelText?: string;
   onCancel?: () => void;
   defaultValue?: DeepPartial<T>;
   isVertical?: boolean;
   singleColumn?: boolean;
   disableScrolling?: boolean;
+  disableBody?: boolean;
+  disablePadding?: boolean;
 }) {
-  const { schema, defaultValue } = props;
+  const { schema, defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
     resolver: schema
@@ -47,6 +51,8 @@ export function PageForm<T extends object>(props: {
         )
       : undefined,
   });
+
+  const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState('');
@@ -62,8 +68,7 @@ export function PageForm<T extends object>(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
   const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800;
 
-  return (
-    // <PageBody>
+  let Component = (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -85,14 +90,14 @@ export function PageForm<T extends object>(props: {
         }}
       >
         {props.disableScrolling ? (
-          <div style={{ maxWidth, padding: 24 }}>
+          <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
             <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
               {props.children}
             </Grid>
           </div>
         ) : (
           <Scrollable style={{ height: '100%', flexGrow: 1 }}>
-            <div style={{ maxWidth, padding: 24 }}>
+            <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
               <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
                 {props.children}
               </Grid>
@@ -112,14 +117,14 @@ export function PageForm<T extends object>(props: {
             style={{
               backgroundColor:
                 settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
-              padding: 24,
+              padding: disablePadding ? undefined : 24,
             }}
           >
             <ActionGroup style={{ marginTop: 0 }}>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
-                  {props.cancelText}
+                  {props.cancelText ?? frameworkTranslations.cancelText}
                 </PageFormCancelButton>
               )}
             </ActionGroup>
@@ -129,8 +134,13 @@ export function PageForm<T extends object>(props: {
         )}
       </Form>
     </FormProvider>
-    // </PageBody>
   );
+
+  if (!disableBody) {
+    Component = <PageBody>{Component}</PageBody>;
+  }
+
+  return Component;
 }
 
 export type PageFormSubmitHandler<T extends FieldValues> = (

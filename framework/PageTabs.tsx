@@ -22,7 +22,9 @@ export function PageTabs(props: {
   children: ReactNode;
   preComponents?: ReactNode;
   postComponents?: ReactNode;
+  loading?: boolean;
 }) {
+  const { loading } = props;
   const [activeKey, setActiveKey] = useState<number>(0);
   const onSelect = useCallback(
     (_, key: string | number) => setActiveKey(key as number),
@@ -32,11 +34,11 @@ export function PageTabs(props: {
   const tabs = children.map((child, index) => {
     if (isValidElement(child)) {
       if (child.type === PageTab) {
-        const title = (child.props as { title: string }).title;
+        const label = (child.props as { label: string }).label;
         return (
           <Tab
-            key={title ?? index}
-            title={title ? title : <Skeleton width="60px" />}
+            key={label ?? index}
+            title={label ? label : <Skeleton width="60px" />}
             eventKey={index}
           />
         );
@@ -45,6 +47,19 @@ export function PageTabs(props: {
     return child;
   });
   const content = children[activeKey];
+
+  if (loading) {
+    return (
+      <PageTabs>
+        <PageTab>
+          <PageSection variant="light">
+            <Skeleton />
+          </PageSection>
+        </PageTab>
+      </PageTabs>
+    );
+  }
+
   return (
     <>
       <PageSection type={PageSectionTypes.tabs}>
@@ -94,7 +109,7 @@ export function PageTabs(props: {
   );
 }
 
-export function PageTab(props: { title?: string; children: ReactNode }) {
+export function PageTab(props: { label?: string; children: ReactNode }) {
   return <>{props.children}</>;
 }
 

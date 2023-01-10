@@ -5,8 +5,10 @@ import {
   ElapsedTimeCell,
   ITableColumn,
   IToolbarFilter,
+  PageHeader,
+  PageLayout,
+  PageTable,
   SinceCell,
-  TablePage,
   TextCell,
 } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
@@ -35,9 +37,9 @@ export function Tasks() {
   //   tableColumns
   // )
   return (
-    <>
-      <TablePage<Task>
-        title={t('Tasks')}
+    <PageLayout>
+      <PageHeader title={t('Tasks')} />
+      <PageTable<Task>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading tasks')}
@@ -45,7 +47,7 @@ export function Tasks() {
         {...view}
         defaultSubtitle={t('Task')}
       />
-    </>
+    </PageLayout>
   );
 }
 

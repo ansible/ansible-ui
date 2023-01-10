@@ -39,13 +39,3 @@ A live instance of the latest development version is running at [AnsibleDev.com]
 
    - [Development](./docs/DEVELOPMENT.md)
    - [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
-
-## Docker
-
-The latest version of the Ansible UI can be run locally using docker.
-
-```
-docker run --rm -e PORT=4321 -p 4321:4321 quay.io/ansible/ansible-ui
-```
-
-Then goto [https://localhost:4321](https://localhost:4321)

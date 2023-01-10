@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -78,23 +80,27 @@ export function Credentials() {
   );
 
   return (
-    <TablePage<Credential>
-      title={t('Credentials')}
-      titleHelpTitle={t('Credentials')}
-      titleHelp={t('credentials.title.help')}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html"
-      description={t('credentials.title.description')}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading credentials')}
-      emptyStateTitle={t('No credentials yet')}
-      emptyStateDescription={t('To get started, create an credential.')}
-      emptyStateButtonText={t('Create credential')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateCredential)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Credentials')}
+        titleHelpTitle={t('Credentials')}
+        titleHelp={t('credentials.title.help')}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html"
+        description={t('credentials.title.description')}
+      />
+      <PageTable<Credential>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading credentials')}
+        emptyStateTitle={t('No credentials yet')}
+        emptyStateDescription={t('To get started, create an credential.')}
+        emptyStateButtonText={t('Create credential')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateCredential)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 
@@ -127,6 +133,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
     ...options,
     onClick: nameClick,
   });
+
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);

@@ -12,7 +12,7 @@ export function useRulebookColumns() {
     () => [
       {
         header: t('ID'),
-        cell: (inventory) => inventory.id,
+        cell: (rulebook) => rulebook.id,
         sort: 'id',
         card: 'hidden',
         list: 'hidden',

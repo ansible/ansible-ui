@@ -1,17 +1,54 @@
-// ***********************************************************
-// This example support/e2e.ts is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
-import 'cypress-axe';
+/// <reference types="cypress" />
+// import 'cypress-axe';
 import './commands';
+import { mockController } from './mock-controller';
+
+before(() => {
+  // cy.injectAxe()
+
+  window.localStorage.setItem('access', 'true');
+  window.localStorage.setItem('theme', 'light');
+
+  if (Cypress.env('server')) {
+    const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
+    const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
+    const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'password';
+
+    Cypress.Cookies.defaults({
+      preserve: ['awx_sessionid', 'useLoggedIn', 'csrftoken'],
+    });
+
+    cy.visit(`/automation-servers`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+
+    cy.clickButton(/^Add automation server$/);
+    cy.typeByLabel(/^Name$/, 'Controller');
+    cy.typeByLabel(/^Url$/, server);
+    cy.get('button[type=submit]').click();
+
+    cy.contains('a', /^Controller$/).click();
+    cy.typeByLabel(/^Username$/, username);
+    cy.typeByLabel(/^Password$/, password);
+    cy.get('button[type=submit]').click();
+
+    cy.contains(/^Welcome to Automation Controller$/);
+  } else {
+    mockController();
+    cy.visit(`/controller/debug`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+  }
+});
+
+beforeEach(() => {
+  window.localStorage.setItem('access', 'true');
+  window.localStorage.setItem('theme', 'light');
+
+  if (!Cypress.env('server')) {
+    mockController();
+  }
+});
+
+afterEach(() => {
+  // cy.checkA11y()
+});

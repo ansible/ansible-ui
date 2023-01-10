@@ -4,7 +4,7 @@
     "module": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020", "DOM"],
-    "types": ["cypress", "cypress-axe"],
+    "types": ["cypress"],
     "allowSyntheticDefaultImports": true,
     "allowJs": false,
     "sourceMap": true,

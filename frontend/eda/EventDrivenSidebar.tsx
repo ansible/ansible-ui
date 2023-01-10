@@ -96,6 +96,31 @@ export function EventDrivenSidebar(props: {
       >
         {t('Rules')}
       </NavItem>
+      <NavExpandable
+        key="user"
+        title={t('User Access')}
+        isExpanded
+        isActive={isRouteActive([RouteE.EdaUsers, RouteE.EdaGroups, RouteE.EdaRoles], location)}
+      >
+        <NavItem
+          isActive={isRouteActive(RouteE.EdaUsers, location)}
+          onClick={() => onClick(RouteE.EdaUsers)}
+        >
+          {t('Users')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteE.EdaGroups, location)}
+          onClick={() => onClick(RouteE.EdaGroups)}
+        >
+          {t('Groups')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteE.EdaRoles, location)}
+          onClick={() => onClick(RouteE.EdaRoles)}
+        >
+          {t('Roles')}
+        </NavItem>
+      </NavExpandable>
     </CommonSidebar>
   );
 }

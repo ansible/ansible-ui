@@ -1,33 +1,33 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteE } from '../Routes';
 import Dashboard from './dashboard/Dashboard';
 import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
 import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
-import { EditInventory } from './inventories/EditInventory';
-import { Inventories } from './inventories/Inventories';
-import { InventoryDetails } from './inventories/InventoryDetails';
-import { EditProject } from './projects/EditProject';
-import { ProjectDetails } from './projects/ProjectDetails';
-import { Projects } from './projects/Projects';
+import { EditInventory } from './Resources/inventories/EditInventory';
+import { Inventories } from './Resources/inventories/Inventories';
+import { InventoryDetails } from './Resources/inventories/InventoryDetails';
+import { EditProject } from './Resources/projects/EditProject';
+import { ProjectDetails } from './Resources/projects/ProjectDetails';
+import { Projects } from './Resources/projects/Projects';
 import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
-import { EditRulebook } from './rulebooks/EditRulebook';
 import { RulebookDetails } from './rulebooks/RulebookDetails';
 import { Rulebooks } from './rulebooks/Rulebooks';
 import { EditRule } from './rules/EditRule';
 import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
+import { Users } from './UserAccess/Users/Users';
 
 export function EventDrivenRouter() {
   return (
     <Routes>
       <Route
         path={RouteE.EdaAutomationServers.replace(RouteE.Eda, '')}
-        element={<AutomationServersPage />}
+        element={<AutomationServers />}
       />
 
       <Route path={RouteE.EdaDashboard.replace(RouteE.Eda, '')} element={<Dashboard />} />
@@ -97,9 +97,6 @@ export function EventDrivenRouter() {
         element={<UnderDevelopment />}
       />
       <Route path={RouteE.EdaActivities.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-
-      <Route path={RouteE.CreateEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
-      <Route path={RouteE.EditEdaRulebook.replace(RouteE.Eda, '')} element={<EditRulebook />} />
       <Route
         path={RouteE.EdaRulebookDetails.replace(RouteE.Eda, '')}
         element={<RulebookDetails />}
@@ -111,6 +108,7 @@ export function EventDrivenRouter() {
       <Route path={RouteE.EdaRuleDetails.replace(RouteE.Eda, '')} element={<RuleDetails />} />
       <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
 
+      <Route path={RouteE.EdaUsers.replace(RouteE.Eda, '')} element={<Users />} />
       <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   );

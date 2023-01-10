@@ -3,8 +3,8 @@ import { ReactNode, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
-import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
-import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher';
+import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
+import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { RouteE } from '../Routes';
 import { isRouteActive } from './Masthead';
 

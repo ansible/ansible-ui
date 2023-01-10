@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteE } from '../Routes';
 import { Token } from './access/token/Token';
 import { Approvals } from './administration/approvals/Approvals';
@@ -21,7 +21,7 @@ export function HubRouter() {
     <Routes>
       <Route
         path={RouteE.HubAutomationServers.replace(RouteE.Hub, '')}
-        element={<AutomationServersPage />}
+        element={<AutomationServers />}
       />
       <Route path={RouteE.HubDashboard.replace(RouteE.Hub, '')} element={<HubDashboard />} />
       <Route path={RouteE.Collections.replace(RouteE.Hub, '')} element={<Collections />} />

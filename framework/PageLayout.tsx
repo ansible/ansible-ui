@@ -15,7 +15,7 @@ import { useFrameworkTranslations } from './useFrameworkTranslations';
  *   </PageLayout>
  * <Page>
  */
-export function PageLayout(props: { children: ReactNode }) {
+export function PageLayout(props: { children?: ReactNode }) {
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>

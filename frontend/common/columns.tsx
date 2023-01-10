@@ -33,7 +33,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
   return column;
 }
 
-export function useDescriptionColumn<T extends { description?: string | undefined }>() {
+export function useDescriptionColumn<T extends { description?: string | null | undefined }>() {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({

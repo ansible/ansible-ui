@@ -38,3 +38,11 @@
   color: var(--pf-global--Color--100);
   flex-shrink: 1;
 }
+
+.ansible-context-selector .pf-c-context-selector__menu-search {
+  display: none;
+}
+
+.ansible-context-selector .pf-c-context-selector__menu-list {
+  max-height: 80%;
+}

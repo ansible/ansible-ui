@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TablePage } from '../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
 import { idKeyFn } from '../../hub/usePulpView';
@@ -9,7 +9,6 @@ import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulebookColumns } from './hooks/useRulebookColumns';
 import { useRulebookFilters } from './hooks/useRulebookFilters';
-import { useRulebooksActions } from './hooks/useRulebooksActions';
 
 export function Rulebooks() {
   const { t } = useTranslation();
@@ -23,22 +22,23 @@ export function Rulebooks() {
     toolbarFilters,
     keyFn: idKeyFn,
   });
-  const toolbarActions = useRulebooksActions(refresh);
-  const rowActions = useRulebookActions(refresh);
+
+  const rowActions = useRulebookActions(undefined, refresh);
   return (
-    <TablePage
-      title={t('Rulebooks')}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      toolbarFilters={toolbarFilters}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading rulebooks')}
-      emptyStateTitle={t('No rulebooks yet')}
-      emptyStateDescription={t('To get started, create a rulebook.')}
-      emptyStateButtonText={t('Create rulebook')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebook)}
-      {...view}
-      defaultSubtitle={t('Rulebook')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Rulebooks')} />
+      <PageTable
+        tableColumns={tableColumns}
+        toolbarFilters={toolbarFilters}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading rulebooks')}
+        emptyStateTitle={t('No rulebooks yet')}
+        emptyStateDescription={t('Please add a project by using the button below')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        {...view}
+        defaultSubtitle={t('Rulebook')}
+      />
+    </PageLayout>
   );
 }

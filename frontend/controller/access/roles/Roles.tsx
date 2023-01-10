@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
 import { RouteE } from '../../../Routes';
-import { Role } from './Role';
+import { Role } from '../../interfaces/Role';
+import { IRoles, useRolesMetadata } from './useRoleMetadata';
 
 export function useRolesFilters() {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export function useRolesFilters() {
 
 export function useRolesColumns() {
   const { t } = useTranslation();
+  const rolesMetadata = useRolesMetadata();
 
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
@@ -41,25 +43,42 @@ export function useRolesColumns() {
             }
           />
         ),
-        sort: 'role.summary_fields.resource_name',
+        sort: 'id',
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Resource type'),
         cell: (role) => <TextCell text={role.summary_fields.resource_type_display_name} />,
-        sort: 'role.summary_fields.resource_type_display_name',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
-        header: t('User role'),
-        cell: (role) => (
-          <TextCell
-            text={role.name}
-            // to={RouteE.OrganizationDetails.replace(':id', role.summary_fields.resource_id.toString())}
-          />
-        ),
-        sort: 'name',
+        header: t('Role'),
+        cell: (role) => <TextCell text={role.name} />,
+        list: 'secondary',
+      },
+      {
+        header: t('Description'),
+        cell: (role) => {
+          if (!role.summary_fields.resource_type) return;
+          const roles = (rolesMetadata as Record<string, IRoles>)[
+            role.summary_fields.resource_type
+          ];
+          if (roles) {
+            const roleMetadata = Object.values(roles).find(
+              (roleMetadata) => roleMetadata.id === role.name
+            );
+            if (roleMetadata) {
+              return <TextCell text={roleMetadata.description} />;
+            }
+          }
+        },
+        card: 'description',
+        list: 'description',
       },
     ],
-    [t]
+    [rolesMetadata, t]
   );
   return tableColumns;
 }

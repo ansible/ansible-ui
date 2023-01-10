@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import { AlertToasterProps, usePageAlertToaster } from '../../../../../framework';
 import { ItemsResponse, requestGet, requestPost } from '../../../../Data';
 import {
   AdHocCommandRelaunch,
@@ -9,13 +11,25 @@ import {
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getRelaunchEndpoint } from '../jobUtils';
 
-export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
+export function useRelaunchJob(
+  onComplete: (jobs: UnifiedJob[]) => void,
+  jobRelaunchParams?: JobRelaunch
+) {
+  const alertToaster = usePageAlertToaster();
+  const { t } = useTranslation();
+
   return async (job: UnifiedJob) => {
     const relaunchEndpoint = getRelaunchEndpoint(job);
 
     if (!relaunchEndpoint) {
       return Promise.reject(new Error('Unable to retrieve launch configuration'));
     }
+
+    const alert: AlertToasterProps = {
+      variant: 'info',
+      title: t('Relaunching job'),
+    };
+    alertToaster.addAlert(alert);
 
     // Get relaunch configuration
     try {
@@ -70,12 +84,22 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
             await requestPost<ProjectUpdateView>(relaunchEndpoint, {} as ProjectUpdateView);
             break;
         }
-        return Promise.resolve();
+
+        alertToaster.replaceAlert(alert, {
+          variant: 'success',
+          title: t('Job relaunched'),
+          timeout: 2000,
+        });
+
+        // TODO: The relaunch should open up the job details UI (for now we're refreshing the jobs list)
+        onComplete([job]);
       }
     } catch (error) {
-      // TODO: Handle displaying error
-      return Promise.reject(error);
+      alertToaster.replaceAlert(alert, {
+        variant: 'danger',
+        title: t('Failed to relaunch job'),
+        children: error instanceof Error && error.message,
+      });
     }
-    // TODO: The relaunch should open up the job details UI
   };
 }

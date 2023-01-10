@@ -8,7 +8,9 @@ import {
   ITableColumn,
   IToolbarFilter,
   PageActionType,
-  TablePage,
+  PageHeader,
+  PageLayout,
+  PageTable,
 } from '../../../../framework';
 import {
   useCreatedColumn,
@@ -23,9 +25,9 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters';
+import { Template } from '../../interfaces/Template';
 import { useControllerView } from '../../useControllerView';
-import { Template } from './Template';
-import { useDeleteTemplates } from './useDeleteTemplates';
+import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -36,6 +38,9 @@ export function Templates() {
     url: '/api/v2/unified_job_templates/',
     toolbarFilters,
     tableColumns,
+    queryParams: {
+      type: 'job_template,workflow_job_template',
+    },
   });
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
@@ -91,27 +96,31 @@ export function Templates() {
     [navigate, deleteTemplates, t]
   );
   return (
-    <TablePage<Template>
-      title={t('Job templates')}
-      titleHelpTitle={t('Job templates')}
-      titleHelp={t(
-        'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
-      )}
-      titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
-      description={t(
-        'A job template is a definition and set of parameters for running an Ansible job.'
-      )}
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading templates')}
-      emptyStateTitle={t('No Templates yet')}
-      emptyStateDescription={t('To get started, create a template.')}
-      emptyStateButtonText={t('Create template')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
-      {...view}
-    />
+    <PageLayout>
+      <PageHeader
+        title={t('Job templates')}
+        titleHelpTitle={t('Job templates')}
+        titleHelp={t(
+          'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
+        )}
+        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
+        description={t(
+          'A job template is a definition and set of parameters for running an Ansible job.'
+        )}
+      />
+      <PageTable<Template>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading templates')}
+        emptyStateTitle={t('No Templates yet')}
+        emptyStateDescription={t('To get started, create a template.')}
+        emptyStateButtonText={t('Create template')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
+        {...view}
+      />
+    </PageLayout>
   );
 }
 
@@ -134,9 +143,10 @@ export function useTemplateFilters() {
 
 export function useTemplatesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
+  // TODO: URL should be dependant on template type
   const nameClick = useCallback(
     (template: Template) =>
-      navigate(RouteE.InventoryDetails.replace(':id', template.id.toString())),
+      navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({

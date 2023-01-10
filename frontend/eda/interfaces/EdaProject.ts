@@ -7,6 +7,12 @@
 
 export interface EdaProject {
   id: number;
-  url: string;
-  name: string;
+  name?: string;
+  description?: string;
+  type?: string;
+  token?: string;
+  created_at?: string;
+  modified_at?: string;
+  url?: string;
+  git_hash?: string;
 }

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TablePage } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { idKeyFn, useHubView } from '../../useHubView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
@@ -20,16 +20,18 @@ export function ExecutionEnvironments() {
   const toolbarActions = useExecutionEnvironmentsActions();
   const rowActions = useExecutionEnvironmentActions();
   return (
-    <TablePage<ExecutionEnvironment>
-      title={t('Execution environments')}
-      toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading execution environments')}
-      emptyStateTitle={t('No execution environments yet')}
-      {...view}
-      defaultSubtitle={t('Execution environment')}
-    />
+    <PageLayout>
+      <PageHeader title={t('Execution environments')} />
+      <PageTable<ExecutionEnvironment>
+        toolbarFilters={toolbarFilters}
+        tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading execution environments')}
+        emptyStateTitle={t('No execution environments yet')}
+        {...view}
+        defaultSubtitle={t('Execution environment')}
+      />
+    </PageLayout>
   );
 }

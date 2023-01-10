@@ -14,6 +14,8 @@ export type FormGroupTextAreaProps = Pick<
   | 'onChange'
   | 'type'
   | 'aria-label'
+  | 'minLength'
+  | 'maxLength'
 > &
   PageFormGroupProps;
 

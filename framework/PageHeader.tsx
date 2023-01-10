@@ -89,17 +89,15 @@ export interface PageHeaderProps {
  * @param {ReactNode} headerActions - The actions for the page.
  *
  * @example
- * <Page>
- *   <PageLayout>
- *     <PageHeader
- *       breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
- *       title='Page title'
- *       description='Page description'
- *       headerActions={<TypedActions actions={actions} />}
- *     />
- *     <PageBody />...</PageBody>
- *   </PageLayout>
- * <Page>
+ * <PageLayout>
+ *   <PageHeader
+ *     breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Page title' }]}
+ *     title='Page title'
+ *     description='Page description'
+ *     headerActions={<TypedActions actions={actions} />}
+ *   />
+ *   ...
+ * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
   const { navigation, breadcrumbs, title, description, controls, headerActions } = props;
@@ -155,12 +153,12 @@ export function PageHeader(props: PageHeaderProps) {
           </Flex>
         </PageSection>
       )}
-      {(isMdOrLarger || !navigation) && (
+      {true && (
         <PageSection
           variant={PageSectionVariants.light}
           style={{
             paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
-            paddingBottom: xl ? 20 : 12,
+            paddingBottom: xl ? 16 : 12,
             borderTop:
               !navigation && settings.theme !== 'light' && settings.borders
                 ? 'thin solid var(--pf-global--BorderColor--100)'

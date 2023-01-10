@@ -4,16 +4,6 @@ import { Input, Options } from 'ky/distribution/types/options';
 import { SWRConfiguration } from 'swr';
 import { RouteE } from './Routes';
 
-export const headers: Record<string, string> = {};
-
-function initHeaders() {
-  const server = localStorage.getItem('server');
-  if (typeof server === 'string') {
-    headers['x-server'] = server;
-  }
-}
-initHeaders();
-
 export async function requestHead<ResponseBody>(url: string): Promise<ResponseBody> {
   return requestCommon<ResponseBody>(url, {}, ky.head);
 }
@@ -48,7 +38,7 @@ export async function requestPostFile(
 ): Promise<string> {
   const body = new FormData();
   body.append('file', file);
-  return ky.post(url, { body, signal, credentials: 'include', headers }).json();
+  return ky.post(url, { body, signal, credentials: 'include' }).json();
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
@@ -76,20 +66,32 @@ async function requestCommon<ResponseBody>(
     const result = await methodFn(url, {
       ...options,
       credentials: 'include',
-      headers: { ...headers, ...(options.headers ?? {}) },
+      headers: options.headers,
+      hooks: {
+        beforeError: [
+          async (error) => {
+            const { response } = error;
+            const body: unknown = await response?.json();
+            if (
+              typeof body === 'object' &&
+              body !== null &&
+              'msg' in body &&
+              typeof body.msg === 'string'
+            ) {
+              error.name = 'Controller Error';
+              error.message = body.msg;
+            }
+            return error;
+          },
+        ],
+      },
     }).json<ResponseBody>();
-    // if (process.env.NODE_ENV === 'development') {
-    //     console.debug(result)
-    // }
     return result;
   } catch (err) {
-    // if (process.env.NODE_ENV === 'development') {
-    //     console.error(err)
-    // }
     if (err instanceof HTTPError) {
       switch (err.response.status) {
         case 401:
-          location.replace(RouteE.Login);
+          location.assign(RouteE.Login + '?navigate-back=true');
           break;
       }
     }
@@ -115,3 +117,10 @@ export function getItemKey(item: { id: number }) {
 export const swrOptions: SWRConfiguration = {
   dedupingInterval: 0,
 };
+
+export function setCookie(cookie: string, value: string) {
+  const date = new Date();
+  date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const expires = 'expires=' + date.toUTCString();
+  document.cookie = cookie + '=' + value + ';' + expires + ';path=/';
+}
