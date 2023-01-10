@@ -26,7 +26,7 @@ export function PageFormInventorySelect(props: {
           const itemsResponse = await requestGet<ItemsResponse<Inventory>>(
             `/api/v2/inventories/?name=${inventoryName}`
           );
-          if (itemsResponse.results.length === 0) return t('Job inventory not found.');
+          if (itemsResponse.results.length === 0) return t('Inventory not found.');
           if (props.inventoryPath) setValue(props.inventoryPath, itemsResponse.results[0]);
           if (props.inventoryIdPath) setValue(props.inventoryIdPath, itemsResponse.results[0].id);
         } catch (err) {
