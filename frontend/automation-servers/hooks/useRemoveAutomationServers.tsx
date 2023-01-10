@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../framework';
-import { AutomationServer, automationServerKeyFn } from './AutomationServer';
-import { useAutomationServers } from './AutomationServerProvider';
-import { useAutomationServersColumns } from './AutomationServersPage';
+import { compareStrings, useBulkConfirmation } from '../../../framework';
+import { useAutomationServersColumns } from '../AutomationServers';
+import { useAutomationServers } from '../contexts/AutomationServerProvider';
+import { AutomationServer, automationServerKeyFn } from '../interfaces/AutomationServer';
 
 export function useRemoveAutomationServers() {
   const { t } = useTranslation();

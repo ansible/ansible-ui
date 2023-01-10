@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AutomationServersPage } from '../automation-servers/AutomationServersPage';
+import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteE } from '../Routes';
 import Dashboard from './dashboard/Dashboard';
 import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
@@ -19,15 +19,15 @@ import { Rulebooks } from './rulebooks/Rulebooks';
 import { EditRule } from './rules/EditRule';
 import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
-import { Users } from './UserAccess/Users/Users';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
+import { Users } from './UserAccess/Users/Users';
 
 export function EventDrivenRouter() {
   return (
     <Routes>
       <Route
         path={RouteE.EdaAutomationServers.replace(RouteE.Eda, '')}
-        element={<AutomationServersPage />}
+        element={<AutomationServers />}
       />
 
       <Route path={RouteE.EdaDashboard.replace(RouteE.Eda, '')} element={<Dashboard />} />

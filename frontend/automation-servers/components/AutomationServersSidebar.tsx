@@ -1,4 +1,4 @@
-import { CommonSidebar } from '../common/CommonSidebar';
+import { CommonSidebar } from '../../common/CommonSidebar';
 
 export function AutomationServersSidebar(props: {
   isNavOpen: boolean;
