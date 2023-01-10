@@ -42,7 +42,7 @@ import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
-import { useAutomationServers } from '../automation-servers/AutomationServerProvider';
+import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { swrOptions, useFetcher } from '../Data';
 import { RouteE } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
@@ -345,7 +345,7 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              await fetch('/api/logout');
+              await fetch('/api/logout/');
               history(RouteE.AutomationServers);
             }
             void logout();

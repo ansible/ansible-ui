@@ -10,7 +10,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AutomationServer, AutomationServerType } from './AutomationServer';
+import { AutomationServer, AutomationServerType } from '../interfaces/AutomationServer';
 
 export const AutomationServersCompiler = TypeCompiler.Compile(Type.Array(AutomationServerType));
 

@@ -1,10 +1,10 @@
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageForm, PageFormSelectOption, usePageDialog } from '../../framework';
-import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
-import { AutomationServer } from './AutomationServer';
-import { useAutomationServers } from './AutomationServerProvider';
+import { PageForm, PageFormSelectOption, usePageDialog } from '../../../framework';
+import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
+import { useAutomationServers } from '../contexts/AutomationServerProvider';
+import { AutomationServer } from '../interfaces/AutomationServer';
 
 export function useAddAutomationServer() {
   const [_, setDialog] = usePageDialog();
