@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../../framework/Settings';
 import { useLoginModal } from '../../common/LoginModal';
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
@@ -18,7 +17,6 @@ export function AutomationServerSwitcher() {
   const settings = useSettings();
   const { automationServer, automationServers } = useAutomationServers();
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
   const openLoginModal = useLoginModal();
   return (
     <PageSection
