@@ -4,7 +4,8 @@ import {
   PageSection,
   Skeleton,
   Stack,
-  ChipGroup,
+  LabelGroup,
+  Label,
 } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -27,9 +28,11 @@ import { useItem, useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { Credential } from '../../interfaces/Credential';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Team } from '../../interfaces/Team';
 import { useControllerView } from '../../useControllerView';
-import { CredentialChip } from '../../common/CredentialChip';
+import { CredentialLabel } from '../../common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
 import { useTeamsColumns } from '../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../teams/hooks/useTeamsFilters';
 import { AccessTable } from '../users/Users';
@@ -118,17 +121,30 @@ export function OrganizationDetails() {
   );
 }
 
+function useGalaxyCredentials(orgId: string) {
+  const { data } = useGet<{ results: Credential[] }>(
+    `/api/v2/organizations/${orgId}/galaxy_credentials/`
+  );
+  return data?.results ?? [];
+}
+
+function useInstanceGroups(orgId: string) {
+  const { data } = useGet<{ results: InstanceGroup[] }>(
+    `/api/v2/organizations/${orgId}/instance_groups/`
+  );
+  return data?.results ?? [];
+}
+
 function OrganizationDetailsTab(props: { organization: Organization }) {
   const { t } = useTranslation();
   const { organization } = props;
   const history = useNavigate();
   const params = useParams<{ id: string }>();
 
-  const { data } = useGet<{ results: Credential[] }>(
-    `/api/v2/organizations/${params.id ?? '0'}/galaxy_credentials/`
-  );
-  const galaxyCredentials = data?.results ?? [];
+  const galaxyCredentials = useGalaxyCredentials(params.id || '0');
+  const instanceGroups = useInstanceGroups(params.id || '0');
 
+  // TODO look up license type from context (TBD) and add max hosts
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{organization.name}</PageDetail>
@@ -136,15 +152,15 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
       {/* {license_info?.license_type !== 'open' ? (
         <PageDetail label={t('Max hosts')}>{organization.max_hosts}</PageDetail>
       ) : null} */}
-      {/* <ExecutionEnvironmentDetail
-        virtualEnvironment={custom_virtualenv}
-        executionEnvironment={summary_fields?.default_environment}
+      <ExecutionEnvironmentDetail
+        virtualEnvironment={organization.custom_virtualenv || undefined}
+        executionEnvironment={organization.summary_fields?.default_environment}
         isDefaultEnvironment
         helpText={t`The execution environment that will be used for jobs
           inside of this organization. This will be used a fallback when
           an execution environment has not been explicitly assigned at the
           project, job template or workflow level.`}
-      /> */}
+      />
       <PageDetail label={t('Created')}>
         <SinceCell
           value={organization.created}
@@ -173,23 +189,27 @@ function OrganizationDetailsTab(props: { organization: Organization }) {
           }
         />
       </PageDetail>
-      {/* {instanceGroups && (
-        <Detail
-          fullWidth
-          label={t`Instance Groups`}
-          helpText={t`The Instance Groups for this Organization to run on.`}
-          value={<InstanceGroupLabels labels={instanceGroups} isLinkable />}
-          isEmpty={instanceGroups.length === 0}
-        />
-      )} */}
-      <PageDetail label={t('Galaxy Credentials')} isEmpty={galaxyCredentials?.length === 0}>
-        <ChipGroup numChips={5} ouiaId="galaxy-credential-chips">
-          {galaxyCredentials?.map((credential) => (
-            <Link key={credential.id} to={`/credentials/${credential.id}/details`}>
-              <CredentialChip credential={credential} key={credential.id} isReadOnly />
-            </Link>
+      <PageDetail
+        label={t`Instance Groups`}
+        helpText={t`The Instance Groups for this Organization to run on.`}
+        isEmpty={instanceGroups.length === 0}
+      >
+        <LabelGroup>
+          {instanceGroups.map((ig) => (
+            <Label color="blue" key={ig.id}>
+              <Link to={RouteE.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
+                {ig.name}
+              </Link>
+            </Label>
           ))}
-        </ChipGroup>
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail label={t('Galaxy Credentials')} isEmpty={galaxyCredentials.length === 0}>
+        <LabelGroup>
+          {galaxyCredentials?.map((credential) => (
+            <CredentialLabel credential={credential} key={credential.id} />
+          ))}
+        </LabelGroup>
       </PageDetail>
     </PageDetails>
   );
