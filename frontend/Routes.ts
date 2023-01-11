@@ -10,7 +10,7 @@ export enum RouteE {
   Jobs = '/controller/jobs',
   JobDetails = '/controller/jobs/details/:id',
   Schedules = '/controller/schedules',
-  ActivityStream = '/controller/activity-stream',
+  ActivityStream = '/controller/activity-stream/:type',
   WorkflowApprovals = '/controller/workflow-approvals',
 
   // Resources
