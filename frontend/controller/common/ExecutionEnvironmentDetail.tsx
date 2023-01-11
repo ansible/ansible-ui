@@ -6,6 +6,7 @@ import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfl
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { PageDetail } from '../../../framework';
 import { RouteE } from '../../Routes';
+import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-global--warning-color--100);
@@ -22,7 +23,7 @@ const ExclamationTrianglePopover = styled(PFExclamationTriangleIcon)`
 ExclamationTrianglePopover.displayName = 'ExclamationTrianglePopover';
 
 function ExecutionEnvironmentDetail(props: {
-  executionEnvironment: ExecutionEnvironment;
+  executionEnvironment: ExecutionEnvironment | SummaryFieldsExecutionEnvironment;
   isDefaultEnvironment: boolean;
   virtualEnvironment?: string;
   verifyMissingVirtualEnv?: boolean;
