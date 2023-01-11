@@ -64,7 +64,7 @@ export function Organizations() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
-        onClick: () => navigate(RouteE.CreateOrganization),
+        href: RouteE.CreateOrganization,
       },
       { type: PageActionType.seperator },
       {
@@ -91,21 +91,21 @@ export function Organizations() {
     [
       t,
       deleteOrganizations,
-      navigate,
       selectUsersAddOrganizations,
       view.selectedItems,
       selectUsersRemoveOrganizations,
     ]
   );
 
-  const rowActions = useMemo<IPageAction<Organization>[]>(
-    () => [
+  const rowActions = useMemo<IPageAction<Organization>[]>(() => {
+    const actions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.singleLink,
         icon: EditIcon,
         label: t('Edit organization'),
-        onClick: (organization) =>
-          navigate(RouteE.EditOrganization.replace(':id', organization.id.toString())),
+        href: (organization) => {
+          return RouteE.EditOrganization.replace(':id', organization.id.toString());
+        },
       },
       { type: PageActionType.seperator },
       {
@@ -128,9 +128,9 @@ export function Organizations() {
         onClick: (organization) => deleteOrganizations([organization]),
         isDanger: true,
       },
-    ],
-    [t, navigate, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]
-  );
+    ];
+    return actions;
+  }, [t, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]);
 
   return (
     <PageLayout>
