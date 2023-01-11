@@ -129,7 +129,7 @@ export function useAutomationServersColumns(_options?: {
       },
       {
         header: t('Url'),
-        cell: (server) => <TextCell text={server.url} to={server.url} />,
+        cell: (server) => <TextCell text={server.url} />,
         card: 'description',
         list: 'description',
       },
