@@ -1,1 +1,1 @@
-declare module '@cypress/code-coverage/task'
+declare module '@cypress/code-coverage/task';
