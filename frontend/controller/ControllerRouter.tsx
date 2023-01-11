@@ -20,7 +20,7 @@ import { InstanceGroups } from './administration/instance-groups/InstanceGroups'
 import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
 import { Instances } from './administration/instances/Instances';
-import Dashboard from './Dashboard';
+import Dashboard from './dashboard/Dashboard';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
