@@ -1,6 +1,18 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
+import {
+  Divider,
+  PageSection,
+  Stack,
+  Title,
+  TitleSizes,
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@patternfly/react-core';
+import { TachometerAltIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useControllerView } from '../../useControllerView';
 import { useJobRowActions } from './hooks/useJobRowActions';
@@ -23,6 +35,8 @@ export default function Jobs() {
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
 
+  const [showGraph, setShowGraph] = useState(true);
+
   return (
     <PageLayout>
       <PageHeader
@@ -31,7 +45,31 @@ export default function Jobs() {
         titleHelp={t('jobs.title.help')}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t('jobs.title.description')}
+        headerActions={
+          <ToggleGroup aria-label="Icon variant toggle group">
+            <ToggleGroupItem
+              icon={<TachometerAltIcon />}
+              aria-label="copy"
+              buttonId="toggle-group-icons-1"
+              isSelected={showGraph}
+              onChange={() => setShowGraph((show) => !show)}
+            />
+          </ToggleGroup>
+        }
       />
+      {showGraph && (
+        <>
+          <PageSection variant="light">
+            <Stack hasGutter>
+              <Title headingLevel="h2" size={TitleSizes['lg']}>
+                {t('Job runs in the last 30 days')}
+              </Title>
+              <JobsChart height={250} />
+            </Stack>
+          </PageSection>
+          <Divider />
+        </>
+      )}
       <PageTable
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

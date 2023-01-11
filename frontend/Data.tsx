@@ -12,8 +12,11 @@ export async function requestOptions<ResponseBody>(url: string): Promise<Respons
   return requestCommon<ResponseBody>(url, { method: 'OPTIONS' }, ky.get);
 }
 
-export async function requestGet<ResponseBody>(url: string): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, {}, ky.get);
+export async function requestGet<ResponseBody>(
+  url: string,
+  signal?: AbortSignal
+): Promise<ResponseBody> {
+  return requestCommon<ResponseBody>(url, { signal }, ky.get);
 }
 
 export async function requestPut<ResponseBody, RequestBody = unknown>(
