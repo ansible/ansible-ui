@@ -1,11 +1,39 @@
 # Cypress Testing
 
-## Goals
+Cypress is being used for both unit and E2E tests.
+
+## 1. Component Testing
+
+### Goals
+
+- Unit test components, hooks and other functions.
+
+### Getting started
+
+- Run the unit tests headlessly.
+
+  ```
+  npm run test:unit
+  ```
+
+  OR
+
+- Run the unit tests by opening Cypress and launching the browser. (For visual rendering of the components being tested)
+
+  ```
+  npm run test:unit:open
+  ```
+
+---
+
+## 2. E2E Testing
+
+### Goals
 
 - Test major user flows theough the UI such as creating, editing, and deleting.
 - Run E2E tests against both a mock API and a live API.
 
-## Getting started
+### Getting started
 
 1. Run the Ansible-UI frontend.
 
@@ -19,7 +47,7 @@
    npm run cypress:open
    ```
 
-## NPM E2E Commands
+### NPM E2E Commands
 
 | Command                     | Description                                                            |
 | --------------------------- | ---------------------------------------------------------------------- |
@@ -31,19 +59,19 @@
 | `npm run cypress:open:live` | Run Cypress UI against a live API.                                     |
 | `npm run coverage`          | After tests have finished, view test coverage.                         |
 
-## Testing Philosophy
+### Testing Philosophy
 
-### Tests should be self contained
+#### Tests should be self contained
 
 This is so that tests do not interfere with each other.
 
-### Tests should be able to be run without fixtures
+#### Tests should be able to be run without fixtures
 
 This is so that it can run against not only a mock server but also a live server.
 
 To facilitate this, there are functions to setup state using the REST api.
 
-#### Example
+##### Example
 
 Creating a team that does not exist for use in a test.
 
