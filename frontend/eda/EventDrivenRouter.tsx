@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteE } from '../Routes';
 import Dashboard from './dashboard/Dashboard';
@@ -109,7 +109,6 @@ export function EventDrivenRouter() {
       <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
 
       <Route path={RouteE.EdaUsers.replace(RouteE.Eda, '')} element={<Users />} />
-      <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   );
 }

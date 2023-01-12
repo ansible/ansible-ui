@@ -1,16 +1,16 @@
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const path = require('path')
-const webpack = require('webpack')
-const { GenerateSW } = require('workbox-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const { GenerateSW } = require('workbox-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 
 module.exports = function (_env, argv) {
-  var isProduction = argv.mode === 'production' || argv.mode === undefined
-  var isDevelopment = !isProduction
+  var isProduction = argv.mode === 'production' || argv.mode === undefined;
+  var isDevelopment = !isProduction;
   var config = {
     entry: './frontend',
     resolve: { extensions: ['.ts', '.tsx', '.js', '.jsx'] },
@@ -53,6 +53,9 @@ module.exports = function (_env, argv) {
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),
         'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.CONTROLLER': _env.controller ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.HUB': _env.hub ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.EDA': _env.eda ? JSON.stringify('true') : JSON.stringify(''),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'fr'].map((locale) => {
@@ -62,7 +65,7 @@ module.exports = function (_env, argv) {
             fileName: `/locales/${locale}/translation.json`,
           },
           space: 4,
-        })
+        });
       }),
       new HtmlWebpackPlugin({
         title: 'AnsibleDev',
@@ -114,6 +117,6 @@ module.exports = function (_env, argv) {
       },
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
-  }
-  return config
-}
+  };
+  return config;
+};

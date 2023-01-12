@@ -35,6 +35,7 @@ export function CommonSidebar(props: {
       nav={
         <Nav>
           <NavList>
+            {process.env.CONTROLLER !== 'true'}
             <NavItemSeparator style={{ margin: 0 }} />
             <NavItem
               isActive={isRouteActive(
