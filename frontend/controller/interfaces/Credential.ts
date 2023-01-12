@@ -22,4 +22,7 @@ export interface Credential extends Omit<SwaggerCredential, 'id' | 'name' | 'sum
       use: boolean;
     };
   };
+  inputs: {
+    vault_id?: number | string;
+  };
 }
