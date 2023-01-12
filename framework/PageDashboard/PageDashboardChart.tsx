@@ -23,7 +23,7 @@ export function PageDashboardChart(props: {
     <PageChartContainer>
       {(size) => (
         <Chart
-          padding={{ bottom: 27, left: 40, right: 0, top: 5 }}
+          padding={{ bottom: 27, left: 40, right: 0, top: 10 }}
           colorScale={groups.map((group) => group.color)}
           width={size.width}
           height={size.height}
