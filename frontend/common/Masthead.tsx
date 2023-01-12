@@ -22,6 +22,7 @@ import {
   StackItem,
   Text,
   Title,
+  TitleSizes,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
@@ -33,7 +34,6 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
-  RedhatIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
@@ -44,9 +44,10 @@ import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { swrOptions, useFetcher } from '../Data';
+import AnsibleIcon from '../icons/ansible.svg';
 import { RouteE } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
-
+import { shouldShowAutmationServers } from './should-show-autmation-servers';
 export const ApplicationLauncherBasic: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const onToggle = (isOpen: boolean) => setIsOpen(isOpen);
@@ -122,6 +123,8 @@ export function AnsibleMasthead(props: {
   const { t } = useTranslation();
   const openSettings = useSettingsDialog(t);
   const openAnsibleAboutModal = useAnsibleAboutModal();
+  const { showAutomationServers, showHub, showEda } = shouldShowAutmationServers();
+
   return (
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
@@ -135,15 +138,38 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ marginTop: 6 }}>
-                <RedhatIcon size="lg" color="#ee0000" style={{ marginTop: -20 }} />
-              </div>
-              <div style={{ color: 'white', textDecoration: 'none' }}>
-                <Title headingLevel="h4" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
-                  {t('Red Hat')}
-                </Title>
-                <Title headingLevel="h3" style={{ fontWeight: 'lighter', lineHeight: 1.2 }}>
-                  <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
+              <AnsibleIcon width={48} />
+              <div
+                style={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {process.env.BRAND && (
+                  <span style={{ fontWeight: 900, marginTop: -4 }}>{process.env.BRAND}</span>
+                )}
+                <Title
+                  headingLevel="h1"
+                  sizes={TitleSizes[TitleSizes.lg]}
+                  style={{ lineHeight: 1 }}
+                >
+                  {showAutomationServers ? (
+                    <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
+                  ) : showHub ? (
+                    <Truncate content={t('Ansible Automation Hub')} style={{ minWidth: 0 }} />
+                  ) : showEda ? (
+                    <Truncate
+                      content={t('Ansible Event Driven Automation')}
+                      style={{ minWidth: 0 }}
+                    />
+                  ) : (
+                    <Truncate
+                      content={t('Ansible Automation Controller')}
+                      style={{ minWidth: 0 }}
+                    />
+                  )}
                 </Title>
               </div>
             </div>
@@ -153,10 +179,27 @@ export function AnsibleMasthead(props: {
         <MastheadMain style={{ marginRight: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
           <MastheadBrand>
             <Title headingLevel="h3" style={{ color: 'white' }}>
-              <Truncate
-                content={t('Ansible Automation Platform')}
-                style={{ minWidth: 0, marginLeft: -8 }}
-              />
+              {showAutomationServers ? (
+                <Truncate
+                  content={t('Ansible Automation Platform')}
+                  style={{ minWidth: 0, marginLeft: -8 }}
+                />
+              ) : showHub ? (
+                <Truncate
+                  content={t('Ansible Automation Hub')}
+                  style={{ minWidth: 0, marginLeft: -8 }}
+                />
+              ) : showEda ? (
+                <Truncate
+                  content={t('Ansible Event Driven Automation')}
+                  style={{ minWidth: 0, marginLeft: -8 }}
+                />
+              ) : (
+                <Truncate
+                  content={t('Ansible Automation Controller')}
+                  style={{ minWidth: 0, marginLeft: -8 }}
+                />
+              )}
             </Title>
           </MastheadBrand>
         </MastheadMain>
@@ -346,7 +389,7 @@ function AccountDropdownInternal() {
           onClick={() => {
             async function logout() {
               await fetch('/api/logout/');
-              history(RouteE.AutomationServers);
+              history('/');
             }
             void logout();
           }}

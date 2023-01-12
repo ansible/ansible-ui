@@ -18,10 +18,10 @@ export function Login() {
       style={{
         minWidth: '100%',
         minHeight: '100%',
-        backgroundColor: 'red',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#444',
         backgroundImage: `url(${background})`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',

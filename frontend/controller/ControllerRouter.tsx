@@ -1,6 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
 import { RouteE } from '../Routes';
@@ -134,8 +134,6 @@ export function ControllerRouter() {
         <Route path={RouteE.Settings.replace(RouteE.Controller, '')} element={<Settings />} />
 
         <Route path={RouteE.ControllerDebug.replace(RouteE.Controller, '')} element={<Debug />} />
-
-        <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
       </Routes>
     </Suspense>
   );
