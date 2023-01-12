@@ -26,6 +26,7 @@ export function useRulesActions(refresh: () => Promise<unknown>) {
         icon: TrashIcon,
         label: t('Delete selected rules'),
         onClick: (rules: EdaRule[]) => deleteRules(rules),
+        isDanger: true,
       },
     ],
     [deleteRules, navigate, t]

@@ -59,6 +59,7 @@ export function TemplateDetail() {
           if (!template) return;
           deleteTemplates([template]);
         },
+        isDanger: true,
       },
     ];
     return itemActions;

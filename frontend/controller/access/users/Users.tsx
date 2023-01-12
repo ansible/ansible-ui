@@ -86,6 +86,7 @@ export function Users() {
         icon: TrashIcon,
         label: t('Delete selected users'),
         onClick: deleteUsers,
+        isDanger: true,
       },
     ],
     [
@@ -141,6 +142,7 @@ export function Users() {
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: (user) => deleteUsers([user]),
+        isDanger: true,
       },
     ],
     [

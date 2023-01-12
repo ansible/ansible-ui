@@ -26,6 +26,7 @@ export function useUsersActions(refresh: () => Promise<unknown>) {
         icon: TrashIcon,
         label: t('Delete selected Users'),
         onClick: (Users: EdaUser[]) => deleteUsers(Users),
+        isDanger: true,
       },
     ],
     [deleteUsers, navigate, t]

@@ -58,6 +58,7 @@ export function Projects() {
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: deleteProjects,
+        isDanger: true,
       },
     ],
     [navigate, deleteProjects, t]
@@ -83,6 +84,7 @@ export function Projects() {
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project) => deleteProjects([project]),
+        isDanger: true,
       },
     ],
     [navigate, deleteProjects, t]
