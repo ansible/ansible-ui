@@ -7,6 +7,7 @@ import { AutomationServerSwitcher } from '../automation-servers/components/Autom
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { RouteE } from '../Routes';
 import { isRouteActive } from './Masthead';
+import { shouldShowAutmationServers } from './should-show-autmation-servers';
 
 export function CommonSidebar(props: {
   isNavOpen: boolean;
@@ -29,39 +30,46 @@ export function CommonSidebar(props: {
     },
     [navigate, isXl, setNavOpen]
   );
+
+  const { showAutomationServers } = shouldShowAutmationServers();
+
   return (
     <PageSidebar
       isNavOpen={isNavOpen}
       nav={
         <Nav>
           <NavList>
-            <NavItemSeparator style={{ margin: 0 }} />
-            <NavItem
-              isActive={isRouteActive(
-                automationServer?.type === 'controller'
-                  ? RouteE.ControllerAutomationServers
-                  : automationServer?.type === 'hub'
-                  ? RouteE.HubAutomationServers
-                  : automationServer?.type === 'eda'
-                  ? RouteE.EdaAutomationServers
-                  : RouteE.AutomationServers,
-                location
-              )}
-              onClick={() =>
-                onClick(
-                  automationServer?.type === 'controller'
-                    ? RouteE.ControllerAutomationServers
-                    : automationServer?.type === 'hub'
-                    ? RouteE.HubAutomationServers
-                    : automationServer?.type === 'eda'
-                    ? RouteE.EdaAutomationServers
-                    : RouteE.AutomationServers
-                )
-              }
-            >
-              {t('Automation Servers')}
-            </NavItem>
-            <AutomationServerSwitcher />
+            {showAutomationServers && (
+              <>
+                <NavItemSeparator style={{ margin: 0 }} />
+                <NavItem
+                  isActive={isRouteActive(
+                    automationServer?.type === 'controller'
+                      ? RouteE.ControllerAutomationServers
+                      : automationServer?.type === 'hub'
+                      ? RouteE.HubAutomationServers
+                      : automationServer?.type === 'eda'
+                      ? RouteE.EdaAutomationServers
+                      : RouteE.AutomationServers,
+                    location
+                  )}
+                  onClick={() =>
+                    onClick(
+                      automationServer?.type === 'controller'
+                        ? RouteE.ControllerAutomationServers
+                        : automationServer?.type === 'hub'
+                        ? RouteE.HubAutomationServers
+                        : automationServer?.type === 'eda'
+                        ? RouteE.EdaAutomationServers
+                        : RouteE.AutomationServers
+                    )
+                  }
+                >
+                  {t('Automation Servers')}
+                </NavItem>
+                <AutomationServerSwitcher />
+              </>
+            )}
             <NavItemSeparator style={{ margin: 0 }} />
             {props.children}
           </NavList>

@@ -9,6 +9,7 @@ import { AutomationServersProvider } from './automation-servers/contexts/Automat
 import { AccessCode } from './common/AccessCode';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
+import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
 import { Controller } from './controller/Controller';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
@@ -33,15 +34,24 @@ export default function Main() {
 
 function Routing() {
   const navigate = useNavigate();
+
+  const { showAutomationServers, showController, showHub, showEda } = shouldShowAutmationServers();
+
   return (
     <PageFramework navigate={navigate}>
       <Routes>
-        <Route path={RouteE.AutomationServers} element={<AutomationServersRoute />} />
-        <Route path={RouteE.Controller + '/*'} element={<Controller />} />
-        <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />
-        <Route path={RouteE.Hub + '/*'} element={<Hub />} />
-        <Route path={RouteE.Login + '/*'} element={<Login />} />
-        <Route path="/" element={<Navigate to={RouteE.AutomationServers} />} />
+        {showAutomationServers && (
+          <Route path={RouteE.AutomationServers} element={<AutomationServersRoute />} />
+        )}
+        {showController && <Route path={RouteE.Controller + '/*'} element={<Controller />} />}
+        {showHub && <Route path={RouteE.Hub + '/*'} element={<Hub />} />}
+        {showEda && <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />}
+        <Route path={RouteE.Login} element={<Login />} />
+        {showAutomationServers ? (
+          <Route path="/" element={<Navigate to={RouteE.AutomationServers} />} />
+        ) : (
+          <Route path="/" element={<Navigate to={RouteE.Login} />} />
+        )}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </PageFramework>

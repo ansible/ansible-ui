@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteE } from '../Routes';
 import { Token } from './access/token/Token';
@@ -54,7 +54,6 @@ export function HubRouter() {
       <Route path={RouteE.TaskDetails.replace(RouteE.Hub, '')} element={<TaskDetails />} />
       <Route path={RouteE.SignatureKeys.replace(RouteE.Hub, '')} element={<SignatureKeys />} />
       <Route path={RouteE.APIToken.replace(RouteE.Hub, '')} element={<Token />} />
-      <Route path="*" element={<Navigate to={RouteE.AutomationServers} replace />} />
     </Routes>
   );
 }
