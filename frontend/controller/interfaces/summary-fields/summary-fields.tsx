@@ -17,3 +17,10 @@ export interface SummeryFieldObjectRole {
   id: number;
   user_only?: boolean;
 }
+
+export interface SummaryFieldsExecutionEnvironment {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
