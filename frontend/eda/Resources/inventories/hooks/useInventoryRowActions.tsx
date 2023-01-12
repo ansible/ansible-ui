@@ -25,6 +25,7 @@ export function useInventoryRowActions(refresh: () => Promise<unknown>) {
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory: EdaInventory) => deleteInventories([inventory]),
+        isDanger: true,
       },
     ],
     [deleteInventories, navigate, t]

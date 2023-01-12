@@ -27,6 +27,7 @@ export function useCollectionActions(callback?: (collections: Collection[]) => v
         icon: TrashIcon,
         label: t('Delete entire collection'),
         onClick: (collection) => deleteCollections([collection]),
+        isDanger: true,
       },
       // {
       //   type: PageActionType.button,

@@ -51,6 +51,7 @@ export function Hosts() {
         icon: TrashIcon,
         label: t('Delete selected hosts'),
         onClick: deleteHosts,
+        isDanger: true,
       },
     ],
     [navigate, deleteHosts, t]
@@ -69,6 +70,7 @@ export function Hosts() {
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),
+        isDanger: true,
       },
     ],
     [navigate, deleteHosts, t]

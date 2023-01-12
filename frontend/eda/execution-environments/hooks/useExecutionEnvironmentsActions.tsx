@@ -28,6 +28,7 @@ export function useExecutionEnvironmentsActions(refresh: () => Promise<unknown>)
         label: t('Delete selected execution environments'),
         onClick: (executionEnvironments: EdaExecutionEnvironment[]) =>
           deleteExecutionEnvironments(executionEnvironments),
+        isDanger: true,
       },
     ],
     [deleteExecutionEnvironments, navigate, t]

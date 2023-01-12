@@ -59,6 +59,7 @@ export function InstanceGroups() {
         icon: TrashIcon,
         label: t('Delete selected instance groups'),
         onClick: deleteInstanceGroups,
+        isDanger: true,
       },
     ],
     [deleteInstanceGroups, navigate, t]
@@ -78,6 +79,7 @@ export function InstanceGroups() {
         icon: TrashIcon,
         label: t('Delete instance group'),
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),
+        isDanger: true,
       },
     ],
     [deleteInstanceGroups, navigate, t]

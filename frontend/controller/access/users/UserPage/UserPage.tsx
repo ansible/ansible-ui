@@ -51,6 +51,7 @@ export function UserPage() {
           if (!user) return;
           deleteUsers([user]);
         },
+        isDanger: true,
       },
     ];
     return itemActions;

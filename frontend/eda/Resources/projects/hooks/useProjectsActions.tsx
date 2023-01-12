@@ -26,6 +26,7 @@ export function useProjectsActions(refresh: () => Promise<unknown>) {
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: (projects: EdaProject[]) => deleteProjects(projects),
+        isDanger: true,
       },
     ],
     [deleteProjects, navigate, t]

@@ -26,6 +26,7 @@ export function useInventoriesToolbarActions(refresh: () => Promise<unknown>) {
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: (inventories: EdaInventory[]) => deleteInventories(inventories),
+        isDanger: true,
       },
     ],
     [deleteInventories, navigate, t]

@@ -85,6 +85,7 @@ export function Organizations() {
         icon: TrashIcon,
         label: t('Delete selected organizations'),
         onClick: deleteOrganizations,
+        isDanger: true,
       },
     ],
     [

@@ -28,6 +28,7 @@ export function useRulebookActivationActions(refresh: () => Promise<unknown>) {
         label: t('Delete rulebookActivation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
+        isDanger: true,
       },
     ],
     [deleteRulebookActivations, navigate, t]

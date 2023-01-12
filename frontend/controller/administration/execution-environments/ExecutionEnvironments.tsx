@@ -27,8 +27,8 @@ import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
 } from '../../common/controller-toolbar-filters';
-import { useControllerView } from '../../useControllerView';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
+import { useControllerView } from '../../useControllerView';
 
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
@@ -58,6 +58,7 @@ export function ExecutionEnvironments() {
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
         onClick: deleteExecutionEnvironments,
+        isDanger: true,
       },
     ],
     [navigate, deleteExecutionEnvironments, t]
@@ -79,6 +80,7 @@ export function ExecutionEnvironments() {
         icon: TrashIcon,
         label: t('Delete execution environment'),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
+        isDanger: true,
       },
     ],
     [navigate, deleteExecutionEnvironments, t]

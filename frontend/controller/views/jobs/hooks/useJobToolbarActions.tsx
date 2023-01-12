@@ -18,6 +18,7 @@ export function useJobToolbarActions(onComplete: (jobs: UnifiedJob[]) => void) {
         icon: TrashIcon,
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
+        isDanger: true,
       },
       {
         type: PageActionType.bulk,
