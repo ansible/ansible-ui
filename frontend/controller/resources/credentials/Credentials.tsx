@@ -55,6 +55,7 @@ export function Credentials() {
         icon: TrashIcon,
         label: t('Delete selected credentials'),
         onClick: deleteCredentials,
+        isDanger: true,
       },
     ],
     [navigate, deleteCredentials, t]
@@ -74,6 +75,7 @@ export function Credentials() {
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential) => deleteCredentials([credential]),
+        isDanger: true,
       },
     ],
     [navigate, deleteCredentials, t]

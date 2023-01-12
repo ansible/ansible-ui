@@ -55,6 +55,7 @@ export function Inventories() {
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: deleteInventories,
+        isDanger: true,
       },
     ],
     [navigate, deleteInventories, t]
@@ -74,6 +75,7 @@ export function Inventories() {
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory) => deleteInventories([inventory]),
+        isDanger: true,
       },
     ],
     [navigate, deleteInventories, t]
