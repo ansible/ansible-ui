@@ -6,7 +6,7 @@ import { PageFramework } from '../framework';
 import ErrorBoundary from '../framework/components/ErrorBoundary';
 import { AutomationServersRoute } from './automation-servers/AutomationServersRoute';
 import { AutomationServersProvider } from './automation-servers/contexts/AutomationServerProvider';
-import { AccessCode } from './common/AccessCode';
+import { Disclaimer } from './common/Disclaimer';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
@@ -20,13 +20,13 @@ export default function Main() {
   return (
     // <StrictMode>
     <ErrorBoundary message={t('An error occured')}>
-      <AccessCode>
+      <Disclaimer>
         <AutomationServersProvider>
           <BrowserRouter>
             <Routing />
           </BrowserRouter>
         </AutomationServersProvider>
-      </AccessCode>
+      </Disclaimer>
     </ErrorBoundary>
     // </StrictMode>
   );

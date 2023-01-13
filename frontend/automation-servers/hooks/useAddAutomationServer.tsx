@@ -78,7 +78,9 @@ export function AddAutomationServerDialog() {
               },
               {
                 label: t('Event-driven Ansible server'),
-                // description: t('Discover, publish, and manage your Ansible Collections.'),
+                description: t(
+                  'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
+                ),
                 value: AutomationServerType.EDA,
               },
             ]}

@@ -49,11 +49,3 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-  deploy-ansibledev:
-    name: Deploy AnsibleDev.com
-    needs: docker-push
-    with:
-      version: latest
-    uses: ansible/ansible-ui/.github/workflows/deploy-ansibledev.yml@main
-    secrets: inherit

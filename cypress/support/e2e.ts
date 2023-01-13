@@ -6,7 +6,6 @@ import { mockController } from './mock-controller';
 before(() => {
   // cy.injectAxe()
 
-  window.localStorage.setItem('access', 'true');
   window.localStorage.setItem('theme', 'light');
 
   if (Cypress.env('server')) {
@@ -28,7 +27,7 @@ before(() => {
     cy.typeByLabel(/^Url$/, server);
     cy.get('button[type=submit]').click();
 
-    cy.contains('a', /^Controller$/).click();
+    cy.contains('a', /^AWX Ausible server$/).click();
     cy.typeByLabel(/^Username$/, username);
     cy.typeByLabel(/^Password$/, password);
     cy.get('button[type=submit]').click();
@@ -41,7 +40,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  window.localStorage.setItem('access', 'true');
   window.localStorage.setItem('theme', 'light');
 
   if (!Cypress.env('server')) {

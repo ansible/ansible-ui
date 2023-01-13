@@ -11,16 +11,22 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '../../../framework';
 import { RouteE } from '../../Routes';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   return (
     <Fragment>
-      <PageHeader title="Welcome to Event Driven Automation" />
+      <PageHeader
+        title={t('Welcome to Event Driven Automation')}
+        description={t(
+          'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
+        )}
+      />
       <PageSection>
         <Gallery hasGutter minWidths={{ default: '300px' }}>
           <Card isRounded isFlat>
