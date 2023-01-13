@@ -3,7 +3,7 @@
   "description": "Ansible UI",
   "version": "0.0.461",
   "author": "Red Hat",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ansible/ansible-ui.git"
