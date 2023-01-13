@@ -1,10 +1,11 @@
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as builder
+ARG VERSION
 RUN apk upgrade --no-cache -U && apk add --no-cache openssl
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --force --no-optional
 COPY . .
-RUN npm run build
+RUN VERSION=$VERSION DISCLAIMER=true npm run build
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
 ARG VERSION
