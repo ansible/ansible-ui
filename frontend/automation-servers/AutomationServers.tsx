@@ -6,7 +6,6 @@ import {
   IPageAction,
   ITableColumn,
   PageActionType,
-  PageHeader,
   PageLayout,
   PageTable,
   TextCell,
@@ -19,6 +18,7 @@ import { useAutomationServers } from './contexts/AutomationServerProvider';
 import { useAddAutomationServer } from './hooks/useAddAutomationServer';
 import { useRemoveAutomationServers } from './hooks/useRemoveAutomationServers';
 import { AutomationServer, automationServerKeyFn } from './interfaces/AutomationServer';
+import { AutomationServerType } from './interfaces/AutomationServerType';
 
 export function AutomationServers() {
   const { t } = useTranslation();
@@ -72,13 +72,12 @@ export function AutomationServers() {
 
   return (
     <PageLayout>
-      {automationServers.length > 0 && <PageHeader title={t('Automation servers')} />}
       <PageTable<AutomationServer>
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading automation servers')}
-        emptyStateTitle={t('Welcome to the Ansible Automation Platform')}
+        emptyStateTitle={t('Welcome to Ansible')}
         emptyStateDescription={t('To get started, add your Ansible automation servers.')}
         emptyStateButtonText={t('Add automation server')}
         emptyStateButtonClick={addAutomationServer}
@@ -114,14 +113,14 @@ export function useAutomationServersColumns(_options?: {
         header: t('Type'),
         cell: (server) => {
           switch (server.type) {
-            case 'controller':
-              return <TextCell text="Automation controller" />;
-            case 'hub':
-              return <TextCell text="Automation hub" />;
-            case 'eda':
-              return <TextCell text="Event driven automation" />;
+            case AutomationServerType.AWX:
+              return <TextCell text={t('AWX Ansible server')} />;
+            case AutomationServerType.Galaxy:
+              return <TextCell text={t('Galaxy Ansible server')} />;
+            case AutomationServerType.EDA:
+              return <TextCell text={t('Event-driven Ansible server')} />;
             default:
-              return <TextCell text="Unknown" />;
+              return <TextCell text={t('Unknown')} />;
           }
         },
         card: 'subtitle',

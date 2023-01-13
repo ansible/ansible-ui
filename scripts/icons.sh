@@ -18,7 +18,7 @@ convert -density 1920 -background "#00000000" -resize 192x192 ansible.svg ansibl
 convert -density 480 -background "#00000000" -resize 48x48 favicon.svg favicon.png
 
 # iOS requires an 'apple-touch-icon' non-transparent 192px
-convert -density 1920 -background "#EE0000" -resize 192x192 ansible.svg ansible192.png
+convert -density 1920 -background "#000000" -resize 192x192 ansible.svg ansible192.png
 
 optipng -o7 ansible.png
 optipng -o7 favicon.png

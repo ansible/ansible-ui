@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
 import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
+import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { RouteE } from '../Routes';
 import { isRouteActive } from './Masthead';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
@@ -44,22 +45,22 @@ export function CommonSidebar(props: {
                 <NavItemSeparator style={{ margin: 0 }} />
                 <NavItem
                   isActive={isRouteActive(
-                    automationServer?.type === 'controller'
+                    automationServer?.type === AutomationServerType.AWX
                       ? RouteE.ControllerAutomationServers
-                      : automationServer?.type === 'hub'
+                      : automationServer?.type === AutomationServerType.Galaxy
                       ? RouteE.HubAutomationServers
-                      : automationServer?.type === 'eda'
+                      : automationServer?.type === AutomationServerType.EDA
                       ? RouteE.EdaAutomationServers
                       : RouteE.AutomationServers,
                     location
                   )}
                   onClick={() =>
                     onClick(
-                      automationServer?.type === 'controller'
+                      automationServer?.type === AutomationServerType.AWX
                         ? RouteE.ControllerAutomationServers
-                        : automationServer?.type === 'hub'
+                        : automationServer?.type === AutomationServerType.Galaxy
                         ? RouteE.HubAutomationServers
-                        : automationServer?.type === 'eda'
+                        : automationServer?.type === AutomationServerType.EDA
                         ? RouteE.EdaAutomationServers
                         : RouteE.AutomationServers
                     )

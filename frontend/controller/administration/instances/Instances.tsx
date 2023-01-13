@@ -233,7 +233,7 @@ export function NodeTypeCell(props: { node_type: string }) {
       return (
         <Tooltip
           content={t(
-            'Hybrid is the default node type for control plane nodes, responsible for automation controller runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
+            'Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
           )}
         >
           <Dotted>{t('Hybrid node')}</Dotted>

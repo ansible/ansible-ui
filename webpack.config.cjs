@@ -47,6 +47,7 @@ module.exports = function (_env, argv) {
           ? JSON.stringify('production')
           : JSON.stringify('development'),
         'process.env.BRAND': JSON.stringify(process.env.BRAND),
+        'process.env.PRODUCT': JSON.stringify(process.env.PRODUCT),
         'process.env.VERSION': isProduction
           ? JSON.stringify(process.env.VERSION)
           : JSON.stringify('development'),

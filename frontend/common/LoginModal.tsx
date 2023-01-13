@@ -11,6 +11,7 @@ import {
 } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
+import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from '../Data';
 import { RouteE } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
@@ -22,9 +23,9 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
     <Modal
       header={
         <Stack style={{ paddingBottom: 8 }}>
-          {t('Welcome to the')}
+          {t('Welcome to')}
           <Title headingLevel="h1" size={TitleSizes['2xl']}>
-            {t('Ansible Automation Platform')}
+            {process.env.PRODUCT ?? t('Ansible')}
           </Title>
         </Stack>
       }
@@ -74,9 +75,9 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         const automationServer = automationServers.find((server) => server.url === data.server);
         if (!automationServer) return;
         const loginPageUrl =
-          automationServer.type === 'controller'
+          automationServer.type === AutomationServerType.AWX
             ? '/api/login/'
-            : automationServer.type === 'hub'
+            : automationServer.type === AutomationServerType.Galaxy
             ? '/api/automation-hub/_ui/v1/auth/login/'
             : undefined;
 
@@ -110,11 +111,11 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         localStorage.setItem('server', data.server);
         setAutomationServer(automationServer);
         switch (automationServer.type) {
-          case 'eda':
+          case AutomationServerType.EDA:
             setCookie('server', data.server);
             navigate(RouteE.EdaProjects);
             break;
-          case 'hub':
+          case AutomationServerType.Galaxy:
             navigate(RouteE.HubDashboard);
             break;
           default:
@@ -156,11 +157,18 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         name="server"
         label={t('Automation server')}
         placeholderText={t('Select automation server')}
-        options={automationServers.map((host) => ({
-          label: host.name,
-          description: host.url,
-          value: host.url,
-          group: host.type === 'controller' ? t('Automation controllers') : t('Automation hubs'),
+        options={automationServers.map((automationServer) => ({
+          label: automationServer.name,
+          description: automationServer.url,
+          value: automationServer.url,
+          group:
+            automationServer?.type === AutomationServerType.AWX
+              ? t('AWX Ansible server')
+              : automationServer?.type === AutomationServerType.Galaxy
+              ? t('Galaxy Ansible server')
+              : automationServer?.type === AutomationServerType.EDA
+              ? t('Event-driven Ansible server')
+              : t('Unknown'),
         }))}
         isRequired
       />

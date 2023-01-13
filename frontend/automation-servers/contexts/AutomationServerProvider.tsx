@@ -10,9 +10,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AutomationServer, AutomationServerType } from '../interfaces/AutomationServer';
+import { AutomationServer, AutomationServerSchema } from '../interfaces/AutomationServer';
 
-export const AutomationServersCompiler = TypeCompiler.Compile(Type.Array(AutomationServerType));
+export const AutomationServersCompiler = TypeCompiler.Compile(Type.Array(AutomationServerSchema));
 
 interface IAutomationServersContext {
   automationServers: AutomationServer[];
@@ -64,10 +64,6 @@ export function loadAutomationServers(): AutomationServer[] {
   if (!AutomationServersCompiler.Check(servers)) {
     servers = [];
   }
-  // if (process.env.NODE_ENV === 'development') {
-  //   servers.push({ name: 'Dev Controller', url: 'https://localhost:8043', type: 'controller' })
-  //   servers.push({ name: 'Dev Hub', url: 'http://localhost:5001', type: 'hub' })
-  // }
   servers = servers.filter(
     (host, index, array) => array.findIndex((h) => h.url === host.url) === index
   );

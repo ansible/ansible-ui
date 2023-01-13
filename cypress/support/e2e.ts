@@ -33,7 +33,7 @@ before(() => {
     cy.typeByLabel(/^Password$/, password);
     cy.get('button[type=submit]').click();
 
-    cy.contains(/^Welcome to Automation Controller$/);
+    cy.contains(/^Welcome to/);
   } else {
     mockController();
     cy.visit(`/controller/debug`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
