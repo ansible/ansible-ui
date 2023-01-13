@@ -20,7 +20,7 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       trademark="Trademark and copyright information here"
       brandImageSrc="Ansible.svg"
       brandImageAlt="Ansible Logo"
-      productName="Ansible Automation Platform"
+      productName={process.env.PRODUCT ?? t('Ansible')}
     >
       <TextContent>
         <TextList component="dl">

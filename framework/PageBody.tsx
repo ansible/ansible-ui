@@ -1,10 +1,14 @@
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useSettings } from './Settings';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
-export function PageBody(props: { children?: ReactNode; disablePadding?: boolean }) {
+export function PageBody(props: {
+  children?: ReactNode;
+  disablePadding?: boolean;
+  style?: CSSProperties;
+}) {
   const usePadding = useBreakpoint('xxl') && props.disablePadding !== true;
   const settings = useSettings();
   const [translations] = useFrameworkTranslations();
@@ -18,6 +22,7 @@ export function PageBody(props: { children?: ReactNode; disablePadding?: boolean
           maxHeight: '100%',
           overflow: 'hidden',
           backgroundColor: 'var(--pf-c-page__main-section--BackgroundColor)',
+          ...props.style,
         }}
       >
         <div

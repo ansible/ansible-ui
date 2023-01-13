@@ -1,6 +1,6 @@
 {
   "name": "@ansible/ansible-ui",
-  "description": "Ansible Automation Platform UI",
+  "description": "Ansible UI",
   "version": "0.0.460",
   "author": "Red Hat",
   "license": "MIT",
@@ -14,11 +14,15 @@
     "start": "concurrently npm:frontend npm:proxy --prefix-colors cyan,green",
     "frontend": "webpack serve --mode development",
     "frontend:controller": "webpack serve --mode development --env controller",
+    "frontend:hub": "webpack serve --mode development --env hub",
+    "frontend:eda": "webpack serve --mode development --env eda",
     "proxy": "NODE_ENV=development PORT=3001 nodemon --watch './proxy/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' proxy/main.ts | pino-zen",
     "build": "npm run clean && concurrently --kill-others-on-fail npm:build:frontend npm:build:proxy --prefix-colors cyan,green,blue,magenta,gray",
     "build:proxy": "rollup --config rollup.config.ts --configPlugin typescript",
     "build:frontend": "webpack --mode production --env pwa",
     "build:controller": "webpack --mode production --env controller --output-path build/controller",
+    "build:hub": "webpack --mode production --env hub --output-path build/hub",
+    "build:eda": "webpack --mode production --env eda --output-path build/eda",
     "clean": "rm -rf build coverage .nyc_output",
     "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:cypress --prefix-colors cyan,green,blue,magenta,gray",
     "tsc": "tsc --noEmit",
@@ -42,8 +46,7 @@
     "prepare": "husky install",
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
-    "build:mjs": "npx tsc -p tsconfig.mjs.json",
-    "build:cjs": "npx tsc -p tsconfig.cjs.json"
+    "build:framework": "npx tsc -p tsconfig.cjs.json"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.10",

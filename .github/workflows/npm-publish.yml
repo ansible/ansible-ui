@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
       - run: npm ci --force
       - run: |
-          npm run build:cjs
+          npm run build:framework
           cp -f LICENSE publish
           cp -f framework/README.md publish/README.md
           cd publish

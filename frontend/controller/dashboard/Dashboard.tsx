@@ -13,16 +13,18 @@ import {
   Text,
 } from '@patternfly/react-core';
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Help, PageHeader } from '../../../framework';
 import { DashboardJobsCard } from './DashboardJobsCard';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   return (
     <Fragment>
       {/* <Banner variant="info">You are</Banner> */}
       <PageHeader
-        title="Welcome to Automation Controller"
-        description="Install and configure your Ansible Automation Controller clusters."
+        title={t('Welcome to AWX')}
+        description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
       <PageSection>
         <Stack hasGutter>
