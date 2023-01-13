@@ -40,7 +40,7 @@ jobs:
           # platforms: linux/amd64,linux/arm64 - Quay does not seem to support this :(
           tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ github.ref_name }}
           labels: version=${{ github.ref_name }}
-          build-contexts: VERSION=${{ github.ref_name }} DISCLAIMER=true
+          build-args: VERSION=${{ github.ref_name }}
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
