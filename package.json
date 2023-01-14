@@ -73,7 +73,7 @@
     "get-value": "3.0.1",
     "i18next-browser-languagedetector": "7.0.1",
     "i18next-http-backend": "2.1.1",
-    "ky": "0.33.1",
+    "ky": "0.33.2",
     "luxon": "3.2.1",
     "p-limit": "4.0.0",
     "pino": "8.8.0",
