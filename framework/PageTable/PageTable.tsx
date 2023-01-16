@@ -14,6 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import {
+  CollapseColumn,
   SortByDirection,
   TableComposable,
   Tbody,
@@ -112,6 +113,8 @@ export type PageTableProps<T extends object> = {
   disableBodyPadding?: boolean;
 
   defaultSubtitle?: ReactNode;
+
+  expandedRow?: (item: T) => ReactNode;
 };
 
 /**
@@ -271,6 +274,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     clearAllFilters,
     onSelect,
     unselectAll,
+    expandedRow,
   } = props;
   let { t } = props;
   t = t ? t : (t: string) => t;
@@ -378,6 +382,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   scrollRight={scroll.right > 1}
                   unselectAll={unselectAll}
                   onSelect={onSelect}
+                  expandedRow={expandedRow}
                 />
               ))}
         </Tbody>
@@ -415,6 +420,7 @@ function TableHead<T extends object>(props: {
   scrollLeft?: boolean;
   scrollRight?: boolean;
   onSelect?: (item: T) => void;
+  expandedRow?: (item: T) => ReactNode;
 }) {
   const {
     tableColumns: columns,
@@ -425,6 +431,7 @@ function TableHead<T extends object>(props: {
     setSortDirection,
     showSelect,
     onSelect,
+    expandedRow,
   } = props;
   const settings = useSettings();
 
@@ -454,6 +461,15 @@ function TableHead<T extends object>(props: {
   return (
     <Thead>
       <Tr>
+        {expandedRow && (
+          <Th
+            style={{
+              width: '0%',
+              backgroundColor:
+                settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+            }}
+          />
+        )}
         {(showSelect || onSelect) && (
           <Th
             isStickyColumn
@@ -525,6 +541,7 @@ function TableRow<T extends object>(props: {
   scrollRight?: boolean;
   onSelect?: (item: T) => void;
   unselectAll?: () => void;
+  expandedRow?: (item: T) => ReactNode;
 }) {
   const {
     columns,
@@ -537,70 +554,132 @@ function TableRow<T extends object>(props: {
     rowIndex,
     showSelect,
     onSelect,
+    expandedRow,
   } = props;
-  const md = useBreakpoint('xl');
+  const [expanded, setExpanded] = useState(false);
+
+  let columnCount = columns.length;
+  if (expandedRow) columnCount++;
+  if (showSelect) columnCount++;
+  if (onSelect) columnCount++;
+  if (rowActions) columnCount++;
+
+  const expandedContent = expandedRow?.(item);
+
   return (
-    <Tr
-      className={isItemSelected ? 'selected' : undefined}
-      // style={{ backgroundColor: theme === ThemeE.Dark ? 'transparent' : undefined }}
-      isRowSelected={isItemSelected}
-      style={{ boxShadow: 'unset' }}
-      // isStriped={rowIndex % 2 === 0}
-    >
-      {showSelect && (
-        <Th
-          select={
-            isItemSelected !== undefined
-              ? {
-                  onSelect: (_event, isSelecting) => {
-                    if (isSelecting) {
-                      selectItem?.(item);
-                    } else {
-                      unselectItem?.(item);
-                    }
-                  },
-                  isSelected: isItemSelected,
-                }
-              : undefined
-          }
-          style={{ width: '0%', paddingLeft: md ? undefined : 20, paddingRight: 16 }}
-          isStickyColumn
-          stickyMinWidth="0px"
-          hasRightBorder={props.scrollLeft}
+    <>
+      <Tr
+        className={isItemSelected ? 'selected' : undefined}
+        isRowSelected={isItemSelected}
+        style={{ boxShadow: 'unset', borderBottom: expanded ? 'unset' : undefined }}
+      >
+        {expandedRow && (
+          <Td
+            expand={
+              expandedContent
+                ? {
+                    rowIndex,
+                    isExpanded: expanded,
+                    onToggle: () => setExpanded((expanded) => !expanded),
+                    expandId: 'composable-expandable-example',
+                  }
+                : undefined
+            }
+            style={{ width: '0%', paddingLeft: 8, paddingRight: 0 }}
+          />
+        )}
+        {showSelect && (
+          <Th
+            select={
+              isItemSelected !== undefined
+                ? {
+                    onSelect: (_event, isSelecting) => {
+                      if (isSelecting) {
+                        selectItem?.(item);
+                      } else {
+                        unselectItem?.(item);
+                      }
+                    },
+                    isSelected: isItemSelected,
+                  }
+                : undefined
+            }
+            style={{ width: '0%' }}
+            isStickyColumn
+            stickyMinWidth="0px"
+            hasRightBorder={props.scrollLeft}
+          />
+        )}
+        {onSelect && (
+          <Td
+            select={{
+              rowIndex,
+              onSelect: () => {
+                unselectAll?.();
+                selectItem?.(item);
+                onSelect?.(item);
+              },
+              isSelected: isItemSelected ?? false,
+              variant: 'radio',
+            }}
+            style={{ width: '0%' }}
+            isStickyColumn
+            stickyMinWidth="0px"
+            hasRightBorder={props.scrollLeft}
+          />
+        )}
+        <TableCells
+          rowIndex={rowIndex}
+          columns={columns}
+          item={item}
+          rowActions={rowActions}
+          scrollLeft={props.scrollLeft}
+          scrollRight={props.scrollRight}
         />
+      </Tr>
+      {expandedRow && expanded && expandedContent && (
+        <Tr
+          className={isItemSelected ? 'selected' : undefined}
+          isRowSelected={isItemSelected}
+          style={{ boxShadow: 'unset' }}
+        >
+          <Td style={{ width: '0%' }} />
+          {showSelect && (
+            <Th
+              style={{ width: '0%' }}
+              isStickyColumn
+              stickyMinWidth="0px"
+              hasRightBorder={props.scrollLeft}
+            />
+          )}
+          {onSelect && (
+            <Td
+              style={{ width: '0%' }}
+              isStickyColumn
+              stickyMinWidth="0px"
+              hasRightBorder={props.scrollLeft}
+            />
+          )}
+          <Td colSpan={columnCount - 3} style={{ paddingBottom: 16, paddingTop: 4 }}>
+            <CollapseColumn>{expandedContent}</CollapseColumn>
+          </Td>
+          {rowActions !== undefined && rowActions.length > 0 && (
+            <Th
+              style={{
+                zIndex: 100 - rowIndex,
+                paddingRight: 8,
+                paddingLeft: 8,
+                width: '0%',
+                right: 0,
+              }}
+              isStickyColumn
+              stickyMinWidth="0px"
+              className={props.scrollRight ? 'pf-m-border-left' : undefined}
+            />
+          )}
+        </Tr>
       )}
-      {onSelect && (
-        <Td
-          select={{
-            rowIndex,
-            onSelect: () => {
-              unselectAll?.();
-              selectItem?.(item);
-              onSelect?.(item);
-            },
-            isSelected: isItemSelected ?? false,
-            // disable: !isRepoSelectable(repo),
-            variant: 'radio',
-          }}
-          style={{
-            width: '0%',
-            paddingLeft: md ? undefined : 20,
-            position: 'sticky',
-            left: 0,
-            background: 'var(--pf-c-table__sticky-column--BackgroundColor)',
-            zIndex: 1,
-          }}
-        />
-      )}
-      <TableCells
-        rowIndex={rowIndex}
-        columns={columns}
-        item={item}
-        rowActions={rowActions}
-        scrollLeft={props.scrollLeft}
-        scrollRight={props.scrollRight}
-      />
-    </Tr>
+    </>
   );
 }
 
