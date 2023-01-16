@@ -25,7 +25,7 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
   const tableColumns = useMemo<ITableColumn<Team>[]>(
     () => [
       {
-        header: 'Id',
+        header: t('Id'),
         cell: (team) => team.id,
         enabled: false,
         minWidth: 0,
@@ -37,7 +37,7 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, modifiedColumn, nameColumn, organizationColumn]
+    [createdColumn, modifiedColumn, nameColumn, organizationColumn, t]
   );
   return tableColumns;
 }
