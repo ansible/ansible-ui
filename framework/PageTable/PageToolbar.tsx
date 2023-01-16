@@ -120,6 +120,11 @@ export type PagetableToolbarProps<T extends object> = {
 
   viewType: PageTableViewType;
   setViewType: (viewType: PageTableViewType) => void;
+
+  disableTableView?: boolean;
+  disableListView?: boolean;
+  disableCardView?: boolean;
+  disableColumnManagement?: boolean;
 };
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -166,6 +171,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   );
 
   const settings = useSettings();
+
+  let viewTypeCount = 0;
+  if (!props.disableTableView) viewTypeCount++;
+  if (!props.disableCardView) viewTypeCount++;
+  if (!props.disableListView) viewTypeCount++;
 
   if (!showToolbar) {
     return <Fragment />;
@@ -315,71 +325,77 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         <div style={{ flexGrow: 1 }} />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
-          {openColumnModal && viewType === 'table' && (
+          {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>
                 <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
               </Tooltip>
             </ToolbarItem>
           )}
-          <ToolbarItem>
-            <ToggleGroup aria-label="table view toggle">
-              {[PageTableViewTypeE.Table, PageTableViewTypeE.List, PageTableViewTypeE.Cards].map(
-                (vt) => {
-                  switch (vt) {
-                    case PageTableViewTypeE.Cards:
-                      return (
-                        <Tooltip
-                          content={'Card view'}
-                          key={vt}
-                          position="top-end"
-                          enableFlip={false}
-                        >
-                          <ToggleGroupItem
-                            icon={<ThLargeIcon />}
-                            isSelected={viewType === PageTableViewTypeE.Cards}
-                            onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
-                            aria-label="card view"
-                          />
-                        </Tooltip>
-                      );
-                    case PageTableViewTypeE.List:
-                      return (
-                        <Tooltip
-                          content={'List view'}
-                          key={vt}
-                          position="top-end"
-                          enableFlip={false}
-                        >
-                          <ToggleGroupItem
-                            icon={<ListIcon />}
-                            isSelected={viewType === PageTableViewTypeE.List}
-                            onClick={() => setViewType?.(PageTableViewTypeE.List)}
-                            aria-label="list view"
-                          />
-                        </Tooltip>
-                      );
-                    case PageTableViewTypeE.Table:
-                      return (
-                        <Tooltip
-                          content={'Table view'}
-                          key={vt}
-                          position="top-end"
-                          enableFlip={false}
-                        >
-                          <ToggleGroupItem
-                            icon={<TableIcon />}
-                            isSelected={viewType === PageTableViewTypeE.Table}
-                            onClick={() => setViewType?.(PageTableViewTypeE.Table)}
-                            aria-label="table view"
-                          />
-                        </Tooltip>
-                      );
-                  }
-                }
-              )}
-            </ToggleGroup>
-          </ToolbarItem>
+          {viewTypeCount > 1 && (
+            <ToolbarItem>
+              <ToggleGroup aria-label="table view toggle">
+                {[
+                  !props.disableTableView && PageTableViewTypeE.Table,
+                  !props.disableListView && PageTableViewTypeE.List,
+                  !props.disableCardView && PageTableViewTypeE.Cards,
+                ]
+                  .filter((i) => i)
+                  .map((vt) => {
+                    switch (vt) {
+                      case PageTableViewTypeE.Cards:
+                        return (
+                          <Tooltip
+                            content={'Card view'}
+                            key={vt}
+                            position="top-end"
+                            enableFlip={false}
+                          >
+                            <ToggleGroupItem
+                              icon={<ThLargeIcon />}
+                              isSelected={viewType === PageTableViewTypeE.Cards}
+                              onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
+                              aria-label="card view"
+                            />
+                          </Tooltip>
+                        );
+                      case PageTableViewTypeE.List:
+                        return (
+                          <Tooltip
+                            content={'List view'}
+                            key={vt}
+                            position="top-end"
+                            enableFlip={false}
+                          >
+                            <ToggleGroupItem
+                              icon={<ListIcon />}
+                              isSelected={viewType === PageTableViewTypeE.List}
+                              onClick={() => setViewType?.(PageTableViewTypeE.List)}
+                              aria-label="list view"
+                            />
+                          </Tooltip>
+                        );
+                      case PageTableViewTypeE.Table:
+                        return (
+                          <Tooltip
+                            content={'Table view'}
+                            key={vt}
+                            position="top-end"
+                            enableFlip={false}
+                          >
+                            <ToggleGroupItem
+                              icon={<TableIcon />}
+                              isSelected={viewType === PageTableViewTypeE.Table}
+                              onClick={() => setViewType?.(PageTableViewTypeE.Table)}
+                              aria-label="table view"
+                            />
+                          </Tooltip>
+                        );
+                    }
+                  })}
+              </ToggleGroup>
+            </ToolbarItem>
+          )}
         </ToolbarGroup>
 
         {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}
