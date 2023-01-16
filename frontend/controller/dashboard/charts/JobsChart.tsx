@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
+import { useAutomationServers } from '../../../automation-servers/contexts/AutomationServerProvider';
 import { ItemsResponse, requestGet } from '../../../Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useDB } from './indexdb';
@@ -28,7 +29,8 @@ export function JobsChart(props: { height?: number }) {
     return data;
   });
 
-  const db = useDB('job-history');
+  const { automationServer } = useAutomationServers();
+  const db = useDB(automationServer?.url ?? '');
 
   const updateJobs = useCallback(
     (jobs: UnifiedJobSummary[], disablePut?: boolean) => {

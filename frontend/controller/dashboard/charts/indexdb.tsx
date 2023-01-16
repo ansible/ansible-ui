@@ -19,14 +19,24 @@ export async function getDB(name: string) {
   return db;
 }
 
-export function useDB(dbName: string) {
+export function useDB(hostName: string) {
   const [db, setDB] = useState<IDBPDatabase<IndexedDbSchema>>();
   useEffect(() => {
     async function asyncGetDB() {
-      const db = await getDB(dbName);
+      const db = await getDB(simpleHash(hostName));
       setDB(db);
     }
     void asyncGetDB();
-  }, [dbName]);
+  }, [hostName]);
   return db;
 }
+
+const simpleHash = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash &= hash;
+  }
+  return new Uint32Array([hash])[0].toString(36);
+};
