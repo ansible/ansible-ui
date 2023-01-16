@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, useMemo, useState } from 'react';
+import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { IPageAction } from './PageAction';
 import { isHiddenAction } from './PageActions';
 import { PageActionType } from './PageActionType';
@@ -23,6 +23,7 @@ export function PageDropdownAction<T extends object>(props: {
   selectedItem?: T;
   position?: DropdownPosition;
   iconOnly?: boolean;
+  onOpen?: (open: boolean) => void;
 }) {
   const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props;
 
@@ -42,6 +43,9 @@ export function PageDropdownAction<T extends object>(props: {
       ) !== undefined,
     [actions]
   );
+  useEffect(() => {
+    props.onOpen?.(dropdownOpen);
+  }, [dropdownOpen, props]);
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;

@@ -23,7 +23,20 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Team>[]>(
-    () => [nameColumn, organizationColumn, createdColumn, modifiedColumn],
+    () => [
+      {
+        header: 'Id',
+        cell: (team) => team.id,
+        enabled: false,
+        minWidth: 0,
+        card: 'hidden',
+        list: 'hidden',
+      },
+      nameColumn,
+      organizationColumn,
+      createdColumn,
+      modifiedColumn,
+    ],
     [createdColumn, modifiedColumn, nameColumn, organizationColumn]
   );
   return tableColumns;
