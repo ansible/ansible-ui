@@ -119,7 +119,7 @@
     "css-minimizer-webpack-plugin": "4.2.2",
     "cypress": "11.2.0",
     "cypress-react-selector": "^3.0.0",
-    "eslint": "8.31.0",
+    "eslint": "8.32.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-i18next": "6.0.0-6",
     "eslint-plugin-import": "2.27.4",
