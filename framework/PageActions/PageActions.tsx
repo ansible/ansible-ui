@@ -33,6 +33,8 @@ export function PageActions<T extends object>(props: {
 
   /** Indicates if only to show the icon when not collapsed */
   iconOnly?: boolean;
+
+  onOpen?: (open: boolean) => void;
 }) {
   const { actions, selectedItem, selectedItems, iconOnly } = props;
 
@@ -71,7 +73,7 @@ export function PageActions<T extends object>(props: {
       )}
       {dropdownActions.length > 0 && (
         <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <PageDropdownAction {...props} actions={dropdownActions} />
+          <PageDropdownAction {...props} actions={dropdownActions} onOpen={props.onOpen} />
         </SplitItem>
       )}
     </Split>
