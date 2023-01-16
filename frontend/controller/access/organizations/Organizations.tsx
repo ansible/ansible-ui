@@ -20,7 +20,7 @@ import {
 } from '../../../../framework';
 import {
   useCreatedColumn,
-  useDescriptionColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
@@ -154,6 +154,9 @@ export function Organizations() {
         emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
         {...view}
         defaultSubtitle={t('Organization')}
+        expandedRow={(organization) =>
+          organization.description ? <>{organization.description}</> : undefined
+        }
       />
     </PageLayout>
   );
@@ -182,6 +185,7 @@ export function useOrganizationsColumns(options?: {
 }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const idColumn = useIdColumn();
   const nameClick = useCallback(
     (organization: Organization) =>
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
@@ -191,13 +195,12 @@ export function useOrganizationsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Organization>[]>(
     () => [
+      idColumn,
       nameColumn,
-      descriptionColumn,
       {
         header: t('Members'),
         type: 'count',
@@ -211,7 +214,7 @@ export function useOrganizationsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

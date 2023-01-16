@@ -142,6 +142,9 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
             errorStateTitle="Error loading organizations"
             {...view}
             onSelect={() => null}
+            disableCardView
+            disableListView
+            disableColumnManagement
           />
         </div>
       </Collapse>
