@@ -108,6 +108,8 @@ export type PageTableProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
 
+  disableColumnManagement?: boolean;
+
   defaultTableView?: PageTableViewType;
 
   disableBodyPadding?: boolean;
@@ -137,12 +139,13 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { toolbarActions, filters, error, itemCount } = props;
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const showSelect =
+    props.showSelect ||
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-    undefined;
+      undefined;
 
   const hasTableViewType = !props.disableTableView;
   const hasListViewType = !props.disableListView;
-  // const hasCardViewType = !props.disableCardView
+  // const hasCardViewType = !props.disableCardView;
 
   const [viewType, setViewType] = useState<PageTableViewType>(
     () =>

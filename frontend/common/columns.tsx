@@ -4,6 +4,22 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn, SinceCell, TextCell } from '../../framework';
 import { RouteE } from '../Routes';
 
+export function useIdColumn<T extends { name: string; id: number }>() {
+  const { t } = useTranslation();
+  const column = useMemo<ITableColumn<T>>(
+    () => ({
+      header: t('Id'),
+      cell: (team) => team.id,
+      enabled: false,
+      minWidth: 0,
+      card: 'hidden',
+      list: 'hidden',
+    }),
+    [t]
+  );
+  return column;
+}
+
 export function useNameColumn<T extends { name: string; id: number }>(options?: {
   header?: string;
   url?: string;

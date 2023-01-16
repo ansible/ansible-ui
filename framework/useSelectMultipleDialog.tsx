@@ -64,6 +64,9 @@ export function SelectMultipleDialog<T extends object>(props: SelectMultipleDial
           emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
           errorStateTitle={props.errorStateTitle ?? translations.errorText}
           showSelect
+          disableCardView
+          disableListView
+          disableColumnManagement
         />
       </div>
     </Modal>
