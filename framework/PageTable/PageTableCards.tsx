@@ -1,6 +1,6 @@
 import { PageSection } from '@patternfly/react-core';
 import { useMemo } from 'react';
-import { Grid } from '../components/Grid';
+import { PageGrid } from '../components/PageGrid';
 import { PageTableProps } from './PageTable';
 import { PageTableCard, useColumnsToTableCardFn } from './PageTableCard';
 
@@ -23,7 +23,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
 
   const catalogCards = useMemo(() => {
     return (
-      <Grid size={400}>
+      <PageGrid size={400}>
         {items?.map((item) => (
           <PageTableCard<T>
             key={keyFn(item)}
@@ -37,7 +37,7 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
             defaultCardSubtitle={defaultCardSubtitle}
           />
         ))}
-      </Grid>
+      </PageGrid>
     );
   }, [
     items,

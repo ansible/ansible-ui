@@ -1,15 +1,19 @@
 import { Card } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { usePageNavigate } from '../components/usePageNavigate';
 
-export function PageDashboardCard(props: { to?: string; children: ReactNode }) {
+export function PageDashboardCard(props: {
+  to?: string;
+  children: ReactNode;
+  style?: CSSProperties;
+}) {
   const history = usePageNavigate();
   return (
     <Card
       isFlat
-      isSelectable
+      isSelectable={!!props.to}
       isRounded
-      style={{ transition: 'box-shadow 0.25s', minHeight: 300 }}
+      style={{ transition: 'box-shadow 0.25s', ...props.style }}
       onClick={() => props.to && history(props.to)}
     >
       {props.children}

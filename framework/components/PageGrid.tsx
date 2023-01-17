@@ -1,8 +1,7 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useBreakpoint } from './useBreakPoint';
 
-export function Grid(props: { size?: number; maxColumns?: number; children?: ReactNode }) {
+export function PageGrid(props: { size?: number; maxColumns?: number; children?: ReactNode }) {
   const size = props.size ?? 350;
   const target = useRef<HTMLDivElement>(null);
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
@@ -18,11 +17,11 @@ export function Grid(props: { size?: number; maxColumns?: number; children?: Rea
   useLayoutEffect(() => {
     resize(target.current?.clientWidth ?? 0);
   }, [resize]);
-  const isMd = !useBreakpoint('lg');
-  const isXS = !useBreakpoint('xs');
-  let gap = 24;
-  if (isMd) gap = 16;
-  if (isXS) gap = 8;
+  // const isMd = !useBreakpoint('lg');
+  // const isXS = !useBreakpoint('xs');
+  const gap = 16;
+  // if (isMd) gap = 16;
+  // if (isXS) gap = 8;
   return (
     <div ref={target} style={{ display: 'grid', gridAutoRows: '1fr', gridTemplateColumns, gap }}>
       {props.children}

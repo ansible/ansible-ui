@@ -1,5 +1,6 @@
+import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { AlertToasterProps, usePageAlertToaster } from '../../../../../framework';
+import { usePageAlertToaster } from '../../../../../framework';
 import { ItemsResponse, requestGet, requestPost } from '../../../../Data';
 import {
   AdHocCommandRelaunch,
@@ -25,7 +26,7 @@ export function useRelaunchJob(
       return Promise.reject(new Error('Unable to retrieve launch configuration'));
     }
 
-    const alert: AlertToasterProps = {
+    const alert: AlertProps = {
       variant: 'info',
       title: t('Relaunching job'),
     };
