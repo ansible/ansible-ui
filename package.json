@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.473",
+  "version": "0.0.474",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -46,7 +46,12 @@
     "prepare": "husky install",
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
-    "build:framework": "npx tsc -p tsconfig.cjs.json"
+    "build:framework": "npx tsc -p tsconfig.cjs.json",
+    "build:mjs": "npx tsc -p tsconfig.mjs.json",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "gendocs": "./scripts/gendocs.sh",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.10",
@@ -101,6 +106,14 @@
     "@rollup/plugin-replace": "5.0.2",
     "@rollup/plugin-strip": "3.0.2",
     "@rollup/plugin-typescript": "10.0.1",
+    "@storybook/addon-actions": "^6.5.14",
+    "@storybook/addon-essentials": "^6.5.14",
+    "@storybook/addon-interactions": "^6.5.14",
+    "@storybook/addon-links": "^6.5.14",
+    "@storybook/builder-webpack5": "^6.5.14",
+    "@storybook/manager-webpack5": "^6.5.14",
+    "@storybook/react": "^6.5.14",
+    "@storybook/testing-library": "^0.0.13",
     "@svgr/webpack": "6.5.1",
     "@types/css-minimizer-webpack-plugin": "3.2.0",
     "@types/html-webpack-plugin": "3.2.6",
@@ -129,6 +142,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.1",
     "eslint-plugin-react-hooks": "4.6.0",
+    "eslint-plugin-storybook": "^0.6.7",
     "html-webpack-plugin": "5.5.0",
     "husky": "8.0.3",
     "merge-jsons-webpack-plugin": "2.0.1",
