@@ -70,6 +70,7 @@
     "cookie": "0.5.0",
     "debounce": "1.2.1",
     "etag": "1.8.1",
+    "fetch-retry": "^5.0.3",
     "get-value": "3.0.1",
     "i18next-browser-languagedetector": "7.0.1",
     "i18next-http-backend": "2.1.1",

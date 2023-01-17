@@ -1,26 +1,29 @@
-import { Alert, AlertActionCloseButton, AlertGroup, AlertProps } from '@patternfly/react-core';
+import { AlertProps } from '@patternfly/react-core';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-export interface IPageAlertToaster {
+export interface IPageAlerts {
   addAlert: (alert: AlertProps) => void;
   removeAlert: (alert: AlertProps) => void;
   replaceAlert: (oldAlert: AlertProps, newAlert: AlertProps) => void;
   removeAlerts: (filter?: (alert: AlertProps) => boolean) => void;
 }
 
-export const PageAlertToasterContext = createContext<IPageAlertToaster>({
+export const PageAlertsContext = createContext<IPageAlerts>({
   addAlert: () => null,
   removeAlert: () => null,
   replaceAlert: () => null,
   removeAlerts: () => null,
 });
-export function usePageAlertToaster(): IPageAlertToaster {
-  return useContext(PageAlertToasterContext);
+
+export const PageAlertsArrayContext = createContext<AlertProps[]>([]);
+
+export function usePageAlerts(): IPageAlerts {
+  return useContext(PageAlertsContext);
 }
 
-export function PageAlertToasterProvider(props: { children: ReactNode }) {
+export function PageAlertsProvider(props: { children: ReactNode }) {
   const [toasterAlerts, setToasterAlerts] = useState<AlertProps[]>([]);
-  const [pageAlertToaster] = useState<IPageAlertToaster>(() => {
+  const [pageAlerts] = useState<IPageAlerts>(() => {
     function removeAlerts(filter?: (alert: AlertProps) => boolean) {
       setToasterAlerts((alerts) => (filter ? alerts.filter(filter) : []));
     }
@@ -61,19 +64,10 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     return { addAlert, removeAlert, removeAlerts, replaceAlert };
   });
   return (
-    <PageAlertToasterContext.Provider value={pageAlertToaster}>
-      <AlertGroup isToast isLiveRegion>
-        {toasterAlerts.map((alertProps, index) => (
-          <Alert
-            {...alertProps}
-            key={alertProps.key ?? alertProps.id ?? index}
-            actionClose={
-              <AlertActionCloseButton onClose={() => pageAlertToaster.removeAlert(alertProps)} />
-            }
-          />
-        ))}
-      </AlertGroup>
-      {props.children}
-    </PageAlertToasterContext.Provider>
+    <PageAlertsContext.Provider value={pageAlerts}>
+      <PageAlertsArrayContext.Provider value={toasterAlerts}>
+        {props.children}
+      </PageAlertsArrayContext.Provider>
+    </PageAlertsContext.Provider>
   );
 }
