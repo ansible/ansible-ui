@@ -22,9 +22,7 @@ export type PageFormTextInputProps<
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
-  validate?:
-    | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
-    | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   selectTitle?: string;
   selectValue?: (selection: TSelection) => FieldPathValue<TSelection, FieldPath<TSelection>>;
   selectOpen?: (callback: (selection: TSelection) => void, title: string) => void;

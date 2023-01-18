@@ -1,12 +1,5 @@
 import { Checkbox, CheckboxProps } from '@patternfly/react-core';
-import {
-  Controller,
-  FieldPath,
-  FieldPathValue,
-  FieldValues,
-  useFormContext,
-  Validate,
-} from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
 
 export type PageFormCheckboxProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -14,9 +7,7 @@ export type PageFormCheckboxProps<
 > = {
   id?: string;
   name: TFieldName;
-  validate?:
-    | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
-    | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  validate?: Validate<boolean, TFieldValues> | Record<string, Validate<boolean, TFieldValues>>;
 } & Omit<CheckboxProps, 'id' | 'onChange' | 'value'>;
 
 /** PatternFly Checkbox wrapper for use with react-hook-form */
