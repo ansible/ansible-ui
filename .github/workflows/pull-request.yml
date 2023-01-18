@@ -16,6 +16,14 @@ jobs:
           node-version: '18'
       - run: node -v
       - run: npm -v
-      - run: npm ci
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run coverage:check

@@ -25,7 +25,7 @@
     "build:eda": "webpack --mode production --env eda --output-path build/eda",
     "clean": "rm -rf build coverage .nyc_output",
     "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:cypress --prefix-colors cyan,green,blue,magenta,gray",
-    "tsc": "tsc --noEmit",
+    "tsc": "tsc -v && tsc --noEmit",
     "eslint": "eslint --max-warnings=0 frontend proxy framework cypress",
     "eslint:fix": "eslint --fix frontend proxy framework cypress",
     "prettier": "prettier --check !**/*.scss frontend proxy framework cypress",
