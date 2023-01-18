@@ -30,6 +30,7 @@ type IPageActionWithLink = IPageActionCommon & {
 type IPageActionWithOnClick = IPageActionCommon & {
   type: PageActionType.button;
   variant?: ButtonVariant;
+  isDisabled?: string | undefined;
   onClick: () => void;
   href?: never;
 };

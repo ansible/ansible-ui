@@ -10,12 +10,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
+import { useOptions } from '../../../../Data';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { IControllerView } from '../../../useControllerView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
 import { useDeleteTeams } from './useDeleteTeams';
+import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function useTeamToolbarActions(view: IControllerView<Team>) {
   const { t } = useTranslation();
@@ -23,6 +25,9 @@ export function useTeamToolbarActions(view: IControllerView<Team>) {
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/teams/' });
+  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
+
   return useMemo<IPageAction<Team>[]>(
     () => [
       {
@@ -30,6 +35,11 @@ export function useTeamToolbarActions(view: IControllerView<Team>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create team'),
+        isDisabled: canCreateTeam
+          ? undefined
+          : t(
+              'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
+            ),
         onClick: () => navigate(RouteE.CreateTeam),
       },
       { type: PageActionType.seperator },
@@ -61,6 +71,6 @@ export function useTeamToolbarActions(view: IControllerView<Team>) {
         onClick: () => void view.refresh(),
       },
     ],
-    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view]
+    [canCreateTeam, deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view]
   );
 }
