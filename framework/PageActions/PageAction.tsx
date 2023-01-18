@@ -21,11 +21,19 @@ export interface IPageActionSeperator {
   type: PageActionType.seperator;
 }
 
-export type IPageActionButton = IPageActionCommon & {
+type IPageActionWithLink = IPageActionCommon & {
+  type: PageActionType.button;
+  variant?: ButtonVariant;
+  href: string;
+  onClick?: never;
+};
+type IPageActionWithOnClick = IPageActionCommon & {
   type: PageActionType.button;
   variant?: ButtonVariant;
   onClick: () => void;
+  href?: never;
 };
+export type IPageActionButton = IPageActionWithLink | IPageActionWithOnClick;
 
 export type IPageBulkAction<T extends object> = IPageActionCommon & {
   type: PageActionType.bulk;
@@ -33,13 +41,25 @@ export type IPageBulkAction<T extends object> = IPageActionCommon & {
   onClick: (selectedItems: T[]) => void;
 };
 
-export type IPageSingleAction<T extends object> = IPageActionCommon & {
-  type: PageActionType.single;
+type IPageSingleActionWithLink<T extends object> = IPageActionCommon & {
+  type: PageActionType.singleLink;
   variant?: ButtonVariant;
-  onClick: (item: T) => void;
+  href: (item: T) => string;
+  onClick?: never;
   isDisabled?: (item: T) => string | undefined;
   isHidden?: (item: T) => boolean;
 };
+type IPageSingleActionWithOnClick<T extends object> = IPageActionCommon & {
+  type: PageActionType.single;
+  variant?: ButtonVariant;
+  onClick: (item: T) => void;
+  href?: never;
+  isDisabled?: (item: T) => string | undefined;
+  isHidden?: (item: T) => boolean;
+};
+export type IPageSingleAction<T extends object> =
+  | IPageSingleActionWithLink<T>
+  | IPageSingleActionWithOnClick<T>;
 
 export type IPageDropdownAction<T extends object> = IPageActionCommon & {
   type: PageActionType.dropdown;

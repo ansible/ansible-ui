@@ -1,5 +1,6 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
 import { IPageActionButton } from './PageAction';
 
 export function PageButtonAction(props: {
@@ -28,11 +29,15 @@ export function PageButtonAction(props: {
     variant = ButtonVariant.plain;
   }
 
+  const id = props.action.label.toLowerCase().split(' ').join('-');
+  const content =
+    props.iconOnly && Icon ? <Icon /> : action.shortLabel ? action.shortLabel : action.label;
+
   return (
     <Wrapper>
       <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
         <Button
-          id={props.action.label.toLowerCase().split(' ').join('-')}
+          id={id}
           variant={variant}
           isDanger={action.isDanger}
           icon={
@@ -43,9 +48,10 @@ export function PageButtonAction(props: {
             ) : undefined
           }
           isAriaDisabled={isDisabled}
-          onClick={action.onClick}
+          onClick={action.onClick ? action.onClick : undefined}
+          component={action.href ? (props) => <Link {...props} to={action.href} /> : undefined}
         >
-          {props.iconOnly && Icon ? <Icon /> : action.shortLabel ? action.shortLabel : action.label}
+          {content}
         </Button>
       </Tooltip>
     </Wrapper>

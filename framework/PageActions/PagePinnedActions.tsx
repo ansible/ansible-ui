@@ -50,7 +50,8 @@ export function PagePinnedAction<T extends object>(props: {
     case PageActionType.seperator: {
       return <></>;
     }
-    case PageActionType.single: {
+    case PageActionType.single:
+    case PageActionType.singleLink: {
       return (
         <PageSingleAction
           action={action}

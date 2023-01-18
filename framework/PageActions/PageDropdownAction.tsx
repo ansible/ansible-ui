@@ -9,6 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { IPageAction } from './PageAction';
 import { isHiddenAction } from './PageActions';
 import { PageActionType } from './PageActionType';
@@ -114,7 +115,8 @@ function PageDropdownActionItem<T extends object>(props: {
   const { action, selectedItems, selectedItem, hasIcons, index } = props;
 
   switch (action.type) {
-    case PageActionType.single: {
+    case PageActionType.single:
+    case PageActionType.singleLink: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
       let tooltip = action.tooltip;
@@ -124,7 +126,16 @@ function PageDropdownActionItem<T extends object>(props: {
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            onClick={() => selectedItem && action.onClick(selectedItem)}
+            onClick={
+              action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined
+            }
+            component={
+              action.href
+                ? (props: object) => (
+                    <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
+                  )
+                : undefined
+            }
             isAriaDisabled={Boolean(isDisabled)}
             icon={
               Icon ? (
@@ -157,7 +168,10 @@ function PageDropdownActionItem<T extends object>(props: {
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            onClick={() => action.onClick(selectedItems)}
+            onClick={action.onClick ? () => action.onClick(selectedItems) : undefined}
+            component={
+              !action.onClick ? (props: object) => <Link {...props} to={action.href} /> : undefined
+            }
             isAriaDisabled={isDisabled}
             icon={
               Icon ? (
