@@ -95,6 +95,7 @@ export function isHiddenAction<T extends object>(
 ): boolean {
   switch (action.type) {
     case PageActionType.single:
+    case PageActionType.singleLink:
     case PageActionType.dropdown:
       return action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false;
     case PageActionType.bulk:
