@@ -84,7 +84,7 @@ function TeamInputs() {
   return (
     <>
       <PageFormTextInput<Team>
-        name="name2"
+        name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
