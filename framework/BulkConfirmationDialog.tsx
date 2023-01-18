@@ -64,7 +64,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
-      description={prompt}
+      description={prompt ? <>{prompt}</> : undefined}
       variant={ModalVariant.medium}
       isOpen
       onClose={onCloseClicked}

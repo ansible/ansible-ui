@@ -27,7 +27,7 @@ export function PageTabs(props: {
   const { loading } = props;
   const [activeKey, setActiveKey] = useState<number>(0);
   const onSelect = useCallback(
-    (_, key: string | number) => setActiveKey(key as number),
+    (_: unknown, key: string | number) => setActiveKey(key as number),
     [setActiveKey]
   );
   const children = Children.toArray(props.children);
@@ -119,7 +119,10 @@ export function PageTabsOld(props: {
   children: ReactNode;
 }) {
   const { activeKey, setActiveKey } = props;
-  const onSelect = useCallback((_, key: string | number) => setActiveKey(key), [setActiveKey]);
+  const onSelect = useCallback(
+    (_: unknown, key: string | number) => setActiveKey(key),
+    [setActiveKey]
+  );
   return (
     <PageSection type={PageSectionTypes.tabs} style={{ flexGrow: 1 }}>
       <Tabs
