@@ -1,7 +1,6 @@
 import {
   Controller,
   FieldPath,
-  FieldPathValue,
   FieldValues,
   useFormContext,
   Validate,
@@ -18,9 +17,7 @@ export type PageFormTextAreaProps<
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
-  validate?:
-    | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
-    | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
 } & Omit<FormGroupTextAreaProps, 'onChange' | 'value'>;
 
 /** PatternFly TextArea wrapper for use with react-hook-form */
