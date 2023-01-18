@@ -83,13 +83,18 @@ function TeamInputs() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
-      <PageFormTextArea
+      <PageFormTextInput<Team>
+        name="name2"
+        label={t('Name')}
+        placeholder={t('Enter name')}
+        isRequired
+      />
+      <PageFormTextArea<Team>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect
+      <PageFormOrganizationSelect<Team>
         name="summary_fields.organization.name"
         organizationIdPath="organization"
       />
