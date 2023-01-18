@@ -14,7 +14,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+      - run: node -v
+      - run: npm -v
       - run: npm ci
       - run: npm test
       - run: npm run coverage:check
