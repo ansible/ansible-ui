@@ -70,7 +70,6 @@
   "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate": "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.",
   "An unknown error occured": "An unknown error occured.",
   "Ansible": "Ansible",
-  "Ansible Automation Platform": "Ansible Automation Platform",
   "Ansible Galaxy/Automation Hub API Token": "Ansible Galaxy/Automation Hub API Token",
   "Ansible node instances dedicated for a particular purpose indicated by node type": "Ansible node instances dedicated for a particular purpose indicated by node type.",
   "Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory": {
@@ -694,8 +693,6 @@
   "View activity stream": "View activity stream",
   "Views": "Views",
   "Waiting": "Waiting",
-  "Welcome to the": "Welcome to the",
-  "Welcome to the ansible automation platform": "Welcome to the ansible automation platform",
   "Workflow Job": "Workflow Job",
   "Yes, I confirm that I want to cancel these {{count}} jobs": {
     "_one": "Yes, I confirm that I want to cancel this job.",

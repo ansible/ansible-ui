@@ -1,13 +1,11 @@
 import { Alert, AlertActionCloseButton, AlertGroup, AlertProps } from '@patternfly/react-core';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-export type AlertToasterProps = AlertProps;
-
 export interface IPageAlertToaster {
-  addAlert: (alert: AlertToasterProps) => void;
-  removeAlert: (alert: AlertToasterProps) => void;
-  replaceAlert: (oldAlert: AlertToasterProps, newAlert: AlertToasterProps) => void;
-  removeAlerts: (filter?: (alert: AlertToasterProps) => boolean) => void;
+  addAlert: (alert: AlertProps) => void;
+  removeAlert: (alert: AlertProps) => void;
+  replaceAlert: (oldAlert: AlertProps, newAlert: AlertProps) => void;
+  removeAlerts: (filter?: (alert: AlertProps) => boolean) => void;
 }
 
 export const PageAlertToasterContext = createContext<IPageAlertToaster>({
@@ -21,22 +19,31 @@ export function usePageAlertToaster(): IPageAlertToaster {
 }
 
 export function PageAlertToasterProvider(props: { children: ReactNode }) {
-  const [toasterAlerts, setToasterAlerts] = useState<AlertToasterProps[]>([]);
+  const [toasterAlerts, setToasterAlerts] = useState<AlertProps[]>([]);
   const [pageAlertToaster] = useState<IPageAlertToaster>(() => {
-    function removeAlerts(filter?: (alert: AlertToasterProps) => boolean) {
+    function removeAlerts(filter?: (alert: AlertProps) => boolean) {
       setToasterAlerts((alerts) => (filter ? alerts.filter(filter) : []));
     }
-    function removeAlert(alert: AlertToasterProps) {
+    function removeAlert(alert: AlertProps) {
       setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
     }
-    function addAlert(alert: AlertToasterProps) {
+    function addAlert(alert: AlertProps) {
       if (Number.isInteger(alert.timeout)) {
         setTimeout(() => removeAlert(alert), alert.timeout as number);
         delete alert.timeout;
       }
-      setToasterAlerts((alerts) => [...alerts, alert]);
+      setToasterAlerts((alerts) => {
+        const alertIndex = alerts.findIndex((a) => a === alert);
+        if (alertIndex !== -1) {
+          const newAlerts = [...alerts];
+          newAlerts[alertIndex] = alert;
+          return newAlerts;
+        } else {
+          return [...alerts, alert];
+        }
+      });
     }
-    function replaceAlert(oldAlert: AlertToasterProps, alert: AlertToasterProps) {
+    function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
       setToasterAlerts((alerts) => {
         const oldAlertIndex = alerts.findIndex((a) => a === oldAlert);
         if (oldAlertIndex !== -1) {

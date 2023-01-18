@@ -1,20 +1,19 @@
-import { useFormContext } from 'react-hook-form';
+import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../Data';
 import { Organization } from '../../../interfaces/Organization';
 import { useSelectOrganization } from '../hooks/useSelectOrganization';
 
-export function PageFormOrganizationSelect(props: {
-  name: string;
-  organizationPath?: string;
-  organizationIdPath?: string;
-}) {
+export function PageFormOrganizationSelect<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: { name: TFieldName; organizationPath?: string; organizationIdPath?: string }) {
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
   const { setValue } = useFormContext();
   return (
-    <PageFormTextInput
+    <PageFormTextInput<TFieldValues, TFieldName, Organization>
       name={props.name}
       label={t('Organization')}
       placeholder="Enter organization"

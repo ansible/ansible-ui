@@ -1,313 +1,134 @@
 /* eslint-disable i18next/no-literal-string */
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  PageSection,
-  Split,
-  SplitItem,
-  Stack,
-  StackItem,
-  Text,
-} from '@patternfly/react-core';
-import { Fragment } from 'react';
-import { Help, PageHeader } from '../../../framework';
-import { DashboardJobsCard } from './DashboardJobsCard';
+import { Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PageHeader, PageLayout, Scrollable } from '../../../framework';
+import { PageGrid } from '../../../framework/components/PageGrid';
+import { ItemsResponse, useGet2 } from '../../Data';
+import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
+import { Host } from '../interfaces/Host';
+import { Inventory } from '../interfaces/Inventory';
+import { Project } from '../interfaces/Project';
+import { UnifiedJob } from '../interfaces/UnifiedJob';
+import { DashboardExecutionEnvironments } from './cards/DashboardExecutionEnvironments';
+import { DashboardHosts } from './cards/DashboardHosts';
+import { DashboardInventories } from './cards/DashboardInventories';
+import { DashboardJobsCard } from './cards/DashboardJobs';
+import { DashboardProjects } from './cards/DashboardProjects';
+import { OnboardExecutionEnvironments } from './cards/OnboardExecutionEnvironments';
+import { OnboardInventories } from './cards/OnboardInventories';
+import { OnboardJobs } from './cards/OnboardJobs';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   return (
-    <Fragment>
-      {/* <Banner variant="info">You are</Banner> */}
+    <PageLayout>
       <PageHeader
-        title="Welcome to Automation Controller"
-        description="Install and configure your Ansible Automation Controller clusters."
+        title={t('Welcome to AWX')}
+        description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
-      <PageSection>
-        <Stack hasGutter>
-          <Card isRounded isFlat>
-            <CardTitle>
-              <Split>
-                <SplitItem>Create or sync an execution environment</SplitItem>
-                <SplitItem isFilled>
-                  <Help
-                    title="Execution environments"
-                    help="The ability to build and deploy Python virtual environments for automation has been replaced by
-                                        Ansible execution environments. Unlike legacy virtual environments, execution environments are
-                                        container images that make it possible to incorporate system-level dependencies and collection-based
-                                        content. Each execution environment allows you to have a customized image to run jobs, and each of
-                                        them contain only what you need when running the job, nothing more."
-                  />
-                </SplitItem>
-                <SplitItem>
-                  <Button variant="link" isInline>
-                    Browse all available execution environemnts
-                  </Button>
-                </SplitItem>
-              </Split>
-            </CardTitle>
-            <CardBody>
-              <Stack hasGutter>
-                <Text>Sync from the available execution environments or create your own.</Text>
-                <Split>
-                  <Button>Create execution environment</Button>
-                </Split>
-              </Stack>
-            </CardBody>
-          </Card>
-
-          <Card isRounded isFlat>
-            <CardHeader>
-              <CardTitle>Create an inventory</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <Stack hasGutter>
-                <StackItem>To get started, create an inventory.</StackItem>
-                <StackItem>
-                  <Button>Create inventory</Button>
-                </StackItem>
-              </Stack>
-            </CardBody>
-          </Card>
-
-          <Card isRounded isFlat>
-            <CardHeader>
-              <CardTitle>Create your first job template</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <Stack hasGutter>
-                <StackItem>To get started, create your first job template.</StackItem>
-                <StackItem>
-                  <Button>Create job template</Button>
-                </StackItem>
-              </Stack>
-            </CardBody>
-          </Card>
-
-          <DashboardJobsCard />
-        </Stack>
-      </PageSection>
-      {/* <Scrollable>
-        <PageSection>
-          <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>
-            <GridItem span={12}>
-              <Card isRounded>
-                <CardTitle>Getting Started</CardTitle>
-                <CardBody>
-                  <ProgressStepper>
-                    <ProgressStep
-                      variant="success"
-                      id="basic-step1"
-                      titleId="basic-step1-title"
-                      aria-label="completed step, step with success"
-                    >
-                      <Button variant="link" isInline>
-                        Create
-                      </Button>
-                      &nbsp;or sync an execution environment.
-                    </ProgressStep>
-                    <ProgressStep
-                      variant="info"
-                      isCurrent
-                      id="basic-step2"
-                      titleId="basic-step2-title"
-                      aria-label="step with info"
-                    >
-                      <Button variant="link" isInline>
-                        Create
-                      </Button>
-                      &nbsp;an inventory.
-                    </ProgressStep>
-                    <ProgressStep
-                      variant="pending"
-                      id="basic-step3"
-                      titleId="basic-step3-title"
-                      aria-label="pending step"
-                    >
-                      <Button variant="link" isInline>
-                        Create
-                      </Button>
-                      &nbsp;your first job template.
-                    </ProgressStep>
-                  </ProgressStepper>
-                </CardBody>
-              </Card>
-            </GridItem>
-            <GridItem span={12}>
-              <Card isRounded>
-                <CardTitle>
-                  <Split>
-                    <SplitItem>Execution environments</SplitItem>
-                    <SplitItem isFilled>
-                      <Help
-                        title="Execution environments"
-                        help="The ability to build and deploy Python virtual environments for automation has been replaced by
-                                        Ansible execution environments. Unlike legacy virtual environments, execution environments are
-                                        container images that make it possible to incorporate system-level dependencies and collection-based
-                                        content. Each execution environment allows you to have a customized image to run jobs, and each of
-                                        them contain only what you need when running the job, nothing more."
-                      />
-                    </SplitItem>
-                    <SplitItem>
-                      <Button variant="link" isInline>
-                        Browse all available execution environemnts
-                      </Button>
-                    </SplitItem>
-                  </Split>
-                </CardTitle>
-                <CardBody>
-                  <Stack hasGutter>
-                    <Text>
-                      Sync from the available execution environments below or create your own.
-                    </Text>
-                    <Split>
-                      <Button>Create execution environment</Button>
-                    </Split>
-                    <Gallery hasGutter>
-                      <Card isFlat>
-                        <CardTitle>
-                          <Stack>
-                            <StackItem>
-                              <Button variant="link" isInline>
-                                Execution environment 1
-                              </Button>
-                            </StackItem>
-                            <StackItem>
-                              <Text
-                                component="small"
-                                style={{
-                                  fontWeight: 'normal',
-                                  opacity: 0.7,
-                                }}
-                              >
-                                Provided by Red Hat
-                              </Text>
-                            </StackItem>
-                          </Stack>
-                        </CardTitle>
-                        <CardBody>
-                          <Stack hasGutter>
-                            <Text>This is the description.</Text>
-                          </Stack>
-                        </CardBody>
-                        <CardFooter>
-                          <Button variant="secondary">Sync</Button>
-                        </CardFooter>
-                      </Card>
-                      <Card isFlat>
-                        <CardTitle>
-                          <Stack>
-                            <StackItem>
-                              <Button variant="link" isInline>
-                                Execution environment 2
-                              </Button>
-                            </StackItem>
-                            <StackItem>
-                              <Text
-                                component="small"
-                                style={{
-                                  fontWeight: 'normal',
-                                  opacity: 0.7,
-                                }}
-                              >
-                                Provided by Red Hat
-                              </Text>
-                            </StackItem>
-                          </Stack>
-                        </CardTitle>
-                        <CardBody>
-                          <Stack hasGutter>
-                            <Text>
-                              This is the description. This ia a very long long long description.
-                              This ia a very long long long description.
-                            </Text>
-                          </Stack>
-                        </CardBody>
-                        <CardFooter>
-                          <Button variant="secondary">Sync</Button>
-                        </CardFooter>
-                      </Card>
-                    </Gallery>
-                  </Stack>
-                </CardBody>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardTitle>
-                  <Split>
-                    <SplitItem>Inventory</SplitItem>
-                    <SplitItem isFilled>
-                      <Help help="TODO" />
-                    </SplitItem>
-                    <SplitItem>
-                      <Button variant="link" isInline>
-                        Go to Inventory List
-                      </Button>
-                    </SplitItem>
-                  </Split>
-                </CardTitle>
-                <CardBody>&nbsp;</CardBody>
-                <CardFooter>
-                  <Bullseye>
-                    <Button>Create inventory</Button>
-                  </Bullseye>
-                </CardFooter>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardTitle>
-                  <Split>
-                    <SplitItem>Topology</SplitItem>
-                    <SplitItem isFilled>
-                      <Help help="TODO" />
-                    </SplitItem>
-                    <SplitItem>
-                      <Button variant="link" isInline>
-                        Go to Topology View
-                      </Button>
-                    </SplitItem>
-                  </Split>
-                </CardTitle>
-                <CardBody>&nbsp;</CardBody>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardTitle>
-                  <Split>
-                    <SplitItem>Job Status</SplitItem>
-                    <SplitItem isFilled>
-                      <Help help="TODO" />
-                    </SplitItem>
-                    <SplitItem>
-                      <Button variant="link" isInline>
-                        Go to Jobs List
-                      </Button>
-                    </SplitItem>
-                  </Split>
-                </CardTitle>
-                <CardBody>&nbsp;</CardBody>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardTitle>
-                  <Split>
-                    <SplitItem>Top Job Templates</SplitItem>
-                    <SplitItem isFilled>
-                      <Help help="TODO" />
-                    </SplitItem>
-                  </Split>
-                </CardTitle>
-                <CardBody>&nbsp;</CardBody>
-              </Card>
-            </GridItem>
-          </Grid>
-        </PageSection>
-      </Scrollable> */}
-    </Fragment>
+      <DashboardInternal />
+    </PageLayout>
   );
+}
+
+function DashboardInternal() {
+  const projects = useProjects();
+  const executionEnvironments = useExecutionEnvironments();
+  const inventories = useInventories();
+  const hosts = useHosts();
+  const unifiedJobs = useUnifiedJobs({ page_size: 1 });
+
+  if (
+    executionEnvironments.loading ||
+    inventories.loading ||
+    projects.loading ||
+    hosts.loading ||
+    unifiedJobs.loading
+  ) {
+    return (
+      <PageSection isFilled>
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
+      </PageSection>
+    );
+  }
+
+  return (
+    <>
+      <Scrollable>
+        <PageSection isWidthLimited>
+          <Stack hasGutter>
+            <OnboardExecutionEnvironments count={executionEnvironments.count} />
+            <OnboardInventories count={inventories.count} />
+            <OnboardJobs count={unifiedJobs.count} />
+            <PageGrid size={300}>
+              <DashboardInventories inventories={inventories} />
+              <DashboardHosts hosts={hosts} />
+              <DashboardProjects projects={projects} />
+              <DashboardExecutionEnvironments executionEnvironments={executionEnvironments} />
+            </PageGrid>
+            <DashboardJobsCard />
+          </Stack>
+        </PageSection>
+      </Scrollable>
+    </>
+  );
+}
+
+function useExecutionEnvironments(query?: Record<string, string | number | boolean>) {
+  const { t } = useTranslation();
+  return useAwxItemsResponse<ExecutionEnvironment>({
+    url: '/api/v2/execution_environments/',
+    query,
+    errorTitle: t('Error querying execution environments.'),
+  });
+}
+
+function useInventories(query?: Record<string, string | number | boolean>) {
+  const { t } = useTranslation();
+  return useAwxItemsResponse<Inventory>({
+    url: '/api/v2/inventories/',
+    query,
+    errorTitle: t('Error querying inventories.'),
+  });
+}
+
+function useHosts(query?: Record<string, string | number | boolean>) {
+  const { t } = useTranslation();
+  return useAwxItemsResponse<Host>({
+    url: '/api/v2/hosts/',
+    query,
+    errorTitle: t('Error querying hosts.'),
+  });
+}
+
+function useProjects(query?: Record<string, string | number | boolean>) {
+  const { t } = useTranslation();
+  return useAwxItemsResponse<Project>({
+    url: '/api/v2/projects/',
+    query,
+    errorTitle: t('Error querying projects.'),
+  });
+}
+
+function useUnifiedJobs(query?: Record<string, string | number | boolean>) {
+  const { t } = useTranslation();
+  return useAwxItemsResponse<UnifiedJob>({
+    url: '/api/v2/unified_jobs/',
+    query,
+    errorTitle: t('Error querying unified jobs.'),
+  });
+}
+
+function useAwxItemsResponse<T>(options: {
+  url: string;
+  query?: Record<string, string | number | boolean>;
+  errorTitle?: string;
+}) {
+  const { url, query, errorTitle } = options;
+  const response = useGet2<ItemsResponse<T>>({ url, query, errorTitle });
+  const refresh = useCallback(() => void response.mutate(), [response]);
+  return { ...response.data, loading: !response.data && !response.error, refresh };
 }

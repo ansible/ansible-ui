@@ -1,8 +1,4 @@
 import {
-  ApplicationLauncher,
-  ApplicationLauncherGroup,
-  ApplicationLauncherItem,
-  ApplicationLauncherSeparator,
   Button,
   ButtonVariant,
   Dropdown,
@@ -18,9 +14,6 @@ import {
   NotificationBadge,
   PageToggleButton,
   Spinner,
-  Stack,
-  StackItem,
-  Text,
   Title,
   TitleSizes,
   Toolbar,
@@ -43,75 +36,11 @@ import useSWR from 'swr';
 import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
+import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { swrOptions, useFetcher } from '../Data';
 import AnsibleIcon from '../icons/ansible.svg';
 import { RouteE } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
-import { shouldShowAutmationServers } from './should-show-autmation-servers';
-export const ApplicationLauncherBasic: React.FunctionComponent = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const onToggle = (isOpen: boolean) => setIsOpen(isOpen);
-  const navigate = useNavigate();
-
-  const { automationServers } = useAutomationServers();
-  const controllers = automationServers.filter((server) => server.type === 'controller');
-  const hubs = automationServers.filter((server) => server.type === 'hub');
-  return (
-    <ApplicationLauncher
-      onToggle={onToggle}
-      isOpen={isOpen}
-      items={[
-        controllers.length && (
-          <ApplicationLauncherGroup label="Automation Controllers" key="controllers">
-            {controllers.map((server) => (
-              <ApplicationLauncherItem
-                key={server.name}
-                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
-              >
-                <Stack>
-                  {server.name}
-                  <StackItem>
-                    <Text component="small" style={{ opacity: 0.7 }}>
-                      {server.url}
-                    </Text>
-                  </StackItem>
-                </Stack>
-              </ApplicationLauncherItem>
-            ))}
-          </ApplicationLauncherGroup>
-        ),
-        hubs.length && <ApplicationLauncherSeparator key="1" />,
-        hubs.length && (
-          <ApplicationLauncherGroup label="Automation Hubs" key="hubs">
-            {hubs.map((server) => (
-              <ApplicationLauncherItem
-                key={server.name}
-                onClick={() => navigate(RouteE.Login + '?server=' + encodeURIComponent(server.url))}
-              >
-                <Stack>
-                  {server.name}
-                  <StackItem>
-                    <Text component="small" style={{ opacity: 0.7 }}>
-                      {server.url}
-                    </Text>
-                  </StackItem>
-                </Stack>
-              </ApplicationLauncherItem>
-            ))}
-          </ApplicationLauncherGroup>
-        ),
-        // <ApplicationLauncherSeparator key="2" />,
-        // <ApplicationLauncherItem key="add controller" icon={<PlusIcon />}>
-        //     Add Controller
-        // </ApplicationLauncherItem>,
-        // <ApplicationLauncherItem key="add hub" icon={<PlusIcon />}>
-        //     Add Hub
-        // </ApplicationLauncherItem>,
-      ].filter(Boolean)}
-      position="right"
-    />
-  );
-};
 
 export function AnsibleMasthead(props: {
   isNavOpen: boolean;
@@ -123,7 +52,9 @@ export function AnsibleMasthead(props: {
   const { t } = useTranslation();
   const openSettings = useSettingsDialog(t);
   const openAnsibleAboutModal = useAnsibleAboutModal();
-  const { showAutomationServers, showHub, showEda } = shouldShowAutmationServers();
+
+  const brand: string = process.env.BRAND ?? '';
+  const product: string = process.env.PRODUCT ?? t('Ansible');
 
   return (
     <Masthead display={{ default: 'inline' }}>
@@ -147,29 +78,17 @@ export function AnsibleMasthead(props: {
                   flexDirection: 'column',
                 }}
               >
-                {process.env.BRAND && (
-                  <span style={{ fontWeight: 900, marginTop: -4 }}>{process.env.BRAND}</span>
+                {brand && (
+                  <span style={{ fontWeight: 900, marginTop: -4 }}>
+                    <Truncate content={brand} style={{ minWidth: 0 }} />
+                  </span>
                 )}
                 <Title
                   headingLevel="h1"
                   sizes={TitleSizes[TitleSizes.lg]}
                   style={{ lineHeight: 1 }}
                 >
-                  {showAutomationServers ? (
-                    <Truncate content={t('Ansible Automation Platform')} style={{ minWidth: 0 }} />
-                  ) : showHub ? (
-                    <Truncate content={t('Ansible Automation Hub')} style={{ minWidth: 0 }} />
-                  ) : showEda ? (
-                    <Truncate
-                      content={t('Ansible Event Driven Automation')}
-                      style={{ minWidth: 0 }}
-                    />
-                  ) : (
-                    <Truncate
-                      content={t('Ansible Automation Controller')}
-                      style={{ minWidth: 0 }}
-                    />
-                  )}
+                  <Truncate content={product} style={{ minWidth: 0 }} />
                 </Title>
               </div>
             </div>
@@ -178,28 +97,8 @@ export function AnsibleMasthead(props: {
       ) : (
         <MastheadMain style={{ marginRight: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
           <MastheadBrand>
-            <Title headingLevel="h3" style={{ color: 'white' }}>
-              {showAutomationServers ? (
-                <Truncate
-                  content={t('Ansible Automation Platform')}
-                  style={{ minWidth: 0, marginLeft: -8 }}
-                />
-              ) : showHub ? (
-                <Truncate
-                  content={t('Ansible Automation Hub')}
-                  style={{ minWidth: 0, marginLeft: -8 }}
-                />
-              ) : showEda ? (
-                <Truncate
-                  content={t('Ansible Event Driven Automation')}
-                  style={{ minWidth: 0, marginLeft: -8 }}
-                />
-              ) : (
-                <Truncate
-                  content={t('Ansible Automation Controller')}
-                  style={{ minWidth: 0, marginLeft: -8 }}
-                />
-              )}
+            <Title headingLevel="h1" sizes={TitleSizes[TitleSizes.md]} style={{ color: 'white' }}>
+              <Truncate content={product} style={{ minWidth: 0, marginLeft: -8 }} />
             </Title>
           </MastheadBrand>
         </MastheadMain>
@@ -341,7 +240,11 @@ function AccountDropdownInternal() {
   const fetcher = useFetcher();
   const { automationServer } = useAutomationServers();
   const meResponse = useSWR<{ results: { username: string }[] }>(
-    automationServer ? (automationServer.type !== 'eda' ? '/api/v2/me/' : undefined) : undefined,
+    automationServer
+      ? automationServer.type !== AutomationServerType.EDA
+        ? '/api/v2/me/'
+        : undefined
+      : undefined,
     fetcher,
     swrOptions
   );

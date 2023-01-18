@@ -17,7 +17,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
   } = useFormContext();
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const handleFileInputChange = useCallback((_, file: File) => setFilename(file.name), []);
+  const handleFileInputChange = useCallback((_: unknown, file: File) => setFilename(file.name), []);
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true);
   };

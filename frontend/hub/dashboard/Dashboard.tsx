@@ -31,8 +31,8 @@ export function HubDashboard() {
   return (
     <PageLayout>
       <PageHeader
-        title="Welcome to Automation Hub"
-        description="Find and use content that is supported by Redhat and out partners to devliver reassurance for the most demanding environments. Get started by exploring the options below."
+        title="Welcome to Galaxy"
+        description="Discover, publish, and manage your Ansible collections."
       />
       <PageSection>
         <Stack hasGutter>

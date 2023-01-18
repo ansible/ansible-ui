@@ -1,4 +1,4 @@
-import { ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { Dotted } from '../../../../framework/components/Dotted';
-import { AlertToasterProps, usePageAlertToaster } from '../../../../framework/PageAlertToaster';
+import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { StatusCell } from '../../../common/StatusCell';
 import { requestPost } from '../../../Data';
@@ -68,7 +68,7 @@ export function Instances() {
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instance) => {
-          const alert: AlertToasterProps = {
+          const alert: AlertProps = {
             variant: 'info',
             title: t('Health check running'),
           };
@@ -233,7 +233,7 @@ export function NodeTypeCell(props: { node_type: string }) {
       return (
         <Tooltip
           content={t(
-            'Hybrid is the default node type for control plane nodes, responsible for automation controller runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
+            'Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.'
           )}
         >
           <Dotted>{t('Hybrid node')}</Dotted>

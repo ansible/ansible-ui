@@ -1,22 +1,28 @@
 import { Checkbox, CheckboxProps } from '@patternfly/react-core';
-import { Controller, useFormContext, Validate } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
 
-export type PageFormCheckboxProps = {
+export type PageFormCheckboxProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
   id?: string;
-  name: string;
-  validate?: Validate<string> | Record<string, Validate<string>>;
+  name: TFieldName;
+  validate?: Validate<boolean, TFieldValues> | Record<string, Validate<boolean, TFieldValues>>;
 } & Omit<CheckboxProps, 'id' | 'onChange' | 'value'>;
 
 /** PatternFly Checkbox wrapper for use with react-hook-form */
-export function PageFormCheckbox(props: PageFormCheckboxProps) {
+export function PageFormCheckbox<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: PageFormCheckboxProps<TFieldValues, TFieldName>) {
   const { name, readOnly, validate } = props;
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext();
+  } = useFormContext<TFieldValues>();
 
   return (
-    <Controller
+    <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister

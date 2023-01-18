@@ -1,24 +1,37 @@
-import { Controller, useFormContext, Validate, ValidationRule } from 'react-hook-form';
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  useFormContext,
+  Validate,
+  ValidationRule,
+} from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea';
 
-export type PageFormTextAreaProps = {
-  name: string;
+export type PageFormTextAreaProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  name: TFieldName;
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
-  validate?: Validate<string> | Record<string, Validate<string>>;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
 } & Omit<FormGroupTextAreaProps, 'onChange' | 'value'>;
 
 /** PatternFly TextArea wrapper for use with react-hook-form */
-export function PageFormTextArea(props: PageFormTextAreaProps) {
+export function PageFormTextArea<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: PageFormTextAreaProps<TFieldValues, TFieldName>) {
   const { name, label, isReadOnly, isRequired, minLength, maxLength, pattern, validate } = props;
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext();
+  } = useFormContext<TFieldValues>();
   return (
-    <Controller
+    <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
