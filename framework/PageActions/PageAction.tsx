@@ -24,6 +24,7 @@ export interface IPageActionSeperator {
 type IPageActionWithLink = IPageActionCommon & {
   type: PageActionType.button;
   variant?: ButtonVariant;
+  isDisabled?: string | undefined;
   href: string;
   onClick?: never;
 };
