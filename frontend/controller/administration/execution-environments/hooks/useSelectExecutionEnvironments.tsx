@@ -12,7 +12,7 @@ export function useSelectExecutionEnvironments() {
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
   const view = useControllerView<ExecutionEnvironment>({
-    url: '/api/v2/execution-environments/',
+    url: '/api/v2/execution_environments/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
