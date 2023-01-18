@@ -26,6 +26,6 @@ jobs:
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci --ignore-scripts
+        run: npm ci
       - run: npm test
       - run: npm run coverage:check
