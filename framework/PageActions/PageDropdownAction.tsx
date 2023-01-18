@@ -130,11 +130,13 @@ function PageDropdownActionItem<T extends object>(props: {
               action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined
             }
             component={
-              action.href
-                ? (props: object) => (
-                    <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
-                  )
-                : undefined
+              <>
+                {action.href
+                  ? (props: object) => (
+                      <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
+                    )
+                  : undefined}
+              </>
             }
             isAriaDisabled={Boolean(isDisabled)}
             icon={
@@ -170,7 +172,11 @@ function PageDropdownActionItem<T extends object>(props: {
           <DropdownItem
             onClick={action.onClick ? () => action.onClick(selectedItems) : undefined}
             component={
-              !action.onClick ? (props: object) => <Link {...props} to={action.href} /> : undefined
+              <>
+                {!action.onClick
+                  ? (props: object) => <Link {...props} to={action.href} />
+                  : undefined}
+              </>
             }
             isAriaDisabled={isDisabled}
             icon={
