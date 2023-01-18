@@ -1,22 +1,41 @@
 import { Button } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import { Controller, useFormContext, Validate, ValidationRule } from 'react-hook-form';
+import {
+  Controller,
+  FieldPath,
+  FieldPathValue,
+  FieldValues,
+  PathValue,
+  useFormContext,
+  Validate,
+  ValidationRule,
+} from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
-export type PageFormTextInputProps<T> = {
-  name: string;
+export type PageFormTextInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TSelection extends FieldValues = FieldValues
+> = {
+  name: TFieldName;
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
-  validate?: Validate<string> | Record<string, Validate<string>>;
+  validate?:
+    | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
+    | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   selectTitle?: string;
-  selectValue?: (item: T) => string | number;
-  selectOpen?: (callback: (item: T) => void, title: string) => void;
+  selectValue?: (selection: TSelection) => FieldPathValue<TSelection, FieldPath<TSelection>>;
+  selectOpen?: (callback: (selection: TSelection) => void, title: string) => void;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
-export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>) {
+export function PageFormTextInput<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TSelection extends FieldValues = FieldValues
+>(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection>) {
   const {
     label,
     name,
@@ -32,10 +51,10 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
     control,
     setValue,
     formState: { isSubmitting, isValidating },
-  } = useFormContext();
+  } = useFormContext<TFieldValues>();
 
   return (
-    <Controller
+    <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
@@ -55,10 +74,12 @@ export function PageFormTextInput<T = unknown>(props: PageFormTextInputProps<T>)
               <Button
                 variant="control"
                 onClick={() =>
-                  props.selectOpen?.((item: T) => {
+                  props.selectOpen?.((item: TSelection) => {
                     if (props.selectValue) {
                       const value = props.selectValue(item);
-                      setValue(name, value, { shouldValidate: true });
+                      setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
+                        shouldValidate: true,
+                      });
                     }
                   }, props.selectTitle as string)
                 }

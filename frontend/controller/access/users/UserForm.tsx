@@ -155,12 +155,12 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
         maxLength={150}
         autoComplete="new-username"
-        validate={(username) => {
+        validate={(username: string) => {
           for (const c of username) {
             if (
               !'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890@.+-_'.includes(c)
             ) {
-              return t('Username  may contain only letters, numbers, and @.+-_ characters.');
+              return t('Username may contain only letters, numbers, and @.+-_ characters.');
             }
           }
         }}
