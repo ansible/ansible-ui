@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { ComponentClass, FunctionComponent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IPageAction } from './PageAction';
 import { isHiddenAction } from './PageActions';
@@ -130,13 +130,11 @@ function PageDropdownActionItem<T extends object>(props: {
               action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined
             }
             component={
-              <>
-                {action.href
-                  ? (props: object) => (
-                      <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
-                    )
-                  : undefined}
-              </>
+              (action.href
+                ? (props: object) => (
+                    <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
+                  )
+                : undefined) as ReactNode
             }
             isAriaDisabled={Boolean(isDisabled)}
             icon={
@@ -172,11 +170,9 @@ function PageDropdownActionItem<T extends object>(props: {
           <DropdownItem
             onClick={action.onClick ? () => action.onClick(selectedItems) : undefined}
             component={
-              <>
-                {!action.onClick
-                  ? (props: object) => <Link {...props} to={action.href} />
-                  : undefined}
-              </>
+              (!action.onClick
+                ? (props: object) => <Link {...props} to={action.href} />
+                : undefined) as ReactNode
             }
             isAriaDisabled={isDisabled}
             icon={
