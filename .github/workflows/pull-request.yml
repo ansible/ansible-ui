@@ -3,21 +3,21 @@ name: Pull Request
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  pull-request:
+  packages:
+    name: Packages
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.head_ref }}
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
       - name: PreCache
-        run: |
-          cp package-lock.json package-lock-copy.json
-          sed -i "3d;9d" package-lock-copy.json
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -29,5 +29,64 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm test
-      - run: npm run coverage:check
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packages-${{ github.ref }}
+          path: |
+            node_modules
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    needs: packages
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/download-artifact@v3
+        with:
+          name: packages-${{ github.ref }}
+      - run: npm run eslint
+
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    needs: packages
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/download-artifact@v3
+        with:
+          name: packages-${{ github.ref }}
+      - run: npm run prettier
+
+  tsc:
+    name: TSC
+    needs: packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/download-artifact@v3
+        with:
+          name: packages-${{ github.ref }}
+      - run: npm run tsc
+
+  cypress-e2e:
+    name: Cypress E2E
+    needs: packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - uses: actions/download-artifact@v3
+        with:
+          name: packages-${{ github.ref }}
+      - run: npm run cypress
