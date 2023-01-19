@@ -14,8 +14,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: node -v
-      - run: npm -v
+      - name: PreCache
+        run: |
+          cp package-lock.json package-lock-copy.json
+          sed -i '' "3d;9d" package-lock-copy.json
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -23,7 +25,7 @@ jobs:
           path: |
             ./node_modules
             /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
