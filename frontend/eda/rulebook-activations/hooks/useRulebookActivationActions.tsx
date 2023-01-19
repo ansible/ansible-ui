@@ -1,26 +1,37 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import {
+  useDisableActivation,
+  useRelaunchActivation,
+  useRestartActivation,
+} from './useActivationDialogs';
 
 export function useRulebookActivationActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const relaunchActivation = useRelaunchActivation();
+  const restartActivation = useRestartActivation();
+  const disableActivation = useDisableActivation();
   const deleteRulebookActivations = useDeleteRulebookActivations(() => void refresh());
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
         type: PageActionType.single,
-        icon: EditIcon,
-        label: t('Edit rulebookActivation'),
-        onClick: (rulebookActivation: EdaRulebookActivation) =>
-          navigate(
-            RouteE.EditEdaRulebookActivation.replace(':id', rulebookActivation.id.toString())
-          ),
+        label: 'Relaunch',
+        onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
+      },
+      {
+        type: PageActionType.single,
+        label: 'Restart',
+        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
+      },
+      {
+        type: PageActionType.single,
+        label: 'Disable',
+        onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
       },
       {
         type: PageActionType.single,
@@ -31,6 +42,6 @@ export function useRulebookActivationActions(refresh: () => Promise<unknown>) {
         isDanger: true,
       },
     ],
-    [deleteRulebookActivations, navigate, t]
+    [relaunchActivation, restartActivation, deleteRulebookActivations, disableActivation, t]
   );
 }
