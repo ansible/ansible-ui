@@ -57,6 +57,22 @@ export function AddAutomationServerDialog() {
             label={t('Url')}
             name="url"
             placeholder={t('Enter the url of the automation server')}
+            validate={(url: string) => {
+              let valid = true;
+              try {
+                const parsed = new URL(url);
+                if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+                  valid = false;
+                }
+                if (!parsed.host) {
+                  valid = false;
+                }
+                if (!valid) return parsed.protocol;
+              } catch {
+                valid = false;
+              }
+              if (!valid) return t('Url must be a valid URL.');
+            }}
             isRequired
           />
           <PageFormSelectOption
