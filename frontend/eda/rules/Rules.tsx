@@ -3,43 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
-import { RouteE } from '../../Routes';
 import { EdaRule } from '../interfaces/EdaRule';
-import { useRuleActions } from './hooks/useRuleActions';
 import { useRuleColumns } from './hooks/useRuleColumns';
 import { useRuleFilters } from './hooks/useRuleFilters';
-import { useRulesActions } from './hooks/useRulesActions';
+import { RouteE } from '../../Routes';
 
 export function Rules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRuleFilters();
-  const { data: rules, mutate: refresh } = useGet<EdaRule[]>('/api/rules');
+  const { data: rules } = useGet<EdaRule[]>('/api/rules');
   const tableColumns = useRuleColumns();
   const view = useInMemoryView<EdaRule>({
     items: rules,
     tableColumns,
     toolbarFilters,
-    keyFn: idKeyFn,
+    keyFn: (rule: EdaRule) => rule.id,
   });
-  const toolbarActions = useRulesActions(refresh);
-  const rowActions = useRuleActions(refresh);
   return (
     <PageLayout>
       <PageHeader title={t('Rules')} />
       <PageTable
         tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading rules')}
         emptyStateTitle={t('No rules yet')}
-        emptyStateDescription={t('To get started, create a rule.')}
-        emptyStateButtonText={t('Create rule')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaRule)}
+        emptyStateDescription={t('Please add a project by using the button below')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
         {...view}
-        defaultSubtitle={t('Rule')}
+        defaultSubtitle={t('Rules')}
       />
     </PageLayout>
   );
