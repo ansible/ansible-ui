@@ -17,7 +17,7 @@ jobs:
       - name: PreCache
         run: |
           cp package-lock.json package-lock-copy.json
-          sed -i '' "3d;9d" package-lock-copy.json
+          sed -i "3d;9d" package-lock-copy.json
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
