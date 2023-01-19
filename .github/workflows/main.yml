@@ -71,7 +71,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   docker:
-    name: Docker
+    name: Docker Build and Push
     needs: tag
     runs-on: ubuntu-latest
     steps:
