@@ -89,9 +89,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          key: docker
+          restore-keys: docker
       - name: Login to Quay
         uses: docker/login-action@v2
         with:
