@@ -35,7 +35,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: VERSION=`npm version patch --no-git-tag-version`
+      - run: |
+          VERSION=`npm version patch --no-git-tag-version`
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: PreCache
         run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
       - name: Cache dependencies
@@ -70,7 +72,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: VERSION=`npm version patch --no-git-tag-version`
+      - run: |
+          VERSION=`npm version patch --no-git-tag-version`
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Setup Docker QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -96,9 +100,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           # platforms: linux/amd64,linux/arm64 - Quay does not seem to support this :(
-          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ github.ref_name }}
-          labels: version=${{ github.ref_name }}
-          build-args: VERSION=${{ github.ref_name }}
+          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ env.VERSION }}
+          labels: version=${{ env.VERSION }}
+          build-args: VERSION=${{ env.VERSION }}
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
