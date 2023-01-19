@@ -6,6 +6,7 @@ import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface Settings {
   theme?: 'system' | 'light' | 'dark';
+  activeTheme?: 'light' | 'dark';
   tableLayout?: 'compact' | 'comfortable';
   formColumns?: 'single' | 'multiple';
   formLayout?: 'vertical' | 'horizontal';
@@ -24,19 +25,22 @@ export function useSettings() {
 
 export function SettingsProvider(props: { children?: ReactNode }) {
   const [settings, setSettingsState] = useState<Settings>(() => {
+    const theme = localStorage.getItem('theme') as 'system' | 'light' | 'dark';
+    const activeTheme =
+      theme !== 'dark' && theme !== 'light'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : theme;
     const settings: Settings = {
-      theme: localStorage.getItem('theme') as 'system' | 'light' | 'dark',
+      theme,
+      activeTheme,
       tableLayout: localStorage.getItem('tableLayout') as 'compact' | 'comfortable',
       formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
       formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
       borders: localStorage.getItem('borders') !== 'false',
     };
-    const activeTheme =
-      settings.theme !== 'dark' && settings.theme !== 'light'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : settings.theme;
+
     if (activeTheme === 'dark') {
       document.documentElement.classList.add('pf-theme-dark');
     } else {
@@ -51,13 +55,15 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
     localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
     localStorage.setItem('borders', settings.borders ? 'true' : 'false');
-    setSettingsState(settings);
     const activeTheme =
       settings.theme === 'system'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'
         : settings.theme;
+    settings.activeTheme = activeTheme;
+    setSettingsState(settings);
+
     if (activeTheme === 'dark') {
       document.documentElement.classList.add('pf-theme-dark');
     } else {
