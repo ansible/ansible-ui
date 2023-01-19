@@ -8,7 +8,7 @@ on:
 concurrency: main
 
 jobs:
-  tag-release:
+  tag:
     name: Tag Release
     runs-on: ubuntu-latest
     outputs:
@@ -25,6 +25,7 @@ jobs:
         run: |
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{ env.VERSION }} [skip ci]
@@ -32,12 +33,12 @@ jobs:
 
   publish-framework:
     name: Publish Framework
-    needs: tag-release
+    needs: tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.tag-release.outputs.VERSION }}
+          ref: ${{ needs.tag.outputs.VERSION }}
           token: ${{ secrets.GH_TOKEN }}
       - uses: actions/setup-node@v3
         with:
@@ -71,12 +72,12 @@ jobs:
 
   docker:
     name: Docker
-    needs: tag-release
+    needs: tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.tag-release.outputs.VERSION }}
+          ref: ${{ needs.tag.outputs.VERSION }}
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -101,9 +102,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           # platforms: linux/amd64,linux/arm64 - Quay does not seem to support this :(
-          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag-release.outputs.VERSION }}
-          labels: version=${{ needs.tag-release.outputs.VERSION }}
-          build-args: VERSION=${{ needs.tag-release.outputs.VERSION }}
+          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
+          labels: version=${{ needs.tag.outputs.VERSION }}
+          build-args: VERSION=${{ needs.tag.outputs.VERSION }}
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
