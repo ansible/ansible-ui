@@ -4,6 +4,8 @@ import { useController, useFormContext } from 'react-hook-form';
 export function PageFormSwitch(props: {
   id?: string;
   label: string;
+  labelOn?: string;
+  labelOff?: string;
   name: string;
   helperText?: string;
   required?: boolean;
@@ -27,6 +29,8 @@ export function PageFormSwitch(props: {
     >
       <Switch
         id={id}
+        label={props.labelOn}
+        labelOff={props.labelOff}
         aria-describedby={`${id}-form-group`}
         // isRequired={props.required}
         // validated={error?.message ? 'error' : undefined}

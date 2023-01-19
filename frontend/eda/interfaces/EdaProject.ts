@@ -7,7 +7,7 @@
 
 export interface EdaProject {
   id: number;
-  name?: string;
+  name: string;
   description?: string;
   type?: string;
   token?: string;
