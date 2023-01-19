@@ -15,18 +15,17 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
       - run: |
           VERSION=`npm version patch --no-git-tag-version`
-          echo "version=$VERSION" >> $GITHUB_ENV
-
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{ env.VERSION }} [skip ci]
           tagging_message: ${{ env.VERSION }}
-          push_options: '--force'
 
   # publish-framework:
   #   name: Publish Framework
