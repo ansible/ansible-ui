@@ -17,10 +17,10 @@ jobs:
         with:
           node-version: '18'
       - run: |
-          VERSION=`npm version patch`
-          git config --global user.email github-actions[bot]
-          git commit --amend --reset-author --no-edit
-          git push -m "$VERSION [skip ci]" -
+          VERSION=`npm version patch --no-git-tag-version`
+          git add .
+          git commit -m "$VERSION [skip ci]"
+          git tag -a $VERSION -m "$VERSION [skip ci]"
           git push origin $VERSION
 
   publish-framework:
