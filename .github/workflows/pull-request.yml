@@ -26,6 +26,8 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: PostCache
+        run: rm package-lock-copy.json
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
