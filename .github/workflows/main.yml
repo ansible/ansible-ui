@@ -5,12 +5,12 @@ on:
     branches:
       - main
 
-runs-on: ubuntu-latest
 concurrency: main
 
 jobs:
   tag-release:
     name: Tag Release
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -25,6 +25,7 @@ jobs:
 
   publish-framework:
     name: Publish Framework
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -59,6 +60,7 @@ jobs:
 
   docker:
     name: Docker
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
