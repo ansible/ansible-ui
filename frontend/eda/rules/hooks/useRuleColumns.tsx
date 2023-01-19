@@ -14,9 +14,6 @@ export function useRuleColumns() {
         header: t('ID'),
         cell: (inventory) => inventory.id,
         sort: 'id',
-        card: 'hidden',
-        list: 'hidden',
-        isIdColumn: true,
       },
       {
         header: t('Name'),
