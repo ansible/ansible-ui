@@ -9,7 +9,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, IPageActionButton, PageActionType } from '../../../../../framework';
 import { useOptions } from '../../../../Data';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
@@ -41,7 +41,7 @@ export function useTeamToolbarActions(view: IControllerView<Team>) {
               'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
             ),
         onClick: () => navigate(RouteE.CreateTeam),
-      },
+      } as IPageActionButton,
       { type: PageActionType.seperator },
       {
         type: PageActionType.bulk,
