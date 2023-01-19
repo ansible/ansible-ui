@@ -1,6 +1,7 @@
 import { StringOptions, Type } from '@sinclair/typebox';
 import { JSONSchema6 } from 'json-schema';
 import { ReactNode } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { IFormGroupSelectOption } from './Inputs/FormGroupSelectOption';
 import { PageFormSelectOption, PageFormSelectOptionProps } from './Inputs/PageFormSelectOption';
 import { PageFormSlider } from './Inputs/PageFormSlider';
@@ -87,7 +88,7 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
         switch ((property as { variant?: string }).variant) {
           case 'select': {
             if ('options' in property) {
-              const formSelectProps = property as unknown as PageFormSelectOptionProps<unknown>;
+              const formSelectProps = property as unknown as PageFormSelectOptionProps<FieldValues>;
               p.push(
                 <PageFormSelectOption
                   id={base + propertyName}

@@ -8,7 +8,8 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, useMemo, useState } from 'react';
+import { ComponentClass, FunctionComponent, ReactNode, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { IPageAction } from './PageAction';
 import { isHiddenAction } from './PageActions';
 import { PageActionType } from './PageActionType';
@@ -23,6 +24,7 @@ export function PageDropdownAction<T extends object>(props: {
   selectedItem?: T;
   position?: DropdownPosition;
   iconOnly?: boolean;
+  onOpen?: (open: boolean) => void;
 }) {
   const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props;
 
@@ -42,6 +44,9 @@ export function PageDropdownAction<T extends object>(props: {
       ) !== undefined,
     [actions]
   );
+  useEffect(() => {
+    props.onOpen?.(dropdownOpen);
+  }, [dropdownOpen, props]);
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;
@@ -110,7 +115,8 @@ function PageDropdownActionItem<T extends object>(props: {
   const { action, selectedItems, selectedItem, hasIcons, index } = props;
 
   switch (action.type) {
-    case PageActionType.single: {
+    case PageActionType.single:
+    case PageActionType.singleLink: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
       let tooltip = action.tooltip;
@@ -120,7 +126,16 @@ function PageDropdownActionItem<T extends object>(props: {
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            onClick={() => selectedItem && action.onClick(selectedItem)}
+            onClick={
+              action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined
+            }
+            component={
+              (action.href
+                ? (props: object) => (
+                    <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
+                  )
+                : undefined) as ReactNode
+            }
             isAriaDisabled={Boolean(isDisabled)}
             icon={
               Icon ? (
@@ -153,7 +168,12 @@ function PageDropdownActionItem<T extends object>(props: {
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            onClick={() => action.onClick(selectedItems)}
+            onClick={action.onClick ? () => action.onClick(selectedItems) : undefined}
+            component={
+              (!action.onClick
+                ? (props: object) => <Link {...props} to={action.href} />
+                : undefined) as ReactNode
+            }
             isAriaDisabled={isDisabled}
             icon={
               Icon ? (

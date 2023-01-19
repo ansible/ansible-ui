@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useSettings } from '../../../framework/Settings';
 import { useLoginModal } from '../../common/LoginModal';
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
+import { AutomationServerType } from '../interfaces/AutomationServerType';
 
 export function AutomationServerSwitcher() {
   const { t } = useTranslation();
@@ -37,51 +38,28 @@ export function AutomationServerSwitcher() {
           >
             <Title headingLevel="h2">{automationServer?.name}</Title>
             <Text component="small" style={{ opacity: 0.7 }}>
-              {automationServer?.type === 'controller'
-                ? t('Automation controller')
-                : automationServer?.type === 'hub'
-                ? t('Automation hub')
-                : t('Event driven automation')}
+              {automationServer?.type === AutomationServerType.AWX
+                ? t('AWX Ansible server')
+                : automationServer?.type === AutomationServerType.Galaxy
+                ? t('Galaxy Ansible server')
+                : automationServer?.type === AutomationServerType.EDA
+                ? t('Event-driven Ansible server')
+                : t('Unknown')}
             </Text>
           </Flex>
         }
-        // onSearchInputChange={onSearchInputChange}
         isOpen={open}
-        // searchInputValue={searchValue}
         onToggle={() => setOpen((open) => !open)}
-        // screenReaderLabel="Selected Project:"
         isPlain
-        // footer={
-        //   <div style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
-        //     <Button
-        //       variant="link"
-        //       isInline
-        //       style={{ margin: 16 }}
-        //       onClick={() => {
-        //         automationServer?.type === 'controller'
-        //           ? navigate(RouteE.ControllerAutomationServers)
-        //           : automationServer?.type === 'hub'
-        //           ? navigate(RouteE.HubAutomationServers)
-        //           : navigate(RouteE.AutomationServers);
-        //         setOpen(false);
-        //       }}
-        //     >
-        //       {t('Manage automation servers')}
-        //     </Button>
-        //   </div>
-        // }
         className="ansible-context-selector"
       >
         {automationServers.map((automationServer, index) => (
           <ContextSelectorItem
             key={index}
-            onClick={
-              () => {
-                setOpen(false);
-                openLoginModal(automationServer.url);
-              }
-              // navigate(RouteE.Login + '?server=' + encodeURIComponent(automationServer.url))
-            }
+            onClick={() => {
+              setOpen(false);
+              openLoginModal(automationServer.url);
+            }}
           >
             <Flex
               direction={{ default: 'column' }}
@@ -90,11 +68,13 @@ export function AutomationServerSwitcher() {
             >
               <Title headingLevel="h6">{automationServer?.name}</Title>
               <Text component="small" style={{ opacity: 0.7 }}>
-                {automationServer?.type === 'controller'
-                  ? t('Automation controller')
-                  : automationServer?.type === 'hub'
-                  ? t('Automation hub')
-                  : t('Event driven automation')}
+                {automationServer?.type === AutomationServerType.AWX
+                  ? t('AWX Ansible server')
+                  : automationServer?.type === AutomationServerType.Galaxy
+                  ? t('Galaxy Ansible server')
+                  : automationServer?.type === AutomationServerType.EDA
+                  ? t('Event-driven Ansible server')
+                  : t('Unknown')}
               </Text>
             </Flex>
           </ContextSelectorItem>

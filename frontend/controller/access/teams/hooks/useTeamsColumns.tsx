@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
 import {
   useCreatedColumn,
-  useDescriptionColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
@@ -19,14 +19,14 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
     (team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
     [history]
   );
+  const idColumn = useIdColumn();
   const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
-  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Team>[]>(
-    () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
-    [createdColumn, descriptionColumn, modifiedColumn, nameColumn, organizationColumn]
+    () => [idColumn, nameColumn, organizationColumn, createdColumn, modifiedColumn],
+    [createdColumn, idColumn, modifiedColumn, nameColumn, organizationColumn]
   );
   return tableColumns;
 }

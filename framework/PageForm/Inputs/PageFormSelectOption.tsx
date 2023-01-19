@@ -1,21 +1,38 @@
-import { Controller, useFormContext, Validate } from 'react-hook-form';
+import {
+  Controller,
+  FieldPath,
+  FieldPathValue,
+  FieldValues,
+  useFormContext,
+  Validate,
+} from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption';
 
-export type PageFormSelectOptionProps<T> = {
-  name: string;
-  validate?: Validate<string> | Record<string, Validate<string>>;
-} & Omit<FormGroupSelectOptionProps<T>, 'onSelect' | 'value'>;
+export type PageFormSelectOptionProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TSelection = unknown
+> = {
+  name: TFieldName;
+  validate?:
+    | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
+    | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+} & Omit<FormGroupSelectOptionProps<TSelection>, 'onSelect' | 'value'>;
 
 /**  Select wrapper for use with react-hook-form */
-export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
+export function PageFormSelectOption<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TSelection = unknown
+>(props: PageFormSelectOptionProps<TFieldValues, TFieldName, TSelection>) {
   const { label, isRequired, validate } = props;
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext();
+  } = useFormContext<TFieldValues>();
   return (
-    <Controller
+    <Controller<TFieldValues, TFieldName>
       name={props.name}
       control={control}
       shouldUnregister
@@ -23,7 +40,7 @@ export function PageFormSelectOption<T>(props: PageFormSelectOptionProps<T>) {
         <FormGroupSelectOption
           {...props}
           id={props.id ?? props.name}
-          value={value as T}
+          value={value as TSelection}
           onSelect={(_, value) => onChange(value)}
           helperTextInvalid={error?.message}
           isReadOnly={props.isReadOnly || isSubmitting}

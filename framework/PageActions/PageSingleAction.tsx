@@ -1,5 +1,6 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
 import { IPageSingleAction } from './PageAction';
 
 export function PageSingleAction<T extends object>(props: {
@@ -37,7 +38,12 @@ export function PageSingleAction<T extends object>(props: {
             ) : undefined
           }
           isAriaDisabled={Boolean(isDisabled)}
-          onClick={() => selectedItem && action.onClick(selectedItem)}
+          onClick={action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined}
+          component={
+            action.href
+              ? (props) => <Link {...props} to={selectedItem && action.href(selectedItem)} />
+              : undefined
+          }
           isDanger={action.isDanger}
         >
           {props.iconOnly && Icon ? <Icon /> : action.shortLabel ? action.shortLabel : action.label}

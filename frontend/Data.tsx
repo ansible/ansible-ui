@@ -1,8 +1,104 @@
 /* eslint-disable no-console */
+import { AlertProps } from '@patternfly/react-core';
 import ky, { HTTPError, ResponsePromise } from 'ky';
 import { Input, Options } from 'ky/distribution/types/options';
-import { SWRConfiguration } from 'swr';
+import { useEffect, useMemo } from 'react';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+import { usePageAlerts } from '../framework/PageAlerts';
 import { RouteE } from './Routes';
+
+export function useHandleSWRResponseError(swrResponse: SWRResponse, errorTitle?: string) {
+  const alertToaster = usePageAlerts();
+  const alert = useMemo<AlertProps>(() => ({ title: '', variant: 'danger' }), []);
+  useEffect(() => {
+    if (swrResponse.error) {
+      if (errorTitle) {
+        alert.title = errorTitle;
+        if (swrResponse.error instanceof Error) {
+          alert.children = swrResponse.error.message;
+        } else {
+          alert.children = undefined;
+        }
+      } else {
+        if (swrResponse.error instanceof Error) {
+          alert.title = swrResponse.error.message;
+        } else {
+          alert.title = 'Unknown error';
+        }
+        alert.children = undefined;
+      }
+      alertToaster.addAlert(alert);
+    } else {
+      alertToaster.removeAlert(alert);
+    }
+  }, [alert, alertToaster, errorTitle, swrResponse.error]);
+}
+
+function handleSwrResponseError(swrResponse: SWRResponse, navigate: NavigateFunction) {
+  const error = swrResponse.error as unknown;
+  if (error) {
+    if (error instanceof HTTPError) {
+      if (error.response.status === 401) {
+        navigate(RouteE.Login + '?navigate-back=true');
+      }
+
+      // error.message = 'SOMETHING ELSE...';
+    }
+  }
+}
+
+export function useOptions<T>(options: { url: string; errorTitle?: string }) {
+  const navigate = useNavigate();
+  const { url } = options;
+  const abortController = useMemo(() => new AbortController(), []);
+  useEffect(() => () => abortController.abort(), [abortController]);
+  const fetcher = useOptionsFetcher(abortController?.signal);
+  const swrResponse = useSWR<T>(url, fetcher);
+  handleSwrResponseError(swrResponse, navigate);
+  return swrResponse;
+}
+
+function useOptionsFetcher(signal?: AbortSignal) {
+  return (url: string) =>
+    fetch(url, { method: 'OPTIONS', credentials: 'include', signal }).then((response) =>
+      response.json()
+    );
+}
+
+export function useGet2<T>(options: {
+  url: string;
+  query?: Record<string, string | number | boolean>;
+  errorTitle?: string;
+}) {
+  const navigate = useNavigate();
+  let { url } = options;
+  const { query, errorTitle } = options;
+  const abortController = useMemo(() => new AbortController(), []);
+  useEffect(() => () => abortController.abort(), [abortController]);
+  const fetcher = useGetFetcher(abortController?.signal);
+  if (query && Object.keys(query).length > 0) {
+    const normalizedQuery = Object.keys(query).reduce<Record<string, string>>(
+      (normalizedQuery, key) => {
+        normalizedQuery[key] = query[key].toString();
+        return normalizedQuery;
+      },
+      {}
+    );
+    url += '?' + new URLSearchParams(normalizedQuery).toString();
+  }
+  const swrResponse = useSWR<T>(url, fetcher);
+  handleSwrResponseError(swrResponse, navigate);
+  useHandleSWRResponseError(swrResponse, errorTitle);
+  return swrResponse;
+}
+
+function useGetFetcher(signal?: AbortSignal) {
+  return (url: string) =>
+    fetch(url, { method: 'GET', credentials: 'include', signal }).then((response) =>
+      response.json()
+    );
+}
 
 export async function requestHead<ResponseBody>(url: string): Promise<ResponseBody> {
   return requestCommon<ResponseBody>(url, {}, ky.head);

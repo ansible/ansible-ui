@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { EdaRuleset } from '../../interfaces/EdaRuleset';
 
-export function useDisableRuleset(_onComplete: (ruleset: EdaRuleset) => void) {
+export function useDisableRuleset() {
   const [_, setDialog] = usePageDialog();
   const disableRuleset = useCallback(
     (ruleset: EdaRuleset) => setDialog(<DisableRulesetDialog ruleset={ruleset} />),

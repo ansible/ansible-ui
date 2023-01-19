@@ -18,7 +18,7 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
         type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: t(' activation'),
+        label: t('Rulebook activation'),
         onClick: () => navigate(RouteE.CreateEdaRulebookActivation),
       },
       {

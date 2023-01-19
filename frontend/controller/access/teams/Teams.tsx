@@ -43,7 +43,7 @@ export function Teams() {
         navigation={<AccessNav active="teams" />}
         headerActions={<PageActions actions={headerActions} iconOnly collapse="never" />}
       />
-      <PageTable
+      <PageTable<Team>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -55,6 +55,7 @@ export function Teams() {
         emptyStateButtonClick={() => navigate(RouteE.CreateTeam)}
         {...view}
         defaultSubtitle={t('Team')}
+        expandedRow={(team: Team) => (team.description ? <>{team.description}</> : undefined)}
       />
     </PageLayout>
   );

@@ -2,28 +2,26 @@ import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/reac
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  PageActions,
   PageDetail,
   PageDetails,
-  PageActions,
-  PageBody,
   PageHeader,
   PageLayout,
   PageTab,
-  PageTabs,
-  useInMemoryView,
   PageTable,
+  PageTabs,
+  Scrollable,
+  useInMemoryView,
 } from '../../../framework';
-import { Scrollable } from '../../../framework';
+import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
 import { RouteE } from '../../Routes';
-import { useRulebookActions } from './hooks/useRulebookActions';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
-import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useRulesetFilters } from './hooks/useRulesetFilters';
-import { useRulesetColumns } from './hooks/useRulesetColumns';
-import { idKeyFn } from '../../hub/usePulpView';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
+import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulesetActions } from './hooks/useRulesetActions';
+import { useRulesetColumns } from './hooks/useRulesetColumns';
+import { useRulesetFilters } from './hooks/useRulesetFilters';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
@@ -61,18 +59,16 @@ export function RulebookDetails() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
-    const { data: rulesets, mutate: refresh } = useGet<EdaRuleset[]>(
-      `/api/rulebooks/${params?.id || ''}/rulesets`
-    );
+    const { data: rulesets } = useGet<EdaRuleset[]>(`/api/rulebooks/${params?.id || ''}/rulesets`);
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({
       items: rulesets,
       tableColumns,
       toolbarFilters,
-      keyFn: idKeyFn,
+      keyFn: (item) => item?.id,
     });
 
-    const rowActions = useRulesetActions(undefined, refresh);
+    const rowActions = useRulesetActions(undefined);
     return (
       <PageLayout>
         <PageTable
@@ -105,31 +101,27 @@ export function RulebookDetails() {
           />
         }
       />
-      <Scrollable>
-        <PageBody>
-          {rulebook ? (
-            <PageTabs>
-              <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
-              <PageTab label={t('Rule Sets')}>
-                <RulesetsTab />
-              </PageTab>
-            </PageTabs>
-          ) : (
-            <PageTabs>
-              <PageTab>
-                <PageSection variant="light">
-                  <Stack hasGutter>
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                  </Stack>
-                </PageSection>
-              </PageTab>
-            </PageTabs>
-          )}
-        </PageBody>
-      </Scrollable>
+      {rulebook ? (
+        <PageTabs>
+          <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
+          <PageTab label={t('Rule Sets')}>
+            <RulesetsTab />
+          </PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }

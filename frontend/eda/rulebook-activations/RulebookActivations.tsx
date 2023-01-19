@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
 import { RouteE } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
@@ -15,15 +14,14 @@ export function RulebookActivations() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookActivationFilters();
-  const { data: rulebookActivations, mutate: refresh } = useGet<EdaRulebookActivation[]>(
-    '/api/activation_instances'
-  );
+  const { data: rulebookActivations, mutate: refresh } =
+    useGet<EdaRulebookActivation[]>('/api/activations');
   const tableColumns = useRulebookActivationColumns();
   const view = useInMemoryView<EdaRulebookActivation>({
     items: rulebookActivations,
     tableColumns,
     toolbarFilters,
-    keyFn: idKeyFn,
+    keyFn: (item) => item?.id,
   });
   const toolbarActions = useRulebookActivationsActions(refresh);
   const rowActions = useRulebookActivationActions(refresh);
