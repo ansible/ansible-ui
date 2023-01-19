@@ -21,7 +21,6 @@ import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useRulesetFilters } from './hooks/useRulesetFilters';
 import { useRulesetColumns } from './hooks/useRulesetColumns';
-import { idKeyFn } from '../../hub/usePulpView';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
 import { useRulesetActions } from './hooks/useRulesetActions';
 
@@ -61,18 +60,16 @@ export function RulebookDetails() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
-    const { data: rulesets, mutate: refresh } = useGet<EdaRuleset[]>(
-      `/api/rulebooks/${params?.id || ''}/rulesets`
-    );
+    const { data: rulesets } = useGet<EdaRuleset[]>(`/api/rulebooks/${params?.id || ''}/rulesets`);
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({
       items: rulesets,
       tableColumns,
       toolbarFilters,
-      keyFn: idKeyFn,
+      keyFn: (item) => item?.id,
     });
 
-    const rowActions = useRulesetActions(undefined, refresh);
+    const rowActions = useRulesetActions(undefined);
     return (
       <PageLayout>
         <PageTable

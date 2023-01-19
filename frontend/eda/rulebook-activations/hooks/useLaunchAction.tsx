@@ -11,28 +11,27 @@ import {
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
-import { EdaRuleset } from '../../interfaces/EdaRuleset';
+import { EdaJob } from '../../interfaces/EdaJob';
 
-export function useDisableRuleset() {
+export function useLaunchAction() {
   const [_, setDialog] = usePageDialog();
-  const disableRuleset = useCallback(
-    (ruleset: EdaRuleset) => setDialog(<DisableRulesetDialog ruleset={ruleset} />),
+  const launchAction = useCallback(
+    (job: EdaJob) => setDialog(<LaunchActionDialog job={job} />),
     [setDialog]
   );
-  return disableRuleset;
+  return launchAction;
 }
 
-export function DisableRulesetDialog({ ruleset }: { ruleset: EdaRuleset }) {
+export function LaunchActionDialog({ job }: { job: EdaJob }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const onClose = () => setDialog(undefined);
   const onSubmit = () => {
     onClose();
   };
-  const disabledStatus = ruleset?.fired_stats?.status === 'disabled';
   return (
     <Modal
-      title={disabledStatus ? t('Enable ruleset') : t('Disable ruleset')}
+      title={t('Launch action')}
       isOpen
       onClose={onClose}
       variant={ModalVariant.small}
@@ -40,13 +39,13 @@ export function DisableRulesetDialog({ ruleset }: { ruleset: EdaRuleset }) {
       actions={[
         <Button
           key="submit"
-          variant={disabledStatus ? 'primary' : 'danger'}
+          variant={'primary'}
           type="button"
           id="confirm"
           ouiaId="confirm"
           onClick={onSubmit}
         >
-          {disabledStatus ? t('Enable') : t('Disable')}
+          {t('Launch')}
         </Button>,
         <Button key="cancel" ouiaId="cancel" variant="link" type="button" onClick={onClose}>
           {t('Cancel')}
@@ -57,16 +56,14 @@ export function DisableRulesetDialog({ ruleset }: { ruleset: EdaRuleset }) {
         <StackItem>
           <TextContent>
             <Text component={TextVariants.p}>
-              {disabledStatus
-                ? t('Are you sure you want to enable the ruleset below?')
-                : t('Are you sure you want to disable the ruleset below?')}
+              {t('Are you sure you want to launch the action below?')}
             </Text>
           </TextContent>
         </StackItem>
         <StackItem>
           <TextContent>
             <Text component={TextVariants.p}>
-              <strong> {ruleset?.name} </strong>
+              <strong> {job?.name || `Job ${job.id}`} </strong>
             </Text>
           </TextContent>
         </StackItem>

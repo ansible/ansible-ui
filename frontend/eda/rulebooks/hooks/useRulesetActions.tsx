@@ -4,12 +4,9 @@ import { IPageAction, PageActionType } from '../../../../framework';
 import { EdaRuleset } from '../../interfaces/EdaRuleset';
 import { useDisableRuleset } from './useDisableRuleset';
 
-export function useRulesetActions(
-  ruleset: EdaRuleset | undefined,
-  refresh: () => Promise<unknown>
-) {
+export function useRulesetActions(ruleset: EdaRuleset | undefined) {
   const { t } = useTranslation();
-  const disableRuleset = useDisableRuleset(() => void refresh());
+  const disableRuleset = useDisableRuleset();
   return useMemo<IPageAction<EdaRuleset>[]>(
     () => [
       {

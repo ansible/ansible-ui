@@ -7,5 +7,10 @@
 
 export interface EdaJob {
   id: number;
-  uuid: string;
+  name: string;
+  status: string;
+  rule: { id: number; name: string };
+  activation_instance: { id: number; name: string };
+  type: string;
+  fired_at: string;
 }
