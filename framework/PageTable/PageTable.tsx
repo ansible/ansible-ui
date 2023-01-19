@@ -466,7 +466,7 @@ function TableHead<T extends object>(props: {
       <Tr
         style={{
           backgroundColor:
-            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : 'white',
+            settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : 'white',
         }}
       >
         {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
