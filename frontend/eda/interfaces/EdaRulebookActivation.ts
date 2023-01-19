@@ -6,12 +6,21 @@
  */
 
 export interface EdaRulebookActivation {
+  id: string;
   name: string;
-  rulebook_id: number;
-  inventory_id: number;
-  extra_var_id: number;
-  working_directory: string;
-  execution_environment: string;
-  project_id: number | null;
-  id: number;
+  description?: string;
+  inventory?: { id: string; name: string };
+  execution_environment?: string;
+  rulebook?: { id: string; name: string };
+  restart_policy?: string;
+  project?: { id: string; name: string };
+  working_directory?: string;
+  status?: string;
+  throttle?: string;
+  variables_template?: string;
+  last_restarted?: string;
+  restarted_count?: string;
+  created_at?: string;
+  modified_at?: string;
+  extra_var?: { id: string; name: string };
 }
