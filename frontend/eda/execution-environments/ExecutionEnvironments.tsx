@@ -2,9 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
+import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
 import { RouteE } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
@@ -24,7 +23,7 @@ export function ExecutionEnvironments() {
     items: executionEnvironments,
     tableColumns,
     toolbarFilters,
-    keyFn: idKeyFn,
+    keyFn: (execEnvironment: EdaExecutionEnvironment) => execEnvironment?.id,
     error: response.error as Error | undefined,
   });
   const toolbarActions = useExecutionEnvironmentsActions(refresh);

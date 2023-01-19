@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useInMemoryView } from '../../../../framework/useInMemoryView';
+import { useInMemoryView } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
-import { idKeyFn } from '../../../hub/usePulpView';
 import { RouteE } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useProjectActions } from './hooks/useProjectActions';
@@ -22,7 +21,7 @@ export function Projects() {
     items: projects,
     tableColumns,
     toolbarFilters,
-    keyFn: idKeyFn,
+    keyFn: (project: EdaProject) => project?.id,
   });
   const toolbarActions = useProjectsActions(refresh);
   const rowActions = useProjectActions(refresh);

@@ -25,8 +25,7 @@ export function EditRulebookActivation() {
   const { data: rulebooks } = useGet<EdaRulebook[]>(`${API_PREFIX}/rulebooks`);
   const { data: projects } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
   const { data: inventories } = useGet<EdaInventory[]>(`${API_PREFIX}/inventories`);
-  const { data: extra_vars } = useGet<EdaInventory[]>(`${API_PREFIX}/extra_vars`);
-
+  const { data: extra_vars } = useGet<EdaInventory[]>(`${API_PREFIX}/extra-vars`);
   const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation> = async (
@@ -43,7 +42,7 @@ export function EditRulebookActivation() {
         RouteE.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
       );
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
+import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useRuleColumns } from './hooks/useRuleColumns';
@@ -19,7 +19,7 @@ export function Rules() {
     items: rules,
     tableColumns,
     toolbarFilters,
-    keyFn: (rule: EdaRule) => rule.id,
+    keyFn: (rule: EdaRule) => rule?.id,
   });
   return (
     <PageLayout>
