@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   PageActions,
-  PageBody,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -14,16 +13,16 @@ import {
   Scrollable,
   useInMemoryView,
 } from '../../../framework';
+import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
 import { RouteE } from '../../Routes';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
-import { useActivationActionColumns } from './hooks/useActivationActionColumns';
-import { formatDateString } from '../../../framework/utils/formatDateString';
 import { EdaJob } from '../interfaces/EdaJob';
-import { useActivationActionsActions } from './hooks/useActivationActionsActions';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { useActivationActionColumns } from './hooks/useActivationActionColumns';
 import { useActivationActionFilters } from './hooks/useActivationActionFilters';
+import { useActivationActionsActions } from './hooks/useActivationActionsActions';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
+import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -170,36 +169,30 @@ export function RulebookActivationDetails() {
           />
         }
       />
-      <Scrollable>
-        <PageBody>
-          {rulebookActivation ? (
-            <PageTabs>
-              <PageTab label={t('Details')}>
-                {renderActivationDetailsTab(rulebookActivation)}
-              </PageTab>
-              <PageTab label={t('Actions')}>
-                <ActivationActionsTab />
-              </PageTab>
-              <PageTab label={t('History')}>
-                <ActivationHistoryTab />
-              </PageTab>
-            </PageTabs>
-          ) : (
-            <PageTabs>
-              <PageTab>
-                <PageSection variant="light">
-                  <Stack hasGutter>
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                    <Skeleton />
-                  </Stack>
-                </PageSection>
-              </PageTab>
-            </PageTabs>
-          )}
-        </PageBody>
-      </Scrollable>
+      {rulebookActivation ? (
+        <PageTabs>
+          <PageTab label={t('Details')}>{renderActivationDetailsTab(rulebookActivation)}</PageTab>
+          <PageTab label={t('Actions')}>
+            <ActivationActionsTab />
+          </PageTab>
+          <PageTab label={t('History')}>
+            <ActivationHistoryTab />
+          </PageTab>
+        </PageTabs>
+      ) : (
+        <PageTabs>
+          <PageTab>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </Stack>
+            </PageSection>
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }
