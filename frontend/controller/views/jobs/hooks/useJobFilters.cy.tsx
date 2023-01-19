@@ -1,6 +1,5 @@
 import { IToolbarFilter } from '../../../../../framework';
 import { useJobsFilters } from './useJobsFilters';
-import 'cypress-react-selector';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {
