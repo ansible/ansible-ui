@@ -8,16 +8,18 @@
 export interface EdaRule {
   id: number;
   name: string;
-  action: {
-    run_playbook?: {
-      name: string;
-      copy_files: boolean;
-      post_events: boolean;
-    };
-    debug?: null;
-  };
-  ruleset: {
-    id: number;
+  description: string;
+  action: object;
+  project?: { id: string; name: string };
+  ruleset?: {
+    id: string;
     name: string;
   };
+  type: string;
+  fired_stats: {
+    fired_date: string;
+    fire_count: string;
+  };
+  created_at: string;
+  modified_at: string;
 }
