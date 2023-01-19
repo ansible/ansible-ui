@@ -16,12 +16,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: |
-          VERSION=`npm version patch --no-git-tag-version`
-          git add .
-          git commit -m "$VERSION [skip ci]"
-          git tag -a $VERSION -m "$VERSION [skip ci]"
-          git push origin $VERSION
+      - run: VERSION=`npm version patch --no-git-tag-version`
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: $VERSION [skip ci]
+          commit_author: Author <actions@github.com> # defaults to author of the commit that triggered the run
+          tagging_message: $VERSION
 
   # publish-framework:
   #   name: Publish Framework
