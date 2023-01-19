@@ -4,7 +4,7 @@ A framework for building applications using [PatternFly](https://www.patternfly.
 
 [Documentation](https://github.com/ansible/ansible-ui/wiki/Ansible-UI-Framework)
 
-####Storybook
+## Storybook
 
 For development you may use Storybook. It allows you to try some of the existing components and develop new ones without running the whole UI.
 
@@ -20,4 +20,4 @@ Start Storybook:
 
 `npm run storybook`
 
-Storybook will run at http://localhost:6006/
+Storybook will run at <http://localhost:6006/>
