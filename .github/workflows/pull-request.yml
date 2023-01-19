@@ -29,11 +29,16 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Tar files
+        run: |
+          tar -cvf packages.tar node_modules
+          tar -cvf cypress.tar /home/runner/.cache/Cypress
       - uses: actions/upload-artifact@v3
         with:
           name: packages-${{ github.ref }}
           path: |
-            node_modules
+            packages.tar
+            cypress.tar
 
   eslint:
     name: ESLint
@@ -47,6 +52,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packages-${{ github.ref }}
+      - run: tar -tvf packages.tar
       - run: npm run eslint
 
   prettier:
@@ -61,6 +67,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packages-${{ github.ref }}
+      - run: tar -tvf packages.tar
       - run: npm run prettier
 
   tsc:
@@ -75,6 +82,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packages-${{ github.ref }}
+      - run: tar -tvf packages.tar
       - run: npm run tsc
 
   cypress-e2e:
@@ -89,4 +97,5 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packages-${{ github.ref }}
+      - run: tar -tvf packages.tar
       - run: npm run cypress
