@@ -1,0 +1,142 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 30,
+      "type": "team",
+      "url": "/api/v2/teams/30/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "modified_by": "/api/v2/users/2/",
+        "projects": "/api/v2/teams/30/projects/",
+        "users": "/api/v2/teams/30/users/",
+        "credentials": "/api/v2/teams/30/credentials/",
+        "roles": "/api/v2/teams/30/roles/",
+        "object_roles": "/api/v2/teams/30/object_roles/",
+        "activity_stream": "/api/v2/teams/30/activity_stream/",
+        "access_list": "/api/v2/teams/30/access_list/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": { "id": 2, "name": " Organization 0", "description": "" },
+        "created_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "modified_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the team",
+            "name": "Admin",
+            "id": 437
+          },
+          "member_role": {
+            "description": "User is a member of the team",
+            "name": "Member",
+            "id": 438
+          },
+          "read_role": {
+            "description": "May view settings for the team",
+            "name": "Read",
+            "id": 439
+          }
+        },
+        "user_capabilities": { "edit": true, "delete": true }
+      },
+      "created": "2023-01-18T17:11:08.390440Z",
+      "modified": "2023-01-18T17:11:08.390468Z",
+      "name": "Team 3 Org 0",
+      "description": "",
+      "organization": 2
+    },
+    {
+      "id": 29,
+      "type": "team",
+      "url": "/api/v2/teams/29/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "modified_by": "/api/v2/users/2/",
+        "projects": "/api/v2/teams/29/projects/",
+        "users": "/api/v2/teams/29/users/",
+        "credentials": "/api/v2/teams/29/credentials/",
+        "roles": "/api/v2/teams/29/roles/",
+        "object_roles": "/api/v2/teams/29/object_roles/",
+        "activity_stream": "/api/v2/teams/29/activity_stream/",
+        "access_list": "/api/v2/teams/29/access_list/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": { "id": 2, "name": " Organization 0", "description": "" },
+        "created_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "modified_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the team",
+            "name": "Admin",
+            "id": 434
+          },
+          "member_role": {
+            "description": "User is a member of the team",
+            "name": "Member",
+            "id": 435
+          },
+          "read_role": {
+            "description": "May view settings for the team",
+            "name": "Read",
+            "id": 436
+          }
+        },
+        "user_capabilities": { "edit": true, "delete": true }
+      },
+      "created": "2023-01-18T16:50:30.647509Z",
+      "modified": "2023-01-18T16:50:30.647536Z",
+      "name": "Test18",
+      "description": "Jan 18",
+      "organization": 2
+    },
+    {
+      "id": 28,
+      "type": "team",
+      "url": "/api/v2/teams/28/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "modified_by": "/api/v2/users/2/",
+        "projects": "/api/v2/teams/28/projects/",
+        "users": "/api/v2/teams/28/users/",
+        "credentials": "/api/v2/teams/28/credentials/",
+        "roles": "/api/v2/teams/28/roles/",
+        "object_roles": "/api/v2/teams/28/object_roles/",
+        "activity_stream": "/api/v2/teams/28/activity_stream/",
+        "access_list": "/api/v2/teams/28/access_list/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": { "id": 3, "name": " Organization 1", "description": "" },
+        "created_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "modified_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the team",
+            "name": "Admin",
+            "id": 414
+          },
+          "member_role": {
+            "description": "User is a member of the team",
+            "name": "Member",
+            "id": 415
+          },
+          "read_role": {
+            "description": "May view settings for the team",
+            "name": "Read",
+            "id": 416
+          }
+        },
+        "user_capabilities": { "edit": true, "delete": true }
+      },
+      "created": "2023-01-16T17:39:33.663522Z",
+      "modified": "2023-01-16T17:39:33.663549Z",
+      "name": "Sample",
+      "description": "sample team",
+      "organization": 3
+    }
+  ]
+}

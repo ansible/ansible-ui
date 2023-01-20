@@ -28,9 +28,8 @@
   "include": [
     "frontend",
     "framework",
-    "proxy",
     "cypress",
-    "rollup.config.ts",
+    "proxy",
     "cypress.config.ts",
     "cypress.d.ts",
     "i18next-parser.config.cjs"

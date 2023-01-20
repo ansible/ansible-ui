@@ -5,24 +5,85 @@ on:
     branches:
       - main
 
-jobs:
-  main:
-    runs-on: ubuntu-latest
-    concurrency: main
+concurrency: main
 
+jobs:
+  tag:
+    name: Tag Release
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
-
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Automated Version Bump
-        uses: 'phips28/gh-action-bump-version@master'
+      - id: version
+        run: |
+          VERSION=`npm version patch --no-git-tag-version`
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          tag-prefix: v
-          version-type: patch
+          commit_message: ${{ env.VERSION }} [skip ci]
+          tagging_message: ${{ env.VERSION }}
+
+  publish-framework:
+    name: Publish Framework
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.tag.outputs.VERSION }}
+          token: ${{ secrets.GH_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: PostCache
+        run: rm package-lock-copy.json
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Publish Framework
+        run: |
+          npm run build:framework
+          cp -f LICENSE.md publish
+          cp -f framework/README.md publish/README.md
+          cd publish
+          VERSION=`cat ../package.json | jq -r '.version'` && cat ../framework/package.json | jq --arg version $VERSION '. +{version: $version}' > package.json
+          npm publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  docker:
+    name: Docker Build and Push
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.tag.outputs.VERSION }}
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:dependencies --target dependencies --tag dependencies --tag quay.io/ansible/ansible-ui:dependencies .
+      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: docker push quay.io/ansible/ansible-ui --all-tags

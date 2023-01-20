@@ -16,8 +16,10 @@ export function PageButtonAction(props: {
   const { action, isSecondary, wrapper } = props;
   const Wrapper = wrapper ?? Fragment;
   const Icon = action.icon;
-  const tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined;
-  const isDisabled = false;
+  let tooltip = action.tooltip ?? props.iconOnly ? props.action.label : undefined;
+  const isDisabled = action.isDisabled !== undefined ? action.isDisabled : false;
+  tooltip = isDisabled ? isDisabled : tooltip;
+
   let variant = action.variant ?? ButtonVariant.secondary;
   if (isSecondary && [ButtonVariant.primary, ButtonVariant.danger].includes(variant)) {
     variant = ButtonVariant.secondary;
@@ -47,7 +49,7 @@ export function PageButtonAction(props: {
               </span>
             ) : undefined
           }
-          isAriaDisabled={isDisabled}
+          isAriaDisabled={Boolean(isDisabled)}
           onClick={action.onClick ? action.onClick : undefined}
           component={action.href ? (props) => <Link {...props} to={action.href} /> : undefined}
         >

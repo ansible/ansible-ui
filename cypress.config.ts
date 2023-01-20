@@ -16,7 +16,6 @@ export default defineConfig({
     },
     baseUrl: 'https://localhost:3002/',
   },
-
   component: {
     setupNodeEvents(on, config) {
       // implement node event listeners here

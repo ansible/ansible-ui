@@ -6,7 +6,7 @@
 // This is a great place to put global configuration and
 // behavior that modifies Cypress.
 //
-// You can change the location of this file or turn off
+// You can change the location of this file or turn offz
 // automatically serving support files with the
 // 'supportFile' configuration option.
 //
@@ -14,13 +14,15 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import 'cypress-react-selector';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import { mount } from 'cypress/react';
+import { mount } from 'cypress/react18';
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
