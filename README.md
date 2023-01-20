@@ -1,6 +1,6 @@
 # Ansible UI
 
-The UI for [Ansible](https://www.ansible.com).
+The UI for [Ansible](https://www.ansible.com)
 
 A live instance of the latest development version is running at [AnsibleDev.com](https://ansibledev.com).
 
