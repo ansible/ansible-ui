@@ -17,13 +17,24 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
-  return useMemo<IPageAction<Team>[]>(
-    () => [
+
+  return useMemo<IPageAction<Team>[]>(() => {
+    const cannotDeleteTeam = (team: Team) =>
+      team?.summary_fields?.user_capabilities?.delete
+        ? ''
+        : t(`The team cannot be deleted due to insufficient permission`);
+    const cannotEditTeam = (team: Team) =>
+      team?.summary_fields?.user_capabilities?.edit
+        ? ''
+        : t(`The team cannot be edited due to insufficient permission`);
+
+    return [
       {
         type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit team'),
+        isDisabled: (team: Team) => cannotEditTeam(team),
         onClick: (team) => navigate(RouteE.EditTeam.replace(':id', team.id.toString())),
       },
       { type: PageActionType.seperator },
@@ -44,10 +55,10 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
         type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete team'),
+        isDisabled: (team: Team) => cannotDeleteTeam(team),
         onClick: (team) => deleteTeams([team]),
         isDanger: true,
       },
-    ],
-    [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]
-  );
+    ];
+  }, [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]);
 }
