@@ -8,7 +8,7 @@ ARG VERSION
 RUN apk upgrade --no-cache -U && apk add --no-cache openssl
 WORKDIR /app
 COPY --from=package /app/package*.json ./
-RUN npm ci --no-optional --ignore-scripts
+RUN npm ci --omit=optional --ignore-scripts
 COPY . .
 RUN VERSION=$VERSION DISCLAIMER=true npm run build
 
