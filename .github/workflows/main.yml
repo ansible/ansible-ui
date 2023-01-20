@@ -100,7 +100,7 @@ jobs:
       - name: Docker Push
         uses: docker/build-push-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
           tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
           labels: version=${{ needs.tag.outputs.VERSION }}
           build-args: VERSION=${{ needs.tag.outputs.VERSION }}

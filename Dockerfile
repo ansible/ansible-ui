@@ -1,10 +1,7 @@
-FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine as package
-RUN apk upgrade --no-cache -U && apk add --no-cache jq
-WORKDIR /src
-COPY package*.json ./
+FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as package
 WORKDIR /app
-RUN cat /src/package.json | jq '.version = "0.0.0"' > /app/package.json
-RUN cat /src/package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > /app/package-lock.json
+COPY package*.json ./
+RUN npm version 0.0.0 --no-git-tag-version
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as builder
 ARG VERSION
