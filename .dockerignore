@@ -1,9 +1,15 @@
+/.github
+/.husky
 /.nyc_output
+/.storybook
+/.vscode
 /build
 /certs
 /coverage
+/cypress
 /docs
-/scripts
 /node_modules
+/scripts
+/stories
 /Dockerfile
 /.dockerignore
