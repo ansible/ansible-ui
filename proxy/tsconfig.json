@@ -1,4 +1,8 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["."]
+  "include": ["."],
+  "compilerOptions": {
+    "types": [],
+    "declaration": false
+  }
 }
