@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.511",
+  "version": "0.0.512",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -28,11 +28,11 @@
     "tsc": "tsc -v && tsc --noEmit",
     "eslint": "eslint --max-warnings=0 frontend proxy framework cypress",
     "eslint:fix": "eslint --fix frontend proxy framework cypress",
-    "eslint:changed": "eslint --max-warnings=0 $(git diff --name-only origin/main -- '*.ts' '*.tsx' '*.jsx' '*.js'| xargs)",
+    "eslint:changed": "eslint --max-warnings=0 $(git diff --name-only --diff-filter=M origin/main -- '*.ts' '*.tsx' '*.jsx' '*.js'| xargs)",
     "prettier": "prettier --check !**/*.scss frontend proxy framework cypress",
     "prettier:fix": "prettier --write frontend proxy framework cypress",
-    "prettier:changed": "prettier --check $(git diff --name-only origin/main | xargs)",
-    "prettier:changed:fix": "prettier --write $(git diff --name-only origin/main | xargs)",
+    "prettier:changed": "prettier --check $(git diff --name-only --diff-filter=M origin/main | xargs)",
+    "prettier:changed:fix": "prettier --write $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix || true && npm dedup || true ",
     "docker:build": "docker build --tag ansible/console .",
     "docker:run": "npm run docker:build && docker run --rm -e LOG_LEVEL=debug -p 3001:3001 -e PORT=3001 -v $PWD/certs:/home/node/certs ansible/console| pino-zen",
@@ -169,8 +169,5 @@
       "../frontend/src/**/*.ts",
       "../frontend/src/**/*.tsx"
     ]
-  },
-  "overrides": {
-    "resq": "^1.11.0"
   }
 }
