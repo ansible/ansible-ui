@@ -51,6 +51,27 @@ jobs:
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run cypress
 
+  cypress-unit:
+    name: Cypress Unit Tests
+    runs-on: ubuntu-latest
+    needs: packages
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - run: npm run test:unit
+
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
