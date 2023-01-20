@@ -60,11 +60,6 @@ export default defineConfig({
         },
       },
     },
-    env: {
-      'cypress-react-selector': {
-        root: '#__cy_root',
-      },
-    },
     specPattern: 'frontend/controller/**/*.cy.tsx',
     supportFile: 'cypress/support/component.ts',
   },

@@ -1,2 +1,9 @@
 # Ignore generated interfaces
 frontend/controller/interfaces/generated-from-swagger
+
+.dockerignore
+.gitignore
+Dockerfile
+*.png
+*.svg
+*.sh
