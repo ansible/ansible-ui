@@ -12,7 +12,9 @@ export default {
   },
   plugins: [
     commonjs(),
-    nodeResolve(),
+    nodeResolve({
+      preferBuiltins: true,
+    }),
     typescript(),
     replace({
       preventAssignment: true,
