@@ -4,14 +4,12 @@ COPY package*.json ./
 RUN npm version 0.0.0 --no-git-tag-version
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as dependencies
+RUN apk upgrade --no-cache -U && apk add --no-cache openssl
 WORKDIR /app
 COPY --from=package /app/package*.json ./
 RUN npm ci --omit=optional --ignore-scripts
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as builder
-RUN apk upgrade --no-cache -U && apk add --no-cache openssl
-WORKDIR /app
-COPY --from=dependencies /app/. .
+FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as builder
 COPY . .
 ARG VERSION
 RUN VERSION=$VERSION DISCLAIMER=true npm run build
