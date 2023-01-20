@@ -3,7 +3,7 @@ name: NPM Upgrade
 on:
   workflow_dispatch:
   schedule:
-    - cron: '40 2 * * *'
+    - cron: '15 1 * * 1'
 
 jobs:
   npm-upgrade:
