@@ -6,7 +6,7 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 import { Suspense } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
 import Main from './Main';
 
@@ -16,6 +16,7 @@ container.style.width = '100%';
 container.style.height = '100%';
 container.style.overflow = 'hidden';
 document.body.appendChild(container);
+const root = createRoot(container);
 
 void i18n
   .use(Backend)
@@ -30,11 +31,10 @@ void i18n
     },
   })
   .then(() => {
-    render(
+    root.render(
       <Suspense fallback={<div />}>
         <Main />
-      </Suspense>,
-      container
+      </Suspense>
     );
   });
 
