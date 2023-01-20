@@ -169,8 +169,5 @@
       "../frontend/src/**/*.ts",
       "../frontend/src/**/*.tsx"
     ]
-  },
-  "overrides": {
-    "resq": "^1.11.0"
   }
 }
