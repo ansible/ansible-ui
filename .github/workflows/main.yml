@@ -87,29 +87,13 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
-      - name: Setup Docker QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
-          path: /tmp/.buildx-cache
           key: docker
-          restore-keys: docker
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v3
-        with:
-          # platforms: linux/amd64,linux/arm64 - Quay does not seem to support this :(
-          build-args: VERSION=${{ needs.tag.outputs.VERSION }}
-          labels: version=${{ needs.tag.outputs.VERSION }}
-          push: true
-          tags: |
-            quay.io/ansible/ansible-ui:latest
-            quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          path: /tmp/dependencies.tar
+      - run: docker load --input /tmp/dependencies.tar
+      - run: docker build --target dependencies --tag dependencies .
+      - run: docker build --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: docker push quay.io/ansible/ansible-ui --all-tags
+      - run: docker save dependencies > /tmp/dependencies.tar
