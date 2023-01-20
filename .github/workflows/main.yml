@@ -97,6 +97,7 @@ jobs:
       #     path: /tmp/.buildx-cache
       #     key: docker
       #     restore-keys: docker
+      - run: docker build --target builder --cache-from quay.io/ansible/ansible-ui:builder --tag quay.io/ansible/ansible-ui:builder .
       - run: docker build --cache-from quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
       - run: docker push quay.io/ansible/ansible-ui --all-tags
       # - name: Docker Push
