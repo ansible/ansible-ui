@@ -761,5 +761,6 @@
   "Yes, I confirm that I want to delete these {{count}} users": {
     "_one": "Yes, I confirm that I want to delete this user.",
     "_other": "Yes, I confirm that I want to delete these {{count}} users."
-  }
+  },
+  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access."
 }
