@@ -93,7 +93,7 @@ jobs:
           key: docker
           path: /tmp/dependencies.tar
       - run: docker load --input /tmp/dependencies.tar
-      - run: docker build --target dependencies --tag dependencies .
-      - run: docker build --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: DOCKER_BUILDKIT=1 docker build --target dependencies --tag dependencies .
+      - run: DOCKER_BUILDKIT=1 docker build --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
       - run: docker push quay.io/ansible/ansible-ui --all-tags
       - run: docker save dependencies > /tmp/dependencies.tar
