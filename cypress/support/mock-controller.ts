@@ -91,6 +91,10 @@ export function handleControllerPost(url: string, body: ICollectionMockItem) {
         id: organizationID,
         name: (organizations.find((o) => o.id === organizationID) as Organization).name,
       },
+      user_capabilities: {
+        edit: true,
+        delete: true,
+      },
     };
   }
   body.created = new Date(Date.now()).toISOString();
@@ -142,6 +146,10 @@ export interface ICollectionMockItem {
     organization?: {
       id: number;
       name: string;
+    };
+    user_capabilities: {
+      edit: boolean;
+      delete: boolean;
     };
   };
 }

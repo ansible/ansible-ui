@@ -1,0 +1,38 @@
+{
+  "id": 2,
+  "type": "team",
+  "url": "/api/v2/teams/2/",
+  "related": {
+    "named_url": "/api/v2/teams/ Team 2 Org 0++ Organization 0/",
+    "created_by": "/api/v2/users/15/",
+    "modified_by": "/api/v2/users/9/",
+    "projects": "/api/v2/teams/2/projects/",
+    "users": "/api/v2/teams/2/users/",
+    "credentials": "/api/v2/teams/2/credentials/",
+    "roles": "/api/v2/teams/2/roles/",
+    "object_roles": "/api/v2/teams/2/object_roles/",
+    "activity_stream": "/api/v2/teams/2/activity_stream/",
+    "access_list": "/api/v2/teams/2/access_list/",
+    "organization": "/api/v2/organizations/2/"
+  },
+  "summary_fields": {
+    "organization": { "id": 2, "name": "Organization 0", "description": "" },
+    "created_by": { "id": 15, "username": "user-8", "first_name": "", "last_name": "" },
+    "modified_by": { "id": 9, "username": "user-2", "first_name": "", "last_name": "" },
+    "object_roles": {
+      "admin_role": {
+        "description": "Can manage all aspects of the team",
+        "name": "Admin",
+        "id": 83
+      },
+      "member_role": { "description": "User is a member of the team", "name": "Member", "id": 84 },
+      "read_role": { "description": "May view settings for the team", "name": "Read", "id": 85 }
+    },
+    "user_capabilities": { "edit": true, "delete": false }
+  },
+  "created": "2022-11-10T12:15:27.112290Z",
+  "modified": "2022-11-10T12:15:27.112315Z",
+  "name": "Team 2 Org 0",
+  "description": "",
+  "organization": 2
+}
