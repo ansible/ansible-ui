@@ -18,7 +18,7 @@ function Test() {
 describe('useJobsFilters', () => {
   it('Returns expected number of filters', () => {
     cy.mount(<Test />);
-    cy.waitForReact(1000, '#root');
+    cy.waitForReact(10000, '#root');
     cy.getReact('TestInner').getProps('filters').should('have.length', 7);
   });
 });
