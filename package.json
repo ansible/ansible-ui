@@ -18,7 +18,7 @@
     "frontend:eda": "webpack serve --mode development --env eda",
     "proxy": "NODE_ENV=development PORT=3001 nodemon --watch './proxy/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' proxy/main.ts | pino-zen",
     "build": "npm run clean && concurrently --kill-others-on-fail npm:build:frontend npm:build:proxy --prefix-colors cyan,green,blue,magenta,gray",
-    "build:proxy": "rollup --config rollup.config.ts --configPlugin typescript",
+    "build:proxy": "cd proxy && rollup --config rollup.config.ts --configPlugin typescript",
     "build:frontend": "webpack --mode production --env pwa",
     "build:controller": "webpack --mode production --env controller --output-path build/controller",
     "build:hub": "webpack --mode production --env hub --output-path build/hub",

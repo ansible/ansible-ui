@@ -1,13 +1,13 @@
-import commonjs from '@rollup/plugin-commonjs'
-import { nodeResolve } from '@rollup/plugin-node-resolve'
-import replace from '@rollup/plugin-replace'
-import strip from '@rollup/plugin-strip'
-import typescript from '@rollup/plugin-typescript'
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import strip from '@rollup/plugin-strip';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'proxy/main.ts',
+  input: 'main.ts',
   output: {
-    file: 'build/proxy.mjs',
+    file: 'proxy.mjs',
     format: 'es',
   },
   plugins: [
@@ -23,4 +23,4 @@ export default {
       functions: ['console.*', 'assert.*', 'logger.trace'],
     }),
   ],
-}
+};
