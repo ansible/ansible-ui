@@ -8,13 +8,17 @@ function TestInner(props: { filters: IToolbarFilter[] }) {
 
 function Test() {
   const jobFilters = useJobsFilters();
-  return <TestInner filters={jobFilters} />;
+  return (
+    <div id="root">
+      <TestInner filters={jobFilters} />
+    </div>
+  );
 }
 
 describe('useJobsFilters', () => {
   it('Returns expected number of filters', () => {
     cy.mount(<Test />);
-    cy.waitForReact();
+    cy.waitForReact(10000, '#root');
     cy.getReact('TestInner').getProps('filters').should('have.length', 7);
   });
 });
