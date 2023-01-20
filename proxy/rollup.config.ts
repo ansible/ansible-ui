@@ -7,7 +7,7 @@ import typescript from '@rollup/plugin-typescript';
 export default {
   input: 'main.ts',
   output: {
-    file: 'proxy.mjs',
+    file: '../build/proxy.mjs',
     format: 'es',
   },
   plugins: [
