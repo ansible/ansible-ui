@@ -28,10 +28,19 @@ describe('TeamForm.cy.ts', () => {
         <CreateTeam />
       </MemoryRouter>
     );
-    cy.clickButton(/^Create team$/);
     cy.typeByLabel(/^Name$/, 'Test');
     cy.typeByLabel(/^Organization$/, 'Default');
     cy.clickButton(/^Create team$/);
     cy.contains('Error validating organization').should('be.visible');
+  });
+  it('Create Team - Validation on name and organization', () => {
+    cy.mount(
+      <MemoryRouter>
+        <CreateTeam />
+      </MemoryRouter>
+    );
+    cy.clickButton(/^Create team$/);
+    cy.contains('Name is required.').should('be.visible');
+    cy.contains('Organization is required.').should('be.visible');
   });
 });
