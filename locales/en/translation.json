@@ -297,6 +297,8 @@
   "Error loading teams": "Error loading teams",
   "Error loading templates": "Error loading templates",
   "Error loading users": "Error loading users",
+  "Error validating organization: {{errMessage}}. Please reload the page.": "Error validating organization: {{errMessage}}. Please reload the page.",
+  "Error validating organization. Please reload the page.": "Error validating organization. Please reload the page.",
   "Event driven": "Event driven",
   "Event driven automation": "Event driven automation",
   "Examples": "Examples",
