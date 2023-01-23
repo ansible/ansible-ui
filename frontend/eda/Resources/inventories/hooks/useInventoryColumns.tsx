@@ -16,7 +16,6 @@ export function useInventoriesColumns() {
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
-        isIdColumn: true,
       },
       {
         header: t('Name'),
@@ -39,6 +38,10 @@ export function useInventoriesColumns() {
         value: (inventory) => inventory.description,
         card: 'description',
         list: 'description',
+      },
+      {
+        header: t('Source of Inventory'),
+        cell: (inventory) => inventory?.source && <TextCell text={inventory.source} />,
       },
     ],
     [navigate, t]
