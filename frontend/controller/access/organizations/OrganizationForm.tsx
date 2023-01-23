@@ -7,7 +7,15 @@ import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache'
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { getControllerError } from '../../useControllerView';
+import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+// import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+
+interface OrganizationFields {
+  organization: Organization;
+  instanceGroups?: InstanceGroup[];
+}
 
 export function CreateOrganization() {
   const { t } = useTranslation();
@@ -55,14 +63,20 @@ export function EditOrganization() {
     requestGet,
     swrOptions
   );
+  const { data: igResponse } = useSWR<{ results: InstanceGroup[] }>(
+    Number.isInteger(id) ? `/api/v2/organizations/${id.toString()}/instance_groups/` : undefined,
+    requestGet,
+    swrOptions
+  );
+  const instanceGroups = igResponse?.results;
 
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
+  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values, setError) => {
     try {
       const organization = await requestPatch<Organization>(
         `/api/v2/organizations/${id}/`,
-        editedOrganization
+        values.organization
       );
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
@@ -70,19 +84,6 @@ export function EditOrganization() {
     }
   };
   const onCancel = () => navigate(-1);
-
-  if (!organization) {
-    return (
-      <PageLayout>
-        <PageHeader
-          breadcrumbs={[
-            { label: t('Organizations'), to: RouteE.Organizations },
-            { label: t('Edit organization') },
-          ]}
-        />
-      </PageLayout>
-    );
-  }
 
   return (
     <PageLayout>
@@ -93,14 +94,16 @@ export function EditOrganization() {
           { label: t('Edit organization') },
         ]}
       />
-      <PageForm
-        submitText={t('Save organization')}
-        onSubmit={onSubmit}
-        onCancel={onCancel}
-        defaultValue={organization}
-      >
-        <OrganizationInputs />
-      </PageForm>
+      {organization ? (
+        <PageForm
+          submitText={t('Save organization')}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          defaultValue={{ organization, instanceGroups }}
+        >
+          <OrganizationInputs />
+        </PageForm>
+      ) : null}
     </PageLayout>
   );
 }
@@ -109,14 +112,28 @@ function OrganizationInputs() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput label={t('Name')} name="name" placeholder={t('Enter name')} isRequired />
+      <PageFormTextInput
+        label={t('Name')}
+        name="organization.name"
+        placeholder={t('Enter name')}
+        isRequired
+      />
       <PageFormTextInput
         label={t('Description')}
-        name="description"
+        name="organization.description"
         placeholder={t('Enter description')}
       />
-      {/* instanceGroups */}
-      {/* executionEnvironments */}
+      {/* <PageFormInstanceGroupSelect
+        name="instance_groups"
+        instanceGroupsPath="instanceGroups"
+        // instanceGroupsIdPath="instance_groups"
+      /> */}
+      <PageFormExecutionEnvironmentSelect
+        name="organization.summary_fields.default_environment.name"
+        label={t('Default execution environment')}
+        executionEnvironmentPath="organization.summary_fields.default_environment"
+        executionEnvironmentIdPath="organization.default_environment"
+      />
       {/* galaxyCredentials */}
     </>
   );

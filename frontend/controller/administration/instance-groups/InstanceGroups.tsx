@@ -17,7 +17,7 @@ import {
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteE } from '../../../Routes';
 import { useControllerView } from '../../useControllerView';
-import { InstanceGroup } from './InstanceGroup';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 
 export function InstanceGroups() {

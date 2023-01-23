@@ -5,7 +5,7 @@ import { useControllerView } from '../../../useControllerView';
 import {
   useExecutionEnvironmentsColumns,
   useExecutionEnvironmentsFilters,
-} from '../../execution-environments/ExecutionEnvironments';
+} from '../ExecutionEnvironments';
 
 export function useSelectExecutionEnvironments() {
   const { t } = useTranslation();
