@@ -10,6 +10,9 @@ import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { EdaInventory } from '../../interfaces/EdaInventory';
+import { CodeEditor, Language } from '@patternfly/react-code-editor';
+import { editor } from 'monaco-editor';
+import ICodeEditor = editor.ICodeEditor;
 
 export function EditInventory() {
   const { t } = useTranslation();
@@ -23,6 +26,7 @@ export function EditInventory() {
       Type.Object({
         name: Type.String(),
         description: Type.Optional(Type.String()),
+        source: Type.Optional(Type.String()),
         inventory: Type.Optional(Type.String()),
       }),
     []
@@ -39,7 +43,7 @@ export function EditInventory() {
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newInventory = await requestPost<EdaInventory>('/api/inventory/', inventory);
+        const newInventory = await requestPost<EdaInventory>('/api/inventory', inventory);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteE.EdaInventoryDetails.replace(':id', newInventory.id.toString()));
       }
@@ -52,7 +56,23 @@ export function EditInventory() {
     }
   };
   const onCancel = () => navigate(-1);
+  const onEditorDidMount = (
+    editor: ICodeEditor,
+    monaco: {
+      editor: { getModels: () => { updateOptions: (arg0: { tabSize: number }) => void }[] };
+    }
+  ) => {
+    // eslint-disable-next-line no-console
+    console.log(editor.getValue());
+    editor.layout();
+    editor.focus();
+    monaco.editor.getModels()[0].updateOptions({ tabSize: 5 });
+  };
 
+  const onChange = (value: string) => {
+    // eslint-disable-next-line no-console
+    console.log(value);
+  };
   if (Number.isInteger(id)) {
     if (!inventory) {
       return (
@@ -87,17 +107,25 @@ export function EditInventory() {
               name="name"
               label={t('Name')}
               isRequired
-              placeholder={t('Enter name')}
+              placeholder={t('Enter a name')}
             />
-            <PageFormTextArea
+            <PageFormTextInput
               name="description"
               label={t('Description')}
-              placeholder={t('Enter description')}
+              placeholder={t('Enter a description')}
             />
             <PageFormTextArea
               name="inventory"
               label={t('Inventory')}
               placeholder={t('Enter inventory')}
+            />
+            <CodeEditor
+              isLineNumbersVisible={true}
+              code="Some example content"
+              onChange={onChange}
+              language={Language.javascript}
+              onEditorDidMount={onEditorDidMount}
+              height="400px"
             />
           </PageForm>
         </PageLayout>
@@ -114,15 +142,32 @@ export function EditInventory() {
           ]}
         />
         <PageForm
-          schema={InventorySchemaType}
           submitText={t('Create inventory')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <PageFormTextInput name="name" label={t('Name')} isRequired />
-          <PageFormTextArea name="description" label={t('Description')} />
-          <PageFormTextArea name="inventory" label={t('Inventory')} />
+          <PageFormTextInput
+            name="name"
+            label={t('Name')}
+            isRequired
+            placeholder={t('Enter a name')}
+          />
+          <PageFormTextInput
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter a description')}
+          />
+          <PageFormTextInput
+            name="source"
+            label={t('Source of Inventory')}
+            placeholder={t('Enter a source for inventory')}
+          />
+          <PageFormTextArea
+            name="inventory"
+            label={t('Inventory')}
+            placeholder={t('Enter inventory')}
+          />{' '}
         </PageForm>
       </PageLayout>
     );
