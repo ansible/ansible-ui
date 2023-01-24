@@ -14,6 +14,7 @@ import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
 import { RouteObj } from './Routes';
+import { ActiveUserProvider } from './common/useActiveUser';
 
 export default function Main() {
   const { t } = useTranslation();
@@ -22,9 +23,11 @@ export default function Main() {
     <ErrorBoundary message={t('An error occured')}>
       <Disclaimer>
         <AutomationServersProvider>
-          <BrowserRouter>
-            <Routing />
-          </BrowserRouter>
+          <ActiveUserProvider>
+            <BrowserRouter>
+              <Routing />
+            </BrowserRouter>
+          </ActiveUserProvider>
         </AutomationServersProvider>
       </Disclaimer>
     </ErrorBoundary>

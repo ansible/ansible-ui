@@ -1,4 +1,4 @@
-import { PageBody, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout } from '../../../../framework';
 import { Bullseye, Page, PageSection, Spinner } from '@patternfly/react-core';
 
 export function Reports() {
