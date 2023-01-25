@@ -1,4 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
+import { PageDialogProvider } from '../../../../framework';
 import { Teams } from './Teams';
 
 describe('Jobs.cy.ts', () => {
@@ -21,6 +22,22 @@ describe('Jobs.cy.ts', () => {
     );
     cy.hasTitle(/^Teams$/);
     cy.get('table').find('tr').should('have.length', 4);
+  });
+  it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
+    // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
+    cy.mount(
+      <MemoryRouter>
+        <PageDialogProvider>
+          <Teams />
+        </PageDialogProvider>
+      </MemoryRouter>
+    );
+    cy.get('[type="checkbox"][id="select-all"]').check();
+    cy.get('#toggle-kebab').click();
+    cy.contains('a[role="menuitem"]', 'Delete selected teams').click();
+    cy.contains(
+      '{{count}} of the selected teams cannot be deleted due to insufficient permission. Teams that can be deleted are shown below.'
+    ).should('be.visible');
   });
   it('Create Team button is disabled if the user does not have permission to create teams', () => {
     cy.mount(

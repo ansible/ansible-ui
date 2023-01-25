@@ -97,42 +97,44 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
       ]}
       hasNoBodyWrapper
     >
-      <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            maxHeight: 560,
-            overflow: 'hidden',
-            borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-          }}
-        >
-          <PageTable<T>
-            key="items"
-            pageItems={paged}
-            itemCount={items.length}
-            tableColumns={confirmationColumns}
-            keyFn={keyFn}
-            page={page}
-            perPage={perPage}
-            setPage={setPage}
-            setPerPage={setPerPage}
-            compact
-            errorStateTitle="Error"
-            emptyStateTitle="No items"
-          />
-        </div>
-        {confirmText && (
-          <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
-            <Checkbox
-              id="confirm"
-              label={confirmText}
-              isChecked={confirmed}
-              onChange={setConfirmed}
+      {items.length > 0 && (
+        <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: 560,
+              overflow: 'hidden',
+              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+            }}
+          >
+            <PageTable<T>
+              key="items"
+              pageItems={paged}
+              itemCount={items.length}
+              tableColumns={confirmationColumns}
+              keyFn={keyFn}
+              page={page}
+              perPage={perPage}
+              setPage={setPage}
+              setPerPage={setPerPage}
+              compact
+              errorStateTitle="Error"
+              emptyStateTitle="No items"
             />
           </div>
-        )}
-      </ModalBoxBody>
+          {confirmText && (
+            <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
+              <Checkbox
+                id="confirm"
+                label={confirmText}
+                isChecked={confirmed}
+                onChange={setConfirmed}
+              />
+            </div>
+          )}
+        </ModalBoxBody>
+      )}
     </Modal>
   );
 }
