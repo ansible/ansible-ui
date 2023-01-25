@@ -11,14 +11,6 @@ export function useRulesetColumns() {
   return useMemo<ITableColumn<EdaRuleset>[]>(
     () => [
       {
-        header: t('ID'),
-        cell: (ruleset) => ruleset.id,
-        sort: 'id',
-        card: 'hidden',
-        list: 'hidden',
-        isIdColumn: true,
-      },
-      {
         header: t('Name'),
         cell: (ruleset) => (
           <TextCell
@@ -27,6 +19,26 @@ export function useRulesetColumns() {
           />
         ),
         sort: 'name',
+        defaultSort: true,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Number of Rules'),
+        cell: (ruleset) => (
+          <TextCell text={ruleset?.rule_count ? ruleset?.rule_count.toString() : ''} />
+        ),
+        sort: 'rule_count',
+        defaultSort: true,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Fire count'),
+        cell: (ruleset) => (
+          <TextCell text={ruleset?.fired_count ? ruleset?.fired_count.toString() : ''} />
+        ),
+        sort: 'fired_count',
         defaultSort: true,
         card: 'name',
         list: 'name',
