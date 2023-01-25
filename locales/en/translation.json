@@ -625,6 +625,7 @@
     }
   },
   "Teams": "Teams",
+  "{{count}} of the selected teams cannot be deleted due to insufficient permission. Teams that can be deleted are shown below.": "{{count}} of the selected teams cannot be deleted due to insufficient permission. Teams that can be deleted are shown below.",
   "Templates": "Templates",
   "The collection cannot be imported": {
     " Please create namespace before importing": "The collection cannot be imported. Please create namespace before importing."

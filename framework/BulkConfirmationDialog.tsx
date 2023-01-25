@@ -1,4 +1,4 @@
-import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
+import { Alert, Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
@@ -14,6 +14,9 @@ export interface BulkConfirmationDialog<T extends object> {
 
   /** The prompt that shows up under the confirmation title. */
   prompt?: string;
+
+  /** Alert prompt that shows up under the confirmation title. (appears as an information notification) */
+  alertPrompt?: string;
 
   /** The items to confirm for the bulk action. */
   items: T[];
@@ -45,6 +48,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     title,
     items,
     keyFn,
+    prompt,
+    alertPrompt,
     confirmationColumns,
     onConfirm,
     onClose,
@@ -64,7 +69,13 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
-      description={prompt ? <>{prompt}</> : undefined}
+      description={
+        alertPrompt ? (
+          <Alert isInline title={alertPrompt} variant="info"></Alert>
+        ) : prompt ? (
+          prompt
+        ) : undefined
+      }
       variant={ModalVariant.medium}
       isOpen
       onClose={onCloseClicked}
