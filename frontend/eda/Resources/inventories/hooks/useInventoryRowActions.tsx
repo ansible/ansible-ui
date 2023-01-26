@@ -1,25 +1,15 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 
 export function useInventoryRowActions(refresh: () => Promise<unknown>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const deleteInventories = useDeleteInventories(() => void refresh());
   const rowActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
-      {
-        type: PageActionType.single,
-        icon: EditIcon,
-        label: t('Edit inventory'),
-        onClick: (inventory: EdaInventory) =>
-          navigate(RouteE.EditEdaInventory.replace(':id', inventory.id.toString())),
-      },
       {
         type: PageActionType.single,
         icon: TrashIcon,
@@ -28,7 +18,7 @@ export function useInventoryRowActions(refresh: () => Promise<unknown>) {
         isDanger: true,
       },
     ],
-    [deleteInventories, navigate, t]
+    [deleteInventories, t]
   );
   return rowActions;
 }

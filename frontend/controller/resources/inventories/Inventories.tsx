@@ -1,5 +1,4 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +30,6 @@ import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function Inventories() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useControllerView<Inventory>({
@@ -44,13 +42,6 @@ export function Inventories() {
   const toolbarActions = useMemo<IPageAction<Inventory>[]>(
     () => [
       {
-        type: PageActionType.button,
-        variant: ButtonVariant.primary,
-        icon: PlusIcon,
-        label: t('Create inventory'),
-        onClick: () => navigate(RouteE.CreateInventory),
-      },
-      {
         type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
@@ -58,18 +49,11 @@ export function Inventories() {
         isDanger: true,
       },
     ],
-    [navigate, deleteInventories, t]
+    [deleteInventories, t]
   );
 
   const rowActions = useMemo<IPageAction<Inventory>[]>(
     () => [
-      {
-        type: PageActionType.single,
-        icon: EditIcon,
-        label: t('Edit inventory'),
-        onClick: (inventory) =>
-          navigate(RouteE.EditInventory.replace(':id', inventory.id.toString())),
-      },
       {
         type: PageActionType.single,
         icon: TrashIcon,
@@ -78,7 +62,7 @@ export function Inventories() {
         isDanger: true,
       },
     ],
-    [navigate, deleteInventories, t]
+    [deleteInventories, t]
   );
 
   return (
@@ -101,9 +85,6 @@ export function Inventories() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventories')}
         emptyStateTitle={t('No inventories yet')}
-        emptyStateDescription={t('To get started, create an inventory.')}
-        emptyStateButtonText={t('Create inventory')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateInventory)}
         {...view}
       />
     </PageLayout>
