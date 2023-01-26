@@ -14,6 +14,7 @@ import { Socket } from 'net';
 import { exit } from 'process';
 import selfsigned from 'selfsigned';
 import { TLSSocket } from 'tls';
+import { WebSocketServer } from 'ws';
 import { HTTP2_HEADER_CONTENT_LENGTH } from './constants';
 import { logger } from './logger';
 
@@ -60,6 +61,18 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
         options.requestHandler as (req: Http2ServerRequest, res: Http2ServerResponse) => void
       );
     }
+
+    const wss = new WebSocketServer({ server: server as unknown as undefined });
+    wss.on('listening', () => logger.info('websocket server listening'));
+    wss.on('connection', (ws) => {
+      logger.debug('websocket conection');
+      ws.on('error', (err) => logger.error({ msg: 'websocket error', message: err.message }));
+      ws.on('message', (data) => {
+        logger.debug({ msg: 'websocket message', data: data.toString() });
+      });
+      ws.on('close', () => logger.debug('websocket close'));
+    });
+
     return new Promise((resolve, reject) => {
       server
         ?.listen(process.env.PORT, () => {
