@@ -12,21 +12,6 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
   const teamColumns = useTeamsColumns({ disableLinks: true, disableSort: true });
   const canDeleteTeam = (team: Team) => team?.summary_fields?.user_capabilities?.delete;
-  const confirmationColumns = useMemo<ITableColumn<Team>[]>(
-    () => [
-      {
-        header: '',
-        cell: (team: Team) =>
-          canDeleteTeam(team) ? null : (
-            <Icon status="danger">
-              <ExclamationCircleIcon />
-            </Icon>
-          ),
-      },
-      ...teamColumns,
-    ],
-    [teamColumns]
-  );
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const deleteActionOrganizationColumn = useOrganizationNameColumn({
     disableLinks: true,
@@ -41,10 +26,27 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const deleteTeams = (teams: Team[]) => {
     const deletableTeams = teams.filter(canDeleteTeam);
     const undeletableTeamsCount = teams.length - deletableTeams.length;
+    const confirmationColumns: ITableColumn<Team>[] = [
+      ...(undeletableTeamsCount > 0
+        ? [
+            {
+              header: '',
+              cell: (team: Team) =>
+                canDeleteTeam(team) ? null : (
+                  <Icon status="danger">
+                    <ExclamationCircleIcon />
+                  </Icon>
+                ),
+            },
+          ]
+        : []),
+      ...teamColumns,
+    ];
+
     bulkAction({
       title: t('Permanently delete teams', { count: teams.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} teams.', {
-        count: teams.length,
+        count: deletableTeams.length,
       }),
       actionButtonText: t('Delete teams', { count: teams.length }),
       items:
@@ -54,9 +56,12 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       actionableItems: deletableTeams.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompt:
         undeletableTeamsCount > 0
-          ? t('{{count}} of the selected teams cannot be deleted due to insufficient permission.', {
-              count: undeletableTeamsCount,
-            })
+          ? t(
+              '{{count}} of the selected teams cannot be deleted due to insufficient permissions.',
+              {
+                count: undeletableTeamsCount,
+              }
+            )
           : undefined,
       keyFn: getItemKey,
       isDanger: true,
