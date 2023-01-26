@@ -5,7 +5,6 @@ import Dashboard from './dashboard/Dashboard';
 import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
 import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
-import { EditInventory } from './Resources/inventories/EditInventory';
 import { Inventories } from './Resources/inventories/Inventories';
 import { InventoryDetails } from './Resources/inventories/InventoryDetails';
 import { EditProject } from './Resources/projects/EditProject';
@@ -53,9 +52,6 @@ export function EventDrivenRouter() {
         path={RouteE.EdaExecutionEnvironments.replace(RouteE.Eda, '')}
         element={<ExecutionEnvironments />}
       />
-
-      <Route path={RouteE.CreateEdaInventory.replace(RouteE.Eda, '')} element={<EditInventory />} />
-      <Route path={RouteE.EditEdaInventory.replace(RouteE.Eda, '')} element={<EditInventory />} />
       <Route
         path={RouteE.EdaInventoryDetails.replace(RouteE.Eda, '')}
         element={<InventoryDetails />}

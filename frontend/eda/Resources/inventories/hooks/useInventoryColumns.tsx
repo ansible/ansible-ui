@@ -41,7 +41,8 @@ export function useInventoriesColumns() {
       },
       {
         header: t('Source of Inventory'),
-        cell: (inventory) => inventory?.source && <TextCell text={inventory.source} />,
+        cell: (inventory) =>
+          inventory?.inventory_source && <TextCell text={inventory.inventory_source} />,
       },
     ],
     [navigate, t]
