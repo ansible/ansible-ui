@@ -15,11 +15,14 @@ export interface BulkConfirmationDialog<T extends object> {
   /** The prompt that shows up under the confirmation title. */
   prompt?: string;
 
-  /** Alert prompt that shows up under the confirmation title. (appears as an information notification) */
+  /** Alert prompt that shows up under the confirmation title. (appears as a notification) */
   alertPrompt?: string;
 
   /** The items to confirm for the bulk action. */
   items: T[];
+
+  /** Actionable items for the bulk action. */
+  actionableItems?: T[];
 
   /** A function that gets a unique key for each item. */
   keyFn: (item: T) => string | number;
@@ -71,7 +74,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
       title={title}
       description={
         alertPrompt ? (
-          <Alert isInline title={alertPrompt} variant="info"></Alert>
+          <Alert isInline title={alertPrompt} variant="danger"></Alert>
         ) : prompt ? (
           prompt
         ) : undefined
@@ -163,11 +166,16 @@ export function useBulkConfirmation<T extends object>() {
     (
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
         Omit<BulkActionDialogProps<T>, 'onClose'>
-    ) =>
-      bulkConfirmationDialog({
+    ) => {
+      const bulkActionOptions = Object.assign({}, options);
+      if (options.actionableItems) {
+        bulkActionOptions.items = options.actionableItems;
+      }
+      return bulkConfirmationDialog({
         ...options,
-        onConfirm: () => bulkActionDialog(options),
-      }),
+        onConfirm: () => bulkActionDialog(bulkActionOptions),
+      });
+    },
     [bulkActionDialog, bulkConfirmationDialog]
   );
 }

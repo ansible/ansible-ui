@@ -36,7 +36,7 @@ describe('Jobs.cy.ts', () => {
     cy.get('#toggle-kebab').click();
     cy.contains('a[role="menuitem"]', 'Delete selected teams').click();
     cy.contains(
-      '{{count}} of the selected teams cannot be deleted due to insufficient permission. Teams that can be deleted are shown below.'
+      '{{count}} of the selected teams cannot be deleted due to insufficient permission.'
     ).should('be.visible');
   });
   it('Create Team button is disabled if the user does not have permission to create teams', () => {

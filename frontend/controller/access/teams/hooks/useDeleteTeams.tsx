@@ -1,6 +1,8 @@
+import { Icon } from '@patternfly/react-core';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings, ITableColumn, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../Data';
 import { Team } from '../../../interfaces/Team';
@@ -8,7 +10,23 @@ import { useTeamsColumns } from './useTeamsColumns';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useTeamsColumns({ disableLinks: true, disableSort: true });
+  const teamColumns = useTeamsColumns({ disableLinks: true, disableSort: true });
+  const canDeleteTeam = (team: Team) => team?.summary_fields?.user_capabilities?.delete;
+  const confirmationColumns = useMemo<ITableColumn<Team>[]>(
+    () => [
+      {
+        header: '',
+        cell: (team: Team) =>
+          canDeleteTeam(team) ? null : (
+            <Icon status="danger">
+              <ExclamationCircleIcon />
+            </Icon>
+          ),
+      },
+      ...teamColumns,
+    ],
+    [teamColumns]
+  );
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const deleteActionOrganizationColumn = useOrganizationNameColumn({
     disableLinks: true,
@@ -19,7 +37,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
     [deleteActionNameColumn, deleteActionOrganizationColumn]
   );
   const bulkAction = useBulkConfirmation<Team>();
-  const canDeleteTeam = (team: Team) => team?.summary_fields?.user_capabilities?.delete;
+
   const deleteTeams = (teams: Team[]) => {
     const deletableTeams = teams.filter(canDeleteTeam);
     const undeletableTeamsCount = teams.length - deletableTeams.length;
@@ -29,13 +47,16 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
         count: teams.length,
       }),
       actionButtonText: t('Delete teams', { count: teams.length }),
-      items: deletableTeams.sort((l, r) => compareStrings(l.name, r.name)),
+      items:
+        undeletableTeamsCount > 0
+          ? teams.sort((l, r) => Number(canDeleteTeam(l)) - Number(canDeleteTeam(r)))
+          : teams.sort((l, r) => compareStrings(l.name, r.name)),
+      actionableItems: deletableTeams.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompt:
         undeletableTeamsCount > 0
-          ? t(
-              '{{count}} of the selected teams cannot be deleted due to insufficient permission. Teams that can be deleted are shown below.',
-              { count: undeletableTeamsCount }
-            )
+          ? t('{{count}} of the selected teams cannot be deleted due to insufficient permission.', {
+              count: undeletableTeamsCount,
+            })
           : undefined,
       keyFn: getItemKey,
       isDanger: true,
