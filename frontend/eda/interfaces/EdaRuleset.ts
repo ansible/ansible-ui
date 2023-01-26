@@ -20,5 +20,6 @@ export interface EdaRuleset {
   name: string;
   status: string;
   rule_count: number;
+  fired_count: number;
   fired_stats: FiredStats;
 }
