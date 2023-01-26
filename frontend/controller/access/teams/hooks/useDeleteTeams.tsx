@@ -1,4 +1,4 @@
-import { Icon } from '@patternfly/react-core';
+import { Icon, Tooltip } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,9 +33,14 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
               header: '',
               cell: (team: Team) =>
                 canDeleteTeam(team) ? null : (
-                  <Icon status="danger">
-                    <ExclamationCircleIcon />
-                  </Icon>
+                  <Tooltip
+                    content={t('The team cannot be deleted due to insufficient permissions.')}
+                    trigger="manual"
+                  >
+                    <Icon status="danger">
+                      <ExclamationCircleIcon />
+                    </Icon>
+                  </Tooltip>
                 ),
             },
           ]
