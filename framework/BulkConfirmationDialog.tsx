@@ -1,5 +1,15 @@
-import { Alert, Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Icon,
+  Modal,
+  ModalBoxBody,
+  ModalVariant,
+  Tooltip,
+} from '@patternfly/react-core';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
 import { ITableColumn, PageTable } from './PageTable/PageTable';
@@ -12,17 +22,19 @@ export interface BulkConfirmationDialog<T extends object> {
    */
   title: string;
 
-  /** The prompt that shows up under the confirmation title. */
+  /** The prompt/description that shows up under the confirmation title. */
   prompt?: string;
 
-  /** Alert prompt that shows up under the confirmation title. (appears as a notification) */
-  alertPrompt?: string;
+  /** Alert prompts that shows up under the confirmation title. */
+  alertPrompts?: string[];
 
   /** The items to confirm for the bulk action. */
   items: T[];
 
-  /** Actionable items for the bulk action. */
-  actionableItems?: T[];
+  /** A function that determines that whether an action cannot be performed on a selected item
+   * (so that this item can be identified in the confirmation dialog) and returns a tooltip
+   * that can be displayed with the non-actionable row */
+  isItemNonActionable?: (item: T) => string | undefined;
 
   /** A function that gets a unique key for each item. */
   keyFn: (item: T) => string | number;
@@ -52,8 +64,9 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     items,
     keyFn,
     prompt,
-    alertPrompt,
+    alertPrompts,
     confirmationColumns,
+    isItemNonActionable,
     onConfirm,
     onClose,
     confirmText,
@@ -68,17 +81,45 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
   }, [onClose, setDialog]);
   const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
   const [confirmed, setConfirmed] = useState(!confirmText);
+  /**
+   * If there are non-actionable rows, the first column will contain exclamation icons
+   * to identify the non-actionable rows. Also, non-actionable rows appear at the top of the list.
+   */
+  const columnsForConfirmation: ITableColumn<T>[] = useMemo<ITableColumn<T>[]>(() => {
+    if (isItemNonActionable && items.some(isItemNonActionable)) {
+      return [
+        {
+          header: '',
+          cell: (item: T) =>
+            isItemNonActionable(item) ? (
+              <Tooltip
+                content={isItemNonActionable(item)}
+                trigger={isItemNonActionable(item) ? undefined : 'manual'}
+              >
+                <Icon status="danger">
+                  <ExclamationCircleIcon />
+                </Icon>
+              </Tooltip>
+            ) : null,
+        },
+        ...confirmationColumns,
+      ];
+    }
+    return confirmationColumns;
+  }, [confirmationColumns, isItemNonActionable, items]);
+
+  const actionableItems = useMemo<T[]>(() => {
+    if (isItemNonActionable) {
+      return items.filter((item) => !isItemNonActionable(item));
+    }
+    return items;
+  }, [isItemNonActionable, items]);
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
-      description={
-        alertPrompt ? (
-          <Alert isInline title={alertPrompt} variant="danger"></Alert>
-        ) : prompt ? (
-          prompt
-        ) : undefined
-      }
+      description={prompt}
       variant={ModalVariant.medium}
       isOpen
       onClose={onCloseClicked}
@@ -111,11 +152,16 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               borderTop: 'thin solid var(--pf-global--BorderColor--100)',
             }}
           >
+            {alertPrompts &&
+              alertPrompts.length > 0 &&
+              alertPrompts.map((alertPrompt, i) => (
+                <Alert isInline title={alertPrompt} variant="danger" key={i}></Alert>
+              ))}
             <PageTable<T>
               key="items"
               pageItems={paged}
               itemCount={items.length}
-              tableColumns={confirmationColumns}
+              tableColumns={columnsForConfirmation}
               keyFn={keyFn}
               page={page}
               perPage={perPage}
@@ -126,7 +172,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               emptyStateTitle="No items"
             />
           </div>
-          {confirmText && (
+          {confirmText && actionableItems.length > 0 && (
             <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
               <Checkbox
                 id="confirm"
@@ -168,8 +214,10 @@ export function useBulkConfirmation<T extends object>() {
         Omit<BulkActionDialogProps<T>, 'onClose'>
     ) => {
       const bulkActionOptions = Object.assign({}, options);
-      if (options.actionableItems) {
-        bulkActionOptions.items = options.actionableItems;
+      if (options.isItemNonActionable && options.isItemNonActionable !== undefined) {
+        bulkActionOptions.items = options.items.filter(
+          (item) => options.isItemNonActionable !== undefined && !options.isItemNonActionable(item)
+        );
       }
       return bulkConfirmationDialog({
         ...options,
