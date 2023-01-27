@@ -15,6 +15,7 @@ import { usePageDialog } from './PageDialog';
 import { ITableColumn, PageTable } from './PageTable/PageTable';
 import { usePaged } from './PageTable/useTableItems';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { compareStrings } from './utils/compare';
 
 export interface BulkConfirmationDialog<T extends object> {
   /** The title of the model.
@@ -79,11 +80,20 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     setDialog(undefined);
     onClose?.();
   }, [onClose, setDialog]);
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
+
+  // Non-actionable rows appear first
+  const sortedItems = useMemo<T[]>(() => {
+    if (isItemNonActionable && items.some(isItemNonActionable)) {
+      return items.sort((l, r) => compareStrings(isItemNonActionable(l), isItemNonActionable(r)));
+    }
+    return items;
+  }, [items, isItemNonActionable]);
+
+  const { paged, page, perPage, setPage, setPerPage } = usePaged(sortedItems);
   const [confirmed, setConfirmed] = useState(!confirmText);
   /**
    * If there are non-actionable rows, the first column will contain exclamation icons
-   * to identify the non-actionable rows. Also, non-actionable rows appear at the top of the list.
+   * to identify the non-actionable rows.
    */
   const columnsForConfirmation: ITableColumn<T>[] = useMemo<ITableColumn<T>[]>(() => {
     if (isItemNonActionable && items.some(isItemNonActionable)) {

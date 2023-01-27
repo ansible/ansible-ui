@@ -36,10 +36,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
         count: teams.length - undeletableTeams.length,
       }),
       actionButtonText: t('Delete teams', { count: teams.length }),
-      items:
-        undeletableTeams.length > 0
-          ? teams.sort((l, r) => Number(cannotDeleteTeam(r)) - Number(cannotDeleteTeam(l)))
-          : teams.sort((l, r) => compareStrings(l.name, r.name)),
+      items: teams.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompts:
         undeletableTeams.length > 0
           ? [
