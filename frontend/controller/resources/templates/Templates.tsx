@@ -17,6 +17,7 @@ import {
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
+  useTypeColumn,
 } from '../../../common/columns';
 import { RouteE } from '../../../Routes';
 import {
@@ -143,6 +144,7 @@ export function useTemplateFilters() {
 
 export function useTemplatesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   // TODO: URL should be dependant on template type
   const nameClick = useCallback(
     (template: Template) =>
@@ -153,12 +155,19 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
     ...options,
     onClick: nameClick,
   });
+  const makeReadable: (type: string) => string = (type) => {
+    if (type === 'workflow_job_template') {
+      return t('Workflow Job Template');
+    }
+    return t('Job Template');
+  };
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
+  const typeOfTemplate = useTypeColumn({ makeReadable });
   const tableColumns = useMemo<ITableColumn<Template>[]>(
-    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn],
+    [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
