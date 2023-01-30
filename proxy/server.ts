@@ -14,7 +14,7 @@ import { Socket } from 'net';
 import { exit } from 'process';
 import selfsigned from 'selfsigned';
 import { TLSSocket } from 'tls';
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 import { HTTP2_HEADER_CONTENT_LENGTH } from './constants';
 import { logger } from './logger';
 
@@ -64,14 +64,72 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
 
     const wss = new WebSocketServer({ server: server as unknown as undefined });
     wss.on('listening', () => logger.info('websocket server listening'));
-    wss.on('connection', (ws) => {
-      logger.debug('websocket conection');
-      ws.on('error', (err) => logger.error({ msg: 'websocket error', message: err.message }));
-      ws.on('message', (data) => {
-        logger.debug({ msg: 'websocket message', data: data.toString() });
-      });
-      ws.on('close', () => logger.debug('websocket close'));
+    wss.on('connection', (ws, incommingMessage) => {
+      const cookies = incommingMessage.headers.cookie
+        ?.split(';')
+        .map((p) => p.trim())
+        .reduce<Record<string, string>>((cookies, cookieValue) => {
+          const parts = cookieValue.split('=');
+          if (parts.length > 0) {
+            cookies[parts[0]] = parts.slice(1).join('=');
+          }
+          return cookies;
+        }, {});
+      const server = cookies?.server;
+      logger.debug({ msg: 'websocket conection', targetServer: server });
+
+      let messageQueue: string[] | undefined = [];
+
+      let websocket: WebSocket | undefined;
+      if (server) {
+        let new_uri = server.replace('https', 'wss');
+        new_uri += `/websocket/`;
+        websocket = new WebSocket(new_uri, {
+          headers: incommingMessage.headers,
+          rejectUnauthorized: false,
+        });
+      }
+
+      websocket
+        ?.on('open', () => {
+          logger.debug({ msg: 'websocket proxy open' });
+          if (messageQueue) {
+            for (const message of messageQueue) {
+              websocket?.send(message);
+            }
+            messageQueue = undefined;
+          }
+        })
+        .on('message', (data) => {
+          logger.debug({
+            msg: 'websocket proxy message',
+            ...(JSON.parse(data.toString()) as unknown as object),
+          });
+          ws.send(data.toString());
+        })
+        .on('close', () => {
+          logger.debug({ msg: 'websocket proxy close' });
+        });
+
+      ws.on('error', (err) => logger.error({ msg: 'websocket error', message: err.message }))
+        .on('message', (data) => {
+          logger.debug({
+            msg: 'websocket message',
+            ...(JSON.parse(data.toString()) as unknown as object),
+          });
+          if (messageQueue) {
+            messageQueue.push(data.toString());
+          } else {
+            websocket?.send(data.toString());
+          }
+        })
+        .on('close', () => {
+          logger.debug('websocket close');
+          websocket?.close();
+        });
     });
+    wss.on('error', (err) => logger.error({ msg: 'websocket server error', error: err.message }));
+    wss.on('close', () => logger.info('websocket server closed'));
 
     return new Promise((resolve, reject) => {
       server

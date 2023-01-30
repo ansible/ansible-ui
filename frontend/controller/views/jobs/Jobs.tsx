@@ -12,6 +12,7 @@ import {
 import { TachometerAltIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useControllerView } from '../../useControllerView';
@@ -37,6 +38,12 @@ export default function Jobs() {
 
   const [showGraph, setShowGraph] = useState(true);
 
+  useAwxWebSocketSubscription({
+    control: ['limit_reached_1'],
+    jobs: ['status_changed'],
+    schedules: ['changed'],
+  });
+
   return (
     <PageLayout>
       <PageHeader
@@ -46,11 +53,10 @@ export default function Jobs() {
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t('jobs.title.description')}
         headerActions={
-          <ToggleGroup aria-label="Icon variant toggle group">
+          <ToggleGroup aria-label="show graph toggle">
             <ToggleGroupItem
               icon={<TachometerAltIcon />}
-              aria-label="copy"
-              buttonId="toggle-group-icons-1"
+              aria-label="toggle show graph"
               isSelected={showGraph}
               onChange={() => setShowGraph((show) => !show)}
             />
