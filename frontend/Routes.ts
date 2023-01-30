@@ -150,8 +150,6 @@ export enum RouteE {
 
   EdaActions = '/eda/actions',
   EdaActionDetails = '/eda/actions/details/:id',
-  CreateEdaAction = '/eda/actions/create',
-  EditEdaAction = '/eda/actions/edit/:id',
 
   EdaRulebookActivations = '/eda/rulebook-activations',
   EdaRulebookActivationDetails = '/eda/rulebook-activations/details/:id',
