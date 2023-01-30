@@ -10,7 +10,7 @@ import {
   ToggleGroupItem,
 } from '@patternfly/react-core';
 import { TachometerAltIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
@@ -38,11 +38,24 @@ export default function Jobs() {
 
   const [showGraph, setShowGraph] = useState(true);
 
-  useAwxWebSocketSubscription({
-    control: ['limit_reached_1'],
-    jobs: ['status_changed'],
-    schedules: ['changed'],
-  });
+  const handleWebSocketMessage = useCallback((message?: { group_name?: string; type?: string }) => {
+    switch (message?.group_name) {
+      case 'jobs':
+        switch (message?.type) {
+          case 'job':
+            void view.refresh();
+            break;
+          case 'workflow_job':
+            void view.refresh();
+            break;
+        }
+        break;
+    }
+  }, []);
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'], schedules: ['changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
 
   return (
     <PageLayout>

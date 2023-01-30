@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import useReactWebSocket from 'react-use-websocket';
+import useReactWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue, WebSocketHook } from 'react-use-websocket/dist/lib/types';
 import { useAutomationServers } from '../../automation-servers/contexts/AutomationServerProvider';
 import { getCookie } from '../../Data';
@@ -48,11 +48,11 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
     }
   }, [automationServer]);
 
-  const { sendMessage } = webSocket;
+  const { sendMessage, readyState } = webSocket;
 
   useEffect(() => {
     const csrftoken = getCookie('csrftoken');
-    if (csrftoken) {
+    if (csrftoken && readyState === ReadyState.OPEN) {
       const groups = Object.keys(subscriptions).reduce<{ [group: string]: string[] }>(
         (groups, group) => {
           groups[group] = Object.keys(subscriptions[group]);
@@ -62,7 +62,7 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
       );
       sendMessage(JSON.stringify({ groups, xrftoken: csrftoken }));
     }
-  }, [sendMessage, subscriptions]);
+  }, [sendMessage, subscriptions, readyState]);
 
   return (
     <WebSocketContext.Provider value={{ ...webSocket, setSubscriptions }}>
@@ -71,9 +71,14 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
   );
 }
 
-export function useAwxWebSocketSubscription(events: { [group: string]: string[] }) {
+export function useAwxWebSocketSubscription(
+  events: { [group: string]: string[] },
+  onMessage: (message: unknown) => void
+) {
   const [evts] = useState(() => events);
-  const { sendMessage, lastMessage, readyState, setSubscriptions } = useWebSocket();
+  const { sendMessage, lastJsonMessage, lastMessage, readyState, setSubscriptions } =
+    useWebSocket();
+
   useEffect(() => {
     setSubscriptions((subscriptions) => {
       subscriptions = { ...subscriptions };
@@ -110,6 +115,10 @@ export function useAwxWebSocketSubscription(events: { [group: string]: string[] 
       });
     };
   }, [evts, setSubscriptions]);
+
+  useEffect(() => {
+    onMessage(lastJsonMessage);
+  }, [lastJsonMessage, onMessage]);
 
   return { sendMessage, lastMessage, readyState };
 }

@@ -11,6 +11,7 @@ import {
   Http2ServerResponse,
 } from 'http2';
 import { Socket } from 'net';
+import { join } from 'path';
 import { exit } from 'process';
 import selfsigned from 'selfsigned';
 import { TLSSocket } from 'tls';
@@ -83,7 +84,7 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
       let websocket: WebSocket | undefined;
       if (server) {
         let new_uri = server.replace('https', 'wss');
-        new_uri += `/websocket/`;
+        new_uri = join(new_uri, `/websocket/`);
         websocket = new WebSocket(new_uri, {
           headers: incommingMessage.headers,
           rejectUnauthorized: false,
@@ -91,7 +92,10 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
       }
 
       websocket
-        ?.on('open', () => {
+        ?.on('error', (err) => {
+          logger.error({ msg: 'websocket proxy error', error: err.message });
+        })
+        .on('open', () => {
           logger.debug({ msg: 'websocket proxy open' });
           if (messageQueue) {
             for (const message of messageQueue) {
