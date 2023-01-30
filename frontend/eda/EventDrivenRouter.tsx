@@ -20,6 +20,7 @@ import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
 import { Users } from './UserAccess/Users/Users';
+import { Actions } from './views/actions/Actions';
 
 export function EventDrivenRouter() {
   return (
@@ -58,13 +59,11 @@ export function EventDrivenRouter() {
       />
       <Route path={RouteE.EdaInventories.replace(RouteE.Eda, '')} element={<Inventories />} />
 
-      <Route path={RouteE.CreateEdaAction.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-      <Route path={RouteE.EditEdaAction.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
       <Route
         path={RouteE.EdaActionDetails.replace(RouteE.Eda, '')}
         element={<UnderDevelopment />}
       />
-      <Route path={RouteE.EdaActions.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
+      <Route path={RouteE.EdaActions.replace(RouteE.Eda, '')} element={<Actions />} />
 
       <Route
         path={RouteE.CreateEdaRulebookActivation.replace(RouteE.Eda, '')}
