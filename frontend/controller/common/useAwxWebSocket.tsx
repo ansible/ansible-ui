@@ -19,7 +19,15 @@ type IWebSocket = WebSocketHook<JsonValue | null, MessageEvent<unknown> | null> 
   setSubscriptions: Dispatch<SetStateAction<Subscriptions>>;
 };
 
-const WebSocketContext = createContext<IWebSocket>(null as unknown as IWebSocket);
+const WebSocketContext = createContext<IWebSocket>({
+  sendMessage: () => null,
+  sendJsonMessage: () => null,
+  lastMessage: null,
+  lastJsonMessage: null,
+  readyState: ReadyState.UNINSTANTIATED,
+  getWebSocket: () => null,
+  setSubscriptions: () => null,
+});
 
 function useWebSocket() {
   return useContext(WebSocketContext);
