@@ -10,7 +10,7 @@ export interface EdaInventory {
   description: string;
   inventory: string;
   id: number;
-  source: string;
+  inventory_source: string;
   created_at: string;
   modified_at: string;
 }
