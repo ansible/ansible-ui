@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../Data';
-import { Template } from '../../../interfaces/Template';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTemplate';
 
 export function PageFormWorkflowJobTemplateSelect(props: {
@@ -19,11 +19,11 @@ export function PageFormWorkflowJobTemplateSelect(props: {
       label={t('Workflow job template')}
       placeholder="Enter workflow job template"
       selectTitle={t('Select a workflow job template')}
-      selectValue={(workflowJobTemplate: Template) => workflowJobTemplate.name}
+      selectValue={(workflowJobTemplate: WorkflowJobTemplate) => workflowJobTemplate.name}
       selectOpen={selectWorkflowJobTemplate}
       validate={async (workflowJobTemplateName: string) => {
         try {
-          const itemsResponse = await requestGet<ItemsResponse<Template>>(
+          const itemsResponse = await requestGet<ItemsResponse<WorkflowJobTemplate>>(
             `/api/v2/workflow_job_templates/?name=${workflowJobTemplateName}`
           );
           if (itemsResponse.results.length === 0) return t('Workflow job template not found.');

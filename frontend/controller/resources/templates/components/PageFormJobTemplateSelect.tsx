@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../Data';
-import { Template } from '../../../interfaces/Template';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useSelectJobTemplate } from '../hooks/useSelectJobTemplate';
 
 export function PageFormJobTemplateSelect(props: {
@@ -19,11 +19,11 @@ export function PageFormJobTemplateSelect(props: {
       label={t('Job template')}
       placeholder="Enter job template"
       selectTitle={t('Select a job template')}
-      selectValue={(jobTemplate: Template) => jobTemplate.name}
+      selectValue={(jobTemplate: JobTemplate) => jobTemplate.name}
       selectOpen={selectJobTemplate}
       validate={async (jobTemplateName: string) => {
         try {
-          const itemsResponse = await requestGet<ItemsResponse<Template>>(
+          const itemsResponse = await requestGet<ItemsResponse<JobTemplate>>(
             `/api/v2/job_templates/?name=${jobTemplateName}`
           );
           if (itemsResponse.results.length === 0) return t('Job template not found.');

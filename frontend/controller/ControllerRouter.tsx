@@ -30,6 +30,7 @@ import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
 import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
+import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 
 export function ControllerRouter() {
   return (
@@ -55,6 +56,10 @@ export function ControllerRouter() {
         <Route
           path={RouteE.JobTemplateDetails.replace(RouteE.Controller, '')}
           element={<TemplateDetail />}
+        />
+        <Route
+          path={RouteE.WorkflowJobTemplateDetails.replace(RouteE.Controller, '')}
+          element={<WorkflowJobTemplateDetail />}
         />
         <Route
           path={RouteE.CreateJobTemplate.replace(RouteE.Controller, '')}
