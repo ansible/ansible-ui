@@ -4,17 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { EdaRule } from '../../interfaces/EdaRule';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 
 export function useRuleColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRule>[]>(
     () => [
-      {
-        header: t('ID'),
-        cell: (inventory) => inventory.id,
-        sort: 'id',
-      },
       {
         header: t('Name'),
         cell: (rule) => (
@@ -27,6 +23,31 @@ export function useRuleColumns() {
         card: 'name',
         list: 'name',
         defaultSort: true,
+      },
+      {
+        header: t('Rule set'),
+        cell: (rule) => <TextCell text={rule.ruleset?.name} />,
+        sort: 'ruleset',
+        card: 'name',
+        list: 'name',
+        defaultSort: true,
+      },
+      {
+        header: t('Action Type'),
+        cell: (rule) => <TextCell text={rule?.action ? Object.keys(rule.action).at(0) : ''} />,
+        sort: 'action',
+        defaultSort: true,
+      },
+      {
+        header: t('Last fired date'),
+        cell: (rule) => (
+          <TextCell
+            text={
+              rule?.fired_stats?.fired_date ? formatDateString(rule.fired_stats.fired_date) : ''
+            }
+          />
+        ),
+        sort: 'fired_at',
       },
     ],
     [navigate, t]

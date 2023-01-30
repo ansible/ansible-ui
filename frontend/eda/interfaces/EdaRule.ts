@@ -20,6 +20,7 @@ export interface EdaRule {
     fired_date: string;
     fire_count: string;
   };
+  conditions: string;
   created_at: string;
   modified_at: string;
 }

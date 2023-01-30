@@ -11,14 +11,6 @@ export function useRulebookColumns() {
   return useMemo<ITableColumn<EdaRulebook>[]>(
     () => [
       {
-        header: t('ID'),
-        cell: (rulebook) => rulebook.id,
-        sort: 'id',
-        card: 'hidden',
-        list: 'hidden',
-        isIdColumn: true,
-      },
-      {
         header: t('Name'),
         cell: (rulebook) => (
           <TextCell
@@ -29,6 +21,24 @@ export function useRulebookColumns() {
           />
         ),
         sort: 'name',
+        defaultSort: true,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Number of rule sets'),
+        cell: (rulebook) => (
+          <TextCell text={`${rulebook?.ruleset_count ? rulebook.ruleset_count : 0}`} />
+        ),
+        sort: 'rule_count',
+        defaultSort: true,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Fire count'),
+        cell: (rulebook) => <TextCell text={`${rulebook?.fire_count ? rulebook.fire_count : 0}`} />,
+        sort: 'fired_count',
         defaultSort: true,
         card: 'name',
         list: 'name',
