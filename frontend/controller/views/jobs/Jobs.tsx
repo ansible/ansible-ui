@@ -38,20 +38,24 @@ export default function Jobs() {
 
   const [showGraph, setShowGraph] = useState(true);
 
-  const handleWebSocketMessage = useCallback((message?: { group_name?: string; type?: string }) => {
-    switch (message?.group_name) {
-      case 'jobs':
-        switch (message?.type) {
-          case 'job':
-            void view.refresh();
-            break;
-          case 'workflow_job':
-            void view.refresh();
-            break;
-        }
-        break;
-    }
-  }, []);
+  const { refresh } = view;
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+              void refresh();
+              break;
+            case 'workflow_job':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
   useAwxWebSocketSubscription(
     { control: ['limit_reached_1'], jobs: ['status_changed'], schedules: ['changed'] },
     handleWebSocketMessage as (data: unknown) => void
