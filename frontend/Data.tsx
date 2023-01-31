@@ -175,7 +175,7 @@ async function requestCommon<ResponseBody>(
             try {
               body = await response?.json();
             } catch (bodyParseError) {
-              console.log('Error parsing response body', bodyParseError);
+              return error;
             }
 
             if (
