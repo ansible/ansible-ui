@@ -13,9 +13,9 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
       : ratio >= 0.5
       ? 'var(--pf-global--palette--gold'
       : 'var(--pf-global--palette--green';
-  const color1 = settings.theme === 'light' ? `${base}-100)` : `${base}-600)`;
-  const color2 = settings.theme === 'light' ? `${base}-400)` : `${base}-200)`;
-  const borderColor = settings.theme === 'light' ? `#0002` : `#fff2`;
+  const color1 = settings.activeTheme === 'light' ? `${base}-100)` : `${base}-600)`;
+  const color2 = settings.activeTheme === 'light' ? `${base}-400)` : `${base}-200)`;
+  const borderColor = settings.activeTheme === 'light' ? `#0002` : `#fff2`;
   return (
     <Flex alignItems={{ default: 'alignItemsBaseline' }} spaceItems={{ default: 'spaceItemsSm' }}>
       {props.capacity > 0 && (

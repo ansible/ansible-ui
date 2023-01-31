@@ -116,7 +116,9 @@ export function PageForm<T extends object>(props: {
           <div
             style={{
               backgroundColor:
-                settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
+                settings.activeTheme === 'dark'
+                  ? 'var(--pf-global--BackgroundColor--400)'
+                  : undefined,
               padding: disablePadding ? undefined : 24,
             }}
           >

@@ -120,7 +120,7 @@ export function PageHeader(props: PageHeaderProps) {
             paddingTop: 0,
             paddingBottom: 0,
             borderTop:
-              settings.theme !== 'light' && settings.borders
+              settings.activeTheme !== 'light' && settings.borders
                 ? 'thin solid var(--pf-global--BorderColor--100)'
                 : undefined,
             borderBottom:
@@ -164,7 +164,7 @@ export function PageHeader(props: PageHeaderProps) {
               paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
               paddingBottom: xl ? 16 : 12,
               borderTop:
-                !navigation && settings.theme !== 'light' && settings.borders
+                !navigation && settings.activeTheme !== 'light' && settings.borders
                   ? 'thin solid var(--pf-global--BorderColor--100)'
                   : undefined,
               borderBottom:
@@ -172,7 +172,9 @@ export function PageHeader(props: PageHeaderProps) {
                   ? 'thin solid var(--pf-global--BorderColor--100)'
                   : undefined,
               backgroundColor:
-                settings.theme !== 'light' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+                settings.activeTheme !== 'light'
+                  ? 'var(--pf-global--BackgroundColor--300)'
+                  : undefined,
             }}
           >
             <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>

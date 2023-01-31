@@ -38,7 +38,7 @@ export function PagePagination(props: PagePaginationProps) {
         paddingTop: compact ? 4 : 6,
         paddingBottom: compact ? 4 : 6,
         backgroundColor:
-          settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+          settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
       }}
     />
   );

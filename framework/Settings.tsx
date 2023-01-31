@@ -56,7 +56,7 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
     localStorage.setItem('borders', settings.borders ? 'true' : 'false');
     const activeTheme =
-      settings.theme === 'system'
+      settings.theme !== 'light' && settings.theme !== 'dark'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'

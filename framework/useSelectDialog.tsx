@@ -115,7 +115,17 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
           <b>
             {view.selectedItems.map((item, i) => {
               if (tableColumns && tableColumns.length > 0) {
-                return <TableColumnCell key={i} item={item} column={tableColumns[0]} />;
+                return (
+                  <TableColumnCell
+                    key={i}
+                    item={item}
+                    column={
+                      tableColumns.find(
+                        (column) => column.card === 'name' || column.list === 'name'
+                      ) ?? tableColumns[0]
+                    }
+                  />
+                );
               }
               return <></>;
             })}
@@ -131,7 +141,7 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
           style={{
             display: 'flex',
             flexDirection: 'column',
-            maxHeight: 400,
+            maxHeight: 500,
             overflow: 'hidden',
           }}
         >
@@ -145,6 +155,7 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
             disableCardView
             disableListView
             disableColumnManagement
+            compact
           />
         </div>
       </Collapse>

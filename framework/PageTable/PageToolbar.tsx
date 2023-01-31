@@ -191,7 +191,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           paddingBottom: sm ? undefined : 8,
           paddingTop: sm ? undefined : 8,
           backgroundColor:
-            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+            settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
         }}
       >
         <ToolbarContent>
@@ -213,7 +213,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         paddingBottom: sm ? undefined : 8,
         paddingTop: sm ? undefined : 8,
         backgroundColor:
-          settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+          settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
       }}
     >
       <ToolbarContent>
