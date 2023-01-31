@@ -70,10 +70,10 @@ export default function Jobs() {
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t('jobs.title.description')}
         headerActions={
-          <ToggleGroup aria-label="show graph toggle">
+          <ToggleGroup aria-label={t('show graph toggle')}>
             <ToggleGroupItem
               icon={<TachometerAltIcon />}
-              aria-label="toggle show graph"
+              aria-label={t('toggle show graph')}
               isSelected={showGraph}
               onChange={() => setShowGraph((show) => !show)}
             />
