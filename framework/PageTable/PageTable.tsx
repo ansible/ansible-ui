@@ -166,7 +166,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       <div
         style={{
           backgroundColor:
-            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
+            settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
           height: '100%',
         }}
       >

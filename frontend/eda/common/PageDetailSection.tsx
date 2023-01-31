@@ -11,7 +11,7 @@ export function PageDetailsSection(props: { children?: ReactNode; disablePadding
       padding={{ default: 'noPadding' }}
       style={{
         backgroundColor:
-          settings.theme === 'dark'
+          settings.activeTheme === 'dark'
             ? 'var(--pf-global--BackgroundColor--300)'
             : 'var(--pf-global--BackgroundColor--100)',
       }}
