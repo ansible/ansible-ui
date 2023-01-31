@@ -85,7 +85,7 @@
             "id": 436
           }
         },
-        "user_capabilities": { "edit": true, "delete": true }
+        "user_capabilities": { "edit": true, "delete": false }
       },
       "created": "2023-01-18T16:50:30.647509Z",
       "modified": "2023-01-18T16:50:30.647536Z",
