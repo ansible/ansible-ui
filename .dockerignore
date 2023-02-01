@@ -1,8 +1,12 @@
+/.dockerignore
+/.git
 /.github
 /.husky
 /.nyc_output
 /.storybook
 /.vscode
+/.vscode
+/Dockerfile
 /build
 /certs
 /coverage
@@ -11,5 +15,3 @@
 /node_modules
 /scripts
 /stories
-/Dockerfile
-/.dockerignore
