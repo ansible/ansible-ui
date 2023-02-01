@@ -96,20 +96,10 @@ export function PageTableCard<T extends object>(props: {
         transition: 'box-shadow 0.25s',
         cursor: 'default',
         maxWidth: '100%',
-        overflow: 'hidden',
       }}
     >
-      <CardHeader
-        style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%', overflow: 'hidden' }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'nowrap',
-            maxWidth: '100%',
-            overflow: 'hidden',
-          }}
-        >
+      <CardHeader style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
+        <div style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
           <div
             style={{
               display: 'flex',
@@ -121,7 +111,9 @@ export function PageTableCard<T extends object>(props: {
           >
             {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
             <div style={{ maxWidth: '100%' }}>
-              <CardTitle>{card.title}</CardTitle>
+              <CardTitle>
+                <Truncate content={card.title as string} />
+              </CardTitle>
               {card.subtitle ? (
                 <Text component="small" style={{ opacity: 0.7 }}>
                   {card.subtitle}
