@@ -6,3 +6,4 @@
 /publish
 .DS_Store
 /storybook-static
+.vscode

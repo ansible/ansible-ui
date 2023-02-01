@@ -9,7 +9,7 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -26,30 +26,45 @@ import {
 } from '../../../../framework';
 import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
+import { handleLaunch } from '../../common/util/launchHandlers';
 import { UserDateDetail } from '../../common/UserDateDetail';
-import { Template } from '../../interfaces/Template';
+import { JobTemplate } from '../../interfaces/JobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function TemplateDetail() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const template = useItem<Template>('/api/v2/job_templates', params.id ?? '0');
-  const history = useNavigate();
+  const template = useItem<JobTemplate>('/api/v2/job_templates', params.id ?? '0');
+  const navigate = useNavigate();
 
-  const deleteTemplates = useDeleteTemplates((deleted: Template[]) => {
+  const deleteTemplates = useDeleteTemplates((deleted) => {
     if (deleted.length > 0) {
-      history(RouteE.Templates);
+      navigate(RouteE.Templates);
     }
   });
+  // async function launchJob(type: string, id: number) {
+  //   try {
+  //     const launchedJob = await handleLaunch(template?.type as string, template?.id as number);
+  //     navigate(
+  //       RouteE.JobOutput.replace(':job_type', launchedJob?.type as string).replace(
+  //         ':id',
+  //         launchedJob?.id.toString() as string
+  //       )
+  //     );
+  //   } catch {
+  //     // handle error
+  //   }
+  // }
 
-  const itemActions: IPageAction<Template>[] = useMemo(() => {
-    const itemActions: IPageAction<Template>[] = [
+  const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
+    const itemActions: IPageAction<JobTemplate>[] = [
       {
         type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit template'),
-        onClick: () => history(RouteE.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+        ouiaId: 'job-template-detail-edit-button',
+        onClick: () => navigate(RouteE.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -59,11 +74,29 @@ export function TemplateDetail() {
           if (!template) return;
           deleteTemplates([template]);
         },
+        ouiaId: 'job-template-detail-delete-button',
         isDanger: true,
+      },
+      {
+        type: PageActionType.button,
+        icon: RocketIcon,
+        label: t('Launch template'),
+        onClick: async () => {
+          try {
+            const data = await handleLaunch(template?.type as string, template?.id as number);
+            navigate(
+              `/controller/jobs/${data?.type as string}/output/${data?.id.toString() as string}`
+            );
+          } catch {
+            // handle error
+          }
+        },
+        ouiaId: 'job-template-detail-launch-button',
+        isDanger: false,
       },
     ];
     return itemActions;
-  }, [deleteTemplates, history, template, t]);
+  }, [deleteTemplates, navigate, template, t]);
 
   return (
     <PageLayout>
@@ -71,7 +104,7 @@ export function TemplateDetail() {
         title={template?.name}
         breadcrumbs={[{ label: t('Templates'), to: RouteE.Templates }, { label: template?.name }]}
         headerActions={
-          <PageActions<Template> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<JobTemplate> actions={itemActions} position={DropdownPosition.right} />
         }
       />
       {template ? (
@@ -121,7 +154,7 @@ const VERBOSITY = (t: (arg0: string) => string, value: number): string => {
   }
 };
 
-function TemplateDetailsTab(props: { template: Template }) {
+function TemplateDetailsTab(props: { template: JobTemplate }) {
   const { t } = useTranslation();
   const { template } = props;
   const { summary_fields: summaryFields } = template;
@@ -242,6 +275,6 @@ function TemplateDetailsTab(props: { template: Template }) {
   );
 }
 
-function TemplateAccessTab(props: { template: Template }) {
+function TemplateAccessTab(props: { template: JobTemplate }) {
   return <div>{props.template.name}</div>;
 }

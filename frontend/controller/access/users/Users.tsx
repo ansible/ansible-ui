@@ -204,7 +204,7 @@ export function AccessTable(props: { url: string }) {
         icon: PlusIcon,
         label: t('Add users'),
         shortLabel: t('Add'),
-        onClick: () => null,
+        href: RouteE.CreateUser,
       },
       {
         type: PageActionType.bulk,

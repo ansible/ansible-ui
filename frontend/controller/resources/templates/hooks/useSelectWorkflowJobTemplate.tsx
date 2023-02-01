@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
-import { Template } from '../../../interfaces/Template';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useControllerView } from '../../../useControllerView';
 import { useTemplateFilters, useTemplatesColumns } from '../Templates';
 
@@ -8,13 +8,13 @@ export function useSelectWorkflowJobTemplate() {
   const { t } = useTranslation();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplatesColumns({ disableLinks: true });
-  const view = useControllerView<Template>({
+  const view = useControllerView<WorkflowJobTemplate>({
     url: '/api/v2/workflow_job_templates/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
   });
-  return useSelectDialog<Template>({
+  return useSelectDialog<WorkflowJobTemplate>({
     toolbarFilters,
     tableColumns,
     view,

@@ -15,6 +15,7 @@ export interface IPageActionCommon {
   shortLabel?: string;
   tooltip?: string;
   isDanger?: boolean;
+  ouiaId?: string;
 }
 
 export interface IPageActionSeperator {
@@ -32,7 +33,7 @@ type IPageActionWithOnClick = IPageActionCommon & {
   type: PageActionType.button;
   variant?: ButtonVariant;
   isDisabled?: string | undefined;
-  onClick: () => void;
+  onClick: (() => void) | (() => Promise<unknown>);
   href?: never;
 };
 export type IPageActionButton = IPageActionWithLink | IPageActionWithOnClick;
@@ -54,7 +55,7 @@ type IPageSingleActionWithLink<T extends object> = IPageActionCommon & {
 type IPageSingleActionWithOnClick<T extends object> = IPageActionCommon & {
   type: PageActionType.single;
   variant?: ButtonVariant;
-  onClick: (item: T) => void;
+  onClick: (item: T) => void | (() => Promise<unknown>);
   href?: never;
   isDisabled?: (item: T) => string | undefined;
   isHidden?: (item: T) => boolean;
