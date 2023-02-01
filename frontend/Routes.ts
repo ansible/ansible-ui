@@ -40,7 +40,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditTemplate: `${awxRoutePrefix}/templates/edit/:id`,
 
   Credentials: `${awxRoutePrefix}/credentials`,
-  CredentialDetails: `${awxRoutePrefix}/credentials/details/:id`,
+  CredentialPage: `${awxRoutePrefix}/credentials/details/:id`,
   CreateCredential: `${awxRoutePrefix}/credentials/create`,
   EditCredential: `${awxRoutePrefix}/credentials/edit/:id`,
 

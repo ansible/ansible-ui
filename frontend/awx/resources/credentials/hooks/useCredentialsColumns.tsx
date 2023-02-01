@@ -17,7 +17,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const navigate = useNavigate();
   const nameClick = useCallback(
     (credential: Credential) =>
-      navigate(RouteObj.CredentialDetails.replace(':id', credential.id.toString())),
+      navigate(RouteObj.CredentialPage.replace(':id', credential.id.toString())),
     [navigate]
   );
   const idColumn = useIdColumn();

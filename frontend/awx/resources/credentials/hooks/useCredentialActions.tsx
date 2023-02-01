@@ -8,7 +8,7 @@ import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { useDeleteCredentials } from '../useDeleteCredentials';
 
-export function useCredentialActions(options?: { onDeleted: (crednetials: Credential[]) => void }) {
+export function useCredentialActions(options?: { onDeleted: (cred: Credential[]) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteCredentials = useDeleteCredentials(options?.onDeleted);
@@ -18,15 +18,20 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
         type: PageActionType.single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
+        isHidden: (credential: Credential) =>
+          credential?.summary_fields?.user_capabilities.edit === false,
         label: t('Edit credential'),
-        onClick: (credential) =>
+        onClick: (credential: Credential) =>
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
       {
         type: PageActionType.single,
         icon: TrashIcon,
+        isHidden: (credential: Credential) =>
+          credential?.summary_fields?.user_capabilities?.delete === false,
+        variant: ButtonVariant.danger,
         label: t('Delete credential'),
-        onClick: (credential) => deleteCredentials([credential]),
+        onClick: (credential: Credential) => deleteCredentials([credential]),
         isDanger: true,
       },
     ],

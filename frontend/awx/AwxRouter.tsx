@@ -69,7 +69,7 @@ export function AwxRouter() {
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
-        <Route path={RouteObjWithoutPrefix.CredentialDetails} element={<CredentialPage />} />
+        <Route path={RouteObjWithoutPrefix.CredentialPage} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
         <Route path={RouteObjWithoutPrefix.EditCredential} element={<EditCredential />} />
         <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />
