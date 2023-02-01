@@ -78,8 +78,10 @@ describe('Jobs.cy.ts', () => {
         <Teams />
       </MemoryRouter>
     );
-    cy.get('button[id="create-team"]')
-      .contains('Create team')
-      .should('have.attr', 'aria-disabled', 'false');
+    cy.contains('button[id="create-team"]', 'Create team').should(
+      'have.attr',
+      'aria-disabled',
+      'false'
+    );
   });
 });
