@@ -8,7 +8,6 @@ RUN npm version 0.0.0 --no-git-tag-version
 # dependencies installs dependencies
 # docker should be able to cache this step unless package-lock.json changes
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as dependencies
-RUN apk upgrade --no-cache -U && apk add --no-cache openssl
 WORKDIR /ansible-ui
 COPY --from=package /ansible-ui/package*.json ./
 RUN npm ci --omit=dev --omit=optional --ignore-scripts
