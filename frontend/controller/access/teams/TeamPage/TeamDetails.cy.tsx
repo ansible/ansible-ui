@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Team } from '../../../interfaces/Team';
 import { TeamDetails } from './TeamDetails';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 describe('TeamDetails', () => {
   it('Component renders and displays team', () => {
@@ -31,8 +31,7 @@ describe('TeamDetails', () => {
           </Routes>
         </MemoryRouter>
       );
-      cy.get('button')
-        .contains(/^user-8$/) // Team created by user with name 'user-8'
+      cy.contains('button', /^user-8$/) // Team created by user with name 'user-8'
         .click();
       cy.get('div[data-test-id="user-details"]').should('have.text', 'user-8 details');
     });

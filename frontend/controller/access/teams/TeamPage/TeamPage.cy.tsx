@@ -28,9 +28,11 @@ describe('TeamPage', () => {
         <TeamPage />
       </MemoryRouter>
     );
-    cy.get('button[id="edit-team"]')
-      .contains('Edit team')
-      .should('have.attr', 'aria-disabled', 'false');
+    cy.contains('button[id="edit-team"]', 'Edit team').should(
+      'have.attr',
+      'aria-disabled',
+      'false'
+    );
   });
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
     cy.mount(
@@ -39,9 +41,11 @@ describe('TeamPage', () => {
       </MemoryRouter>
     );
     cy.get('button[aria-label="Actions"]').click();
-    cy.get('a.pf-c-dropdown__menu-item')
-      .contains('Delete team')
-      .should('have.attr', 'aria-disabled', 'true');
+    cy.contains('a.pf-c-dropdown__menu-item', 'Delete team').should(
+      'have.attr',
+      'aria-disabled',
+      'true'
+    );
   });
   it('Displays tabs for Details, Access and Roles', () => {
     cy.mount(

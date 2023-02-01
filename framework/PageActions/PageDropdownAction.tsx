@@ -91,9 +91,7 @@ export function PageDropdownAction<T extends object>(props: {
         />
       ))}
       position={props.position}
-      style={{
-        zIndex: 201,
-      }}
+      style={{ zIndex: dropdownOpen ? 201 : undefined }}
     />
   );
   return tooltip && (iconOnly || isDisabled) ? (
