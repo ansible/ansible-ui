@@ -33,6 +33,7 @@ import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 import Settings from './settings/Settings';
+import { JobPage } from './views/jobs/JobPage/JobPage';
 import Jobs from './views/jobs/Jobs';
 
 export function AwxRouter() {
@@ -53,6 +54,7 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteObjWithoutPrefix.JobDetails} element={<JobPage />} />
 
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplateDetail />} />
