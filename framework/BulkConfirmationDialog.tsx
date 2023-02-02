@@ -165,7 +165,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             {alertPrompts &&
               alertPrompts.length > 0 &&
               alertPrompts.map((alertPrompt, i) => (
-                <Alert isInline title={alertPrompt} variant="danger" key={i}></Alert>
+                <Alert isInline title={alertPrompt} variant="warning" key={i}></Alert>
               ))}
             <PageTable<T>
               key="items"
@@ -180,6 +180,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"
+              autoHidePagination={true}
             />
           </div>
           {confirmText && actionableItems.length > 0 && (
