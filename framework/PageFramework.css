@@ -1,0 +1,27 @@
+.border-top {
+  border-top: thin solid var(--pf-global--BorderColor--100);
+}
+
+.border-bottom {
+  border-bottom: thin solid var(--pf-global--BorderColor--100);
+}
+
+.light {
+  background-color: var(--pf-global--BackgroundColor--100);
+}
+
+:root:where(.pf-theme-dark) .dark-0 {
+  background-color: var(--pf-global--BackgroundColor--200);
+}
+
+:root:where(.pf-theme-dark) .dark-1 {
+  background-color: var(--pf-global--BackgroundColor--100);
+}
+
+:root:where(.pf-theme-dark) .dark-2 {
+  background-color: var(--pf-global--BackgroundColor--300);
+}
+
+:root:where(.pf-theme-dark) .dark-3 {
+  background-color: var(--pf-global--BackgroundColor--400);
+}
