@@ -1,15 +1,16 @@
 import {
   Label,
-  PageSection,
   SearchInput,
   Skeleton,
+  Stack,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import Ansi from 'ansi-to-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, Fragment, SetStateAction, useState } from 'react';
+import { PageLayout } from '../../../../../framework';
 import { ItemsResponse, useGet2 } from '../../../../Data';
 import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
 import { Job } from '../../../interfaces/Job';
@@ -32,7 +33,7 @@ export function JobOutput(props: { job: Job }) {
   const jobEvents = itemsResponse?.results;
 
   return (
-    <PageSection variant="light" padding={{ default: 'noPadding' }}>
+    <PageLayout>
       <Toolbar className="dark-2 border-bottom">
         <ToolbarContent>
           <ToolbarItem>
@@ -40,8 +41,14 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      <JobEventsComponent jobEvents={jobEvents} />
-    </PageSection>
+      {/* <div style={{ backgroundColor: 'green', flexGrow: 1 }}>kk</div> */}
+      <div>
+        <Stack>
+          <JobEventsComponent jobEvents={jobEvents} />
+          <Test jobEvents={jobEvents} />
+        </Stack>
+      </div>
+    </PageLayout>
   );
 }
 
@@ -55,16 +62,12 @@ function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
   return (
     <pre style={{ fontSize: 'smaller', flexGrow: 1 }}>
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto auto 1fr',
-          height: '100%',
-          minHeight: '100%',
-        }}
+        style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr' }}
+        className="border-bottom"
       >
         <div className="expand-column" style={{ minHeight: 8 }} />
         <div className="line-column" />
-        <div className="dark-0" />
+        <div className="stdout-column" />
 
         {jobEvents.map((jobEvent) => (
           <JobEventComponent
@@ -74,8 +77,12 @@ function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
             setCollapsed={setCollapsed}
           />
         ))}
-        {/* <div style={{ minHeight: '100%', gridRow: '1fr' }} />
-        <div />
+        <div className="expand-column" style={{ minHeight: 8 }} />
+        <div className="line-column" />
+        <div className="stdout-column" />
+
+        {/* <div style={{ minHeight: 10, backgroundColor: 'red' }} />
+        <div className="line-column" />
         <div className="dark-0" /> */}
       </div>
       {/* {Object.keys(collapsed).map((key) => (
@@ -157,15 +164,7 @@ function JobEventComponent(props: {
         }
         return (
           <>
-            <div
-              className="expand-column"
-              style={{
-                textAlign: 'right',
-                paddingLeft: 16,
-                paddingTop: 2,
-                paddingBottom: 2,
-              }}
-            >
+            <div className="expand-column">
               {eventHeaderLine && useEventHeader && (
                 <button style={{ backgroundColor: 'unset', border: 0 }} onClick={collapseEvent}>
                   <AngleRightIcon
@@ -177,16 +176,7 @@ function JobEventComponent(props: {
                 </button>
               )}
             </div>
-            <div
-              className="line-column"
-              style={{
-                textAlign: 'right',
-                paddingLeft: 8,
-                paddingRight: 16,
-                paddingTop: 2,
-                paddingBottom: 2,
-              }}
-            >
+            <div className="line-column">
               {/* {playUuid} &nbsp; */}
               {/* {taskUuid} &nbsp; */}
               {/* {jobEvent.play} &nbsp; */}
@@ -194,15 +184,7 @@ function JobEventComponent(props: {
               {/* &nbsp; {jobEvent.uuid} */}
               {/* &nbsp; {jobEvent.parent_uuid} */}
             </div>
-            <div
-              className="dark-0"
-              style={{
-                paddingLeft: 16,
-                paddingRight: 16,
-                paddingTop: 2,
-                paddingBottom: 2,
-              }}
-            >
+            <div className="stdout-column">
               <span style={{ whiteSpace: 'pre-wrap' }}>
                 <Ansi useClasses>{line}</Ansi>
               </span>
@@ -220,8 +202,8 @@ function JobEventComponent(props: {
         <>
           <div className="expand-column" />
           <div className="line-column" />
-          <div className="dark-0" style={{ paddingLeft: 16 }}>
-            <Label isCompact onClick={collapseEvent}>
+          <div className="stdout-column">
+            <Label isCompact onClick={collapseEvent} style={{ cursor: 'pointer' }}>
               ...
             </Label>
           </div>
@@ -229,4 +211,65 @@ function JobEventComponent(props: {
       )}
     </>
   );
+}
+
+function Test(props: { jobEvents: JobEvent[] }) {
+  const { jobEvents } = props;
+  const [collapsed, setCollapsed] = useState<ICollapsed>({});
+  const rows = useJobOutputRows(jobEvents);
+  return (
+    <pre style={{ fontSize: 'smaller', flexGrow: 1 }}>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr' }}
+        className="border-bottom"
+      >
+        <div className="expand-column" style={{ minHeight: 8 }} />
+        <div className="line-column" />
+        <div className="stdout-column" />
+        {rows.map((row) => (
+          <Fragment key={row.uuid}>
+            <div className="expand-column" />
+            <div className="line-column">{row.lineNumber}</div>
+            <div className="stdout-column">
+              <Ansi useClasses>{row.stdout}</Ansi>
+            </div>
+          </Fragment>
+        ))}
+        <div className="expand-column" style={{ minHeight: 8 }} />
+        <div className="line-column" />
+        <div className="stdout-column" />
+      </div>
+    </pre>
+  );
+}
+
+type JobOutputRow = {
+  lineNumber: number;
+  uuid: string | undefined;
+  playUuid: string | undefined;
+  taskUuid: string | undefined;
+  stdout: string;
+  counter: number | undefined;
+} & Pick<JobEvent, 'event'>;
+
+function useJobOutputRows(jobEvents: JobEvent[]) {
+  const jobOutputRows: JobOutputRow[] = [];
+  for (const jobEvent of jobEvents) {
+    const playUuid = (jobEvent.event_data as { play_uuid?: string }).play_uuid ?? '';
+    const taskUuid = (jobEvent.event_data as { task_uuid?: string }).task_uuid ?? '';
+    const lines = (jobEvent.stdout ?? '').split('\r\n');
+    let lineNumber = Number(jobEvent.start_line);
+    for (const line of lines) {
+      jobOutputRows.push({
+        uuid: jobEvent.uuid,
+        lineNumber: ++lineNumber,
+        playUuid,
+        taskUuid,
+        stdout: line,
+        event: jobEvent.event,
+        counter: jobEvent.counter,
+      });
+    }
+  }
+  return jobOutputRows;
 }
