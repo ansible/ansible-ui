@@ -1,0 +1,32 @@
+.ansi-green-fg {
+  color: var(--pf-global--success-color--100);
+}
+
+.ansi-red-fg {
+  color: var(--pf-global--danger-color--100);
+}
+
+.ansi-yellow-fg {
+  color: var(--pf-global--warning-color--100);
+}
+
+.ansi-blue-fg {
+  color: var(--pf-global--info-color--100);
+}
+
+.expand-column {
+  background-color: var(--pf-global--BackgroundColor--200);
+}
+
+:root:where(.pf-theme-dark) .expand-column {
+  background-color: var(--pf-global--BackgroundColor--100);
+}
+
+.line-column {
+  background-color: var(--pf-global--BackgroundColor--200);
+  border-right: thin solid var(--pf-global--BorderColor--100);
+}
+
+:root:where(.pf-theme-dark) .line-column {
+  background-color: var(--pf-global--BackgroundColor--100);
+}

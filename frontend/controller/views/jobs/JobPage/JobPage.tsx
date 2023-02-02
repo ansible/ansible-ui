@@ -10,7 +10,7 @@ import { JobOutput } from './JobOutput';
 export function JobPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: job } = useGet2<Job>({ url: `/api/v2/jobs/${params.id}/` });
+  const { data: job } = useGet2<Job>({ url: params.id ? `/api/v2/jobs/${params.id}/` : '' });
   return (
     <PageLayout>
       <PageHeader
@@ -19,7 +19,7 @@ export function JobPage() {
       />
       <PageTabs loading={!job}>
         <PageTab label={t('Output')}>
-          <JobOutput job={job} />
+          <JobOutput job={job!} />
         </PageTab>
       </PageTabs>
     </PageLayout>
