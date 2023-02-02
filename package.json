@@ -49,7 +49,7 @@
     "prepare": "husky install",
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint:changed npm:prettier:changed --prefix-colors cyan,green,blue",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
-    "build:framework": "npx tsc -p tsconfig.cjs.json",
+    "build:framework": "npx tsc -p tsconfig.cjs.json && cpy 'framework/**/*.css' publish/cjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -97,6 +97,8 @@
     "cookie": "0.5.0",
     "copy-webpack-plugin": "11.0.0",
     "coverage-istanbul-loader": "3.0.5",
+    "cpy": "^9.0.1",
+    "cpy-cli": "^4.2.0",
     "css-loader": "6.7.3",
     "css-minimizer-webpack-plugin": "4.2.2",
     "debounce": "1.2.1",
