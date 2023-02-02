@@ -37,12 +37,12 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
   if (!props.breadcrumbs) return <Fragment />;
   return (
     <Breadcrumb style={props.style}>
-      {props.breadcrumbs.map((breadcrumb) => {
-        if (!breadcrumb.label) return <></>;
+      {props.breadcrumbs.map((breadcrumb, index) => {
+        if (!breadcrumb.label) return <Fragment key={index}></Fragment>;
         return (
           <BreadcrumbItem
             id={breadcrumb.id}
-            key={breadcrumb.id ?? breadcrumb.label}
+            key={breadcrumb.id ?? breadcrumb.label ?? index}
             component={breadcrumb.component}
             isActive={breadcrumb.to === undefined}
           >

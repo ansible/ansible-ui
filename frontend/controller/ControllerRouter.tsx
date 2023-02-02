@@ -28,9 +28,10 @@ import { Projects } from './resources/projects/Projects';
 import { TemplateDetail } from './resources/templates/TemplateDetail';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
-import Settings from './settings/Settings';
-import Jobs from './views/jobs/Jobs';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
+import Settings from './settings/Settings';
+import { JobPage } from './views/jobs/JobPage/JobPage';
+import Jobs from './views/jobs/Jobs';
 
 export function ControllerRouter() {
   return (
@@ -51,6 +52,7 @@ export function ControllerRouter() {
         {/* <Route path={RouteE.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteE.JobDetails.replace(RouteE.Controller, '')} element={<JobPage />} />
 
         <Route path={RouteE.Templates.replace(RouteE.Controller, '')} element={<Templates />} />
         <Route
