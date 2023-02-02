@@ -41,9 +41,10 @@ import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageActionType } from '../PageActions/PageActionType';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
-import { useSettings } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
+
+import './PageToolbar.css';
 
 export interface IItemFilter<T extends object> {
   label: string;
@@ -114,7 +115,6 @@ export type PagetableToolbarProps<T extends object> = {
   selectItems?: (items: T[]) => void;
   unselectAll?: () => void;
   onSelect?: (item: T) => void;
-  disableBorderBottom?: boolean;
 
   showSelect?: boolean;
 
@@ -140,7 +140,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     setFilters,
     clearAllFilters,
     openColumnModal,
-    disableBorderBottom,
   } = props;
 
   const sm = useBreakpoint('md');
@@ -170,8 +169,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
 
-  const settings = useSettings();
-
   let viewTypeCount = 0;
   if (!props.disableTableView) viewTypeCount++;
   if (!props.disableCardView) viewTypeCount++;
@@ -184,15 +181,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   if (itemCount === undefined) {
     return (
       <Toolbar
-        style={{
-          borderBottom: disableBorderBottom
-            ? undefined
-            : 'thin solid var(--pf-global--BorderColor--100)',
-          paddingBottom: sm ? undefined : 8,
-          paddingTop: sm ? undefined : 8,
-          backgroundColor:
-            settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-        }}
+        className="border-bottom dark-2"
+        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>
@@ -206,15 +196,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   return (
     <Toolbar
       clearAllFilters={clearAllFilters}
-      style={{
-        borderBottom: disableBorderBottom
-          ? undefined
-          : 'thin solid var(--pf-global--BorderColor--100)',
-        paddingBottom: sm ? undefined : 8,
-        paddingTop: sm ? undefined : 8,
-        backgroundColor:
-          settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-      }}
+      className="dark-2"
+      style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
     >
       <ToolbarContent>
         {showSelect && (
