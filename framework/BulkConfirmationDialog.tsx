@@ -8,7 +8,7 @@ import {
   ModalVariant,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
@@ -106,8 +106,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
                 content={isItemNonActionable(item)}
                 trigger={isItemNonActionable(item) ? undefined : 'manual'}
               >
-                <Icon status="danger">
-                  <ExclamationCircleIcon />
+                <Icon status="warning">
+                  <ExclamationTriangleIcon />
                 </Icon>
               </Tooltip>
             ) : null,
