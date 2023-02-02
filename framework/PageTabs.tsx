@@ -62,7 +62,7 @@ export function PageTabs(props: {
 
   return (
     <>
-      <PageSection type={PageSectionTypes.tabs}>
+      <PageSection type={PageSectionTypes.tabs} className="border-bottom">
         <Flex spaceItems={{ default: 'spaceItemsNone' }}>
           {props.preComponents && (
             <>
@@ -103,7 +103,6 @@ export function PageTabs(props: {
           )}
         </Flex>
       </PageSection>
-      <Divider />
       {content}
     </>
   );

@@ -1,7 +1,6 @@
 import { CSSProperties, ReactNode } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useBreakpoint } from './components/useBreakPoint';
-import { useSettings } from './Settings';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export function PageBody(props: {
@@ -10,7 +9,6 @@ export function PageBody(props: {
   style?: CSSProperties;
 }) {
   const usePadding = useBreakpoint('xxl') && props.disablePadding !== true;
-  const settings = useSettings();
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
@@ -33,10 +31,7 @@ export function PageBody(props: {
             maxHeight: '100%',
             margin: usePadding ? 24 : 0,
             overflow: 'hidden',
-            border:
-              settings.borders && usePadding
-                ? 'thin solid var(--pf-global--BorderColor--100)'
-                : undefined,
+            border: 'thin solid var(--pf-global--BorderColor--100)',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >

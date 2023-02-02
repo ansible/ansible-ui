@@ -1,0 +1,7 @@
+.pf-c-toolbar__content-section {
+  row-gap: 16px !important;
+}
+
+.pf-c-toolbar__expandable-content.pf-m-expanded {
+  z-index: 400;
+}
