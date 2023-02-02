@@ -21,7 +21,3 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
     }[];
   };
 }
-
-export interface activeUser {
-  results: User[];
-}
