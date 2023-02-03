@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Chart, ChartAxis, ChartLine, ChartTooltip } from '@patternfly/react-charts';
 
 import chart_color_green_400 from '@patternfly/react-tokens/dist/js/chart_color_green_400';
@@ -6,61 +6,55 @@ import chart_color_red_300 from '@patternfly/react-tokens/dist/js/chart_color_re
 import { c_content_small_FontSize } from '@patternfly/react-tokens';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useGet } from '../../common/useItem';
+import { EdaAction } from '../interfaces/EdaAction';
 
 interface TickType {
   x: string;
   y: number;
 }
+const actionsRulesEndpoint = '/api/audit/rules_fired';
 
 const ActionsChart = () => {
-  const [width, setWidth] = useState(window.innerWidth);
-
+  const [width, _setWidth] = useState(window.innerWidth);
+  const [successfulRuns, _setSuccessfulRuns] = useState<TickType[]>([]);
+  const [failedRuns, _setFailedRuns] = useState<TickType[]>([]);
   const { t } = useTranslation();
-
-  const handleResize = () => {
-    setWidth(window.innerWidth);
-  };
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const calculateChartPoints = (data) => {
+  const useListActionsRules = () => useGet<EdaAction[]>(actionsRulesEndpoint);
+  const { data: actions } = useListActionsRules();
+  const calculateChartPoints = (data: EdaAction[] | undefined) => {
+    if (!data) {
+      return;
+    }
     const tickValues: string[] = [];
     data.forEach((item) => {
-      const keyDate = new Date(item.fired_date);
-      const key = `${keyDate.getMonth()}/${keyDate.getDate()}`;
-      const idx = tickValues.findIndex((tick) => tick === key);
-      if (idx < 0) {
-        tickValues.push(key);
-        if (item.status === 'successful') {
-          successfulRuns.push({ x: key, y: 1 });
-          failedRuns.push({ x: key, y: 0 });
-        }
-        if (item.status === 'failed') {
-          failedRuns.push({ x: key, y: 1 });
-          successfulRuns.push({ x: key, y: 0 });
-        }
-      } else {
-        if (item.status === 'successful') {
-          successfulRuns[idx].y = successfulRuns[idx].y + 1;
-        }
-        if (item.status === 'failed') {
-          failedRuns[idx].y = failedRuns[idx].y + 1;
+      if (item.fired_date) {
+        const keyDate = new Date(item.fired_date);
+        const key = `${keyDate.getMonth()}/${keyDate.getDate()}`;
+        const idx = tickValues.findIndex((tick) => tick === key);
+        if (idx < 0) {
+          tickValues.push(key);
+          if (item.status === 'successful') {
+            successfulRuns.push({ x: key, y: 1 });
+            failedRuns.push({ x: key, y: 0 });
+          }
+          if (item.status === 'failed') {
+            failedRuns.push({ x: key, y: 1 });
+            successfulRuns.push({ x: key, y: 0 });
+          }
+        } else {
+          if (item.status === 'successful') {
+            successfulRuns[idx].y = successfulRuns[idx].y + 1;
+          }
+          if (item.status === 'failed') {
+            failedRuns[idx].y = failedRuns[idx].y + 1;
+          }
         }
       }
     });
   };
 
-  const fetchChartData = () => {
-    listActionsRules().then((data) => {
-      calculateChartPoints(data?.data);
-    });
-  };
+  calculateChartPoints(actions);
 
   const renderSuccessfulRulesFired = () => {
     const successPoints = successfulRuns.map((tick) => {
@@ -127,6 +121,7 @@ const ActionsChart = () => {
       fontSize: c_content_small_FontSize.value,
     },
   };
+
   return (
     <Card>
       <CardHeader>{t('Rules over time')}</CardHeader>
@@ -147,6 +142,7 @@ const ActionsChart = () => {
           <ChartAxis
             tickValues={getTickValues()}
             fixLabelOverlap
+            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
             label={t('Time')}
             style={xAxisStyles}
           />
@@ -154,8 +150,9 @@ const ActionsChart = () => {
             dependentAxis
             showGrid
             domain={[0, 3]}
-            tickFormat={(tick) => Math.round(tick)}
+            tickFormat={(tick) => Math.round(tick as number)}
             style={yAxisStyles}
+            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
             label={t('Rules fired')}
           />
           {successfulRuns && renderSuccessfulRulesFired()}
