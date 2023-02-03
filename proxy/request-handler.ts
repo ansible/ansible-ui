@@ -8,7 +8,7 @@ import { serve } from './serve';
 export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse): void {
   try {
     let proxyRequest = false;
-    if (req.url.startsWith('/api/')) {
+    if (req.url.startsWith('/api/') || req.url.startsWith('/eda/api/')) {
       const cookieHeader = req.headers[HTTP2_HEADER_COOKIE];
       let cookies: Record<string, string> | undefined;
       if (typeof cookieHeader === 'string') {
@@ -16,7 +16,9 @@ export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse
       }
 
       const target = cookies?.['server'];
+      console.log('Debug : target', target);
       proxyRequest = !!target;
+      console.log('Debug : proxyRequest', proxyRequest);
     }
 
     if (proxyRequest) {

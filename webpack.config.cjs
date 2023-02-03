@@ -114,6 +114,10 @@ module.exports = function (_env, argv) {
           target: 'https://localhost:3001',
           secure: false,
         },
+        '/eda/api': {
+          target: 'https://localhost:3001',
+          secure: false,
+        },
       },
       devMiddleware: {
         writeToDisk: true,

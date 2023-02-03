@@ -15,7 +15,7 @@ export function Projects() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useProjectFilters();
-  const { data: projects, mutate: refresh } = useGet<EdaProject[]>('/api/projects');
+  const { data: projects, mutate: refresh } = useGet<EdaProject[]>('/eda/api/v1/projects');
   const tableColumns = useProjectColumns();
   const view = useInMemoryView<EdaProject>({
     items: projects,

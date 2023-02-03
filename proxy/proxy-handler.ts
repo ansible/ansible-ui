@@ -38,7 +38,6 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
   }
 
   const url = req.url;
-
   const headers: OutgoingHttpHeaders = {};
 
   if (cookies?.['csrftoken']) {
