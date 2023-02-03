@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
+import { FieldValues } from 'react-hook-form';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
@@ -10,9 +11,9 @@ import { Organization } from '../../interfaces/Organization';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { getControllerError } from '../../useControllerView';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
-// import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 
-interface OrganizationFields {
+interface OrganizationFields extends FieldValues {
   organization: Organization;
   instanceGroups?: InstanceGroup[];
 }
@@ -123,11 +124,7 @@ function OrganizationInputs() {
         name="organization.description"
         placeholder={t('Enter description')}
       />
-      {/* <PageFormInstanceGroupSelect
-        name="instance_groups"
-        instanceGroupsPath="instanceGroups"
-        // instanceGroupsIdPath="instance_groups"
-      /> */}
+      <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
       <PageFormExecutionEnvironmentSelect
         name="organization.summary_fields.default_environment.name"
         label={t('Default execution environment')}
