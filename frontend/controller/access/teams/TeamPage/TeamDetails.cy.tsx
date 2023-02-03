@@ -21,9 +21,9 @@ describe('TeamDetails', () => {
   it('Triggers navigation to user details on click', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(
-        <MemoryRouter initialEntries={['/controller/teams/2/details']}>
+        <MemoryRouter initialEntries={['/controller/teams/details/2']}>
           <Routes>
-            <Route element={<TeamDetails team={team} />} path="/controller/teams/2/details" />
+            <Route element={<TeamDetails team={team} />} path="/controller/teams/details/2" />
             <Route
               element={<div data-test-id="user-details">user-8 details</div>}
               path="/controller/users/15/details"

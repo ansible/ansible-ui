@@ -51,13 +51,13 @@ export enum RouteE {
   EditOrganization = '/controller/organizations/edit/:id',
 
   Teams = '/controller/teams',
-  TeamDetails = '/controller/teams/:id/details',
+  TeamDetails = '/controller/teams/details/:id',
   CreateTeam = '/controller/teams/create',
   EditTeam = '/controller/teams/:id/edit',
   AddRolesToTeam = '/controller/teams/:id/roles/add',
 
   Users = '/controller/users',
-  UserDetails = '/controller/users/:id/details',
+  UserDetails = '/controller/users/details/:id',
   CreateUser = '/controller/users/create',
   EditUser = '/controller/users/:id/edit',
   AddRolesToUser = '/controller/users/:id/roles/add',
