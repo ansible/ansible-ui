@@ -19,7 +19,9 @@ import { useProjectActions } from './hooks/useProjectActions';
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: project, mutate: refresh } = useGet<EdaProject>(`/api/projects/${params.id ?? ''}`);
+  const { data: project, mutate: refresh } = useGet<EdaProject>(
+    `/eda/api/v1/projects/${params.id ?? ''}`
+  );
   const itemActions = useProjectActions(refresh);
 
   const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {

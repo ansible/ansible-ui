@@ -16,7 +16,7 @@ export function EditExecutionEnvironment() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
-    `/api/executionEnvironments/${id.toString()}`
+    `/eda/api/v1/executionEnvironments/${id.toString()}`
   );
 
   const ExecutionEnvironmentSchemaType = useMemo(
@@ -41,14 +41,14 @@ export function EditExecutionEnvironment() {
     try {
       if (Number.isInteger(id)) {
         executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
-          `/api/executionEnvironments/${id}`,
+          `/eda/api/v1/executionEnvironments/${id}`,
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
         const newExecutionEnvironment = await requestPost<EdaExecutionEnvironment>(
-          '/api/executionEnvironments',
+          '/eda/api/v1/executionEnvironments',
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();

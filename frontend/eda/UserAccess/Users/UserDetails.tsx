@@ -12,7 +12,7 @@ import { useUserColumns } from './hooks/useUserColumns';
 export function UserDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: User, mutate: refresh } = useGet<EdaUser>(`/api/Users/${params.id ?? ''}`);
+  const { data: User, mutate: refresh } = useGet<EdaUser>(`/eda/api/v1/Users/${params.id ?? ''}`);
   const tableColumns = useUserColumns();
   const itemActions = useUserActions(refresh);
   return (

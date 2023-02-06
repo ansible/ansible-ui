@@ -35,7 +35,7 @@ export function useDeleteExecutionEnvironments(
         actionColumns,
         onComplete,
         actionFn: (executionEnvironment: EdaExecutionEnvironment) =>
-          requestDelete(`/api/executionEnvironments/${executionEnvironment.id}`),
+          requestDelete(`/eda/api/v1/executionEnvironments/${executionEnvironment.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

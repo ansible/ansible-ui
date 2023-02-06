@@ -31,7 +31,7 @@ export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: inventory, mutate: refresh } = useGet<EdaInventory>(
-    `/api/inventory/${params.id ?? ''}`
+    `/eda/api/v1/inventory/${params.id ?? ''}`
   );
   const [copied, setCopied] = React.useState(false);
 

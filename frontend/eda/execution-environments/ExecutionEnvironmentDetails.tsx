@@ -13,7 +13,7 @@ export function ExecutionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: executionEnvironment, mutate: refresh } = useGet<EdaExecutionEnvironment>(
-    `/api/executionEnvironments/${params.id ?? ''}`
+    `/eda/api/v1/executionEnvironments/${params.id ?? ''}`
   );
   const tableColumns = useExecutionEnvironmentColumns();
   const itemActions = useExecutionEnvironmentActions(refresh);

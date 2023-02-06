@@ -27,7 +27,7 @@ export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebook, mutate: refresh } = useGet<EdaRulebook>(
-    `/api/rulebooks/${params.id ?? ''}`
+    `/eda/api/v1/rulebooks/${params.id ?? ''}`
   );
   const itemActions = useRulebookActions(rulebook, refresh);
 
@@ -59,7 +59,9 @@ export function RulebookDetails() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
-    const { data: rulesets } = useGet<EdaRuleset[]>(`/api/rulebooks/${params?.id || ''}/rulesets`);
+    const { data: rulesets } = useGet<EdaRuleset[]>(
+      `/eda/api/v1/rulebooks/${params?.id || ''}/rulesets`
+    );
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({
       items: rulesets,

@@ -14,7 +14,7 @@ export function Rulebooks() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookFilters();
-  const { data: rulebooks, mutate: refresh } = useGet<EdaRulebook[]>('/api/rulebooks');
+  const { data: rulebooks, mutate: refresh } = useGet<EdaRulebook[]>('/eda/api/v1/rulebooks');
   const tableColumns = useRulebookColumns();
   const view = useInMemoryView<EdaRulebook>({
     items: rulebooks,

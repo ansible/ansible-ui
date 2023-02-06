@@ -28,7 +28,7 @@ export function RulebookActivationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
-    `/api/activations/${params.id ?? ''}`
+    `/eda/api/v1/activations/${params.id ?? ''}`
   );
   const itemActions = useRulebookActivationActions(refresh);
 
@@ -93,7 +93,7 @@ export function RulebookActivationDetails() {
     const tableColumns = useActivationActionColumns();
 
     function useGetActivationActions(id: string) {
-      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`/eda/api/v1/activation_instance_job_instances/${id}`);
     }
 
     const { data: actions } = useGetActivationActions('8' || '');
@@ -128,7 +128,7 @@ export function RulebookActivationDetails() {
     const toolbarFilters = useActivationActionFilters();
 
     function useGetActivationHistory(id: string) {
-      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`/eda/api/v1/activation_instance_job_instances/${id}`);
     }
     const { data: actions } = useGetActivationHistory(params?.id || '');
     const tableColumns = useActivationHistoryColumns();

@@ -16,9 +16,7 @@ export function requestHandler(req: Http2ServerRequest, res: Http2ServerResponse
       }
 
       const target = cookies?.['server'];
-      console.log('Debug : target', target);
       proxyRequest = !!target;
-      console.log('Debug : proxyRequest', proxyRequest);
     }
 
     if (proxyRequest) {

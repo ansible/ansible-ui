@@ -15,7 +15,7 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProject>(`/api/projects/${id.toString()}`);
+  const { data: project } = useGet<EdaProject>(`/eda/api/v1/projects/${id.toString()}`);
 
   const ProjectSchemaType = useMemo(
     () =>
@@ -60,11 +60,11 @@ export function EditProject() {
   const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
       if (Number.isInteger(id)) {
-        await requestPatch<EdaProject>(`/api/projects/${id}`, project);
+        await requestPatch<EdaProject>(`/eda/api/v1/projects/${id}`, project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newProject = await requestPost<EdaProject>('/api/projects', project);
+        const newProject = await requestPost<EdaProject>('/eda/api/v1/projects', project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }

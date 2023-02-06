@@ -12,7 +12,7 @@ export function Rules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRuleFilters();
-  const { data: rules } = useGet<EdaRule[]>('/api/rules');
+  const { data: rules } = useGet<EdaRule[]>('/eda/api/v1/rules');
   const tableColumns = useRuleColumns();
   const view = useInMemoryView<EdaRule>({
     items: rules,

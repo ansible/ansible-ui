@@ -15,8 +15,8 @@ import { useHostsFilters } from './hooks/useHostsFilters';
 import { EdaHost } from '../../interfaces/EdaHost';
 import { useHostsColumns } from './hooks/useHostsColumns';
 
-const actionsRulesEndpoint = '/api/audit/rules_fired';
-const actionsHostsEndpoint = '/api/audit/hosts_changed';
+const actionsRulesEndpoint = '/eda/api/v1/audit/rules_fired';
+const actionsHostsEndpoint = '/eda/api/v1/audit/hosts_changed';
 
 export function Actions() {
   const { t } = useTranslation();

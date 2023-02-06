@@ -15,7 +15,7 @@ export function Users() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useUserFilters();
-  const { data: users, mutate: refresh } = useGet<EdaUser[]>('/api/users');
+  const { data: users, mutate: refresh } = useGet<EdaUser[]>('/eda/api/v1/users');
   const tableColumns = useUserColumns();
   const view = useInMemoryView<EdaUser>({
     items: users,

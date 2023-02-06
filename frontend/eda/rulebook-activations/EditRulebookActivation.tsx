@@ -21,10 +21,10 @@ import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitc
 export function EditRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: rulebooks } = useGet<EdaRulebook[]>('/api/rulebooks');
-  const { data: projects } = useGet<EdaProject[]>('/api/projects');
-  const { data: inventories } = useGet<EdaInventory[]>('/api/inventories');
-  const { data: extra_vars } = useGet<EdaInventory[]>('/api/extra_vars');
+  const { data: rulebooks } = useGet<EdaRulebook[]>('/eda/api/v1/rulebooks');
+  const { data: projects } = useGet<EdaProject[]>('/eda/api/v1/projects');
+  const { data: inventories } = useGet<EdaInventory[]>('/eda/api/v1/inventories');
+  const { data: extra_vars } = useGet<EdaInventory[]>('/eda/api/v1/extra_vars');
 
   const { cache } = useSWRConfig();
 
@@ -34,7 +34,7 @@ export function EditRulebookActivation() {
   ) => {
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
-        '/api/activations',
+        '/eda/api/v1/activations',
         rulebookActivation
       );
       (cache as unknown as { clear: () => void }).clear?.();

@@ -27,7 +27,7 @@ import { PageDetailsSection } from '../common/PageDetailsSection';
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(`/api/rules/${params.id ?? ''}`);
+  const { data: rule } = useGet<EdaRule>(`/eda/api/v1/rules/${params.id ?? ''}`);
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

@@ -16,7 +16,7 @@ export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useExecutionEnvironmentFilters();
-  const response = useGet<EdaExecutionEnvironment[]>('/api/execution-environments');
+  const response = useGet<EdaExecutionEnvironment[]>('/eda/api/v1/execution-environments');
   const { data: executionEnvironments, mutate: refresh } = response;
   const tableColumns = useExecutionEnvironmentColumns();
   const view = useInMemoryView<EdaExecutionEnvironment>({
