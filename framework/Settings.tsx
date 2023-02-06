@@ -10,7 +10,6 @@ export interface Settings {
   tableLayout?: 'compact' | 'comfortable';
   formColumns?: 'single' | 'multiple';
   formLayout?: 'vertical' | 'horizontal';
-  borders?: boolean;
 }
 
 export const SettingsContext = createContext<[Settings, (settings: Settings) => void]>([
@@ -38,7 +37,6 @@ export function SettingsProvider(props: { children?: ReactNode }) {
       tableLayout: localStorage.getItem('tableLayout') as 'compact' | 'comfortable',
       formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
       formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
-      borders: localStorage.getItem('borders') !== 'false',
     };
 
     if (activeTheme === 'dark') {
@@ -54,9 +52,8 @@ export function SettingsProvider(props: { children?: ReactNode }) {
     localStorage.setItem('tableLayout', settings.tableLayout ?? 'comfortable');
     localStorage.setItem('formColumns', settings.formColumns ?? 'multiple');
     localStorage.setItem('formLayout', settings.formLayout ?? 'vertical');
-    localStorage.setItem('borders', settings.borders ? 'true' : 'false');
     const activeTheme =
-      settings.theme === 'system'
+      settings.theme !== 'light' && settings.theme !== 'dark'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light'
@@ -167,16 +164,6 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         >
           <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
           <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
-        </FormGroupSelect>
-        <FormGroupSelect
-          id="borders"
-          label="Borders"
-          value={settings.borders ? 'true' : 'false'}
-          onSelect={(_, value) => setSettings({ ...settings, borders: value === 'true' })}
-          placeholderText="Select borders"
-        >
-          <SelectOption value="true">{'Yes'}</SelectOption>
-          <SelectOption value="false">{'No'}</SelectOption>
         </FormGroupSelect>
       </Form>
     </Modal>

@@ -1,7 +1,6 @@
 import { OnPerPageSelect, OnSetPage, Pagination, PaginationVariant } from '@patternfly/react-core';
 import { CSSProperties, useCallback } from 'react';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { useSettings } from '../Settings';
 
 export type PagePaginationProps = {
   itemCount?: number;
@@ -20,7 +19,6 @@ export function PagePagination(props: PagePaginationProps) {
     [setPerPage]
   );
   const compact = !useBreakpoint('md');
-  const settings = useSettings();
   return (
     <Pagination
       variant={PaginationVariant.bottom}
@@ -31,15 +29,13 @@ export function PagePagination(props: PagePaginationProps) {
       onPerPageSelect={onPerPageSelect}
       style={{
         ...props.style,
-        borderTop: 'thin solid var(--pf-global--BorderColor--100)',
         boxShadow: 'none',
         zIndex: 301,
         // marginTop: -1,
         paddingTop: compact ? 4 : 6,
         paddingBottom: compact ? 4 : 6,
-        backgroundColor:
-          settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
       }}
+      className="dark-2"
     />
   );
 }

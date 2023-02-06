@@ -1,0 +1,62 @@
+{
+  "can_start_without_user_input": true,
+  "passwords_needed_to_start": [],
+  "ask_scm_branch_on_launch": false,
+  "ask_variables_on_launch": false,
+  "ask_tags_on_launch": false,
+  "ask_diff_mode_on_launch": false,
+  "ask_skip_tags_on_launch": false,
+  "ask_job_type_on_launch": false,
+  "ask_limit_on_launch": false,
+  "ask_verbosity_on_launch": false,
+  "ask_inventory_on_launch": false,
+  "ask_credential_on_launch": false,
+  "ask_execution_environment_on_launch": false,
+  "ask_labels_on_launch": false,
+  "ask_forks_on_launch": false,
+  "ask_job_slice_count_on_launch": false,
+  "ask_timeout_on_launch": false,
+  "ask_instance_groups_on_launch": false,
+  "survey_enabled": false,
+  "variables_needed_to_start": [],
+  "credential_needed_to_start": false,
+  "inventory_needed_to_start": false,
+  "job_template_data": {
+    "name": "JT with Default Cred",
+    "id": 7,
+    "description": ""
+  },
+  "defaults": {
+    "inventory": {
+      "name": "Demo Inventory",
+      "id": 1
+    },
+    "limit": "",
+    "scm_branch": "",
+    "labels": [
+      {
+        "id": 1,
+        "name": "alex label"
+      }
+    ],
+    "job_tags": "",
+    "skip_tags": "",
+    "extra_vars": "---",
+    "diff_mode": false,
+    "job_type": "run",
+    "verbosity": 0,
+    "credentials": [
+      {
+        "id": 1,
+        "name": "Demo Credential",
+        "credential_type": 1,
+        "passwords_needed": []
+      }
+    ],
+    "execution_environment": {},
+    "forks": 0,
+    "job_slice_count": 1,
+    "timeout": 0,
+    "instance_groups": []
+  }
+}

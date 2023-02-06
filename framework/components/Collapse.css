@@ -1,0 +1,12 @@
+.collapsed {
+  max-height: 0;
+  transition: max-height 0.15s ease-out, opacity 0.15s ease-out;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.expanded {
+  max-height: 500px;
+  transition: max-height 0.25s ease-in, opacity 0.25s ease-in;
+  opacity: 1;
+}

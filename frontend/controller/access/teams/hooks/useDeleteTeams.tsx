@@ -18,15 +18,37 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
     () => [deleteActionNameColumn, deleteActionOrganizationColumn],
     [deleteActionNameColumn, deleteActionOrganizationColumn]
   );
+
+  const cannotDeleteTeam = (team: Team) => {
+    return team?.summary_fields?.user_capabilities?.delete
+      ? undefined
+      : t('The team cannot be deleted due to insufficient permissions.');
+  };
+
   const bulkAction = useBulkConfirmation<Team>();
+
   const deleteTeams = (teams: Team[]) => {
+    const undeletableTeams = teams.filter(cannotDeleteTeam);
+
     bulkAction({
       title: t('Permanently delete teams', { count: teams.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} teams.', {
-        count: teams.length,
+        count: teams.length - undeletableTeams.length,
       }),
       actionButtonText: t('Delete teams', { count: teams.length }),
       items: teams.sort((l, r) => compareStrings(l.name, r.name)),
+      alertPrompts:
+        undeletableTeams.length > 0
+          ? [
+              t(
+                '{{count}} of the selected teams cannot be deleted due to insufficient permissions.',
+                {
+                  count: undeletableTeams.length,
+                }
+              ),
+            ]
+          : undefined,
+      isItemNonActionable: cannotDeleteTeam,
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,

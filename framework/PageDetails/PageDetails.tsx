@@ -9,15 +9,7 @@ export function PageDetails(props: { children?: ReactNode; disablePadding?: bool
   const columns = settings.formColumns;
   const isCompact = false;
   return (
-    <PageSection
-      padding={{ default: 'noPadding' }}
-      style={{
-        backgroundColor:
-          settings.theme === 'dark'
-            ? 'var(--pf-global--BackgroundColor--300)'
-            : 'var(--pf-global--BackgroundColor--100)',
-      }}
-    >
+    <PageSection variant="light" padding={{ default: 'noPadding' }} className="dark-1">
       <DescriptionList
         orientation={{
           sm: orientation,

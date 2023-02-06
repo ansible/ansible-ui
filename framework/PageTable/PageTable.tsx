@@ -157,19 +157,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         : PageTableViewTypeE.Cards)
   );
 
-  const settings = useSettings();
-
   const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true;
 
   if (error) {
     return (
-      <div
-        style={{
-          backgroundColor:
-            settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
-          height: '100%',
-        }}
-      >
+      <div className="dark-2" style={{ height: '100%' }}>
         <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
             icon={ExclamationCircleIcon}
@@ -436,7 +428,6 @@ function TableHead<T extends object>(props: {
     onSelect,
     expandedRow,
   } = props;
-  const settings = useSettings();
 
   const getColumnSort = useCallback<
     (columnIndex: number, column: ITableColumn<T>) => ThSortType | undefined
@@ -463,12 +454,7 @@ function TableHead<T extends object>(props: {
 
   return (
     <Thead>
-      <Tr
-        style={{
-          backgroundColor:
-            settings.activeTheme === 'dark' ? 'var(--pf-global--BackgroundColor--300)' : 'white',
-        }}
-      >
+      <Tr className="light dark-2">
         {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
         {(showSelect || onSelect) && (
           <Th

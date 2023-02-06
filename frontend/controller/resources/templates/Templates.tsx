@@ -26,7 +26,8 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/controller-toolbar-filters';
-import { Template } from '../../interfaces/Template';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useControllerView } from '../../useControllerView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
@@ -35,7 +36,7 @@ export function Templates() {
   const navigate = useNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplatesColumns();
-  const view = useControllerView<Template>({
+  const view = useControllerView<JobTemplate | WorkflowJobTemplate>({
     url: '/api/v2/unified_job_templates/',
     toolbarFilters,
     tableColumns,
@@ -46,7 +47,7 @@ export function Templates() {
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<Template>[]>(
+  const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
         type: PageActionType.dropdown,
@@ -78,7 +79,7 @@ export function Templates() {
     [deleteTemplates, navigate, t]
   );
 
-  const rowActions = useMemo<IPageAction<Template>[]>(
+  const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
         type: PageActionType.single,
@@ -109,7 +110,7 @@ export function Templates() {
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}
       />
-      <PageTable<Template>
+      <PageTable<JobTemplate | WorkflowJobTemplate>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -147,8 +148,13 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   const { t } = useTranslation();
   // TODO: URL should be dependant on template type
   const nameClick = useCallback(
-    (template: Template) =>
-      navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString())),
+    (template: JobTemplate | WorkflowJobTemplate) => {
+      if (template.type === 'job_template') {
+        navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString()));
+        return;
+      }
+      navigate(RouteE.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+    },
     [navigate]
   );
   const nameColumn = useNameColumn({
@@ -165,7 +171,7 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const typeOfTemplate = useTypeColumn({ makeReadable });
-  const tableColumns = useMemo<ITableColumn<Template>[]>(
+  const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
     () => [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn],
     [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn]
   );

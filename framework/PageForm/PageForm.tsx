@@ -113,13 +113,7 @@ export function PageForm<T extends object>(props: {
           />
         )}
         {props.onCancel ? (
-          <div
-            style={{
-              backgroundColor:
-                settings.theme === 'dark' ? 'var(--pf-global--BackgroundColor--400)' : undefined,
-              padding: disablePadding ? undefined : 24,
-            }}
-          >
+          <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
             <ActionGroup style={{ marginTop: 0 }}>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.onCancel && (
