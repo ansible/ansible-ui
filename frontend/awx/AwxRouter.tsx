@@ -33,7 +33,7 @@ import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 import Settings from './settings/Settings';
-import { JobPage } from './views/jobs/JobPage/JobPage';
+import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 
 export function AwxRouter() {
@@ -50,7 +50,10 @@ export function AwxRouter() {
       <Routes>
         <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<Dashboard />} />
+
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
+        <Route path={RouteObjWithoutPrefix.JobDetails} element={<JobPage />} />
+
         {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
