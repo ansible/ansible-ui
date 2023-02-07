@@ -7,11 +7,11 @@
 
 export interface EdaAction {
   rule: { id: string; name: string };
-  description: string;
-  activation: { id: string; name: string };
+  description?: string;
+  activation?: { id: string; name: string };
   type: string;
   status?: string;
   ruleset: { id: string; name: string };
-  fired_date: string;
-  rule_definition: string;
+  fired_date?: string;
+  rule_definition?: string;
 }

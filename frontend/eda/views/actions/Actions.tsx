@@ -21,7 +21,6 @@ const actionsHostsEndpoint = '/api/audit/hosts_changed';
 export function Actions() {
   const { t } = useTranslation();
   const useFetchHosts = () => useGet<EdaHost[]>(actionsHostsEndpoint);
-
   const useFetchRecentActions = () => useGet<EdaAction[]>(actionsRulesEndpoint);
 
   function ActionsTab() {
