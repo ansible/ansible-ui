@@ -5,6 +5,7 @@ import { requestDelete } from '../../../../Data';
 import { idKeyFn } from '../../../../hub/useHubView';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { useProjectColumns } from './useProjectColumns';
+import { API_PREFIX } from '../../../constants';
 
 export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (project: EdaProject) => requestDelete(`/api/projects/${project.id}`),
+        actionFn: (project: EdaProject) => requestDelete(`${API_PREFIX}/projects/${project.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
