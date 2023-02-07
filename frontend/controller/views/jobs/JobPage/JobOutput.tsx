@@ -9,9 +9,8 @@ import {
 } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import Anser from 'anser';
-
 import { Dispatch, Fragment, SetStateAction, useState } from 'react';
-import { PageLayout } from '../../../../../framework';
+import { Scrollable } from '../../../../../framework';
 import { ItemsResponse, useGet2 } from '../../../../Data';
 import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
 import { Job } from '../../../interfaces/Job';
@@ -34,22 +33,38 @@ export function JobOutput(props: { job: Job }) {
   const jobEvents = itemsResponse?.results;
 
   return (
-    <PageLayout>
+    <>
       <Toolbar className="dark-2 border-bottom">
         <ToolbarContent>
           <ToolbarItem>
             <SearchInput />
           </ToolbarItem>
+          <div style={{ flexGrow: 1 }} />
+          <ToolbarItem>
+            Plays <Label>{job.playbook_counts.play_count}</Label>
+          </ToolbarItem>
+          <ToolbarItem>
+            Tasks <Label>{job.playbook_counts.task_count}</Label>
+          </ToolbarItem>
+          <ToolbarItem>
+            Hosts <Label>{job.host_status_counts.failures}</Label>
+          </ToolbarItem>
+          <ToolbarItem>
+            Failed <Label>{job.host_status_counts.failures}</Label>
+          </ToolbarItem>
+          <ToolbarItem>
+            Elapsed <Label>{job.elapsed}</Label>
+          </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
       {/* <div style={{ backgroundColor: 'green', flexGrow: 1 }}>kk</div> */}
-      <div>
+      <Scrollable>
         <Stack>
           <JobEventsComponent jobEvents={jobEvents} />
-          <Test jobEvents={jobEvents} />
+          {/* <Test jobEvents={jobEvents} /> */}
         </Stack>
-      </div>
-    </PageLayout>
+      </Scrollable>
+    </>
   );
 }
 
@@ -172,6 +187,7 @@ function JobEventComponent(props: {
                     style={{
                       transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                       transition: 'transform',
+                      // marginRight: playUuid === jobEvent.uuid ? 32 : 0,
                     }}
                   />
                 </button>
@@ -186,9 +202,9 @@ function JobEventComponent(props: {
               {/* &nbsp; {jobEvent.parent_uuid} */}
             </div>
             <div className="stdout-column">
-              <span style={{ whiteSpace: 'pre-wrap' }}>
-                <Ansi input={line} />
-              </span>
+              {/* <span style={{ whiteSpace: 'pre-wrap' }}> */}
+              <Ansi input={line} />
+              {/* </span> */}
               {/* &nbsp; <Label isCompact>{jobEvent.uuid}</Label> */}
               {eventHeaderLine && showTime && (
                 <>
@@ -256,6 +272,7 @@ type JobOutputRow = {
 function useJobOutputRows(jobEvents: JobEvent[]) {
   const jobOutputRows: JobOutputRow[] = [];
   for (const jobEvent of jobEvents) {
+    if (!jobEvent.stdout) continue;
     const playUuid = (jobEvent.event_data as { play_uuid?: string }).play_uuid ?? '';
     const taskUuid = (jobEvent.event_data as { task_uuid?: string }).task_uuid ?? '';
     const lines = (jobEvent.stdout ?? '').split('\r\n');
