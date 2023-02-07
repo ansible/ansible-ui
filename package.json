@@ -89,7 +89,7 @@
     "@types/styled-components": "5.1.26",
     "@types/webpack": "5.28.0",
     "@types/webpack-dev-server": "4.7.1",
-    "ansi-to-react": "^6.1.6",
+    "anser": "^2.1.1",
     "babel-loader": "9.1.2",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-styled-components": "2.0.7",

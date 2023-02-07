@@ -8,7 +8,8 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
-import Ansi from 'ansi-to-react';
+import Anser from 'anser';
+
 import { Dispatch, Fragment, SetStateAction, useState } from 'react';
 import { PageLayout } from '../../../../../framework';
 import { ItemsResponse, useGet2 } from '../../../../Data';
@@ -186,7 +187,7 @@ function JobEventComponent(props: {
             </div>
             <div className="stdout-column">
               <span style={{ whiteSpace: 'pre-wrap' }}>
-                <Ansi useClasses>{line}</Ansi>
+                <Ansi input={line} />
               </span>
               {/* &nbsp; <Label isCompact>{jobEvent.uuid}</Label> */}
               {eventHeaderLine && showTime && (
@@ -231,7 +232,7 @@ function Test(props: { jobEvents: JobEvent[] }) {
             <div className="expand-column" />
             <div className="line-column">{row.lineNumber}</div>
             <div className="stdout-column">
-              <Ansi useClasses>{row.stdout}</Ansi>
+              <Ansi input={row.stdout} />
             </div>
           </Fragment>
         ))}
@@ -273,3 +274,25 @@ function useJobOutputRows(jobEvents: JobEvent[]) {
   }
   return jobOutputRows;
 }
+
+function Ansi(props: { input: string }) {
+  const data = Anser.ansiToJson(props.input, ansiOptions);
+  return (
+    <>
+      {data.map((entry, index) => {
+        let className = undefined;
+        if (entry.fg) className = `${entry.fg}-fg`;
+        return (
+          <span key={index} className={className}>
+            {entry.content}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+const ansiOptions = {
+  json: true,
+  remove_empty: true,
+  use_classes: true,
+};
