@@ -14,12 +14,13 @@ export function useSelectInstanceGroups() {
     tableColumns,
     disableQueryString: true,
   });
-  return useSelectDialog<InstanceGroup>({
+  return useSelectDialog<InstanceGroup, true>({
     toolbarFilters,
     tableColumns,
     view,
     confirm: t('Confirm'),
     cancel: t('Cancel'),
     selected: t('Selected'),
+    isMultiple: true,
   });
 }

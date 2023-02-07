@@ -25,7 +25,6 @@ export type PageFormMultiInputProps<
   T,
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-  // TSelection extends FieldValues = FieldValues
 > = {
   name: TFieldName;
   minLength?: number | ValidationRule<number>;
@@ -41,10 +40,9 @@ interface FieldValuesWithArray<T> extends FieldValues {
 }
 
 export function PageFormMultiInput<
-  T extends { id: number },
+  T extends { id: number; name: string },
   TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-  // TSelection extends FieldValues = FieldValues
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, ...formGroupInputProps } = props;
   const { label, name, isRequired, minLength, maxLength, pattern } = props;
@@ -61,18 +59,15 @@ export function PageFormMultiInput<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const canDelete = !isRequired || value?.length > 1;
-        const removeItem = (item: T) => onChange(value.filter((i) => i.id !== item.id));
+        const removeItem = (item: T) => {
+          onChange(value.filter((i) => i.id !== item.id));
+        };
 
         return (
           <PageFormGroup
             {...formGroupInputProps}
             id={props.id ?? name.split('.').join('-')}
-            // onChange={onChange}
             helperTextInvalid={!(validate && isValidating) && error?.message}
-            // isReadOnly={isSubmitting}
-            // minLength={undefined}
-            // maxLength={undefined}
           >
             <InputGroup>
               <ChipHolder isDisabled={isSubmitting} className="pf-c-form-control">
@@ -82,7 +77,10 @@ export function PageFormMultiInput<
                   collapsedText={t(`${value?.length - 5} more`)}
                 >
                   {value?.map((item) => (
-                    <Chip key={item.id} onClick={() => removeItem(item)} isReadOnly={!canDelete} />
+                    <Chip key={item.id} onClick={() => removeItem(item)}>
+                      {/* TODO: add renderChip() callback prop? */}
+                      {item.name}
+                    </Chip>
                   ))}
                 </ChipGroup>
               </ChipHolder>
@@ -94,12 +92,6 @@ export function PageFormMultiInput<
                       setValue(name, items as unknown as PathValue<TFieldValues, TFieldName>, {
                         shouldValidate: true,
                       });
-                      // if (selectValue) {
-                      //   const value = selectValue(item);
-                      //   setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
-                      //     shouldValidate: true,
-                      //   });
-                      // }
                     }, props.selectTitle as string)
                   }
                   aria-label="Options menu"

@@ -23,11 +23,11 @@ export function CreateOrganization() {
   const navigate = useNavigate();
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
+  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values, setError) => {
     try {
       const organization = await requestPost<Organization>(
         '/api/v2/organizations/',
-        editedOrganization
+        values.organization
       );
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
