@@ -29,6 +29,15 @@ export function CreateOrganization() {
         '/api/v2/organizations/',
         values.organization
       );
+      const igRequests = [];
+      for (const ig of values.instanceGroups || []) {
+        igRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+          })
+        );
+      }
+      await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
@@ -79,6 +88,25 @@ export function EditOrganization() {
         `/api/v2/organizations/${id}/`,
         values.organization
       );
+      const disassociateRequests = [];
+      for (const ig of instanceGroups || []) {
+        disassociateRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+            disassociate: true,
+          })
+        );
+      }
+      await Promise.all(disassociateRequests);
+      const igRequests = [];
+      for (const ig of values.instanceGroups || []) {
+        igRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+          })
+        );
+      }
+      await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
