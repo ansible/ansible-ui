@@ -114,6 +114,11 @@ module.exports = function (_env, argv) {
           target: 'https://localhost:3001',
           secure: false,
         },
+        '/websocket/': {
+          target: 'https://localhost:3001',
+          secure: false,
+          ws: true,
+        },
       },
       devMiddleware: {
         writeToDisk: true,
