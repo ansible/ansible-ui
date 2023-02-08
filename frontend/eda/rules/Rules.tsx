@@ -7,12 +7,13 @@ import { EdaRule } from '../interfaces/EdaRule';
 import { useRuleColumns } from './hooks/useRuleColumns';
 import { useRuleFilters } from './hooks/useRuleFilters';
 import { RouteE } from '../../Routes';
+import { API_PREFIX } from '../constants';
 
 export function Rules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRuleFilters();
-  const { data: rules } = useGet<EdaRule[]>('/api/rules');
+  const { data: rules } = useGet<EdaRule[]>(`${API_PREFIX}/rules`);
   const tableColumns = useRuleColumns();
   const view = useInMemoryView<EdaRule>({
     items: rules,

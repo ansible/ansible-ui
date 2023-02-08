@@ -5,6 +5,7 @@ import { requestDelete } from '../../../../Data';
 import { idKeyFn } from '../../../../hub/useHubView';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useUserColumns } from './useUserColumns';
+import { API_PREFIX } from '../../../constants';
 
 export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (User: EdaUser) => requestDelete(`/api/Users/${User.id}`),
+        actionFn: (User: EdaUser) => requestDelete(`${API_PREFIX}/Users/${User.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

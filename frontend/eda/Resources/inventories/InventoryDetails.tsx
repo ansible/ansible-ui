@@ -26,12 +26,13 @@ import { useInventoryRowActions } from './hooks/useInventoryRowActions';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import React from 'react';
 import { PageDetailsSection } from '../../common/PageDetailSection';
+import { API_PREFIX } from '../../constants';
 
 export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: inventory, mutate: refresh } = useGet<EdaInventory>(
-    `/api/inventory/${params.id ?? ''}`
+    `${API_PREFIX}/inventory/${params.id ?? ''}`
   );
   const [copied, setCopied] = React.useState(false);
 

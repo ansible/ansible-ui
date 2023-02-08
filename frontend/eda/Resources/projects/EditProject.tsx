@@ -9,13 +9,14 @@ import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
+import { API_PREFIX } from '../../constants';
 
 export function EditProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProject>(`/api/projects/${id.toString()}`);
+  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${id.toString()}`);
 
   const ProjectSchemaType = useMemo(
     () =>
@@ -60,11 +61,11 @@ export function EditProject() {
   const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
       if (Number.isInteger(id)) {
-        await requestPatch<EdaProject>(`/api/projects/${id}`, project);
+        await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}`, project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newProject = await requestPost<EdaProject>('/api/projects', project);
+        const newProject = await requestPost<EdaProject>(`${API_PREFIX}/projects`, project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }

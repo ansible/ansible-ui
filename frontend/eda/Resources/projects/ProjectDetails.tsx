@@ -15,11 +15,14 @@ import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useProjectActions } from './hooks/useProjectActions';
+import { API_PREFIX } from '../../constants';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: project, mutate: refresh } = useGet<EdaProject>(`/api/projects/${params.id ?? ''}`);
+  const { data: project, mutate: refresh } = useGet<EdaProject>(
+    `${API_PREFIX}/projects/${params.id ?? ''}`
+  );
   const itemActions = useProjectActions(refresh);
 
   const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {

@@ -9,12 +9,13 @@ import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulebookColumns } from './hooks/useRulebookColumns';
 import { useRulebookFilters } from './hooks/useRulebookFilters';
+import { API_PREFIX } from '../constants';
 
 export function Rulebooks() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookFilters();
-  const { data: rulebooks, mutate: refresh } = useGet<EdaRulebook[]>('/api/rulebooks');
+  const { data: rulebooks, mutate: refresh } = useGet<EdaRulebook[]>(`${API_PREFIX}/rulebooks`);
   const tableColumns = useRulebookColumns();
   const view = useInMemoryView<EdaRulebook>({
     items: rulebooks,

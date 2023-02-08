@@ -11,12 +11,13 @@ import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentA
 import { useExecutionEnvironmentColumns } from './hooks/useExecutionEnvironmentColumns';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
+import { API_PREFIX } from '../constants';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useExecutionEnvironmentFilters();
-  const response = useGet<EdaExecutionEnvironment[]>('/api/execution-environments');
+  const response = useGet<EdaExecutionEnvironment[]>(`${API_PREFIX}/execution-environments`);
   const { data: executionEnvironments, mutate: refresh } = response;
   const tableColumns = useExecutionEnvironmentColumns();
   const view = useInMemoryView<EdaExecutionEnvironment>({

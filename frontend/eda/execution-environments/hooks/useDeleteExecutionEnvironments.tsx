@@ -5,6 +5,7 @@ import { requestDelete } from '../../../Data';
 import { idKeyFn } from '../../../hub/useHubView';
 import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentColumns } from './useExecutionEnvironmentColumns';
+import { API_PREFIX } from '../../constants';
 
 export function useDeleteExecutionEnvironments(
   onComplete: (executionEnvironments: EdaExecutionEnvironment[]) => void
@@ -35,7 +36,7 @@ export function useDeleteExecutionEnvironments(
         actionColumns,
         onComplete,
         actionFn: (executionEnvironment: EdaExecutionEnvironment) =>
-          requestDelete(`/api/executionEnvironments/${executionEnvironment.id}`),
+          requestDelete(`${API_PREFIX}/executionEnvironments/${executionEnvironment.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

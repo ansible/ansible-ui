@@ -23,11 +23,12 @@ import { EdaRule } from '../interfaces/EdaRule';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import React from 'react';
 import { PageDetailsSection } from '../common/PageDetailsSection';
+import { API_PREFIX } from '../constants';
 
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(`/api/rules/${params.id ?? ''}`);
+  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}`);
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

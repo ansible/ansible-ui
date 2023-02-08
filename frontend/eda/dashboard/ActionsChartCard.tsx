@@ -8,12 +8,13 @@ import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../common/useItem';
 import { EdaAction } from '../interfaces/EdaAction';
+import { API_PREFIX } from '../constants';
 
 interface TickType {
   x: string;
   y: number;
 }
-const actionsRulesEndpoint = '/api/audit/rules_fired';
+const actionsRulesEndpoint = `${API_PREFIX}/action/rules_fired`;
 
 const ActionsChart = () => {
   const [width, _setWidth] = useState(window.innerWidth);
