@@ -10,12 +10,13 @@ import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
 import { useUserFilters } from './hooks/useUserFilters';
 import { useUsersActions } from './hooks/useUsersActions';
+import { API_PREFIX } from '../../constants';
 
 export function Users() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useUserFilters();
-  const { data: users, mutate: refresh } = useGet<EdaUser[]>('/api/users');
+  const { data: users, mutate: refresh } = useGet<EdaUser[]>(`${API_PREFIX}/users`);
   const tableColumns = useUserColumns();
   const view = useInMemoryView<EdaUser>({
     items: users,

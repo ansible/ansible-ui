@@ -22,7 +22,7 @@ import { CSSProperties, Fragment, ReactNode } from 'react';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
 import { PageAlertsArrayContext, PageAlertsContext } from './PageAlerts';
-import { useSettings } from './Settings';
+import './PageFramework.css';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -77,7 +77,6 @@ export interface PageHeaderProps {
   controls?: ReactNode;
   headerActions?: ReactNode;
   t?: (t: string) => string;
-  disableBorderBottom?: boolean;
 }
 
 /**
@@ -107,7 +106,6 @@ export function PageHeader(props: PageHeaderProps) {
   const lg = useBreakpoint('lg');
   const xl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
-  const settings = useSettings();
   let { t } = props;
   t = t ? t : (t: string) => t;
   return (
@@ -115,20 +113,8 @@ export function PageHeader(props: PageHeaderProps) {
       {navigation && (
         <PageSection
           variant={PageSectionVariants.light}
-          style={{
-            paddingLeft: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            borderTop:
-              settings.theme !== 'light' && settings.borders
-                ? 'thin solid var(--pf-global--BorderColor--100)'
-                : undefined,
-            borderBottom:
-              !props.disableBorderBottom && settings.borders
-                ? 'thin solid var(--pf-global--BorderColor--100)'
-                : undefined,
-            backgroundColor: 'var(--pf-global--BackgroundColor--100)',
-          }}
+          className="border-top dark-1"
+          style={{ paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}
         >
           <Flex
             direction={{ default: 'row' }}
@@ -160,19 +146,10 @@ export function PageHeader(props: PageHeaderProps) {
         <>
           <PageSection
             variant={PageSectionVariants.light}
+            className="border-top border-bottom dark-3"
             style={{
               paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
               paddingBottom: xl ? 16 : 12,
-              borderTop:
-                !navigation && settings.theme !== 'light' && settings.borders
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-              borderBottom:
-                !props.disableBorderBottom && settings.borders
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-              backgroundColor:
-                settings.theme !== 'light' ? 'var(--pf-global--BackgroundColor--300)' : undefined,
             }}
           >
             <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>

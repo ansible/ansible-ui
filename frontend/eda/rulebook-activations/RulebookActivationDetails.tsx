@@ -23,12 +23,13 @@ import { useActivationActionFilters } from './hooks/useActivationActionFilters';
 import { useActivationActionsActions } from './hooks/useActivationActionsActions';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
+import { API_PREFIX } from '../constants';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
-    `/api/activations/${params.id ?? ''}`
+    `${API_PREFIX}/activations/${params.id ?? ''}`
   );
   const itemActions = useRulebookActivationActions(refresh);
 
@@ -93,7 +94,7 @@ export function RulebookActivationDetails() {
     const tableColumns = useActivationActionColumns();
 
     function useGetActivationActions(id: string) {
-      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}`);
     }
 
     const { data: actions } = useGetActivationActions('8' || '');
@@ -128,7 +129,7 @@ export function RulebookActivationDetails() {
     const toolbarFilters = useActivationActionFilters();
 
     function useGetActivationHistory(id: string) {
-      return useGet<EdaJob[]>(`/api/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}`);
     }
     const { data: actions } = useGetActivationHistory(params?.id || '');
     const tableColumns = useActivationHistoryColumns();

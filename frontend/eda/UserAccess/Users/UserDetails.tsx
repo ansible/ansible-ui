@@ -8,11 +8,12 @@ import { RouteE } from '../../../Routes';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
+import { API_PREFIX } from '../../constants';
 
 export function UserDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: User, mutate: refresh } = useGet<EdaUser>(`/api/Users/${params.id ?? ''}`);
+  const { data: User, mutate: refresh } = useGet<EdaUser>(`${API_PREFIX}/Users/${params.id ?? ''}`);
   const tableColumns = useUserColumns();
   const itemActions = useUserActions(refresh);
   return (

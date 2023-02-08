@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { PageNavigateCallbackContextProvider } from './components/usePageNavigate';
 import { PageAlertToasterProvider } from './PageAlertToaster';
 import { PageDialogProvider } from './PageDialog';
+import './PageFramework.css';
 import { SettingsProvider } from './Settings';
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
 

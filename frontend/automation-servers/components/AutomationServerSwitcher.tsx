@@ -8,25 +8,20 @@ import {
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSettings } from '../../../framework/Settings';
 import { useLoginModal } from '../../common/LoginModal';
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
 import { AutomationServerType } from '../interfaces/AutomationServerType';
 
 export function AutomationServerSwitcher() {
   const { t } = useTranslation();
-  const settings = useSettings();
   const { automationServer, automationServers } = useAutomationServers();
   const [open, setOpen] = useState(false);
   const openLoginModal = useLoginModal();
   return (
     <PageSection
       variant="dark"
-      style={{
-        padding: 12,
-        backgroundColor:
-          settings.theme === 'light' ? undefined : 'var(--pf-global--BackgroundColor--300)',
-      }}
+      className="dark-0"
+      style={{ padding: 12 }}
       padding={{ default: 'padding' }}
     >
       <ContextSelector

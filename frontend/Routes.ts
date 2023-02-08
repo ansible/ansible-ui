@@ -8,6 +8,7 @@ export enum RouteE {
   // Views
   Dashboard = '/controller/dashboard',
   Jobs = '/controller/jobs',
+  JobOutput = '/controller/jobs/:job_type/output/:id',
   JobDetails = '/controller/jobs/details/:id',
   Schedules = '/controller/schedules',
   ActivityStream = '/controller/activity-stream/:type',
@@ -150,8 +151,6 @@ export enum RouteE {
 
   EdaActions = '/eda/actions',
   EdaActionDetails = '/eda/actions/details/:id',
-  CreateEdaAction = '/eda/actions/create',
-  EditEdaAction = '/eda/actions/edit/:id',
 
   EdaRulebookActivations = '/eda/rulebook-activations',
   EdaRulebookActivationDetails = '/eda/rulebook-activations/details/:id',

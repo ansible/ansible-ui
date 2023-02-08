@@ -4,6 +4,7 @@ import { requestDelete } from '../../../../Data';
 import { idKeyFn } from '../../../../hub/useHubView';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './useInventoryColumns';
+import { API_PREFIX } from '../../../constants';
 
 export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) => void) {
   const { t } = useTranslation();
@@ -19,7 +20,8 @@ export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) =
       actionButtonText: t('Delete inventories', { count: items.length }),
       items: items.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: idKeyFn,
-      actionFn: (inventory: EdaInventory) => requestDelete(`/api/inventory/${inventory.id}`),
+      actionFn: (inventory: EdaInventory) =>
+        requestDelete(`${API_PREFIX}/inventory/${inventory.id}`),
       confirmationColumns,
       actionColumns,
       onComplete,

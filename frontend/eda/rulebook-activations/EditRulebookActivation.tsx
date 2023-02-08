@@ -17,14 +17,15 @@ import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaInventory } from '../interfaces/EdaInventory';
 import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitch';
+import { API_PREFIX } from '../constants';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: rulebooks } = useGet<EdaRulebook[]>('/api/rulebooks');
-  const { data: projects } = useGet<EdaProject[]>('/api/projects');
-  const { data: inventories } = useGet<EdaInventory[]>('/api/inventories');
-  const { data: extra_vars } = useGet<EdaInventory[]>('/api/extra_vars');
+  const { data: rulebooks } = useGet<EdaRulebook[]>(`${API_PREFIX}/rulebooks`);
+  const { data: projects } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
+  const { data: inventories } = useGet<EdaInventory[]>(`${API_PREFIX}/inventories`);
+  const { data: extra_vars } = useGet<EdaInventory[]>(`${API_PREFIX}/extra_vars`);
 
   const { cache } = useSWRConfig();
 
@@ -34,7 +35,7 @@ export function EditRulebookActivation() {
   ) => {
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
-        '/api/activations',
+        `${API_PREFIX}/activations`,
         rulebookActivation
       );
       (cache as unknown as { clear: () => void }).clear?.();
