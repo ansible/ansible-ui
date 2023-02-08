@@ -8,12 +8,13 @@ import { RouteE } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentColumns } from './hooks/useExecutionEnvironmentColumns';
+import { API_PREFIX } from '../constants';
 
 export function ExecutionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: executionEnvironment, mutate: refresh } = useGet<EdaExecutionEnvironment>(
-    `/api/executionEnvironments/${params.id ?? ''}`
+    `${API_PREFIX}/executionEnvironments/${params.id ?? ''}`
   );
   const tableColumns = useExecutionEnvironmentColumns();
   const itemActions = useExecutionEnvironmentActions(refresh);

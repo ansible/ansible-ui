@@ -10,12 +10,13 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
+import { API_PREFIX } from '../../constants';
 
 export function Projects() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useProjectFilters();
-  const { data: projects, mutate: refresh } = useGet<EdaProject[]>('/api/projects');
+  const { data: projects, mutate: refresh } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
   const tableColumns = useProjectColumns();
   const view = useInMemoryView<EdaProject>({
     items: projects,
