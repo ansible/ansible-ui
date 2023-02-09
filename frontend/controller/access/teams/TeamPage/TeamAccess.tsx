@@ -18,11 +18,11 @@ import { Team } from '../../../interfaces/Team';
 import { AccessRole, User } from '../../../interfaces/User';
 import { useControllerView } from '../../../useControllerView';
 import { useDeleteRoleConfirmationDialog } from '../../common/DeleteRoleConfirmation';
-import { useRemoveUsersFromTeams } from '../../users/hooks/useRemoveUsersFromTeams';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useUsersColumns } from '../../users/hooks/useUsersColumns';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 import { useDeleteAccessRole } from '../hooks/useDeleteAccessRole';
+import { useRemoveUsersFromTeam } from '../hooks/useRemoveUsersFromTeam';
 
 export function TeamAccess(props: { team: Team }) {
   const { team } = props;
@@ -135,7 +135,7 @@ export function TeamAccess(props: { team: Team }) {
   }, [view.pageItems]);
 
   const selectUsersAddTeams = useSelectUsersAddTeams(() => void view.refresh());
-  const removeUsersFromTeams = useRemoveUsersFromTeams();
+  const removeUsersFromTeam = useRemoveUsersFromTeam();
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -151,10 +151,10 @@ export function TeamAccess(props: { team: Team }) {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove users'),
-        onClick: (users) => removeUsersFromTeams(users, [team], view.unselectItemsAndRefresh),
+        onClick: (users) => removeUsersFromTeam(users, team, view.unselectItemsAndRefresh),
       },
     ],
-    [t, selectUsersAddTeams, team, removeUsersFromTeams, view.unselectItemsAndRefresh]
+    [t, selectUsersAddTeams, team, removeUsersFromTeam, view.unselectItemsAndRefresh]
   );
 
   const rowActions = useMemo<IPageAction<User>[]>(
@@ -163,7 +163,7 @@ export function TeamAccess(props: { team: Team }) {
         type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
-        onClick: (user) => removeUsersFromTeams([user], [team], view.unselectItemsAndRefresh),
+        onClick: (user) => removeUsersFromTeam([user], team, view.unselectItemsAndRefresh),
         isDisabled: (user: User) => {
           if (user.is_superuser) {
             return t('System administrators have unrestricted access to all resources.');
@@ -175,7 +175,7 @@ export function TeamAccess(props: { team: Team }) {
         },
       },
     ],
-    [removeUsersFromTeams, t, team, view.unselectItemsAndRefresh]
+    [removeUsersFromTeam, t, team, view.unselectItemsAndRefresh]
   );
 
   const history = useNavigate();
