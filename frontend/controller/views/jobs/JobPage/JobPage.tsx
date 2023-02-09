@@ -6,7 +6,7 @@ import { useGet2 } from '../../../../Data';
 import { RouteE } from '../../../../Routes';
 import { Job } from '../../../interfaces/Job';
 import { JobDetails } from './JobDetails';
-import { JobOutput } from './JobOutput';
+import { JobOutput } from './JobOutput/JobOutput';
 
 export function JobPage() {
   const { t } = useTranslation();
