@@ -22,23 +22,13 @@ import { useRemoveUsersFromTeams } from '../../users/hooks/useRemoveUsersFromTea
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useUsersColumns } from '../../users/hooks/useUsersColumns';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
+import { useDeleteAccessRole } from '../hooks/useDeleteAccessRole';
 
 export function TeamAccess(props: { team: Team }) {
   const { team } = props;
   const { t } = useTranslation();
 
   const toolbarFilters = useUsersFilters();
-
-  const openDeleteRoleConfirmationDialog = useDeleteRoleConfirmationDialog();
-  const deleteRole = (role: AccessRole, user: User) => {
-    openDeleteRoleConfirmationDialog({
-      role,
-      username: user.username,
-      onConfirm: () => {
-        console.log('Confirm deletion');
-      },
-    });
-  };
 
   const tableColumns = useUsersColumns();
   tableColumns.splice(1, 1);
@@ -104,6 +94,16 @@ export function TeamAccess(props: { team: Team }) {
     tableColumns,
     disableQueryString: true,
   });
+
+  const openDeleteRoleConfirmationDialog = useDeleteRoleConfirmationDialog();
+  const deleteAccessRole = useDeleteAccessRole(team, () => void view.refresh());
+  const deleteRole = (role: AccessRole, user: User) => {
+    openDeleteRoleConfirmationDialog({
+      role,
+      user: user,
+      onConfirm: deleteAccessRole,
+    });
+  };
 
   type Access = {
     descendant_roles: string[];

@@ -2,24 +2,24 @@ import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
-import { AccessRole } from '../../interfaces/User';
+import { AccessRole, User } from '../../interfaces/User';
 
 export interface DeleteRoleConfirmationProps {
   /** Title for the modal */
   title?: string;
   /** Role to be deleted */
   role: AccessRole;
-  /** Username of the user initiating the deletion request */
-  username: string;
+  /** User initiating the deletion request */
+  user: User;
   /** Callback called when the user confirms. */
-  onConfirm: () => void;
+  onConfirm: (role: AccessRole, user: User) => Promise<void>;
 
   /** Callback called when the dialog closes. */
   onClose?: () => void;
 }
 
 export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
-  const { title, role, username, onConfirm, onClose } = props;
+  const { title, role, user, onConfirm, onClose } = props;
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`Team`) : t(`User`));
@@ -42,7 +42,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
           variant="danger"
           onClick={() => {
             onCloseClicked();
-            onConfirm();
+            void onConfirm(role, user);
           }}
           aria-label={t`Confirm delete`}
         >
@@ -70,7 +70,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
           )}
         </>
       ) : (
-        <>{t(`Are you sure you want to remove ${role.name} access from ${username}?`)}</>
+        <>{t(`Are you sure you want to remove ${role.name} access from ${user.username}?`)}</>
       )}
     </Modal>
   );
