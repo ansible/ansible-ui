@@ -773,5 +773,7 @@
     "_one": "Yes, I confirm that I want to remove this user.",
     "_other": "Yes, I confirm that I want to remove these {{count}} users."
   },
-  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access."
+  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access."
 }

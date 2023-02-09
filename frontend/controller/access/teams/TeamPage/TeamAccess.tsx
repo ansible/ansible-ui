@@ -12,7 +12,13 @@ import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  IPageActionButton,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
+import { useActiveUser } from '../../../../common/useActiveUser';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { AccessRole, User } from '../../../interfaces/User';
@@ -27,6 +33,11 @@ import { useRemoveUsersFromTeam } from '../hooks/useRemoveUsersFromTeam';
 export function TeamAccess(props: { team: Team }) {
   const { team } = props;
   const { t } = useTranslation();
+  const activeUser = useActiveUser();
+  const canAddAndRemoveUsers: boolean = useMemo(
+    () => activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit,
+    [activeUser?.is_superuser, team?.summary_fields?.user_capabilities?.edit]
+  );
 
   const toolbarFilters = useUsersFilters();
 
@@ -144,17 +155,34 @@ export function TeamAccess(props: { team: Team }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
+        isDisabled: canAddAndRemoveUsers
+          ? undefined
+          : t(
+              'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
+            ),
         onClick: () => selectUsersAddTeams([team]),
-      },
+      } as IPageActionButton,
       {
         type: PageActionType.bulk,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove users'),
+        isDisabled: canAddAndRemoveUsers
+          ? undefined
+          : t(
+              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+            ),
         onClick: (users) => removeUsersFromTeam(users, team, view.unselectItemsAndRefresh),
       },
     ],
-    [t, selectUsersAddTeams, team, removeUsersFromTeam, view.unselectItemsAndRefresh]
+    [
+      t,
+      canAddAndRemoveUsers,
+      selectUsersAddTeams,
+      team,
+      removeUsersFromTeam,
+      view.unselectItemsAndRefresh,
+    ]
   );
 
   const rowActions = useMemo<IPageAction<User>[]>(
@@ -165,6 +193,14 @@ export function TeamAccess(props: { team: Team }) {
         label: t('Remove user'),
         onClick: (user) => removeUsersFromTeam([user], team, view.unselectItemsAndRefresh),
         isDisabled: (user: User) => {
+          if (
+            !canAddAndRemoveUsers ||
+            user.user_roles?.some((role) => !role.user_capabilities.unattach)
+          ) {
+            return t(
+              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+            );
+          }
           if (user.is_superuser) {
             return t('System administrators have unrestricted access to all resources.');
           }
@@ -175,7 +211,7 @@ export function TeamAccess(props: { team: Team }) {
         },
       },
     ],
-    [removeUsersFromTeam, t, team, view.unselectItemsAndRefresh]
+    [canAddAndRemoveUsers, removeUsersFromTeam, t, team, view.unselectItemsAndRefresh]
   );
 
   const history = useNavigate();
