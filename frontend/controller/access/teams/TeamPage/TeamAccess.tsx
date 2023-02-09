@@ -90,6 +90,9 @@ export function TeamAccess(props: { team: Team }) {
 
   const view = useControllerView<User>({
     url: `/api/v2/teams/${team.id}/access_list/`,
+    queryParams: {
+      order_by: 'first_name',
+    },
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
