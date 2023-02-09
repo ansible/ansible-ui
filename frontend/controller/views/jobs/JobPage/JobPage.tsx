@@ -19,11 +19,11 @@ export function JobPage() {
         breadcrumbs={[{ label: t('Jobs'), to: RouteE.Jobs }, { label: job?.name }]}
       />
       <PageTabs loading={!job}>
-        <PageTab label={t('Details')}>
-          <JobDetails job={job!} />
-        </PageTab>
         <PageTab label={t('Output')}>
           <JobOutput job={job!} />
+        </PageTab>
+        <PageTab label={t('Details')}>
+          <JobDetails job={job!} />
         </PageTab>
       </PageTabs>
     </PageLayout>

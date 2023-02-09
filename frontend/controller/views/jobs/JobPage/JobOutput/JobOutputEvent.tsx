@@ -1,4 +1,4 @@
-import { Label } from '@patternfly/react-core';
+import { Label, Split, SplitItem } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction } from 'react';
 import { JobEvent } from '../../../../interfaces/generated-from-swagger/api';
@@ -6,7 +6,7 @@ import { Ansi } from './Ansi';
 import { ICollapsed } from './JobOutput';
 import './JobOutput.css';
 
-export function JobEventComponent(props: {
+export function JobOutputEvent(props: {
   jobEvent: JobEvent;
   collapsed: ICollapsed;
   setCollapsed: Dispatch<SetStateAction<ICollapsed>>;
@@ -74,44 +74,44 @@ export function JobEventComponent(props: {
         if (isCollapsed && !eventHeaderLine && foundHeaderLine) {
           return <></>;
         }
+
         return (
-          <>
-            <div className="expand-column">
-              {eventHeaderLine && useEventHeader && (
-                <button style={{ backgroundColor: 'unset', border: 0 }} onClick={collapseEvent}>
-                  <AngleRightIcon
-                    style={{
-                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                      transition: 'transform',
-                      // marginRight: playUuid === jobEvent.uuid ? 32 : 0,
-                    }}
-                  />
-                </button>
-              )}
-            </div>
-            <div className="line-column">
-              {/* {playUuid} &nbsp; */}
-              {/* {taskUuid} &nbsp; */}
-              {/* {jobEvent.play} &nbsp; */}
-              {(lineNumber + index + 1).toString()}
-              {/* &nbsp; {jobEvent.uuid} */}
-              {/* &nbsp; {jobEvent.parent_uuid} */}
-            </div>
-            <div className="stdout-column">
-              {/* <span style={{ whiteSpace: 'pre-wrap' }}> */}
+          <tr key={lineNumber + index + 1}>
+            <td className="expand-column">
+              <div className="expand-div">
+                <Split hasGutter>
+                  <SplitItem isFilled>
+                    {eventHeaderLine && useEventHeader && (
+                      <button
+                        style={{ backgroundColor: 'unset', border: 0 }}
+                        onClick={collapseEvent}
+                      >
+                        <AngleRightIcon
+                          style={{
+                            transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                            transition: 'transform',
+                          }}
+                        />
+                      </button>
+                    )}
+                  </SplitItem>
+                  <SplitItem>{(lineNumber + index + 1).toString()}</SplitItem>
+                </Split>
+              </div>
+            </td>
+            <td className="stdout-column">
               <Ansi input={line} />
-              {/* </span> */}
-              {/* &nbsp; <Label isCompact>{jobEvent.uuid}</Label> */}
               {eventHeaderLine && showTime && (
                 <>
-                  &nbsp; <Label isCompact>{new Date(jobEvent.created).toLocaleTimeString()}</Label>
+                  &nbsp;{' '}
+                  <Label isCompact>{new Date(jobEvent.created ?? '').toLocaleTimeString()}</Label>
                 </>
               )}
-            </div>
-          </>
+            </td>
+          </tr>
         );
       })}
-      {(isPlayCollapsed || isTaskCollapsed) && (
+      {/* {(isPlayCollapsed || isTaskCollapsed) && (
         <>
           <div className="expand-column" />
           <div className="line-column" />
@@ -121,7 +121,7 @@ export function JobEventComponent(props: {
             </Label>
           </div>
         </>
-      )}
+      )} */}
     </>
   );
 }
