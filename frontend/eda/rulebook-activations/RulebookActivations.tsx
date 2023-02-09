@@ -9,13 +9,15 @@ import { useRulebookActivationActions } from './hooks/useRulebookActivationActio
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
+import { API_PREFIX } from '../constants';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookActivationFilters();
-  const { data: rulebookActivations, mutate: refresh } =
-    useGet<EdaRulebookActivation[]>('/api/activations');
+  const { data: rulebookActivations, mutate: refresh } = useGet<EdaRulebookActivation[]>(
+    `${API_PREFIX}/activations`
+  );
   const tableColumns = useRulebookActivationColumns();
   const view = useInMemoryView<EdaRulebookActivation>({
     items: rulebookActivations,

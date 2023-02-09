@@ -4,6 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../Data';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
+import { API_PREFIX } from '../../constants';
 
 export function useDeleteRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
@@ -30,7 +31,7 @@ export function useDeleteRulebookActivations(
         actionColumns,
         onComplete,
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          requestDelete(`/api/activations/${rulebookActivation.id}`),
+          requestDelete(`${API_PREFIX}/activations/${rulebookActivation.id}`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

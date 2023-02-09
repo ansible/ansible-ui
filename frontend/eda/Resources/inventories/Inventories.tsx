@@ -10,12 +10,15 @@ import { useInventoriesColumns } from './hooks/useInventoryColumns';
 import { useInventoriesFilters } from './hooks/useInventoryFilters';
 import { useInventoryRowActions } from './hooks/useInventoryRowActions';
 import { useInventoriesToolbarActions } from './hooks/useInventoryToolbarActions';
+import { API_PREFIX } from '../../constants';
 
 export function Inventories() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useInventoriesFilters();
-  const { data: inventories, mutate: refresh } = useGet<EdaInventory[]>('/api/inventories');
+  const { data: inventories, mutate: refresh } = useGet<EdaInventory[]>(
+    `${API_PREFIX}/inventories`
+  );
   const tableColumns = useInventoriesColumns();
   const view = useInMemoryView<EdaInventory>({
     items: inventories,
