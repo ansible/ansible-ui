@@ -16,6 +16,7 @@ import { PageFormInstanceGroupSelect } from '../../administration/instance-group
 interface OrganizationFields extends FieldValues {
   organization: Organization;
   instanceGroups?: InstanceGroup[];
+  id: number;
 }
 
 export function CreateOrganization() {
@@ -153,7 +154,8 @@ function OrganizationInputs() {
         placeholder={t('Enter description')}
       />
       <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
-      <PageFormExecutionEnvironmentSelect
+      <PageFormExecutionEnvironmentSelect<OrganizationFields>
+        organizationId="organization.id"
         name="organization.summary_fields.default_environment.name"
         label={t('Default execution environment')}
         executionEnvironmentPath="organization.summary_fields.default_environment"

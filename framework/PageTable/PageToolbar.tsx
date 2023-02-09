@@ -447,7 +447,6 @@ function ToolbarTextFilter(props: {
       <TextInputGroup style={{ minWidth: 220 }}>
         <TextInputGroupMain
           id={props.id}
-          // ref={ref}
           value={value}
           onChange={(e, v) => {
             if (typeof e === 'string') setValue(e);
@@ -457,7 +456,6 @@ function ToolbarTextFilter(props: {
             if (value && event.key === 'Enter') {
               props.addFilter(value);
               setValue('');
-              // ref.current?.focus() // Does not work because PF does not expose ref
             }
           }}
           placeholder={props.placeholder}
@@ -469,7 +467,6 @@ function ToolbarTextFilter(props: {
               aria-label="clear filter"
               onClick={() => setValue('')}
               style={{ opacity: value ? undefined : 0 }}
-              // tabIndex={value ? undefined : -1}
               tabIndex={-1}
             >
               <TimesIcon />

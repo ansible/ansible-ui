@@ -1,29 +1,27 @@
-import { FieldValues, Path } from 'react-hook-form';
+import { ReactNode } from 'react';
+import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useSelectInstanceGroups } from '../hooks/useSelectInstanceGroups';
 
-interface PageFormInstanceGroupSelectProps<TFieldValues extends FieldValues = FieldValues> {
-  name: Path<TFieldValues>;
-  label?: string;
-  isRequired?: boolean;
-  instanceGroupsPath?: Path<TFieldValues>;
-  instanceGroupsIdPath?: Path<TFieldValues>;
-}
-
-// TODO: add drag and drop sorting
-export function PageFormInstanceGroupSelect<TFieldValues extends FieldValues = FieldValues>(
-  props: PageFormInstanceGroupSelectProps<TFieldValues>
-) {
+export function PageFormInstanceGroupSelect<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: { name: TFieldName; additionalControls?: ReactNode; isRequired?: boolean }) {
   const { t } = useTranslation();
-  const selectInstanceGroups = useSelectInstanceGroups();
+  const selectInstanceGroup = useSelectInstanceGroups(true);
+
   return (
-    <PageFormMultiInput<InstanceGroup, TFieldValues>
+    <PageFormMultiInput<InstanceGroup, TFieldValues, TFieldName>
+      {...props}
       name={props.name}
-      label={props.label || t('Instance groups')}
-      selectTitle={t('Select an instance groups')}
-      selectOpen={selectInstanceGroups}
+      placeholder={t('Add instance groups')}
+      labelHelpTitle={t('Instance groups')}
+      labelHelp={t('Select the Instance Groups for this Job Template to run on.')}
+      label={t('Instance group')}
+      selectTitle={t('Select an instance group')}
+      selectOpen={selectInstanceGroup}
       validate={async (instanceGroups: InstanceGroup[]) => {
         if (props.isRequired && instanceGroups.length === 0) {
           return t('Instance group is required.');

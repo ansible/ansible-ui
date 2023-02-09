@@ -4,7 +4,7 @@ import { SummaryFieldsByUser } from './summary-fields/summary-fields';
 export interface WorkflowJobTemplate
   extends Omit<SwaggerWorkflowJobTemplate, 'id' | 'name' | 'summary_fields' | 'job_type'> {
   id: number;
-  job_type: 'workflow_job_template';
+  job_type: 'workflow_job_template' | string;
   name: string;
   inventory?: number;
   created: string;

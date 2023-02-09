@@ -119,16 +119,18 @@ export function EditRulebookActivation() {
           id={'working_directory'}
           placeholder={t('Insert working directory here')}
         />
-        <PageFormSwitch
-          label={t('Rulebook activation enabled?')}
-          labelOn={'Enabled'}
-          labelOff={'Disabled'}
+        <PageFormSwitch<EdaRulebook>
+          id="rulebook-activation"
+          formLabel={t('Rulebook activation enabled?')}
+          label={t('Enabled')}
+          labelOff={t('Disabled')}
           name="is_enabled"
         />
-        <PageFormSwitch
-          label={t('Throttle')}
-          labelOn={'Enabled'}
-          labelOff={'Disabled'}
+        <PageFormSwitch<EdaRulebook>
+          id="rulebook-throttle"
+          formLabel={t('Throttle')}
+          label={t('Enabled')}
+          labelOff={t('Disabled')}
           name="throttle"
         />
         <PageFormSelectOption
