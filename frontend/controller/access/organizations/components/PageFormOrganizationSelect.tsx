@@ -30,8 +30,11 @@ export function PageFormOrganizationSelect<
           if (props.organizationIdPath)
             setValue(props.organizationIdPath, itemsResponse.results[0].id);
         } catch (err) {
-          if (err instanceof Error) return err.message;
-          else return 'Unknown error';
+          if (err instanceof Error)
+            return t('Error validating organization: {{errMessage}}. Please reload the page.', {
+              errMessage: err.message,
+            });
+          else return t('Error validating organization. Please reload the page.');
         }
         return undefined;
       }}
