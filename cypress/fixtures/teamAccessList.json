@@ -1,0 +1,304 @@
+{
+  "count": 6,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "user",
+      "url": "/api/v2/users/1/",
+      "related": {
+        "teams": "/api/v2/users/1/teams/",
+        "organizations": "/api/v2/users/1/organizations/",
+        "admin_of_organizations": "/api/v2/users/1/admin_of_organizations/",
+        "projects": "/api/v2/users/1/projects/",
+        "credentials": "/api/v2/users/1/credentials/",
+        "roles": "/api/v2/users/1/roles/",
+        "activity_stream": "/api/v2/users/1/activity_stream/",
+        "access_list": "/api/v2/users/1/access_list/",
+        "tokens": "/api/v2/users/1/tokens/",
+        "authorized_tokens": "/api/v2/users/1/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/1/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [],
+        "indirect_access": [
+          {
+            "role": {
+              "id": 1,
+              "name": "System Administrator",
+              "description": "Can manage all aspects of the system",
+              "user_capabilities": { "unattach": false }
+            },
+            "descendant_roles": ["admin_role", "member_role", "read_role"]
+          }
+        ]
+      },
+      "created": "2022-10-03T20:40:37.335422Z",
+      "modified": null,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "admin@localhost",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null
+    },
+    {
+      "id": 3,
+      "type": "user",
+      "url": "/api/v2/users/3/",
+      "related": {
+        "teams": "/api/v2/users/3/teams/",
+        "organizations": "/api/v2/users/3/organizations/",
+        "admin_of_organizations": "/api/v2/users/3/admin_of_organizations/",
+        "projects": "/api/v2/users/3/projects/",
+        "credentials": "/api/v2/users/3/credentials/",
+        "roles": "/api/v2/users/3/roles/",
+        "activity_stream": "/api/v2/users/3/activity_stream/",
+        "access_list": "/api/v2/users/3/access_list/",
+        "tokens": "/api/v2/users/3/tokens/",
+        "authorized_tokens": "/api/v2/users/3/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/3/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [],
+        "indirect_access": [
+          {
+            "role": {
+              "id": 41,
+              "name": "Admin",
+              "description": "Can manage all aspects of the organization",
+              "resource_name": " Organization 0",
+              "resource_type": "organization",
+              "related": { "organization": "/api/v2/organizations/2/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["admin_role", "member_role", "read_role"]
+          }
+        ]
+      },
+      "created": "2022-11-10T12:15:25.571314Z",
+      "modified": null,
+      "username": "org_admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null
+    },
+    {
+      "id": 4,
+      "type": "user",
+      "url": "/api/v2/users/4/",
+      "related": {
+        "teams": "/api/v2/users/4/teams/",
+        "organizations": "/api/v2/users/4/organizations/",
+        "admin_of_organizations": "/api/v2/users/4/admin_of_organizations/",
+        "projects": "/api/v2/users/4/projects/",
+        "credentials": "/api/v2/users/4/credentials/",
+        "roles": "/api/v2/users/4/roles/",
+        "activity_stream": "/api/v2/users/4/activity_stream/",
+        "access_list": "/api/v2/users/4/access_list/",
+        "tokens": "/api/v2/users/4/tokens/",
+        "authorized_tokens": "/api/v2/users/4/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/4/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [],
+        "indirect_access": [
+          {
+            "role": {
+              "id": 50,
+              "name": "Auditor",
+              "description": "Can view all aspects of the organization",
+              "resource_name": " Organization 0",
+              "resource_type": "organization",
+              "related": { "organization": "/api/v2/organizations/2/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["read_role"]
+          }
+        ]
+      },
+      "created": "2022-11-10T12:15:25.758622Z",
+      "modified": null,
+      "username": "org_member",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null
+    },
+    {
+      "id": 9,
+      "type": "user",
+      "url": "/api/v2/users/9/",
+      "related": {
+        "teams": "/api/v2/users/9/teams/",
+        "organizations": "/api/v2/users/9/organizations/",
+        "admin_of_organizations": "/api/v2/users/9/admin_of_organizations/",
+        "projects": "/api/v2/users/9/projects/",
+        "credentials": "/api/v2/users/9/credentials/",
+        "roles": "/api/v2/users/9/roles/",
+        "activity_stream": "/api/v2/users/9/activity_stream/",
+        "access_list": "/api/v2/users/9/access_list/",
+        "tokens": "/api/v2/users/9/tokens/",
+        "authorized_tokens": "/api/v2/users/9/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/9/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [
+          {
+            "role": {
+              "id": 601,
+              "name": "Member",
+              "description": "User is a member of the team",
+              "resource_name": "Team 2 Org 0",
+              "resource_type": "team",
+              "related": { "team": "/api/v2/teams/81/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["member_role", "read_role"]
+          },
+          {
+            "role": {
+              "id": 602,
+              "name": "Read",
+              "description": "May view settings for the team",
+              "resource_name": "Team 2 Org 0",
+              "resource_type": "team",
+              "related": { "team": "/api/v2/teams/81/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["read_role"]
+          },
+          {
+            "role": {
+              "id": 602,
+              "name": "Read",
+              "description": "May view settings for the team",
+              "team_id": 81,
+              "team_name": "Team 2 Org 0",
+              "team_organization_name": " Organization 0",
+              "resource_name": "Team 2 Org 0",
+              "resource_type": "team",
+              "related": { "team": "/api/v2/teams/81/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["member_role", "read_role"]
+          }
+        ],
+        "indirect_access": []
+      },
+      "created": "2022-11-10T12:15:26.949530Z",
+      "modified": null,
+      "username": "user-2",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null
+    },
+    {
+      "id": 20,
+      "type": "user",
+      "url": "/api/v2/users/20/",
+      "related": {
+        "teams": "/api/v2/users/20/teams/",
+        "organizations": "/api/v2/users/20/organizations/",
+        "admin_of_organizations": "/api/v2/users/20/admin_of_organizations/",
+        "projects": "/api/v2/users/20/projects/",
+        "credentials": "/api/v2/users/20/credentials/",
+        "roles": "/api/v2/users/20/roles/",
+        "activity_stream": "/api/v2/users/20/activity_stream/",
+        "access_list": "/api/v2/users/20/access_list/",
+        "tokens": "/api/v2/users/20/tokens/",
+        "authorized_tokens": "/api/v2/users/20/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/20/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [],
+        "indirect_access": [
+          {
+            "role": {
+              "id": 1,
+              "name": "System Administrator",
+              "description": "Can manage all aspects of the system",
+              "user_capabilities": { "unattach": false }
+            },
+            "descendant_roles": ["admin_role", "member_role", "read_role"]
+          }
+        ]
+      },
+      "created": "2023-02-09T18:41:37.395481Z",
+      "modified": "2023-02-09T19:45:55.156504Z",
+      "username": "vn-admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": true,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": "2023-02-09T19:45:55.156504Z",
+      "external_account": null
+    },
+    {
+      "id": 2,
+      "type": "user",
+      "url": "/api/v2/users/2/",
+      "related": {
+        "teams": "/api/v2/users/2/teams/",
+        "organizations": "/api/v2/users/2/organizations/",
+        "admin_of_organizations": "/api/v2/users/2/admin_of_organizations/",
+        "projects": "/api/v2/users/2/projects/",
+        "credentials": "/api/v2/users/2/credentials/",
+        "roles": "/api/v2/users/2/roles/",
+        "activity_stream": "/api/v2/users/2/activity_stream/",
+        "access_list": "/api/v2/users/2/access_list/",
+        "tokens": "/api/v2/users/2/tokens/",
+        "authorized_tokens": "/api/v2/users/2/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/2/personal_tokens/"
+      },
+      "summary_fields": {
+        "direct_access": [],
+        "indirect_access": [
+          {
+            "role": {
+              "id": 41,
+              "name": "Admin",
+              "description": "Can manage all aspects of the organization",
+              "resource_name": " Organization 0",
+              "resource_type": "organization",
+              "related": { "organization": "/api/v2/organizations/2/" },
+              "user_capabilities": { "unattach": true }
+            },
+            "descendant_roles": ["admin_role", "member_role", "read_role"]
+          }
+        ]
+      },
+      "created": "2022-10-03T20:52:49.517632Z",
+      "modified": "2023-02-10T15:10:24.949784Z",
+      "username": "vnambiar",
+      "first_name": "",
+      "last_name": "",
+      "email": "vnambiar@redhat.com",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "ldap_dn": "",
+      "last_login": "2023-02-10T15:10:24.949784Z",
+      "external_account": null
+    }
+  ]
+}

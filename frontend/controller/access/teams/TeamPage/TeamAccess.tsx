@@ -84,7 +84,7 @@ export function TeamAccess(props: { team: Team }) {
                       key={role.id}
                       onClick={() => deleteRole(role, user)}
                       isReadOnly={!role.user_capabilities.unattach}
-                      ouiaId={`${role.name}-${role.id}`}
+                      ouiaId={`team-role-${role.name}-${role.id}`}
                       closeBtnAriaLabel={t`Remove ${role.name} chip`}
                     >
                       {role.name}
