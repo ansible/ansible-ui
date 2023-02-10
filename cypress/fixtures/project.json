@@ -1,0 +1,124 @@
+{
+  "id": 9,
+  "type": "project",
+  "url": "/api/v2/projects/9/",
+  "related": {
+    "named_url": "/api/v2/projects/Demo Project %40 10%3A44%3A51++Default/",
+    "created_by": "/api/v2/users/2/",
+    "modified_by": "/api/v2/users/2/",
+    "last_job": "/api/v2/project_updates/5/",
+    "teams": "/api/v2/projects/9/teams/",
+    "playbooks": "/api/v2/projects/9/playbooks/",
+    "inventory_files": "/api/v2/projects/9/inventories/",
+    "update": "/api/v2/projects/9/update/",
+    "project_updates": "/api/v2/projects/9/project_updates/",
+    "scm_inventory_sources": "/api/v2/projects/9/scm_inventory_sources/",
+    "schedules": "/api/v2/projects/9/schedules/",
+    "activity_stream": "/api/v2/projects/9/activity_stream/",
+    "notification_templates_started": "/api/v2/projects/9/notification_templates_started/",
+    "notification_templates_success": "/api/v2/projects/9/notification_templates_success/",
+    "notification_templates_error": "/api/v2/projects/9/notification_templates_error/",
+    "access_list": "/api/v2/projects/9/access_list/",
+    "object_roles": "/api/v2/projects/9/object_roles/",
+    "copy": "/api/v2/projects/9/copy/",
+    "organization": "/api/v2/organizations/1/",
+    "last_update": "/api/v2/project_updates/5/"
+  },
+  "summary_fields": {
+    "organization": {
+      "id": 1,
+      "name": "Default",
+      "description": ""
+    },
+    "last_job": {
+      "id": 5,
+      "name": "Demo Project @ 10:44:51",
+      "description": "",
+      "finished": "2023-01-19T18:45:07.967305Z",
+      "status": "successful",
+      "failed": false
+    },
+    "last_update": {
+      "id": 5,
+      "name": "Demo Project @ 10:44:51",
+      "description": "",
+      "status": "successful",
+      "failed": false
+    },
+    "created_by": {
+      "id": 2,
+      "username": "awx",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 2,
+      "username": "awx",
+      "first_name": "",
+      "last_name": ""
+    },
+    "object_roles": {
+      "admin_role": {
+        "description": "Can manage all aspects of the project",
+        "name": "Admin",
+        "id": 38
+      },
+      "use_role": {
+        "description": "Can use the project in a job template",
+        "name": "Use",
+        "id": 39
+      },
+      "update_role": {
+        "description": "May update the project",
+        "name": "Update",
+        "id": 40
+      },
+      "read_role": {
+        "description": "May view settings for the project",
+        "name": "Read",
+        "id": 41
+      }
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true,
+      "start": true,
+      "schedule": true,
+      "copy": true
+    },
+    "resolved_environment": {
+      "id": 1,
+      "name": "AWX EE (latest)",
+      "description": "",
+      "image": "quay.io/ansible/awx-ee:latest"
+    }
+  },
+  "created": "2023-01-19T18:44:51.534702Z",
+  "modified": "2023-01-19T18:44:51.848589Z",
+  "name": "Demo Project @ 10:44:51",
+  "description": "",
+  "local_path": "_9__demo_project_104451",
+  "scm_type": "git",
+  "scm_url": "https://github.com/ansible/ansible-tower-samples",
+  "scm_branch": "",
+  "scm_refspec": "",
+  "scm_clean": false,
+  "scm_track_submodules": false,
+  "scm_delete_on_update": false,
+  "credential": null,
+  "timeout": 0,
+  "scm_revision": "347e44fea036c94d5f60e544de006453ee5c71ad",
+  "last_job_run": "2023-01-19T18:45:07.967305Z",
+  "last_job_failed": false,
+  "next_job_run": null,
+  "status": "successful",
+  "organization": 1,
+  "scm_update_on_launch": false,
+  "scm_update_cache_timeout": 0,
+  "allow_override": false,
+  "custom_virtualenv": null,
+  "default_environment": null,
+  "signature_validation_credential": null,
+  "last_update_failed": false,
+  "last_updated": "2023-01-19T18:45:07.967305Z"
+}

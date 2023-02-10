@@ -19,6 +19,7 @@ declare global {
       clickTab(label: string | RegExp): Chainable<void>;
       navigateTo(label: string | RegExp, refresh?: boolean): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
+      hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
       clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickRowAction(
@@ -168,6 +169,10 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) =
 
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
   cy.contains('.pf-c-title', label);
+});
+
+Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
+  cy.contains('.pf-c-alert__title', label);
 });
 
 Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
