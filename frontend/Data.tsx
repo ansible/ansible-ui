@@ -170,7 +170,14 @@ async function requestCommon<ResponseBody>(
         beforeError: [
           async (error) => {
             const { response } = error;
-            const body: unknown = await response?.json();
+
+            let body: unknown;
+            try {
+              body = await response?.json();
+            } catch (bodyParseError) {
+              return error;
+            }
+
             if (
               typeof body === 'object' &&
               body !== null &&
