@@ -8,7 +8,7 @@ import {
   ModalVariant,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
@@ -106,8 +106,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
                 content={isItemNonActionable(item)}
                 trigger={isItemNonActionable(item) ? undefined : 'manual'}
               >
-                <Icon status="danger">
-                  <ExclamationCircleIcon />
+                <Icon status="warning">
+                  <ExclamationTriangleIcon />
                 </Icon>
               </Tooltip>
             ) : null,
@@ -165,7 +165,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             {alertPrompts &&
               alertPrompts.length > 0 &&
               alertPrompts.map((alertPrompt, i) => (
-                <Alert isInline title={alertPrompt} variant="danger" key={i}></Alert>
+                <Alert isInline title={alertPrompt} variant="warning" key={i}></Alert>
               ))}
             <PageTable<T>
               key="items"
@@ -180,6 +180,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"
+              autoHidePagination={true}
             />
           </div>
           {confirmText && actionableItems.length > 0 && (
