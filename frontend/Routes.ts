@@ -30,7 +30,7 @@ export enum RouteE {
   EditCredential = '/controller/credentials/edit/:id',
 
   Projects = '/controller/projects',
-  ProjectDetails = '/controller/projects/details/:id',
+  ProjectDetails = '/controller/projects/:id/details',
   CreateProject = '/controller/projects/create',
   EditProject = '/controller/projects/edit/:id',
 
