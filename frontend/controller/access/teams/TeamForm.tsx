@@ -5,7 +5,6 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -16,7 +15,6 @@ import { PageFormOrganizationSelect } from '../organizations/components/PageForm
 export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  useInvalidateCacheOnUnmount();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       try {
@@ -51,7 +49,7 @@ async function getOrganizationByName(organizationName: string) {
   const itemsResponse = await requestGet<ItemsResponse<Organization>>(
     `/api/v2/organizations/?name=${organizationName}`
   );
-  if (itemsResponse.results.length === 1) {
+  if (itemsResponse.results.length >= 1) {
     return itemsResponse.results[0];
   }
   return undefined;
@@ -63,7 +61,6 @@ export function EditTeam() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: team } = useSWR<Team>(`/api/v2/teams/${id.toString()}/`, requestGet, swrOptions);
-  useInvalidateCacheOnUnmount();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       try {
