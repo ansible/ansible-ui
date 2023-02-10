@@ -17,9 +17,9 @@ describe('teams', () => {
   });
 
   beforeEach(() => {
-    cy.requestGet<ItemsResponse<Organization>>(
-      '/api/v2/organizations/?name__contains=Default'
-    ).then((response) => (organization = response.results[0]));
+    cy.requestGet<ItemsResponse<Organization>>('/api/v2/organizations/?name=Default').then(
+      (response) => (organization = response.results[0])
+    );
   });
 
   it('create team', () => {
@@ -30,13 +30,11 @@ describe('teams', () => {
     cy.typeByLabel(/^Organization$/, 'Default');
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName);
-    cy.requestGet<ItemsResponse<Team>>(`/api/v2/teams/?name__contains=${teamName}`).then(
-      (response) => {
-        if (response.results.length > 0) {
-          cy.requestDelete(`/api/v2/teams/${response.results[0].id}/`);
-        }
+    cy.requestGet<ItemsResponse<Team>>(`/api/v2/teams/?name=${teamName}`).then((response) => {
+      if (response.results.length > 0) {
+        cy.requestDelete(`/api/v2/teams/${response.results[0].id}/`);
       }
-    );
+    });
   });
 
   it('edit team', () => {
