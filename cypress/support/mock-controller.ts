@@ -26,6 +26,11 @@ export function mockController() {
     const result = handleControllerDelete(req.url);
     req.reply(result ? 200 : 404);
   });
+
+  cy.intercept('POST', `/api/v2/**/update`, (req) => {
+    const result = handleControllerUpdate(req.url, req.body as ICollectionMockItem);
+    req.reply(result ? 202 : 404);
+  });
 }
 
 export function handleControllerRequest(method: string, url: string, body: ICollectionMockItem) {
@@ -38,6 +43,8 @@ export function handleControllerRequest(method: string, url: string, body: IColl
       return handleControllerPatch(url, body);
     case 'DELETE':
       return handleControllerDelete(url);
+    case 'UPDATE':
+      return handleControllerUpdate(url, body);
   }
 }
 
@@ -85,15 +92,17 @@ export function handleControllerPost(url: string, body: ICollectionMockItem) {
   body.id = id;
   if (body.organization !== undefined && body.organization !== undefined) {
     const organizationID = body.organization;
-    const organizations = getMockCollection('organizations');
+    const organizations = getMockCollection<Organization>('organizations');
     body.summary_fields = {
       organization: {
         id: organizationID,
-        name: (organizations.find((o) => o.id === organizationID) as Organization).name,
+        name: organizations.find((o) => o.id === organizationID)?.name ?? '',
       },
       user_capabilities: {
+        copy: true,
         edit: true,
         delete: true,
+        start: true,
       },
     };
   }
@@ -137,6 +146,23 @@ export function handleControllerDelete(url: string) {
   }
 }
 
+export function handleControllerUpdate(url: string, body: ICollectionMockItem) {
+  url = sanitizeUrl(url);
+  const parts = url.split('/');
+  const collectionName = parts[0];
+  const collection = getMockCollection(collectionName);
+  const itemID = parts.length > 1 && Number(parts[1]);
+  if (itemID) {
+    const itemIndex = collection.findIndex((item) => item.id === itemID);
+    if (itemIndex === -1) return false;
+    const item = collection[itemIndex];
+    Object.assign(item, body);
+    item.modified = new Date(Date.now()).toISOString();
+    return true;
+  }
+  return false;
+}
+
 export interface ICollectionMockItem {
   id: number;
   organization?: number;
@@ -148,19 +174,21 @@ export interface ICollectionMockItem {
       name: string;
     };
     user_capabilities: {
+      copy: boolean;
       edit: boolean;
       delete: boolean;
+      start: boolean;
     };
   };
 }
 
 const collections: { [collectionName: string]: ICollectionMockItem[] } = {};
 
-function getMockCollection(collectionName: string): ICollectionMockItem[] {
+function getMockCollection<T = ICollectionMockItem>(collectionName: string): T[] {
   let collection = collections[collectionName];
   if (!collection) {
     collection = [];
     collections[collectionName] = collection;
   }
-  return collection;
+  return collection as T[];
 }

@@ -9,7 +9,7 @@ import { StandardPopover } from '../components/StandardPopover';
 export function PageDetail(props: {
   label?: string;
   children?: ReactNode;
-  helpText?: string;
+  helpText?: string | ReactNode;
   isEmpty?: boolean;
 }) {
   const { label, children, helpText, isEmpty } = props;
