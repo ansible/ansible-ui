@@ -70,7 +70,7 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:run:live
+      - run: npm run cypress:live
 
   cypress-unit:
     name: Cypress Unit Tests
@@ -84,7 +84,7 @@ jobs:
       - name: PreCache
         run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
       - name: Cache dependencies
-        id: cache
+        id: cache``
         uses: actions/cache@v3
         with:
           path: |

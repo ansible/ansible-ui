@@ -76,7 +76,6 @@ Cypress.Commands.add('login', () => {
           retryOnNetworkFailure: true,
         });
       } else {
-        mockController();
         cy.visit(`/controller/debug`, {
           retryOnStatusCodeFailure: true,
           retryOnNetworkFailure: true,
@@ -85,6 +84,10 @@ Cypress.Commands.add('login', () => {
     },
     { cacheAcrossSpecs: true }
   );
+
+  if (!Cypress.env('server')) {
+    mockController();
+  }
 });
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
