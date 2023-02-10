@@ -17,9 +17,9 @@ describe('projects', () => {
   });
 
   beforeEach(() => {
-    cy.requestGet<ItemsResponse<Organization>>(
-      '/api/v2/organizations/?name__contains=Default'
-    ).then((response) => (organization = response.results[0]));
+    cy.requestGet<ItemsResponse<Organization>>('/api/v2/organizations/?name=Default').then(
+      (response) => (organization = response.results[0])
+    );
   });
 
   // it('create project', () => {
@@ -59,6 +59,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -73,6 +75,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -86,6 +90,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -99,6 +105,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -112,6 +120,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -142,6 +152,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -157,6 +169,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -172,6 +186,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(project.name);
@@ -199,6 +215,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRowAction(project.name, /^Delete project$/);
@@ -214,6 +232,8 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'Project ' + randomString(4),
       organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
       cy.selectRow(project.name);

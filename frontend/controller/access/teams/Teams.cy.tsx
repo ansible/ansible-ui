@@ -45,11 +45,7 @@ describe('Jobs.cy.ts', () => {
         <Teams />
       </MemoryRouter>
     );
-    cy.contains('button[id="create-team"]', 'Create team').should(
-      'have.attr',
-      'aria-disabled',
-      'true'
-    );
+    cy.contains('button', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
   });
   it('Create Team button is enabled if the user has permission to create teams', () => {
     cy.intercept(

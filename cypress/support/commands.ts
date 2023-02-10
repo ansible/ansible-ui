@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import { randomString } from '../../framework/utils/random-string';
 import {
   handleControllerDelete,
   handleControllerGet,
@@ -39,9 +40,11 @@ declare global {
   }
 }
 
+const sessionID = randomString(8);
+
 Cypress.Commands.add('login', () => {
   cy.session(
-    'default1',
+    sessionID,
     () => {
       window.localStorage.setItem('theme', 'light');
 
@@ -118,7 +121,7 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
     return cy.wrap(handleControllerDelete(url));
   } else {
     cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request({ method: 'Delete', url });
+    cy.request({ method: 'Delete', url, failOnStatusCode: false });
   }
 });
 
