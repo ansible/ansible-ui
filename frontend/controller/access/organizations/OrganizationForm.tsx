@@ -69,12 +69,12 @@ export function EditOrganization() {
   const id = Number(params.id);
 
   const { data: organization } = useSWR<Organization>(
-    Number.isInteger(id) ? `/api/v2/organizations/${id.toString()}/` : undefined,
+    `/api/v2/organizations/${id.toString()}/`,
     requestGet,
     swrOptions
   );
   const { data: igResponse } = useSWR<{ results: InstanceGroup[] }>(
-    Number.isInteger(id) ? `/api/v2/organizations/${id.toString()}/instance_groups/` : undefined,
+    `/api/v2/organizations/${id.toString()}/instance_groups/`,
     requestGet,
     swrOptions
   );
@@ -159,7 +159,7 @@ function OrganizationInputs() {
         executionEnvironmentPath="organization.summary_fields.default_environment"
         executionEnvironmentIdPath="organization.default_environment"
       />
-      {/* galaxyCredentials */}
+      {/* TODO: galaxyCredentials */}
     </>
   );
 }

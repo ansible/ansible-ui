@@ -9,6 +9,7 @@ import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvir
 export function PageFormExecutionEnvironmentSelect(props: {
   name: string;
   label?: string;
+  isRequired?: boolean;
   executionEnvironmentPath?: string;
   executionEnvironmentIdPath?: string;
 }) {
@@ -24,6 +25,9 @@ export function PageFormExecutionEnvironmentSelect(props: {
       selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
       selectOpen={selectExecutionEnvironment}
       validate={async (executionEnvironmentName: string) => {
+        if (!executionEnvironmentName && !props.isRequired) {
+          return undefined;
+        }
         try {
           const itemsResponse = await requestGet<ItemsResponse<Inventory>>(
             `/api/v2/execution_environments/?name=${executionEnvironmentName}`
@@ -41,7 +45,7 @@ export function PageFormExecutionEnvironmentSelect(props: {
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }

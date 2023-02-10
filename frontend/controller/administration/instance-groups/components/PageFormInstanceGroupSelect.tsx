@@ -21,7 +21,7 @@ export function PageFormInstanceGroupSelect<TFieldValues extends FieldValues = F
   return (
     <PageFormMultiInput<InstanceGroup, TFieldValues>
       name={props.name}
-      label={props.label || t('Instance Groups')}
+      label={props.label || t('Instance groups')}
       selectTitle={t('Select an instance groups')}
       selectOpen={selectInstanceGroups}
       validate={async (instanceGroups: InstanceGroup[]) => {
@@ -30,7 +30,7 @@ export function PageFormInstanceGroupSelect<TFieldValues extends FieldValues = F
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }
