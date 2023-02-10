@@ -6,8 +6,9 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
 import { getControllerError } from '../../useControllerView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
@@ -18,6 +19,15 @@ export function CreateTeam() {
   useInvalidateCacheOnUnmount();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
+      try {
+        const organization = await getOrganizationByName(
+          editedTeam.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        editedTeam.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
+      }
       const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
       navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
     } catch (err) {
@@ -37,6 +47,16 @@ export function CreateTeam() {
   );
 }
 
+async function getOrganizationByName(organizationName: string) {
+  const itemsResponse = await requestGet<ItemsResponse<Organization>>(
+    `/api/v2/organizations/?name=${organizationName}`
+  );
+  if (itemsResponse.results.length === 1) {
+    return itemsResponse.results[0];
+  }
+  return undefined;
+}
+
 export function EditTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -46,6 +66,15 @@ export function EditTeam() {
   useInvalidateCacheOnUnmount();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
+      try {
+        const organization = await getOrganizationByName(
+          editedTeam.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        editedTeam.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
+      }
       await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
       navigate(-1);
     } catch (err) {
@@ -94,10 +123,7 @@ function TeamInputs() {
         label={t('Description')}
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect<Team>
-        name="summary_fields.organization.name"
-        organizationIdPath="organization"
-      />
+      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" />
     </>
   );
 }

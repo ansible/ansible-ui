@@ -6,11 +6,13 @@ import {
   handleControllerGet,
   handleControllerPost,
   ICollectionMockItem,
+  mockController,
 } from './mock-controller';
 
 declare global {
   namespace Cypress {
     interface Chainable {
+      login(): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -35,6 +37,55 @@ declare global {
     }
   }
 }
+
+Cypress.Commands.add('login', () => {
+  cy.session(
+    'default1',
+    () => {
+      window.localStorage.setItem('theme', 'light');
+
+      if (Cypress.env('server')) {
+        const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
+        const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
+        const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'password';
+
+        cy.visit(`/automation-servers`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+
+        cy.clickButton(/^Add automation server$/);
+        cy.typeByLabel(/^Name$/, 'Controller');
+        cy.typeByLabel(/^Url$/, server);
+        cy.get('.pf-c-select__toggle').click();
+        cy.clickButton('AWX Ansible server');
+        cy.get('button[type=submit]').click();
+
+        cy.contains('a', /^Controller$/).click();
+        cy.typeByLabel(/^Username$/, username);
+        cy.typeByLabel(/^Password$/, password);
+        cy.get('button[type=submit]').click();
+
+        cy.contains(/^Welcome to/);
+        cy.wait(2000);
+      }
+
+      if (Cypress.env('server')) {
+        cy.visit(`/controller`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+      } else {
+        mockController();
+        cy.visit(`/controller/debug`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+      }
+    },
+    { cacheAcrossSpecs: true }
+  );
+});
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
