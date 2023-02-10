@@ -70,18 +70,6 @@ Cypress.Commands.add('login', () => {
         cy.contains(/^Welcome to/);
         cy.wait(2000);
       }
-
-      if (Cypress.env('server')) {
-        cy.visit(`/controller`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
-      } else {
-        cy.visit(`/controller/debug`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
-      }
     },
     { cacheAcrossSpecs: true }
   );

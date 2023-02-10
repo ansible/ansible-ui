@@ -9,6 +9,13 @@ import { ItemsResponse } from '../../../frontend/Data';
 describe('projects', () => {
   let organization: Organization;
 
+  before(() => {
+    cy.visit(`/controller/projects`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+  });
+
   beforeEach(() => {
     cy.requestGet<ItemsResponse<Organization>>(
       '/api/v2/organizations/?name__contains=Default'
