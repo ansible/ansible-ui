@@ -13,7 +13,7 @@ describe('teams', () => {
 
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
-    }).then((newOrg) => (organization = newOrg));
+    }).then((testOrg) => (organization = testOrg));
   });
 
   after(() => {
