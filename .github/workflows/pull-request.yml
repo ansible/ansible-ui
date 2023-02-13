@@ -35,8 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          DOCKER_BUILDKIT=1 docker build --cache-from quay.io/ansible/ansible-ui:dependencies --tag ansible-ui:${{ github.ref }} .
-      - run: docker save ansible-ui:${{ github.ref }} > ansible-ui:${{ github.ref }}.tar
+          DOCKER_BUILDKIT=1 docker build --cache-from quay.io/ansible/ansible-ui:dependencies --tag ansible-ui .
+      - run: docker save ansible-ui > ansible-ui.tar
       - uses: actions/upload-artifact@v3
         with:
           name: ansible-ui.tar
