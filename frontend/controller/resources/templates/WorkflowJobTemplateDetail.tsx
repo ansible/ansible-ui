@@ -28,6 +28,7 @@ import { useItem } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
+import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function WorkflowJobTemplateDetail() {
@@ -85,7 +86,7 @@ export function WorkflowJobTemplateDetail() {
             <TemplateAccessTab template={template} />
           </PageTab>
           <PageTab label={t('Visualizer')}>
-            <TemplateAccessTab template={template} />
+            <WorkflowVisualizer template={template} />
           </PageTab>
         </PageTabs>
       ) : (
@@ -171,4 +172,8 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
 
 function TemplateAccessTab(props: { template: WorkflowJobTemplate }) {
   return <div>{props.template.name}</div>;
+}
+
+function WorkflowVisualizer(props: { template: WorkflowJobTemplate }) {
+  return <VisualizerTab template={props.template} />;
 }
