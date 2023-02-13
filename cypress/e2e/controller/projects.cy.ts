@@ -33,8 +33,6 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
     }).then((testProject) => (project = testProject));
   });
 
@@ -110,33 +108,44 @@ describe('projects', () => {
   //   });
 
   it('project details copy project', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.clickRow(project.name);
-    cy.hasTitle(project.name);
-    cy.clickPageAction(/^Copy project$/);
-    cy.hasAlert(`${project.name} copied`);
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
+    }).then((project) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.clickRow(project.name);
+      cy.hasTitle(project.name);
+      cy.clickPageAction(/^Copy project$/);
+      cy.hasAlert(`${project.name} copied`);
+    });
   });
 
   it('project details sync project', () => {
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
+    }).then((project) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.clickRow(project.name);
+      cy.hasTitle(project.name);
+      cy.clickPageAction(/^Sync project$/);
+      cy.hasAlert(`Syncing ${project.name}`);
+    });
+  });
+
+  it('project details delete project', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickPageAction(/^Sync project$/);
-    cy.hasAlert(`Syncing ${project.name}`);
+    cy.clickPageAction(/^Delete project/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.hasTitle(/^Projects$/);
   });
-
-  // This test needs to be moved to Unit Tests
-  //   as on a live E2E server, the project starts syncing
-  //   and when syncing it cannot be deleted
-  // it('project details delete project', () => {
-  //   cy.navigateTo(/^Projects$/, false);
-  //   cy.clickRow(project.name);
-  //   cy.hasTitle(project.name);
-  //   cy.clickPageAction(/^Delete project/);
-  //   cy.get('#confirm').click();
-  //   cy.clickButton(/^Delete project/);
-  //   cy.hasTitle(/^Projects$/);
-  // });
 
   //   it('projects table row edit project', () => {
   //       cy.navigateTo(/^Projects$/, true);
@@ -144,30 +153,24 @@ describe('projects', () => {
   //       cy.hasTitle(/^Edit project$/);
   //   });
 
-  // This test needs to be moved to Unit Tests
-  //   as on a live E2E server, the project starts syncing
-  //   and when syncing it cannot be deleted
-  // it('projects table row delete project', () => {
-  //     cy.navigateTo(/^Projects$/, false);
-  //     cy.clickRowAction(project.name, /^Delete project$/);
-  //     cy.get('#confirm').click();
-  //     cy.clickButton(/^Delete project/);
-  //     cy.contains(/^Success$/);
-  //     cy.clickButton(/^Close$/);
-  //     cy.clickButton(/^Clear all filters$/);
-  // });
+  it('projects table row delete project', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRowAction(project.name, /^Delete project$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
 
-  // This test needs to be moved to Unit Tests
-  //   as on a live E2E server, the project starts syncing
-  //   and when syncing it cannot be deleted
-  // it('projects toolbar delete projects', () => {
-  //   cy.navigateTo(/^Projects$/, false);
-  //   cy.selectRow(project.name);
-  //   cy.clickToolbarAction(/^Delete selected projects$/);
-  //   cy.get('#confirm').click();
-  //   cy.clickButton(/^Delete project/);
-  //   cy.contains(/^Success$/);
-  //   cy.clickButton(/^Close$/);
-  //   cy.clickButton(/^Clear all filters$/);
-  // });
+  it('projects toolbar delete projects', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.selectRow(project.name);
+    cy.clickToolbarAction(/^Delete selected projects$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
 });
