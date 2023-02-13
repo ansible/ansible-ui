@@ -17,7 +17,7 @@ describe('organizations', () => {
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {
-        cy.requestDelete(`/api/v2/organizations/${organization.id}/`);
+        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
       }
     });
   });
@@ -29,7 +29,7 @@ describe('organizations', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`);
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
   });
 
   it('organization page', () => {

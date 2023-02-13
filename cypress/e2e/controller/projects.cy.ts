@@ -17,7 +17,7 @@ describe('projects', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`);
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
     // Deleting the organization does not delete the projects...
     // So get all projects without an organization and delete them
     // Multiple test runs could be running, so only delete projects without an organization as those are not being used.
@@ -25,7 +25,7 @@ describe('projects', () => {
     cy.requestGet<ItemsResponse<Project>>(`/api/v2/projects/?limit=100&organization=null`).then(
       (itemsResponse) => {
         for (const project of itemsResponse.results) {
-          cy.requestDelete(`/api/v2/projects/${project.id}/`);
+          cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
         }
       }
     );
@@ -39,7 +39,7 @@ describe('projects', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/projects/${project.id}/`);
+    cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
   });
 
   // it('create project', () => {

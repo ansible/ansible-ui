@@ -35,7 +35,7 @@ declare global {
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
       requestGet<T>(url: string): Chainable<T>;
-      requestDelete(url: string): Chainable;
+      requestDelete(url: string, ignoreError?: boolean): Chainable;
     }
   }
 }
@@ -116,12 +116,12 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   }
 });
 
-Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
+Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   if (!Cypress.env('server')) {
     return cy.wrap(handleControllerDelete(url));
   } else {
     cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request({ method: 'Delete', url, failOnStatusCode: false });
+    return cy.request({ method: 'Delete', url, failOnStatusCode: ignoreError ? false : true });
   }
 });
 

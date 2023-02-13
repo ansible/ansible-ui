@@ -16,7 +16,7 @@ describe('teams', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`);
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
   });
 
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe('teams', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/teams/${team.id}/`);
+    cy.requestDelete(`/api/v2/teams/${team.id}/`, true);
   });
 
   it('create team', () => {
