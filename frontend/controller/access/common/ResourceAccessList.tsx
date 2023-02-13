@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   ButtonVariant,
   Chip,
@@ -12,29 +11,25 @@ import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  IPageAction,
-  IPageActionButton,
-  PageActionType,
-  PageTable,
-} from '../../../../../framework';
-import { useActiveUser } from '../../../../common/useActiveUser';
-import { RouteE } from '../../../../Routes';
-import { Team } from '../../../interfaces/Team';
-import { AccessRole, User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useControllerView';
-import { useDeleteRoleConfirmationDialog } from '../../common/DeleteRoleConfirmation';
-import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
-import { useUsersColumns } from '../../users/hooks/useUsersColumns';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { useDeleteAccessRole } from '../hooks/useDeleteAccessRole';
-import { useRemoveUsersFromTeam } from '../hooks/useRemoveUsersFromTeam';
+import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
+import { useActiveUser } from '../../../common/useActiveUser';
+import { RouteE } from '../../../Routes';
+import { Team } from '../../interfaces/Team';
+import { AccessRole, User } from '../../interfaces/User';
+import { useControllerView } from '../../useControllerView';
+import { useDeleteAccessRole } from './useDeleteAccessRole';
+import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
+import { useUsersColumns } from '../users/hooks/useUsersColumns';
+import { useUsersFilters } from '../users/hooks/useUsersFilters';
+import { useDeleteRoleConfirmationDialog } from './DeleteRoleConfirmation';
+import { useRemoveUsersFromResource } from './useRemoveUserFromResource';
 
 export type ResourceType = Team; // TODO: Expand to handle other resource types: | Project | Credential | Inventory | Organization | Template;
 
-export function TeamAccess(props: { resource: ResourceType }) {
-  const { team } = props;
+export function ResourceAccessList(props: { url: string; resource: ResourceType }) {
   const { t } = useTranslation();
+  const { url, resource } = props;
+
   const activeUser = useActiveUser();
   const canAddAndRemoveUsers: boolean = useMemo(
     () => activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit,
@@ -46,6 +41,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
   const tableColumns = useUsersColumns();
   tableColumns.splice(1, 1);
   tableColumns.splice(4, 1);
+  // Set up Roles column
   tableColumns.push({
     header: t('Roles'),
     cell: (user) => {
@@ -102,7 +98,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
   });
 
   const view = useControllerView<User>({
-    url: `/api/v2/teams/${team.id}/access_list/`,
+    url: url,
     queryParams: {
       order_by: 'first_name',
     },
@@ -112,7 +108,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
   });
 
   const openDeleteRoleConfirmationDialog = useDeleteRoleConfirmationDialog();
-  const deleteAccessRole = useDeleteAccessRole(team, () => void view.refresh());
+  const deleteAccessRole = useDeleteAccessRole(() => void view.refresh());
   const deleteRole = (role: AccessRole, user: User) => {
     openDeleteRoleConfirmationDialog({
       role,
@@ -147,8 +143,14 @@ export function TeamAccess(props: { resource: ResourceType }) {
     }
   }, [view.pageItems]);
 
+  /**
+   * TODO: Add users is currently specific to teams and does not handle role selection
+   * while adding a user to a team. This hook should be replaced with a hook to open up
+   * the new PageWizard component when it becomes available.
+   */
   const selectUsersAddTeams = useSelectUsersAddTeams(() => void view.refresh());
-  const removeUsersFromTeam = useRemoveUsersFromTeam();
+
+  const removeUsersFromResource = useRemoveUsersFromResource(resource);
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -162,7 +164,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
           : t(
               'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
             ),
-        onClick: () => selectUsersAddTeams([team]),
+        onClick: () => selectUsersAddTeams([resource]),
       } as IPageActionButton,
       {
         type: PageActionType.bulk,
@@ -174,15 +176,15 @@ export function TeamAccess(props: { resource: ResourceType }) {
           : t(
               'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
             ),
-        onClick: (users) => removeUsersFromTeam(users, team, view.unselectItemsAndRefresh),
+        onClick: (users) => removeUsersFromResource(users, view.unselectItemsAndRefresh),
       },
     ],
     [
       t,
       canAddAndRemoveUsers,
       selectUsersAddTeams,
-      team,
-      removeUsersFromTeam,
+      resource,
+      removeUsersFromResource,
       view.unselectItemsAndRefresh,
     ]
   );
@@ -193,7 +195,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
         type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
-        onClick: (user) => removeUsersFromTeam([user], team, view.unselectItemsAndRefresh),
+        onClick: (user) => removeUsersFromResource([user], view.unselectItemsAndRefresh),
         isDisabled: (user: User) => {
           if (
             !canAddAndRemoveUsers ||
@@ -213,10 +215,10 @@ export function TeamAccess(props: { resource: ResourceType }) {
         },
       },
     ],
-    [canAddAndRemoveUsers, removeUsersFromTeam, t, team, view.unselectItemsAndRefresh]
+    [canAddAndRemoveUsers, removeUsersFromResource, t, view.unselectItemsAndRefresh]
   );
 
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <PageTable<User>
@@ -228,7 +230,7 @@ export function TeamAccess(props: { resource: ResourceType }) {
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
       emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => history(RouteE.CreateUser)}
+      emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
       {...view}
     />
   );

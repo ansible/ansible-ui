@@ -1,21 +1,30 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
-import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
-import { useUsersColumns } from '../../users/hooks/useUsersColumns';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestPost } from '../../../Data';
+import { User } from '../../interfaces/User';
+import { useUsersColumns } from '../users/hooks/useUsersColumns';
+import { ResourceType } from './ResourceAccessList';
 
-export function useRemoveUsersFromTeam() {
+export function useRemoveUsersFromResource(resource: ResourceType) {
   const { t } = useTranslation();
+
+  const title = useMemo(() => {
+    const titleMap: { [key: string]: string } = {
+      organization: 'Remove user from organization',
+      team: 'Remove user from team',
+      // TODO: Expand map for other resource types
+    };
+    return resource.type ? titleMap[resource.type] : 'Remove user';
+  }, [resource.type]);
 
   const confirmationColumns = useUsersColumns();
   const removeUserConfirmationDialog = useBulkConfirmation<User>();
 
-  const removeUserToTeams = useCallback(
-    (users: User[], team: Team, onComplete?: (users: User[]) => void) => {
+  const removeUsersFromResource = useCallback(
+    (users: User[], onComplete?: (users: User[]) => void) => {
       removeUserConfirmationDialog({
-        title: t('Remove user from team', { count: users.length }),
+        title: t(title, { count: users.length }),
         confirmText: t('Yes, I confirm that I want to remove these {{count}} users.', {
           count: users.length,
         }),
@@ -35,17 +44,11 @@ export function useRemoveUsersFromTeam() {
                 signal
               );
             }
-          } else {
-            await requestPost(
-              `/api/v2/users/${user.id.toString()}/roles/`,
-              { id: team.summary_fields.object_roles.member_role.id, disassociate: true },
-              signal
-            );
           }
         },
       });
     },
-    [confirmationColumns, removeUserConfirmationDialog, t]
+    [confirmationColumns, removeUserConfirmationDialog, t, title]
   );
-  return removeUserToTeams;
+  return removeUsersFromResource;
 }

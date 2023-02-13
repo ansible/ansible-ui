@@ -523,6 +523,8 @@
   "Remove user from teams": "Remove user from teams",
   "Remove user from team_one": "Remove user from team",
   "Remove user from team_other": "Remove users from team",
+  "Remove user from organization_one": "Remove user from organization",
+  "Remove user from organization_other": "Remove users from organization",
   "Remove users from organization": "Remove users from organization",
   "Remove users from organizations_one": "Remove users from organizations",
   "Remove users from organizations_other": "Remove users from organizations",

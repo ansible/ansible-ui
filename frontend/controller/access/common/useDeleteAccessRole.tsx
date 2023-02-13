@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
-import { Team } from '../../../interfaces/Team';
-import { AccessRole, User } from '../../../interfaces/User';
+import { usePageAlertToaster } from '../../../../framework';
+import { requestPost } from '../../../Data';
+import { Team } from '../../interfaces/Team';
+import { AccessRole, User } from '../../interfaces/User';
 
 export function useDeleteAccessRole(onComplete?: () => void) {
   const { t } = useTranslation();
