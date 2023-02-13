@@ -118,7 +118,7 @@ jobs:
         with:
           name: unit.info
       - name: Report code coverage
-        uses: zgosalvez/github-actions-report-lcov@v3
+        uses: zgosalvez/github-actions-report-lcov@v2
         with:
           coverage-files: '*.info'
           minimum-coverage: 90
