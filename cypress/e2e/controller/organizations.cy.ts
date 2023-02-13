@@ -9,6 +9,7 @@ describe('organizations', () => {
   let organization: Organization;
 
   after(() => {
+    // Sometimes if tests are stopped in the middle, we get left over organizations
     // Cleanup E2E organizations older than 2 hours
     cy.requestGet<ItemsResponse<Organization>>(
       `/api/v2/organizations/?limit=100&created__lt=${new Date(

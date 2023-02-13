@@ -20,6 +20,8 @@ describe('projects', () => {
     cy.requestDelete(`/api/v2/organizations/${organization.id}/`);
     // Deleting the organization does not delete the projects...
     // So get all projects without an organization and delete them
+    // Multiple test runs could be running, so only delete projects without an organization as those are not being used.
+    // This does cleanup projects that were sync and could not be deleted by other runs, making a self cleaning E2E system for the live server.
     cy.requestGet<ItemsResponse<Project>>(`/api/v2/projects/?limit=100&organization=null`).then(
       (itemsResponse) => {
         for (const project of itemsResponse.results) {
@@ -111,7 +113,7 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
-      scm_type: 'git',
+      scm_type: 'git', // Only projects with scm_type and scm_url can be copied
       scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
@@ -126,7 +128,7 @@ describe('projects', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
-      scm_type: 'git',
+      scm_type: 'git', // Only projects with scm_type and scm_url can be synced
       scm_url: 'foo',
     }).then((project) => {
       cy.navigateTo(/^Projects$/, false);
