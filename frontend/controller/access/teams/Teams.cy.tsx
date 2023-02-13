@@ -3,7 +3,7 @@ import { PageDialogProvider } from '../../../../framework';
 import { Teams } from './Teams';
 
 describe('Jobs.cy.ts', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
