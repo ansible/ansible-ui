@@ -30,6 +30,21 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+  docker-image:
+    name: Docker Build and Archive
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          DOCKER_BUILDKIT=1 docker build \
+            --cache-from quay.io/ansible/ansible-ui:dependencies \
+            --tag ansible-ui:${{ github.ref }} .
+      - run: docker save ansible-ui:${{ github.ref }} > ansible-ui:${{ github.ref }}.tar
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ansible-ui:${{ github.ref }}.tar
+          path: ansible-ui:${{ github.ref }}.tar
+
   cypress-e2e:
     name: Cypress E2E
     runs-on: ubuntu-latest
