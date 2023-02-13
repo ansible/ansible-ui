@@ -233,6 +233,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
             compact
             errorStateTitle=""
             emptyStateTitle="No items"
+            autoHidePagination={true}
           />
         </div>
       </ModalBoxBody>
