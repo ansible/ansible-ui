@@ -48,15 +48,15 @@ Cypress.Commands.add('login', () => {
     () => {
       window.localStorage.setItem('theme', 'light');
 
+      cy.visit(`/automation-servers`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+
       if (Cypress.env('server')) {
         const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
         const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
         const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'password';
-
-        cy.visit(`/automation-servers`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
 
         cy.clickButton(/^Add automation server$/);
         cy.typeByLabel(/^Name$/, 'Controller');
