@@ -23,9 +23,7 @@ describe('teams', () => {
     cy.requestPost<Team>('/api/v2/teams/', {
       name: 'E2E Team ' + randomString(4),
       organization: organization.id,
-    }).then((testTeam) => {
-      team = testTeam;
-    });
+    }).then((testTeam) => (team = testTeam));
   });
 
   afterEach(() => {

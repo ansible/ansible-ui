@@ -35,9 +35,7 @@ describe('projects', () => {
       organization: organization.id,
       scm_type: 'git',
       scm_url: 'foo',
-    }).then((testProject) => {
-      project = testProject;
-    });
+    }).then((testProject) => (project = testProject));
   });
 
   afterEach(() => {
