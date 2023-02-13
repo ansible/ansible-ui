@@ -8,6 +8,7 @@ export default defineConfig({
   defaultCommandTimeout: 30000,
 
   e2e: {
+    testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires

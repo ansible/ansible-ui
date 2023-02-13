@@ -13,7 +13,7 @@ Cypress is being used for both unit and E2E tests.
 - Run the unit tests headlessly.
 
   ```
-  npm run test:unit
+  npm run cypress:run:unit
   ```
 
   OR
@@ -21,7 +21,7 @@ Cypress is being used for both unit and E2E tests.
 - Run the unit tests by opening Cypress and launching the browser. (For visual rendering of the components being tested)
 
   ```
-  npm run test:unit:open
+  npm run cypress:open:unit
   ```
 
 ---
@@ -54,7 +54,7 @@ Cypress is being used for both unit and E2E tests.
 | `npm run cypress`           | Runs the frontend and Cypress headless in parallel using the mock API. |
 | `npm run cypress:frontend`  | Runs the frontend without opening the UI in the browser.               |
 | `npm run cypress:run`       | Run Cypress headless against the mock API.                             |
-| `npm run cypress:run:live`  | Run Cypress headless against a live API.                               |
+| `npm run cypress:run:e2e`   | Run Cypress headless against a live API.                               |
 | `npm run cypress:open`      | Run Cypress UI against the mock API.                                   |
 | `npm run cypress:open:live` | Run Cypress UI against a live API.                                     |
 | `npm run coverage`          | After tests have finished, view test coverage.                         |
