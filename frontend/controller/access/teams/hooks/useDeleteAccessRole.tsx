@@ -5,14 +5,14 @@ import { requestPost } from '../../../../Data';
 import { Team } from '../../../interfaces/Team';
 import { AccessRole, User } from '../../../interfaces/User';
 
-export function useDeleteAccessRole(team: Team, onComplete?: () => void) {
+export function useDeleteAccessRole(onComplete?: () => void) {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const onDeleteRole = useCallback(
     async (role: AccessRole, user: User) => {
       try {
         if (typeof role.team_id !== 'undefined') {
-          await requestPost<Team>(`/api/v2/teams/${team.id}/roles/`, {
+          await requestPost<Team>(`/api/v2/teams/${role.team_id}/roles/`, {
             id: role.id,
             disassociate: true,
           });
@@ -30,7 +30,7 @@ export function useDeleteAccessRole(team: Team, onComplete?: () => void) {
       }
       onComplete?.();
     },
-    [alertToaster, onComplete, t, team.id]
+    [alertToaster, onComplete, t]
   );
   return onDeleteRole;
 }

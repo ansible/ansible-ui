@@ -110,7 +110,7 @@ export function TeamAccess(props: { team: Team }) {
   });
 
   const openDeleteRoleConfirmationDialog = useDeleteRoleConfirmationDialog();
-  const deleteAccessRole = useDeleteAccessRole(team, () => void view.refresh());
+  const deleteAccessRole = useDeleteAccessRole(() => void view.refresh());
   const deleteRole = (role: AccessRole, user: User) => {
     openDeleteRoleConfirmationDialog({
       role,
