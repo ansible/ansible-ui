@@ -34,6 +34,7 @@ jobs:
     name: Docker Build and Archive
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - run: |
           DOCKER_BUILDKIT=1 docker build --cache-from quay.io/ansible/ansible-ui:dependencies --tag ansible-ui .
       - run: docker save ansible-ui > ansible-ui.tar
