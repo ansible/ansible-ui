@@ -42,8 +42,8 @@ jobs:
       - run: docker save ansible-ui:${{ github.ref }} > ansible-ui:${{ github.ref }}.tar
       - uses: actions/upload-artifact@v3
         with:
-          name: ansible-ui:${{ github.ref }}.tar
-          path: ansible-ui:${{ github.ref }}.tar
+          name: ansible-ui.tar
+          path: ansible-ui.tar
 
   cypress-e2e:
     name: Cypress E2E
@@ -64,7 +64,12 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:live
+      - uses: actions/download-artifact@v3
+        with:
+          name: ansible-ui.tar
+      - run: docker load ansible-ui.tar
+      - run: docker run -d -e PORT=3002 -p 3002:3002 ansible-ui
+      - run: npm run cypress:run:live
         env:
           E2E_SERVER: ${{ secrets.E2E_SERVER }}
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
