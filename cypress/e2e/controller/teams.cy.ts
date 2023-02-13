@@ -10,8 +10,6 @@ describe('teams', () => {
   let team: Team;
 
   before(() => {
-    cy.login();
-
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
     }).then((testOrg) => (organization = testOrg));
