@@ -43,8 +43,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  cypress-e2e:
-    name: Cypress E2E Tests
+  controller-e2e:
+    name: Controller E2E Tests
     runs-on: ubuntu-latest
     needs:
       - packages
