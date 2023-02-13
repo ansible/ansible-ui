@@ -2,7 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { TeamPage } from './TeamPage';
 
 describe('TeamPage', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
