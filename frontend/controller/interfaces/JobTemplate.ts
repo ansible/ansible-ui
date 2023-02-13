@@ -23,12 +23,12 @@ export interface JobTemplate
   id: number;
   type: 'job_template';
   job_type: 'run' | 'check';
-  name: string;
-  verbosity: number;
+  url: string;
   created: string;
   modified: string;
+  name: string;
   status: string;
-  url: string;
+  verbosity: 0 | 1 | 2 | 3 | 4 | 5;
   related: {
     named_url: string;
     created_by: string;

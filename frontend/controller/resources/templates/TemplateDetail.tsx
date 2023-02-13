@@ -42,19 +42,6 @@ export function TemplateDetail() {
       navigate(RouteE.Templates);
     }
   });
-  // async function launchJob(type: string, id: number) {
-  //   try {
-  //     const launchedJob = await handleLaunch(template?.type as string, template?.id as number);
-  //     navigate(
-  //       RouteE.JobOutput.replace(':job_type', launchedJob?.type as string).replace(
-  //         ':id',
-  //         launchedJob?.id.toString() as string
-  //       )
-  //     );
-  //   } catch {
-  //     // handle error
-  //   }
-  // }
 
   const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
