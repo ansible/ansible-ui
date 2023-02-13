@@ -121,7 +121,7 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
     return cy.wrap(handleControllerDelete(url));
   } else {
     cy.setCookie('server', Cypress.env('server') as string);
-    cy.request({ method: 'Delete', url, failOnStatusCode: false });
+    return cy.request({ method: 'Delete', url, failOnStatusCode: false });
   }
 });
 
