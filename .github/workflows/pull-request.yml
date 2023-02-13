@@ -67,7 +67,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
-      - run: docker load ansible-ui.tar
+      - run: docker load --input ansible-ui.tar
       - run: docker run -d -e PORT=3002 -p 3002:3002 ansible-ui
       - run: npm run cypress:run:live
         env:
@@ -104,27 +104,6 @@ jobs:
           name: unit.info
           path: coverage/lcov.info
 
-  eslint:
-    name: ESLint - Prettier - TSC
-    runs-on: ubuntu-latest
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run checks
-
   coverage:
     name: Coverage Report
     runs-on: ubuntu-latest
@@ -145,3 +124,24 @@ jobs:
           minimum-coverage: 90
           artifact-name: code-coverage-report
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  eslint:
+    name: ESLint - Prettier - TSC
+    runs-on: ubuntu-latest
+    needs: packages
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - run: npm run checks
