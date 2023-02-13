@@ -32,7 +32,6 @@ jobs:
 
   docker-image:
     name: Docker Build and Archive
-    needs: tag
     runs-on: ubuntu-latest
     steps:
       - run: |
