@@ -47,6 +47,7 @@ Cypress.Commands.add('login', () => {
     sessionID,
     () => {
       window.localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('disclaimer', 'true');
 
       cy.visit(`/automation-servers`, {
         retryOnStatusCodeFailure: true,
