@@ -8,6 +8,7 @@ import { ItemsResponse } from '../../../frontend/Data';
 
 describe('projects', () => {
   let organization: Organization;
+  let project: Project;
 
   before(() => {
     cy.login();
@@ -30,6 +31,21 @@ describe('projects', () => {
     );
   });
 
+  beforeEach(() => {
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'foo',
+    }).then((testProject) => {
+      project = testProject;
+    });
+  });
+
+  afterEach(() => {
+    cy.requestDelete(`/api/v2/projects/${project.id}/`);
+  });
+
   // it('create project', () => {
   //   const projectName = 'E2E Project ' + randomString(4);
   //   cy.navigateTo(/^Projects$/, true);
@@ -41,10 +57,6 @@ describe('projects', () => {
   // });
 
   //   it('edit project', () => {
-  //     cy.requestPost<Project>('/api/v2/projects/', {
-  //       name: 'E2E Project ' + randomString(4),
-  //       organization: organization.id,
-  //     }).then((project) => {
   //       cy.navigateTo(/^Projects$/, true);
   //       cy.clickRow(project.name);
   //       cy.clickButton(/^Edit project$/);
@@ -52,85 +64,45 @@ describe('projects', () => {
   //       cy.typeByLabel(/^Name$/, 'a');
   //       cy.clickButton(/^Save project$/);
   //       cy.hasTitle(`${project.name}a`);
-  //     });
   //   });
 
-  it.only('project details', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickButton(/^Details$/);
-      cy.contains('#name', project.name);
-    });
+  it('project details', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickButton(/^Details$/);
+    cy.contains('#name', project.name);
   });
 
   it('project access', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickTab(/^Access$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickTab(/^Access$/);
   });
 
   it('project job templates', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickTab(/^Job Templates$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickTab(/^Job Templates$/);
   });
 
   it('project notifications', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickTab(/^Notifications$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickTab(/^Notifications$/);
   });
 
   it('project schedules', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickTab(/^Schedules$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickTab(/^Schedules$/);
   });
 
   //   it('project details edit project', () => {
-  //     cy.requestPost<Project>('/api/v2/projects/', {
-  //       name: 'E2E Project ' + randomString(4),
-  //       organization: organization.id,
-  //     }).then((project) => {
   //       cy.navigateTo(/^Projects$/, true);
   //       cy.clickRow(project.name);
   //       cy.hasTitle(project.name);
@@ -139,76 +111,41 @@ describe('projects', () => {
   //       cy.typeByLabel(/^Name$/, 'a');
   //       cy.clickButton(/^Save project$/);
   //       cy.hasTitle(`${project.name}a`);
-  //     });
   //   });
 
   it('project details copy project', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickPageAction(/^Copy project$/);
-      // ensure toast message shows up
-      cy.hasAlert(`${project.name} copied`);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickPageAction(/^Copy project$/);
+    cy.hasAlert(`${project.name} copied`);
   });
 
   it('project details sync project', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickPageAction(/^Sync project$/);
-      // ensure toast message shows up
-      cy.hasAlert(`Syncing ${project.name}`);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickPageAction(/^Sync project$/);
+    cy.hasAlert(`Syncing ${project.name}`);
   });
 
   it('project details delete project', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
-      cy.clickPageAction(/^Delete project/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      cy.hasTitle(/^Projects$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickPageAction(/^Delete project/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.hasTitle(/^Projects$/);
   });
 
   //   it('projects table row edit project', () => {
-  //     cy.requestPost<Project>('/api/v2/projects/', {
-  //       name: 'E2E Project ' + randomString(4),
-  //       organization: organization.id,
-  //     }).then((project) => {
   //       cy.navigateTo(/^Projects$/, true);
   //       cy.get('#edit-project').click();
   //       cy.hasTitle(/^Edit project$/);
-  //     });
   //   });
 
   // it('projects table row delete project', () => {
-  //   cy.requestPost<Project>('/api/v2/projects/', {
-  //     name: 'E2E Project ' + randomString(4),
-  //     organization: organization.id,
-  //     scm_type: 'git',
-  //     scm_url: 'foo',
-  //   }).then((project) => {
   //     cy.navigateTo(/^Projects$/, false);
   //     cy.clickRowAction(project.name, /^Delete project$/);
   //     cy.get('#confirm').click();
@@ -216,24 +153,16 @@ describe('projects', () => {
   //     cy.contains(/^Success$/);
   //     cy.clickButton(/^Close$/);
   //     cy.clickButton(/^Clear all filters$/);
-  //   });
   // });
 
   it('projects toolbar delete projects', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git',
-      scm_url: 'foo',
-    }).then((project) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.selectRow(project.name);
-      cy.clickToolbarAction(/^Delete selected projects$/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-    });
+    cy.navigateTo(/^Projects$/, false);
+    cy.selectRow(project.name);
+    cy.clickToolbarAction(/^Delete selected projects$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
