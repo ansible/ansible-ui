@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import { randomString } from '../../framework/utils/random-string';
 import {
   handleControllerDelete,
   handleControllerGet,
   handleControllerPost,
   ICollectionMockItem,
+  mockController,
 } from './mock-controller';
 
 declare global {
   namespace Cypress {
     interface Chainable {
+      login(): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -32,10 +35,53 @@ declare global {
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
       requestGet<T>(url: string): Chainable<T>;
-      requestDelete(url: string): Chainable;
+      requestDelete(url: string, ignoreError?: boolean): Chainable;
     }
   }
 }
+
+const sessionID = randomString(8);
+
+Cypress.Commands.add('login', () => {
+  cy.session(
+    sessionID,
+    () => {
+      window.localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('disclaimer', 'true');
+
+      cy.visit(`/automation-servers`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+
+      if (Cypress.env('server')) {
+        const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
+        const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
+        const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'password';
+
+        cy.clickButton(/^Add automation server$/);
+        cy.typeByLabel(/^Name$/, 'Controller');
+        cy.typeByLabel(/^Url$/, server);
+        cy.get('.pf-c-select__toggle').click();
+        cy.clickButton('AWX Ansible server');
+        cy.get('button[type=submit]').click();
+
+        cy.contains('a', /^Controller$/).click();
+        cy.typeByLabel(/^Username$/, username);
+        cy.typeByLabel(/^Password$/, password);
+        cy.get('button[type=submit]').click();
+
+        cy.contains(/^Welcome to/);
+        cy.wait(2000);
+      }
+    },
+    { cacheAcrossSpecs: true }
+  );
+
+  if (!Cypress.env('server')) {
+    mockController();
+  }
+});
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
@@ -71,12 +117,12 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   }
 });
 
-Cypress.Commands.add('requestDelete', function deleteFn(url: string) {
+Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   if (!Cypress.env('server')) {
     return cy.wrap(handleControllerDelete(url));
   } else {
     cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request({ method: 'Delete', url });
+    return cy.request({ method: 'Delete', url, failOnStatusCode: ignoreError ? false : true });
   }
 });
 
