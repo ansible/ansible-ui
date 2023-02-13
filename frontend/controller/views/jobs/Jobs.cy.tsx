@@ -4,7 +4,7 @@ import { ItemsResponse } from '../../../Data';
 import * as deleteJobs from './hooks/useDeleteJobs';
 
 describe('Jobs.cy.ts', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
