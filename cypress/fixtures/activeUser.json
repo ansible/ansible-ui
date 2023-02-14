@@ -1,0 +1,31 @@
+{
+  "id": 20,
+  "type": "user",
+  "url": "/api/v2/users/20/",
+  "related": {
+    "teams": "/api/v2/users/20/teams/",
+    "organizations": "/api/v2/users/20/organizations/",
+    "admin_of_organizations": "/api/v2/users/20/admin_of_organizations/",
+    "projects": "/api/v2/users/20/projects/",
+    "credentials": "/api/v2/users/20/credentials/",
+    "roles": "/api/v2/users/20/roles/",
+    "activity_stream": "/api/v2/users/20/activity_stream/",
+    "access_list": "/api/v2/users/20/access_list/",
+    "tokens": "/api/v2/users/20/tokens/",
+    "authorized_tokens": "/api/v2/users/20/authorized_tokens/",
+    "personal_tokens": "/api/v2/users/20/personal_tokens/"
+  },
+  "summary_fields": { "user_capabilities": { "edit": true, "delete": false } },
+  "created": "2023-02-09T18:41:37.395481Z",
+  "modified": "2023-02-10T17:05:01.307666Z",
+  "username": "vn-admin",
+  "first_name": "",
+  "last_name": "",
+  "email": "",
+  "is_superuser": true,
+  "is_system_auditor": false,
+  "ldap_dn": "",
+  "last_login": "2023-02-10T17:05:01.307666Z",
+  "external_account": null,
+  "auth": []
+}

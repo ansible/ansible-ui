@@ -514,12 +514,17 @@
   "Remove selected users from organizations": "Remove selected users from organizations",
   "Remove selected users from teams": "Remove selected users from teams",
   "Remove user": "Remove user",
+  "Remove user_one": "Remove user",
+  "Remove user_other": "Remove users",
   "Remove user from organization": "Remove user from organization",
   "Remove user from organizations": "Remove user from organizations",
   "Remove user from selected organizations": "Remove user from selected organizations",
   "Remove user from selected teams": "Remove user from selected teams",
-  "Remove user from team": "Remove user from team",
   "Remove user from teams": "Remove user from teams",
+  "Remove user from team_one": "Remove user from team",
+  "Remove user from team_other": "Remove users from team",
+  "Remove user from organization_one": "Remove user from organization",
+  "Remove user from organization_other": "Remove users from organization",
   "Remove users from organization": "Remove users from organization",
   "Remove users from organizations_one": "Remove users from organizations",
   "Remove users from organizations_other": "Remove users from organizations",
@@ -766,5 +771,11 @@
     "_one": "Yes, I confirm that I want to delete this user.",
     "_other": "Yes, I confirm that I want to delete these {{count}} users."
   },
-  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access."
+  "Yes, I confirm that I want to remove these {{count}} users": {
+    "_one": "Yes, I confirm that I want to remove this user.",
+    "_other": "Yes, I confirm that I want to remove these {{count}} users."
+  },
+  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access."
 }
