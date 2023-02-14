@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
-import { randomString } from '../../../framework/utils/random-string';
-import { Organization } from '../../../frontend/controller/interfaces/Organization';
-import { Project } from '../../../frontend/controller/interfaces/Project';
-import { ItemsResponse } from '../../../frontend/Data';
+import { randomString } from '../../../../framework/utils/random-string';
+import { Organization } from '../../../../frontend/controller/interfaces/Organization';
+import { Project } from '../../../../frontend/controller/interfaces/Project';
+import { ItemsResponse } from '../../../../frontend/Data';
 
 describe('projects', () => {
   let organization: Organization;

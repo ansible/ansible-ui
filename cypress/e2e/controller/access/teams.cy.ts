@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
-import { randomString } from '../../../framework/utils/random-string';
-import { Organization } from '../../../frontend/controller/interfaces/Organization';
-import { Team } from '../../../frontend/controller/interfaces/Team';
+import { randomString } from '../../../../framework/utils/random-string';
+import { Organization } from '../../../../frontend/controller/interfaces/Organization';
+import { Team } from '../../../../frontend/controller/interfaces/Team';
 
 describe('teams', () => {
   let organization: Organization;
@@ -28,6 +28,11 @@ describe('teams', () => {
 
   afterEach(() => {
     cy.requestDelete(`/api/v2/teams/${team.id}/`, true);
+  });
+
+  it('teams page', () => {
+    cy.navigateTo(/^Teams$/, false);
+    cy.hasTitle(/^Teams$/);
   });
 
   it('create team', () => {

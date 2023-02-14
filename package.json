@@ -37,7 +37,7 @@
     "upgrade": "npx npm-check-updates '/^@patternfly.*$/' --upgrade --target latest --doctor && npx npm-check-updates '/^(?!@patternfly).*$/' --upgrade --target minor --doctor && npm audit fix || true && npm dedup || true ",
     "docker:build": "docker build --tag ansible-ui .",
     "docker:run": "docker run --rm -e LOG_LEVEL=debug -p 3002:3002 -e PORT=3002 ansible-ui | pino-zen",
-    "cypress:run": "concurrently npm:cypress:run:e2e npm:cypress:run:unit",
+    "cypress:run": "rm -rf coverage .nyc_output && concurrently npm:cypress:run:e2e npm:cypress:run:unit",
     "cypress:run:e2e": "wait-on -i 1000 https-get://localhost:3002 && cypress run --e2e --env server=${E2E_SERVER},username=${E2E_USERNAME},password=${E2E_PASSWORD} --config video=false",
     "cypress:run:unit": "cypress run --component --config video=false",
     "cypress:open": "cypress open",
