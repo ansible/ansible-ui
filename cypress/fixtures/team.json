@@ -1,18 +1,18 @@
 {
-  "id": 2,
+  "id": 81,
   "type": "team",
-  "url": "/api/v2/teams/2/",
+  "url": "/api/v2/teams/81/",
   "related": {
-    "named_url": "/api/v2/teams/ Team 2 Org 0++ Organization 0/",
-    "created_by": "/api/v2/users/15/",
-    "modified_by": "/api/v2/users/9/",
-    "projects": "/api/v2/teams/2/projects/",
-    "users": "/api/v2/teams/2/users/",
-    "credentials": "/api/v2/teams/2/credentials/",
-    "roles": "/api/v2/teams/2/roles/",
-    "object_roles": "/api/v2/teams/2/object_roles/",
-    "activity_stream": "/api/v2/teams/2/activity_stream/",
-    "access_list": "/api/v2/teams/2/access_list/",
+    "named_url": "/api/v2/teams/Team 2 Org 0++ Organization 0/",
+    "created_by": "/api/v2/users/2/",
+    "modified_by": "/api/v2/users/2/",
+    "projects": "/api/v2/teams/81/projects/",
+    "users": "/api/v2/teams/81/users/",
+    "credentials": "/api/v2/teams/81/credentials/",
+    "roles": "/api/v2/teams/81/roles/",
+    "object_roles": "/api/v2/teams/81/object_roles/",
+    "activity_stream": "/api/v2/teams/81/activity_stream/",
+    "access_list": "/api/v2/teams/81/access_list/",
     "organization": "/api/v2/organizations/2/"
   },
   "summary_fields": {
@@ -23,15 +23,15 @@
       "admin_role": {
         "description": "Can manage all aspects of the team",
         "name": "Admin",
-        "id": 83
+        "id": 600
       },
-      "member_role": { "description": "User is a member of the team", "name": "Member", "id": 84 },
-      "read_role": { "description": "May view settings for the team", "name": "Read", "id": 85 }
+      "member_role": { "description": "User is a member of the team", "name": "Member", "id": 601 },
+      "read_role": { "description": "May view settings for the team", "name": "Read", "id": 602 }
     },
     "user_capabilities": { "edit": true, "delete": false }
   },
-  "created": "2022-11-10T12:15:27.112290Z",
-  "modified": "2022-11-10T12:15:27.112315Z",
+  "created": "2023-02-10T15:08:32.547728Z",
+  "modified": "2023-02-10T15:08:32.547752Z",
   "name": "Team 2 Org 0",
   "description": "",
   "organization": 2
