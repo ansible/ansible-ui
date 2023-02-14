@@ -50,7 +50,7 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run npm:cypress:start:e2e
+      - run: npm run cypress:start:e2e
         env:
           E2E_SERVER: ${{ secrets.E2E_SERVER }}
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
