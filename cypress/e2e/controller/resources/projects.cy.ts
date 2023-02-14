@@ -42,6 +42,11 @@ describe('projects', () => {
     cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
   });
 
+  it('projects page', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.hasTitle(/^Projects$/);
+  });
+
   // it('create project', () => {
   //   const projectName = 'E2E Project ' + randomString(4);
   //   cy.navigateTo(/^Projects$/, true);
