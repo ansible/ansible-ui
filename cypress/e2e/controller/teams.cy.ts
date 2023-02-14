@@ -65,6 +65,19 @@ describe('teams', () => {
     cy.clickTab(/^Access$/);
   });
 
+  it('team access', () => {
+    cy.requestPost<Team>('/api/v2/teams/', {
+      name: 'Team ' + randomString(4),
+      organization: organization.id,
+    }).then((team) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.clickRow(team.name);
+      cy.hasTitle(team.name);
+      cy.clickTab(/^Access$/);
+      cy.requestDelete(`/api/v2/teams/${team.id}/`);
+    });
+  });
+
   it('team roles', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
