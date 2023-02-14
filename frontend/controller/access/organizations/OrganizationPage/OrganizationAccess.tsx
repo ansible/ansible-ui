@@ -7,6 +7,7 @@ import { AccessTable } from '../../users/Users';
 export function OrganizationAccess(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();
+  // TODO: Utilize ResourceAccessList component
   return (
     <PageTabs>
       <PageTab label={t('Users')}>

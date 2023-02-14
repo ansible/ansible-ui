@@ -25,6 +25,7 @@ import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { Projects } from './resources/projects/Projects';
+import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { TemplateDetail } from './resources/templates/TemplateDetail';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
@@ -71,7 +72,10 @@ export function ControllerRouter() {
         <Route path={RouteE.Credentials.replace(RouteE.Controller, '')} element={<Credentials />} />
 
         <Route path={RouteE.Projects.replace(RouteE.Controller, '')} element={<Projects />} />
-        {/* <Route path={RouteE.ProjectDetails} element={<ProjectsDetails />} /> */}
+        <Route
+          path={RouteE.ProjectDetails.replace(RouteE.Controller, '')}
+          element={<ProjectPage />}
+        />
         {/* <Route path={RouteE.ProjectEdit} element={<ProjectEdit />} /> */}
 
         <Route path={RouteE.Inventories.replace(RouteE.Controller, '')} element={<Inventories />} />

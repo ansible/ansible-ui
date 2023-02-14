@@ -76,6 +76,7 @@ export interface PageHeaderProps {
   description?: string | string[];
   controls?: ReactNode;
   headerActions?: ReactNode;
+  footer?: ReactNode;
   t?: (t: string) => string;
 }
 
@@ -89,6 +90,7 @@ export interface PageHeaderProps {
  * @param {string} description - The description of the page.
  * @param {ReactNode} controls - Support for extra page controls.
  * @param {ReactNode} headerActions - The actions for the page.
+ * @param {ReactNode} footer - Extra components to render at the bottom of the header.
  *
  * @example
  * <PageLayout>
@@ -102,7 +104,7 @@ export interface PageHeaderProps {
  * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const { navigation, breadcrumbs, title, description, controls, headerActions } = props;
+  const { navigation, breadcrumbs, title, description, controls, headerActions, footer } = props;
   const lg = useBreakpoint('lg');
   const xl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
@@ -142,128 +144,127 @@ export function PageHeader(props: PageHeaderProps) {
           </Flex>
         </PageSection>
       )}
-      {true && (
-        <>
-          <PageSection
-            variant={PageSectionVariants.light}
-            className="border-top border-bottom dark-3"
-            style={{
-              paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
-              paddingBottom: xl ? 16 : 12,
-            }}
-          >
-            <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
-              <FlexItem grow={{ default: 'grow' }}>
-                {breadcrumbs && (
-                  <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: lg ? 6 : 4 }} />
-                )}
-                {title ? (
-                  props.titleHelp ? (
-                    <Popover
-                      headerContent={props.titleHelpTitle}
-                      bodyContent={
-                        <Stack hasGutter>
-                          {typeof props.titleHelp === 'string' ? (
-                            <StackItem>{props.titleHelp}</StackItem>
-                          ) : (
-                            props.titleHelp.map((help, index) => (
-                              <StackItem key={index}>{help}</StackItem>
-                            ))
-                          )}
-                          {props.titleDocLink && (
-                            <StackItem>
-                              <Button
-                                icon={<ExternalLinkAltIcon />}
-                                variant="link"
-                                onClick={() => window.open(props.titleDocLink, '_blank')}
-                                isInline
-                              >
-                                {t('Documentation')}
-                              </Button>
-                            </StackItem>
-                          )}
-                        </Stack>
-                      }
-                      position="bottom-start"
-                      removeFindDomNode
-                    >
-                      <Title headingLevel="h1">
-                        {title}
-                        <Button
-                          variant="link"
-                          style={{
-                            padding: 0,
-                            marginTop: 1,
-                            marginLeft: 8,
-                            verticalAlign: 'top',
-                          }}
-                        >
-                          <OutlinedQuestionCircleIcon />
-                        </Button>
-                      </Title>
-                    </Popover>
-                  ) : (
-                    <Title headingLevel="h1">{title}</Title>
-                  )
-                ) : (
-                  <Title headingLevel="h1">
-                    <Skeleton width="160px" />
-                  </Title>
-                )}
-                {isMdOrLarger && description && (
-                  <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
-                    {typeof description === 'string' ? (
-                      <Truncate content={description} />
-                    ) : (
-                      <Stack>
-                        {description.map((d) => (
-                          <StackItem key={d}>{d}</StackItem>
-                        ))}
-                      </Stack>
-                    )}
-                  </Text>
-                )}
-              </FlexItem>
-              {title && (headerActions || controls) && (
-                <Flex
-                  direction={{ default: 'column' }}
-                  spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
-                  justifyContent={{ default: 'justifyContentCenter' }}
-                >
-                  {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
-                  {headerActions && <FlexItem>{headerActions}</FlexItem>}
-                </Flex>
+      <PageSection
+        variant={PageSectionVariants.light}
+        className="border-top border-bottom dark-3"
+        style={{
+          paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
+          paddingBottom: xl ? 16 : 12,
+        }}
+      >
+        <Stack hasGutter>
+          <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
+            <FlexItem grow={{ default: 'grow' }}>
+              {breadcrumbs && (
+                <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: lg ? 6 : 4 }} />
               )}
-            </Flex>
-          </PageSection>
-          <PageAlertsContext.Consumer>
-            {(pageAlerts) => (
-              <PageAlertsArrayContext.Consumer>
-                {(pageAlertsArray) => {
-                  if (pageAlertsArray.length === 0) return <></>;
-                  return (
-                    <div style={{ borderBottom: 'thin solid rgba(0, 0, 0, 0.12)' }}>
-                      {pageAlertsArray.map((alertProps, index) => (
-                        <Alert
-                          {...alertProps}
-                          key={alertProps.key ?? alertProps.id ?? index}
-                          actionClose={
-                            <AlertActionCloseButton
-                              onClose={() => pageAlerts.removeAlert(alertProps)}
-                            />
-                          }
-                          isInline
-                          isExpandable={!!alertProps.children}
-                        />
+              {title ? (
+                props.titleHelp ? (
+                  <Popover
+                    headerContent={props.titleHelpTitle}
+                    bodyContent={
+                      <Stack hasGutter>
+                        {typeof props.titleHelp === 'string' ? (
+                          <StackItem>{props.titleHelp}</StackItem>
+                        ) : (
+                          props.titleHelp.map((help, index) => (
+                            <StackItem key={index}>{help}</StackItem>
+                          ))
+                        )}
+                        {props.titleDocLink && (
+                          <StackItem>
+                            <Button
+                              icon={<ExternalLinkAltIcon />}
+                              variant="link"
+                              onClick={() => window.open(props.titleDocLink, '_blank')}
+                              isInline
+                            >
+                              {t('Documentation')}
+                            </Button>
+                          </StackItem>
+                        )}
+                      </Stack>
+                    }
+                    position="bottom-start"
+                    removeFindDomNode
+                  >
+                    <Title headingLevel="h1">
+                      {title}
+                      <Button
+                        variant="link"
+                        style={{
+                          padding: 0,
+                          marginTop: 1,
+                          marginLeft: 8,
+                          verticalAlign: 'top',
+                        }}
+                      >
+                        <OutlinedQuestionCircleIcon />
+                      </Button>
+                    </Title>
+                  </Popover>
+                ) : (
+                  <Title headingLevel="h1">{title}</Title>
+                )
+              ) : (
+                <Title headingLevel="h1">
+                  <Skeleton width="160px" />
+                </Title>
+              )}
+              {isMdOrLarger && description && (
+                <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
+                  {typeof description === 'string' ? (
+                    <Truncate content={description} />
+                  ) : (
+                    <Stack>
+                      {description.map((d) => (
+                        <StackItem key={d}>{d}</StackItem>
                       ))}
-                    </div>
-                  );
-                }}
-              </PageAlertsArrayContext.Consumer>
+                    </Stack>
+                  )}
+                </Text>
+              )}
+            </FlexItem>
+            {title && (headerActions || controls) && (
+              <Flex
+                direction={{ default: 'column' }}
+                spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
+                justifyContent={{ default: 'justifyContentCenter' }}
+              >
+                {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
+                {headerActions && <FlexItem>{headerActions}</FlexItem>}
+              </Flex>
             )}
-          </PageAlertsContext.Consumer>
-        </>
-      )}
+          </Flex>
+          {footer}
+        </Stack>
+      </PageSection>
+      <PageAlertsContext.Consumer>
+        {(pageAlerts) => (
+          <PageAlertsArrayContext.Consumer>
+            {(pageAlertsArray) => {
+              if (pageAlertsArray.length === 0) return <></>;
+              return (
+                <div style={{ borderBottom: 'thin solid rgba(0, 0, 0, 0.12)' }}>
+                  {pageAlertsArray.map((alertProps, index) => (
+                    <Alert
+                      {...alertProps}
+                      key={alertProps.key ?? alertProps.id ?? index}
+                      actionClose={
+                        <AlertActionCloseButton
+                          onClose={() => pageAlerts.removeAlert(alertProps)}
+                        />
+                      }
+                      isInline
+                      isExpandable={!!alertProps.children}
+                    />
+                  ))}
+                </div>
+              );
+            }}
+          </PageAlertsArrayContext.Consumer>
+        )}
+      </PageAlertsContext.Consumer>
     </>
   );
 }

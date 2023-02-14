@@ -39,7 +39,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.tag.outputs.VERSION }}
-          token: ${{ secrets.GH_TOKEN }}
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -66,7 +65,7 @@ jobs:
           cp -f framework/README.md publish/README.md
           cd publish
           VERSION=`cat ../package.json | jq -r '.version'` && cat ../framework/package.json | jq --arg version $VERSION '. +{version: $version}' > package.json
-          npm publish
+          npm publish --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
