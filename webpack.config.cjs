@@ -47,7 +47,7 @@ module.exports = function (_env, argv) {
                 plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
               },
             },
-          ],
+          ].filter(Boolean),
           type: 'javascript/auto',
         },
       ],
