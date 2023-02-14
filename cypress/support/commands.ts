@@ -2,13 +2,6 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
-import {
-  handleControllerDelete,
-  handleControllerGet,
-  handleControllerPost,
-  ICollectionMockItem,
-  mockController,
-} from './mock-controller';
 
 declare global {
   namespace Cypress {
@@ -54,33 +47,30 @@ Cypress.Commands.add('login', () => {
         retryOnNetworkFailure: true,
       });
 
-      if (Cypress.env('server')) {
-        const server = Cypress.env('server') ? (Cypress.env('server') as string) : 'mock';
-        const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
-        const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'password';
+      const server = Cypress.env('server')
+        ? (Cypress.env('server') as string)
+        : 'https://localhost:8043/';
+      cy.setCookie('server', server);
+      const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
+      const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'admin';
 
-        cy.clickButton(/^Add automation server$/);
-        cy.typeByLabel(/^Name$/, 'Controller');
-        cy.typeByLabel(/^Url$/, server);
-        cy.get('.pf-c-select__toggle').click();
-        cy.clickButton('AWX Ansible server');
-        cy.get('button[type=submit]').click();
+      cy.clickButton(/^Add automation server$/);
+      cy.typeByLabel(/^Name$/, 'Controller');
+      cy.typeByLabel(/^Url$/, server);
+      cy.get('.pf-c-select__toggle').click();
+      cy.clickButton('AWX Ansible server');
+      cy.get('button[type=submit]').click();
 
-        cy.contains('a', /^Controller$/).click();
-        cy.typeByLabel(/^Username$/, username);
-        cy.typeByLabel(/^Password$/, password);
-        cy.get('button[type=submit]').click();
+      cy.contains('a', /^Controller$/).click();
+      cy.typeByLabel(/^Username$/, username);
+      cy.typeByLabel(/^Password$/, password);
+      cy.get('button[type=submit]').click();
 
-        cy.contains(/^Welcome to/);
-        cy.wait(2000);
-      }
+      cy.contains(/^Welcome to/);
+      cy.wait(2000);
     },
     { cacheAcrossSpecs: true }
   );
-
-  if (!Cypress.env('server')) {
-    mockController();
-  }
 });
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
@@ -100,30 +90,15 @@ Cypress.Commands.add('filterByText', (text: string) => {
 });
 
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
-  if (!Cypress.env('server')) {
-    return cy.wrap<T>(handleControllerPost(url, body as unknown as ICollectionMockItem) as T);
-  } else {
-    cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request<T>({ method: 'POST', url, body }).then((response) => response.body);
-  }
+  return cy.request<T>({ method: 'POST', url, body }).then((response) => response.body);
 });
 
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
-  if (!Cypress.env('server')) {
-    return cy.wrap<T>(handleControllerGet(url) as T);
-  } else {
-    cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
-  }
+  return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
-  if (!Cypress.env('server')) {
-    return cy.wrap(handleControllerDelete(url));
-  } else {
-    cy.setCookie('server', Cypress.env('server') as string);
-    return cy.request({ method: 'Delete', url, failOnStatusCode: ignoreError ? false : true });
-  }
+  return cy.request({ method: 'Delete', url, failOnStatusCode: ignoreError ? false : true });
 });
 
 Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {

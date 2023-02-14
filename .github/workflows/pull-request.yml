@@ -8,19 +8,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docker-image:
-    name: Docker Build and Archive
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          DOCKER_BUILDKIT=1 docker build --cache-from quay.io/ansible/ansible-ui:dependencies --tag ansible-ui .
-      - run: docker save ansible-ui > ansible-ui.tar
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ansible-ui.tar
-          path: ansible-ui.tar
-
   packages:
     name: Packages
     runs-on: ubuntu-latest
@@ -48,7 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - packages
-      - docker-image
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -64,20 +50,11 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - uses: actions/download-artifact@v3
-        with:
-          name: ansible-ui.tar
-      - run: docker load --input ansible-ui.tar
-      - run: docker run -d -e PORT=3002 -p 3002:3002 ansible-ui
-      - run: npm run cypress:run:e2e
+      - run: npm run cypress:start:e2e
         env:
           E2E_SERVER: ${{ secrets.E2E_SERVER }}
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-      - uses: actions/upload-artifact@v3
-        with:
-          name: e2e.info
-          path: coverage/lcov.info
 
   cypress-unit:
     name: Cypress Unit Tests
@@ -99,32 +76,6 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run cypress:run:unit
-      - uses: actions/upload-artifact@v3
-        with:
-          name: unit.info
-          path: coverage/lcov.info
-
-  coverage:
-    name: Coverage Report
-    runs-on: ubuntu-latest
-    needs:
-      - cypress-e2e
-      - cypress-unit
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: e2e.info
-      - uses: actions/download-artifact@v3
-        with:
-          name: unit.info
-      - name: Report code coverage
-        uses: zgosalvez/github-actions-report-lcov@v2
-        with:
-          coverage-files: '*.info'
-          minimum-coverage: 50
-          artifact-name: code-coverage-report
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   eslint:
     name: ESLint - Prettier - TSC

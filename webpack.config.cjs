@@ -40,7 +40,7 @@ module.exports = function (_env, argv) {
           test: /\.(ts|tsx|js|jsx)$/,
           exclude: /node_modules/,
           use: [
-            'coverage-istanbul-loader',
+            isDevelopment && 'coverage-istanbul-loader',
             {
               loader: 'babel-loader',
               options: {
@@ -115,7 +115,6 @@ module.exports = function (_env, argv) {
     devServer: {
       static: 'ansible',
       port: 3002,
-      open: true,
       historyApiFallback: true,
       compress: true,
       hot: true,

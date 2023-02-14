@@ -6,7 +6,7 @@ import { User } from '../../../interfaces/User';
 import { TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
