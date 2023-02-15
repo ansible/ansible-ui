@@ -5,7 +5,7 @@ export interface Label {
   type: string;
   url: string;
   created: string;
-  modeified: string;
+  modified: string;
   summary_fields: {
     created_by: { username: string; first_name: string; last_name: string; id: number };
     modified_by: { username: string; first_name: string; last_name: string; id: number };

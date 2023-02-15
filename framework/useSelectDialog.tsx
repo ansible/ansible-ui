@@ -15,20 +15,24 @@ import { IToolbarFilter } from './PageTable/PageToolbar';
 import { ISelected } from './PageTable/useTableItems';
 import { IView } from './useView';
 
-interface ISelectDialogOptions<T extends object> {
+interface ISelectDialogOptions<T extends object, TMultiple> {
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
   toolbarFilters: IToolbarFilter[];
   confirm: string;
   cancel: string;
   selected: string;
+  isMultiple?: TMultiple extends true ? true : false;
 }
 
-export function useSelectDialog<T extends { id: number }>(options: ISelectDialogOptions<T>) {
-  const { view, tableColumns, toolbarFilters, confirm, cancel, selected } = options;
+export function useSelectDialog<T extends { id: number }, TMultiple = false>(
+  options: ISelectDialogOptions<T, TMultiple>
+) {
+  const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
   const [title, setTitle] = useState('');
-  const [onSelect, setOnSelect] = useState<(item: T) => void>();
-  const openSetting = useCallback((onSelect?: (item: T) => void, title?: string) => {
+  type ISetter = TMultiple extends true ? (item: T[]) => void : (item: T) => void;
+  const [onSelect, setOnSelect] = useState<ISetter>();
+  const openSetting = useCallback((onSelect?: ISetter, title?: string) => {
     setTitle(title ?? '');
     setOnSelect(() => onSelect);
   }, []);
@@ -36,9 +40,10 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
   useEffect(() => {
     if (onSelect !== undefined) {
       setDialog(
-        <SelectDialog<T>
+        <SelectDialog<T, TMultiple>
           title={title}
           open
+          isMultiple={isMultiple}
           setOpen={() => setOnSelect(undefined)}
           onSelect={onSelect}
           view={view}
@@ -54,22 +59,37 @@ export function useSelectDialog<T extends { id: number }>(options: ISelectDialog
       setDialog(undefined);
       view.unselectAll();
     }
-  }, [cancel, confirm, onSelect, selected, setDialog, tableColumns, title, toolbarFilters, view]);
+  }, [
+    cancel,
+    confirm,
+    onSelect,
+    selected,
+    setDialog,
+    tableColumns,
+    title,
+    toolbarFilters,
+    view,
+    isMultiple,
+  ]);
   return openSetting;
 }
 
-export type SelectDialogProps<T extends object> = {
+export type SelectDialogProps<T extends object, TMultiple> = {
   title: string;
   open: boolean;
+  isMultiple?: TMultiple extends true ? true : false;
   setOpen: (open: boolean) => void;
-  onSelect: (item: T) => void;
+  onSelect: TMultiple extends true ? (item: T[]) => void : (item: T) => void;
   keyFn: (item: T) => string | number;
-} & ISelectDialogOptions<T>;
+} & ISelectDialogOptions<T, TMultiple>;
 
-export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<T>) {
+export function SelectDialog<T extends { id: number }, TMultiple = false>(
+  props: SelectDialogProps<T, TMultiple>
+) {
   const {
     title,
     open,
+    isMultiple = false,
     setOpen,
     onSelect,
     view,
@@ -92,8 +112,10 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
           key="confirm"
           variant="primary"
           onClick={() => {
-            if (view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0]);
+            if (!isMultiple && view.selectedItems.length > 0) {
+              onSelect(view.selectedItems[0] as T[] & T);
+            } else if (isMultiple) {
+              onSelect(view.selectedItems as T[] & T);
             }
             onClose();
           }}
@@ -151,6 +173,7 @@ export function SelectDialog<T extends { id: number }>(props: SelectDialogProps<
             emptyStateTitle="No organizations found"
             errorStateTitle="Error loading organizations"
             {...view}
+            isSelectMultiple={isMultiple}
             onSelect={() => null}
             disableCardView
             disableListView

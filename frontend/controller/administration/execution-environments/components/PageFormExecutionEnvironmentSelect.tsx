@@ -8,6 +8,8 @@ import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvir
 
 export function PageFormExecutionEnvironmentSelect(props: {
   name: string;
+  label?: string;
+  isRequired?: boolean;
   executionEnvironmentPath?: string;
   executionEnvironmentIdPath?: string;
 }) {
@@ -17,28 +19,33 @@ export function PageFormExecutionEnvironmentSelect(props: {
   return (
     <PageFormTextInput
       name={props.name}
-      label={t('Execution environment')}
+      label={props.label || t('Execution environment')}
       placeholder="Enter execution environment"
       selectTitle={t('Select an execution environment')}
       selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
       selectOpen={selectExecutionEnvironment}
       validate={async (executionEnvironmentName: string) => {
+        if (!executionEnvironmentName && !props.isRequired) {
+          return undefined;
+        }
         try {
           const itemsResponse = await requestGet<ItemsResponse<Inventory>>(
             `/api/v2/execution_environments/?name=${executionEnvironmentName}`
           );
           if (itemsResponse.results.length === 0) return t('Execution environment not found.');
-          if (props.executionEnvironmentPath)
+          if (props.executionEnvironmentPath) {
             setValue(props.executionEnvironmentPath, itemsResponse.results[0]);
-          if (props.executionEnvironmentIdPath)
+          }
+          if (props.executionEnvironmentIdPath) {
             setValue(props.executionEnvironmentIdPath, itemsResponse.results[0].id);
+          }
         } catch (err) {
           if (err instanceof Error) return err.message;
           else return 'Unknown error';
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }

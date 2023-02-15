@@ -84,6 +84,7 @@ export type PageTableProps<T extends object> = {
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
+  isSelectMultiple?: boolean;
   selectedItems?: T[];
   selectItem?: (item: T) => void;
   unselectItem?: (item: T) => void;
@@ -261,6 +262,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     selectItem,
     unselectItem,
     isSelected,
+    isSelectMultiple,
     keyFn,
     rowActions,
     toolbarActions,
@@ -368,6 +370,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   columns={tableColumns}
                   item={item}
                   isItemSelected={isSelected?.(item)}
+                  isSelectMultiple={isSelectMultiple}
                   selectItem={selectItem}
                   unselectItem={unselectItem}
                   rowActions={rowActions}
@@ -514,6 +517,7 @@ function TableRow<T extends object>(props: {
   columns: ITableColumn<T>[];
   item: T;
   isItemSelected?: boolean;
+  isSelectMultiple?: boolean;
   selectItem?: (item: T) => void;
   unselectItem?: (item: T) => void;
   rowActions?: IPageAction<T>[];
@@ -531,6 +535,7 @@ function TableRow<T extends object>(props: {
     unselectItem,
     unselectAll,
     isItemSelected,
+    isSelectMultiple,
     item,
     rowActions,
     rowIndex,
@@ -591,12 +596,14 @@ function TableRow<T extends object>(props: {
             select={{
               rowIndex,
               onSelect: () => {
-                unselectAll?.();
+                if (!isSelectMultiple) {
+                  unselectAll?.();
+                }
                 selectItem?.(item);
                 onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
-              variant: 'radio',
+              variant: isSelectMultiple ? 'checkbox' : 'radio',
             }}
             isStickyColumn
             stickyMinWidth="0px"

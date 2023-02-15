@@ -1,25 +1,43 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
+import { FieldValues } from 'react-hook-form';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { getControllerError } from '../../useControllerView';
+import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+
+interface OrganizationFields extends FieldValues {
+  organization: Organization;
+  instanceGroups?: InstanceGroup[];
+}
 
 export function CreateOrganization() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
+  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values, setError) => {
     try {
       const organization = await requestPost<Organization>(
         '/api/v2/organizations/',
-        editedOrganization
+        values.organization
       );
+      const igRequests = [];
+      for (const ig of values.instanceGroups || []) {
+        igRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+          })
+        );
+      }
+      await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
@@ -51,38 +69,50 @@ export function EditOrganization() {
   const id = Number(params.id);
 
   const { data: organization } = useSWR<Organization>(
-    Number.isInteger(id) ? `/api/v2/organizations/${id.toString()}/` : undefined,
+    `/api/v2/organizations/${id.toString()}/`,
     requestGet,
     swrOptions
   );
+  const { data: igResponse } = useSWR<{ results: InstanceGroup[] }>(
+    `/api/v2/organizations/${id.toString()}/instance_groups/`,
+    requestGet,
+    swrOptions
+  );
+  const instanceGroups = igResponse?.results;
 
   useInvalidateCacheOnUnmount();
 
-  const onSubmit: PageFormSubmitHandler<Organization> = async (editedOrganization, setError) => {
+  const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values, setError) => {
     try {
       const organization = await requestPatch<Organization>(
         `/api/v2/organizations/${id}/`,
-        editedOrganization
+        values.organization
       );
+      const disassociateRequests = [];
+      for (const ig of instanceGroups || []) {
+        disassociateRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+            disassociate: true,
+          })
+        );
+      }
+      await Promise.all(disassociateRequests);
+      const igRequests = [];
+      for (const ig of values.instanceGroups || []) {
+        igRequests.push(
+          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+          })
+        );
+      }
+      await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getControllerError(err));
     }
   };
   const onCancel = () => navigate(-1);
-
-  if (!organization) {
-    return (
-      <PageLayout>
-        <PageHeader
-          breadcrumbs={[
-            { label: t('Organizations'), to: RouteE.Organizations },
-            { label: t('Edit organization') },
-          ]}
-        />
-      </PageLayout>
-    );
-  }
 
   return (
     <PageLayout>
@@ -93,14 +123,16 @@ export function EditOrganization() {
           { label: t('Edit organization') },
         ]}
       />
-      <PageForm
-        submitText={t('Save organization')}
-        onSubmit={onSubmit}
-        onCancel={onCancel}
-        defaultValue={organization}
-      >
-        <OrganizationInputs />
-      </PageForm>
+      {organization ? (
+        <PageForm
+          submitText={t('Save organization')}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          defaultValue={{ organization, instanceGroups }}
+        >
+          <OrganizationInputs />
+        </PageForm>
+      ) : null}
     </PageLayout>
   );
 }
@@ -109,15 +141,25 @@ function OrganizationInputs() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput label={t('Name')} name="name" placeholder={t('Enter name')} isRequired />
+      <PageFormTextInput
+        label={t('Name')}
+        name="organization.name"
+        placeholder={t('Enter name')}
+        isRequired
+      />
       <PageFormTextInput
         label={t('Description')}
-        name="description"
+        name="organization.description"
         placeholder={t('Enter description')}
       />
-      {/* instanceGroups */}
-      {/* executionEnvironments */}
-      {/* galaxyCredentials */}
+      <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
+      <PageFormExecutionEnvironmentSelect
+        name="organization.summary_fields.default_environment.name"
+        label={t('Default execution environment')}
+        executionEnvironmentPath="organization.summary_fields.default_environment"
+        executionEnvironmentIdPath="organization.default_environment"
+      />
+      {/* TODO: galaxyCredentials */}
     </>
   );
 }
