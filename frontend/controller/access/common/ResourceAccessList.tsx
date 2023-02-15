@@ -197,6 +197,12 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         label: t('Remove user'),
         onClick: (user) => removeUsersFromResource([user], view.unselectItemsAndRefresh),
         isDisabled: (user: User) => {
+          if (user.is_superuser) {
+            return t('System administrators have unrestricted access to all resources.');
+          }
+          if (user.is_system_auditor) {
+            return t('System auditors have read access to all resources.');
+          }
           if (
             !canAddAndRemoveUsers ||
             user.user_roles?.some((role) => !role.user_capabilities.unattach)
@@ -204,12 +210,6 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
             return t(
               'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
             );
-          }
-          if (user.is_superuser) {
-            return t('System administrators have unrestricted access to all resources.');
-          }
-          if (user.is_system_auditor) {
-            return t('System auditors have read access to all resources.');
           }
           return undefined;
         },

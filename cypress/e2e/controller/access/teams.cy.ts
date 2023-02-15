@@ -3,19 +3,41 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/controller/interfaces/Organization';
+import { User } from '../../../../frontend/controller/interfaces/User';
 import { Team } from '../../../../frontend/controller/interfaces/Team';
 
 describe('teams', () => {
   let organization: Organization;
   let team: Team;
+  let user1: User;
+  let user2: User;
 
   before(() => {
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
-    }).then((testOrg) => (organization = testOrg));
+    }).then((testOrg) => {
+      organization = testOrg;
+      // Create users for testing access UI
+      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
+        username: 'e2e-user-' + randomString(4),
+        is_superuser: false,
+        is_system_auditor: false,
+        password: 'pw',
+        user_type: 'normal',
+      }).then((testUser) => (user1 = testUser));
+      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
+        username: 'e2e-user-' + randomString(4),
+        is_superuser: false,
+        is_system_auditor: false,
+        password: 'pw',
+        user_type: 'normal',
+      }).then((testUser) => (user2 = testUser));
+    });
   });
 
   after(() => {
+    cy.requestDelete(`/api/v2/users/${user1.id}/`, true);
+    cy.requestDelete(`/api/v2/users/${user2.id}/`, true);
     cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
   });
 
@@ -63,19 +85,44 @@ describe('teams', () => {
     cy.contains('#name', team.name);
   });
 
-  it('team access', () => {
+  it.only('team access: add and remove users using toolbar buttons', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/);
+    // Add users to team -> TODO: Replace with Wizard when it is ready
+    cy.clickButton(/^Add users$/);
+    cy.selectRowInDialog(user1.username);
+    cy.selectRowInDialog(user2.username);
+    cy.clickButton(/^Confirm$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.getRowFromList(user1.username).should('be.visible');
+    cy.getRowFromList(user2.username).should('be.visible');
+
+    // Remove users
+    cy.selectRow(user1.username);
+    cy.selectRow(user2.username);
+    cy.clickButton(/^Remove users$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Remove user/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.getRowFromList(user1.username).should('not.exist');
+    cy.getRowFromList(user2.username).should('not.exist');
   });
 
-  it('team access', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.clickRow(team.name);
-    cy.hasTitle(team.name);
-    cy.clickTab(/^Access$/);
-    cy.requestDelete(`/api/v2/teams/${team.id}/`);
+  it('team access: remove a single user using the row action', () => {
+    cy.requestPost<Team>('/api/v2/teams/', {
+      name: 'Team ' + randomString(4),
+      organization: organization.id,
+    }).then((team) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.clickRow(team.name);
+      cy.hasTitle(team.name);
+      cy.clickTab(/^Access$/);
+      cy.requestDelete(`/api/v2/teams/${team.id}/`);
+    });
   });
 
   it('team roles', () => {
