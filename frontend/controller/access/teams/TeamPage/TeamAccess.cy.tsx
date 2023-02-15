@@ -153,4 +153,50 @@ describe('TeamAccess', () => {
       ).should('be.visible');
     });
   });
+  it('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
+    cy.fixture('activeUser').then((activeUser: User) => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/me/',
+          hostname: 'localhost',
+        },
+        {
+          activeUser,
+        }
+      );
+    });
+    cy.intercept('POST', '/api/v2/users/**/roles/', cy.spy().as('removeUser'));
+
+    cy.fixture('team').then((team: Team) => {
+      cy.mount(
+        <MemoryRouter>
+          <ActiveUserProvider>
+            <PageDialogProvider>
+              <TeamAccess team={team} />
+            </PageDialogProvider>
+          </ActiveUserProvider>
+        </MemoryRouter>
+      );
+      // Remove users
+      cy.selectRow('admin'); //  User cannot be removed as they are a System Administrator
+      cy.selectRow('user-2');
+      cy.clickButton(/^Remove users$/);
+      // Confirmation modal is displayed with a warning
+      cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.hasAlert(
+          '{{count}} of the selected users cannot be deleted due to insufficient permissions.'
+        ).should('exist');
+        cy.contains('td', 'admin')
+          .parent()
+          .within(() => {
+            cy.get('span.pf-c-icon span.pf-m-warning').should('exist');
+          });
+        cy.get('#confirm').click();
+        cy.clickButton(/^Remove user/);
+        // Only 1 out of the 2 users is deleted
+        cy.get('@removeUser').should('have.been.calledOnce');
+      });
+    });
+  });
 });

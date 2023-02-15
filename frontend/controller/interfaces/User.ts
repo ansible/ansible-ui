@@ -19,6 +19,8 @@ export type AccessRole = {
 export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields'> {
   id: number;
   username: string;
+  user_type?: 'normal' | 'administrator' | 'auditor';
+  disassociate?: boolean;
   summary_fields: {
     user_capabilities: {
       edit: boolean;
