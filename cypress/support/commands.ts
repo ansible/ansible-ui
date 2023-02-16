@@ -161,7 +161,7 @@ Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean)
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
   }
-  cy.contains('td', name).parent();
+  cy.contains('tr', name);
 });
 
 Cypress.Commands.add(
