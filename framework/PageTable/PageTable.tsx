@@ -392,11 +392,11 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             {t('No results found')}
           </Title>
           <EmptyStateBody>
-            {t('No results match this filter criteria. Adjust your filters and try again.')}
+            {t('No results match this filter criteria. Clear all filters and try again.')}
           </EmptyStateBody>
           {clearAllFilters && (
             <EmptyStateSecondaryActions>
-              <Button variant="link" onClick={clearAllFilters}>
+              <Button variant="primary" onClick={clearAllFilters}>
                 {t('Clear all filters')}
               </Button>
             </EmptyStateSecondaryActions>
