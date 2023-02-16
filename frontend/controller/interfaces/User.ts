@@ -20,6 +20,7 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
   id: number;
   username: string;
   user_type?: 'normal' | 'administrator' | 'auditor';
+  disassociate?: boolean;
   summary_fields: {
     user_capabilities: {
       edit: boolean;
