@@ -35,7 +35,15 @@
       {
         "mode": "jsx-only",
         "jsx-attributes": {
-          "include": ["label", "placeholderText", "placeholder", "helperText"]
+          "include": [
+            "label",
+            "placeholderText",
+            "placeholder",
+            "helperText",
+            "description",
+            "title",
+            "subtitle"
+          ]
         }
       }
     ]
