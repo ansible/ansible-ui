@@ -27,10 +27,8 @@ import { API_PREFIX } from '../constants';
 export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rulebook, mutate: refresh } = useGet<EdaRulebook>(
-    `${API_PREFIX}/rulebooks/${params.id ?? ''}`
-  );
-  const itemActions = useRulebookActions(rulebook, refresh);
+  const { data: rulebook } = useGet<EdaRulebook>(`${API_PREFIX}/rulebooks/${params.id ?? ''}/`);
+  const itemActions = useRulebookActions(rulebook);
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
     return (
@@ -61,7 +59,7 @@ export function RulebookDetails() {
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
     const { data: rulesets } = useGet<EdaRuleset[]>(
-      `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets`
+      `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets/`
     );
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({

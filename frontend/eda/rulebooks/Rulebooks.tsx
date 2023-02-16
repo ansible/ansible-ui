@@ -1,30 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework';
-import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
 import { RouteE } from '../../Routes';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulebookColumns } from './hooks/useRulebookColumns';
 import { useRulebookFilters } from './hooks/useRulebookFilters';
 import { API_PREFIX } from '../constants';
+import { useEdaView } from '../useEventDrivenView';
 
 export function Rulebooks() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookFilters();
-  const { data: rulebooks, mutate: refresh } = useGet<EdaRulebook[]>(`${API_PREFIX}/rulebooks/`);
   const tableColumns = useRulebookColumns();
-  const view = useInMemoryView<EdaRulebook>({
-    items: rulebooks,
-    tableColumns,
+  const view = useEdaView<EdaRulebook>({
+    url: `${API_PREFIX}/rulebooks/`,
     toolbarFilters,
-    keyFn: idKeyFn,
+    tableColumns,
   });
 
-  const rowActions = useRulebookActions(undefined, refresh);
+  const rowActions = useRulebookActions(undefined);
   return (
     <PageLayout>
       <PageHeader title={t('Rulebooks')} />

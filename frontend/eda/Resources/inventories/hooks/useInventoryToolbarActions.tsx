@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
+import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteInventories } from './useDeleteInventories';
 
-export function useInventoriesToolbarActions(refresh: () => Promise<unknown>) {
+export function useInventoriesToolbarActions(view: IEdaView<EdaInventory>) {
   const { t } = useTranslation();
-  const deleteInventories = useDeleteInventories(() => void refresh());
+  const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
   const toolbarActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {

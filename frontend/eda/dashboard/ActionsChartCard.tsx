@@ -24,6 +24,7 @@ const ActionsChart = () => {
   const { t } = useTranslation();
   const useListActionsRules = () => useGet<EdaResult<EdaAction>>(actionsRulesEndpoint);
   const { data: data } = useListActionsRules();
+
   const calculateChartPoints = (data: EdaAction[] | undefined) => {
     if (!data) {
       return;
