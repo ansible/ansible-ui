@@ -41,7 +41,7 @@
     "cypress:run:unit": "cypress run --component --config video=false && npm run cypress:unit:check",
     "cypress:open": "cypress open",
     "cypress:open:e2e": "cypress open --e2e --env server=${E2E_SERVER},username=${E2E_USERNAME},password=${E2E_PASSWORD}",
-    "cypress:open:unit": "cypress open --component",
+    "cypress:open:unit": "cypress open --component --browser chrome",
     "cypress:start:e2e": "concurrently npm:cypress:run:e2e npm:start --kill-others --success first --prefix-colors cyan,green,blue,magenta,gray",
     "cypress:coverage": "open coverage/lcov-report/index.html",
     "cypress:e2e:check": "npx nyc report --check-coverage --statements 20 --branches 20 --functions 19 --lines 20 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
