@@ -51,7 +51,7 @@ export function useRemoveUsersFromResource(resource: ResourceType) {
       removeUserConfirmationDialog({
         title: t(title, { count: users.length }),
         confirmText: t('Yes, I confirm that I want to remove these {{count}} users.', {
-          count: users.length,
+          count: users.length - undeletableUsers.length,
         }),
         actionButtonText: t('Remove user', { count: users.length }),
         items: users.sort((l, r) => compareStrings(l.username, r.username)),
