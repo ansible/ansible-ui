@@ -42,14 +42,14 @@ export function EditExecutionEnvironment() {
     try {
       if (Number.isInteger(id)) {
         executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
-          `${API_PREFIX}/executionEnvironments/${id}`,
+          `${API_PREFIX}/executionEnvironments/${id}/`,
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
         const newExecutionEnvironment = await requestPost<EdaExecutionEnvironment>(
-          `${API_PREFIX}/executionEnvironments`,
+          `${API_PREFIX}/executionEnvironments/`,
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();

@@ -9,7 +9,7 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
+import { PageDetail } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
@@ -21,7 +21,7 @@ export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: project, mutate: refresh } = useGet<EdaProject>(
-    `${API_PREFIX}/projects/${params.id ?? ''}`
+    `${API_PREFIX}/projects/${params.id ?? ''}/`
   );
   const itemActions = useProjectActions(refresh);
 
