@@ -5,14 +5,14 @@ import { useControllerView } from '../../../useControllerView';
 import {
   useExecutionEnvironmentsColumns,
   useExecutionEnvironmentsFilters,
-} from '../../execution-environments/ExecutionEnvironments';
+} from '../ExecutionEnvironments';
 
 export function useSelectExecutionEnvironments() {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
   const view = useControllerView<ExecutionEnvironment>({
-    url: '/api/v2/execution-environments/',
+    url: '/api/v2/execution_environments/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

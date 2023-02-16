@@ -40,14 +40,14 @@ module.exports = function (_env, argv) {
           test: /\.(ts|tsx|js|jsx)$/,
           exclude: /node_modules/,
           use: [
-            'coverage-istanbul-loader',
+            isDevelopment && 'coverage-istanbul-loader',
             {
               loader: 'babel-loader',
               options: {
                 plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
               },
             },
-          ],
+          ].filter(Boolean),
           type: 'javascript/auto',
         },
       ],
@@ -100,7 +100,7 @@ module.exports = function (_env, argv) {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, 'build/public'),
-      publicPath: isProduction ? '/' : '/',
+      publicPath: _env.controller ? '/static/controller/' : '/',
     },
     optimization: {
       minimizer: [
@@ -115,7 +115,6 @@ module.exports = function (_env, argv) {
     devServer: {
       static: 'ansible',
       port: 3002,
-      open: true,
       historyApiFallback: true,
       compress: true,
       hot: true,

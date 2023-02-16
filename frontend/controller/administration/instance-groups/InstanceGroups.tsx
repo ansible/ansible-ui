@@ -17,7 +17,7 @@ import {
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteE } from '../../../Routes';
 import { useControllerView } from '../../useControllerView';
-import { InstanceGroup } from './InstanceGroup';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 
 export function InstanceGroups() {
@@ -131,6 +131,7 @@ export function useInstanceGroupsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const disableLinks = options && options.disableLinks;
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<InstanceGroup>[]>(
@@ -139,7 +140,11 @@ export function useInstanceGroupsColumns(options?: {
         header: t('Name'),
         cell: (instanceGroup) => (
           <TextCell
-            to={RouteE.InstanceGroupDetails.replace(':id', instanceGroup.id.toString())}
+            to={
+              disableLinks
+                ? undefined
+                : RouteE.InstanceGroupDetails.replace(':id', instanceGroup.id.toString())
+            }
             text={instanceGroup.name}
           />
         ),
@@ -172,7 +177,7 @@ export function useInstanceGroupsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [t, createdColumn, modifiedColumn]
+    [t, disableLinks, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

@@ -34,17 +34,9 @@ export function PageFormTextInput<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TSelection extends FieldValues = FieldValues
 >(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection>) {
-  const {
-    label,
-    name,
-    isReadOnly,
-    isRequired,
-    minLength,
-    maxLength,
-    pattern,
-    validate,
-    selectTitle,
-  } = props;
+  const { isReadOnly, validate, selectTitle, selectValue, selectOpen, ...formGroupInputProps } =
+    props;
+  const { label, name, isRequired, minLength, maxLength, pattern } = props;
   const {
     control,
     setValue,
@@ -59,7 +51,7 @@ export function PageFormTextInput<
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <FormGroupTextInput
-            {...props}
+            {...formGroupInputProps}
             id={props.id ?? name.split('.').join('-')}
             value={value as string}
             onChange={onChange}
@@ -72,9 +64,9 @@ export function PageFormTextInput<
               <Button
                 variant="control"
                 onClick={() =>
-                  props.selectOpen?.((item: TSelection) => {
-                    if (props.selectValue) {
-                      const value = props.selectValue(item);
+                  selectOpen?.((item: TSelection) => {
+                    if (selectValue) {
+                      const value = selectValue(item);
                       setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
                         shouldValidate: true,
                       });
