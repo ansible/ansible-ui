@@ -68,7 +68,7 @@ export function useAccessColumns(
                       {user.user_roles.map((role) => (
                         <Chip
                           key={role.id}
-                          onClick={() => deleteRole(role, user)}
+                          onClick={() => deleteRole && deleteRole(role, user)}
                           isReadOnly={!role.user_capabilities.unattach}
                           ouiaId={`${role.name}-${role.id}`}
                           closeBtnAriaLabel={t`Remove ${role.name} chip`}
@@ -88,7 +88,7 @@ export function useAccessColumns(
                       {user.team_roles.map((role) => (
                         <Chip
                           key={role.id}
-                          onClick={() => deleteRole(role, user)}
+                          onClick={() => deleteRole && deleteRole(role, user)}
                           isReadOnly={!role.user_capabilities.unattach}
                           ouiaId={`team-role-${role.name}-${role.id}`}
                           closeBtnAriaLabel={t`Remove ${role.name} chip`}
