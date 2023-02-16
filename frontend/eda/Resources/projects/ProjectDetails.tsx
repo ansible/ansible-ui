@@ -1,8 +1,10 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  IPageAction,
   PageActions,
+  PageActionType,
   PageDetails,
   PageHeader,
   PageLayout,
@@ -14,16 +16,42 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
-import { useProjectActions } from './hooks/useProjectActions';
 import { API_PREFIX } from '../../constants';
+import { useMemo } from 'react';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: project, mutate: refresh } = useGet<EdaProject>(
-    `${API_PREFIX}/projects/${params.id ?? ''}/`
+  const navigate = useNavigate();
+  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${params.id ?? ''}/`);
+
+  const deleteProjects = useDeleteProjects((deleted) => {
+    if (deleted.length > 0) {
+      navigate(RouteE.EdaProjects);
+    }
+  });
+
+  const itemActions = useMemo<IPageAction<EdaProject>[]>(
+    () => [
+      {
+        type: PageActionType.single,
+        icon: EditIcon,
+        label: t('Edit project'),
+        onClick: (project: EdaProject) =>
+          navigate(RouteE.EditEdaProject.replace(':id', project.id.toString())),
+      },
+      {
+        type: PageActionType.single,
+        icon: TrashIcon,
+        label: t('Delete project'),
+        onClick: (project: EdaProject) => deleteProjects([project]),
+        isDanger: true,
+      },
+    ],
+    [deleteProjects, navigate, t]
   );
-  const itemActions = useProjectActions(refresh);
 
   const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {
     return (
