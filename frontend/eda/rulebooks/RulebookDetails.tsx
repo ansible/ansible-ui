@@ -23,6 +23,7 @@ import { useRulesetActions } from './hooks/useRulesetActions';
 import { useRulesetColumns } from './hooks/useRulesetColumns';
 import { useRulesetFilters } from './hooks/useRulesetFilters';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
@@ -58,12 +59,12 @@ export function RulebookDetails() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
-    const { data: rulesets } = useGet<EdaRuleset[]>(
+    const { data: rulesets } = useGet<EdaResult<EdaRuleset>>(
       `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets/`
     );
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({
-      items: rulesets,
+      items: rulesets?.results,
       tableColumns,
       toolbarFilters,
       keyFn: (item) => item?.id,

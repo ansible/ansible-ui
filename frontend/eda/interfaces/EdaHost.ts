@@ -6,7 +6,7 @@
  */
 
 export interface EdaHost {
-  id: string;
+  id: number;
   host: string;
   rule: { id: string; name: string };
   ruleset?: { id: string; name: string };

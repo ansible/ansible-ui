@@ -17,7 +17,9 @@ export function useActionsColumns() {
         cell: (action) => (
           <TextCell
             text={action?.rule?.name}
-            onClick={() => navigate(RouteE.EdaActionDetails.replace(':id', action.rule.id))}
+            onClick={() =>
+              navigate(RouteE.EdaActionDetails.replace(':id', action?.rule?.id?.toString()))
+            }
           />
         ),
         sort: 'name',

@@ -17,7 +17,7 @@ export function EditExecutionEnvironment() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
-    `${API_PREFIX}/executionEnvironments/${id.toString()}`
+    `${API_PREFIX}/executionEnvironments/${id.toString()}/`
   );
 
   const ExecutionEnvironmentSchemaType = useMemo(

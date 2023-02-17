@@ -16,7 +16,7 @@ export function EditRule() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${id.toString()}/`);
+  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${id}}/`);
 
   const RuleSchemaType = useMemo(
     () =>
