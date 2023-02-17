@@ -23,8 +23,7 @@ export function Teams() {
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
   const headerActions = useRefreshAction(view.refreshing, view.refresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/teams/' });
-  let canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
-  canCreateTeam = true;
+  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
   return (
     <PageLayout>
@@ -55,12 +54,16 @@ export function Teams() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
-        emptyStateTitle={t('No teams yet')}
+        emptyStateTitle={
+          canCreateTeam
+            ? t('There are currently no teams added to your organization.')
+            : t('You do not have permission to create a team')
+        }
         emptyStateDescription={
           canCreateTeam
-            ? t('To get started, create a team.')
+            ? t('Please create a team by using the button below.')
             : t(
-                'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your Organization Administrator if there is an issue with your access.'
               )
         }
         emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}

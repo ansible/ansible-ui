@@ -3,8 +3,15 @@ import { Alert, ButtonVariant, Divider } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  IPageActionButton,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
+import { useOptions } from '../../../../Data';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
 import { useControllerView } from '../../../useControllerView';
@@ -25,6 +32,9 @@ export function UserTeams(props: { user: User }) {
   });
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/users/' });
+  const canAddTeam = Boolean(data && data.actions && data.actions['POST']);
+
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
@@ -32,8 +42,13 @@ export function UserTeams(props: { user: User }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to teams'),
+        isDisabled: canAddTeam
+          ? undefined
+          : t(
+              'You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.'
+            ),
         onClick: () => selectTeamsAddUsers([user]),
-      },
+      } as IPageActionButton,
       {
         type: PageActionType.bulk,
         icon: MinusCircleIcon,
@@ -41,7 +56,7 @@ export function UserTeams(props: { user: User }) {
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
       },
     ],
-    [t, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
+    [t, canAddTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
   );
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
@@ -74,10 +89,20 @@ export function UserTeams(props: { user: User }) {
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
-        emptyStateTitle={t('User is not a member of any teams.')}
-        emptyStateDescription={t('To get started, add the user to a team.')}
-        emptyStateButtonText={t('Add user to team')}
-        emptyStateButtonClick={() => selectTeamsAddUsers([user])}
+        emptyStateTitle={
+          canAddTeam
+            ? t('This user currently does not belong to any teams.')
+            : t('You do not have permissions to add this user to a team.')
+        }
+        emptyStateDescription={
+          canAddTeam
+            ? t('To get started, add the user to a team.')
+            : t(
+                'Please contact your Organization Administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={canAddTeam ? t('Add user to team') : undefined}
+        emptyStateButtonClick={canAddTeam ? () => selectTeamsAddUsers([user]) : undefined}
         {...view}
       />
     </>
