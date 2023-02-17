@@ -28,7 +28,7 @@ import { API_PREFIX } from '../constants';
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}`);
+  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}/`);
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

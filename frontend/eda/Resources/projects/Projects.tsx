@@ -16,7 +16,7 @@ export function Projects() {
   const toolbarFilters = useProjectFilters();
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
-    url: `${API_PREFIX}/projects`,
+    url: `${API_PREFIX}/projects/`,
     toolbarFilters,
     tableColumns,
   });
