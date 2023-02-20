@@ -1,6 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../framework';
 import { Teams } from './Teams';
+import * as requests from '../../../Data';
 
 describe('Teams.cy.ts', () => {
   describe('Non-empty list', () => {
@@ -49,29 +50,22 @@ describe('Teams.cy.ts', () => {
       cy.contains('button', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Create Team button is enabled if the user has permission to create teams', () => {
-      cy.intercept(
-        {
-          method: 'OPTIONS',
-          url: '/api/v2/teams/',
-        },
-        {
-          statusCode: 201,
-          body: {
-            actions: {
-              POST: {
-                name: {
-                  type: 'string',
-                  required: true,
-                  label: 'Name',
-                  max_length: 512,
-                  help_text: 'Name of this team.',
-                  filterable: true,
-                },
+      cy.stub(requests, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {
+            POST: {
+              name: {
+                type: 'string',
+                required: true,
+                label: 'Name',
+                max_length: 512,
+                help_text: 'Name of this team.',
+                filterable: true,
               },
             },
           },
-        }
-      ).as('optionsWithPost');
+        },
+      }));
       cy.mount(
         <MemoryRouter>
           <Teams />
@@ -93,29 +87,22 @@ describe('Teams.cy.ts', () => {
       ).as('emptyList');
     });
     it('Empty state is displayed correctly for user with permission to create teams', () => {
-      cy.intercept(
-        {
-          method: 'OPTIONS',
-          url: '/api/v2/teams/',
-        },
-        {
-          statusCode: 201,
-          body: {
-            actions: {
-              POST: {
-                name: {
-                  type: 'string',
-                  required: true,
-                  label: 'Name',
-                  max_length: 512,
-                  help_text: 'Name of this team.',
-                  filterable: true,
-                },
+      cy.stub(requests, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {
+            POST: {
+              name: {
+                type: 'string',
+                required: true,
+                label: 'Name',
+                max_length: 512,
+                help_text: 'Name of this team.',
+                filterable: true,
               },
             },
           },
-        }
-      ).as('optionsWithPost');
+        },
+      }));
       cy.mount(
         <MemoryRouter initialEntries={['/teams']}>
           <Teams />
@@ -129,18 +116,11 @@ describe('Teams.cy.ts', () => {
       cy.contains('button', /^Create team$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
-      cy.intercept(
-        {
-          method: 'OPTIONS',
-          url: '/api/v2/teams/',
+      cy.stub(requests, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {},
         },
-        {
-          statusCode: 201,
-          body: {
-            actions: {},
-          },
-        }
-      ).as('optionsWithoutPost');
+      }));
       cy.mount(
         <MemoryRouter>
           <Teams />
