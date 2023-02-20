@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Alert, ButtonVariant, Divider } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { CubesIcon, MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -96,12 +96,14 @@ export function UserTeams(props: { user: User }) {
         }
         emptyStateDescription={
           canAddTeam
-            ? t('To get started, add the user to a team.')
+            ? t('Please add a team by using the button below.')
             : t(
                 'Please contact your Organization Administrator if there is an issue with your access.'
               )
         }
-        emptyStateButtonText={canAddTeam ? t('Add user to team') : undefined}
+        emptyStateIcon={canAddTeam ? undefined : CubesIcon}
+        emptyStateButtonText={canAddTeam ? t('Add team') : undefined}
+        emptyStateButtonIcon={canAddTeam ? <PlusIcon /> : null}
         emptyStateButtonClick={canAddTeam ? () => selectTeamsAddUsers([user]) : undefined}
         {...view}
       />
