@@ -7,7 +7,7 @@ import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
-import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
+import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
 import { useDeleteTeams } from './useDeleteTeams';
 
 export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => void }) {
@@ -16,7 +16,7 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
   const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
-  const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
+  const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
 
   return useMemo<IPageAction<Team>[]>(() => {
     const cannotDeleteTeam = (team: Team) =>
@@ -48,7 +48,7 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
         type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove users from team'),
-        onClick: (team) => selectUsersRemoveTeams([team]),
+        onClick: (team) => selectAndRemoveUsersFromTeam(team),
       },
       { type: PageActionType.seperator },
       {
@@ -60,5 +60,5 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
         isDanger: true,
       },
     ];
-  }, [deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t]);
+  }, [deleteTeams, navigate, selectAndRemoveUsersFromTeam, selectUsersAddTeams, t]);
 }
