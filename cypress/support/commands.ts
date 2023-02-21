@@ -16,12 +16,14 @@ declare global {
       hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
       clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      getRowFromList(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickRowAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
@@ -155,6 +157,13 @@ Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
   });
 });
 
+Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterByText(name);
+  }
+  cy.contains('tr', name);
+});
+
 Cypress.Commands.add(
   'clickRowAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
@@ -173,6 +182,20 @@ Cypress.Commands.add(
 Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
+  }
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+});
+
+Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('#filter-input').type(name, { delay: 0 });
+    });
+    cy.get('[aria-label="apply filter"]').click();
   }
   cy.contains('td', name)
     .parent()
