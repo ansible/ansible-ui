@@ -26,7 +26,7 @@ export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (User: EdaUser) => requestDelete(`${API_PREFIX}/Users/${User.id}`),
+        actionFn: (User: EdaUser) => requestDelete(`${API_PREFIX}/Users/${User.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

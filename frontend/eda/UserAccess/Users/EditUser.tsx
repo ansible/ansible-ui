@@ -16,7 +16,7 @@ export function EditUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: User } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}`);
+  const { data: User } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}/`);
 
   const UserSchemaType = useMemo(
     () =>
@@ -42,10 +42,10 @@ export function EditUser() {
   const onSubmit: PageFormSubmitHandler<UserSchema> = async (User, setError) => {
     try {
       if (Number.isInteger(id)) {
-        User = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}`, User);
+        User = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, User);
         navigate(-1);
       } else {
-        const newUser = await requestPost<EdaUser>(`${API_PREFIX}/users`, User);
+        const newUser = await requestPost<EdaUser>(`${API_PREFIX}/users/`, User);
         navigate(RouteE.EdaUserDetails.replace(':id', newUser.id.toString()));
       }
     } catch (err) {

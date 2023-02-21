@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { IEdaView } from '../../useEventDrivenView';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 
-export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
+export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteRulebookActivations = useDeleteRulebookActivations(() => void refresh());
+  const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {

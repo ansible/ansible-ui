@@ -18,14 +18,15 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function ActivationsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: activations } = useGet<EdaRulebookActivation[]>(`${API_PREFIX}/activations`);
+  const { data: data } = useGet<EdaResult<EdaRulebookActivation>>(`${API_PREFIX}/activations/`);
   const tableColumns = useActivationColumns();
   const view = useInMemoryView<EdaRulebookActivation>({
-    items: activations?.slice(-4),
+    items: data?.results ? data.results.slice(-4) : [],
     tableColumns,
     keyFn: (activation: EdaRulebookActivation) => activation.id,
   });

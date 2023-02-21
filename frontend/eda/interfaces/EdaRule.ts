@@ -11,10 +11,7 @@ export interface EdaRule {
   description: string;
   action: object;
   project?: { id: string; name: string };
-  ruleset?: {
-    id: string;
-    name: string;
-  };
+  ruleset?: string;
   type: string;
   fired_stats: {
     fired_date: string;

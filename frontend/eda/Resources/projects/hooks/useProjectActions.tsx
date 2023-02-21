@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteE } from '../../../../Routes';
 import { EdaProject } from '../../../interfaces/EdaProject';
+import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteProjects } from './useDeleteProjects';
 
-export function useProjectActions(refresh: () => Promise<unknown>) {
+export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteProjects = useDeleteProjects(() => void refresh());
+  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {

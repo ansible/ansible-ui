@@ -9,6 +9,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 export function useRuleColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   return useMemo<ITableColumn<EdaRule>[]>(
     () => [
       {
@@ -26,7 +27,7 @@ export function useRuleColumns() {
       },
       {
         header: t('Rule set'),
-        cell: (rule) => <TextCell text={rule.ruleset?.name} />,
+        cell: (rule) => <TextCell text={`Ruleset ${rule?.ruleset || ''} `} />,
         sort: 'ruleset',
         card: 'name',
         list: 'name',
@@ -34,7 +35,7 @@ export function useRuleColumns() {
       },
       {
         header: t('Action Type'),
-        cell: (rule) => <TextCell text={rule?.action ? Object.keys(rule.action).at(0) : ''} />,
+        cell: (rule) => <TextCell text={rule.action ? Object.keys(rule.action)[0] : ''} />,
         sort: 'action',
         defaultSort: true,
       },

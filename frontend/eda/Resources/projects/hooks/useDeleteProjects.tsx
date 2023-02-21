@@ -26,7 +26,7 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (project: EdaProject) => requestDelete(`${API_PREFIX}/projects/${project.id}`),
+        actionFn: (project: EdaProject) => requestDelete(`${API_PREFIX}/projects/${project.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

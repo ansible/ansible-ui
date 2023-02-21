@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
-export function useDisableRulebook(_onComplete: (rulebook: EdaRulebook) => void) {
+export function useDisableRulebook() {
   const [_, setDialog] = usePageDialog();
   const disableRulebook = useCallback(
     (rulebook: EdaRulebook) => setDialog(<DisableRulebookDialog rulebook={rulebook} />),

@@ -6,7 +6,7 @@
  */
 
 export interface EdaRulebookActivation {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   inventory?: { id: string; name: string };

@@ -21,7 +21,7 @@ export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) =
       items: items.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: idKeyFn,
       actionFn: (inventory: EdaInventory) =>
-        requestDelete(`${API_PREFIX}/inventory/${inventory.id}`),
+        requestDelete(`${API_PREFIX}/inventory/${inventory.id}/`),
       confirmationColumns,
       actionColumns,
       onComplete,

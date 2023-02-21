@@ -6,12 +6,13 @@
  */
 
 export interface EdaAction {
-  rule: { id: string; name: string };
+  id: number;
+  rule: { id: number; name: string };
   description?: string;
-  activation?: { id: string; name: string };
+  activation?: { id: number; name: string };
   type: string;
   status?: string;
-  ruleset: { id: string; name: string };
+  ruleset: { id: number; name: string };
   fired_date?: string;
   rule_definition?: string;
 }

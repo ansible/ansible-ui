@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
-import { useGet } from '../../common/useItem';
-import { idKeyFn } from '../../hub/usePulpView';
 import { RouteE } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
@@ -12,23 +9,20 @@ import { useExecutionEnvironmentColumns } from './hooks/useExecutionEnvironmentC
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { API_PREFIX } from '../constants';
+import { useEdaView } from '../useEventDrivenView';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useExecutionEnvironmentFilters();
-  const response = useGet<EdaExecutionEnvironment[]>(`${API_PREFIX}/execution-environments`);
-  const { data: executionEnvironments, mutate: refresh } = response;
   const tableColumns = useExecutionEnvironmentColumns();
-  const view = useInMemoryView<EdaExecutionEnvironment>({
-    items: executionEnvironments,
-    tableColumns,
+  const view = useEdaView<EdaExecutionEnvironment>({
+    url: `${API_PREFIX}/execution-environments/`,
     toolbarFilters,
-    keyFn: idKeyFn,
-    error: response.error as Error | undefined,
+    tableColumns,
   });
-  const toolbarActions = useExecutionEnvironmentsActions(refresh);
-  const rowActions = useExecutionEnvironmentActions(refresh);
+  const toolbarActions = useExecutionEnvironmentsActions(view);
+  const rowActions = useExecutionEnvironmentActions(view);
   const emptyStateButtonClick = useMemo(
     () => () => navigate(RouteE.CreateEdaExecutionEnvironment),
     [navigate]

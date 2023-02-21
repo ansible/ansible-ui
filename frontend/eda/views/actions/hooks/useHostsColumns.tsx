@@ -38,6 +38,22 @@ export function useHostsColumns() {
         defaultSort: true,
       },
       {
+        header: t('Rule set'),
+        cell: (host) => (
+          <TextCell
+            text={host.ruleset?.name}
+            onClick={() =>
+              navigate(
+                RouteE.EdaRulesetDetails.replace(':id', (host?.ruleset?.id || '').toString())
+              )
+            }
+          />
+        ),
+        sort: 'rule',
+        defaultSort: true,
+      },
+
+      {
         header: t('Last fired date'),
         cell: (host) => (
           <TextCell text={host?.fired_date ? formatDateString(new Date(host.fired_date)) : ''} />

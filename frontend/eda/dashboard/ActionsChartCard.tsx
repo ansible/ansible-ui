@@ -9,20 +9,22 @@ import { useTranslation } from 'react-i18next';
 import { useGet } from '../../common/useItem';
 import { EdaAction } from '../interfaces/EdaAction';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 interface TickType {
   x: string;
   y: number;
 }
-const actionsRulesEndpoint = `${API_PREFIX}/action/rules_fired`;
+const actionsRulesEndpoint = `${API_PREFIX}/action/rules_fired/`;
 
 const ActionsChart = () => {
   const [width, _setWidth] = useState(window.innerWidth);
   const [successfulRuns, _setSuccessfulRuns] = useState<TickType[]>([]);
   const [failedRuns, _setFailedRuns] = useState<TickType[]>([]);
   const { t } = useTranslation();
-  const useListActionsRules = () => useGet<EdaAction[]>(actionsRulesEndpoint);
-  const { data: actions } = useListActionsRules();
+  const useListActionsRules = () => useGet<EdaResult<EdaAction>>(actionsRulesEndpoint);
+  const { data: data } = useListActionsRules();
+
   const calculateChartPoints = (data: EdaAction[] | undefined) => {
     if (!data) {
       return;
@@ -55,7 +57,7 @@ const ActionsChart = () => {
     });
   };
 
-  calculateChartPoints(actions);
+  calculateChartPoints(data?.results);
 
   const renderSuccessfulRulesFired = () => {
     const successPoints = successfulRuns.map((tick) => {

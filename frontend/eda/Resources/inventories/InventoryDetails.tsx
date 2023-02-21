@@ -9,9 +9,11 @@ import {
   Stack,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  IPageAction,
   PageActions,
+  PageActionType,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -22,18 +24,18 @@ import {
 import { useGet } from '../../../common/useItem';
 import { RouteE } from '../../../Routes';
 import { EdaInventory } from '../../interfaces/EdaInventory';
-import { useInventoryRowActions } from './hooks/useInventoryRowActions';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { API_PREFIX } from '../../constants';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: inventory, mutate: refresh } = useGet<EdaInventory>(
-    `${API_PREFIX}/inventory/${params.id ?? ''}`
-  );
+  const navigate = useNavigate();
+  const { data: inventory } = useGet<EdaInventory>(`${API_PREFIX}/inventory/${params.id ?? ''}/`);
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {
@@ -44,7 +46,24 @@ export function InventoryDetails() {
     clipboardCopyFunc(event, text);
     setCopied(true);
   };
-  const itemActions = useInventoryRowActions(refresh);
+
+  const deleteInventories = useDeleteInventories((deleted) => {
+    if (deleted.length > 0) {
+      navigate(RouteE.EdaInventories);
+    }
+  });
+  const itemActions = useMemo<IPageAction<EdaInventory>[]>(
+    () => [
+      {
+        type: PageActionType.single,
+        icon: TrashIcon,
+        label: t('Delete inventory'),
+        onClick: (inventory: EdaInventory) => deleteInventories([inventory]),
+        isDanger: true,
+      },
+    ],
+    [deleteInventories, t]
+  );
   const actions = (
     <React.Fragment>
       <CodeBlockAction>

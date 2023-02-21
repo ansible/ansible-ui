@@ -17,7 +17,9 @@ export function useActionsColumns() {
         cell: (action) => (
           <TextCell
             text={action?.rule?.name}
-            onClick={() => navigate(RouteE.EdaActionDetails.replace(':id', action.rule.id))}
+            onClick={() =>
+              navigate(RouteE.EdaActionDetails.replace(':id', action?.rule?.id?.toString()))
+            }
           />
         ),
         sort: 'name',
@@ -26,16 +28,16 @@ export function useActionsColumns() {
         list: 'name',
       },
       {
+        header: t('Action type'),
+        cell: (action) => <TextCell text={action.type} />,
+      },
+      {
         header: t('Status'),
         cell: (action) => <StatusCell status={action?.status} />,
         sort: 'status',
         defaultSort: true,
         card: 'name',
         list: 'name',
-      },
-      {
-        header: t('Rule'),
-        cell: (action) => <TextCell text={action.rule.name} />,
       },
       {
         header: t('Rule set'),
@@ -47,7 +49,7 @@ export function useActionsColumns() {
             }
           />
         ),
-        sort: 'name',
+        sort: 'ruleset.name',
         defaultSort: true,
         card: 'name',
         list: 'name',

@@ -18,14 +18,15 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function ProjectsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: projects } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
+  const { data: data } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
   const tableColumns = useProjectColumns();
   const view = useInMemoryView<EdaProject>({
-    items: projects?.slice(-4),
+    items: data?.results ? data.results.slice(-4) : [],
     tableColumns,
     keyFn: (project: EdaProject) => project.id,
   });
