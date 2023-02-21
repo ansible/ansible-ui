@@ -8,28 +8,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  packages:
-    name: Packages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-
   cypress-e2e:
     name: Cypress E2E
     runs-on: ubuntu-latest
@@ -37,6 +15,16 @@ jobs:
       - packages
     steps:
       - uses: actions/checkout@v3
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.4.0
+      - run: git clone git@github.com:jamestalton/awx-operator-in-kind.git
+      - run: |
+          cd awx-operator-in-kind
+          ./apply.sh
+          PASSWORD=`kubectl get secret -n awx awx-demo-admin-password -o jsonpath="{.data.password}" | base64 --decode`
+          echo "E2E_SERVER=http://localhost:30000" >> $GITHUB_ENV
+          echo "E2E_USERNAME=admin" >> $GITHUB_ENV
+          echo "E2E_PASSWORD=$PASSWORD" >> $GITHUB_ENV
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -52,48 +40,6 @@ jobs:
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run cypress:start:e2e
         env:
-          E2E_SERVER: ${{ secrets.E2E_SERVER }}
-          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-
-  cypress-unit:
-    name: Cypress Unit Tests
-    runs-on: ubuntu-latest
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:run:unit
-
-  eslint:
-    name: ESLint - Prettier - TSC
-    runs-on: ubuntu-latest
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run checks
+          E2E_SERVER: ${{ env.E2E_SERVER }}
+          E2E_USERNAME: ${{ env.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ env.E2E_PASSWORD }}
