@@ -98,6 +98,9 @@ export type PageTableProps<T extends object> = {
 
   emptyStateTitle: string;
   emptyStateDescription?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  emptyStateIcon?: React.ComponentType<any>;
+  emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string;
   emptyStateButtonClick?: () => void;
 
@@ -183,7 +186,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     return (
       <PageSection>
         <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
-          <EmptyStateIcon icon={PlusCircleIcon} />
+          <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
           <Title headingLevel="h4" size="lg">
             {props.emptyStateTitle}
           </Title>
@@ -191,7 +194,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
             <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
           )}
           {props.emptyStateButtonClick && (
-            <Button variant="primary" onClick={props.emptyStateButtonClick}>
+            <Button
+              variant="primary"
+              onClick={props.emptyStateButtonClick}
+              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+            >
               {props.emptyStateButtonText}
             </Button>
           )}
@@ -392,11 +399,11 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             {t('No results found')}
           </Title>
           <EmptyStateBody>
-            {t('No results match this filter criteria. Adjust your filters and try again.')}
+            {t('No results match this filter criteria. Clear all filters and try again.')}
           </EmptyStateBody>
           {clearAllFilters && (
             <EmptyStateSecondaryActions>
-              <Button variant="link" onClick={clearAllFilters}>
+              <Button variant="primary" onClick={clearAllFilters}>
                 {t('Clear all filters')}
               </Button>
             </EmptyStateSecondaryActions>
