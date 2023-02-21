@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
@@ -15,6 +15,7 @@ import { useUsersFilters } from '../users/hooks/useUsersFilters';
 import { useDeleteRoleConfirmationDialog } from './DeleteRoleConfirmation';
 import { useRemoveUsersFromResource } from './useRemoveUserFromResource';
 import { useAccessColumns } from './useAccessColumns';
+import { useUserAndTeamRolesLists } from './useUserAndTeamRolesLists';
 
 export type ResourceType = Team; // TODO: Expand to handle other resource types: | Project | Credential | Inventory | Organization | Template;
 
@@ -52,31 +53,8 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
     disableQueryString: true,
   });
 
-  type Access = {
-    descendant_roles: string[];
-    role: AccessRole;
-  };
-
-  useEffect(() => {
-    const users = view.pageItems as User[];
-    function sortRoles(access: Access, user: User) {
-      const { role } = access;
-      if (role.team_id) {
-        user.team_roles?.push(role);
-      } else {
-        user.user_roles?.push(role);
-      }
-    }
-
-    if (users?.length > 0) {
-      for (const user of users) {
-        user.team_roles = [];
-        user.user_roles = [];
-        user.summary_fields?.direct_access?.forEach((access) => sortRoles(access, user));
-        user.summary_fields?.indirect_access?.forEach((access) => sortRoles(access, user));
-      }
-    }
-  }, [view.pageItems]);
+  // Build the user and team roles lists for a user
+  useUserAndTeamRolesLists(view.pageItems as User[]);
 
   /**
    * TODO: Add users is currently specific to teams and does not handle role selection
