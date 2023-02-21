@@ -23,14 +23,13 @@ import { useRulesetActions } from './hooks/useRulesetActions';
 import { useRulesetColumns } from './hooks/useRulesetColumns';
 import { useRulesetFilters } from './hooks/useRulesetFilters';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rulebook, mutate: refresh } = useGet<EdaRulebook>(
-    `${API_PREFIX}/rulebooks/${params.id ?? ''}`
-  );
-  const itemActions = useRulebookActions(rulebook, refresh);
+  const { data: rulebook } = useGet<EdaRulebook>(`${API_PREFIX}/rulebooks/${params.id ?? ''}/`);
+  const itemActions = useRulebookActions(rulebook);
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
     return (
@@ -60,12 +59,12 @@ export function RulebookDetails() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
-    const { data: rulesets } = useGet<EdaRuleset[]>(
-      `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets`
+    const { data: rulesets } = useGet<EdaResult<EdaRuleset>>(
+      `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets/`
     );
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({
-      items: rulesets,
+      items: rulesets?.results,
       tableColumns,
       toolbarFilters,
       keyFn: (item) => item?.id,

@@ -5,10 +5,11 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaHost {
-  id: number;
-  host: string;
-  rule: { id: string; name: string };
-  ruleset?: { id: string; name: string };
-  fired_date?: string;
+export interface EdaResult<T> {
+  count: number;
+  next?: string;
+  page?: number;
+  page_size?: 20;
+  previous?: string;
+  results?: T[];
 }

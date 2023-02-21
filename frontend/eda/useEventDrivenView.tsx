@@ -1,36 +1,59 @@
 import { HTTPError } from 'ky';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { getItemKey, useFetcher } from '../Data';
+import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data';
 
 export type IEdaView<T extends { id: number }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<T[] | undefined>;
+    refresh: () => Promise<ItemsResponse<T> | undefined>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
+    refreshing: boolean;
   };
+
+export type QueryParams = {
+  [key: string]: string;
+};
+
+function getQueryString(queryParams: QueryParams) {
+  return Object.entries(queryParams)
+    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+}
 
 export function useEdaView<T extends { id: number }>(options: {
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns?: ITableColumn<T>[];
+  queryParams?: QueryParams;
   disableQueryString?: boolean;
 }): IEdaView<T> {
-  const { url } = options;
+  let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
+
+  let defaultSort: string | undefined = undefined;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined;
+
+  // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
+  if (tableColumns && tableColumns.length) {
+    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
+    defaultSort = defaultSortColumn?.sort;
+    defaultSortDirection = defaultSortColumn?.defaultSortDirection;
+  }
+
   const view = useView(
-    { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    { sort: defaultSort, sortDirection: defaultSortDirection },
     disableQueryString
   );
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
@@ -49,7 +72,7 @@ export function useEdaView<T extends { id: number }>(options: {
     }
   }
 
-  if (sort) {
+  if (sort && !queryString.includes('order_by')) {
     queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
       queryString += `order_by=-${sort}`;
@@ -64,13 +87,19 @@ export function useEdaView<T extends { id: number }>(options: {
   queryString ? (queryString += '&') : (queryString += '?');
   queryString += `page_size=${perPage}`;
 
-  // url += queryString
+  url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<T[]>(url, fetcher);
+  const response = useSWR<ItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
-  const refresh = useCallback(() => mutate(), [mutate]);
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(() => {
+    setRefreshing(true);
+    return mutate().finally(() => {
+      setRefreshing(false);
+    });
+  }, [mutate]);
 
-  // useSWR<T[]>(data?.next, fetcher, swrOptions)
+  useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
@@ -81,10 +110,10 @@ export function useEdaView<T extends { id: number }>(options: {
     }
   }
 
-  const selection = useSelected(data ?? [], getItemKey);
+  const selection = useSelected(data?.results ?? [], getItemKey);
 
-  if (data !== undefined) {
-    itemCountRef.current.itemCount = data.length;
+  if (data?.count !== undefined) {
+    itemCountRef.current.itemCount = data?.count;
   }
 
   const selectItemsAndRefresh = useCallback(
@@ -107,14 +136,24 @@ export function useEdaView<T extends { id: number }>(options: {
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data,
+      pageItems: data?.results,
       error,
       ...view,
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
+      refreshing,
     };
-  }, [data, error, refresh, selectItemsAndRefresh, selection, unselectItemsAndRefresh, view]);
+  }, [
+    data?.results,
+    error,
+    refresh,
+    refreshing,
+    selectItemsAndRefresh,
+    selection,
+    unselectItemsAndRefresh,
+    view,
+  ]);
 }
 
 export async function getEdaError(err: unknown) {
