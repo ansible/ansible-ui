@@ -128,7 +128,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         },
       },
     ],
-    [canAddAndRemoveUsers, removeUsersFromResource, t, view.unselectItemsAndRefresh]
+    [canAddAndRemoveUsers, removeUsersFromResource, resource, t, view.unselectItemsAndRefresh]
   );
 
   const navigate = useNavigate();

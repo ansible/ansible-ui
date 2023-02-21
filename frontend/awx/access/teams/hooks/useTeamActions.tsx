@@ -9,6 +9,7 @@ import { Team } from '../../../interfaces/Team';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
 import { useDeleteTeams } from './useDeleteTeams';
+import { useActiveUser } from '../../../../common/useActiveUser';
 
 export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => void }) {
   const { onTeamsDeleted } = options;
@@ -17,16 +18,29 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
+  const activeUser = useActiveUser();
 
   return useMemo<IPageAction<Team>[]>(() => {
     const cannotDeleteTeam = (team: Team) =>
       team?.summary_fields?.user_capabilities?.delete
         ? ''
-        : t(`The team cannot be deleted due to insufficient permission`);
+        : t(`The team cannot be deleted due to insufficient permissions.`);
     const cannotEditTeam = (team: Team) =>
       team?.summary_fields?.user_capabilities?.edit
         ? ''
-        : t(`The team cannot be edited due to insufficient permission`);
+        : t(`The team cannot be edited due to insufficient permissions.`);
+    const cannotRemoveUsers = (team: Team) =>
+      activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
+        ? ''
+        : t(
+            `You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.`
+          );
+    const cannotAddUsers = (team: Team) =>
+      activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
+        ? ''
+        : t(
+            `You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.`
+          );
 
     return [
       {
@@ -42,12 +56,14 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
         type: PageActionType.single,
         icon: PlusCircleIcon,
         label: t('Add users to team'),
+        isDisabled: (team: Team) => cannotAddUsers(team),
         onClick: (team) => selectUsersAddTeams([team]),
       },
       {
         type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove users from team'),
+        isDisabled: (team: Team) => cannotRemoveUsers(team),
         onClick: (team) => selectAndRemoveUsersFromTeam(team),
       },
       { type: PageActionType.seperator },
@@ -60,5 +76,12 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
         isDanger: true,
       },
     ];
-  }, [deleteTeams, navigate, selectAndRemoveUsersFromTeam, selectUsersAddTeams, t]);
+  }, [
+    activeUser?.is_superuser,
+    deleteTeams,
+    navigate,
+    selectAndRemoveUsersFromTeam,
+    selectUsersAddTeams,
+    t,
+  ]);
 }
