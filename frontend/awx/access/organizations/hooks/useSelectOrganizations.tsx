@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { Organization } from '../../../interfaces/Organization';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
 
 function SelectOrganizations(props: {

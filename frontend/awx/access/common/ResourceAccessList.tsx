@@ -8,7 +8,7 @@ import { useActiveUser } from '../../../common/useActiveUser';
 import { RouteE } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { AccessRole, User } from '../../interfaces/User';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useDeleteAccessRole } from './useDeleteAccessRole';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersFilters } from '../users/hooks/useUsersFilters';

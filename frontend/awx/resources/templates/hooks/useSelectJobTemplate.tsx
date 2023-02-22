@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useTemplateFilters, useTemplatesColumns } from '../Templates';
 
 export function useSelectJobTemplate() {

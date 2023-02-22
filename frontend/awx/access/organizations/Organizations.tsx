@@ -30,9 +30,9 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { Organization } from '../../interfaces/Organization';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';

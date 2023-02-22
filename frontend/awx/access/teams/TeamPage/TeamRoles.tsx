@@ -8,7 +8,7 @@ import { IPageAction, PageActionType, PageTable } from '../../../../../framework
 import { RouteE } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function TeamRoles(props: { team: Team }) {

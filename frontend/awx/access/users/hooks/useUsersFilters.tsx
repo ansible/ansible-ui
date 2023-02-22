@@ -5,7 +5,7 @@ import {
   useFirstNameToolbarFilter,
   useLastNameToolbarFilter,
   useUsernameToolbarFilter,
-} from '../../../common/controller-toolbar-filters';
+} from '../../../common/awx-toolbar-filters';
 
 export function useUsersFilters() {
   const { t } = useTranslation();

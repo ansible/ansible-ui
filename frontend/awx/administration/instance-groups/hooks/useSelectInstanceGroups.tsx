@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useInstanceGroupsColumns, useInstanceGroupsFilters } from '../InstanceGroups';
 
 export function useSelectInstanceGroups() {

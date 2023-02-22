@@ -24,9 +24,9 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { Host } from '../../interfaces/Host';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
 
 export function Hosts() {

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useTemplateFilters, useTemplatesColumns } from '../Templates';
 
 export function useSelectWorkflowJobTemplate() {

@@ -10,7 +10,7 @@ import { Disclaimer } from './common/Disclaimer';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
-import { Controller } from './awx/Controller';
+import { Controller } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
 import { RouteE } from './Routes';

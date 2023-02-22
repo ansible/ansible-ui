@@ -1,5 +1,5 @@
 import { IToolbarFilter } from '../../../../../framework';
-import { useNameToolbarFilter } from '../../../common/controller-toolbar-filters';
+import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

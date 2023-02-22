@@ -23,7 +23,7 @@ import { StatusCell } from '../../../common/StatusCell';
 import { requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 
 export function Instances() {
   const { t } = useTranslation();

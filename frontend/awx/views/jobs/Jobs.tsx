@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';

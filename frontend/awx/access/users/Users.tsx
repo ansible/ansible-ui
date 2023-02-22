@@ -18,7 +18,7 @@ import {
 } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { User } from '../../interfaces/User';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';

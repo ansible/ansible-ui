@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Credential } from '../../../interfaces/Credential';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useCredentialsColumns, useCredentialsFilters } from '../Credentials';
 
 export function useSelectCredential() {

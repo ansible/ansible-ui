@@ -14,7 +14,7 @@ import { useOptions } from '../../../../Data';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';

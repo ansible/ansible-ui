@@ -9,7 +9,7 @@ import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
-import { getControllerError } from '../../useControllerView';
+import { getControllerError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {

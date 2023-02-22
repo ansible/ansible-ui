@@ -9,7 +9,7 @@ import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { getControllerError } from '../../useControllerView';
+import { getControllerError } from '../../useAwxView';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 

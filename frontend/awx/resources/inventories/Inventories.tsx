@@ -23,9 +23,9 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { Inventory } from '../../interfaces/Inventory';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function Inventories() {

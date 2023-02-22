@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { Team } from '../../../interfaces/Team';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useTeamsColumns } from './useTeamsColumns';
 import { useTeamsFilters } from './useTeamsFilters';
 

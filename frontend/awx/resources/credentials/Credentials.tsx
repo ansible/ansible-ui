@@ -24,9 +24,9 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { Credential } from '../../interfaces/Credential';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function Credentials() {

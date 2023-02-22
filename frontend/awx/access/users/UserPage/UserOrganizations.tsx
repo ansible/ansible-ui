@@ -7,7 +7,7 @@ import { IPageAction, PageActionType, PageTable } from '../../../../../framework
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 import {

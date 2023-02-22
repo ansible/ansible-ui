@@ -8,7 +8,7 @@ import { IPageAction, PageActionType, PageTable } from '../../../../../framework
 import { RouteE } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function UserRoles(props: { user: User }) {

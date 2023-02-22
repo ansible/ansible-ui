@@ -7,7 +7,7 @@ import { useOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';

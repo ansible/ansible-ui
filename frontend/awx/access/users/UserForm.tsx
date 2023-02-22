@@ -15,7 +15,7 @@ import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
-import { getControllerError } from '../../useControllerView';
+import { getControllerError } from '../../useAwxView';
 import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
 
 export function CreateUser() {

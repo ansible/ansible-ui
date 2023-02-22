@@ -27,9 +27,9 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { Project } from '../../interfaces/Project';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function Projects() {

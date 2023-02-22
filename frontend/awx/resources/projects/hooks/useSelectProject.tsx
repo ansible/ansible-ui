@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Project } from '../../../interfaces/Project';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useProjectsColumns, useProjectsFilters } from '../Projects';
 
 export function useSelectProject() {

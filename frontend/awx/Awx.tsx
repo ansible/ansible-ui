@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { AnsibleMasthead } from '../common/Masthead';
 import { WebSocketProvider } from './common/useAwxWebSocket';
 import { ActiveUserProvider } from '../common/useActiveUser';
-import { ControllerRouter } from './ControllerRouter';
-import { ControllerSidebar } from './ControllerSidebar';
+import { ControllerRouter } from './AwxRouter';
+import { ControllerSidebar } from './AwxSidebar';
 
 export function Controller() {
   const [isNavOpen, setNavOpen] = useState(() => window.innerWidth >= 1200);

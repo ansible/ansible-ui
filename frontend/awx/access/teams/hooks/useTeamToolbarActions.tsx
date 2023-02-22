@@ -13,7 +13,7 @@ import { IPageAction, IPageActionButton, PageActionType } from '../../../../../f
 import { useOptions } from '../../../../Data';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
-import { IControllerView } from '../../../useControllerView';
+import { IControllerView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
 import { useDeleteTeams } from './useDeleteTeams';

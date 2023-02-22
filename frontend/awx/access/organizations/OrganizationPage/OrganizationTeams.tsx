@@ -5,7 +5,7 @@ import { PageTable } from '../../../../../framework';
 import { RouteE } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 

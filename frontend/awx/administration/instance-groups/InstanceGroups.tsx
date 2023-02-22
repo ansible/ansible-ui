@@ -16,7 +16,7 @@ import {
 } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteE } from '../../../Routes';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 

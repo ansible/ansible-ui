@@ -26,9 +26,9 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
-} from '../../common/controller-toolbar-filters';
+} from '../../common/awx-toolbar-filters';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { useControllerView } from '../../useControllerView';
+import { useControllerView } from '../../useAwxView';
 
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 

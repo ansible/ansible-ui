@@ -9,7 +9,7 @@ import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { requestGet, requestPatch, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
-import { getControllerError } from '../../useControllerView';
+import { getControllerError } from '../../useAwxView';
 
 export function EditInstance() {
   const { t } = useTranslation();

@@ -5,7 +5,7 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
-} from '../../../common/controller-toolbar-filters';
+} from '../../../common/awx-toolbar-filters';
 
 export function useTeamsFilters() {
   const nameToolbarFilter = useNameToolbarFilter();

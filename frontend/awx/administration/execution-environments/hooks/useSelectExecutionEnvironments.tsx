@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 import {
   useExecutionEnvironmentsColumns,
   useExecutionEnvironmentsFilters,

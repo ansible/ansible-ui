@@ -1,5 +1,5 @@
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { useControllerView } from '../../../useControllerView';
+import { useControllerView } from '../../../useAwxView';
 
 export function useJobsView() {
   const view = useControllerView<UnifiedJob>({
