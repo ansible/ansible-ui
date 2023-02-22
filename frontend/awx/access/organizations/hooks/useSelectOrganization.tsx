@@ -2,10 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Organization } from '../../../interfaces/Organization';
 import { useControllerView } from '../../../useControllerView';
-import {
-  useOrganizationsColumns,
-  useOrganizationsFilters,
-} from '../../organizations/Organizations';
+import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
 
 export function useSelectOrganization() {
   const { t } = useTranslation();

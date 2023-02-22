@@ -2,8 +2,8 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { Organization } from '../../../../frontend/controller/interfaces/Organization';
-import { Project } from '../../../../frontend/controller/interfaces/Project';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { ItemsResponse } from '../../../../frontend/Data';
 
 describe('projects', () => {

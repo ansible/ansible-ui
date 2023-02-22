@@ -2,9 +2,9 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { Organization } from '../../../../frontend/controller/interfaces/Organization';
-import { User } from '../../../../frontend/controller/interfaces/User';
-import { Team } from '../../../../frontend/controller/interfaces/Team';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
+import { Team } from '../../../../frontend/awx/interfaces/Team';
 
 describe('teams', () => {
   let organization: Organization;

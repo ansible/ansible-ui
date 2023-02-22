@@ -2,7 +2,7 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { Organization } from '../../../../frontend/controller/interfaces/Organization';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { ItemsResponse } from '../../../../frontend/Data';
 
 describe('organizations', () => {

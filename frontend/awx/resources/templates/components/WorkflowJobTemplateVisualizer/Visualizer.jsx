@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { RouteE } from '../../../../../Routes.ts';
-import { visualizerReducer } from '../../components/WorkflowReducer.tsx';
+import { visualizerReducer } from '../WorkflowReducer.tsx';
 import { WorkflowDispatchContext, WorkflowStateContext } from './shared/WorkflowContext.jsx';
 import {
   WorkflowApprovalAPI,

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { PageHeader } from '../../framework';
 import { useBulkActionDialog } from '../../framework/BulkActionDialog';
 import { randomString } from '../../framework/utils/random-string';
-import { Team } from '../controller/interfaces/Team';
+import { Team } from '../awx/interfaces/Team';
 import { requestPost } from '../Data';
 import { RouteE } from '../Routes';
 

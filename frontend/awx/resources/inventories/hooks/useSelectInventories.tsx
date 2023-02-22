@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useControllerView } from '../../../useControllerView';
-import { useInventoriesColumns, useInventoriesFilters } from '../../inventories/Inventories';
+import { useInventoriesColumns, useInventoriesFilters } from '../Inventories';
 
 export function useSelectInventories() {
   const { t } = useTranslation();

@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { t } from '@lingui/macro';
 import { ExclamationTriangleIcon, PauseIcon, TimesIcon } from '@patternfly/react-icons';
 import styled from 'styled-components';
-import { WorkflowDispatchContext } from './shared/WorkflowContext.jsx';
+import { WorkflowDispatchContext } from './shared/WorkflowContext.jsx.js';
 
 const Wrapper = styled.div`
   background-color: white;
