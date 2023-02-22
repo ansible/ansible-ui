@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
-import { Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
+import { Banner, Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { PageHeader, PageLayout, Scrollable } from '../../../framework';
 import { PageGrid } from '../../../framework/components/PageGrid';
 import { ItemsResponse, useGet2 } from '../../Data';
@@ -23,6 +24,15 @@ export default function Dashboard() {
   const { t } = useTranslation();
   return (
     <PageLayout>
+      <Banner variant="info">
+        <Trans>
+          <p>
+            <InfoCircleIcon /> You are currently viewing a tech preview of the new Ansible
+            Automation Platform user interface. To return to the original interface, click{' '}
+            <a href="/">here</a>.
+          </p>
+        </Trans>
+      </Banner>
       <PageHeader
         title={t('Welcome to AWX')}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
