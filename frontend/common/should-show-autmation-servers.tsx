@@ -1,7 +1,7 @@
 export function shouldShowAutmationServers() {
   let count = 0;
 
-  let showAWX = process.env.CONTROLLER === 'true';
+  let showAWX = process.env.AWX === 'true';
   if (showAWX) count++;
 
   let showHub = process.env.HUB === 'true';
