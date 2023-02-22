@@ -8,7 +8,7 @@ import { useActiveUser } from '../../../common/useActiveUser';
 import { RouteE } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { AccessRole, User } from '../../interfaces/User';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteAccessRole } from './useDeleteAccessRole';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersFilters } from '../users/hooks/useUsersFilters';
@@ -43,7 +43,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
 
   const tableColumns = useAccessColumns(undefined, deleteRole);
 
-  const view = useControllerView<User>({
+  const view = useAwxView<User>({
     url: url,
     queryParams: {
       order_by: 'first_name',

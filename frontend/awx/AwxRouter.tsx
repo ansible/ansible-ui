@@ -33,7 +33,7 @@ import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 
-export function ControllerRouter() {
+export function AwxRouter() {
   return (
     <Suspense
       fallback={
@@ -44,105 +44,87 @@ export function ControllerRouter() {
     >
       <Routes>
         <Route
-          path={RouteE.ControllerAutomationServers.replace(RouteE.Controller, '')}
+          path={RouteE.AwxAutomationServers.replace(RouteE.AWX, '')}
           element={<AutomationServers />}
         />
-        <Route path={RouteE.Dashboard.replace(RouteE.Controller, '')} element={<Dashboard />} />
-        <Route path={RouteE.Jobs.replace(RouteE.Controller, '')} element={<Jobs />} />
+        <Route path={RouteE.Dashboard.replace(RouteE.AWX, '')} element={<Dashboard />} />
+        <Route path={RouteE.Jobs.replace(RouteE.AWX, '')} element={<Jobs />} />
         {/* <Route path={RouteE.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
 
-        <Route path={RouteE.Templates.replace(RouteE.Controller, '')} element={<Templates />} />
+        <Route path={RouteE.Templates.replace(RouteE.AWX, '')} element={<Templates />} />
         <Route
-          path={RouteE.JobTemplateDetails.replace(RouteE.Controller, '')}
+          path={RouteE.JobTemplateDetails.replace(RouteE.AWX, '')}
           element={<TemplateDetail />}
         />
         <Route
-          path={RouteE.WorkflowJobTemplateDetails.replace(RouteE.Controller, '')}
+          path={RouteE.WorkflowJobTemplateDetails.replace(RouteE.AWX, '')}
           element={<WorkflowJobTemplateDetail />}
         />
         <Route
-          path={RouteE.CreateJobTemplate.replace(RouteE.Controller, '')}
+          path={RouteE.CreateJobTemplate.replace(RouteE.AWX, '')}
           element={<CreateJobTemplate />}
         />
 
-        <Route path={RouteE.Credentials.replace(RouteE.Controller, '')} element={<Credentials />} />
+        <Route path={RouteE.Credentials.replace(RouteE.AWX, '')} element={<Credentials />} />
 
-        <Route path={RouteE.Projects.replace(RouteE.Controller, '')} element={<Projects />} />
-        <Route
-          path={RouteE.ProjectDetails.replace(RouteE.Controller, '')}
-          element={<ProjectPage />}
-        />
+        <Route path={RouteE.Projects.replace(RouteE.AWX, '')} element={<Projects />} />
+        <Route path={RouteE.ProjectDetails.replace(RouteE.AWX, '')} element={<ProjectPage />} />
         {/* <Route path={RouteE.ProjectEdit} element={<ProjectEdit />} /> */}
 
-        <Route path={RouteE.Inventories.replace(RouteE.Controller, '')} element={<Inventories />} />
+        <Route path={RouteE.Inventories.replace(RouteE.AWX, '')} element={<Inventories />} />
 
-        <Route path={RouteE.Hosts.replace(RouteE.Controller, '')} element={<Hosts />} />
+        <Route path={RouteE.Hosts.replace(RouteE.AWX, '')} element={<Hosts />} />
 
+        <Route path={RouteE.Organizations.replace(RouteE.AWX, '')} element={<Organizations />} />
         <Route
-          path={RouteE.Organizations.replace(RouteE.Controller, '')}
-          element={<Organizations />}
-        />
-        <Route
-          path={RouteE.OrganizationDetails.replace(RouteE.Controller, '')}
+          path={RouteE.OrganizationDetails.replace(RouteE.AWX, '')}
           element={<OrganizationPage />}
         />
         <Route
-          path={RouteE.CreateOrganization.replace(RouteE.Controller, '')}
+          path={RouteE.CreateOrganization.replace(RouteE.AWX, '')}
           element={<CreateOrganization />}
         />
         <Route
-          path={RouteE.EditOrganization.replace(RouteE.Controller, '')}
+          path={RouteE.EditOrganization.replace(RouteE.AWX, '')}
           element={<EditOrganization />}
         />
 
-        <Route path={RouteE.Users.replace(RouteE.Controller, '')} element={<Users />} />
-        <Route path={RouteE.UserDetails.replace(RouteE.Controller, '')} element={<UserPage />} />
-        <Route path={RouteE.CreateUser.replace(RouteE.Controller, '')} element={<CreateUser />} />
-        <Route path={RouteE.EditUser.replace(RouteE.Controller, '')} element={<EditUser />} />
-        <Route
-          path={RouteE.AddRolesToUser.replace(RouteE.Controller, '')}
-          element={<AddRolesToUser />}
-        />
+        <Route path={RouteE.Users.replace(RouteE.AWX, '')} element={<Users />} />
+        <Route path={RouteE.UserDetails.replace(RouteE.AWX, '')} element={<UserPage />} />
+        <Route path={RouteE.CreateUser.replace(RouteE.AWX, '')} element={<CreateUser />} />
+        <Route path={RouteE.EditUser.replace(RouteE.AWX, '')} element={<EditUser />} />
+        <Route path={RouteE.AddRolesToUser.replace(RouteE.AWX, '')} element={<AddRolesToUser />} />
 
-        <Route path={RouteE.Teams.replace(RouteE.Controller, '')} element={<Teams />} />
-        <Route path={RouteE.TeamDetails.replace(RouteE.Controller, '')} element={<TeamPage />} />
-        <Route path={RouteE.CreateTeam.replace(RouteE.Controller, '')} element={<CreateTeam />} />
-        <Route path={RouteE.EditTeam.replace(RouteE.Controller, '')} element={<EditTeam />} />
-        <Route
-          path={RouteE.AddRolesToTeam.replace(RouteE.Controller, '')}
-          element={<AddRolesToTeam />}
-        />
+        <Route path={RouteE.Teams.replace(RouteE.AWX, '')} element={<Teams />} />
+        <Route path={RouteE.TeamDetails.replace(RouteE.AWX, '')} element={<TeamPage />} />
+        <Route path={RouteE.CreateTeam.replace(RouteE.AWX, '')} element={<CreateTeam />} />
+        <Route path={RouteE.EditTeam.replace(RouteE.AWX, '')} element={<EditTeam />} />
+        <Route path={RouteE.AddRolesToTeam.replace(RouteE.AWX, '')} element={<AddRolesToTeam />} />
 
         {/* <Route path={RouteE.CredentialTypes} element={<CredentialTypes />} /> */}
         {/* <Route path={RouteE.Notifications} element={<Notifications />} /> */}
         {/* <Route path={RouteE.ManagementJobs} element={<ManagementJobs />} /> */}
 
-        <Route
-          path={RouteE.InstanceGroups.replace(RouteE.Controller, '')}
-          element={<InstanceGroups />}
-        />
+        <Route path={RouteE.InstanceGroups.replace(RouteE.AWX, '')} element={<InstanceGroups />} />
 
-        <Route path={RouteE.Instances.replace(RouteE.Controller, '')} element={<Instances />} />
+        <Route path={RouteE.Instances.replace(RouteE.AWX, '')} element={<Instances />} />
         <Route
-          path={RouteE.InstanceDetails.replace(RouteE.Controller, '')}
+          path={RouteE.InstanceDetails.replace(RouteE.AWX, '')}
           element={<InstanceDetails />}
         />
-        <Route
-          path={RouteE.EditInstance.replace(RouteE.Controller, '')}
-          element={<EditInstance />}
-        />
+        <Route path={RouteE.EditInstance.replace(RouteE.AWX, '')} element={<EditInstance />} />
 
         {/* <Route path={RouteE.Applications} element={<Applications />} /> */}
         <Route
-          path={RouteE.ExecutionEnvironments.replace(RouteE.Controller, '')}
+          path={RouteE.ExecutionEnvironments.replace(RouteE.AWX, '')}
           element={<ExecutionEnvironments />}
         />
 
-        <Route path={RouteE.Settings.replace(RouteE.Controller, '')} element={<Settings />} />
+        <Route path={RouteE.Settings.replace(RouteE.AWX, '')} element={<Settings />} />
 
-        <Route path={RouteE.ControllerDebug.replace(RouteE.Controller, '')} element={<Debug />} />
+        <Route path={RouteE.AwxDebug.replace(RouteE.AWX, '')} element={<Debug />} />
       </Routes>
     </Suspense>
   );

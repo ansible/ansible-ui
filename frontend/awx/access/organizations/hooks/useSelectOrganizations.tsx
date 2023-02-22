@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { Organization } from '../../../interfaces/Organization';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
 
 function SelectOrganizations(props: {
@@ -11,7 +11,7 @@ function SelectOrganizations(props: {
 }) {
   const toolbarFilters = useOrganizationsFilters();
   const tableColumns = useOrganizationsColumns({ disableLinks: true });
-  const view = useControllerView<Organization>({
+  const view = useAwxView<Organization>({
     url: '/api/v2/organizations/',
     toolbarFilters,
     tableColumns,

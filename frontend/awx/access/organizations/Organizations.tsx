@@ -32,7 +32,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { Organization } from '../../interfaces/Organization';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
@@ -46,7 +46,7 @@ export function Organizations() {
 
   const tableColumns = useOrganizationsColumns();
 
-  const view = useControllerView<Organization>({
+  const view = useAwxView<Organization>({
     url: '/api/v2/organizations/',
     toolbarFilters,
     tableColumns,

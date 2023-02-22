@@ -7,7 +7,7 @@ import { useOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
@@ -19,7 +19,7 @@ export function Teams() {
   const navigate = useNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
-  const view = useControllerView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
+  const view = useAwxView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
   const headerActions = useRefreshAction(view.refreshing, view.refresh);

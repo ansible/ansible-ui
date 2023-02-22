@@ -23,14 +23,14 @@ import { StatusCell } from '../../../common/StatusCell';
 import { requestPost } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 
 export function Instances() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useInstancesFilters();
   const tableColumns = useInstancesColumns();
-  const view = useControllerView<Instance>({
+  const view = useAwxView<Instance>({
     url: '/api/v2/instances/',
     toolbarFilters,
     tableColumns,

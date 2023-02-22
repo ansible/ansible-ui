@@ -16,7 +16,7 @@ import {
 } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteE } from '../../../Routes';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 
@@ -25,7 +25,7 @@ export function InstanceGroups() {
   const navigate = useNavigate();
   const toolbarFilters = useInstanceGroupsFilters();
   const tableColumns = useInstanceGroupsColumns();
-  const view = useControllerView({
+  const view = useAwxView({
     url: '/api/v2/instance_groups/',
     toolbarFilters,
     tableColumns,

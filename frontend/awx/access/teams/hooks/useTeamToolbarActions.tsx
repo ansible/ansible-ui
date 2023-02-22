@@ -13,13 +13,13 @@ import { IPageAction, IPageActionButton, PageActionType } from '../../../../../f
 import { useOptions } from '../../../../Data';
 import { RouteE } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
-import { IControllerView } from '../../../useAwxView';
+import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
 import { useDeleteTeams } from './useDeleteTeams';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 
-export function useTeamToolbarActions(view: IControllerView<Team>) {
+export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);

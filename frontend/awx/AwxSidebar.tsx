@@ -7,10 +7,7 @@ import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { RouteE } from '../Routes';
 
-export function ControllerSidebar(props: {
-  isNavOpen: boolean;
-  setNavOpen: (open: boolean) => void;
-}) {
+export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
   const { isNavOpen, setNavOpen } = props;
   const { t } = useTranslation();
   const location = useLocation();
@@ -25,15 +22,6 @@ export function ControllerSidebar(props: {
   );
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
-      {/* <NavExpandable
-                            key="controller"
-                            title="Controller"
-                            isExpanded
-                            isActive={isRouteActive(
-                                [RouteE.Dashboard, RouteE.Jobs, RouteE.Schedules, RouteE.ActivityStream, RouteE.WorkflowApprovals],
-                                location
-                            )}
-                        > */}
       <NavExpandable
         key="views"
         title="Views"
@@ -190,8 +178,8 @@ export function ControllerSidebar(props: {
       {/* </NavExpandable> */}
       {process.env.NODE_ENV === 'development' && (
         <NavItem
-          isActive={isRouteActive(RouteE.ControllerDebug, location)}
-          onClick={() => onClick(RouteE.ControllerDebug)}
+          isActive={isRouteActive(RouteE.AwxDebug, location)}
+          onClick={() => onClick(RouteE.AwxDebug)}
         >
           {t('Debug')}
         </NavItem>

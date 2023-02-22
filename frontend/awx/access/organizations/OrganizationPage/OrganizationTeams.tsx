@@ -5,7 +5,7 @@ import { PageTable } from '../../../../../framework';
 import { RouteE } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
@@ -15,7 +15,7 @@ export function OrganizationTeams(props: { organization: Organization }) {
   const history = useNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
-  const view = useControllerView<Team>({
+  const view = useAwxView<Team>({
     url: `/api/v2/organizations/${organization.id}/teams/`,
     toolbarFilters,
     tableColumns,

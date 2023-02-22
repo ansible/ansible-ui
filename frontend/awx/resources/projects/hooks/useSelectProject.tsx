@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Project } from '../../../interfaces/Project';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useProjectsColumns, useProjectsFilters } from '../Projects';
 
 export function useSelectProject() {
   const { t } = useTranslation();
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns({ disableLinks: true });
-  const view = useControllerView<Project>({
+  const view = useAwxView<Project>({
     url: '/api/v2/projects/',
     toolbarFilters,
     tableColumns,

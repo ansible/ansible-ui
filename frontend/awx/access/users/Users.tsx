@@ -18,7 +18,7 @@ import {
 } from '../../../../framework';
 import { RouteE } from '../../../Routes';
 import { User } from '../../interfaces/User';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
@@ -36,7 +36,7 @@ export function Users() {
 
   const tableColumns = useUsersColumns();
 
-  const view = useControllerView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns });
+  const view = useAwxView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns });
 
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
@@ -189,7 +189,7 @@ export function AccessTable(props: { url: string }) {
 
   const tableColumns = useUsersColumns();
 
-  const view = useControllerView<User>({
+  const view = useAwxView<User>({
     url: props.url,
     toolbarFilters,
     tableColumns,

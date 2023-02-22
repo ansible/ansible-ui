@@ -28,7 +28,7 @@ import {
   useOrganizationToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
@@ -37,7 +37,7 @@ export function ExecutionEnvironments() {
   const navigate = useNavigate();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
-  const view = useControllerView<ExecutionEnvironment>({
+  const view = useAwxView<ExecutionEnvironment>({
     url: '/api/v2/execution_environments/',
     toolbarFilters,
     tableColumns,

@@ -15,7 +15,7 @@ import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
-import { getControllerError } from '../../useAwxView';
+import { getAwxError } from '../../useAwxView';
 import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
 
 export function CreateUser() {
@@ -41,7 +41,7 @@ export function CreateUser() {
       );
       navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
 
@@ -91,7 +91,7 @@ export function EditUser() {
       const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
       navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
 

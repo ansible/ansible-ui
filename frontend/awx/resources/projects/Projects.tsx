@@ -29,7 +29,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { Project } from '../../interfaces/Project';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function Projects() {
@@ -37,7 +37,7 @@ export function Projects() {
   const navigate = useNavigate();
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns();
-  const view = useControllerView<Project>({
+  const view = useAwxView<Project>({
     url: '/api/v2/projects/',
     toolbarFilters,
     tableColumns,

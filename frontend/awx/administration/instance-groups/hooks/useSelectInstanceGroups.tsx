@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useInstanceGroupsColumns, useInstanceGroupsFilters } from '../InstanceGroups';
 
 export function useSelectInstanceGroups() {
   const { t } = useTranslation();
   const toolbarFilters = useInstanceGroupsFilters();
   const tableColumns = useInstanceGroupsColumns({ disableLinks: true });
-  const view = useControllerView<InstanceGroup>({
+  const view = useAwxView<InstanceGroup>({
     url: '/api/v2/instance_groups/',
     toolbarFilters,
     tableColumns,

@@ -8,7 +8,7 @@ import { IPageAction, PageActionType, PageTable } from '../../../../../framework
 import { RouteE } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function UserRoles(props: { user: User }) {
@@ -17,7 +17,7 @@ export function UserRoles(props: { user: User }) {
   const toolbarFilters = useRolesFilters();
   const tableColumns = useRolesColumns();
   const navigate = useNavigate();
-  const view = useControllerView<Role>({
+  const view = useAwxView<Role>({
     url: `/api/v2/users/${user.id}/roles/`,
     toolbarFilters,
     tableColumns,

@@ -14,7 +14,7 @@ import { useOptions } from '../../../../Data';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
@@ -25,7 +25,7 @@ export function UserTeams(props: { user: User }) {
   const { t } = useTranslation();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
-  const view = useControllerView<Team>({
+  const view = useAwxView<Team>({
     url: `/api/v2/users/${user.id}/teams/`,
     toolbarFilters,
     disableQueryString: true,

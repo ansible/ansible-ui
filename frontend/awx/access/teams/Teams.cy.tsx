@@ -112,7 +112,7 @@ describe('Teams.cy.ts', () => {
           <Teams />
         </MemoryRouter>
       );
-      // Refresh needed so that useControllerView picks up the updated intercept for empty state in the next set of tests
+      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
       cy.contains('Error loading teams');
     });
@@ -151,7 +151,7 @@ describe('Teams.cy.ts', () => {
           <Teams />
         </MemoryRouter>
       );
-      // Refresh needed so that useControllerView picks up the updated intercept for empty state in the next set of tests
+      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
 
       cy.contains(/^There are currently no teams added to your organization.$/);
@@ -169,7 +169,7 @@ describe('Teams.cy.ts', () => {
           <Teams />
         </MemoryRouter>
       );
-      // Refresh needed so that useControllerView picks up the updated intercept for empty state in the next set of tests
+      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
       cy.contains(/^You do not have permission to create a team$/);
       cy.contains(

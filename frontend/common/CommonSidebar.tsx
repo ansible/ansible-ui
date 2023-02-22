@@ -46,7 +46,7 @@ export function CommonSidebar(props: {
                 <NavItem
                   isActive={isRouteActive(
                     automationServer?.type === AutomationServerType.AWX
-                      ? RouteE.ControllerAutomationServers
+                      ? RouteE.AwxAutomationServers
                       : automationServer?.type === AutomationServerType.Galaxy
                       ? RouteE.HubAutomationServers
                       : automationServer?.type === AutomationServerType.EDA
@@ -57,7 +57,7 @@ export function CommonSidebar(props: {
                   onClick={() =>
                     onClick(
                       automationServer?.type === AutomationServerType.AWX
-                        ? RouteE.ControllerAutomationServers
+                        ? RouteE.AwxAutomationServers
                         : automationServer?.type === AutomationServerType.Galaxy
                         ? RouteE.HubAutomationServers
                         : automationServer?.type === AutomationServerType.EDA

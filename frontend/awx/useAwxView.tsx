@@ -5,7 +5,7 @@ import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../fram
 import { IView, useView } from '../../framework/useView';
 import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data';
 
-export type IControllerView<T extends { id: number }> = IView &
+export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -25,13 +25,13 @@ function getQueryString(queryParams: QueryParams) {
     .join('&');
 }
 
-export function useControllerView<T extends { id: number }>(options: {
+export function useAwxView<T extends { id: number }>(options: {
   url: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns?: ITableColumn<T>[];
   queryParams?: QueryParams;
   disableQueryString?: boolean;
-}): IControllerView<T> {
+}): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
 
@@ -156,7 +156,7 @@ export function useControllerView<T extends { id: number }>(options: {
   ]);
 }
 
-export async function getControllerError(err: unknown) {
+export async function getAwxError(err: unknown) {
   if (err instanceof HTTPError) {
     try {
       const response = (await err.response.json()) as { __all__?: string[] };

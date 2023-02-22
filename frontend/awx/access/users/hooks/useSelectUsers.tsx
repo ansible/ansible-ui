@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { User } from '../../../interfaces/User';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useUsersColumns } from './useUsersColumns';
 import { useUsersFilters } from './useUsersFilters';
 
 function SelectUsers(props: { title: string; onSelect: (users: User[]) => void }) {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
-  const view = useControllerView<User>({
+  const view = useAwxView<User>({
     url: '/api/v2/users/',
     toolbarFilters,
     tableColumns,

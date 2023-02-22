@@ -1,8 +1,8 @@
 export function shouldShowAutmationServers() {
   let count = 0;
 
-  let showController = process.env.CONTROLLER === 'true';
-  if (showController) count++;
+  let showAWX = process.env.CONTROLLER === 'true';
+  if (showAWX) count++;
 
   let showHub = process.env.HUB === 'true';
   if (showHub) count++;
@@ -12,14 +12,14 @@ export function shouldShowAutmationServers() {
 
   const showAutomationServers = count !== 1;
   if (showAutomationServers) {
-    showController = true;
+    showAWX = true;
     showHub = true;
     showEda = true;
   }
 
   return {
     showAutomationServers,
-    showController,
+    showAWX,
     showHub,
     showEda,
   };

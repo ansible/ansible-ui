@@ -9,7 +9,7 @@ import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
-import { getControllerError } from '../../useAwxView';
+import { getAwxError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {
@@ -29,7 +29,7 @@ export function CreateTeam() {
       const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
       navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
   return (
@@ -75,7 +75,7 @@ export function EditTeam() {
       await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
       navigate(-1);
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
   if (!team) {

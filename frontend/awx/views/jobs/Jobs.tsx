@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
@@ -25,7 +25,7 @@ export default function Jobs() {
   const { t } = useTranslation();
   const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
-  const view = useControllerView<UnifiedJob>({
+  const view = useAwxView<UnifiedJob>({
     url: '/api/v2/unified_jobs/',
     queryParams: {
       not__launch_type: 'sync',

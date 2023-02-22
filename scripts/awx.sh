@@ -5,7 +5,7 @@ cd $SCRIPT_DIR
 export SERVER=''
 export TOKEN=''
 
-OUT="../frontend/controller/interfaces"
+OUT="../frontend/awx/interfaces"
 mkdir -p $OUT
 # ./api2ts.sh User /api/v2/users/ .results $OUT/User.ts
 # ./api2ts.sh Organization /api/v2/organizations/ .results $OUT/Organization.ts

@@ -9,7 +9,7 @@ import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { requestGet, requestPatch, swrOptions } from '../../../Data';
 import { RouteE } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
-import { getControllerError } from '../../useAwxView';
+import { getAwxError } from '../../useAwxView';
 
 export function EditInstance() {
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ export function EditInstance() {
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);

@@ -26,7 +26,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { Credential } from '../../interfaces/Credential';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function Credentials() {
@@ -34,7 +34,7 @@ export function Credentials() {
   const navigate = useNavigate();
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns();
-  const view = useControllerView<Credential>({
+  const view = useAwxView<Credential>({
     url: '/api/v2/credentials/',
     toolbarFilters,
     tableColumns,

@@ -28,7 +28,7 @@ import {
 } from '../../common/awx-toolbar-filters';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function Templates() {
@@ -36,7 +36,7 @@ export function Templates() {
   const navigate = useNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplatesColumns();
-  const view = useControllerView<JobTemplate | WorkflowJobTemplate>({
+  const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: '/api/v2/unified_job_templates/',
     toolbarFilters,
     tableColumns,

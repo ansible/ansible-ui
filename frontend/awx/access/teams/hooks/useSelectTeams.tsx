@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { Team } from '../../../interfaces/Team';
-import { useControllerView } from '../../../useAwxView';
+import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from './useTeamsColumns';
 import { useTeamsFilters } from './useTeamsFilters';
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns({ disableLinks: true });
-  const view = useControllerView<Team>({
+  const view = useAwxView<Team>({
     url: '/api/v2/teams/',
     toolbarFilters,
     tableColumns,

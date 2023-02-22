@@ -26,7 +26,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { Host } from '../../interfaces/Host';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
 
 export function Hosts() {
@@ -34,7 +34,7 @@ export function Hosts() {
   const navigate = useNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
-  const view = useControllerView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
+  const view = useAwxView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Host>[]>(

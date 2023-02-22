@@ -25,14 +25,14 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { Inventory } from '../../interfaces/Inventory';
-import { useControllerView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function Inventories() {
   const { t } = useTranslation();
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
-  const view = useControllerView<Inventory>({
+  const view = useAwxView<Inventory>({
     url: '/api/v2/inventories/',
     toolbarFilters,
     tableColumns,

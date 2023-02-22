@@ -9,7 +9,7 @@ import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data
 import { RouteE } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { getControllerError } from '../../useAwxView';
+import { getAwxError } from '../../useAwxView';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 
@@ -40,7 +40,7 @@ export function CreateOrganization() {
       await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);
@@ -109,7 +109,7 @@ export function EditOrganization() {
       await Promise.all(igRequests);
       navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
-      setError(await getControllerError(err));
+      setError(await getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);
