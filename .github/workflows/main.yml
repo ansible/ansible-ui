@@ -86,3 +86,57 @@ jobs:
       - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:dependencies --target dependencies --tag dependencies --tag quay.io/ansible/ansible-ui:dependencies .
       - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
       - run: docker push quay.io/ansible/ansible-ui --all-tags
+
+  release:
+    name: Release latest tar
+    runs-on: ubuntu-latest
+    needs: tag
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.tag.outputs.VERSION }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: PostCache
+        run: rm package-lock-copy.json
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build EDA
+        run: npm run build:all
+      - name: ansible-ui.tar
+        run: |
+          cd build/public
+          tar cf ../../ansible-ui.tar .
+      - name: controller.tar
+        run: |
+          cd build/controller
+          tar cf ../../controller.tar .
+      - name: hub.tar
+        run: |
+          cd build/hub
+          tar cf ../../hub.tar .
+      - name: eda.tar
+        run: |
+          cd build/eda
+          tar cf ../../eda.tar .
+      - uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: '*.tar'
+          tag_name: latest
+          draft: false
+          overwrite: true
