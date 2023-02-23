@@ -127,12 +127,16 @@ jobs:
         run: npm ci
       - name: Build EDA
         run: npm run build:eda
+      - name: TAR
+        run: tar cf eda.tar build/eda
       - uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: 'build/eda/*'
+          file: eda.tar
+          draft: false
           tag_name: eda
+          overwrite: true
       # - name: GitHub Releases
       #   uses: fnkr/github-action-ghr@v1.3
       #   env:
