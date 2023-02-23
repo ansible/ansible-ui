@@ -7,7 +7,7 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { requestGet, requestPatch, swrOptions } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { getAwxError } from '../../useAwxView';
 
@@ -61,7 +61,7 @@ export function EditInstance() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Instances'), to: RouteE.Instances },
+            { label: t('Instances'), to: RouteObj.Instances },
             { label: t('Edit instance') },
           ]}
         />
@@ -73,7 +73,7 @@ export function EditInstance() {
         <PageHeader
           title={instance.hostname}
           breadcrumbs={[
-            { label: t('Instances'), to: RouteE.Instances },
+            { label: t('Instances'), to: RouteObj.Instances },
             { label: instance.hostname },
           ]}
         />

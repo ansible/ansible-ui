@@ -25,7 +25,7 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { useItem } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { handleLaunch } from '../../common/util/launchHandlers';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { JobTemplate } from '../../interfaces/JobTemplate';
@@ -39,7 +39,7 @@ export function TemplateDetail() {
 
   const deleteTemplates = useDeleteTemplates((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.Templates);
+      navigate(RouteObj.Templates);
     }
   });
 
@@ -51,7 +51,8 @@ export function TemplateDetail() {
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
-        onClick: () => navigate(RouteE.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+        onClick: () =>
+          navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -71,9 +72,9 @@ export function TemplateDetail() {
         onClick: async () => {
           try {
             const data = await handleLaunch(template?.type as string, template?.id as number);
-            navigate(
-              `/controller/jobs/${data?.type as string}/output/${data?.id.toString() as string}`
-            );
+            let jobOutputRoute = RouteObj.JobOutput.replace(':job_type', data?.type as string);
+            jobOutputRoute = jobOutputRoute.replace(':id', data?.id.toString() as string);
+            navigate(jobOutputRoute);
           } catch {
             // handle error
           }
@@ -89,7 +90,7 @@ export function TemplateDetail() {
     <PageLayout>
       <PageHeader
         title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteE.Templates }, { label: template?.name }]}
+        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
           <PageActions<JobTemplate> actions={itemActions} position={DropdownPosition.right} />
         }
@@ -161,7 +162,7 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link
-          to={RouteE.OrganizationDetails.replace(
+          to={RouteObj.OrganizationDetails.replace(
             ':id',
             summaryFields.organization?.id.toString() ?? ''
           )}
@@ -171,20 +172,25 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         <Link
-          to={RouteE.InventoryDetails.replace(':id', summaryFields.inventory?.id.toString() ?? '')}
+          to={RouteObj.InventoryDetails.replace(
+            ':id',
+            summaryFields.inventory?.id.toString() ?? ''
+          )}
         >
           {summaryFields.inventory?.name}
         </Link>
       </PageDetail>
       <PageDetail label={t`Project`} isEmpty={!summaryFields.project}>
-        <Link to={RouteE.ProjectDetails.replace(':id', summaryFields.project?.id.toString() ?? '')}>
+        <Link
+          to={RouteObj.ProjectDetails.replace(':id', summaryFields.project?.id.toString() ?? '')}
+        >
           {summaryFields.project?.name}
         </Link>
       </PageDetail>
       {/* TODO: more flushed out ExecutionEnvironmentDetail ? */}
       <PageDetail label={t`Execution environment`} isEmpty={!summaryFields.resolved_environment}>
         <Link
-          to={RouteE.ExecutionEnvironmentDetails.replace(
+          to={RouteObj.ExecutionEnvironmentDetails.replace(
             ':id',
             summaryFields.resolved_environment?.id.toString() ?? ''
           )}
@@ -209,7 +215,7 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
         <Link
-          to={RouteE.CredentialDetails.replace(
+          to={RouteObj.CredentialDetails.replace(
             ':id',
             summaryFields.webhook_credential?.id.toString()
           )}

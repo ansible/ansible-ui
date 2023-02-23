@@ -18,7 +18,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -48,7 +48,7 @@ export function Credentials() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create credential'),
-        onClick: () => navigate(RouteE.CreateCredential),
+        onClick: () => navigate(RouteObj.CreateCredential),
       },
       {
         type: PageActionType.bulk,
@@ -68,7 +68,7 @@ export function Credentials() {
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential) =>
-          navigate(RouteE.EditCredential.replace(':id', credential.id.toString())),
+          navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -99,7 +99,7 @@ export function Credentials() {
         emptyStateTitle={t('No credentials yet')}
         emptyStateDescription={t('To get started, create an credential.')}
         emptyStateButtonText={t('Create credential')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateCredential)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
         {...view}
       />
     </PageLayout>
@@ -128,7 +128,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const navigate = useNavigate();
   const nameClick = useCallback(
     (credential: Credential) =>
-      navigate(RouteE.CredentialDetails.replace(':id', credential.id.toString())),
+      navigate(RouteObj.CredentialDetails.replace(':id', credential.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({

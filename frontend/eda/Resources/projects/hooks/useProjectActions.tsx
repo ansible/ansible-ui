@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteProjects } from './useDeleteProjects';
@@ -19,7 +19,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
-          navigate(RouteE.EditEdaProject.replace(':id', project.id.toString())),
+          navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.single,

@@ -10,7 +10,7 @@ import {
 } from '../../../framework';
 import { useGet } from '../../common/useItem';
 import { requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
@@ -40,7 +40,7 @@ export function EditRulebookActivation() {
       );
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(
-        RouteE.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
+        RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : t('Unknown error'));
@@ -53,7 +53,7 @@ export function EditRulebookActivation() {
       <PageHeader
         title={t('Create rulebook activation')}
         breadcrumbs={[
-          { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
+          { label: t('RulebookActivations'), to: RouteObj.EdaRulebookActivations },
           { label: t('Create rulebook activation') },
         ]}
       />

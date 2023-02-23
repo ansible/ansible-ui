@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function useUserColumns() {
@@ -23,7 +23,7 @@ export function useUserColumns() {
         cell: (User) => (
           <TextCell
             text={User.name}
-            onClick={() => navigate(RouteE.EdaUserDetails.replace(':id', User.id.toString()))}
+            onClick={() => navigate(RouteObj.EdaUserDetails.replace(':id', User.id.toString()))}
           />
         ),
         sort: 'name',

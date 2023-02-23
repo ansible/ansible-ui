@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework';
 import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { HubItemsResponse } from '../../useHubView';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
 import { Namespace } from './Namespace';
@@ -23,7 +23,7 @@ export function NamespaceDetails() {
       <PageHeader
         title={namespace?.name}
         breadcrumbs={[
-          { label: t('Namespaces'), to: RouteE.Namespaces },
+          { label: t('Namespaces'), to: RouteObj.Namespaces },
           { label: namespace?.name },
         ]}
       />

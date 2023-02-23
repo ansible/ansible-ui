@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 import { usePageAlerts } from '../framework/PageAlerts';
-import { RouteE } from './Routes';
+import { RouteObj } from './Routes';
 
 export function useHandleSWRResponseError(swrResponse: SWRResponse, errorTitle?: string) {
   const alertToaster = usePageAlerts();
@@ -40,7 +40,7 @@ function handleSwrResponseError(swrResponse: SWRResponse, navigate: NavigateFunc
   if (error) {
     if (error instanceof HTTPError) {
       if (error.response.status === 401) {
-        navigate(RouteE.Login + '?navigate-back=true');
+        navigate(RouteObj.Login + '?navigate-back=true');
       }
 
       // error.message = 'SOMETHING ELSE...';
@@ -197,7 +197,7 @@ async function requestCommon<ResponseBody>(
     if (err instanceof HTTPError) {
       switch (err.response.status) {
         case 401:
-          location.assign(RouteE.Login + '?navigate-back=true');
+          location.assign(RouteObj.Login + '?navigate-back=true');
           break;
       }
     }

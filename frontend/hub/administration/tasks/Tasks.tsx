@@ -14,7 +14,7 @@ import {
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { pulpHRefKeyFn } from '../../useHubView';
 import { getIdFromPulpHref } from '../../usePulpView';
 import { Task } from './Task';
@@ -62,7 +62,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              navigate(RouteE.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href)))
+              navigate(RouteObj.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href)))
             }
           />
         ),

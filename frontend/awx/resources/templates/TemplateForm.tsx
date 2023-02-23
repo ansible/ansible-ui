@@ -4,7 +4,7 @@ import { useSWRConfig } from 'swr';
 import { PageForm, PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { getDefaultValues } from './templateFormhelpers';
 import JobTemplateInputs from './JobTemplateInputs';
@@ -22,7 +22,7 @@ export function EditJobTemplate() {
     try {
       await requestPatch<JobTemplate>(`/api/job_templates/${id}`, values);
       (cache as unknown as { clear: () => void }).clear?.();
-      navigate(RouteE.JobTemplateDetails.replace(':id', `${id}`.toString()));
+      navigate(RouteObj.JobTemplateDetails.replace(':id', `${id}`.toString()));
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -37,7 +37,7 @@ export function EditJobTemplate() {
       <PageHeader
         title={t('Edit job template')}
         breadcrumbs={[
-          { label: t('Templates'), to: RouteE.Templates },
+          { label: t('Templates'), to: RouteObj.Templates },
           { label: t('Edit job template') },
         ]}
       />
@@ -61,7 +61,7 @@ export function CreateJobTemplate() {
     try {
       const { id } = await requestPost<JobTemplate>(`/api/job_templates/`, values);
 
-      navigate(RouteE.JobTemplateDetails.replace(':id', id.toString()));
+      navigate(RouteObj.JobTemplateDetails.replace(':id', id.toString()));
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -76,7 +76,7 @@ export function CreateJobTemplate() {
       <PageHeader
         title={t('Create job template')}
         breadcrumbs={[
-          { label: t('Templates'), to: RouteE.Templates },
+          { label: t('Templates'), to: RouteObj.Templates },
           { label: t('Create job template') },
         ]}
       />

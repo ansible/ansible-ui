@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteE } from '../Routes';
+import { RouteObj, RouteType } from '../Routes';
 
 export function EventDrivenSidebar(props: {
   isNavOpen: boolean;
@@ -17,7 +17,7 @@ export function EventDrivenSidebar(props: {
   const navigate = useNavigate();
   const isXl = useBreakpoint('xl');
   const onClick = useCallback(
-    (route: RouteE) => {
+    (route: RouteType) => {
       navigate(route);
       if (!isXl) setNavOpen(false);
     },
@@ -26,8 +26,8 @@ export function EventDrivenSidebar(props: {
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
       <NavItem
-        isActive={isRouteActive(RouteE.EdaDashboard, location)}
-        onClick={() => onClick(RouteE.EdaDashboard)}
+        isActive={isRouteActive(RouteObj.EdaDashboard, location)}
+        onClick={() => onClick(RouteObj.EdaDashboard)}
       >
         {t('Dashboard')}
       </NavItem>
@@ -36,25 +36,25 @@ export function EventDrivenSidebar(props: {
         title={t('Resources')}
         isExpanded
         isActive={isRouteActive(
-          [RouteE.EdaProjects, RouteE.EdaExecutionEnvironments, RouteE.EdaInventories],
+          [RouteObj.EdaProjects, RouteObj.EdaExecutionEnvironments, RouteObj.EdaInventories],
           location
         )}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.EdaProjects, location)}
-          onClick={() => onClick(RouteE.EdaProjects)}
+          isActive={isRouteActive(RouteObj.EdaProjects, location)}
+          onClick={() => onClick(RouteObj.EdaProjects)}
         >
           {t('Projects')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.EdaExecutionEnvironments, location)}
-          onClick={() => onClick(RouteE.EdaExecutionEnvironments)}
+          isActive={isRouteActive(RouteObj.EdaExecutionEnvironments, location)}
+          onClick={() => onClick(RouteObj.EdaExecutionEnvironments)}
         >
           {t('Execution environments')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.EdaInventories, location)}
-          onClick={() => onClick(RouteE.EdaInventories)}
+          isActive={isRouteActive(RouteObj.EdaInventories, location)}
+          onClick={() => onClick(RouteObj.EdaInventories)}
         >
           {t('Inventories')}
         </NavItem>
@@ -63,36 +63,36 @@ export function EventDrivenSidebar(props: {
         key="views"
         title={t('Views')}
         isExpanded
-        isActive={isRouteActive([RouteE.EdaActions, RouteE.EdaRulebookActivations], location)}
+        isActive={isRouteActive([RouteObj.EdaActions, RouteObj.EdaRulebookActivations], location)}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.EdaActions, location)}
-          onClick={() => onClick(RouteE.EdaActions)}
+          isActive={isRouteActive(RouteObj.EdaActions, location)}
+          onClick={() => onClick(RouteObj.EdaActions)}
         >
           {t('Actions')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.EdaRulebookActivations, location)}
-          onClick={() => onClick(RouteE.EdaRulebookActivations)}
+          isActive={isRouteActive(RouteObj.EdaRulebookActivations, location)}
+          onClick={() => onClick(RouteObj.EdaRulebookActivations)}
         >
           {t('Rulebook activations')}
         </NavItem>
       </NavExpandable>
       <NavItem
-        isActive={isRouteActive(RouteE.EdaActivities, location)}
-        onClick={() => onClick(RouteE.EdaActivities)}
+        isActive={isRouteActive(RouteObj.EdaActivities, location)}
+        onClick={() => onClick(RouteObj.EdaActivities)}
       >
         {t('Activities')}
       </NavItem>
       <NavItem
-        isActive={isRouteActive(RouteE.EdaRulebooks, location)}
-        onClick={() => onClick(RouteE.EdaRulebooks)}
+        isActive={isRouteActive(RouteObj.EdaRulebooks, location)}
+        onClick={() => onClick(RouteObj.EdaRulebooks)}
       >
         {t('Rulebooks')}
       </NavItem>
       <NavItem
-        isActive={isRouteActive(RouteE.EdaRules, location)}
-        onClick={() => onClick(RouteE.EdaRules)}
+        isActive={isRouteActive(RouteObj.EdaRules, location)}
+        onClick={() => onClick(RouteObj.EdaRules)}
       >
         {t('Rules')}
       </NavItem>
@@ -100,23 +100,26 @@ export function EventDrivenSidebar(props: {
         key="user"
         title={t('User Access')}
         isExpanded
-        isActive={isRouteActive([RouteE.EdaUsers, RouteE.EdaGroups, RouteE.EdaRoles], location)}
+        isActive={isRouteActive(
+          [RouteObj.EdaUsers, RouteObj.EdaGroups, RouteObj.EdaRoles],
+          location
+        )}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.EdaUsers, location)}
-          onClick={() => onClick(RouteE.EdaUsers)}
+          isActive={isRouteActive(RouteObj.EdaUsers, location)}
+          onClick={() => onClick(RouteObj.EdaUsers)}
         >
           {t('Users')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.EdaGroups, location)}
-          onClick={() => onClick(RouteE.EdaGroups)}
+          isActive={isRouteActive(RouteObj.EdaGroups, location)}
+          onClick={() => onClick(RouteObj.EdaGroups)}
         >
           {t('Groups')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.EdaRoles, location)}
-          onClick={() => onClick(RouteE.EdaRoles)}
+          isActive={isRouteActive(RouteObj.EdaRoles, location)}
+          onClick={() => onClick(RouteObj.EdaRoles)}
         >
           {t('Roles')}
         </NavItem>

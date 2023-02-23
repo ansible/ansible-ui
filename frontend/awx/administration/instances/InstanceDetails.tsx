@@ -18,7 +18,7 @@ import {
 import { StatusCell } from '../../../common/StatusCell';
 import { useItem } from '../../../common/useItem';
 import { requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { NodeTypeCell } from './Instances';
 
@@ -35,7 +35,7 @@ export function InstanceDetails() {
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit instance'),
-        onClick: () => history(RouteE.EditInstance.replace(':id', instance?.id.toString() ?? '')),
+        onClick: () => history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -58,7 +58,7 @@ export function InstanceDetails() {
       <PageHeader
         title={instance?.hostname}
         breadcrumbs={[
-          { label: t('Instances'), to: RouteE.Instances },
+          { label: t('Instances'), to: RouteObj.Instances },
           { label: instance?.hostname },
         ]}
         headerActions={

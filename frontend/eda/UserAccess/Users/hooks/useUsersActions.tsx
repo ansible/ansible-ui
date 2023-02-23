@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
@@ -20,7 +20,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create User'),
-        onClick: () => navigate(RouteE.CreateEdaUser),
+        onClick: () => navigate(RouteObj.CreateEdaUser),
       },
       {
         type: PageActionType.bulk,

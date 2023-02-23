@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -31,7 +31,7 @@ export function TeamRoles(props: { team: Team }) {
         icon: PlusIcon,
         label: t('Add role to team'),
         shortLabel: t('Add role'),
-        onClick: () => navigate(RouteE.AddRolesToTeam.replace(':id', team.id.toString())),
+        onClick: () => navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString())),
       },
       {
         type: PageActionType.bulk,
@@ -66,7 +66,7 @@ export function TeamRoles(props: { team: Team }) {
       emptyStateDescription={t('To get started, add roles to the team.')}
       emptyStateButtonText={t('Add role to team')}
       emptyStateButtonClick={() =>
-        navigate(RouteE.AddRolesToTeam.replace(':id', team.id.toString()))
+        navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString()))
       }
       {...view}
     />

@@ -6,7 +6,7 @@ import { useBreakpoint } from '../../framework';
 import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { RouteE } from '../Routes';
+import { RouteObj, RouteType } from '../Routes';
 import { isRouteActive } from './Masthead';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 
@@ -23,7 +23,7 @@ export function CommonSidebar(props: {
   const isXl = useBreakpoint('xl');
   const { isNavOpen, setNavOpen } = props;
   const onClick = useCallback(
-    (route: RouteE) => {
+    (route: RouteType) => {
       navigate(route);
       if (!isXl) {
         setNavOpen(false);
@@ -46,23 +46,23 @@ export function CommonSidebar(props: {
                 <NavItem
                   isActive={isRouteActive(
                     automationServer?.type === AutomationServerType.AWX
-                      ? RouteE.AwxAutomationServers
+                      ? RouteObj.AwxAutomationServers
                       : automationServer?.type === AutomationServerType.Galaxy
-                      ? RouteE.HubAutomationServers
+                      ? RouteObj.HubAutomationServers
                       : automationServer?.type === AutomationServerType.EDA
-                      ? RouteE.EdaAutomationServers
-                      : RouteE.AutomationServers,
+                      ? RouteObj.EdaAutomationServers
+                      : RouteObj.AutomationServers,
                     location
                   )}
                   onClick={() =>
                     onClick(
                       automationServer?.type === AutomationServerType.AWX
-                        ? RouteE.AwxAutomationServers
+                        ? RouteObj.AwxAutomationServers
                         : automationServer?.type === AutomationServerType.Galaxy
-                        ? RouteE.HubAutomationServers
+                        ? RouteObj.HubAutomationServers
                         : automationServer?.type === AutomationServerType.EDA
-                        ? RouteE.EdaAutomationServers
-                        : RouteE.AutomationServers
+                        ? RouteObj.EdaAutomationServers
+                        : RouteObj.AutomationServers
                     )
                   }
                 >

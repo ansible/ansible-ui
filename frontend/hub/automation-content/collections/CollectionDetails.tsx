@@ -49,7 +49,7 @@ import { Scrollable } from '../../../../framework/components/Scrollable';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { HubItemsResponse } from '../../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
@@ -71,7 +71,7 @@ export function CollectionDetails() {
       <PageHeader
         title={collection?.name}
         breadcrumbs={[
-          { label: t('Collections'), to: RouteE.Collections },
+          { label: t('Collections'), to: RouteObj.Collections },
           { label: collection?.name },
         ]}
         headerActions={

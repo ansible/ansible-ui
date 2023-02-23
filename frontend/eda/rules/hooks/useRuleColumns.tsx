@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRule } from '../../interfaces/EdaRule';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 
@@ -17,7 +17,7 @@ export function useRuleColumns() {
         cell: (rule) => (
           <TextCell
             text={rule.name}
-            onClick={() => navigate(RouteE.EdaRuleDetails.replace(':id', rule.id.toString()))}
+            onClick={() => navigate(RouteObj.EdaRuleDetails.replace(':id', rule.id.toString()))}
           />
         ),
         sort: 'name',
