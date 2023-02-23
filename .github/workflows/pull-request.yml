@@ -126,8 +126,20 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build EDA
-        run: npm run build:eda
-      - name: TAR
+        run: npm run build:all
+      - name: ansible-ui.tar
+        run: |
+          cd build/frontend
+          tar cf ../../ansible-ui.tar .
+      - name: controller.tar
+        run: |
+          cd build/controller
+          tar cf ../../controller.tar .
+      - name: hub.tar
+        run: |
+          cd build/hub
+          tar cf ../../hub.tar .
+      - name: eda.tar
         run: |
           cd build/eda
           tar cf ../../eda.tar .
@@ -135,7 +147,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: eda.tar
-          tag_name: eda-2.4
+          file: *.tar
+          tag_name: latest
           draft: false
           overwrite: true
