@@ -126,7 +126,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build EDA
-        if: steps.cache.outputs.cache-hit != 'true'
         run: npm run build:eda
       - name: GitHub Releases
         uses: fnkr/github-action-ghr@v1.3
