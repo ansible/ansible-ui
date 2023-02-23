@@ -136,6 +136,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: eda.tar
-          tag_name: eda:2.4
+          tag_name: eda-2.4
           draft: false
           overwrite: true
