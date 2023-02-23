@@ -100,7 +100,7 @@ jobs:
 
   eda:
     name: EDA
-    needs: tag
+    # needs: tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
