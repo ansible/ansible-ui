@@ -7,14 +7,12 @@ SCRIPTS_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PROJECT_DIR="${SCRIPTS_DIR}/../.."
 
 CMD=${1:-help}
-VERSION=${2:-'latest'}
-UI_LOCAL_PORT=${2:-8080}
+VERSION=${2:-'eda-latest'}
 
 export DEBUG=${DEBUG:-false}
 
 # import common & logging
 source "${SCRIPTS_DIR}"/common/logging.sh
-source "${SCRIPTS_DIR}"/common/utils.sh
 
 trap handle_errors ERR
 
@@ -36,10 +34,9 @@ help() {
 }
 
 build-eda() {
-  local _image="eda-ui:${1}"
+  local _image="ansible-ui:${1}"
 
   cd "${PROJECT_DIR}"
-  log-debug "PWD #2: ${PWD}"
   log-info "docker build . -t ${_image} -f standalone/eda/nginx/Dockerfile"
   docker build . -t "${_image}" -f standalone/eda/nginx/Dockerfile
 }
@@ -47,6 +44,9 @@ build-eda() {
 #
 # execute
 #
+log-debug "COMMAND: ${CMD}"
+log-debug "VERSION: ${VERSION}"
+
 case ${CMD} in
   "build-eda") build-eda "${VERSION}" ;;
   "help") usage ;;
