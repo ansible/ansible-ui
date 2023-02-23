@@ -200,7 +200,9 @@ export function useRoutesWithoutPrefix(prefix: RouteType) {
   const routesWithoutPrefix: { [key: string]: RouteType } = useMemo(() => {
     const routes: { [key: string]: RouteType } = {};
     for (const route in RouteObj) {
-      routes[route] = RouteObj[route].replace(prefix, '/') as RouteType;
+      if (RouteObj[route].startsWith(prefix)) {
+        routes[route] = RouteObj[route].replace(prefix, '/') as RouteType;
+      }
     }
     return routes;
   }, [prefix]);
