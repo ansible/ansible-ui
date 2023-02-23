@@ -97,3 +97,41 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run checks
+
+  eda:
+    name: EDA
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.tag.outputs.VERSION }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: PostCache
+        run: rm package-lock-copy.json
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build EDA
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm run build:eda
+      - name: GitHub Releases
+        uses: fnkr/github-action-ghr@v1.3
+        env:
+          GHR_COMPRESS: xz
+          GHR_REPLACE: true
+          GHR_PATH: build/eda
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
