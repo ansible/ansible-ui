@@ -11,7 +11,7 @@ import { useCallback, useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { RouteE } from '../../../../../Routes.ts';
+import { RouteObj } from '../../../../../Routes.ts';
 import { visualizerReducer } from '../WorkflowReducer.tsx';
 import { WorkflowDispatchContext, WorkflowStateContext } from './shared/WorkflowContext.jsx';
 import {
@@ -135,7 +135,7 @@ function Visualizer(props) {
     if (unsavedChanges) {
       dispatch({ type: 'TOGGLE_UNSAVED_CHANGES_MODAL' });
     } else {
-      navigate(RouteE.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+      navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
     }
   };
 
@@ -542,7 +542,7 @@ function Visualizer(props) {
         ...associateLabelRequests,
         ...instanceGroupRequests,
       ]);
-      navigate(RouteE.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+      navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
     }, [links, nodes, navigate, defaultOrganization, template.id]),
     {}
   );

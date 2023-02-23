@@ -21,7 +21,7 @@ import {
 } from '../../../common/columns';
 import { ScmType } from '../../../common/scm';
 import { StatusCell } from '../../../common/StatusCell';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -51,7 +51,7 @@ export function Projects() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
-        onClick: () => navigate(RouteE.CreateProject),
+        onClick: () => navigate(RouteObj.CreateProject),
       },
       {
         type: PageActionType.bulk,
@@ -77,7 +77,7 @@ export function Projects() {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit project'),
-        onClick: (project) => navigate(RouteE.EditProject.replace(':id', project.id.toString())),
+        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -112,7 +112,7 @@ export function Projects() {
         emptyStateTitle={t('No projects yet')}
         emptyStateDescription={t('To get started, create an project.')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateProject)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
         {...view}
       />
     </PageLayout>
@@ -161,7 +161,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
   const { t } = useTranslation();
   const navigate = useNavigate();
   const nameClick = useCallback(
-    (project: Project) => navigate(RouteE.ProjectDetails.replace(':id', project.id.toString())),
+    (project: Project) => navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });

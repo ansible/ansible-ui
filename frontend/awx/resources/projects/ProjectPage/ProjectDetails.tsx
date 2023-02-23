@@ -2,7 +2,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { CopyCell, PageDetail, PageDetails, SinceCell, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { ScmType } from '../../../../common/scm';
 import { StatusCell } from '../../../../common/StatusCell';
@@ -46,7 +46,7 @@ export function ProjectDetails(props: { project: Project }) {
       <PageDetail label={t('Organization')}>
         <TextCell
           text={project.summary_fields?.organization?.name}
-          to={RouteE.OrganizationDetails.replace(
+          to={RouteObj.OrganizationDetails.replace(
             ':id',
             (project.summary_fields?.organization?.id ?? '').toString()
           )}
@@ -76,7 +76,7 @@ export function ProjectDetails(props: { project: Project }) {
           author={project.summary_fields?.created_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (project.summary_fields?.created_by?.id ?? 0).toString()
               )
@@ -90,7 +90,7 @@ export function ProjectDetails(props: { project: Project }) {
           author={project.summary_fields?.modified_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (project.summary_fields?.modified_by?.id ?? 0).toString()
               )

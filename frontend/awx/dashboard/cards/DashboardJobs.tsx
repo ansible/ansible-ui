@@ -1,7 +1,7 @@
 import { CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { JobsChart } from '../charts/JobsChart';
 
 export function DashboardJobsCard() {
@@ -22,7 +22,7 @@ export function DashboardJobsCard() {
   // </Card>
 
   return (
-    <PageDashboardCard to={RouteE.Jobs} style={{ minHeight: 300 }}>
+    <PageDashboardCard to={RouteObj.Jobs} style={{ minHeight: 300 }}>
       <CardHeader>
         <Flex style={{ width: '100%' }}>
           <FlexItem grow={{ default: 'grow' }}>

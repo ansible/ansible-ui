@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
 import { useItem } from '../../../../common/useItem';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
@@ -17,14 +17,14 @@ export function TeamPage() {
   const params = useParams<{ id: string }>();
   const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
   const navigate = useNavigate();
-  const itemActions = useTeamActions({ onTeamsDeleted: () => navigate(RouteE.Teams) });
+  const itemActions = useTeamActions({ onTeamsDeleted: () => navigate(RouteObj.Teams) });
   const viewActivityStreamAction = useViewActivityStream('team');
   const pageActions = [...viewActivityStreamAction, ...itemActions];
   return (
     <PageLayout>
       <PageHeader
         title={team?.name}
-        breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: team?.name }]}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: team?.name }]}
         headerActions={
           <PageActions<Team>
             actions={pageActions}

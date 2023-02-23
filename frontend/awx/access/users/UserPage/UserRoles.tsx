@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
@@ -31,7 +31,7 @@ export function UserRoles(props: { user: User }) {
         icon: PlusIcon,
         label: t('Add role to user'),
         shortLabel: t('Add role'),
-        onClick: () => navigate(RouteE.AddRolesToUser.replace(':id', user.id.toString())),
+        onClick: () => navigate(RouteObj.AddRolesToUser.replace(':id', user.id.toString())),
       },
       {
         type: PageActionType.bulk,
@@ -82,7 +82,7 @@ export function UserRoles(props: { user: User }) {
         emptyStateTitle={t('User does not have any roles.')}
         emptyStateDescription={t('To get started, add roles to the user.')}
         emptyStateButtonText={t('Add role to user')}
-        // emptyStateButtonClick={() => history(RouteE.CreateUser)}
+        // emptyStateButtonClick={() => history(RouteObj.CreateUser)}
         {...view}
       />
     </>

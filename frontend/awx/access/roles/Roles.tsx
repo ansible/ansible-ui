@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Role } from '../../interfaces/Role';
 import { IRoles, useRolesMetadata } from './useRoleMetadata';
 
@@ -35,7 +35,7 @@ export function useRolesColumns() {
             to={
               role.summary_fields.resource_id &&
               role.summary_fields.resource_type === 'organization'
-                ? RouteE.OrganizationDetails.replace(
+                ? RouteObj.OrganizationDetails.replace(
                     ':id',
                     role.summary_fields.resource_id.toString()
                   )

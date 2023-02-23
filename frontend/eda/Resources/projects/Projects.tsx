@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
@@ -34,7 +34,7 @@ export function Projects() {
         emptyStateTitle={t('No projects yet')}
         emptyStateDescription={t('To get started, create a project.')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
         defaultSubtitle={t('Project')}
       />

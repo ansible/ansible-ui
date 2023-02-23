@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Project } from '../../interfaces/Project';
 
 export function DashboardProjects(props: {
@@ -17,7 +17,7 @@ export function DashboardProjects(props: {
   return (
     <PageDashboardDonutCard
       title={t('Projects')}
-      to={RouteE.Projects}
+      to={RouteObj.Projects}
       items={[
         {
           label: t('Ready'),

@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -29,7 +29,7 @@ export function OrganizationTeams(props: { organization: Organization }) {
       emptyStateTitle={t('No teams yet')}
       emptyStateDescription={t('To get started, create a team.')}
       emptyStateButtonText={t('Create team')}
-      emptyStateButtonClick={() => history(RouteE.CreateTeam)}
+      emptyStateButtonClick={() => history(RouteObj.CreateTeam)}
       {...view}
     />
   );

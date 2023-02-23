@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Host } from '../../interfaces/Host';
 
 export function DashboardHosts(props: { hosts: { results?: Host[] | undefined } | undefined }) {
@@ -15,7 +15,7 @@ export function DashboardHosts(props: { hosts: { results?: Host[] | undefined } 
   return (
     <PageDashboardDonutCard
       title={t('Hosts')}
-      to={RouteE.Hosts}
+      to={RouteObj.Hosts}
       items={[
         {
           label: t('Ready'),

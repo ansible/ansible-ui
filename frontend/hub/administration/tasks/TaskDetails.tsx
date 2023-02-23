@@ -4,7 +4,7 @@ import { PageDetails, PageHeader, PageLayout, SinceCell } from '../../../../fram
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { StatusCell } from '../../../common/StatusCell';
 import { useItem } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Task } from './Task';
 
 export function TaskDetails() {
@@ -15,7 +15,7 @@ export function TaskDetails() {
     <PageLayout>
       <PageHeader
         title={task?.name}
-        breadcrumbs={[{ label: t('Task management'), to: RouteE.Tasks }, { label: task?.name }]}
+        breadcrumbs={[{ label: t('Task management'), to: RouteObj.Tasks }, { label: task?.name }]}
       />
       <PageDetails>
         <PageDetail label={t('Name')}>{task?.name}</PageDetail>

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusCell } from '../../../common/StatusCell';
 
@@ -17,7 +17,9 @@ export function useActivationColumns() {
           <TextCell
             text={activation.name}
             onClick={() =>
-              navigate(RouteE.EdaRulebookActivationDetails.replace(':id', activation.id.toString()))
+              navigate(
+                RouteObj.EdaRulebookActivationDetails.replace(':id', activation.id.toString())
+              )
             }
           />
         ),
