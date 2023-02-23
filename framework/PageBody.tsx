@@ -31,7 +31,7 @@ export function PageBody(props: {
             maxHeight: '100%',
             margin: usePadding ? 24 : 0,
             overflow: 'hidden',
-            border: 'thin solid var(--pf-global--BorderColor--100)',
+            border: usePadding ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
