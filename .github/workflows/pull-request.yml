@@ -128,12 +128,14 @@ jobs:
       - name: Build EDA
         run: npm run build:eda
       - name: TAR
-        run: tar cf eda.tar build/eda
+        run: |
+          cd build/eda
+          tar cf ../../eda.tar .
       - uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: eda.tar
+          tag_name: eda:2.4
           draft: false
-          tag_name: eda
           overwrite: true
