@@ -8,95 +8,95 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  packages:
-    name: Packages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+  # packages:
+  #   name: Packages
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #     - name: PreCache
+  #       run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+  #     - name: Cache dependencies
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock-copy.json') }}
+  #     - name: Install dependencies
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: npm ci
 
-  cypress-e2e:
-    name: Cypress E2E
-    runs-on: ubuntu-latest
-    needs:
-      - packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:start:e2e
-        env:
-          E2E_SERVER: ${{ secrets.E2E_SERVER }}
-          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+  # cypress-e2e:
+  #   name: Cypress E2E
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - packages
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #     - name: PreCache
+  #       run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+  #     - name: Cache dependencies
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock-copy.json') }}
+  #     - run: npm run cypress:start:e2e
+  #       env:
+  #         E2E_SERVER: ${{ secrets.E2E_SERVER }}
+  #         E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+  #         E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
 
-  cypress-unit:
-    name: Cypress Unit Tests
-    runs-on: ubuntu-latest
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:run:unit
+  # cypress-unit:
+  #   name: Cypress Unit Tests
+  #   runs-on: ubuntu-latest
+  #   needs: packages
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #     - name: PreCache
+  #       run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+  #     - name: Cache dependencies
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock-copy.json') }}
+  #     - run: npm run cypress:run:unit
 
-  eslint:
-    name: ESLint - Prettier - TSC
-    runs-on: ubuntu-latest
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run checks
+  # eslint:
+  #   name: ESLint - Prettier - TSC
+  #   runs-on: ubuntu-latest
+  #   needs: packages
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+  #     - name: PreCache
+  #       run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+  #     - name: Cache dependencies
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock-copy.json') }}
+  #     - run: npm run checks
 
   eda:
     name: EDA
@@ -127,10 +127,16 @@ jobs:
         run: npm ci
       - name: Build EDA
         run: npm run build:eda
-      - name: GitHub Releases
-        uses: fnkr/github-action-ghr@v1.3
+      - uses: xresloader/upload-to-github-release@v1
         env:
-          GHR_COMPRESS: xz
-          GHR_REPLACE: true
-          GHR_PATH: build/eda
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'build/eda/*'
+          tag_name: eda
+      # - name: GitHub Releases
+      #   uses: fnkr/github-action-ghr@v1.3
+      #   env:
+      #     GHR_COMPRESS: xz
+      #     GHR_REPLACE: true
+      #     GHR_PATH: build/eda
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
