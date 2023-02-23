@@ -98,8 +98,8 @@ jobs:
   #         key: modules-${{ hashFiles('package-lock-copy.json') }}
   #     - run: npm run checks
 
-  eda:
-    name: EDA
+  release:
+    name: Release latest tar
     # needs: tag
     runs-on: ubuntu-latest
     steps:
@@ -129,7 +129,7 @@ jobs:
         run: npm run build:all
       - name: ansible-ui.tar
         run: |
-          cd build/frontend
+          cd build/public
           tar cf ../../ansible-ui.tar .
       - name: controller.tar
         run: |
