@@ -16,7 +16,7 @@ export function Groups() {
   const toolbarFilters = useGroupFilters();
   const tableColumns = useGroupColumns();
   const view = useEdaView<EdaGroup>({
-    url: `${API_PREFIX}/groups/`,
+    url: `${API_PREFIX}/projects/`,
     toolbarFilters,
     tableColumns,
   });

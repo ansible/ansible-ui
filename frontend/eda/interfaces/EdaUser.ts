@@ -9,7 +9,9 @@ export interface EdaUser {
   id: number;
   email: string;
   name: string;
-  url: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
   is_active: boolean;
   is_superuser: boolean;
   is_verified: boolean;

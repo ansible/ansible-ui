@@ -16,7 +16,7 @@ export function Roles() {
   const toolbarFilters = useRoleFilters();
   const tableColumns = useRoleColumns();
   const view = useEdaView<EdaRole>({
-    url: `${API_PREFIX}/roles/`,
+    url: `${API_PREFIX}/projects/`,
     toolbarFilters,
     tableColumns,
   });
