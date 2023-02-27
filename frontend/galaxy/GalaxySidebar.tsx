@@ -7,7 +7,7 @@ import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { RouteObj, RouteType } from '../Routes';
 
-export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
+export function GalaxySidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
   const { isNavOpen, setNavOpen } = props;
   const { t } = useTranslation();
   const location = useLocation();
@@ -23,8 +23,8 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
       <NavItem
-        isActive={isRouteActive(RouteObj.HubDashboard, location)}
-        onClick={() => onClick(RouteObj.HubDashboard)}
+        isActive={isRouteActive(RouteObj.GalaxyDashboard, location)}
+        onClick={() => onClick(RouteObj.GalaxyDashboard)}
       >
         {t('Dashboard')}
       </NavItem>
@@ -50,8 +50,8 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           {t('Collections')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteObj.HubExecutionEnvironments, location)}
-          onClick={() => onClick(RouteObj.HubExecutionEnvironments)}
+          isActive={isRouteActive(RouteObj.GalaxyExecutionEnvironments, location)}
+          onClick={() => onClick(RouteObj.GalaxyExecutionEnvironments)}
         >
           {t('Execution environments')}
         </NavItem>
@@ -67,7 +67,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         title={t('Administration')}
         isExpanded
         isActive={isRouteActive(
-          [RouteObj.HubExecutionEnvironments, RouteObj.RemoteRegistries],
+          [RouteObj.GalaxyExecutionEnvironments, RouteObj.RemoteRegistries],
           location
         )}
       >
@@ -102,7 +102,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         title={t('Access')}
         isExpanded
         isActive={isRouteActive(
-          [RouteObj.HubExecutionEnvironments, RouteObj.RemoteRegistries],
+          [RouteObj.GalaxyExecutionEnvironments, RouteObj.RemoteRegistries],
           location
         )}
       >

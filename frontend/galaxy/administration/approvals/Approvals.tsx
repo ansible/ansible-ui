@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { idKeyFn, useHubView } from '../../useGalaxyView';
+import { idKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { Approval } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
@@ -11,7 +11,7 @@ export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
-  const view = useHubView<Approval>(
+  const view = useGalaxyView<Approval>(
     '/api/automation-hub/_ui/v1/collection-versions/',
     idKeyFn,
     toolbarFilters,

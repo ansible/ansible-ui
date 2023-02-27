@@ -116,7 +116,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             navigate(RouteObj.EdaProjects);
             break;
           case AutomationServerType.Galaxy:
-            navigate(RouteObj.HubDashboard);
+            navigate(RouteObj.GalaxyDashboard);
             break;
           default:
             navigate(RouteObj.Dashboard);

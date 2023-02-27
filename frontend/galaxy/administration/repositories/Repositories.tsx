@@ -15,7 +15,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useGalaxyView';
+import { galaxyKeyFn, pulpHRefKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { RemoteRepository, Repository } from './Repository';
 
 export function Repositories() {
@@ -39,9 +39,9 @@ export function LocalRepositories() {
   const { t } = useTranslation();
   // const navigate = useNavigate()
   const tableColumns = useLocalRepositoriesColumns();
-  const view = useHubView<Repository>(
+  const view = useGalaxyView<Repository>(
     '/api/automation-hub/_ui/v1/distributions/',
-    hubKeyFn,
+    galaxyKeyFn,
     undefined,
     tableColumns
   );
@@ -92,7 +92,7 @@ export function RemoteRepositories() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const tableColumns = useRemoteRepositoriesColumns();
-  const view = useHubView<RemoteRepository>(
+  const view = useGalaxyView<RemoteRepository>(
     '/api/automation-hub/_ui/v1/remotes/',
     pulpHRefKeyFn,
     undefined,

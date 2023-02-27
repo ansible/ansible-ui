@@ -50,7 +50,7 @@ import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { HubItemsResponse } from '../../useGalaxyView';
+import { GalaxyItemsResponse } from '../../useGalaxyView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
@@ -58,7 +58,7 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 export function CollectionDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data, mutate: refresh } = useGet<HubItemsResponse<Collection>>(
+  const { data, mutate: refresh } = useGet<GalaxyItemsResponse<Collection>>(
     `/api/automation-hub/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
   );
   let collection: Collection | undefined = undefined;
@@ -395,7 +395,7 @@ function CollectionContentsTab(_props: { collection?: Collection }) {
 function CollectionImportLogTab(props: { collection?: Collection }) {
   const { collection } = props;
   const { t } = useTranslation();
-  const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
+  const { data: collectionImportsResponse } = useGet<GalaxyItemsResponse<CollectionImport>>(
     collection
       ? `/api/automation-hub/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
       : ''

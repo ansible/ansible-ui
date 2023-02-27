@@ -5,7 +5,7 @@ import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../fram
 import { IView, useView } from '../../framework/useView';
 import { swrOptions, useFetcher } from '../Data';
 
-export function hubKeyFn(item: { pulp_id: string }) {
+export function galaxyKeyFn(item: { pulp_id: string }) {
   return item.pulp_id;
 }
 
@@ -30,7 +30,7 @@ interface PulpItemsResponse<T extends object> {
   next?: string;
 }
 
-export type IHubView<T extends object> = IView &
+export type IGalaxyView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -43,7 +43,7 @@ export function usePulpView<T extends object>(
   toolbarFilters?: IToolbarFilter[],
   tableColumns?: ITableColumn<T>[],
   disableQueryString?: boolean
-): IHubView<T> {
+): IGalaxyView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString

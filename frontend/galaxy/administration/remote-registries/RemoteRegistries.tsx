@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { pkKeyFn, useHubView } from '../../useGalaxyView';
+import { pkKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
@@ -11,7 +11,7 @@ export function RemoteRegistries() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
-  const view = useHubView<RemoteRegistry>(
+  const view = useGalaxyView<RemoteRegistry>(
     '/api/automation-hub/_ui/v1/execution-environments/registries/',
     pkKeyFn,
     toolbarFilters,

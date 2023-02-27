@@ -13,15 +13,15 @@ The project is broken into three parts.
 | Path       | Description                                                                          |
 | ---------- | ------------------------------------------------------------------------------------ |
 | /frontend  | The React web application for the Ansible UI.                                        |
-| /proxy     | The proxy that hosts the web application and proxies calls to AWX and hub hosts.     |
+| /proxy     | The proxy that hosts the web application and proxies calls to AWX and Galaxy hosts.  |
 | /framework | A framework for building applications using [PatternFly](https://www.patternfly.org) |
 
-In addition the frontend is broken down into the structure needed for supporting both AWX, hub, and EDA.
+In addition the frontend is broken down into the structure needed for supporting both AWX, Galaxy, and EDA.
 
 | Path                   | Description                                           |
 | ---------------------- | ----------------------------------------------------- |
 | /frontend/awx          | The source code for the AWX UI.                       |
-| /frontend/hub          | The source code for the hub UI.                       |
+| /frontend/galaxy       | The source code for the Galaxy UI.                    |
 | /frontend/event-driven | The source code for the event driven architecture UI. |
 
 Under each one of these, the directory structure should match the use navigation that is shown in the UI.

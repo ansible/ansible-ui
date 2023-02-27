@@ -65,7 +65,7 @@ export default defineConfig({
         plugins: [
           new DefinePlugin({
             'process.env.AWX_ROUTE_PREFIX': JSON.stringify('/ui_next'),
-            'process.env.HUB_ROUTE_PREFIX': JSON.stringify('/hub'),
+            'process.env.GALAXY_ROUTE_PREFIX': JSON.stringify('/galaxy'),
             'process.env.EDA_ROUTE_PREFIX': JSON.stringify('/eda'),
           }),
         ],

@@ -1,8 +1,8 @@
 import { useGet } from '../../../../common/useItem';
-import { HubItemsResponse } from '../../../useGalaxyView';
+import { GalaxyItemsResponse } from '../../../useGalaxyView';
 import { Namespace } from '../Namespace';
 
 export function useNamespaces() {
-  const t = useGet<HubItemsResponse<Namespace>>('/api/automation-hub/_ui/v1/namespaces/');
+  const t = useGet<GalaxyItemsResponse<Namespace>>('/api/automation-hub/_ui/v1/namespaces/');
   return t.data?.data;
 }

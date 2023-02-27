@@ -12,7 +12,7 @@ import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
 import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
-import { Hub } from './galaxy/Galaxy';
+import { Galaxy } from './galaxy/Galaxy';
 import { RouteObj } from './Routes';
 
 export default function Main() {
@@ -35,7 +35,7 @@ export default function Main() {
 function Routing() {
   const navigate = useNavigate();
 
-  const { showAutomationServers, showAWX, showHub, showEda } = shouldShowAutmationServers();
+  const { showAutomationServers, showAWX, showGalaxy, showEda } = shouldShowAutmationServers();
 
   return (
     <PageFramework navigate={navigate}>
@@ -44,7 +44,7 @@ function Routing() {
           <Route path={RouteObj.AutomationServers} element={<AutomationServersRoute />} />
         )}
         {showAWX && <Route path={RouteObj.AWX + '/*'} element={<AWX />} />}
-        {showHub && <Route path={RouteObj.Hub + '/*'} element={<Hub />} />}
+        {showGalaxy && <Route path={RouteObj.Galaxy + '/*'} element={<Galaxy />} />}
         {showEda && <Route path={RouteObj.Eda + '/*'} element={<EventDriven />} />}
         <Route path={RouteObj.Login} element={<Login />} />
         {showAutomationServers ? (

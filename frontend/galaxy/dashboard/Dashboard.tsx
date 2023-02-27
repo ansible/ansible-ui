@@ -19,7 +19,7 @@ import { FeaturedCollections } from '../automation-content/collections/FeaturedC
 import { useCollections } from '../automation-content/collections/hooks/useCollections';
 import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces';
 
-export function HubDashboard() {
+export function GalaxyDashboard() {
   const { t } = useTranslation();
   const namespaces = useNamespaces();
   const collections = useCollections();

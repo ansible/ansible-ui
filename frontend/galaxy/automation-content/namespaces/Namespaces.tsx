@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { idKeyFn, useHubView } from '../../useGalaxyView';
+import { idKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { useNamespaceFilters } from './hooks/useNamespaceFilters';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
 import { Namespace } from './Namespace';
@@ -39,7 +39,7 @@ export function AllNamespaces() {
   const navigate = useNavigate();
   const toolbarFilters = useNamespaceFilters();
   const tableColumns = useNamespacesColumns();
-  const view = useHubView<Namespace>(
+  const view = useGalaxyView<Namespace>(
     '/api/automation-hub/_ui/v1/namespaces/',
     idKeyFn,
     toolbarFilters,
@@ -66,7 +66,7 @@ export function MyNamespaces() {
   const navigate = useNavigate();
   const toolbarFilters = useNamespaceFilters();
   const tableColumns = useNamespacesColumns();
-  const view = useHubView<Namespace>(
+  const view = useGalaxyView<Namespace>(
     '/api/automation-hub/_ui/v1/my-namespaces/',
     idKeyFn,
     toolbarFilters,

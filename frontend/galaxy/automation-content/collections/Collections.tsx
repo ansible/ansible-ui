@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { idKeyFn, useHubView } from '../../useGalaxyView';
+import { idKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
@@ -39,7 +39,7 @@ export function Collections() {
   const navigate = useNavigate();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>(
+  const view = useGalaxyView<Collection>(
     '/api/automation-hub/_ui/v1/repo/published/',
     idKeyFn,
     toolbarFilters

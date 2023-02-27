@@ -8,9 +8,9 @@ const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
   ? (process.env.AWX_ROUTE_PREFIX as RouteType)
   : '/ui_next';
 
-const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
-  ? (process.env.HUB_ROUTE_PREFIX as RouteType)
-  : '/hub';
+const galaxyRoutePrefix: RouteType = process.env.GALAXY_ROUTE_PREFIX
+  ? (process.env.GALAXY_ROUTE_PREFIX as RouteType)
+  : '/galaxy';
 const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
   ? (process.env.EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
@@ -104,43 +104,43 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Settings
   Settings: `${awxRoutePrefix}/settings`,
 
-  Hub: `${hubRoutePrefix}`,
+  Galaxy: `${galaxyRoutePrefix}`,
 
-  HubDashboard: `${hubRoutePrefix}/dashboard`,
+  GalaxyDashboard: `${galaxyRoutePrefix}/dashboard`,
 
-  Collections: `${hubRoutePrefix}/collections`,
-  CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
-  UploadCollection: `${hubRoutePrefix}/collections/upload`,
+  Collections: `${galaxyRoutePrefix}/collections`,
+  CollectionDetails: `${galaxyRoutePrefix}/collections/details/:id`,
+  UploadCollection: `${galaxyRoutePrefix}/collections/upload`,
 
-  Repositories: `${hubRoutePrefix}/repositories`,
-  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:id`,
-  EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
+  Repositories: `${galaxyRoutePrefix}/repositories`,
+  RepositoryDetails: `${galaxyRoutePrefix}/repositories/details/:id`,
+  EditRepository: `${galaxyRoutePrefix}/repositories/edit/:id`,
 
-  Namespaces: `${hubRoutePrefix}/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/namespaces/details/:id`,
-  CreateNamespace: `${hubRoutePrefix}/namespaces/create/:id`,
-  EditNamespace: `${hubRoutePrefix}/namespaces/edit/:id`,
+  Namespaces: `${galaxyRoutePrefix}/namespaces`,
+  NamespaceDetails: `${galaxyRoutePrefix}/namespaces/details/:id`,
+  CreateNamespace: `${galaxyRoutePrefix}/namespaces/create/:id`,
+  EditNamespace: `${galaxyRoutePrefix}/namespaces/edit/:id`,
 
-  Approvals: `${hubRoutePrefix}/approvals`,
-  ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
+  Approvals: `${galaxyRoutePrefix}/approvals`,
+  ApprovalDetails: `${galaxyRoutePrefix}/approvals/details/:id`,
 
-  HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
-  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
+  GalaxyExecutionEnvironments: `${galaxyRoutePrefix}/execution-environments`,
+  GalaxyExecutionEnvironmentDetails: `${galaxyRoutePrefix}/execution-environments/details/:id`,
 
-  RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
+  RemoteRegistries: `${galaxyRoutePrefix}/remote-registries`,
 
-  Tasks: `${hubRoutePrefix}/tasks`,
-  TaskDetails: `${hubRoutePrefix}/tasks/details/:id`,
+  Tasks: `${galaxyRoutePrefix}/tasks`,
+  TaskDetails: `${galaxyRoutePrefix}/tasks/details/:id`,
 
-  SignatureKeys: `${hubRoutePrefix}/signature-keys`,
+  SignatureKeys: `${galaxyRoutePrefix}/signature-keys`,
 
-  APIToken: `${hubRoutePrefix}/api-token`,
+  APIToken: `${galaxyRoutePrefix}/api-token`,
 
   AwxDebug: `${awxRoutePrefix}/debug`,
 
   AutomationServers: `/automation-servers`,
   AwxAutomationServers: `${awxRoutePrefix}/automation-servers`,
-  HubAutomationServers: `${hubRoutePrefix}/automation-servers`,
+  GalaxyAutomationServers: `${galaxyRoutePrefix}/automation-servers`,
 
   // Event Driven Automation
   Eda: `${edaRoutePrefix}`,

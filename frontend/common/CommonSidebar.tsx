@@ -48,7 +48,7 @@ export function CommonSidebar(props: {
                     automationServer?.type === AutomationServerType.AWX
                       ? RouteObj.AwxAutomationServers
                       : automationServer?.type === AutomationServerType.Galaxy
-                      ? RouteObj.HubAutomationServers
+                      ? RouteObj.GalaxyAutomationServers
                       : automationServer?.type === AutomationServerType.EDA
                       ? RouteObj.EdaAutomationServers
                       : RouteObj.AutomationServers,
@@ -59,7 +59,7 @@ export function CommonSidebar(props: {
                       automationServer?.type === AutomationServerType.AWX
                         ? RouteObj.AwxAutomationServers
                         : automationServer?.type === AutomationServerType.Galaxy
-                        ? RouteObj.HubAutomationServers
+                        ? RouteObj.GalaxyAutomationServers
                         : automationServer?.type === AutomationServerType.EDA
                         ? RouteObj.EdaAutomationServers
                         : RouteObj.AutomationServers

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { idKeyFn, useHubView } from '../../useGalaxyView';
+import { idKeyFn, useGalaxyView } from '../../useGalaxyView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
@@ -11,7 +11,7 @@ export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
-  const view = useHubView<ExecutionEnvironment>(
+  const view = useGalaxyView<ExecutionEnvironment>(
     '/api/automation-hub/v3/plugin/execution-environments/repositories/',
     idKeyFn,
     toolbarFilters,

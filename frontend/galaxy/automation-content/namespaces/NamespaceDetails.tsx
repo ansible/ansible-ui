@@ -4,14 +4,14 @@ import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework
 import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { HubItemsResponse } from '../../useGalaxyView';
+import { GalaxyItemsResponse } from '../../useGalaxyView';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
 import { Namespace } from './Namespace';
 
 export function NamespaceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data, mutate: _refresh } = useGet<HubItemsResponse<Namespace>>(
+  const { data, mutate: _refresh } = useGet<GalaxyItemsResponse<Namespace>>(
     `/api/automation-hub/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
   let namespace: Namespace | undefined = undefined;

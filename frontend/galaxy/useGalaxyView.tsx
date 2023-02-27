@@ -5,7 +5,7 @@ import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../fram
 import { IView, useView } from '../../framework/useView';
 import { swrOptions, useFetcher } from '../Data';
 
-export function hubKeyFn(item: { pulp_id: string }) {
+export function galaxyKeyFn(item: { pulp_id: string }) {
   return item.pulp_id;
 }
 
@@ -25,7 +25,7 @@ export function pkKeyFn(item: { pk: number | string }) {
   return item.pk;
 }
 
-export interface HubItemsResponse<T extends object> {
+export interface GalaxyItemsResponse<T extends object> {
   meta: {
     count: number;
   };
@@ -35,21 +35,21 @@ export interface HubItemsResponse<T extends object> {
   };
 }
 
-export type IHubView<T extends object> = IView &
+export type IGalaxyView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<HubItemsResponse<T> | undefined>;
+    refresh: () => Promise<GalaxyItemsResponse<T> | undefined>;
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>(
+export function useGalaxyView<T extends object>(
   url: string,
   keyFn: (item: T) => string | number,
   toolbarFilters?: IToolbarFilter[],
   tableColumns?: ITableColumn<T>[],
   disableQueryString?: boolean
-): IHubView<T> {
+): IGalaxyView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString
@@ -94,11 +94,11 @@ export function useHubView<T extends object>(
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher);
+  const response = useSWR<GalaxyItemsResponse<T>>(url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, swrOptions);
+  useSWR<GalaxyItemsResponse<T>>(data?.links?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

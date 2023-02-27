@@ -14,15 +14,15 @@ import { ExecutionEnvironments } from './automation-content/execution-environmen
 import { NamespaceDetails } from './automation-content/namespaces/NamespaceDetails';
 import { Namespaces } from './automation-content/namespaces/Namespaces';
 import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys';
-import { HubDashboard } from './dashboard/Dashboard';
+import { GalaxyDashboard } from './dashboard/Dashboard';
 
-export function HubRouter() {
-  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);
+export function GalaxyRouter() {
+  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Galaxy);
 
   return (
     <Routes>
-      <Route path={RouteObjWithoutPrefix.HubAutomationServers} element={<AutomationServers />} />
-      <Route path={RouteObjWithoutPrefix.HubDashboard} element={<HubDashboard />} />
+      <Route path={RouteObjWithoutPrefix.GalaxyAutomationServers} element={<AutomationServers />} />
+      <Route path={RouteObjWithoutPrefix.GalaxyDashboard} element={<GalaxyDashboard />} />
       <Route path={RouteObjWithoutPrefix.Collections} element={<Collections />} />
       <Route path={RouteObjWithoutPrefix.UploadCollection} element={<UploadCollection />} />
       <Route path={RouteObjWithoutPrefix.CollectionDetails} element={<CollectionDetails />} />
@@ -34,7 +34,7 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.Approvals} element={<Approvals />} />
       <Route path={RouteObjWithoutPrefix.RemoteRegistries} element={<RemoteRegistries />} />
       <Route
-        path={RouteObjWithoutPrefix.HubExecutionEnvironments}
+        path={RouteObjWithoutPrefix.GalaxyExecutionEnvironments}
         element={<ExecutionEnvironments />}
       />
       <Route path={RouteObjWithoutPrefix.Tasks} element={<Tasks />} />
