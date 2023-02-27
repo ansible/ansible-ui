@@ -14,7 +14,7 @@ import {
   PageTabs,
 } from '../../../../../framework';
 import { useItem } from '../../../../common/useItem';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { OrganizationAccess } from './OrganizationAccess';
@@ -29,7 +29,7 @@ export function OrganizationPage() {
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
     if (deleted.length > 0) {
-      history(RouteE.Organizations);
+      history(RouteObj.Organizations);
     }
   });
 
@@ -41,7 +41,7 @@ export function OrganizationPage() {
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: () =>
-          history(RouteE.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+          history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -62,7 +62,7 @@ export function OrganizationPage() {
       <PageHeader
         title={organization?.name}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteE.Organizations },
+          { label: t('Organizations'), to: RouteObj.Organizations },
           { label: organization?.name },
         ]}
         headerActions={

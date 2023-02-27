@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { pfSuccess } from '../../../../framework';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Inventory } from '../../interfaces/Inventory';
 
 export function DashboardInventories(props: {
@@ -17,7 +17,7 @@ export function DashboardInventories(props: {
   return (
     <PageDashboardDonutCard
       title={t('Inventories')}
-      to={RouteE.Inventories}
+      to={RouteObj.Inventories}
       items={[
         {
           label: t('Ready'),

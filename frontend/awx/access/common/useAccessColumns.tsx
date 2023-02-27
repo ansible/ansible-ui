@@ -9,7 +9,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { AccessRole, User } from '../../interfaces/User';
 
 export function useAccessColumns(
@@ -24,7 +24,7 @@ export function useAccessColumns(
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={RouteE.UserDetails.replace(':id', user.id.toString())}
+            to={RouteObj.UserDetails.replace(':id', user.id.toString())}
           />
         ),
         card: 'name',

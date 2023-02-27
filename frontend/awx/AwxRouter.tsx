@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
-import { RouteE } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
@@ -34,6 +34,8 @@ import Jobs from './views/jobs/Jobs';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 
 export function AwxRouter() {
+  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
+
   return (
     <Suspense
       fallback={
@@ -43,88 +45,67 @@ export function AwxRouter() {
       }
     >
       <Routes>
-        <Route
-          path={RouteE.AwxAutomationServers.replace(RouteE.AWX, '')}
-          element={<AutomationServers />}
-        />
-        <Route path={RouteE.Dashboard.replace(RouteE.AWX, '')} element={<Dashboard />} />
-        <Route path={RouteE.Jobs.replace(RouteE.AWX, '')} element={<Jobs />} />
-        {/* <Route path={RouteE.Schedules} element={<Schedules />} /> */}
-        {/* <Route path={RouteE.ActivityStream} element={<ActivityStreeam />} /> */}
-        {/* <Route path={RouteE.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
+        <Route path={RouteObjWithoutPrefix.Dashboard} element={<Dashboard />} />
+        <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
+        {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
+        {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
+        {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
 
-        <Route path={RouteE.Templates.replace(RouteE.AWX, '')} element={<Templates />} />
+        <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
+        <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplateDetail />} />
         <Route
-          path={RouteE.JobTemplateDetails.replace(RouteE.AWX, '')}
-          element={<TemplateDetail />}
-        />
-        <Route
-          path={RouteE.WorkflowJobTemplateDetails.replace(RouteE.AWX, '')}
+          path={RouteObjWithoutPrefix.WorkflowJobTemplateDetails}
           element={<WorkflowJobTemplateDetail />}
         />
+        <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
+
+        <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
+
+        <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />
+        <Route path={RouteObjWithoutPrefix.ProjectDetails} element={<ProjectPage />} />
+        {/* <Route path={RouteObjWithoutPrefix.ProjectEdit} element={<ProjectEdit />} /> */}
+
+        <Route path={RouteObjWithoutPrefix.Inventories} element={<Inventories />} />
+
+        <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
+
+        <Route path={RouteObjWithoutPrefix.Organizations} element={<Organizations />} />
+        <Route path={RouteObjWithoutPrefix.OrganizationDetails} element={<OrganizationPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
+        <Route path={RouteObjWithoutPrefix.EditOrganization} element={<EditOrganization />} />
+
+        <Route path={RouteObjWithoutPrefix.Users} element={<Users />} />
+        <Route path={RouteObjWithoutPrefix.UserDetails} element={<UserPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateUser} element={<CreateUser />} />
+        <Route path={RouteObjWithoutPrefix.EditUser} element={<EditUser />} />
+        <Route path={RouteObjWithoutPrefix.AddRolesToUser} element={<AddRolesToUser />} />
+
+        <Route path={RouteObjWithoutPrefix.Teams} element={<Teams />} />
+        <Route path={RouteObjWithoutPrefix.TeamDetails} element={<TeamPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateTeam} element={<CreateTeam />} />
+        <Route path={RouteObjWithoutPrefix.EditTeam} element={<EditTeam />} />
+        <Route path={RouteObjWithoutPrefix.AddRolesToTeam} element={<AddRolesToTeam />} />
+
+        {/* <Route path={RouteObjWithoutPrefix.CredentialTypes} element={<CredentialTypes />} /> */}
+        {/* <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} /> */}
+        {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
+
+        <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
+
+        <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />
+        <Route path={RouteObjWithoutPrefix.InstanceDetails} element={<InstanceDetails />} />
+        <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
+
+        {/* <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} /> */}
         <Route
-          path={RouteE.CreateJobTemplate.replace(RouteE.AWX, '')}
-          element={<CreateJobTemplate />}
-        />
-
-        <Route path={RouteE.Credentials.replace(RouteE.AWX, '')} element={<Credentials />} />
-
-        <Route path={RouteE.Projects.replace(RouteE.AWX, '')} element={<Projects />} />
-        <Route path={RouteE.ProjectDetails.replace(RouteE.AWX, '')} element={<ProjectPage />} />
-        {/* <Route path={RouteE.ProjectEdit} element={<ProjectEdit />} /> */}
-
-        <Route path={RouteE.Inventories.replace(RouteE.AWX, '')} element={<Inventories />} />
-
-        <Route path={RouteE.Hosts.replace(RouteE.AWX, '')} element={<Hosts />} />
-
-        <Route path={RouteE.Organizations.replace(RouteE.AWX, '')} element={<Organizations />} />
-        <Route
-          path={RouteE.OrganizationDetails.replace(RouteE.AWX, '')}
-          element={<OrganizationPage />}
-        />
-        <Route
-          path={RouteE.CreateOrganization.replace(RouteE.AWX, '')}
-          element={<CreateOrganization />}
-        />
-        <Route
-          path={RouteE.EditOrganization.replace(RouteE.AWX, '')}
-          element={<EditOrganization />}
-        />
-
-        <Route path={RouteE.Users.replace(RouteE.AWX, '')} element={<Users />} />
-        <Route path={RouteE.UserDetails.replace(RouteE.AWX, '')} element={<UserPage />} />
-        <Route path={RouteE.CreateUser.replace(RouteE.AWX, '')} element={<CreateUser />} />
-        <Route path={RouteE.EditUser.replace(RouteE.AWX, '')} element={<EditUser />} />
-        <Route path={RouteE.AddRolesToUser.replace(RouteE.AWX, '')} element={<AddRolesToUser />} />
-
-        <Route path={RouteE.Teams.replace(RouteE.AWX, '')} element={<Teams />} />
-        <Route path={RouteE.TeamDetails.replace(RouteE.AWX, '')} element={<TeamPage />} />
-        <Route path={RouteE.CreateTeam.replace(RouteE.AWX, '')} element={<CreateTeam />} />
-        <Route path={RouteE.EditTeam.replace(RouteE.AWX, '')} element={<EditTeam />} />
-        <Route path={RouteE.AddRolesToTeam.replace(RouteE.AWX, '')} element={<AddRolesToTeam />} />
-
-        {/* <Route path={RouteE.CredentialTypes} element={<CredentialTypes />} /> */}
-        {/* <Route path={RouteE.Notifications} element={<Notifications />} /> */}
-        {/* <Route path={RouteE.ManagementJobs} element={<ManagementJobs />} /> */}
-
-        <Route path={RouteE.InstanceGroups.replace(RouteE.AWX, '')} element={<InstanceGroups />} />
-
-        <Route path={RouteE.Instances.replace(RouteE.AWX, '')} element={<Instances />} />
-        <Route
-          path={RouteE.InstanceDetails.replace(RouteE.AWX, '')}
-          element={<InstanceDetails />}
-        />
-        <Route path={RouteE.EditInstance.replace(RouteE.AWX, '')} element={<EditInstance />} />
-
-        {/* <Route path={RouteE.Applications} element={<Applications />} /> */}
-        <Route
-          path={RouteE.ExecutionEnvironments.replace(RouteE.AWX, '')}
+          path={RouteObjWithoutPrefix.ExecutionEnvironments}
           element={<ExecutionEnvironments />}
         />
 
-        <Route path={RouteE.Settings.replace(RouteE.AWX, '')} element={<Settings />} />
+        <Route path={RouteObjWithoutPrefix.Settings} element={<Settings />} />
 
-        <Route path={RouteE.AwxDebug.replace(RouteE.AWX, '')} element={<Debug />} />
+        <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
       </Routes>
     </Suspense>
   );

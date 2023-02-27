@@ -10,7 +10,7 @@ import {
 } from '../../../../framework';
 import { PageDetailsFromColumns } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useUserColumns } from './hooks/useUserColumns';
 import { API_PREFIX } from '../../constants';
@@ -27,7 +27,7 @@ export function UserDetails() {
 
   const deleteUsers = useDeleteUsers((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaUsers);
+      navigate(RouteObj.EdaUsers);
     }
   });
 
@@ -37,7 +37,8 @@ export function UserDetails() {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit User'),
-        onClick: (User: EdaUser) => navigate(RouteE.EditEdaUser.replace(':id', User.id.toString())),
+        onClick: (User: EdaUser) =>
+          navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -53,7 +54,7 @@ export function UserDetails() {
     <PageLayout>
       <PageHeader
         title={User?.name}
-        breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: User?.name }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: User?.name }]}
         headerActions={
           <PageActions<EdaUser>
             actions={itemActions}

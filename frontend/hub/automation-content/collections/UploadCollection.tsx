@@ -8,7 +8,7 @@ import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { requestPostFile } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { useRepositories } from '../../administration/repositories/hooks/useRepositories';
 import { useNamespaces } from '../namespaces/hooks/useNamespaces';
 
@@ -22,7 +22,7 @@ export function UploadCollection() {
       <PageHeader
         title={t('Upload collection')}
         breadcrumbs={[
-          { label: t('Collections'), to: RouteE.Collections },
+          { label: t('Collections'), to: RouteObj.Collections },
           { label: t('Upload collection') },
         ]}
       />
@@ -52,7 +52,7 @@ export function UploadCollectionByFile() {
             return requestPostFile(
               `/api/automation-hub/content/inbound-${namespace}/v3/artifacts/collections/`,
               data.file as Blob
-            ).then(() => navigate(RouteE.Approvals + '?status=staging'));
+            ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
           }}
         >
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />

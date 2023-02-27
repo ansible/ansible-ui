@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 
 export function useInventoriesColumns() {
@@ -23,7 +23,7 @@ export function useInventoriesColumns() {
           <TextCell
             text={inventory.name}
             onClick={() =>
-              navigate(RouteE.EdaInventoryDetails.replace(':id', inventory.id.toString()))
+              navigate(RouteObj.EdaInventoryDetails.replace(':id', inventory.id.toString()))
             }
           />
         ),

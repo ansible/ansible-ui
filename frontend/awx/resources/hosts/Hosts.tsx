@@ -18,7 +18,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -44,7 +44,7 @@ export function Hosts() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create host'),
-        onClick: () => navigate(RouteE.CreateHost),
+        onClick: () => navigate(RouteObj.CreateHost),
       },
       {
         type: PageActionType.bulk,
@@ -63,7 +63,7 @@ export function Hosts() {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit host'),
-        onClick: (host) => navigate(RouteE.EditHost.replace(':id', host.id.toString())),
+        onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -103,7 +103,7 @@ export function Hosts() {
         emptyStateTitle={t('No hosts yet')}
         emptyStateDescription={t('To get started, create an host.')}
         emptyStateButtonText={t('Create host')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateHost)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateHost)}
         {...view}
       />
     </PageLayout>
@@ -130,7 +130,7 @@ export function useHostsFilters() {
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
   const nameClick = useCallback(
-    (host: Host) => navigate(RouteE.HostDetails.replace(':id', host.id.toString())),
+    (host: Host) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({

@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
@@ -20,7 +20,7 @@ export function useExecutionEnvironmentsActions(view: IEdaView<EdaExecutionEnvir
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create execution environment'),
-        onClick: () => navigate(RouteE.CreateEdaExecutionEnvironment),
+        onClick: () => navigate(RouteObj.CreateEdaExecutionEnvironment),
       },
       {
         type: PageActionType.bulk,

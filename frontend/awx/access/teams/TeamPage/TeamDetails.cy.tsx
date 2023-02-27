@@ -12,21 +12,18 @@ describe('TeamDetails', () => {
         </MemoryRouter>
       );
       cy.get('dd').first().should('have.text', 'Team 2 Org 0');
-      cy.get('a[href*="/controller/organizations/details/2"]').should(
-        'have.text',
-        'Organization 0'
-      );
+      cy.get('a[href*="/ui_next/organizations/details/2"]').should('have.text', 'Organization 0');
     });
   });
   it('Triggers navigation to user details on click', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(
-        <MemoryRouter initialEntries={['/controller/teams/2/details']}>
+        <MemoryRouter initialEntries={['/ui_next/teams/2/details']}>
           <Routes>
-            <Route element={<TeamDetails team={team} />} path="/controller/teams/2/details" />
+            <Route element={<TeamDetails team={team} />} path="/ui_next/teams/2/details" />
             <Route
               element={<div data-test-id="user-details">user-8 details</div>}
-              path="/controller/users/15/details"
+              path="/ui_next/users/15/details"
             />
           </Routes>
         </MemoryRouter>

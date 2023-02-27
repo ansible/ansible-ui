@@ -2,7 +2,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 
 interface User {
   id: number;
@@ -23,7 +23,7 @@ export function UserDateDetail(props: { label: string; date: string; user: User 
       {user ? (
         <Trans t={t}>
           {dateStr} by{' '}
-          <Link to={RouteE.UserDetails.replace(':id', user.id.toString())}>{username}</Link>
+          <Link to={RouteObj.UserDetails.replace(':id', user.id.toString())}>{username}</Link>
         </Trans>
       ) : (
         dateStr

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Label } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { Credential } from '../interfaces/Credential';
 import { toTitleCase } from './util/strings';
 
@@ -22,7 +22,7 @@ function CredentialLabel(props: { credential: Credential }) {
 
   return (
     <Label color="blue" {...rest}>
-      <Link to={RouteE.CredentialDetails.replace(':id', credential.id.toString())}>
+      <Link to={RouteObj.CredentialDetails.replace(':id', credential.id.toString())}>
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <strong>{type}: </strong>
         {credential.kind === 'vault' && credential.inputs?.vault_id

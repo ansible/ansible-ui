@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { pfSuccess } from '../../../../framework';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 
 export function DashboardExecutionEnvironments(props: {
@@ -17,7 +17,7 @@ export function DashboardExecutionEnvironments(props: {
   return (
     <PageDashboardDonutCard
       title={t('Execution environments')}
-      to={RouteE.ExecutionEnvironments}
+      to={RouteObj.ExecutionEnvironments}
       items={[
         {
           label: t('Ready'),

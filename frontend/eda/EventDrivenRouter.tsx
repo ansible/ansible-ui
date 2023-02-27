@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
-import { RouteE } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import Dashboard from './dashboard/Dashboard';
 import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
 import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails';
@@ -23,87 +23,71 @@ import { Users } from './UserAccess/Users/Users';
 import { Actions } from './views/actions/Actions';
 
 export function EventDrivenRouter() {
+  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Eda);
+
   return (
     <Routes>
-      <Route
-        path={RouteE.EdaAutomationServers.replace(RouteE.Eda, '')}
-        element={<AutomationServers />}
-      />
+      <Route path={RouteObjWithoutPrefix.EdaAutomationServers} element={<AutomationServers />} />
 
-      <Route path={RouteE.EdaDashboard.replace(RouteE.Eda, '')} element={<Dashboard />} />
+      <Route path={RouteObjWithoutPrefix.EdaDashboard} element={<Dashboard />} />
 
-      <Route path={RouteE.CreateEdaProject.replace(RouteE.Eda, '')} element={<EditProject />} />
-      <Route path={RouteE.EditEdaProject.replace(RouteE.Eda, '')} element={<EditProject />} />
-      <Route path={RouteE.EdaProjectDetails.replace(RouteE.Eda, '')} element={<ProjectDetails />} />
-      <Route path={RouteE.EdaProjects.replace(RouteE.Eda, '')} element={<Projects />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaProject} element={<EditProject />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaProject} element={<EditProject />} />
+      <Route path={RouteObjWithoutPrefix.EdaProjectDetails} element={<ProjectDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaProjects} element={<Projects />} />
 
       <Route
-        path={RouteE.CreateEdaExecutionEnvironment.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.CreateEdaExecutionEnvironment}
         element={<EditExecutionEnvironment />}
       />
       <Route
-        path={RouteE.EditEdaExecutionEnvironment.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EditEdaExecutionEnvironment}
         element={<EditExecutionEnvironment />}
       />
       <Route
-        path={RouteE.EdaExecutionEnvironmentDetails.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EdaExecutionEnvironmentDetails}
         element={<ExecutionEnvironmentDetails />}
       />
       <Route
-        path={RouteE.EdaExecutionEnvironments.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EdaExecutionEnvironments}
         element={<ExecutionEnvironments />}
       />
-      <Route
-        path={RouteE.EdaInventoryDetails.replace(RouteE.Eda, '')}
-        element={<InventoryDetails />}
-      />
-      <Route path={RouteE.EdaInventories.replace(RouteE.Eda, '')} element={<Inventories />} />
+      <Route path={RouteObjWithoutPrefix.EdaInventoryDetails} element={<InventoryDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaInventories} element={<Inventories />} />
+
+      <Route path={RouteObjWithoutPrefix.EdaActionDetails} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EdaActions} element={<Actions />} />
 
       <Route
-        path={RouteE.EdaActionDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route path={RouteE.EdaActions.replace(RouteE.Eda, '')} element={<Actions />} />
-
-      <Route
-        path={RouteE.CreateEdaRulebookActivation.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.CreateEdaRulebookActivation}
         element={<EditRulebookActivation />}
       />
       <Route
-        path={RouteE.EditEdaRulebookActivation.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EditEdaRulebookActivation}
         element={<EditRulebookActivation />}
       />
       <Route
-        path={RouteE.EdaRulebookActivationDetails.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EdaRulebookActivationDetails}
         element={<RulebookActivationDetails />}
       />
       <Route
-        path={RouteE.EdaRulebookActivations.replace(RouteE.Eda, '')}
+        path={RouteObjWithoutPrefix.EdaRulebookActivations}
         element={<RulebookActivations />}
       />
 
-      <Route
-        path={RouteE.CreateEdaActivity.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route path={RouteE.EditEdaActivity.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-      <Route
-        path={RouteE.EdaActivityDetails.replace(RouteE.Eda, '')}
-        element={<UnderDevelopment />}
-      />
-      <Route path={RouteE.EdaActivities.replace(RouteE.Eda, '')} element={<UnderDevelopment />} />
-      <Route
-        path={RouteE.EdaRulebookDetails.replace(RouteE.Eda, '')}
-        element={<RulebookDetails />}
-      />
-      <Route path={RouteE.EdaRulebooks.replace(RouteE.Eda, '')} element={<Rulebooks />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaActivity} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaActivity} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EdaActivityDetails} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EdaActivities} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EdaRulebookDetails} element={<RulebookDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaRulebooks} element={<Rulebooks />} />
 
-      <Route path={RouteE.CreateEdaRule.replace(RouteE.Eda, '')} element={<EditRule />} />
-      <Route path={RouteE.EditEdaRule.replace(RouteE.Eda, '')} element={<EditRule />} />
-      <Route path={RouteE.EdaRuleDetails.replace(RouteE.Eda, '')} element={<RuleDetails />} />
-      <Route path={RouteE.EdaRules.replace(RouteE.Eda, '')} element={<Rules />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaRule} element={<EditRule />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaRule} element={<EditRule />} />
+      <Route path={RouteObjWithoutPrefix.EdaRuleDetails} element={<RuleDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaRules} element={<Rules />} />
 
-      <Route path={RouteE.EdaUsers.replace(RouteE.Eda, '')} element={<Users />} />
+      <Route path={RouteObjWithoutPrefix.EdaUsers} element={<Users />} />
     </Routes>
   );
 }
