@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { pkKeyFn, useHubView } from '../../useHubView';
+import { pkKeyFn, useHubView } from '../../useGalaxyView';
 import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';

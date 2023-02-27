@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { idKeyFn, useHubView } from '../../useHubView';
+import { idKeyFn, useHubView } from '../../useGalaxyView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';

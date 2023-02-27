@@ -1,8 +1,8 @@
 import { Page } from '@patternfly/react-core';
 import { useState } from 'react';
 import { AnsibleMasthead } from '../common/Masthead';
-import { HubRouter } from './HubRouter';
-import { HubSidebar } from './HubSidebar';
+import { HubRouter } from './GalaxyRouter';
+import { HubSidebar } from './GalaxySidebar';
 
 export function Hub() {
   const [isNavOpen, setNavOpen] = useState(() => window.innerWidth >= 1200);

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { idKeyFn, useHubView } from '../../useHubView';
+import { idKeyFn, useHubView } from '../../useGalaxyView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';

@@ -15,7 +15,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { downloadTextFile } from '../../../../framework/utils/download-file';
-import { pulpHRefKeyFn } from '../../useHubView';
+import { pulpHRefKeyFn } from '../../useGalaxyView';
 import { usePulpView } from '../../usePulpView';
 import { SignatureKey } from './SignatureKey';
 

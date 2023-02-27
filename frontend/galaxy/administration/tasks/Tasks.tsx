@@ -15,7 +15,7 @@ import { useInMemoryView } from '../../../../framework/useInMemoryView';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { pulpHRefKeyFn } from '../../useHubView';
+import { pulpHRefKeyFn } from '../../useGalaxyView';
 import { getIdFromPulpHref } from '../../usePulpView';
 import { Task } from './Task';
 

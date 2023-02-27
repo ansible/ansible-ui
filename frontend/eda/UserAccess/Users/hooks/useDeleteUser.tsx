@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../Data';
-import { idKeyFn } from '../../../../galaxy/useHubView';
+import { idKeyFn } from '../../../../galaxy/useGalaxyView';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useUserColumns } from './useUserColumns';
 import { API_PREFIX } from '../../../constants';

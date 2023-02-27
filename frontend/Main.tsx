@@ -12,7 +12,7 @@ import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
 import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
-import { Hub } from './galaxy/Hub';
+import { Hub } from './galaxy/Galaxy';
 import { RouteObj } from './Routes';
 
 export default function Main() {

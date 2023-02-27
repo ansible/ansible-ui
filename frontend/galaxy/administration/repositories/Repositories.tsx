@@ -15,7 +15,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView';
+import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useGalaxyView';
 import { RemoteRepository, Repository } from './Repository';
 
 export function Repositories() {

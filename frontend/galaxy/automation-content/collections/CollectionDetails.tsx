@@ -50,7 +50,7 @@ import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { HubItemsResponse } from '../../useHubView';
+import { HubItemsResponse } from '../../useGalaxyView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';

@@ -1,5 +1,5 @@
 import { useGet } from '../../../../common/useItem';
-import { HubItemsResponse } from '../../../useHubView';
+import { HubItemsResponse } from '../../../useGalaxyView';
 import { Repository } from '../Repository';
 
 export function useRepositories() {

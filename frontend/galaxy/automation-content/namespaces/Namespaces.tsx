@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { idKeyFn, useHubView } from '../../useHubView';
+import { idKeyFn, useHubView } from '../../useGalaxyView';
 import { useNamespaceFilters } from './hooks/useNamespaceFilters';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
 import { Namespace } from './Namespace';

@@ -4,7 +4,7 @@ import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework
 import { PageDetailsFromColumns } from '../../../../framework/PageDetails/PageDetailsFromColumns';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { HubItemsResponse } from '../../useHubView';
+import { HubItemsResponse } from '../../useGalaxyView';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
 import { Namespace } from './Namespace';
 
