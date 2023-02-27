@@ -136,7 +136,7 @@ export function useHubView<T extends object>(
   }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
 }
 
-export async function getControllerError(err: unknown) {
+export async function getAwxError(err: unknown) {
   if (err instanceof HTTPError) {
     try {
       const response = (await err.response.json()) as { __all__?: string[] };

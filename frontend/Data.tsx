@@ -184,7 +184,7 @@ async function requestCommon<ResponseBody>(
               'msg' in body &&
               typeof body.msg === 'string'
             ) {
-              error.name = 'Controller Error';
+              error.name = 'Error';
               error.message = body.msg;
             }
             return error;

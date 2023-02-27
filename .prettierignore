@@ -1,5 +1,5 @@
 # Ignore generated interfaces
-frontend/controller/interfaces/generated-from-swagger
+frontend/awx/interfaces/generated-from-swagger
 
 .dockerignore
 .gitignore

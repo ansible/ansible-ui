@@ -57,13 +57,13 @@ Cypress.Commands.add('login', () => {
       const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'admin';
 
       cy.clickButton(/^Add automation server$/);
-      cy.typeByLabel(/^Name$/, 'Controller');
+      cy.typeByLabel(/^Name$/, 'AWX');
       cy.typeByLabel(/^Url$/, server);
       cy.get('.pf-c-select__toggle').click();
       cy.clickButton('AWX Ansible server');
       cy.get('button[type=submit]').click();
 
-      cy.contains('a', /^Controller$/).click();
+      cy.contains('a', /^AWX$/).click();
       cy.typeByLabel(/^Username$/, username);
       cy.typeByLabel(/^Password$/, password);
       cy.get('button[type=submit]').click();
