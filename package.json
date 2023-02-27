@@ -61,7 +61,7 @@
     "@hookform/resolvers": "2.9.11",
     "@patternfly/patternfly": "4.224.2",
     "@patternfly/react-charts": "6.94.18",
-    "@patternfly/react-core": "4.267.6",
+    "@patternfly/react-core": "4.276.6",
     "@patternfly/react-icons": "4.93.6",
     "@patternfly/react-table": "4.112.39",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.10",

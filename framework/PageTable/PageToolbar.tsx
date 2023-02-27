@@ -434,7 +434,7 @@ function ToolbarTextFilter(props: {
           id={props.id}
           // ref={ref}
           value={value}
-          onChange={setValue}
+          onChange={(_, v) => setValue(v)}
           onKeyUp={(event) => {
             if (value && event.key === 'Enter') {
               props.addFilter(value);
