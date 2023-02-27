@@ -6,7 +6,7 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
 import { getAwxError } from '../../useAwxView';
@@ -27,7 +27,7 @@ export function CreateTeam() {
         throw new Error(t('Organization not found.'));
       }
       const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
-      navigate(RouteE.TeamDetails.replace(':id', team.id.toString()));
+      navigate(RouteObj.TeamDetails.replace(':id', team.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -36,7 +36,7 @@ export function CreateTeam() {
     <PageLayout>
       <PageHeader
         title={t('Create team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Create team') }]}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create team') }]}
       />
       <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
@@ -82,7 +82,7 @@ export function EditTeam() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
+          breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit team') }]}
         />
       </PageLayout>
     );
@@ -91,7 +91,7 @@ export function EditTeam() {
     <PageLayout>
       <PageHeader
         title={t('Edit team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteE.Teams }, { label: t('Edit team') }]}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit team') }]}
       />
       <PageForm
         submitText={t('Save team')}

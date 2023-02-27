@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
 
 export function useExecutionEnvironmentColumns() {
@@ -25,7 +25,7 @@ export function useExecutionEnvironmentColumns() {
             text={executionEnvironment.name}
             onClick={() =>
               navigate(
-                RouteE.EdaExecutionEnvironmentDetails.replace(
+                RouteObj.EdaExecutionEnvironmentDetails.replace(
                   ':id',
                   executionEnvironment.id.toString()
                 )

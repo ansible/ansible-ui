@@ -12,7 +12,7 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
@@ -39,7 +39,7 @@ export function CreateUser() {
         `/api/v2/organizations/${organization.toString()}/users/`,
         user
       );
-      navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()));
+      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -51,7 +51,7 @@ export function CreateUser() {
     <>
       <PageHeader
         title={t('Create user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Create user') }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create user') }]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -89,7 +89,7 @@ export function EditUser() {
         }
       }
       const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
-      navigate(RouteE.UserDetails.replace(':id', newUser.id.toString()));
+      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -101,7 +101,7 @@ export function EditUser() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
+          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
         />
       </PageLayout>
     );
@@ -119,7 +119,7 @@ export function EditUser() {
     <PageLayout>
       <PageHeader
         title={t('Edit user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: t('Edit user') }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}

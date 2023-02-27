@@ -70,6 +70,15 @@ module.exports = function (_env, argv) {
         'process.env.AWX': _env.awx ? JSON.stringify('true') : JSON.stringify(''),
         'process.env.HUB': _env.hub ? JSON.stringify('true') : JSON.stringify(''),
         'process.env.EDA': _env.eda ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.AWX_ROUTE_PREFIX': _env.awx_route_prefix
+          ? JSON.stringify(_env.awx_route_prefix)
+          : JSON.stringify('/ui_next'),
+        'process.env.HUB_ROUTE_PREFIX': _env.hub_route_prefix
+          ? JSON.stringify(_env.hub_route_prefix)
+          : JSON.stringify('/hub'),
+        'process.env.EDA_ROUTE_PREFIX': _env.eda_route_prefix
+          ? JSON.stringify(_env.eda_route_prefix)
+          : JSON.stringify('/eda'),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'fr'].map((locale) => {

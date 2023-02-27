@@ -1,182 +1,210 @@
 /* istanbul ignore file */
 
-export enum RouteE {
-  Login = '/login',
+import { useMemo } from 'react';
 
-  AWX = '/controller',
+export type RouteType = `/${string}`;
+
+const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
+  ? (process.env.AWX_ROUTE_PREFIX as RouteType)
+  : '/ui_next';
+
+const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
+  ? (process.env.HUB_ROUTE_PREFIX as RouteType)
+  : '/hub';
+const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
+  ? (process.env.EDA_ROUTE_PREFIX as RouteType)
+  : '/eda';
+
+export const RouteObj: { [key: string]: RouteType } = {
+  Login: '/login',
+
+  AWX: `${awxRoutePrefix}`,
 
   // Views
-  Dashboard = '/controller/dashboard',
-  Jobs = '/controller/jobs',
-  JobOutput = '/controller/jobs/:job_type/output/:id',
-  JobDetails = '/controller/jobs/details/:id',
-  Schedules = '/controller/schedules',
-  ActivityStream = '/controller/activity-stream/:type',
-  WorkflowApprovals = '/controller/workflow-approvals',
+  Dashboard: `${awxRoutePrefix}/dashboard`,
+  Jobs: `${awxRoutePrefix}/jobs`,
+  JobOutput: `${awxRoutePrefix}/jobs/:job_type/output/:id`,
+  JobDetails: `${awxRoutePrefix}/jobs/details/:id`,
+  Schedules: `${awxRoutePrefix}/schedules`,
+  ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
+  WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
 
   // Resources
-  Templates = '/controller/templates',
-  JobTemplateDetails = '/controller/job_template/details/:id',
-  WorkflowJobTemplateDetails = '/controller/workflow_job_template/details/:id',
-  WorkflowJobTemplateEdit = '/controller/workflow_job_template/edit/:id',
-  JobTemplateEdit = '/controller/job_template/edit/:id',
-  CreateWorkflowJobTemplate = '/controller/workflow_job_template/create',
-  CreateJobTemplate = '/controller/job_template/create',
-  EditTemplate = '/controller/templates/edit/:id',
+  Templates: `${awxRoutePrefix}/templates`,
+  JobTemplateDetails: `${awxRoutePrefix}/job_template/details/:id`,
+  WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/details/:id`,
+  WorkflowJobTemplateEdit: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
+  JobTemplateEdit: `${awxRoutePrefix}/job_template/edit/:id`,
+  CreateWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/create`,
+  CreateJobTemplate: `${awxRoutePrefix}/job_template/create`,
+  EditTemplate: `${awxRoutePrefix}/templates/edit/:id`,
 
-  Credentials = '/controller/credentials',
-  CredentialDetails = '/controller/credentials/details/:id',
-  CreateCredential = '/controller/credentials/create',
-  EditCredential = '/controller/credentials/edit/:id',
+  Credentials: `${awxRoutePrefix}/credentials`,
+  CredentialDetails: `${awxRoutePrefix}/credentials/details/:id`,
+  CreateCredential: `${awxRoutePrefix}/credentials/create`,
+  EditCredential: `${awxRoutePrefix}/credentials/edit/:id`,
 
-  Projects = '/controller/projects',
-  ProjectDetails = '/controller/projects/:id/details',
-  CreateProject = '/controller/projects/create',
-  EditProject = '/controller/projects/edit/:id',
+  Projects: `${awxRoutePrefix}/projects`,
+  ProjectDetails: `${awxRoutePrefix}/projects/:id/details`,
+  CreateProject: `${awxRoutePrefix}/projects/create`,
+  EditProject: `${awxRoutePrefix}/projects/edit/:id`,
 
-  Inventories = '/controller/inventories',
-  InventoryDetails = '/controller/inventories/details/:id',
-  CreateInventory = '/controller/inventories/create',
-  EditInventory = '/controller/inventories/edit/:id',
+  Inventories: `${awxRoutePrefix}/inventories`,
+  InventoryDetails: `${awxRoutePrefix}/inventories/details/:id`,
+  CreateInventory: `${awxRoutePrefix}/inventories/create`,
+  EditInventory: `${awxRoutePrefix}/inventories/edit/:id`,
 
-  Hosts = '/controller/hosts',
-  HostDetails = '/controller/hosts/details/:id',
-  CreateHost = '/controller/hosts/create',
-  EditHost = '/controller/hosts/edit/:id',
+  Hosts: `${awxRoutePrefix}/hosts`,
+  HostDetails: `${awxRoutePrefix}/hosts/details/:id`,
+  CreateHost: `${awxRoutePrefix}/hosts/create`,
+  EditHost: `${awxRoutePrefix}/hosts/edit/:id`,
 
   // Access
-  Organizations = '/controller/organizations',
-  OrganizationDetails = '/controller/organizations/details/:id',
-  CreateOrganization = '/controller/organizations/create',
-  EditOrganization = '/controller/organizations/edit/:id',
+  Organizations: `${awxRoutePrefix}/organizations`,
+  OrganizationDetails: `${awxRoutePrefix}/organizations/details/:id`,
+  CreateOrganization: `${awxRoutePrefix}/organizations/create`,
+  EditOrganization: `${awxRoutePrefix}/organizations/edit/:id`,
 
-  Teams = '/controller/teams',
-  TeamDetails = '/controller/teams/:id/details',
-  CreateTeam = '/controller/teams/create',
-  EditTeam = '/controller/teams/:id/edit',
-  AddRolesToTeam = '/controller/teams/:id/roles/add',
+  Teams: `${awxRoutePrefix}/teams`,
+  TeamDetails: `${awxRoutePrefix}/teams/:id/details`,
+  CreateTeam: `${awxRoutePrefix}/teams/create`,
+  EditTeam: `${awxRoutePrefix}/teams/:id/edit`,
+  AddRolesToTeam: `${awxRoutePrefix}/teams/:id/roles/add`,
 
-  Users = '/controller/users',
-  UserDetails = '/controller/users/:id/details',
-  CreateUser = '/controller/users/create',
-  EditUser = '/controller/users/:id/edit',
-  AddRolesToUser = '/controller/users/:id/roles/add',
+  Users: `${awxRoutePrefix}/users`,
+  UserDetails: `${awxRoutePrefix}/users/:id/details`,
+  CreateUser: `${awxRoutePrefix}/users/create`,
+  EditUser: `${awxRoutePrefix}/users/:id/edit`,
+  AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,
 
   // Administration
-  CredentialTypes = '/controller/credential-types',
-  Notifications = '/controller/notifications',
-  ManagementJobs = '/controller/management-jobs',
+  CredentialTypes: `${awxRoutePrefix}/credential-types`,
+  Notifications: `${awxRoutePrefix}/notifications`,
+  ManagementJobs: `${awxRoutePrefix}/management-jobs`,
 
-  InstanceGroups = '/controller/instance-groups',
-  InstanceGroupDetails = '/controller/instance-groups/details/:id',
-  CreateInstanceGroup = '/controller/instance-groups/create',
-  EditInstanceGroup = '/controller/instance-groups/edit/:id',
+  InstanceGroups: `${awxRoutePrefix}/instance-groups`,
+  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/details/:id`,
+  CreateInstanceGroup: `${awxRoutePrefix}/instance-groups/create`,
+  EditInstanceGroup: `${awxRoutePrefix}/instance-groups/edit/:id`,
 
-  Applications = '/controller/applications',
+  Applications: `${awxRoutePrefix}/applications`,
 
-  Instances = '/controller/instances',
-  InstanceDetails = '/controller/instances/details/:id',
-  CreateInstance = '/controller/instances/create',
-  EditInstance = '/controller/instances/edit/:id',
+  Instances: `${awxRoutePrefix}/instances`,
+  InstanceDetails: `${awxRoutePrefix}/instances/details/:id`,
+  CreateInstance: `${awxRoutePrefix}/instances/create`,
+  EditInstance: `${awxRoutePrefix}/instances/edit/:id`,
 
-  ExecutionEnvironments = '/controller/execution-environments',
-  ExecutionEnvironmentDetails = '/controller/execution-environments/details/:id',
-  CreateExecutionEnvironment = '/controller/execution-environments/create',
-  EditExecutionEnvironment = '/controller/execution-environments/edit/:id',
+  ExecutionEnvironments: `${awxRoutePrefix}/execution-environments`,
+  ExecutionEnvironmentDetails: `${awxRoutePrefix}/execution-environments/details/:id`,
+  CreateExecutionEnvironment: `${awxRoutePrefix}/execution-environments/create`,
+  EditExecutionEnvironment: `${awxRoutePrefix}/execution-environments/edit/:id`,
 
-  TopologyView = '/controller/topology-view',
+  TopologyView: `${awxRoutePrefix}/topology-view`,
 
   // Settings
-  Settings = '/controller/settings',
+  Settings: `${awxRoutePrefix}/settings`,
 
-  Hub = '/hub',
+  Hub: `${hubRoutePrefix}`,
 
-  HubDashboard = '/hub/dashboard',
+  HubDashboard: `${hubRoutePrefix}/dashboard`,
 
-  Collections = '/hub/collections',
-  CollectionDetails = '/hub/collections/details/:id',
-  UploadCollection = '/hub/collections/upload',
+  Collections: `${hubRoutePrefix}/collections`,
+  CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
+  UploadCollection: `${hubRoutePrefix}/collections/upload`,
 
-  Repositories = '/hub/repositories',
-  RepositoryDetails = '/hub/repositories/details/:id',
-  EditRepository = '/hub/repositories/edit/:id',
+  Repositories: `${hubRoutePrefix}/repositories`,
+  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:id`,
+  EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
 
-  Namespaces = '/hub/namespaces',
-  NamespaceDetails = '/hub/namespaces/details/:id',
-  CreateNamespace = '/hub/namespaces/create/:id',
-  EditNamespace = '/hub/namespaces/edit/:id',
+  Namespaces: `${hubRoutePrefix}/namespaces`,
+  NamespaceDetails: `${hubRoutePrefix}/namespaces/details/:id`,
+  CreateNamespace: `${hubRoutePrefix}/namespaces/create/:id`,
+  EditNamespace: `${hubRoutePrefix}/namespaces/edit/:id`,
 
-  Approvals = '/hub/approvals',
-  ApprovalDetails = '/hub/approvals/details/:id',
+  Approvals: `${hubRoutePrefix}/approvals`,
+  ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
 
-  HubExecutionEnvironments = '/hub/execution-environments',
-  HubExecutionEnvironmentDetails = '/hub/execution-environments/details/:id',
+  HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
+  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
 
-  RemoteRegistries = '/hub/remote-registries',
+  RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
 
-  Tasks = '/hub/tasks',
-  TaskDetails = '/hub/tasks/details/:id',
+  Tasks: `${hubRoutePrefix}/tasks`,
+  TaskDetails: `${hubRoutePrefix}/tasks/details/:id`,
 
-  SignatureKeys = '/hub/signature-keys',
+  SignatureKeys: `${hubRoutePrefix}/signature-keys`,
 
-  APIToken = '/hub/api-token',
+  APIToken: `${hubRoutePrefix}/api-token`,
 
-  AwxDebug = '/controller/debug',
+  AwxDebug: `${awxRoutePrefix}/debug`,
 
-  AutomationServers = '/automation-servers',
-  AwxAutomationServers = '/controller/automation-servers',
-  HubAutomationServers = '/hub/automation-servers',
+  AutomationServers: `/automation-servers`,
+  AwxAutomationServers: `${awxRoutePrefix}/automation-servers`,
+  HubAutomationServers: `${hubRoutePrefix}/automation-servers`,
 
   // Event Driven Automation
-  Eda = '/eda',
+  Eda: `${edaRoutePrefix}`,
 
-  EdaAutomationServers = '/eda/automation-servers',
+  EdaAutomationServers: `${edaRoutePrefix}/automation-servers`,
 
-  EdaDashboard = '/eda/dashboard',
+  EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
-  EdaProjects = '/eda/projects',
-  EdaProjectDetails = '/eda/projects/details/:id',
-  CreateEdaProject = '/eda/projects/create',
-  EditEdaProject = '/eda/projects/edit/:id',
+  EdaProjects: `${edaRoutePrefix}/projects`,
+  EdaProjectDetails: `${edaRoutePrefix}/projects/details/:id`,
+  CreateEdaProject: `${edaRoutePrefix}/projects/create`,
+  EditEdaProject: `${edaRoutePrefix}/projects/edit/:id`,
 
-  EdaExecutionEnvironments = '/eda/execution-environments',
-  EdaExecutionEnvironmentDetails = '/eda/execution-environments/details/:id',
-  CreateEdaExecutionEnvironment = '/eda/execution-environments/create',
-  EditEdaExecutionEnvironment = '/eda/execution-environments/edit/:id',
+  EdaExecutionEnvironments: `${edaRoutePrefix}/execution-environments`,
+  EdaExecutionEnvironmentDetails: `${edaRoutePrefix}/execution-environments/details/:id`,
+  CreateEdaExecutionEnvironment: `${edaRoutePrefix}/execution-environments/create`,
+  EditEdaExecutionEnvironment: `${edaRoutePrefix}/execution-environments/edit/:id`,
 
-  EdaInventories = '/eda/inventories',
-  EdaInventoryDetails = '/eda/inventories/details/:id',
-  CreateEdaInventory = '/eda/inventories/create',
-  EditEdaInventory = '/eda/inventories/edit/:id',
+  EdaInventories: `${edaRoutePrefix}/inventories`,
+  EdaInventoryDetails: `${edaRoutePrefix}/inventories/details/:id`,
+  CreateEdaInventory: `${edaRoutePrefix}/inventories/create`,
+  EditEdaInventory: `${edaRoutePrefix}/inventories/edit/:id`,
 
-  EdaActions = '/eda/actions',
-  EdaActionDetails = '/eda/actions/details/:id',
+  EdaActions: `${edaRoutePrefix}/actions`,
+  EdaActionDetails: `${edaRoutePrefix}/actions/details/:id`,
 
-  EdaRulebookActivations = '/eda/rulebook-activations',
-  EdaRulebookActivationDetails = '/eda/rulebook-activations/details/:id',
-  CreateEdaRulebookActivation = '/eda/rulebook-activations/create',
-  EditEdaRulebookActivation = '/eda/rulebook-activations/edit/:id',
+  EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
+  EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,
+  CreateEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/create`,
+  EditEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/edit/:id`,
 
-  EdaActivities = '/eda/activities',
-  EdaActivityDetails = '/eda/activities/details/:id',
-  CreateEdaActivity = '/eda/activities/create',
-  EditEdaActivity = '/eda/activities/edit/:id',
+  EdaActivities: `${edaRoutePrefix}/activities`,
+  EdaActivityDetails: `${edaRoutePrefix}/activities/details/:id`,
+  CreateEdaActivity: `${edaRoutePrefix}/activities/create`,
+  EditEdaActivity: `${edaRoutePrefix}/activities/edit/:id`,
 
-  EdaRulebooks = '/eda/rulebooks',
-  EdaRulebookDetails = '/eda/rulebooks/details/:id',
-  EdaRulesetDetails = '/eda/rulesets/details/:id',
-  CreateEdaRulebook = '/eda/rulebooks/create',
-  EditEdaRulebook = '/eda/rulebooks/edit/:id',
+  EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
+  EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
+  EdaRulesetDetails: `${edaRoutePrefix}/rulesets/details/:id`,
+  CreateEdaRulebook: `${edaRoutePrefix}/rulebooks/create`,
+  EditEdaRulebook: `${edaRoutePrefix}/rulebooks/edit/:id`,
 
-  EdaRules = '/eda/rules',
-  EdaRuleDetails = '/eda/rules/details/:id',
-  CreateEdaRule = '/eda/rules/create',
-  EditEdaRule = '/eda/rules/edit/:id',
+  EdaRules: `${edaRoutePrefix}/rules`,
+  EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
+  CreateEdaRule: `${edaRoutePrefix}/rules/create`,
+  EditEdaRule: `${edaRoutePrefix}/rules/edit/:id`,
 
-  EdaUsers = '/eda/users',
-  EdaGroups = '/eda/groups',
-  EdaRoles = '/eda/roles',
-  CreateEdaUser = '/eda/users/create',
-  EdaUserDetails = '/eda/user/details/:id',
-  EditEdaUser = '/eda/user/edit/:id',
+  EdaUsers: `${edaRoutePrefix}/users`,
+  EdaGroups: `${edaRoutePrefix}/groups`,
+  EdaRoles: `${edaRoutePrefix}/roles`,
+  CreateEdaUser: `${edaRoutePrefix}/users/create`,
+  EdaUserDetails: `${edaRoutePrefix}/user/details/:id`,
+  EditEdaUser: `${edaRoutePrefix}/user/edit/:id`,
+};
+
+export function useRoutesWithoutPrefix(prefix: RouteType) {
+  const routesWithoutPrefix: { [key: string]: RouteType } = useMemo(() => {
+    const routes: { [key: string]: RouteType } = {};
+    for (const route in RouteObj) {
+      if (RouteObj[route].startsWith(prefix)) {
+        routes[route] = RouteObj[route].replace(prefix, '/') as RouteType;
+      }
+    }
+    return routes;
+  }, [prefix]);
+  return routesWithoutPrefix;
 }

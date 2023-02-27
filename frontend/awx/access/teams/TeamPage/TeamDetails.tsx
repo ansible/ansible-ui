@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageDetail, PageDetails, SinceCell, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 
 export function TeamDetails(props: { team: Team }) {
@@ -16,7 +16,7 @@ export function TeamDetails(props: { team: Team }) {
       <PageDetail label={t('Organization')}>
         <TextCell
           text={team.summary_fields?.organization?.name}
-          to={RouteE.OrganizationDetails.replace(
+          to={RouteObj.OrganizationDetails.replace(
             ':id',
             (team.summary_fields?.organization?.id ?? '').toString()
           )}
@@ -28,7 +28,7 @@ export function TeamDetails(props: { team: Team }) {
           author={team.summary_fields?.created_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (team.summary_fields?.created_by?.id ?? 0).toString()
               )
@@ -42,7 +42,7 @@ export function TeamDetails(props: { team: Team }) {
           author={team.summary_fields?.modified_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (team.summary_fields?.modified_by?.id ?? 0).toString()
               )

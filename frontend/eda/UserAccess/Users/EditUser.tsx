@@ -7,7 +7,7 @@ import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { API_PREFIX } from '../../constants';
 
@@ -46,7 +46,7 @@ export function EditUser() {
         navigate(-1);
       } else {
         const newUser = await requestPost<EdaUser>(`${API_PREFIX}/users/`, User);
-        navigate(RouteE.EdaUserDetails.replace(':id', newUser.id.toString()));
+        navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
       }
     } catch (err) {
       setError('TODO');
@@ -59,7 +59,7 @@ export function EditUser() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: t('Edit User') }]}
+            breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit User') }]}
           />
         </PageLayout>
       );
@@ -68,7 +68,7 @@ export function EditUser() {
         <PageLayout>
           <PageHeader
             title={t('Edit User')}
-            breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: t('Edit User') }]}
+            breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit User') }]}
           />
           <PageForm
             schema={UserSchemaType}
@@ -88,7 +88,7 @@ export function EditUser() {
       <PageLayout>
         <PageHeader
           title={t('Create User')}
-          breadcrumbs={[{ label: t('Users'), to: RouteE.EdaUsers }, { label: t('Create User') }]}
+          breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create User') }]}
         />
         <PageForm
           schema={UserSchemaType}

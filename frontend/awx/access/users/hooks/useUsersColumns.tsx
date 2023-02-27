@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';
 
@@ -14,7 +14,7 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={RouteE.UserDetails.replace(':id', user.id.toString())}
+            to={RouteObj.UserDetails.replace(':id', user.id.toString())}
           />
         ),
         card: 'name',

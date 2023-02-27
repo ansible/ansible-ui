@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useRefreshAction } from '../../../common/useRefreshAction';
 import { useOptions } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { useAwxView } from '../../useAwxView';
@@ -69,7 +69,7 @@ export function Teams() {
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
         emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
-        emptyStateButtonClick={canCreateTeam ? () => navigate(RouteE.CreateTeam) : undefined}
+        emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
         {...view}
         defaultSubtitle={t('Team')}
         expandedRow={(team: Team) => (team.description ? <>{team.description}</> : undefined)}

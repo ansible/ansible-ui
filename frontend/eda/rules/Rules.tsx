@@ -4,7 +4,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useRuleColumns } from './hooks/useRuleColumns';
 import { useRuleFilters } from './hooks/useRuleFilters';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { useEdaView } from '../useEventDrivenView';
 
@@ -28,7 +28,7 @@ export function Rules() {
         emptyStateTitle={t('No rules yet')}
         emptyStateDescription={t('Please add a project by using the button below')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
         defaultSubtitle={t('Rules')}
       />

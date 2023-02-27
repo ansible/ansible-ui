@@ -39,7 +39,7 @@ import { useAutomationServers } from '../automation-servers/contexts/AutomationS
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { swrOptions, useFetcher } from '../Data';
 import AnsibleIcon from '../icons/ansible.svg';
-import { RouteE } from '../Routes';
+import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
 
 export function AnsibleMasthead(props: {
@@ -185,7 +185,7 @@ export function AnsibleMasthead(props: {
   );
 }
 
-export function isRouteActive(route: RouteE | RouteE[], location: { pathname: string }) {
+export function isRouteActive(route: RouteType | RouteType[], location: { pathname: string }) {
   if (Array.isArray(route)) {
     for (const r of route) {
       if (location.pathname.startsWith(r)) return true;
@@ -282,7 +282,7 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            history(RouteE.Users);
+            history(RouteObj.Users);
           }}
         >
           {t('User details')}
@@ -323,7 +323,7 @@ function NotificationsInternal() {
       variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
       count={workflowApprovals.length}
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-      // onClick={() => history(RouteE.WorkflowApprovals)}
+      // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
   );
 }

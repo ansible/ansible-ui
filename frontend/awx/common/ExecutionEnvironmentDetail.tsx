@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { PageDetail } from '../../../framework';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
@@ -48,7 +48,7 @@ function ExecutionEnvironmentDetail(props: {
     return (
       <PageDetail label={label} helpText={helpText}>
         <Link
-          to={RouteE.ExecutionEnvironmentDetails.replace(
+          to={RouteObj.ExecutionEnvironmentDetails.replace(
             ':id',
             executionEnvironment.id?.toString() || ''
           )}

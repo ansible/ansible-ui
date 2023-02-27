@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './hooks/useInventoryColumns';
 import { useInventoriesFilters } from './hooks/useInventoryFilters';
@@ -34,7 +34,7 @@ export function Inventories() {
         emptyStateTitle={t('No inventories yet')}
         emptyStateDescription={t('To get started, create a inventory.')}
         emptyStateButtonText={t('Create inventory')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaInventory)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaInventory)}
         {...view}
         defaultSubtitle={t('Inventory')}
       />

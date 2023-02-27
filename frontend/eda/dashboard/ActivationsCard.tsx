@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationColumns } from './hooks/useActivationColumns';
 import {
@@ -38,7 +38,7 @@ export function ActivationsCard() {
             <Title headingLevel="h2">{t('Rulebook Activations')}</Title>
           </LevelItem>
           <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteE.EdaRulebookActivations)}>
+            <Button variant="link" onClick={() => navigate(RouteObj.EdaRulebookActivations)}>
               {t('Go to Rulebook Activations')}
             </Button>
           </LevelItem>
@@ -58,7 +58,7 @@ export function ActivationsCard() {
         <Button
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => navigate(RouteE.CreateEdaRulebookActivation)}
+          onClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         >
           {t('Create rulebook activation')}
         </Button>

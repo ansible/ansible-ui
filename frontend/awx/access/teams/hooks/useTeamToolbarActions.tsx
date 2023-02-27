@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, IPageActionButton, PageActionType } from '../../../../../framework';
 import { useOptions } from '../../../../Data';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
@@ -40,7 +40,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
           : t(
               'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
             ),
-        onClick: () => navigate(RouteE.CreateTeam),
+        onClick: () => navigate(RouteObj.CreateTeam),
       } as IPageActionButton,
       { type: PageActionType.seperator },
       {

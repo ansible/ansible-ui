@@ -16,7 +16,7 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
@@ -52,7 +52,7 @@ export function Users() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create user'),
-        onClick: () => navigate(RouteE.CreateUser),
+        onClick: () => navigate(RouteObj.CreateUser),
       },
       { type: PageActionType.seperator },
       {
@@ -108,7 +108,7 @@ export function Users() {
         // variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
-        onClick: (user) => navigate(RouteE.EditUser.replace(':id', user.id.toString())),
+        onClick: (user) => navigate(RouteObj.EditUser.replace(':id', user.id.toString())),
       },
       { type: PageActionType.seperator },
       {
@@ -175,7 +175,7 @@ export function Users() {
         emptyStateTitle={t('No users yet')}
         emptyStateDescription={t('To get started, create a user.')}
         emptyStateButtonText={t('Create user')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateUser)}
         {...view}
       />
     </PageLayout>
@@ -204,7 +204,7 @@ export function AccessTable(props: { url: string }) {
         icon: PlusIcon,
         label: t('Add users'),
         shortLabel: t('Add'),
-        href: RouteE.CreateUser,
+        href: RouteObj.CreateUser,
       },
       {
         type: PageActionType.bulk,
@@ -243,7 +243,7 @@ export function AccessTable(props: { url: string }) {
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
       emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
+      emptyStateButtonClick={() => navigate(RouteObj.CreateUser)}
       {...view}
     />
   );

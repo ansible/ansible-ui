@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaProject } from '../interfaces/EdaProject';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import {
@@ -38,7 +38,7 @@ export function ProjectsCard() {
             <Title headingLevel="h2">{t('Projects')}</Title>
           </LevelItem>
           <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteE.EdaProjects)}>
+            <Button variant="link" onClick={() => navigate(RouteObj.EdaProjects)}>
               {t('Go to Projects')}
             </Button>
           </LevelItem>
@@ -58,7 +58,7 @@ export function ProjectsCard() {
         <Button
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => navigate(RouteE.CreateEdaProject)}
+          onClick={() => navigate(RouteObj.CreateEdaProject)}
         >
           {t('Create project')}
         </Button>

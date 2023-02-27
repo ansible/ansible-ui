@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
@@ -34,7 +34,7 @@ export function RulebookActivations() {
         emptyStateTitle={t('No rulebook activations yet')}
         emptyStateDescription={t('To get started, create a rulebook activation.')}
         emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebookActivation)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         {...view}
         defaultSubtitle={t('Rulebook activation')}
       />

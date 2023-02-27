@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaHost } from '../../../interfaces/EdaHost';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
@@ -16,7 +16,7 @@ export function useHostsColumns() {
         cell: (host) => (
           <TextCell
             text={host.host}
-            onClick={() => navigate(RouteE.EdaRulesetDetails.replace(':id', host.id.toString()))}
+            onClick={() => navigate(RouteObj.EdaRulesetDetails.replace(':id', host.id.toString()))}
           />
         ),
         sort: 'ost',
@@ -30,7 +30,7 @@ export function useHostsColumns() {
           <TextCell
             text={host?.rule.name}
             onClick={() =>
-              navigate(RouteE.EdaRulesetDetails.replace(':id', (host?.rule?.id || '').toString()))
+              navigate(RouteObj.EdaRulesetDetails.replace(':id', (host?.rule?.id || '').toString()))
             }
           />
         ),
@@ -44,7 +44,7 @@ export function useHostsColumns() {
             text={host.ruleset?.name}
             onClick={() =>
               navigate(
-                RouteE.EdaRulesetDetails.replace(':id', (host?.ruleset?.id || '').toString())
+                RouteObj.EdaRulesetDetails.replace(':id', (host?.ruleset?.id || '').toString())
               )
             }
           />

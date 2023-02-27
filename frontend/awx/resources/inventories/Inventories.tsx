@@ -17,7 +17,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -112,7 +112,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
   const navigate = useNavigate();
   const nameClick = useCallback(
     (inventory: Inventory) =>
-      navigate(RouteE.InventoryDetails.replace(':id', inventory.id.toString())),
+      navigate(RouteObj.InventoryDetails.replace(':id', inventory.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({

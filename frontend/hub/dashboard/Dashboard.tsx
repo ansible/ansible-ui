@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, pfSuccess } from '../../../framework';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { FeaturedCollections } from '../automation-content/collections/FeaturedCollections';
 import { useCollections } from '../automation-content/collections/hooks/useCollections';
 import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces';
@@ -58,12 +58,12 @@ export function HubDashboard() {
               items={[
                 { label: t('Collections'), count: collections?.length ?? 0, color: pfSuccess },
               ]}
-              to={RouteE.Collections}
+              to={RouteObj.Collections}
             />
             <PageDashboardDonutCard
               title={t('Namespaces')}
               items={[{ label: t('Namespaces'), count: namespaces?.length ?? 0, color: pfSuccess }]}
-              to={RouteE.Namespaces}
+              to={RouteObj.Namespaces}
             />
           </Gallery>
         </Stack>

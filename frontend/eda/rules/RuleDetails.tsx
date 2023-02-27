@@ -18,7 +18,7 @@ import {
   PageTabs,
 } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRule } from '../interfaces/EdaRule';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import React from 'react';
@@ -96,7 +96,7 @@ export function RuleDetails() {
     <PageLayout>
       <PageHeader
         title={rule?.name}
-        breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: rule?.name }]}
+        breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: rule?.name }]}
       />
       {rule ? (
         <PageTabs>

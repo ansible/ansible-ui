@@ -14,7 +14,7 @@ import {
   PageTabs,
 } from '../../../../../framework';
 import { useItem } from '../../../../common/useItem';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
 import { UserDetails } from './UserDetails';
@@ -30,7 +30,7 @@ export function UserPage() {
 
   const deleteUsers = useDeleteUsers((deleted: User[]) => {
     if (deleted.length > 0) {
-      history(RouteE.Users);
+      history(RouteObj.Users);
     }
   });
 
@@ -41,7 +41,7 @@ export function UserPage() {
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
-        onClick: () => history(RouteE.EditUser.replace(':id', user?.id.toString() ?? '')),
+        onClick: () => history(RouteObj.EditUser.replace(':id', user?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -61,7 +61,7 @@ export function UserPage() {
     <PageLayout>
       <PageHeader
         title={user?.username}
-        breadcrumbs={[{ label: t('Users'), to: RouteE.Users }, { label: user?.username }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: user?.username }]}
         headerActions={
           <PageActions<User>
             actions={itemActions}

@@ -19,7 +19,7 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -51,7 +51,7 @@ export function ExecutionEnvironments() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create execution environment'),
-        onClick: () => navigate(RouteE.CreateExecutionEnvironment),
+        onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
       },
       {
         type: PageActionType.bulk,
@@ -72,7 +72,7 @@ export function ExecutionEnvironments() {
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
           navigate(
-            RouteE.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
+            RouteObj.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
           ),
       },
       {
@@ -104,7 +104,7 @@ export function ExecutionEnvironments() {
         emptyStateTitle={t('No execution environments yet')}
         emptyStateDescription={t('To get started, create an execution environment.')}
         emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateExecutionEnvironment)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateExecutionEnvironment)}
         {...view}
       />
     </PageLayout>
@@ -145,7 +145,7 @@ export function useExecutionEnvironmentsColumns(options?: {
   const nameClick = useCallback(
     (executionEnvironment: ExecutionEnvironment) =>
       navigate(
-        RouteE.ExecutionEnvironmentDetails.replace(':id', executionEnvironment.id.toString())
+        RouteObj.ExecutionEnvironmentDetails.replace(':id', executionEnvironment.id.toString())
       ),
     [navigate]
   );

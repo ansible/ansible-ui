@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { PageDetail, PageDetails, SinceCell } from '../../../../../framework';
 import { useGet } from '../../../../common/useItem';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
@@ -56,7 +56,7 @@ export function OrganizationDetails(props: { organization: Organization }) {
           author={organization.summary_fields?.created_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (organization.summary_fields?.created_by?.id ?? 0).toString()
               )
@@ -70,7 +70,7 @@ export function OrganizationDetails(props: { organization: Organization }) {
           author={organization.summary_fields?.modified_by?.username}
           onClick={() =>
             history(
-              RouteE.UserDetails.replace(
+              RouteObj.UserDetails.replace(
                 ':id',
                 (organization.summary_fields?.modified_by?.id ?? 0).toString()
               )
@@ -86,7 +86,7 @@ export function OrganizationDetails(props: { organization: Organization }) {
         <LabelGroup>
           {instanceGroups.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link to={RouteE.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
+              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
                 {ig.name}
               </Link>
             </Label>

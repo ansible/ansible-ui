@@ -14,7 +14,7 @@ import {
   SinceCell,
   TextCell,
 } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../../useHubView';
 import { RemoteRepository, Repository } from './Repository';
 
@@ -53,7 +53,7 @@ export function LocalRepositories() {
       emptyStateTitle={t('No repositories yet')}
       // emptyStateDescription={t('To get started, create an repository.')}
       // emptyStateButtonText={t('Add repository')}
-      // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
+      // emptyStateButtonClick={() => navigate(RouteObj.CreateRepository)}
       {...view}
     />
   );
@@ -105,21 +105,21 @@ export function RemoteRepositories() {
         icon: CogIcon,
         label: t('Configure repository'),
         onClick: (repository) =>
-          navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
         type: PageActionType.single,
         icon: SyncIcon,
         label: t('Sync repository'),
         onClick: (repository) =>
-          navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit repository'),
         onClick: (repository) =>
-          navigate(RouteE.EditRepository.replace(':id', repository.name.toString())),
+          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
     ],
     [navigate, t]
@@ -132,7 +132,7 @@ export function RemoteRepositories() {
       emptyStateTitle={t('No repositories yet')}
       // emptyStateDescription={t('To get started, create an repository.')}
       // emptyStateButtonText={t('Add repository')}
-      // emptyStateButtonClick={() => navigate(RouteE.CreateRepository)}
+      // emptyStateButtonClick={() => navigate(RouteObj.CreateRepository)}
       {...view}
     />
   );

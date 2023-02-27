@@ -26,7 +26,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { idKeyFn, useHubView } from '../../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
@@ -70,7 +70,7 @@ export function Collections() {
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
         emptyStateButtonText={t('Upload collection')}
-        emptyStateButtonClick={() => navigate(RouteE.UploadCollection)}
+        emptyStateButtonClick={() => navigate(RouteObj.UploadCollection)}
         {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}

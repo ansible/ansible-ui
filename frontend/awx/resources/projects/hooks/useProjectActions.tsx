@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
 import { requestPost } from '../../../../Data';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';
 
@@ -41,7 +41,7 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
         icon: EditIcon,
         label: t('Edit project'),
         isDisabled: (project: Project) => cannotEditProject(project),
-        onClick: (project) => navigate(RouteE.EditTeam.replace(':id', project.id.toString())),
+        onClick: (project) => navigate(RouteObj.EditTeam.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.single,

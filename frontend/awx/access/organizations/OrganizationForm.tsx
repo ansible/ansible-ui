@@ -6,7 +6,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { getAwxError } from '../../useAwxView';
@@ -38,7 +38,7 @@ export function CreateOrganization() {
         );
       }
       await Promise.all(igRequests);
-      navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
+      navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -50,7 +50,7 @@ export function CreateOrganization() {
       <PageHeader
         title={t('Create organization')}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteE.Organizations },
+          { label: t('Organizations'), to: RouteObj.Organizations },
           { label: t('Create organization') },
         ]}
       />
@@ -107,7 +107,7 @@ export function EditOrganization() {
         );
       }
       await Promise.all(igRequests);
-      navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString()));
+      navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -119,7 +119,7 @@ export function EditOrganization() {
       <PageHeader
         title={t('Edit organization')}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteE.Organizations },
+          { label: t('Organizations'), to: RouteObj.Organizations },
           { label: t('Edit organization') },
         ]}
       />

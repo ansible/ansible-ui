@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 
@@ -19,7 +19,7 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t(' activation'),
-        onClick: () => navigate(RouteE.CreateEdaRulebookActivation),
+        onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),
       },
       {
         type: PageActionType.bulk,

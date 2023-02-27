@@ -21,7 +21,7 @@ import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { StatusCell } from '../../../common/StatusCell';
 import { requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
 
@@ -95,7 +95,8 @@ export function Instances() {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit instance'),
-        onClick: (instance) => navigate(RouteE.EditInstance.replace(':id', instance.id.toString())),
+        onClick: (instance) =>
+          navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
     [alertToaster, navigate, t, view]
@@ -118,7 +119,7 @@ export function Instances() {
         emptyStateTitle={t('No instances yet')}
         emptyStateDescription={t('To get started, create an instance.')}
         emptyStateButtonText={t('Create instance')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateInstance)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateInstance)}
         {...view}
       />
     </PageLayout>
@@ -166,7 +167,9 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         header: t('Name'),
         cell: (instance) => (
           <TextCell
-            onClick={() => navigate(RouteE.InstanceDetails.replace(':id', instance.id.toString()))}
+            onClick={() =>
+              navigate(RouteObj.InstanceDetails.replace(':id', instance.id.toString()))
+            }
             text={instance.hostname}
           />
         ),

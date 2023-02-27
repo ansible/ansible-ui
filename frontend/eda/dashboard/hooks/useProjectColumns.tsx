@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { StatusCell } from '../../../common/StatusCell';
 
@@ -16,7 +16,9 @@ export function useProjectColumns() {
         cell: (project) => (
           <TextCell
             text={project.name}
-            onClick={() => navigate(RouteE.EdaProjectDetails.replace(':id', project.id.toString()))}
+            onClick={() =>
+              navigate(RouteObj.EdaProjectDetails.replace(':id', project.id.toString()))
+            }
           />
         ),
         sort: 'name',

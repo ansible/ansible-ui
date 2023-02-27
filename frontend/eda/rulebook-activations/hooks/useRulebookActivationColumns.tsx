@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {
@@ -25,7 +25,10 @@ export function useRulebookActivationColumns() {
             text={rulebookActivation.name}
             onClick={() =>
               navigate(
-                RouteE.EdaRulebookActivationDetails.replace(':id', rulebookActivation.id.toString())
+                RouteObj.EdaRulebookActivationDetails.replace(
+                  ':id',
+                  rulebookActivation.id.toString()
+                )
               )
             }
           />

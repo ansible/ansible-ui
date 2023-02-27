@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentColumns } from './hooks/useExecutionEnvironmentColumns';
@@ -24,7 +24,7 @@ export function ExecutionEnvironments() {
   const toolbarActions = useExecutionEnvironmentsActions(view);
   const rowActions = useExecutionEnvironmentActions(view);
   const emptyStateButtonClick = useMemo(
-    () => () => navigate(RouteE.CreateEdaExecutionEnvironment),
+    () => () => navigate(RouteObj.CreateEdaExecutionEnvironment),
     [navigate]
   );
   return (

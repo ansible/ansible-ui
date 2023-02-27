@@ -2,7 +2,7 @@ import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Namespace } from '../Namespace';
 
 export function useNamespacesColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -14,7 +14,7 @@ export function useNamespacesColumns(_options?: { disableSort?: boolean; disable
         cell: (namespace) => (
           <TextCell
             text={namespace.name}
-            to={RouteE.NamespaceDetails.replace(':id', namespace.name)}
+            to={RouteObj.NamespaceDetails.replace(':id', namespace.name)}
           />
         ),
         value: (namespace) => namespace.name,

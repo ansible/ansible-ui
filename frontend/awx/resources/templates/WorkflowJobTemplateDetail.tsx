@@ -25,7 +25,7 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { useItem } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
@@ -39,7 +39,7 @@ export function WorkflowJobTemplateDetail() {
 
   const deleteTemplates = useDeleteTemplates((deleted) => {
     if (deleted.length > 0) {
-      history(RouteE.Templates);
+      history(RouteObj.Templates);
     }
   });
 
@@ -50,7 +50,7 @@ export function WorkflowJobTemplateDetail() {
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit workflow template'),
-        onClick: () => history(RouteE.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+        onClick: () => history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
         type: PageActionType.button,
@@ -69,7 +69,7 @@ export function WorkflowJobTemplateDetail() {
     <PageLayout>
       <PageHeader
         title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteE.Templates }, { label: template?.name }]}
+        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
           <PageActions<WorkflowJobTemplate>
             actions={itemActions}
@@ -121,7 +121,7 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
       <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link
-          to={RouteE.OrganizationDetails.replace(
+          to={RouteObj.OrganizationDetails.replace(
             ':id',
             summaryFields.organization?.id.toString() ?? ''
           )}
@@ -131,7 +131,10 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         <Link
-          to={RouteE.InventoryDetails.replace(':id', summaryFields.inventory?.id.toString() ?? '')}
+          to={RouteObj.InventoryDetails.replace(
+            ':id',
+            summaryFields.inventory?.id.toString() ?? ''
+          )}
         >
           {summaryFields.inventory?.name}
         </Link>
@@ -142,7 +145,9 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
         {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
       </PageDetail>
       <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
-        <Link to={RouteE.CredentialDetails.replace(':id', template.webhook_credential?.toString())}>
+        <Link
+          to={RouteObj.CredentialDetails.replace(':id', template.webhook_credential?.toString())}
+        >
           {summaryFields.webhook_credential?.name}
         </Link>
       </PageDetail>

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -23,7 +23,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         cell: (job: UnifiedJob) => (
           <TextCell
             text={job.name}
-            to={RouteE.JobDetails.replace(':id', job.id.toString())}
+            to={RouteObj.JobDetails.replace(':id', job.id.toString())}
             disableLinks={options?.disableLinks}
           />
         ),

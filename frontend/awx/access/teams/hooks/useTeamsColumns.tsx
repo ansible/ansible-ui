@@ -9,14 +9,14 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const history = useNavigate();
   const nameColumnClick = useCallback(
-    (team: Team) => history(RouteE.TeamDetails.replace(':id', team.id.toString())),
+    (team: Team) => history(RouteObj.TeamDetails.replace(':id', team.id.toString())),
     [history]
   );
   const idColumn = useIdColumn();

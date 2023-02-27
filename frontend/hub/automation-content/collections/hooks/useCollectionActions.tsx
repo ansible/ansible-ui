@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Collection } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 
@@ -19,7 +19,7 @@ export function useCollectionActions(callback?: (collections: Collection[]) => v
         icon: UploadIcon,
         variant: ButtonVariant.secondary,
         label: t('Upload new version'),
-        onClick: () => navigate(RouteE.UploadCollection),
+        onClick: () => navigate(RouteObj.UploadCollection),
       },
       { type: PageActionType.seperator },
       {

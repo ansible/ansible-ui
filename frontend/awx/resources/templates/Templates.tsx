@@ -19,7 +19,7 @@ import {
   useNameColumn,
   useTypeColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -59,13 +59,13 @@ export function Templates() {
             type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create Job Template'),
-            onClick: () => navigate(RouteE.CreateJobTemplate),
+            onClick: () => navigate(RouteObj.CreateJobTemplate),
           },
           {
             type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create Workflow Job Template'),
-            onClick: () => navigate(RouteE.CreateWorkflowJobTemplate),
+            onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
           },
         ],
       },
@@ -86,7 +86,7 @@ export function Templates() {
         icon: EditIcon,
         label: t(`Edit Template`),
         onClick: (template) =>
-          navigate(RouteE.JobTemplateEdit.replace(':id', template.id.toString())),
+          navigate(RouteObj.JobTemplateEdit.replace(':id', template.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -119,7 +119,7 @@ export function Templates() {
         emptyStateTitle={t('No Templates yet')}
         emptyStateDescription={t('To get started, create a template.')}
         emptyStateButtonText={t('Create template')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateJobTemplate)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
         {...view}
       />
     </PageLayout>
@@ -150,10 +150,10 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   const nameClick = useCallback(
     (template: JobTemplate | WorkflowJobTemplate) => {
       if (template.type === 'job_template') {
-        navigate(RouteE.JobTemplateDetails.replace(':id', template.id.toString()));
+        navigate(RouteObj.JobTemplateDetails.replace(':id', template.id.toString()));
         return;
       }
-      navigate(RouteE.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+      navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
     },
     [navigate]
   );

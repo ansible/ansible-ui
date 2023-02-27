@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { idKeyFn, useHubView } from '../../useHubView';
 import { useNamespaceFilters } from './hooks/useNamespaceFilters';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
@@ -53,7 +53,7 @@ export function AllNamespaces() {
       emptyStateTitle={t('No namespaces yet')}
       emptyStateDescription={t('To get started, create an namespace.')}
       emptyStateButtonText={t('Add namespace')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
+      emptyStateButtonClick={() => navigate(RouteObj.CreateNamespace)}
       {...view}
       defaultSubtitle={t('Namespace')}
       defaultTableView="cards"
@@ -80,7 +80,7 @@ export function MyNamespaces() {
       emptyStateTitle={t('No namespaces yet')}
       emptyStateDescription={t('To get started, create an namespace.')}
       emptyStateButtonText={t('Add namespace')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateNamespace)}
+      emptyStateButtonClick={() => navigate(RouteObj.CreateNamespace)}
       {...view}
       defaultSubtitle={t('Namespace')}
     />

@@ -6,11 +6,11 @@ import { useBulkActionDialog } from '../../framework/BulkActionDialog';
 import { randomString } from '../../framework/utils/random-string';
 import { Team } from '../awx/interfaces/Team';
 import { requestPost } from '../Data';
-import { RouteE } from '../Routes';
+import { RouteObj } from '../Routes';
 
 export default function Debug() {
   const breadcrumbs = useMemo(
-    () => [{ label: 'Dashboard', to: RouteE.Dashboard }, { label: 'Debug' }],
+    () => [{ label: 'Dashboard', to: RouteObj.Dashboard }, { label: 'Debug' }],
     []
   );
   const createTeams = useCreateTeams();

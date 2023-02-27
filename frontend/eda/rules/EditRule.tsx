@@ -7,7 +7,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../common/useItem';
 import { requestPatch, requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRule } from '../interfaces/EdaRule';
 import { API_PREFIX } from '../constants';
 
@@ -42,7 +42,7 @@ export function EditRule() {
       } else {
         const newRule = await requestPost<EdaRule>(`${API_PREFIX}/rules/`, rule);
         (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteE.EdaRuleDetails.replace(':id', newRule.id.toString()));
+        navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
       }
     } catch (err) {
       setError('TODO');
@@ -55,7 +55,7 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Edit rule') }]}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
           />
         </PageLayout>
       );
@@ -64,7 +64,7 @@ export function EditRule() {
         <PageLayout>
           <PageHeader
             title={t('Edit rule')}
-            breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Edit rule') }]}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
           />
           <PageForm
             schema={RuleSchemaType}
@@ -84,7 +84,7 @@ export function EditRule() {
       <PageLayout>
         <PageHeader
           title={t('Create rule')}
-          breadcrumbs={[{ label: t('Rules'), to: RouteE.EdaRules }, { label: t('Create rule') }]}
+          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create rule') }]}
         />
         <PageForm
           schema={RuleSchemaType}

@@ -15,7 +15,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { useAwxView } from '../../useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
@@ -44,13 +44,13 @@ export function InstanceGroups() {
             type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create container group'),
-            onClick: () => navigate(RouteE.CreateInstanceGroup),
+            onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
           {
             type: PageActionType.button,
             icon: PlusIcon,
             label: t('Create instance group'),
-            onClick: () => navigate(RouteE.CreateInstanceGroup),
+            onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
         ],
       },
@@ -72,7 +72,7 @@ export function InstanceGroups() {
         icon: EditIcon,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
-          navigate(RouteE.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
+          navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -102,7 +102,7 @@ export function InstanceGroups() {
         emptyStateTitle={t('No instance groups yet')}
         emptyStateDescription={t('To get started, create an instance group.')}
         emptyStateButtonText={t('Create instance group')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateInstanceGroup)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateInstanceGroup)}
         {...view}
       />
     </PageLayout>
@@ -143,7 +143,7 @@ export function useInstanceGroupsColumns(options?: {
             to={
               disableLinks
                 ? undefined
-                : RouteE.InstanceGroupDetails.replace(':id', instanceGroup.id.toString())
+                : RouteObj.InstanceGroupDetails.replace(':id', instanceGroup.id.toString())
             }
             text={instanceGroup.name}
           />

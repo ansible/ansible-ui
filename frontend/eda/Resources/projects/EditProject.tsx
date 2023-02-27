@@ -7,7 +7,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { API_PREFIX } from '../../constants';
 
@@ -67,7 +67,7 @@ export function EditProject() {
       } else {
         const newProject = await requestPost<EdaProject>(`${API_PREFIX}/projects/`, project);
         (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteE.EdaProjectDetails.replace(':id', newProject.id.toString()));
+        navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('Unknown error'));
@@ -81,7 +81,7 @@ export function EditProject() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Projects'), to: RouteE.EdaProjects },
+              { label: t('Projects'), to: RouteObj.EdaProjects },
               { label: t('Edit project') },
             ]}
           />
@@ -93,7 +93,7 @@ export function EditProject() {
           <PageHeader
             title={t('Edit project')}
             breadcrumbs={[
-              { label: t('Projects'), to: RouteE.EdaProjects },
+              { label: t('Projects'), to: RouteObj.EdaProjects },
               { label: t('Edit project') },
             ]}
           />
@@ -116,7 +116,7 @@ export function EditProject() {
         <PageHeader
           title={t('Create project')}
           breadcrumbs={[
-            { label: t('Projects'), to: RouteE.EdaProjects },
+            { label: t('Projects'), to: RouteObj.EdaProjects },
             { label: t('Create project') },
           ]}
         />

@@ -24,7 +24,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -64,7 +64,7 @@ export function Organizations() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
-        href: RouteE.CreateOrganization,
+        href: RouteObj.CreateOrganization,
       },
       { type: PageActionType.seperator },
       {
@@ -104,7 +104,7 @@ export function Organizations() {
         icon: EditIcon,
         label: t('Edit organization'),
         href: (organization) => {
-          return RouteE.EditOrganization.replace(':id', organization.id.toString());
+          return RouteObj.EditOrganization.replace(':id', organization.id.toString());
         },
       },
       { type: PageActionType.seperator },
@@ -151,7 +151,7 @@ export function Organizations() {
         emptyStateTitle={t('No organizations yet')}
         emptyStateDescription={t('To get started, create an organization.')}
         emptyStateButtonText={t('Create organization')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateOrganization)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateOrganization)}
         {...view}
         defaultSubtitle={t('Organization')}
         expandedRow={(organization) =>
@@ -188,7 +188,7 @@ export function useOrganizationsColumns(options?: {
   const idColumn = useIdColumn();
   const nameClick = useCallback(
     (organization: Organization) =>
-      navigate(RouteE.OrganizationDetails.replace(':id', organization.id.toString())),
+      navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({

@@ -22,7 +22,7 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaInventory } from '../../interfaces/EdaInventory';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import React, { useMemo } from 'react';
@@ -49,7 +49,7 @@ export function InventoryDetails() {
 
   const deleteInventories = useDeleteInventories((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaInventories);
+      navigate(RouteObj.EdaInventories);
     }
   });
   const itemActions = useMemo<IPageAction<EdaInventory>[]>(
@@ -115,7 +115,7 @@ export function InventoryDetails() {
       <PageHeader
         title={inventory?.name}
         breadcrumbs={[
-          { label: t('Inventories'), to: RouteE.EdaInventories },
+          { label: t('Inventories'), to: RouteObj.EdaInventories },
           { label: inventory?.name },
         ]}
         headerActions={

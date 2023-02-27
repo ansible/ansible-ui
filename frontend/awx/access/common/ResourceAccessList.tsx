@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
@@ -143,7 +143,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
       emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteE.CreateUser)}
+      emptyStateButtonClick={() => navigate(RouteObj.CreateUser)}
       {...view}
     />
   );

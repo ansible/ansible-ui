@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteE } from '../Routes';
+import { RouteObj, RouteType } from '../Routes';
 
 export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
   const { isNavOpen, setNavOpen } = props;
@@ -14,7 +14,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
   const navigate = useNavigate();
   const isXl = useBreakpoint('xl');
   const onClick = useCallback(
-    (route: RouteE) => {
+    (route: RouteType) => {
       navigate(route);
       if (!isXl) setNavOpen(false);
     },
@@ -26,28 +26,28 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         key="views"
         title="Views"
         isExpanded
-        isActive={isRouteActive([RouteE.Dashboard, RouteE.Jobs], location)}
+        isActive={isRouteActive([RouteObj.Dashboard, RouteObj.Jobs], location)}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.Dashboard, location)}
-          onClick={() => onClick(RouteE.Dashboard)}
+          isActive={isRouteActive(RouteObj.Dashboard, location)}
+          onClick={() => onClick(RouteObj.Dashboard)}
         >
           {t('Dashboard')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Jobs, location)}
-          onClick={() => onClick(RouteE.Jobs)}
+          isActive={isRouteActive(RouteObj.Jobs, location)}
+          onClick={() => onClick(RouteObj.Jobs)}
         >
           {t('Jobs')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteE.Schedules, location)}>
-          <Link to={RouteE.Schedules}>Schedules</Link>
+        {/* <NavItem isActive={isRouteActive(RouteObj.Schedules, location)}>
+          <Link to={RouteObj.Schedules}>Schedules</Link>
         </NavItem>
-        <NavItem isActive={isRouteActive(RouteE.ActivityStream, location)}>
-          <Link to={RouteE.ActivityStream}>Activity stream</Link>
+        <NavItem isActive={isRouteActive(RouteObj.ActivityStream, location)}>
+          <Link to={RouteObj.ActivityStream}>Activity stream</Link>
         </NavItem>
-        <NavItem isActive={isRouteActive(RouteE.WorkflowApprovals, location)}>
-          <Link to={RouteE.WorkflowApprovals}>Workflow approvals</Link>
+        <NavItem isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}>
+          <Link to={RouteObj.WorkflowApprovals}>Workflow approvals</Link>
         </NavItem> */}
       </NavExpandable>
       <NavExpandable
@@ -55,37 +55,43 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         title={t('Resources')}
         isExpanded
         isActive={isRouteActive(
-          [RouteE.Templates, RouteE.Credentials, RouteE.Projects, RouteE.Inventories, RouteE.Hosts],
+          [
+            RouteObj.Templates,
+            RouteObj.Credentials,
+            RouteObj.Projects,
+            RouteObj.Inventories,
+            RouteObj.Hosts,
+          ],
           location
         )}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.Templates, location)}
-          onClick={() => onClick(RouteE.Templates)}
+          isActive={isRouteActive(RouteObj.Templates, location)}
+          onClick={() => onClick(RouteObj.Templates)}
         >
           {t('Templates')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Credentials, location)}
-          onClick={() => onClick(RouteE.Credentials)}
+          isActive={isRouteActive(RouteObj.Credentials, location)}
+          onClick={() => onClick(RouteObj.Credentials)}
         >
           {t('Credentials')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Projects, location)}
-          onClick={() => onClick(RouteE.Projects)}
+          isActive={isRouteActive(RouteObj.Projects, location)}
+          onClick={() => onClick(RouteObj.Projects)}
         >
           {t('Projects')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Inventories, location)}
-          onClick={() => onClick(RouteE.Inventories)}
+          isActive={isRouteActive(RouteObj.Inventories, location)}
+          onClick={() => onClick(RouteObj.Inventories)}
         >
           {t('Inventories')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Hosts, location)}
-          onClick={() => onClick(RouteE.Hosts)}
+          isActive={isRouteActive(RouteObj.Hosts, location)}
+          onClick={() => onClick(RouteObj.Hosts)}
         >
           {t('Hosts')}
         </NavItem>
@@ -94,23 +100,23 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         key="access"
         title={t('Access')}
         isExpanded
-        isActive={isRouteActive([RouteE.Organizations, RouteE.Users, RouteE.Teams], location)}
+        isActive={isRouteActive([RouteObj.Organizations, RouteObj.Users, RouteObj.Teams], location)}
       >
         <NavItem
-          isActive={isRouteActive(RouteE.Organizations, location)}
-          onClick={() => onClick(RouteE.Organizations)}
+          isActive={isRouteActive(RouteObj.Organizations, location)}
+          onClick={() => onClick(RouteObj.Organizations)}
         >
           {t('Organizations')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Teams, location)}
-          onClick={() => onClick(RouteE.Teams)}
+          isActive={isRouteActive(RouteObj.Teams, location)}
+          onClick={() => onClick(RouteObj.Teams)}
         >
           {t('Teams')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Users, location)}
-          onClick={() => onClick(RouteE.Users)}
+          isActive={isRouteActive(RouteObj.Users, location)}
+          onClick={() => onClick(RouteObj.Users)}
         >
           {t('Users')}
         </NavItem>
@@ -121,65 +127,65 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         isExpanded
         isActive={isRouteActive(
           [
-            RouteE.CredentialTypes,
-            RouteE.Notifications,
-            RouteE.ManagementJobs,
-            RouteE.InstanceGroups,
-            RouteE.Instances,
-            RouteE.Applications,
-            RouteE.ExecutionEnvironments,
-            RouteE.TopologyView,
+            RouteObj.CredentialTypes,
+            RouteObj.Notifications,
+            RouteObj.ManagementJobs,
+            RouteObj.InstanceGroups,
+            RouteObj.Instances,
+            RouteObj.Applications,
+            RouteObj.ExecutionEnvironments,
+            RouteObj.TopologyView,
           ],
           location
         )}
       >
-        {/* <NavItem isActive={isRouteActive(RouteE.CredentialTypes, location)}>
-                                <Link to={RouteE.CredentialTypes}>Credential types</Link>
+        {/* <NavItem isActive={isRouteActive(RouteObj.CredentialTypes, location)}>
+                                <Link to={RouteObj.CredentialTypes}>Credential types</Link>
                             </NavItem> */}
-        {/* <NavItem isActive={isRouteActive(RouteE.Notifications, location)}>
-                                <Link to={RouteE.Notifications}>Notifications</Link>
+        {/* <NavItem isActive={isRouteActive(RouteObj.Notifications, location)}>
+                                <Link to={RouteObj.Notifications}>Notifications</Link>
                             </NavItem> */}
-        {/* <NavItem isActive={isRouteActive(RouteE.ManagementJobs, location)}>
-                                <Link to={RouteE.ManagementJobs}>Management jobs</Link>
+        {/* <NavItem isActive={isRouteActive(RouteObj.ManagementJobs, location)}>
+                                <Link to={RouteObj.ManagementJobs}>Management jobs</Link>
                             </NavItem> */}
         <NavItem
-          isActive={isRouteActive(RouteE.InstanceGroups, location)}
-          onClick={() => onClick(RouteE.InstanceGroups)}
+          isActive={isRouteActive(RouteObj.InstanceGroups, location)}
+          onClick={() => onClick(RouteObj.InstanceGroups)}
         >
           {t('Instance groups')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteE.Instances, location)}
-          onClick={() => onClick(RouteE.Instances)}
+          isActive={isRouteActive(RouteObj.Instances, location)}
+          onClick={() => onClick(RouteObj.Instances)}
         >
           {t('Instances')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteE.Applications, location)}>
-                                <Link to={RouteE.Applications}>Applications</Link>
+        {/* <NavItem isActive={isRouteActive(RouteObj.Applications, location)}>
+                                <Link to={RouteObj.Applications}>Applications</Link>
                             </NavItem> */}
         <NavItem
-          isActive={isRouteActive(RouteE.ExecutionEnvironments, location)}
-          onClick={() => onClick(RouteE.ExecutionEnvironments)}
+          isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
+          onClick={() => onClick(RouteObj.ExecutionEnvironments)}
         >
           {t('Execution Environments')}
         </NavItem>
         {/* <NavItem
-          isActive={isRouteActive(RouteE.TopologyView, location)}
-          onClick={() => onClick(RouteE.TopologyView)}
+          isActive={isRouteActive(RouteObj.TopologyView, location)}
+          onClick={() => onClick(RouteObj.TopologyView)}
         >
           {t('Topology view')}
         </NavItem> */}
       </NavExpandable>
       {/* <NavGroup>
-                            <NavItem isActive={isRouteActive(RouteE.Settings, location)}>
-                                <Link to={RouteE.Settings}>Settings</Link>
+                            <NavItem isActive={isRouteActive(RouteObj.Settings, location)}>
+                                <Link to={RouteObj.Settings}>Settings</Link>
                             </NavItem>
                         </NavGroup> */}
       {/* </NavExpandable> */}
       {process.env.NODE_ENV === 'development' && (
         <NavItem
-          isActive={isRouteActive(RouteE.AwxDebug, location)}
-          onClick={() => onClick(RouteE.AwxDebug)}
+          isActive={isRouteActive(RouteObj.AwxDebug, location)}
+          onClick={() => onClick(RouteObj.AwxDebug)}
         >
           {t('Debug')}
         </NavItem>

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 
 export function useViewActivityStream<T extends object>(type: string) {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ export function useViewActivityStream<T extends object>(type: string) {
         type: PageActionType.single,
         icon: HistoryIcon,
         label: t('View activity stream'),
-        onClick: () => navigate(RouteE.ActivityStream.replace(':type', type)),
+        onClick: () => navigate(RouteObj.ActivityStream.replace(':type', type)),
       },
     ],
     [type, navigate, t]

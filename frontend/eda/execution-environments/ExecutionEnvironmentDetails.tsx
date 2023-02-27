@@ -10,7 +10,7 @@ import {
 } from '../../../framework';
 import { PageDetailsFromColumns } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { useExecutionEnvironmentColumns } from './hooks/useExecutionEnvironmentColumns';
 import { API_PREFIX } from '../constants';
@@ -27,7 +27,7 @@ export function ExecutionEnvironmentDetails() {
   );
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaProjects);
+      navigate(RouteObj.EdaProjects);
     }
   });
   const tableColumns = useExecutionEnvironmentColumns();
@@ -39,7 +39,7 @@ export function ExecutionEnvironmentDetails() {
         label: t('Edit executionEnvironment'),
         onClick: (executionEnvironment: EdaExecutionEnvironment) =>
           navigate(
-            RouteE.EditEdaExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
+            RouteObj.EditEdaExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
           ),
       },
       {
@@ -59,7 +59,7 @@ export function ExecutionEnvironmentDetails() {
       <PageHeader
         title={executionEnvironment?.name}
         breadcrumbs={[
-          { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+          { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
           { label: executionEnvironment?.name },
         ]}
         headerActions={

@@ -13,7 +13,7 @@ import { shouldShowAutmationServers } from './common/should-show-autmation-serve
 import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
-import { RouteE } from './Routes';
+import { RouteObj } from './Routes';
 
 export default function Main() {
   const { t } = useTranslation();
@@ -41,16 +41,16 @@ function Routing() {
     <PageFramework navigate={navigate}>
       <Routes>
         {showAutomationServers && (
-          <Route path={RouteE.AutomationServers} element={<AutomationServersRoute />} />
+          <Route path={RouteObj.AutomationServers} element={<AutomationServersRoute />} />
         )}
-        {showAWX && <Route path={RouteE.AWX + '/*'} element={<AWX />} />}
-        {showHub && <Route path={RouteE.Hub + '/*'} element={<Hub />} />}
-        {showEda && <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />}
-        <Route path={RouteE.Login} element={<Login />} />
+        {showAWX && <Route path={RouteObj.AWX + '/*'} element={<AWX />} />}
+        {showHub && <Route path={RouteObj.Hub + '/*'} element={<Hub />} />}
+        {showEda && <Route path={RouteObj.Eda + '/*'} element={<EventDriven />} />}
+        <Route path={RouteObj.Login} element={<Login />} />
         {showAutomationServers ? (
-          <Route path="/" element={<Navigate to={RouteE.AutomationServers} />} />
+          <Route path="/" element={<Navigate to={RouteObj.AutomationServers} />} />
         ) : (
-          <Route path="/" element={<Navigate to={RouteE.Login} />} />
+          <Route path="/" element={<Navigate to={RouteObj.Login} />} />
         )}
         <Route path="*" element={<PageNotFound />} />
       </Routes>

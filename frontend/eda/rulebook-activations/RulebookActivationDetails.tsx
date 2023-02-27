@@ -17,7 +17,7 @@ import {
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaJob } from '../interfaces/EdaJob';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationActionColumns } from './hooks/useActivationActionColumns';
@@ -43,7 +43,7 @@ export function RulebookActivationDetails() {
   const disableActivation = useDisableActivation();
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaRulebookActivations);
+      navigate(RouteObj.EdaRulebookActivations);
     }
   });
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
@@ -204,7 +204,7 @@ export function RulebookActivationDetails() {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteE.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

@@ -14,7 +14,7 @@ import {
 import { PageDetail } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { API_PREFIX } from '../../constants';
 import { useMemo } from 'react';
@@ -29,7 +29,7 @@ export function ProjectDetails() {
 
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaProjects);
+      navigate(RouteObj.EdaProjects);
     }
   });
 
@@ -40,7 +40,7 @@ export function ProjectDetails() {
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
-          navigate(RouteE.EditEdaProject.replace(':id', project.id.toString())),
+          navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -76,7 +76,7 @@ export function ProjectDetails() {
     <PageLayout>
       <PageHeader
         title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteE.EdaProjects }, { label: project?.name }]}
+        breadcrumbs={[{ label: t('Projects'), to: RouteObj.EdaProjects }, { label: project?.name }]}
         headerActions={
           <PageActions<EdaProject>
             actions={itemActions}
