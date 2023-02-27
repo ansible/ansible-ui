@@ -41,10 +41,6 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   const headers: OutgoingHttpHeaders = {};
 
-  if (cookies?.['csrftoken']) {
-    headers['X-CSRFToken'] = cookies['csrftoken'];
-  }
-
   for (const header in req.headers) {
     if (header.startsWith(':')) continue;
     headers[header] = req.headers[header];
