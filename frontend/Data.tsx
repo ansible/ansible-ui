@@ -161,11 +161,16 @@ async function requestCommon<ResponseBody>(
 ) {
   if (process.env.DELAY)
     await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)));
+
   try {
     const result = await methodFn(url, {
       ...options,
       credentials: 'include',
-      headers: options.headers,
+      headers: {
+        ...options.headers,
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+
       hooks: {
         beforeError: [
           async (error) => {
