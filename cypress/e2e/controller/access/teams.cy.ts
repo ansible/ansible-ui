@@ -3,8 +3,8 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/controller/interfaces/Organization';
-import { User } from '../../../../frontend/controller/interfaces/User';
 import { Team } from '../../../../frontend/controller/interfaces/Team';
+import { User } from '../../../../frontend/controller/interfaces/User';
 
 describe('teams', () => {
   let organization: Organization;
