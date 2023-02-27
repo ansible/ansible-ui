@@ -7,7 +7,7 @@ import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { API_PREFIX } from '../../constants';
 
@@ -46,7 +46,7 @@ export function EditRole() {
         navigate(-1);
       } else {
         const newRole = await requestPost<EdaRole>(`${API_PREFIX}/roles/`, Role);
-        navigate(RouteE.EdaRoleDetails.replace(':id', newRole.id.toString()));
+        navigate(RouteObj.EdaRoleDetails.replace(':id', newRole.id.toString()));
       }
     } catch (err) {
       setError('TODO');
@@ -59,7 +59,7 @@ export function EditRole() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Roles'), to: RouteE.EdaRoles }, { label: t('Edit Role') }]}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
           />
         </PageLayout>
       );
@@ -68,7 +68,7 @@ export function EditRole() {
         <PageLayout>
           <PageHeader
             title={t('Edit Role')}
-            breadcrumbs={[{ label: t('Roles'), to: RouteE.EdaRoles }, { label: t('Edit Role') }]}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
           />
           <PageForm
             schema={RoleSchemaType}
@@ -88,7 +88,7 @@ export function EditRole() {
       <PageLayout>
         <PageHeader
           title={t('Create Role')}
-          breadcrumbs={[{ label: t('Roles'), to: RouteE.EdaRoles }, { label: t('Create Role') }]}
+          breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Create Role') }]}
         />
         <PageForm
           schema={RoleSchemaType}

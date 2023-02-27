@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteRoles } from './useDeleteRole';
@@ -18,7 +18,8 @@ export function useRoleActions(view: IEdaView<EdaRole>) {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit Role'),
-        onClick: (role: EdaRole) => navigate(RouteE.EditEdaRole.replace(':id', role.id.toString())),
+        onClick: (role: EdaRole) =>
+          navigate(RouteObj.EditEdaRole.replace(':id', role.id.toString())),
       },
       {
         type: PageActionType.single,

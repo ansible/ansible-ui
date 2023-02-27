@@ -10,7 +10,7 @@ import {
 } from '../../../../framework';
 import { PageDetailsFromColumns } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { useRoleColumns } from './hooks/useRoleColumns';
 import { API_PREFIX } from '../../constants';
@@ -27,7 +27,7 @@ export function RoleDetails() {
 
   const deleteRoles = useDeleteRoles((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaRoles);
+      navigate(RouteObj.EdaRoles);
     }
   });
 
@@ -37,7 +37,8 @@ export function RoleDetails() {
         type: PageActionType.single,
         icon: EditIcon,
         label: t('Edit Role'),
-        onClick: (role: EdaRole) => navigate(RouteE.EditEdaRole.replace(':id', role.id.toString())),
+        onClick: (role: EdaRole) =>
+          navigate(RouteObj.EditEdaRole.replace(':id', role.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -53,7 +54,7 @@ export function RoleDetails() {
     <PageLayout>
       <PageHeader
         title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: RouteE.EdaRoles }, { label: role?.name }]}
+        breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: role?.name }]}
         headerActions={
           <PageActions<EdaRole>
             actions={itemActions}

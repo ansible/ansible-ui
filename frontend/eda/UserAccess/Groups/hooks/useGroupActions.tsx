@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteGroups } from './useDeleteGroup';
@@ -19,7 +19,7 @@ export function useGroupActions(view: IEdaView<EdaGroup>) {
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (Group: EdaGroup) =>
-          navigate(RouteE.EditEdaGroup.replace(':id', Group.id.toString())),
+          navigate(RouteObj.EditEdaGroup.replace(':id', Group.id.toString())),
       },
       {
         type: PageActionType.single,

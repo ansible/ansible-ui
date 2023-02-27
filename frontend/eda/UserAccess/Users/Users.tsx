@@ -16,7 +16,7 @@ export function Users() {
   const toolbarFilters = useUserFilters();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
-    url: `${API_PREFIX}/projects/`,
+    url: `${API_PREFIX}/users/`,
     toolbarFilters,
     tableColumns,
   });

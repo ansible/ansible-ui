@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 
 export function useRoleColumns() {
@@ -15,7 +15,7 @@ export function useRoleColumns() {
         cell: (role) => (
           <TextCell
             text={role.name}
-            onClick={() => navigate(RouteE.EdaRoleDetails.replace(':id', role.id.toString()))}
+            onClick={() => navigate(RouteObj.EdaRoleDetails.replace(':id', role.id.toString()))}
           />
         ),
         sort: 'name',

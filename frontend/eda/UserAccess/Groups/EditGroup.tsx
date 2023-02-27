@@ -7,7 +7,7 @@ import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { useGet } from '../../../common/useItem';
 import { requestPatch, requestPost } from '../../../Data';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { API_PREFIX } from '../../constants';
 
@@ -46,7 +46,7 @@ export function EditGroup() {
         navigate(-1);
       } else {
         const newGroup = await requestPost<EdaGroup>(`${API_PREFIX}/groups/`, Group);
-        navigate(RouteE.EdaGroupDetails.replace(':id', newGroup.id.toString()));
+        navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
       }
     } catch (err) {
       setError('TODO');
@@ -59,7 +59,10 @@ export function EditGroup() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Groups'), to: RouteE.EdaGroups }, { label: t('Edit Group') }]}
+            breadcrumbs={[
+              { label: t('Groups'), to: RouteObj.EdaGroups },
+              { label: t('Edit Group') },
+            ]}
           />
         </PageLayout>
       );
@@ -68,7 +71,10 @@ export function EditGroup() {
         <PageLayout>
           <PageHeader
             title={t('Edit Group')}
-            breadcrumbs={[{ label: t('Groups'), to: RouteE.EdaGroups }, { label: t('Edit Group') }]}
+            breadcrumbs={[
+              { label: t('Groups'), to: RouteObj.EdaGroups },
+              { label: t('Edit Group') },
+            ]}
           />
           <PageForm
             schema={GroupSchemaType}
@@ -88,7 +94,10 @@ export function EditGroup() {
       <PageLayout>
         <PageHeader
           title={t('Create Group')}
-          breadcrumbs={[{ label: t('Groups'), to: RouteE.EdaGroups }, { label: t('Create Group') }]}
+          breadcrumbs={[
+            { label: t('Groups'), to: RouteObj.EdaGroups },
+            { label: t('Create Group') },
+          ]}
         />
         <PageForm
           schema={GroupSchemaType}

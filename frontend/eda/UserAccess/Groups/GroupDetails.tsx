@@ -10,7 +10,7 @@ import {
 } from '../../../../framework';
 import { PageDetailsFromColumns } from '../../../../framework';
 import { useGet } from '../../../common/useItem';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useGroupColumns } from './hooks/useGroupColumns';
 import { API_PREFIX } from '../../constants';
@@ -27,7 +27,7 @@ export function GroupDetails() {
 
   const deleteGroups = useDeleteGroups((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteE.EdaGroups);
+      navigate(RouteObj.EdaGroups);
     }
   });
 
@@ -38,7 +38,7 @@ export function GroupDetails() {
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (group: EdaGroup) =>
-          navigate(RouteE.EditEdaGroup.replace(':id', group.id.toString())),
+          navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
       {
         type: PageActionType.single,
@@ -54,7 +54,7 @@ export function GroupDetails() {
     <PageLayout>
       <PageHeader
         title={group?.name}
-        breadcrumbs={[{ label: t('Groups'), to: RouteE.EdaGroups }, { label: group?.name }]}
+        breadcrumbs={[{ label: t('Groups'), to: RouteObj.EdaGroups }, { label: group?.name }]}
         headerActions={
           <PageActions<EdaGroup>
             actions={itemActions}

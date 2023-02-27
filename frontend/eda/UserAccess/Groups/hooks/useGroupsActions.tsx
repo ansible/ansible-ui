@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteGroups } from './useDeleteGroup';
@@ -20,7 +20,7 @@ export function useGroupsActions(view: IEdaView<EdaGroup>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create Group'),
-        onClick: () => navigate(RouteE.CreateEdaGroup),
+        onClick: () => navigate(RouteObj.CreateEdaGroup),
       },
       {
         type: PageActionType.bulk,

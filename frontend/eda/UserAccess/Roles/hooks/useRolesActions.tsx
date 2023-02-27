@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteRoles } from './useDeleteRole';
@@ -20,7 +20,7 @@ export function useRolesActions(view: IEdaView<EdaRole>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create Role'),
-        onClick: () => navigate(RouteE.CreateEdaRole),
+        onClick: () => navigate(RouteObj.CreateEdaRole),
       },
       {
         type: PageActionType.bulk,
