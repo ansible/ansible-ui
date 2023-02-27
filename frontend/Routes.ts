@@ -3,7 +3,7 @@
 export enum RouteE {
   Login = '/login',
 
-  Controller = '/controller',
+  AWX = '/controller',
 
   // Views
   Dashboard = '/controller/dashboard',
@@ -121,10 +121,10 @@ export enum RouteE {
 
   APIToken = '/hub/api-token',
 
-  ControllerDebug = '/controller/debug',
+  AwxDebug = '/controller/debug',
 
   AutomationServers = '/automation-servers',
-  ControllerAutomationServers = '/controller/automation-servers',
+  AwxAutomationServers = '/controller/automation-servers',
   HubAutomationServers = '/hub/automation-servers',
 
   // Event Driven Automation

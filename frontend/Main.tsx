@@ -10,7 +10,7 @@ import { Disclaimer } from './common/Disclaimer';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
-import { Controller } from './controller/Controller';
+import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
 import { RouteE } from './Routes';
@@ -35,7 +35,7 @@ export default function Main() {
 function Routing() {
   const navigate = useNavigate();
 
-  const { showAutomationServers, showController, showHub, showEda } = shouldShowAutmationServers();
+  const { showAutomationServers, showAWX, showHub, showEda } = shouldShowAutmationServers();
 
   return (
     <PageFramework navigate={navigate}>
@@ -43,7 +43,7 @@ function Routing() {
         {showAutomationServers && (
           <Route path={RouteE.AutomationServers} element={<AutomationServersRoute />} />
         )}
-        {showController && <Route path={RouteE.Controller + '/*'} element={<Controller />} />}
+        {showAWX && <Route path={RouteE.AWX + '/*'} element={<AWX />} />}
         {showHub && <Route path={RouteE.Hub + '/*'} element={<Hub />} />}
         {showEda && <Route path={RouteE.Eda + '/*'} element={<EventDriven />} />}
         <Route path={RouteE.Login} element={<Login />} />
