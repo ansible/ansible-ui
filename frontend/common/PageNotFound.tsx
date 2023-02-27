@@ -11,7 +11,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { RouteE } from '../Routes';
+import { RouteObj } from '../Routes';
 
 export function PageNotFound() {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export function PageNotFound() {
         <EmptyStateSecondaryActions>
           <Stack hasGutter>
             <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-            <Button onClick={() => navigate(RouteE.AutomationServers)}>
+            <Button onClick={() => navigate(RouteObj.AutomationServers)}>
               {t('Return to home page')}
             </Button>
           </Stack>

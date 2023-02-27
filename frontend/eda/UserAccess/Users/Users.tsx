@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
@@ -34,7 +34,7 @@ export function Users() {
         emptyStateTitle={t('No users yet')}
         emptyStateDescription={t('To get started, create a user.')}
         emptyStateButtonText={t('Create user')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaUser)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaUser)}
         {...view}
         defaultSubtitle={t('User')}
       />

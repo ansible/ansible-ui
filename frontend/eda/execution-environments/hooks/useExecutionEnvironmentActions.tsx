@@ -2,7 +2,7 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
-import { RouteE } from '../../../Routes';
+import { RouteObj } from '../../../Routes';
 import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
@@ -20,7 +20,7 @@ export function useExecutionEnvironmentActions(view: IEdaView<EdaExecutionEnviro
         label: t('Edit executionEnvironment'),
         onClick: (executionEnvironment: EdaExecutionEnvironment) =>
           navigate(
-            RouteE.EditEdaExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
+            RouteObj.EditEdaExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
           ),
       },
       {

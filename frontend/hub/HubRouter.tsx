@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
-import { RouteE } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { Token } from './access/token/Token';
 import { Approvals } from './administration/approvals/Approvals';
 import { RemoteRegistries } from './administration/remote-registries/RemoteRegistries';
@@ -17,43 +17,30 @@ import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys
 import { HubDashboard } from './dashboard/Dashboard';
 
 export function HubRouter() {
+  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);
+
   return (
     <Routes>
-      <Route
-        path={RouteE.HubAutomationServers.replace(RouteE.Hub, '')}
-        element={<AutomationServers />}
-      />
-      <Route path={RouteE.HubDashboard.replace(RouteE.Hub, '')} element={<HubDashboard />} />
-      <Route path={RouteE.Collections.replace(RouteE.Hub, '')} element={<Collections />} />
-      <Route
-        path={RouteE.UploadCollection.replace(RouteE.Hub, '')}
-        element={<UploadCollection />}
-      />
-      <Route
-        path={RouteE.CollectionDetails.replace(RouteE.Hub, '')}
-        element={<CollectionDetails />}
-      />
+      <Route path={RouteObjWithoutPrefix.HubAutomationServers} element={<AutomationServers />} />
+      <Route path={RouteObjWithoutPrefix.HubDashboard} element={<HubDashboard />} />
+      <Route path={RouteObjWithoutPrefix.Collections} element={<Collections />} />
+      <Route path={RouteObjWithoutPrefix.UploadCollection} element={<UploadCollection />} />
+      <Route path={RouteObjWithoutPrefix.CollectionDetails} element={<CollectionDetails />} />
 
-      <Route path={RouteE.Namespaces.replace(RouteE.Hub, '')} element={<Namespaces />} />
-      <Route
-        path={RouteE.NamespaceDetails.replace(RouteE.Hub, '')}
-        element={<NamespaceDetails />}
-      />
+      <Route path={RouteObjWithoutPrefix.Namespaces} element={<Namespaces />} />
+      <Route path={RouteObjWithoutPrefix.NamespaceDetails} element={<NamespaceDetails />} />
 
-      <Route path={RouteE.Repositories.replace(RouteE.Hub, '')} element={<Repositories />} />
-      <Route path={RouteE.Approvals.replace(RouteE.Hub, '')} element={<Approvals />} />
+      <Route path={RouteObjWithoutPrefix.Repositories} element={<Repositories />} />
+      <Route path={RouteObjWithoutPrefix.Approvals} element={<Approvals />} />
+      <Route path={RouteObjWithoutPrefix.RemoteRegistries} element={<RemoteRegistries />} />
       <Route
-        path={RouteE.RemoteRegistries.replace(RouteE.Hub, '')}
-        element={<RemoteRegistries />}
-      />
-      <Route
-        path={RouteE.HubExecutionEnvironments.replace(RouteE.Hub, '')}
+        path={RouteObjWithoutPrefix.HubExecutionEnvironments}
         element={<ExecutionEnvironments />}
       />
-      <Route path={RouteE.Tasks.replace(RouteE.Hub, '')} element={<Tasks />} />
-      <Route path={RouteE.TaskDetails.replace(RouteE.Hub, '')} element={<TaskDetails />} />
-      <Route path={RouteE.SignatureKeys.replace(RouteE.Hub, '')} element={<SignatureKeys />} />
-      <Route path={RouteE.APIToken.replace(RouteE.Hub, '')} element={<Token />} />
+      <Route path={RouteObjWithoutPrefix.Tasks} element={<Tasks />} />
+      <Route path={RouteObjWithoutPrefix.TaskDetails} element={<TaskDetails />} />
+      <Route path={RouteObjWithoutPrefix.SignatureKeys} element={<SignatureKeys />} />
+      <Route path={RouteObjWithoutPrefix.APIToken} element={<Token />} />
     </Routes>
   );
 }

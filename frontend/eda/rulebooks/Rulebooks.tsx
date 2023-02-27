@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulebookColumns } from './hooks/useRulebookColumns';
@@ -32,7 +32,7 @@ export function Rulebooks() {
         emptyStateTitle={t('No rulebooks yet')}
         emptyStateDescription={t('Please add a project by using the button below')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
         defaultSubtitle={t('Rulebook')}
       />

@@ -7,7 +7,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../common/useItem';
 import { requestPatch, requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { API_PREFIX } from '../constants';
 
@@ -54,7 +54,7 @@ export function EditExecutionEnvironment() {
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(
-          RouteE.EdaExecutionEnvironmentDetails.replace(
+          RouteObj.EdaExecutionEnvironmentDetails.replace(
             ':id',
             newExecutionEnvironment.id.toString()
           )
@@ -72,7 +72,7 @@ export function EditExecutionEnvironment() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
               { label: t('Edit execution environment') },
             ]}
           />
@@ -84,7 +84,7 @@ export function EditExecutionEnvironment() {
           <PageHeader
             title={t('Edit execution environment')}
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
               { label: t('Edit execution environment') },
             ]}
           />
@@ -107,7 +107,7 @@ export function EditExecutionEnvironment() {
         <PageHeader
           title={t('Create execution environment')}
           breadcrumbs={[
-            { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+            { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
             { label: t('Create execution environment') },
           ]}
         />

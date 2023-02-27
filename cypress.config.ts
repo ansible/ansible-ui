@@ -1,5 +1,8 @@
 import codeCoverage from '@cypress/code-coverage/task';
 import { defineConfig } from 'cypress';
+import pkg from 'webpack';
+
+const { DefinePlugin } = pkg;
 
 export default defineConfig({
   viewportWidth: 1600,
@@ -59,9 +62,16 @@ export default defineConfig({
             },
           ],
         },
+        plugins: [
+          new DefinePlugin({
+            'process.env.AWX_ROUTE_PREFIX': JSON.stringify('/ui_next'),
+            'process.env.HUB_ROUTE_PREFIX': JSON.stringify('/hub'),
+            'process.env.EDA_ROUTE_PREFIX': JSON.stringify('/eda'),
+          }),
+        ],
       },
     },
-    specPattern: 'frontend/controller/**/*.cy.tsx',
+    specPattern: 'frontend/awx/**/*.cy.tsx',
     supportFile: 'cypress/support/component.ts',
   },
 });

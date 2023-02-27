@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, SinceCell, TextCell } from '../../framework';
-import { RouteE } from '../Routes';
+import { RouteObj } from '../Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
   const { t } = useTranslation();
@@ -85,7 +85,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
                 ? undefined
                 : () =>
                     navigate(
-                      RouteE.UserDetails.replace(
+                      RouteObj.UserDetails.replace(
                         ':id',
                         (item.summary_fields?.created_by?.id ?? 0).toString()
                       )
@@ -129,7 +129,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
                 ? undefined
                 : () =>
                     history(
-                      RouteE.UserDetails.replace(
+                      RouteObj.UserDetails.replace(
                         ':id',
                         (item.summary_fields?.modified_by?.id ?? 0).toString()
                       )
@@ -166,7 +166,7 @@ export function useOrganizationNameColumn(options?: {
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
-          to={RouteE.OrganizationDetails.replace(
+          to={RouteObj.OrganizationDetails.replace(
             ':id',
             (item.summary_fields?.organization?.id ?? '').toString()
           )}

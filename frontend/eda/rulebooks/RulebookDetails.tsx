@@ -15,7 +15,7 @@ import {
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
 import { useRulebookActions } from './hooks/useRulebookActions';
@@ -92,7 +92,7 @@ export function RulebookDetails() {
       <PageHeader
         title={rulebook?.name}
         breadcrumbs={[
-          { label: t('Rulebooks'), to: RouteE.EdaRulebooks },
+          { label: t('Rulebooks'), to: RouteObj.EdaRulebooks },
           { label: rulebook?.name },
         ]}
         headerActions={
