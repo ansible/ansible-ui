@@ -92,13 +92,11 @@ Cypress.Commands.add('filterByText', (text: string) => {
 });
 
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
+  let csrftoken;
+  cy.getCookie('csrftoken').then((cookie) => (csrftoken = cookie));
   return cy
-    .getCookie('csrftoken')
-    .then((cookie) =>
-      cy
-        .request<T>({ method: 'POST', url, body, headers: { 'X-CSRFToken': cookie.value } })
-        .then((response) => response.body)
-    );
+    .request<T>({ method: 'POST', url, body, headers: { 'X-CSRFToken': csrftoken } })
+    .then((response) => response.body);
 });
 
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
@@ -106,14 +104,14 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
 });
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
-  return cy.getCookie('csrftoken').then((cookie) =>
-    cy.request({
-      method: 'Delete',
-      url,
-      failOnStatusCode: ignoreError ? false : true,
-      headers: { 'X-CSRFToken': cookie.value },
-    })
-  );
+  let csrftoken;
+  cy.getCookie('csrftoken').then((cookie) => (csrftoken = cookie));
+  return cy.request({
+    method: 'Delete',
+    url,
+    failOnStatusCode: ignoreError ? false : true,
+    headers: { 'X-CSRFToken': csrftoken },
+  });
 });
 
 Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
