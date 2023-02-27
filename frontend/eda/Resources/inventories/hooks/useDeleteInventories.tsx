@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../Data';
-import { idKeyFn } from '../../../../hub/useHubView';
+import { idKeyFn } from '../../../../galaxy/useHubView';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './useInventoryColumns';
 import { API_PREFIX } from '../../../constants';
