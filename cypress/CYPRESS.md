@@ -28,23 +28,53 @@ Cypress is being used for both unit and E2E tests.
 
 ## 2. E2E Testing
 
-### Goals
+```mermaid
+graph TD;
+  subgraph localhost
+    cypress --> frontend
+    frontend --> proxy
+  end
+
+  subgraph api server
+      cypress --> api
+      proxy --> api
+  end
+```
+
+### E2E Goals
 
 - Test major user flows theough the UI such as creating, editing, and deleting.
-- Run E2E tests against both a mock API and a live API.
 
-### Getting started
+### E2E Getting started
 
-1. Run the Ansible-UI frontend.
+1. Setup Environment Variables
+
+   | Environment Variable | Description                                                                   |
+   | -------------------- | ----------------------------------------------------------------------------- |
+   | E2E_SERVER           | URL of the server to run E2E tests against. Default: <https://localhost:8043> |
+   | E2E_USERNAME         | username for logging into the E2E server. Default: admin                      |
+   | E2E_PASSWORD         | password for logging into the E2E server. Default: admin                      |
+
+   > Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
+
+2. Run the Ansible-UI.
 
    ```
-   npm run frontend
+   npm start
    ```
 
-2. Run the Cypress UI in mock mode. Mock mode intercepts API calls and runs them against a mock.
+3. Run Cypress
+
+   - To open the Cypress UI
 
    ```
-   npm run cypress:open
+   npm run cypress:open:e2e
+   ```
+
+   - To run Cypress headless
+
+   ```
+   npm run cypress:run:e2e
    ```
 
 ### NPM E2E Commands
