@@ -27,7 +27,7 @@ import { Groups } from './UserAccess/Groups/Groups';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
-import { EditUser } from './UserAccess/Users/EditUser';
+import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { UserDetails } from './UserAccess/Users/UserDetails';
 
 export function EventDrivenRouter() {
@@ -96,7 +96,7 @@ export function EventDrivenRouter() {
       <Route path={RouteObjWithoutPrefix.EdaRules} element={<Rules />} />
 
       <Route path={RouteObjWithoutPrefix.EdaUsers} element={<Users />} />
-      <Route path={RouteObjWithoutPrefix.CreateEdaUser} element={<EditUser />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaUser} element={<CreateUser />} />
       <Route path={RouteObjWithoutPrefix.EditEdaUser} element={<EditUser />} />
       <Route path={RouteObjWithoutPrefix.EdaUserDetails} element={<UserDetails />} />
 
