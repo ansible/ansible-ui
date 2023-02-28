@@ -49,13 +49,13 @@ graph TD;
 
 1. Setup Environment Variables
 
-    | Environment Variable | Description                                                                    |
-    | -------------------- | ------------------------------------------------------------------------------ |
-    | E2E_SERVER           | URL of the server to run E2E tests against.  Default: <https://localhost:8043> |
-    | E2E_USERNAME         | username for logging into the E2E server. Default: admin                       |
-    | E2E_PASSWORD         | password for logging into the E2E server. Default: admin                       |
+   | Environment Variable | Description                                                                   |
+   | -------------------- | ----------------------------------------------------------------------------- |
+   | E2E_SERVER           | URL of the server to run E2E tests against. Default: <https://localhost:8043> |
+   | E2E_USERNAME         | username for logging into the E2E server. Default: admin                      |
+   | E2E_PASSWORD         | password for logging into the E2E server. Default: admin                      |
 
-    > Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
+   > Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
 
 2. Run the Ansible-UI frontend.
 
