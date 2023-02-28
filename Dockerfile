@@ -25,6 +25,7 @@ RUN npm run build:eda
 # bundle eda
 FROM nginx:alpine as eda
 COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./template-variables /etc/nginx/templates/10-variables.conf.template
 COPY --from=eda-builder /ansible-ui/build/eda /usr/share/nginx/html
 
 # final output image uses alpine with minimal dependencies installed 
