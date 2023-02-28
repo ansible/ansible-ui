@@ -57,10 +57,10 @@ graph TD;
 
    > Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
 
-2. Run the Ansible-UI frontend.
+2. Run the Ansible-UI.
 
    ```
-   npm run frontend
+   npm start
    ```
 
 3. Run Cypress
