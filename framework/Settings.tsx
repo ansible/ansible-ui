@@ -105,67 +105,70 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           {translations.closeText}
         </Button>,
       ]}
+      hasNoBodyWrapper
     >
-      <Form isHorizontal={settings.formLayout === 'horizontal'}>
-        <FormGroupSelect
-          id="theme"
-          label="Theme"
-          value={settings.theme ?? 'system'}
-          onSelect={(_, theme) =>
-            setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
-          }
-          placeholderText="Select theme"
-        >
-          <SelectOption value="system">{'System default'}</SelectOption>
-          <SelectOption value="light">{'Light'}</SelectOption>
-          <SelectOption value="dark">{'Dark'}</SelectOption>
-        </FormGroupSelect>
-        <FormGroupSelect
-          id="table-layout"
-          label="Table Layout"
-          value={settings.tableLayout ?? 'comfortable'}
-          onSelect={(_, tableLayout) =>
-            setSettings({
-              ...settings,
-              tableLayout: tableLayout as 'compact' | 'comfortable',
-            })
-          }
-          placeholderText="Select table layout"
-        >
-          <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
-          <SelectOption value="compact">{'Compact'}</SelectOption>
-        </FormGroupSelect>
-        <FormGroupSelect
-          id="form-columns"
-          label="Form Columns"
-          value={settings.formColumns ?? 'multiple'}
-          onSelect={(_, formColumns) =>
-            setSettings({
-              ...settings,
-              formColumns: formColumns as 'multiple' | 'single',
-            })
-          }
-          placeholderText="Select form columns"
-        >
-          <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
-          <SelectOption value="single">{'Single column'}</SelectOption>
-        </FormGroupSelect>
-        <FormGroupSelect
-          id="form-layout"
-          label="Form Layout"
-          value={settings.formLayout ?? 'vertical'}
-          onSelect={(_, formLayout) =>
-            setSettings({
-              ...settings,
-              formLayout: formLayout as 'vertical' | 'horizontal',
-            })
-          }
-          placeholderText="Select form layout"
-        >
-          <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
-          <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
-        </FormGroupSelect>
-      </Form>
+      <div style={{ padding: 24 }}>
+        <Form isHorizontal={settings.formLayout === 'horizontal'}>
+          <FormGroupSelect
+            id="theme"
+            label="Theme"
+            value={settings.theme ?? 'system'}
+            onSelect={(_, theme) =>
+              setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
+            }
+            placeholderText="Select theme"
+          >
+            <SelectOption value="system">{'System default'}</SelectOption>
+            <SelectOption value="light">{'Light'}</SelectOption>
+            <SelectOption value="dark">{'Dark'}</SelectOption>
+          </FormGroupSelect>
+          <FormGroupSelect
+            id="table-layout"
+            label="Table Layout"
+            value={settings.tableLayout ?? 'comfortable'}
+            onSelect={(_, tableLayout) =>
+              setSettings({
+                ...settings,
+                tableLayout: tableLayout as 'compact' | 'comfortable',
+              })
+            }
+            placeholderText="Select table layout"
+          >
+            <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
+            <SelectOption value="compact">{'Compact'}</SelectOption>
+          </FormGroupSelect>
+          <FormGroupSelect
+            id="form-columns"
+            label="Form Columns"
+            value={settings.formColumns ?? 'multiple'}
+            onSelect={(_, formColumns) =>
+              setSettings({
+                ...settings,
+                formColumns: formColumns as 'multiple' | 'single',
+              })
+            }
+            placeholderText="Select form columns"
+          >
+            <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
+            <SelectOption value="single">{'Single column'}</SelectOption>
+          </FormGroupSelect>
+          <FormGroupSelect
+            id="form-layout"
+            label="Form Layout"
+            value={settings.formLayout ?? 'vertical'}
+            onSelect={(_, formLayout) =>
+              setSettings({
+                ...settings,
+                formLayout: formLayout as 'vertical' | 'horizontal',
+              })
+            }
+            placeholderText="Select form layout"
+          >
+            <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
+            <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
+          </FormGroupSelect>
+        </Form>
+      </div>
     </Modal>
   );
 }
