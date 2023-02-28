@@ -420,7 +420,7 @@
   "Error validating organization": {
     " Please reload the page": "E_R_R_O_R_ _V_A_L_I_D_A_T_I_N_G_ _O_R_G_A_N_I_Z_A_T_I_O_N_._ _P_L_E_A_S_E_ _R_E_L_O_A_D_ _T_H_E_ _P_A_G_E_."
   },
-  "Event-driven Ansible server": "E_V_E_N_T_-_D_R_I_V_E_N_ _A_N_S_I_B_L_E_ _S_E_R_V_E_R",
+  "EDA server": "E_D_A_ _S_E_R_V_E_R",
   "Examples": "E_X_A_M_P_L_E_S",
   "Execute": "E_X_E_C_U_T_E",
   "Execution": "E_X_E_C_U_T_I_O_N",
@@ -1026,7 +1026,7 @@
   "Welcome to": "W_E_L_C_O_M_E_ _T_O",
   "Welcome to Ansible": "W_E_L_C_O_M_E_ _T_O_ _A_N_S_I_B_L_E",
   "Welcome to AWX": "W_E_L_C_O_M_E_ _T_O_ _A_W_X",
-  "Welcome to Event Driven Automation": "W_E_L_C_O_M_E_ _T_O_ _E_V_E_N_T_ _D_R_I_V_E_N_ _A_U_T_O_M_A_T_I_O_N",
+  "Welcome to EDA Server": "W_E_L_C_O_M_E_ _T_O_ _E_D_A_ _S_E_R_V_E_R",
   "Workflow Admin": "W_O_R_K_F_L_O_W_ _A_D_M_I_N",
   "Workflow Job": "W_O_R_K_F_L_O_W_ _J_O_B",
   "Workflow job template": "W_O_R_K_F_L_O_W_ _J_O_B_ _T_E_M_P_L_A_T_E",

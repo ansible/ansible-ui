@@ -142,7 +142,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   AwxAutomationServers: `${awxRoutePrefix}/automation-servers`,
   HubAutomationServers: `${hubRoutePrefix}/automation-servers`,
 
-  // Event Driven Automation
+  // EDA server prefix
   Eda: `${edaRoutePrefix}`,
 
   EdaAutomationServers: `${edaRoutePrefix}/automation-servers`,
