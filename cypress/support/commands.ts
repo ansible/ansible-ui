@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
+import { Group, Host, Inventory } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
 
 declare global {
   namespace Cypress {
@@ -31,6 +34,10 @@ declare global {
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
       requestGet<T>(url: string): Chainable<T>;
       requestDelete(url: string, ignoreError?: boolean): Chainable;
+
+      createInventoryHostGroup(
+        organization: Organization
+      ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
     }
   }
 }
@@ -102,6 +109,30 @@ Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: P
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
+
+Cypress.Commands.add(
+  'createInventoryHostGroup',
+  function createInventoryHostGroup(organization: Organization) {
+    cy.requestPost<Inventory>('/api/v2/inventories/', {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => {
+      cy.requestPost<Host>('/api/v2/hosts/', {
+        name: 'E2E Host ' + randomString(4),
+        inventory: inventory.id,
+      }).then((host) => {
+        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
+          name: 'E2E Group ' + randomString(4),
+          inventory: inventory.id,
+        }).then((group) => ({
+          inventory,
+          host,
+          group,
+        }));
+      });
+    });
+  }
+);
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   cy.getCookie('csrftoken').then((cookie) =>
