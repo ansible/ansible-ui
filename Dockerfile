@@ -12,11 +12,20 @@ WORKDIR /ansible-ui
 COPY --from=package /ansible-ui/package*.json ./
 RUN npm ci --omit=dev --omit=optional --ignore-scripts
 
-# build the product
+# build ansible-ui
 FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as builder
 COPY . .
-ARG VERSION
-RUN VERSION=$VERSION DISCLAIMER=true npm run build
+RUN DISCLAIMER=true npm run build
+
+# build eda
+FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as eda-builder
+COPY . .
+RUN npm run build:eda
+
+# bundle eda
+FROM nginx:alpine as eda
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY --from=eda-builder /ansible-ui/build/eda /usr/share/nginx/html
 
 # final output image uses alpine with minimal dependencies installed 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
