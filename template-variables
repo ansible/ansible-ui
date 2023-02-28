@@ -1,0 +1,3 @@
+map $host $api_server {
+  default "$API_SERVER";
+}
