@@ -45,7 +45,7 @@ build-eda() {
 # execute
 #
 log-debug "COMMAND: ${CMD}"
-log-debug "VERSION: ${VERSION}"
+log-debug "IMAGE: ${IMAGE}"
 
 case ${CMD} in
   "build-eda") build-eda "${IMAGE}" ;;
