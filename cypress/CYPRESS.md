@@ -59,6 +59,12 @@ Cypress is being used for both unit and E2E tests.
 | `npm run cypress:open:live` | Run Cypress UI against a live API.                                     |
 | `npm run coverage`          | After tests have finished, view test coverage.                         |
 
+| Environment Variable | Description                                |
+| -------------------- | ------------------------------------------ |
+| E2E_SERVER           | URL of the server to run E2E tests against |
+| E2E_USERNAME         | username for logging into the E2E server   |
+| E2E_PASSWORD         | password for logging into the E2E server   |
+
 ### Testing Philosophy
 
 #### Tests should be self contained
