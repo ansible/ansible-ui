@@ -1,4 +1,4 @@
-name: NPM Upgrade
+name: Upgrade
 
 on:
   workflow_dispatch:
@@ -6,8 +6,8 @@ on:
     - cron: '15 1 * * 1'
 
 jobs:
-  npm-upgrade:
-    name: NPM Upgrade
+  upgrade:
+    name: Upgrade package dependencies
     if: (github.event_name == 'schedule' && github.repository == 'ansible/ansible-ui') || (github.event_name != 'schedule')
     runs-on: ubuntu-latest
     concurrency: upgrade
