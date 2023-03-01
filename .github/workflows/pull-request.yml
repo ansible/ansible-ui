@@ -37,6 +37,7 @@ jobs:
 
   e2e:
     name: E2E
+    needs: packages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
