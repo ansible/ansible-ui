@@ -107,7 +107,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       ]}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 'var(--pf-global--spacer--lg)' }}>
         <Form isHorizontal={settings.formLayout === 'horizontal'}>
           <FormGroupSelect
             id="theme"
