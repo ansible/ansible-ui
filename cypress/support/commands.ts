@@ -62,15 +62,21 @@ Cypress.Commands.add('login', () => {
       cy.setCookie('server', server);
       const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
       const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'admin';
+      let serverType = 'AWX Ansible server';
+      switch (Cypress.env('servertype')) {
+        case 'EDA':
+          serverType = 'EDA server';
+          break;
+      }
 
       cy.clickButton(/^Add automation server$/);
-      cy.typeByLabel(/^Name$/, 'AWX');
+      cy.typeByLabel(/^Name$/, 'E2E');
       cy.typeByLabel(/^Url$/, server);
       cy.get('.pf-c-select__toggle').click();
-      cy.clickButton('AWX Ansible server');
+      cy.clickButton(serverType);
       cy.get('button[type=submit]').click();
 
-      cy.contains('a', /^AWX$/).click();
+      cy.contains('a', /^E2E$/).click();
       cy.typeByLabel(/^Username$/, username);
       cy.typeByLabel(/^Password$/, password);
       cy.get('button[type=submit]').click();
