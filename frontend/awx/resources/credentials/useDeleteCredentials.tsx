@@ -4,7 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../common/columns';
 import { getItemKey, requestDelete } from '../../../Data';
 import { Credential } from '../../interfaces/Credential';
-import { useCredentialsColumns } from './Credentials';
+import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 
 export function useDeleteCredentials(onComplete: (credentials: Credential[]) => void) {
   const { t } = useTranslation();

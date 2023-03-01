@@ -31,6 +31,7 @@ export function PageFormSelectOption<
     control,
     formState: { isSubmitting },
   } = useFormContext<TFieldValues>();
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={props.name}
@@ -39,7 +40,7 @@ export function PageFormSelectOption<
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupSelectOption
           {...props}
-          id={props.id ?? props.name}
+          id={props.id ?? props.name.split('.').join('-')}
           value={value as TSelection}
           onSelect={(_, value) => onChange(value)}
           helperTextInvalid={error?.message}

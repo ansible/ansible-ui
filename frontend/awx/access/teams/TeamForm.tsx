@@ -120,7 +120,7 @@ function TeamInputs() {
         label={t('Description')}
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" />
+      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" isRequired />
     </>
   );
 }

@@ -8,7 +8,12 @@ import { useSelectOrganization } from '../hooks/useSelectOrganization';
 export function PageFormOrganizationSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: { name: TFieldName; organizationPath?: string; organizationIdPath?: string }) {
+>(props: {
+  name: TFieldName;
+  organizationPath?: string;
+  organizationIdPath?: string;
+  isRequired?: boolean;
+}) {
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
   const { setValue } = useFormContext();
@@ -38,7 +43,7 @@ export function PageFormOrganizationSelect<
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }
