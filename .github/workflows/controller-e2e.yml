@@ -3,10 +3,17 @@ name: E2E
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      E2E_SERVER:
+        required: true
+      E2E_USERNAME:
+        required: true
+      E2E_PASSWORD:
+        required: true
 
 jobs:
-  e2e:
-    name: E2E
+  controller-e2e:
+    name: Controller E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
