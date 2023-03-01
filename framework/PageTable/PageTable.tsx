@@ -218,7 +218,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   }
 
   return (
-    <>
+    <PageSection>
       <PageTableToolbar
         {...props}
         openColumnModal={openColumnModal}
@@ -258,7 +258,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         <PagePagination {...props} />
       )}
       {columnModal}
-    </>
+    </PageSection>
   );
 }
 
