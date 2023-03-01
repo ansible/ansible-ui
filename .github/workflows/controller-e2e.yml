@@ -12,8 +12,8 @@ on:
         required: true
 
 jobs:
-  e2e:
-    name: E2E
+  controller-e2e:
+    name: Controller E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

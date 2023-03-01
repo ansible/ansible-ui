@@ -30,17 +30,17 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  cypress-e2e:
-    name: Cypress E2E
+  controller-e2e:
+    name: Controller E2E
     needs: packages
-    uses: ./.github/workflows/e2e.yml
+    uses: ./.github/workflows/controller-e2e.yml
     secrets:
       E2E_SERVER: ${{ secrets.E2E_SERVER }}
       E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
 
-  cypress-unit:
-    name: Cypress Unit Tests
+  component-tests:
+    name: Component Tests
     runs-on: ubuntu-latest
     needs: packages
     steps:
@@ -60,7 +60,7 @@ jobs:
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run cypress:run:component
 
-  eslint:
+  checks:
     name: ESLint - Prettier - TSC
     runs-on: ubuntu-latest
     needs: packages
