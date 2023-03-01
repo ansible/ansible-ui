@@ -34,6 +34,10 @@ jobs:
     name: Cypress E2E
     needs: packages
     uses: ./.github/workflows/e2e.yml
+    secrets:
+      E2E_SERVER: ${{ secrets.E2E_SERVER }}
+      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
 
   cypress-unit:
     name: Cypress Unit Tests

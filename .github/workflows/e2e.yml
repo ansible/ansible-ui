@@ -3,6 +3,13 @@ name: E2E
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      E2E_SERVER:
+        required: true
+      E2E_USERNAME:
+        required: true
+      E2E_PASSWORD:
+        required: true
 
 jobs:
   e2e:
