@@ -34,7 +34,12 @@ export function PageDashboardChart(props: {
           width={size.width}
           height={size.height}
           containerComponent={
-            <ChartVoronoiContainer labels={({ datum }) => `${datum.x}: ${datum.y}`} />
+            <ChartVoronoiContainer
+              labels={(point: { datum: { x: string | number; y: string | number } }) => {
+                const datum = point.datum;
+                return `${datum.x}: ${datum.y}`;
+              }}
+            />
           }
         >
           <ChartAxis
