@@ -137,7 +137,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
 
   return (
     <PageForm
-      submitText={t('Log In')}
+      submitText={t('Log in')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       isVertical
