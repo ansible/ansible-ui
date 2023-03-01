@@ -33,7 +33,7 @@ jobs:
   e2e:
     needs:
       - packages
-    uses: ./e2e.yml
+    uses: ansible/ansible-ui/.github/workflows/e2e.yml
 
   cypress-unit:
     name: Cypress Unit Tests
