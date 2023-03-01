@@ -6,6 +6,8 @@ import { useFrameworkTranslations } from './useFrameworkTranslations';
 export function PageBody(props: {
   children?: ReactNode;
   disablePadding?: boolean;
+  borderTop?: boolean;
+  borderBottom?: boolean;
   style?: CSSProperties;
 }) {
   const usePadding = useBreakpoint('xxl') && props.disablePadding !== true;

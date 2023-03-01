@@ -225,9 +225,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         showSelect={showSelect}
         viewType={viewType}
         setViewType={setViewType}
+        bottomBorder
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding>
+        <PageBody borderTop borderBottom>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
@@ -255,7 +256,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         </Scrollable>
       )}
       {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-        <PagePagination {...props} />
+        <PagePagination {...props} topBorder />
       )}
       {columnModal}
     </>
