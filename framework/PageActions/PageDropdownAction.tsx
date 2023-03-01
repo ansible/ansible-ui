@@ -58,10 +58,11 @@ export function PageDropdownAction<T extends object>(props: {
         isDisabled={isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
-        toggleIndicator={null}
+        toggleIndicator={Icon && iconOnly ? null : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+        icon={Icon ? <Icon /> : undefined}
       >
-        {toggleIcon}
+        {iconOnly ? undefined : label}
       </DropdownToggle>
     ) : (
       <KebabToggle

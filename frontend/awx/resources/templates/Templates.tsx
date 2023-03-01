@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -53,17 +53,15 @@ export function Templates() {
         type: PageActionType.dropdown,
         variant: ButtonVariant.primary,
         label: t('Create template'),
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         options: [
           {
             type: PageActionType.button,
-            icon: PlusIcon,
             label: t('Create Job Template'),
             onClick: () => navigate(RouteObj.CreateJobTemplate),
           },
           {
             type: PageActionType.button,
-            icon: PlusIcon,
             label: t('Create Workflow Job Template'),
             onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
           },
