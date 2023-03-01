@@ -54,7 +54,7 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:run:unit
+      - run: npm run cypress:run:component
 
   eslint:
     name: ESLint - Prettier - TSC
