@@ -51,5 +51,9 @@ export function PageTableCards<T extends object>(props: PageTableCardsProps<T>) 
     defaultCardSubtitle,
   ]);
 
-  return <PageSection style={{ flexGrow: 1 }}>{catalogCards}</PageSection>;
+  return (
+    <PageSection style={{ flexGrow: 1, paddingLeft: 0, paddingRight: 0 }}>
+      {catalogCards}
+    </PageSection>
+  );
 }

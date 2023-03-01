@@ -233,20 +233,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {viewType === PageTableViewTypeE.List && (
         <Scrollable>
-          <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
-            <div
-              style={{
-                borderLeft: usePadding
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-                borderRight: usePadding
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-              }}
-            >
-              <PageTableList {...props} showSelect={showSelect} />
-            </div>
-          </PageSection>
+          <div
+            style={{
+              borderLeft: usePadding ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+              borderRight: usePadding ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+            }}
+          >
+            <PageTableList {...props} showSelect={showSelect} />
+          </div>
         </Scrollable>
       )}
       {viewType === PageTableViewTypeE.Cards && (
