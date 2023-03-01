@@ -31,9 +31,9 @@ jobs:
         run: npm ci
 
   e2e:
-    needs:
-      - packages
-    uses: ansible/ansible-ui/.github/workflows/e2e.yml
+    name: E2E
+    needs: packages
+    uses: ./.github/workflows/e2e.yml
 
   cypress-unit:
     name: Cypress Unit Tests
