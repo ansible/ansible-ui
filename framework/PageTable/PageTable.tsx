@@ -228,7 +228,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         bottomBorder
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody borderTop borderBottom>
+        <PageBody>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
