@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -37,18 +37,17 @@ export function InstanceGroups() {
     () => [
       {
         type: PageActionType.dropdown,
+        icon: PlusCircleIcon,
         variant: ButtonVariant.primary,
         label: t('Create group'),
         options: [
           {
             type: PageActionType.button,
-            icon: PlusIcon,
             label: t('Create container group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
           {
             type: PageActionType.button,
-            icon: PlusIcon,
             label: t('Create instance group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
