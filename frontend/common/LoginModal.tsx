@@ -167,7 +167,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
               : automationServer?.type === AutomationServerType.Galaxy
               ? t('Galaxy Ansible server')
               : automationServer?.type === AutomationServerType.EDA
-              ? t('Event-driven Ansible server')
+              ? t('EDA server')
               : t('Unknown'),
         }))}
         isRequired

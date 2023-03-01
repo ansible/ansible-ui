@@ -38,7 +38,7 @@ export function AutomationServerSwitcher() {
                 : automationServer?.type === AutomationServerType.Galaxy
                 ? t('Galaxy Ansible server')
                 : automationServer?.type === AutomationServerType.EDA
-                ? t('Event-driven Ansible server')
+                ? t('EDA server')
                 : t('Unknown')}
             </Text>
           </Flex>
@@ -68,7 +68,7 @@ export function AutomationServerSwitcher() {
                   : automationServer?.type === AutomationServerType.Galaxy
                   ? t('Galaxy Ansible server')
                   : automationServer?.type === AutomationServerType.EDA
-                  ? t('Event-driven Ansible server')
+                  ? t('EDA server')
                   : t('Unknown')}
               </Text>
             </Flex>

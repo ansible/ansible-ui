@@ -18,11 +18,11 @@ The project is broken into three parts.
 
 In addition the frontend is broken down into the structure needed for supporting both AWX, hub, and EDA.
 
-| Path                   | Description                                           |
-| ---------------------- | ----------------------------------------------------- |
-| /frontend/awx          | The source code for the AWX UI.                       |
-| /frontend/hub          | The source code for the hub UI.                       |
-| /frontend/event-driven | The source code for the event driven architecture UI. |
+| Path                   | Description                            |
+| ---------------------- | -------------------------------------- |
+| /frontend/awx          | The source code for the AWX UI.        |
+| /frontend/hub          | The source code for the hub UI.        |
+| /frontend/event-driven | The source code for the EDA server UI. |
 
 Under each one of these, the directory structure should match the use navigation that is shown in the UI.
 
