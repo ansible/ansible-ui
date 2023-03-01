@@ -30,9 +30,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  e2e:
-    needs:
-      - packages
+  cypress-e2e:
+    name: Cypress E2E
+    needs: packages
     uses: ./.github/workflows/e2e.yml
 
   cypress-unit:
