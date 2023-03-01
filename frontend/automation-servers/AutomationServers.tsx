@@ -118,7 +118,7 @@ export function useAutomationServersColumns(_options?: {
             case AutomationServerType.Galaxy:
               return <TextCell text={t('Galaxy Ansible server')} />;
             case AutomationServerType.EDA:
-              return <TextCell text={t('Event-driven Ansible server')} />;
+              return <TextCell text={t('EDA server')} />;
             default:
               return <TextCell text={t('Unknown')} />;
           }

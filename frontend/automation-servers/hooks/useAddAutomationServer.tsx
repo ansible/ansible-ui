@@ -93,7 +93,7 @@ export function AddAutomationServerDialog() {
                 value: AutomationServerType.Galaxy,
               },
               {
-                label: t('Event-driven Ansible server'),
+                label: t('EDA server'),
                 description: t(
                   'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
                 ),

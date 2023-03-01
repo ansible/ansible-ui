@@ -391,7 +391,7 @@
   "Error validating organization": {
     " Please reload the page": "Error validating organization. Please reload the page."
   },
-  "Event-driven Ansible server": "Event-driven Ansible server",
+  "EDA server": "EDA server",
   "Examples": "Examples",
   "Execute": "Execute",
   "Execution": "Execution",
@@ -527,7 +527,7 @@
   "License": "License",
   "Limit": "Limit",
   "Local": "Local",
-  "Log In": "Log In",
+  "Log in": "Log in",
   "Logout": "Logout",
   "Machine": "Machine",
   "Management Job": "Management Job",
@@ -975,7 +975,7 @@
   "Welcome to": "Welcome to",
   "Welcome to Ansible": "Welcome to Ansible",
   "Welcome to AWX": "Welcome to AWX",
-  "Welcome to Event Driven Automation": "Welcome to Event Driven Automation",
+  "Welcome to EDA Server": "Welcome to EDA Server",
   "Workflow Admin": "Workflow Admin",
   "Workflow Job": "Workflow Job",
   "Workflow job template": "Workflow job template",

@@ -137,7 +137,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
 
   return (
     <PageForm
-      submitText={t('Log In')}
+      submitText={t('Log in')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       isVertical
@@ -167,7 +167,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
               : automationServer?.type === AutomationServerType.Galaxy
               ? t('Galaxy Ansible server')
               : automationServer?.type === AutomationServerType.EDA
-              ? t('Event-driven Ansible server')
+              ? t('EDA server')
               : t('Unknown'),
         }))}
         isRequired
