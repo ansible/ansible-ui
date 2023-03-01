@@ -1,8 +1,10 @@
 import { CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { FormGroupSelectOption } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { RouteObj } from '../../../Routes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 
 export function DashboardJobsCard() {
@@ -14,7 +16,9 @@ export function DashboardJobsCard() {
       <CardHeader>
         <Flex style={{ width: '100%' }} spaceItems={{ default: 'spaceItemsSm' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            <CardTitle>{t('Jobs')}</CardTitle>
+            <Link to={RouteObj.Jobs}>
+              <CardTitle>{t('Jobs')}</CardTitle>
+            </Link>
           </FlexItem>
           <FlexItem>
             <FormGroupSelectOption<DashboardJobPeriod>

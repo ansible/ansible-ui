@@ -1,6 +1,6 @@
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import useSWR from 'swr';
 import { pfDanger, pfSuccess } from '../../../../framework';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
@@ -25,7 +25,12 @@ export function JobsChart(props: {
     (url: string) => fetch(url).then((r) => r.json())
   );
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading)
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
 
   const reducer = (tuple: [number, number]) => {
     const date = new Date(tuple[0] * 1000);
