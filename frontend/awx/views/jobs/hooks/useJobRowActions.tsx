@@ -49,6 +49,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         type: PageActionType.dropdown,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
+        iconOnly: true,
         label: t(`Relaunch using host parameters`),
         isHidden: (job: UnifiedJob) =>
           !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||

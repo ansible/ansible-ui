@@ -100,6 +100,7 @@ export function PagePinnedAction<T extends object>(props: {
           position={DropdownPosition.right}
           isDisabled={Boolean(isDisabled)}
           tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
+          variant={action.variant}
           // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       );
