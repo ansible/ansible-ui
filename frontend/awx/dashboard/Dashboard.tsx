@@ -10,10 +10,6 @@ import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDon
 import { ItemsResponse, useGet2 } from '../../Data';
 import { RouteObj } from '../../Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
-import { Host } from '../interfaces/Host';
-import { Inventory } from '../interfaces/Inventory';
-import { Project } from '../interfaces/Project';
-import { UnifiedJob } from '../interfaces/UnifiedJob';
 import { DashboardJobsCard } from './cards/DashboardJobs';
 import { OnboardExecutionEnvironments } from './cards/OnboardExecutionEnvironments';
 import { OnboardInventories } from './cards/OnboardInventories';
@@ -209,42 +205,6 @@ function useExecutionEnvironments(query?: Record<string, string | number | boole
     url: '/api/v2/execution_environments/',
     query,
     errorTitle: t('Error querying execution environments.'),
-  });
-}
-
-function useInventories(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
-  return useAwxItemsResponse<Inventory>({
-    url: '/api/v2/inventories/',
-    query,
-    errorTitle: t('Error querying inventories.'),
-  });
-}
-
-function useHosts(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
-  return useAwxItemsResponse<Host>({
-    url: '/api/v2/hosts/',
-    query,
-    errorTitle: t('Error querying hosts.'),
-  });
-}
-
-function useProjects(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
-  return useAwxItemsResponse<Project>({
-    url: '/api/v2/projects/',
-    query,
-    errorTitle: t('Error querying projects.'),
-  });
-}
-
-function useUnifiedJobs(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
-  return useAwxItemsResponse<UnifiedJob>({
-    url: '/api/v2/unified_jobs/',
-    query,
-    errorTitle: t('Error querying unified jobs.'),
   });
 }
 
