@@ -30,14 +30,14 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  controller-e2e:
-    name: Controller E2E
+  awx-e2e:
+    name: AWX E2E
     needs: packages
-    uses: ./.github/workflows/controller-e2e.yml
+    uses: ./.github/workflows/awx-e2e.yml
     secrets:
-      E2E_SERVER: ${{ secrets.E2E_SERVER }}
-      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      AWX_SERVER: ${{ secrets.AWX_SERVER }}
+      AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
 
   component-tests:
     name: Component Tests

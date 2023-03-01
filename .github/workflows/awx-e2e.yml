@@ -1,19 +1,19 @@
-name: E2E
+name: AWX E2E
 
 on:
   workflow_dispatch:
   workflow_call:
     secrets:
-      E2E_SERVER:
+      AWX_SERVER:
         required: true
-      E2E_USERNAME:
+      AWX_USERNAME:
         required: true
-      E2E_PASSWORD:
+      AWX_PASSWORD:
         required: true
 
 jobs:
-  controller-e2e:
-    name: Controller E2E
+  awx-e2e:
+    name: AWX E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,8 +33,8 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm run cypress:start:e2e
+      - run: npm run cypress:start:awx
         env:
-          E2E_SERVER: ${{ secrets.E2E_SERVER }}
-          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+          AWX_SERVER: ${{ secrets.AWX_SERVER }}
+          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
