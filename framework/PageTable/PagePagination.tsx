@@ -9,6 +9,7 @@ export type PagePaginationProps = {
   setPage: (page: number) => void;
   setPerPage: (perPage: number) => void;
   style?: CSSProperties;
+  topBorder?: boolean;
 };
 
 export function PagePagination(props: PagePaginationProps) {
@@ -34,6 +35,7 @@ export function PagePagination(props: PagePaginationProps) {
         // marginTop: -1,
         paddingTop: compact ? 4 : 6,
         paddingBottom: compact ? 4 : 6,
+        borderTop: props.topBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
       className="dark-2"
     />
