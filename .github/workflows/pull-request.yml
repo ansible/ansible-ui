@@ -125,11 +125,8 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          env: server=${AWX_SERVER},username=${AWX_USERNAME},password=${AWX_PASSWORD},servertype=AWX
+          env: server=${{ secrets.AWX_SERVER }},username=${{ secrets.AWX_USERNAME }},password=${{ secrets.AWX_PASSWORD }},servertype=AWX
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          AWX_SERVER: ${{ secrets.AWX_SERVER }}
-          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
-          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
