@@ -181,6 +181,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               errorStateTitle="Error"
               emptyStateTitle="No items"
               autoHidePagination={true}
+              disableBodyPadding
             />
           </div>
           {confirmText && actionableItems.length > 0 && (
