@@ -95,7 +95,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1, 2]
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -126,6 +126,7 @@ jobs:
           record: true
           parallel: true
           env: server=${{ secrets.AWX_SERVER }},username=${{ secrets.AWX_USERNAME }},password=${{ secrets.AWX_PASSWORD }},servertype=AWX
+          video: false
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
