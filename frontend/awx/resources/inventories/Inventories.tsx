@@ -11,12 +11,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-} from '../../../common/columns';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
+import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
@@ -85,6 +81,7 @@ export function Inventories() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventories')}
         emptyStateTitle={t('No inventories yet')}
+        expandedRow={ItemDescriptionExpandedRow<Inventory>}
         {...view}
       />
     </PageLayout>
@@ -119,12 +116,11 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
     ...options,
     onClick: nameClick,
   });
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Inventory>[]>(
-    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, createdColumn, modifiedColumn],
+    [nameColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
