@@ -30,15 +30,26 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  awx-e2e:
-    name: AWX E2E
+  checks:
+    name: ESLint - Prettier - TSC
+    runs-on: ubuntu-latest
     needs: packages
-    uses: ./.github/workflows/awx-e2e.yml
-    secrets:
-      AWX_SERVER: ${{ secrets.AWX_SERVER }}
-      AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
-      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - run: npm run checks
 
   component-tests:
     name: Component Tests
@@ -63,23 +74,50 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
-  checks:
-    name: ESLint - Prettier - TSC
+  image:
+    name: Docker Image
     runs-on: ubuntu-latest
-    needs: packages
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:dependencies --target dependencies --tag dependencies --tag quay.io/ansible/ansible-ui:dependencies .
+      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: docker save ansible-ui > ansible-ui.tar
+      - uses: actions/upload-artifact@v3
         with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
+          path: ansible-ui.tar
+
+  awx-e2e:
+    name: AWX E2E
+    runs-on: ubuntu-latest
+    needs: image
+    # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
+    # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+    # Also see warning here https://github.com/cypress-io/github-action#parallel
+    strategy:
+      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      matrix:
+        containers: [1, 2] # Uses 2 parallel instances
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run checks
+          name: ansible-ui.tar
+      - run: docker load ansible-ui.tar
+      - name: Cypress run
+        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v4
+        with:
+          # Starts web server for E2E tests - replace with your own server invocation
+          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
+          start: npm run docker:run
+          wait-on: 'https://localhost:3002' # Waits for above
+          # Records to Cypress Cloud
+          # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
+          record: true
+          parallel: true # Runs test in parallel using settings above
+        env:
+          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
+          # in GitHub repo → Settings → Secrets → Actions
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
