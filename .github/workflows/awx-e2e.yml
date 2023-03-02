@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npm run cypress:start:awx
+      - run: npm run cypress:cicd:awx
         env:
           AWX_SERVER: ${{ secrets.AWX_SERVER }}
           AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
