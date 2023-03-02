@@ -1,163 +1,60 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Bullseye, Spinner } from '@patternfly/react-core';
+import useSWR from 'swr';
 import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { useAutomationServers } from '../../../automation-servers/contexts/AutomationServerProvider';
-import { ItemsResponse, requestGet } from '../../../Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useDB } from './indexdb';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
 
-interface IJobData {
-  jobs: { [id: number]: UnifiedJobSummary };
-  history: { [date: string]: { success: number; failure: number } };
+interface IJobChartData {
+  jobs: { failed: [number, number][]; successful: [number, number][] };
 }
 
-export function JobsChart(props: { height?: number }) {
-  const [data, setData] = useState<IJobData>(() => {
-    const data: IJobData = {
-      jobs: {},
-      history: {},
-    };
-    let now = Date.now();
-    for (let i = 0; i <= 31; i++) {
-      const date = new Date(now);
-      const label = new Date(date.toDateString()).toISOString();
-      if (!data.history[label]) data.history[label] = { success: 0, failure: 0 };
-      now -= 24 * 60 * 60 * 1000;
-    }
-    return data;
-  });
+export type DashboardJobPeriod = 'month' | 'two_weeks' | 'week' | 'day';
+export type DashboardJobType = 'all' | 'inv_sync' | 'scm_update' | 'playbook_run';
 
-  const { automationServer } = useAutomationServers();
-  const db = useDB(automationServer?.url ?? '');
+export function JobsChart(props: {
+  height?: number;
+  period?: DashboardJobPeriod;
+  jobType?: DashboardJobType;
+}) {
+  const { period, jobType } = props;
 
-  const updateJobs = useCallback(
-    (jobs: UnifiedJobSummary[], disablePut?: boolean) => {
-      setData((data) => {
-        for (const job of jobs) {
-          if (!disablePut) void db?.put('jobHistory', job);
-
-          const existingJob = data.jobs[job.id];
-          if (existingJob) {
-            const existingDate = new Date(
-              new Date(existingJob.finished).toDateString()
-            ).toISOString();
-            if (data.history[existingDate]) {
-              if (existingJob.failed) {
-                data.history[existingDate].failure--;
-              } else if (existingJob.finished) {
-                data.history[existingDate].success--;
-              }
-            }
-          }
-
-          if (new Date(job.finished).valueOf() < Date.now() - 31 * 24 * 60 * 60 * 1000) continue;
-          data.jobs[job.id] = job;
-          const label = new Date(new Date(job.finished).toDateString()).toISOString();
-          if (!data.history[label]) data.history[label] = { success: 0, failure: 0 };
-          if (job.failed) {
-            data.history[label].failure++;
-          } else if (job.finished) {
-            data.history[label].success++;
-          }
-        }
-
-        return { ...data };
-      });
-    },
-    [db]
+  const { data, isLoading } = useSWR<IJobChartData>(
+    `/api/v2/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
+    (url: string) => fetch(url).then((r) => r.json())
   );
 
-  useEffect(() => {
-    const abortController = new AbortController();
+  if (isLoading)
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
 
-    async function up() {
-      if (db === undefined) return;
-      const jobs = await db.getAll('jobHistory');
-      updateJobs(jobs, true);
-      let lastFinished: Date | undefined;
-      for (const job of jobs) {
-        if ('finished' in job && typeof job.finished === 'string') {
-          if (!lastFinished) {
-            lastFinished = new Date(job.finished);
-          } else {
-            const date = new Date(job.finished);
-            if (date > lastFinished) lastFinished = date;
-          }
-        }
-      }
-      if (!lastFinished) lastFinished = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
-      queryJobs(updateJobs, lastFinished, abortController);
+  const reducer = (tuple: [number, number]) => {
+    const date = new Date(tuple[0] * 1000);
+    let label: string;
+    switch (period) {
+      case 'day':
+        label = `${date.toLocaleTimeString()}`;
+        break;
+      default:
+        label = `${date.getMonth() + 1}/${date.getDate()}`;
     }
-    void up();
-    return () => {
-      abortController.abort();
-    };
-  }, [db, updateJobs]);
+    return { label, value: tuple[1] };
+  };
 
-  const failedHistory = Object.keys(data.history)
-    .sort()
-    .map((label) => ({ label, value: data.history[label].failure }));
-
-  const successHistory = Object.keys(data.history)
-    .sort()
-    .map((label) => ({ label, value: data.history[label].success }));
-
+  const failed = data?.jobs.failed.map(reducer) ?? [];
+  const successful = data?.jobs.successful.map(reducer) ?? [];
   return (
     <div style={{ height: props.height ?? '100%' }}>
       <PageDashboardChart
         groups={[
-          { color: pfDanger, values: failedHistory },
-          { color: pfSuccess, values: successHistory },
+          { color: pfDanger, values: failed },
+          { color: pfSuccess, values: successful },
         ]}
       />
     </div>
   );
-}
-
-function queryJobs(
-  addJobs: (jobs: UnifiedJobSummary[]) => void,
-  lastFinshed: Date,
-  abortController: AbortController
-) {
-  async function update() {
-    try {
-      let itemsResponse = await requestGet<ItemsResponse<UnifiedJobSummary>>(
-        `/api/v2/unified_jobs/` +
-          `?not__launch_type=sync` +
-          `&finished__gte=${lastFinshed.toISOString()}` +
-          `&order_by=finished` +
-          `&page_size=200`
-      );
-      if (!abortController.signal.aborted) {
-        addJobs(
-          itemsResponse.results.map((result) => ({
-            id: result.id,
-            finished: result.finished,
-            failed: result.failed,
-          }))
-        );
-      }
-
-      while (itemsResponse.next) {
-        itemsResponse = await requestGet<ItemsResponse<UnifiedJobSummary>>(
-          itemsResponse.next,
-          abortController.signal
-        );
-        if (!abortController.signal.aborted) {
-          addJobs(
-            itemsResponse.results.map((result) => ({
-              id: result.id,
-              finished: result.finished,
-              failed: result.failed,
-            }))
-          );
-        }
-      }
-    } catch {
-      /* Do nothing */
-    }
-  }
-  void update();
 }
