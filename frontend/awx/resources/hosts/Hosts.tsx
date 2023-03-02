@@ -12,12 +12,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-} from '../../../common/columns';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
+import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
@@ -104,6 +100,7 @@ export function Hosts() {
         emptyStateDescription={t('To get started, create an host.')}
         emptyStateButtonText={t('Create host')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateHost)}
+        expandedRow={ItemDescriptionExpandedRow<Host>}
         {...view}
       />
     </PageLayout>
@@ -137,12 +134,11 @@ export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?
     ...options,
     onClick: nameClick,
   });
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Host>[]>(
-    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, createdColumn, modifiedColumn],
+    [nameColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
