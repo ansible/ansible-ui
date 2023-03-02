@@ -163,19 +163,18 @@ describe('teams', () => {
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/);
-    cy.getRowFromList(user1.username).within(() => {
-      cy.get(
+    cy.contains('tr', user1.username)
+      .find(
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
-      ).click();
-    });
+      )
+      .click();
     cy.contains('Remove User Access');
     cy.clickButton('Delete');
     cy.clickButton(/^Clear all filters$/);
-    cy.getRowFromList(user1.username).within(() => {
-      cy.get(
-        `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`
-      ).should('not.exist');
-    });
+    cy.contains('tr', user1.username)
+      .find(`div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`)
+      .should('not.exist');
+
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
