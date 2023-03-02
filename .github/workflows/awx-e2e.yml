@@ -10,6 +10,8 @@ on:
         required: true
       AWX_PASSWORD:
         required: true
+      CYPRESS_RECORD_KEY:
+        required: true
 
 jobs:
   awx-e2e:
@@ -38,3 +40,4 @@ jobs:
           AWX_SERVER: ${{ secrets.AWX_SERVER }}
           AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

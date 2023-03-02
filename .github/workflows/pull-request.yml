@@ -38,6 +38,7 @@ jobs:
       AWX_SERVER: ${{ secrets.AWX_SERVER }}
       AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
   component-tests:
     name: Component Tests
@@ -59,6 +60,8 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
       - run: npm run cypress:run:component
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
   checks:
     name: ESLint - Prettier - TSC
