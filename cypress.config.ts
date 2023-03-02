@@ -10,7 +10,7 @@ export default defineConfig({
   pageLoadTimeout: 120000,
   defaultCommandTimeout: 30000,
   projectId: 'dcozit',
-
+  video: false,
   e2e: {
     testIsolation: false,
     setupNodeEvents(on, config) {

@@ -126,7 +126,6 @@ jobs:
           record: true
           parallel: true
           env: server=${{ secrets.AWX_SERVER }},username=${{ secrets.AWX_USERNAME }},password=${{ secrets.AWX_PASSWORD }},servertype=AWX
-          video: false
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
