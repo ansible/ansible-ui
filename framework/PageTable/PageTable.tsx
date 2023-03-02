@@ -139,7 +139,6 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  // const { disableBodyPadding } = props
   const { toolbarActions, filters, error, itemCount } = props;
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const showSelect =
