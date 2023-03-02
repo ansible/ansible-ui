@@ -6,18 +6,29 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { RouteObj } from '../../../Routes';
-import { Team } from '../../interfaces/Team';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
-import { useDeleteAccessRole } from './useDeleteAccessRole';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersFilters } from '../users/hooks/useUsersFilters';
 import { useDeleteRoleConfirmationDialog } from './DeleteRoleConfirmation';
-import { useRemoveUsersFromResource } from './useRemoveUserFromResource';
 import { useAccessColumns } from './useAccessColumns';
+import { useDeleteAccessRole } from './useDeleteAccessRole';
+import { useRemoveUsersFromResource } from './useRemoveUserFromResource';
 import { useUserAndTeamRolesLists } from './useUserAndTeamRolesLists';
 
-export type ResourceType = Team; // TODO: Expand to handle other resource types: | Project | Credential | Inventory | Organization | Template;
+export type ResourceType = {
+  type?: string | undefined;
+  summary_fields: {
+    object_roles: {
+      member_role: { id: number };
+    };
+    user_capabilities: {
+      edit: boolean;
+    };
+  };
+};
+
+// TODO: Expand to handle other resource types: | Project | Credential | Inventory | Organization | Template;
 
 export function ResourceAccessList(props: { url: string; resource: ResourceType }) {
   const { t } = useTranslation();

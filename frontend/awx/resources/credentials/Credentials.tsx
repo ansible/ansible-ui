@@ -4,7 +4,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
 import { useAwxView } from '../../useAwxView';
-import { useCredentialRowActions } from './hooks/useCredentialRowActions';
+import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
 import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
@@ -20,8 +20,7 @@ export function Credentials() {
     tableColumns,
   });
   const toolbarActions = useCredentialToolbarActions(view);
-  const rowActions = useCredentialRowActions(view);
-
+  const rowActions = useCredentialActions({ onDeleted: () => void view.refresh() });
   return (
     <PageLayout>
       <PageHeader

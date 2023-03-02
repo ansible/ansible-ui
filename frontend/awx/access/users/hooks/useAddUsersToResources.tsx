@@ -2,37 +2,33 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
 import { requestPost } from '../../../../Data';
-import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
+import { ResourceType } from '../../common/ResourceAccessList';
 
-export function useAddUsersToOrganizations(onComplete?: (users: User[]) => void) {
+export function useAddUsersToResources() {
   const { t } = useTranslation();
   const userProgressDialog = useBulkActionDialog<User>();
-  const addUserToOrganizations = useCallback(
-    (users: User[], organizations: Organization[]) => {
+  const addUserToTeams = useCallback(
+    (users: User[], resources: ResourceType[], onComplete?: (users: User[]) => void) => {
       userProgressDialog({
-        title: t('Adding users to organizations', {
-          count: organizations.length,
-        }),
+        title: t('Adding users', { count: resources.length }),
         keyFn: (user: User) => user.id,
         items: users,
         actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
-          for (const organization of organizations) {
+          for (const resource of resources) {
             await requestPost(
               `/api/v2/users/${user.id.toString()}/roles/`,
-              { id: organization.summary_fields.object_roles.member_role.id },
+              { id: resource.summary_fields.object_roles.member_role.id },
               signal
             );
           }
         },
-        processingText: t('Adding users to organizations...', {
-          count: organizations.length,
-        }),
+        processingText: t('Adding users...', { count: resources.length }),
         onComplete,
       });
     },
-    [userProgressDialog, t, onComplete]
+    [userProgressDialog, t]
   );
-  return addUserToOrganizations;
+  return addUserToTeams;
 }

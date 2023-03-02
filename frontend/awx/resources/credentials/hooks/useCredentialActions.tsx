@@ -6,13 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
-import { IAwxView } from '../../../useAwxView';
 import { useDeleteCredentials } from '../useDeleteCredentials';
 
-export function useCredentialRowActions(view: IAwxView<Credential>) {
+export function useCredentialActions(options?: { onDeleted: (crednetials: Credential[]) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh);
+  const deleteCredentials = useDeleteCredentials(options?.onDeleted);
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {

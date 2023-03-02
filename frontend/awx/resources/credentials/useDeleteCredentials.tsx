@@ -6,7 +6,7 @@ import { getItemKey, requestDelete } from '../../../Data';
 import { Credential } from '../../interfaces/Credential';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 
-export function useDeleteCredentials(onComplete: (credentials: Credential[]) => void) {
+export function useDeleteCredentials(onComplete?: (credentials: Credential[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useCredentialsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
