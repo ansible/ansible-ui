@@ -14,11 +14,11 @@ import {
 } from '../../../../framework';
 import {
   useCreatedColumn,
-  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useTypeColumn,
 } from '../../../common/columns';
+import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
@@ -118,6 +118,7 @@ export function Templates() {
         emptyStateDescription={t('To get started, create a template.')}
         emptyStateButtonText={t('Create template')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
+        expandedRow={ItemDescriptionExpandedRow<JobTemplate | WorkflowJobTemplate>}
         {...view}
       />
     </PageLayout>
@@ -165,13 +166,12 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
     }
     return t('Job Template');
   };
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const typeOfTemplate = useTypeColumn({ makeReadable });
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
-    () => [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn],
-    [nameColumn, typeOfTemplate, descriptionColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, typeOfTemplate, createdColumn, modifiedColumn],
+    [nameColumn, typeOfTemplate, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

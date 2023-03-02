@@ -2,6 +2,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { useRefreshAction } from '../../../common/useRefreshAction';
 import { useOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
@@ -72,7 +73,7 @@ export function Teams() {
         emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
         {...view}
         defaultSubtitle={t('Team')}
-        expandedRow={(team: Team) => (team.description ? <>{team.description}</> : undefined)}
+        expandedRow={ItemDescriptionExpandedRow<Team>}
       />
     </PageLayout>
   );
