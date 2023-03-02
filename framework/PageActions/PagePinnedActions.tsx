@@ -75,10 +75,7 @@ export function PagePinnedAction<T extends object>(props: {
       return (
         <PageButtonAction
           action={action}
-          isSecondary={
-            (selectedItems !== undefined && selectedItems.length !== 0) ||
-            selectedItem !== undefined
-          }
+          isSecondary={selectedItems !== undefined && selectedItems.length !== 0}
           iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
