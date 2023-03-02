@@ -125,6 +125,7 @@ export type PagetableToolbarProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
   disableColumnManagement?: boolean;
+  bottomBorder?: boolean;
 };
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -140,6 +141,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     setFilters,
     clearAllFilters,
     openColumnModal,
+    bottomBorder,
   } = props;
 
   const sm = useBreakpoint('md');
@@ -197,7 +199,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     <Toolbar
       clearAllFilters={clearAllFilters}
       className="dark-2"
-      style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+      style={{
+        paddingBottom: sm ? undefined : 8,
+        paddingTop: sm ? undefined : 8,
+        borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+      }}
     >
       <ToolbarContent>
         {showSelect && (
