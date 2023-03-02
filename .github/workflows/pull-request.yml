@@ -104,7 +104,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           start: npm run docker:run
-          wait-on: 'https://localhost:3002'
+          # wait-on: 'https://localhost:3002'
           record: true
           parallel: true
         env:
