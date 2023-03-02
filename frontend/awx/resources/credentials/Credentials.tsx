@@ -12,12 +12,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-} from '../../../common/columns';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
+import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
@@ -100,6 +96,7 @@ export function Credentials() {
         emptyStateDescription={t('To get started, create an credential.')}
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
+        expandedRow={ItemDescriptionExpandedRow<Credential>}
         {...view}
       />
     </PageLayout>
@@ -136,13 +133,11 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
     onClick: nameClick,
   });
 
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
       nameColumn,
-      descriptionColumn,
       {
         header: t('Credential type'),
         cell: (credential) => {
@@ -158,7 +153,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
+    [nameColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
