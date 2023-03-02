@@ -126,7 +126,7 @@ jobs:
           record: true
           parallel: true
           env: server=${{ secrets.AWX_SERVER }},username=${{ secrets.AWX_USERNAME }},password=${{ secrets.AWX_PASSWORD }},servertype=AWX
-          config: specPattern=frontend/awx/**/*.cy.tsx
+          config: '{"e2e": { "specPattern": "frontend/awx/**/*.cy.tsx" } }'
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
