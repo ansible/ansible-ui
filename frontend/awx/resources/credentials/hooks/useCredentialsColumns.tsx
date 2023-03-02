@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
 import {
   useCreatedColumn,
-  useDescriptionColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../../common/columns';
@@ -19,14 +19,14 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       navigate(RouteObj.CredentialDetails.replace(':id', credential.id.toString())),
     [navigate]
   );
+  const idColumn = useIdColumn();
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
-  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
+      idColumn,
       nameColumn,
-      descriptionColumn,
       {
         header: t('Credential type'),
         cell: (credential) => {
@@ -42,7 +42,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

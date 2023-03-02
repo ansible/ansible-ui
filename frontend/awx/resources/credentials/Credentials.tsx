@@ -41,6 +41,9 @@ export function Credentials() {
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
         {...view}
+        expandedRow={(credential: Credential) =>
+          credential.description ? <>{credential.description}</> : undefined
+        }
       />
     </PageLayout>
   );
