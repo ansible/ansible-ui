@@ -5,8 +5,7 @@ export function Ansi(props: { input: string }) {
   return (
     <>
       {data.map((entry, index) => {
-        let className = undefined;
-        if (entry.fg) className = `${entry.fg}-fg`;
+        const className = entry.fg ? `${entry.fg}-fg` : undefined;
         return (
           <span key={index} className={className}>
             {entry.content}

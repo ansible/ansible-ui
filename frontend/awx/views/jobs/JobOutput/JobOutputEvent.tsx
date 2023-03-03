@@ -1,7 +1,7 @@
 import { Label, Split, SplitItem } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction } from 'react';
-import { JobEvent } from '../../../../interfaces/generated-from-swagger/api';
+import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
 import { Ansi } from './Ansi';
 import { ICollapsed } from './JobOutput';
 import './JobOutput.css';

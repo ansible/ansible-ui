@@ -1,7 +1,7 @@
 import { Skeleton } from '@patternfly/react-core';
-import { PageDetailsFromColumns } from '../../../../../framework';
-import { Job } from '../../../interfaces/Job';
-import { useJobsColumns } from '../hooks/useJobsColumns';
+import { PageDetailsFromColumns } from '../../../../framework';
+import { Job } from '../../interfaces/Job';
+import { useJobsColumns } from './hooks/useJobsColumns';
 
 export function JobDetails(props: { job: Job }) {
   const { job } = props;

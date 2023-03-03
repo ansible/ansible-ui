@@ -7,10 +7,10 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Scrollable } from '../../../../../../framework';
-import { ItemsResponse, useGet2 } from '../../../../../Data';
-import { JobEvent } from '../../../../interfaces/generated-from-swagger/api';
-import { Job } from '../../../../interfaces/Job';
+import { Scrollable } from '../../../../../framework';
+import { ItemsResponse, useGet2 } from '../../../../Data';
+import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
+import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobEventsComponent } from './JobOutputEvents';
 
@@ -39,16 +39,17 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
           <div style={{ flexGrow: 1 }} />
           <ToolbarItem>
-            Plays <Label>{job.playbook_counts.play_count}</Label>
+            Plays <Label>{job.playbook_counts.play_count ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Tasks <Label>{job.playbook_counts.task_count}</Label>
+            Tasks <Label>{job.playbook_counts.task_count ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Hosts <Label>{job.host_status_counts.failures}</Label>
+            Hosts{' '}
+            <Label>{job.host_status_counts.ok ?? 0 + job.host_status_counts.failures ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Failed <Label>{job.host_status_counts.failures}</Label>
+            Failed <Label>{job.host_status_counts.failures ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
             Elapsed <Label>{job.elapsed}</Label>

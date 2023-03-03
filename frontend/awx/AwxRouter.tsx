@@ -24,14 +24,15 @@ import Dashboard from './dashboard/Dashboard';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
-import { Projects } from './resources/projects/Projects';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
+import { Projects } from './resources/projects/Projects';
 import { TemplateDetail } from './resources/templates/TemplateDetail';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
-import Settings from './settings/Settings';
-import Jobs from './views/jobs/Jobs';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
+import Settings from './settings/Settings';
+import { JobPage } from './views/jobs/JobPage';
+import Jobs from './views/jobs/Jobs';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -47,7 +48,10 @@ export function AwxRouter() {
       <Routes>
         <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<Dashboard />} />
+
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
+        <Route path={RouteObjWithoutPrefix.JobDetails} element={<JobPage />} />
+
         {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}

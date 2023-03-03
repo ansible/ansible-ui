@@ -176,4 +176,6 @@ export interface Job {
   webhook_service: string;
   webhook_credential: null;
   webhook_guid: string;
+  playbook_counts: { play_count: number; task_count: number };
+  host_status_counts: { ok: number; failures: number };
 }
