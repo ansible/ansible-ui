@@ -182,6 +182,7 @@ export function Users() {
   );
 }
 
+/* deprecated (see access/organizations/OrganizationPage/OrganizationAccess.tsx) */
 export function AccessTable(props: { url: string }) {
   const { t } = useTranslation();
 
