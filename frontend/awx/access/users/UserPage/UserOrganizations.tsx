@@ -68,20 +68,11 @@ export function UserOrganizations(props: { user: User }) {
   );
   return (
     <>
-      {user.is_superuser && (
-        <Alert
-          variant="info"
-          title={t('System administrators have unrestricted access to all resources.')}
-          isInline
-          style={{ border: 0 }}
-        />
-      )}
-      <DetailInfo disablePaddingTop={user.is_superuser === true}>
-        {t(
+      <DetailInfo
+        title={t(
           'Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.'
         )}
-      </DetailInfo>
-      <Divider />
+      />
       <PageTable<Organization>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

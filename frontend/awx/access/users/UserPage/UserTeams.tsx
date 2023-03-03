@@ -71,18 +71,9 @@ export function UserTeams(props: { user: User }) {
   );
   return (
     <>
-      {user.is_superuser && (
-        <Alert
-          variant="info"
-          title={t('System administrators have unrestricted access to all resources.')}
-          isInline
-          style={{ border: 0 }}
-        />
-      )}
-      <DetailInfo disablePaddingTop={user.is_superuser === true}>
-        {t('Being a team member grants the user all the permissions of the team.')}
-      </DetailInfo>
-      <Divider />
+      <DetailInfo
+        title={t('Being a team member grants the user all the permissions of the team.')}
+      />
       <PageTable<Team>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
