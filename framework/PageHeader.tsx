@@ -38,7 +38,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
   return (
     <Breadcrumb style={props.style}>
       {props.breadcrumbs.map((breadcrumb) => {
-        if (!breadcrumb.label) return <></>;
+        if (!breadcrumb.label) return null;
         return (
           <BreadcrumbItem
             id={breadcrumb.id}
