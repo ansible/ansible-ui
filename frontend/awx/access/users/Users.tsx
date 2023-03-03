@@ -203,7 +203,7 @@ export function AccessTable(props: { url: string }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
-        shortLabel: t('Add'),
+        shortLabel: t('Add Access'),
         href: RouteObj.CreateUser,
       },
       {
@@ -211,7 +211,7 @@ export function AccessTable(props: { url: string }) {
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
-        shortLabel: t('Remove'),
+        shortLabel: t('Remove Access'),
         onClick: () => null,
         isDanger: true,
       },
