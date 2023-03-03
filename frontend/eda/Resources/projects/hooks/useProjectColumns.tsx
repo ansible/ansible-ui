@@ -4,20 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaProject } from '../../../interfaces/EdaProject';
+import { StatusLabelCell } from '../../../common/StatusLabelCell';
 
 export function useProjectColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return useMemo<ITableColumn<EdaProject>[]>(
     () => [
-      {
-        header: t('ID'),
-        cell: (inventory) => inventory.id,
-        sort: 'id',
-        card: 'hidden',
-        list: 'hidden',
-        isIdColumn: true,
-      },
       {
         header: t('Name'),
         cell: (project) => (
@@ -34,12 +27,15 @@ export function useProjectColumns() {
         defaultSort: true,
       },
       {
-        header: t('Url'),
-        cell: (project) => project.url && <TextCell text={project.url} />,
-        card: 'description',
-        list: 'description',
+        header: t('Status'),
+        cell: (project) => <StatusLabelCell status={project.status} />,
+      },
+      {
+        header: t('Revision'),
+        cell: (project) => <TextCell text={project?.revision ? project.revision : '00000'} />,
       },
     ],
+
     [navigate, t]
   );
 }
