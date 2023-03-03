@@ -4,6 +4,10 @@ import { PageTab, PageTabs } from '../../../../../framework';
 import { Organization } from '../../../interfaces/Organization';
 import { AccessTable } from '../../users/Users';
 
+/**
+ * TODO: AccessTable should be replaced with ResourceAccessList component
+ * and then deleted (it's no longer used anywhere else)
+ */
 export function OrganizationAccess(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();

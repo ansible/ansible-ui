@@ -81,7 +81,7 @@ export function CreateJobTemplate() {
         ]}
       />
       <PageForm<JobTemplate>
-        submitText={t('Save job template')}
+        submitText={t('Create job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={jobTemplateDefaultValues}

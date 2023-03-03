@@ -15,7 +15,8 @@ export function useSelectUsersRemoveOrganizations(onClose?: (users: User[]) => v
         t('Remove users from organizations', { count: organizations.length }),
         (users: User[]) => {
           removeUsersFromOrganizations(users, organizations);
-        }
+        },
+        t('Remove user(s)')
       );
     },
     [removeUsersFromOrganizations, selectUsers, t]
