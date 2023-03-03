@@ -94,7 +94,7 @@ describe('teams', () => {
     cy.clickButton(/^Add users$/);
     cy.selectRowInDialog(user1.username);
     cy.selectRowInDialog(user2.username);
-    cy.clickButton(/^Confirm$/);
+    cy.clickButton(/^Add/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.getRowFromList(user1.username).should('be.visible');
