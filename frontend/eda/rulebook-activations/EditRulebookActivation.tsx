@@ -10,7 +10,7 @@ import {
 } from '../../../framework';
 import { useGet } from '../../common/useItem';
 import { requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
@@ -18,15 +18,15 @@ import { EdaProject } from '../interfaces/EdaProject';
 import { EdaInventory } from '../interfaces/EdaInventory';
 import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitch';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: rulebooks } = useGet<EdaRulebook[]>(`${API_PREFIX}/rulebooks`);
-  const { data: projects } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
-  const { data: inventories } = useGet<EdaInventory[]>(`${API_PREFIX}/inventories`);
-  const { data: extra_vars } = useGet<EdaInventory[]>(`${API_PREFIX}/extra_vars`);
-
+  const { data: rulebooks } = useGet<EdaResult<EdaRulebook>>(`${API_PREFIX}/rulebooks/`);
+  const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
+  const { data: inventories } = useGet<EdaResult<EdaInventory>>(`${API_PREFIX}/inventories/`);
+  const { data: extra_vars } = useGet<EdaResult<EdaInventory>>(`${API_PREFIX}/extra-vars/`);
   const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation> = async (
@@ -35,15 +35,15 @@ export function EditRulebookActivation() {
   ) => {
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
-        `${API_PREFIX}/activations`,
+        `${API_PREFIX}/activations/`,
         rulebookActivation
       );
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(
-        RouteE.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
+        RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
       );
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);
@@ -53,7 +53,7 @@ export function EditRulebookActivation() {
       <PageHeader
         title={t('Create rulebook activation')}
         breadcrumbs={[
-          { label: t('RulebookActivations'), to: RouteE.EdaRulebookActivations },
+          { label: t('RulebookActivations'), to: RouteObj.EdaRulebookActivations },
           { label: t('Create rulebook activation') },
         ]}
       />
@@ -81,8 +81,8 @@ export function EditRulebookActivation() {
           label={t('Inventory')}
           placeholderText={t('Select inventory')}
           options={
-            inventories
-              ? inventories.map((item: { name: string; id: number }) => ({
+            inventories?.results
+              ? inventories.results.map((item: { name: string; id: number }) => ({
                   label: item.name,
                   value: item.id,
                 }))
@@ -100,8 +100,8 @@ export function EditRulebookActivation() {
           label={t('Rulebook')}
           placeholderText={t('Select rulebook')}
           options={
-            rulebooks
-              ? rulebooks.map((item: { name: string; id: number }) => ({
+            rulebooks?.results
+              ? rulebooks.results.map((item: { name: string; id: number }) => ({
                   label: item.name,
                   value: item.id,
                 }))
@@ -119,8 +119,8 @@ export function EditRulebookActivation() {
           label={t('Project')}
           placeholderText={t('Select project')}
           options={
-            projects
-              ? projects.map((item: { name: string; id: number }) => ({
+            projects?.results
+              ? projects.results.map((item: { name: string; id: number }) => ({
                   label: item.name,
                   value: item.id,
                 }))
@@ -150,8 +150,8 @@ export function EditRulebookActivation() {
           label={t('Extra vars')}
           placeholderText={t('Select extra vars')}
           options={
-            extra_vars
-              ? extra_vars.map((item: { name: string; id: number }) => ({
+            extra_vars?.results
+              ? extra_vars.results.map((item: { name: string; id: number }) => ({
                   label: item.name,
                   value: item.id,
                 }))

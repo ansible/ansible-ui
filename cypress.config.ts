@@ -1,12 +1,16 @@
 import codeCoverage from '@cypress/code-coverage/task';
 import { defineConfig } from 'cypress';
+import pkg from 'webpack';
+
+const { DefinePlugin } = pkg;
 
 export default defineConfig({
   viewportWidth: 1600,
   viewportHeight: 1120,
   pageLoadTimeout: 120000,
   defaultCommandTimeout: 30000,
-
+  projectId: 'dcozit',
+  video: false,
   e2e: {
     testIsolation: false,
     setupNodeEvents(on, config) {
@@ -59,9 +63,16 @@ export default defineConfig({
             },
           ],
         },
+        plugins: [
+          new DefinePlugin({
+            'process.env.AWX_ROUTE_PREFIX': JSON.stringify('/ui_next'),
+            'process.env.HUB_ROUTE_PREFIX': JSON.stringify('/hub'),
+            'process.env.EDA_ROUTE_PREFIX': JSON.stringify('/eda'),
+          }),
+        ],
       },
     },
-    specPattern: 'frontend/controller/**/*.cy.tsx',
+    specPattern: 'frontend/awx/**/*.cy.tsx',
     supportFile: 'cypress/support/component.ts',
   },
 });

@@ -4,14 +4,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
+import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
 
-export function useUsersActions(refresh: () => Promise<unknown>) {
+export function useUsersActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteUsers = useDeleteUsers(() => void refresh());
+  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
@@ -19,7 +20,7 @@ export function useUsersActions(refresh: () => Promise<unknown>) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create User'),
-        onClick: () => navigate(RouteE.CreateEdaUser),
+        onClick: () => navigate(RouteObj.CreateEdaUser),
       },
       {
         type: PageActionType.bulk,

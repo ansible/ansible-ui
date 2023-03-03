@@ -67,9 +67,18 @@ module.exports = function (_env, argv) {
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),
         'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.CONTROLLER': _env.controller ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.AWX': _env.awx ? JSON.stringify('true') : JSON.stringify(''),
         'process.env.HUB': _env.hub ? JSON.stringify('true') : JSON.stringify(''),
         'process.env.EDA': _env.eda ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.AWX_ROUTE_PREFIX': _env.awx_route_prefix
+          ? JSON.stringify(_env.awx_route_prefix)
+          : JSON.stringify('/ui_next'),
+        'process.env.HUB_ROUTE_PREFIX': _env.hub_route_prefix
+          ? JSON.stringify(_env.hub_route_prefix)
+          : JSON.stringify('/hub'),
+        'process.env.EDA_ROUTE_PREFIX': _env.eda_route_prefix
+          ? JSON.stringify(_env.eda_route_prefix)
+          : JSON.stringify('/eda'),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'fr'].map((locale) => {
@@ -100,7 +109,7 @@ module.exports = function (_env, argv) {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, 'build/public'),
-      publicPath: _env.controller ? '/static/controller/' : '/',
+      publicPath: _env.awx ? '/static/awx/' : '/',
     },
     optimization: {
       minimizer: [

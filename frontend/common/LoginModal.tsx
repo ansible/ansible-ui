@@ -13,7 +13,7 @@ import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextI
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from '../Data';
-import { RouteE } from '../Routes';
+import { RouteObj } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
@@ -113,13 +113,13 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         switch (automationServer.type) {
           case AutomationServerType.EDA:
             setCookie('server', data.server);
-            navigate(RouteE.EdaProjects);
+            navigate(RouteObj.EdaProjects);
             break;
           case AutomationServerType.Galaxy:
-            navigate(RouteE.HubDashboard);
+            navigate(RouteObj.HubDashboard);
             break;
           default:
-            navigate(RouteE.Dashboard);
+            navigate(RouteObj.Dashboard);
             break;
         }
 
@@ -137,7 +137,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
 
   return (
     <PageForm
-      submitText={t('Log In')}
+      submitText={t('Log in')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       isVertical
@@ -167,7 +167,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
               : automationServer?.type === AutomationServerType.Galaxy
               ? t('Galaxy Ansible server')
               : automationServer?.type === AutomationServerType.EDA
-              ? t('Event-driven Ansible server')
+              ? t('EDA server')
               : t('Unknown'),
         }))}
         isRequired

@@ -12,7 +12,7 @@ export default function Dashboard() {
   return (
     <Fragment>
       <PageHeader
-        title={t('Welcome to Event Driven Automation')}
+        title={t('Welcome to EDA Server')}
         description={t(
           'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
         )}

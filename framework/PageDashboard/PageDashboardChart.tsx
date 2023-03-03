@@ -1,4 +1,10 @@
-import { Chart, ChartArea, ChartAxis, ChartStack } from '@patternfly/react-charts';
+import {
+  Chart,
+  ChartArea,
+  ChartAxis,
+  ChartStack,
+  ChartVoronoiContainer,
+} from '@patternfly/react-charts';
 import { PageChartContainer } from './PageChartContainer';
 
 export function PageDashboardChart(props: {
@@ -23,15 +29,22 @@ export function PageDashboardChart(props: {
     <PageChartContainer>
       {(size) => (
         <Chart
-          padding={{ bottom: 27, left: 40, right: 0, top: 10 }}
+          padding={{ bottom: 27, left: 40, right: 20, top: 10 }}
           colorScale={groups.map((group) => group.color)}
           width={size.width}
           height={size.height}
-          animate
+          containerComponent={
+            <ChartVoronoiContainer
+              labels={(point: { datum: { x: string | number; y: string | number } }) => {
+                const datum = point.datum;
+                return `${datum.x}: ${datum.y}`;
+              }}
+            />
+          }
         >
           <ChartAxis
             fixLabelOverlap
-            tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
+            // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
             //  tickFormat={(n) => `${Math.round(n)}`}
           />
           <ChartAxis dependentAxis showGrid />

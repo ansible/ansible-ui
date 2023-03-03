@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaProject } from '../interfaces/EdaProject';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import {
@@ -18,14 +18,15 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function ProjectsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: projects } = useGet<EdaProject[]>(`${API_PREFIX}/projects`);
+  const { data: data } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
   const tableColumns = useProjectColumns();
   const view = useInMemoryView<EdaProject>({
-    items: projects?.slice(-4),
+    items: data?.results ? data.results.slice(-4) : [],
     tableColumns,
     keyFn: (project: EdaProject) => project.id,
   });
@@ -37,7 +38,7 @@ export function ProjectsCard() {
             <Title headingLevel="h2">{t('Projects')}</Title>
           </LevelItem>
           <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteE.EdaProjects)}>
+            <Button variant="link" onClick={() => navigate(RouteObj.EdaProjects)}>
               {t('Go to Projects')}
             </Button>
           </LevelItem>
@@ -57,7 +58,7 @@ export function ProjectsCard() {
         <Button
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => navigate(RouteE.CreateEdaProject)}
+          onClick={() => navigate(RouteObj.CreateEdaProject)}
         >
           {t('Create project')}
         </Button>

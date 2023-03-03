@@ -1,4 +1,5 @@
 import {
+  ButtonVariant,
   Dropdown,
   DropdownItem,
   DropdownPosition,
@@ -25,8 +26,10 @@ export function PageDropdownAction<T extends object>(props: {
   position?: DropdownPosition;
   iconOnly?: boolean;
   onOpen?: (open: boolean) => void;
+  variant?: ButtonVariant;
 }) {
-  const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip } = props;
+  const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip, variant } =
+    props;
 
   let { actions } = props;
   actions = actions.filter((action) => !isHiddenAction(action, selectedItem));
@@ -50,18 +53,23 @@ export function PageDropdownAction<T extends object>(props: {
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;
-  const isPrimary = hasBulkActions && !!selectedItems?.length;
+  const isPrimary =
+    variant === ButtonVariant.primary || (hasBulkActions && !!selectedItems?.length);
+  /** Turn primary button to secondary if there are items selected */
+  const isSecondary =
+    variant === ButtonVariant.primary && !hasBulkActions && !!selectedItems?.length;
   const Toggle =
     label || Icon ? (
       <DropdownToggle
         id="toggle-dropdown"
         isDisabled={isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
-        toggleVariant={isPrimary ? 'primary' : undefined}
-        toggleIndicator={null}
+        toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
+        toggleIndicator={Icon && iconOnly ? null : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+        icon={Icon ? <Icon /> : undefined}
       >
-        {toggleIcon}
+        {iconOnly ? undefined : label}
       </DropdownToggle>
     ) : (
       <KebabToggle
@@ -203,6 +211,7 @@ function PageDropdownActionItem<T extends object>(props: {
           selectedItem={selectedItem}
           isDisabled={Boolean(isDisabled)}
           tooltip={tooltip}
+          variant={action.variant}
         />
       );
     }
