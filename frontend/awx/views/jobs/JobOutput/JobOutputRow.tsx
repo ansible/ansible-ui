@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
+import { JobEvent } from '../../../interfaces/JobEvent';
 
 export interface IJobOutputRow {
   counter: number;
@@ -10,8 +10,9 @@ export interface IJobOutputRow {
   stdout: string;
   eventLine: number;
   canCollapse: boolean;
-  jobEvent: JobEvent;
+  // jobEvent: JobEvent;
   isHeaderLine: boolean;
+  created?: string;
 }
 
 export function jobEventToRows(jobEvent: JobEvent): IJobOutputRow[] {
@@ -51,8 +52,9 @@ export function jobEventToRows(jobEvent: JobEvent): IJobOutputRow[] {
       taskUuid: taskUuid ?? '',
       eventLine,
       canCollapse: canCollapse && isHeaderLine,
-      jobEvent,
+      // jobEvent,
       isHeaderLine,
+      created: jobEvent.created,
     };
     return jobOutputRow;
   });

@@ -1,26 +1,41 @@
-import { Divider, Label, LabelGroup, PageSection, Split, SplitItem } from '@patternfly/react-core';
+import {
+  Divider,
+  Label,
+  LabelGroup,
+  PageSection,
+  Skeleton,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
-import { useMemo, useRef, useState } from 'react';
-import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Job } from '../../../interfaces/Job';
 import { Ansi } from './Ansi';
-import { ICollapsed } from './JobOutput';
 import './JobOutput.css';
 import { IJobOutputRow, jobEventToRows } from './JobOutputRow';
+import { useJobOutput } from './useJobOutput';
 import { useVirtualizedList } from './useVirtualized';
 
-export function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
-  const { jobEvents } = props;
+export interface ICollapsed {
+  [uuid: string]: boolean;
+}
+
+export function JobEventsComponent(props: { job: Job }) {
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(props.job, 3);
 
   const jobOutputRows = useMemo(() => {
-    const jobOutputRows: IJobOutputRow[] = [];
-    for (const jobEvent of jobEvents) {
-      for (const row of jobEventToRows(jobEvent)) {
-        jobOutputRows.push(row);
-      }
+    const jobOutputRows: (IJobOutputRow | number)[] = [];
+    for (let counter = 0; counter < jobEventCount; counter++) {
+      const jobEvent = getJobOutputEvent(counter);
+      if (!jobEvent) jobOutputRows.push(counter);
+      else
+        for (const row of jobEventToRows(jobEvent)) {
+          jobOutputRows.push(row);
+        }
     }
     return jobOutputRows;
-  }, [jobEvents]);
+  }, [getJobOutputEvent, jobEventCount]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
   const setCollapsed = (uuid: string, collapsed: boolean) => {
@@ -32,6 +47,7 @@ export function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
 
   const visibleRows = useMemo(() => {
     return jobOutputRows.filter((row) => {
+      if (typeof row === 'number') return true;
       if (collapsed[row.playUuid] && row.playUuid !== row.uuid) return false;
       if (collapsed[row.taskUuid] && row.taskUuid !== row.uuid) return false;
       return true;
@@ -48,10 +64,11 @@ export function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
     <>
       <PageSection variant="light">
         <LabelGroup numLabels={999}>
-          <Label variant="outline">Total Count: {jobOutputRows.length}</Label>
-          <Label variant="outline">Visible Count: {visibleItems.length}</Label>
-          <Label variant="outline">Before: {beforeRowsHeight}</Label>
-          <Label variant="outline">After: {afterRowsHeight}</Label>
+          <Label variant="outline">Event Count: {jobEventCount}</Label>
+          <Label variant="outline">Row Count: {jobOutputRows.length}</Label>
+          <Label variant="outline">Visible Row Count: {visibleItems.length}</Label>
+          <Label variant="outline">Before Spacing: {beforeRowsHeight}px</Label>
+          <Label variant="outline">After Spacing: {afterRowsHeight}px</Label>
         </LabelGroup>
       </PageSection>
       <Divider />
@@ -60,22 +77,49 @@ export function JobEventsComponent(props: { jobEvents: JobEvent[] }) {
           <table style={{ width: '100%', height: '100%' }}>
             <tbody>
               <tr style={{ height: beforeRowsHeight }} />
-              {visibleItems.map((row, index) => (
-                <JobOutputRow
-                  key={`${row.counter}-${row.eventLine}-${index}`}
-                  index={index}
-                  row={row}
-                  collapsed={collapsed}
-                  setCollapsed={setCollapsed}
-                  setHeight={setRowHeight}
-                />
-              ))}
+              {visibleItems.map((row, index) => {
+                if (typeof row === 'number') {
+                  const counter = row as unknown as number;
+                  return (
+                    <JobOutputLoadingRow
+                      key={counter}
+                      counter={counter}
+                      queryJobOutputEvent={queryJobOutputEvent}
+                    />
+                  );
+                }
+                return (
+                  <JobOutputRow
+                    key={`${row.counter}-${row.eventLine}-${index}`}
+                    index={index}
+                    row={row}
+                    collapsed={collapsed}
+                    setCollapsed={setCollapsed}
+                    setHeight={setRowHeight}
+                  />
+                );
+              })}
               <tr style={{ height: afterRowsHeight }} />
             </tbody>
           </table>
         </pre>
       </div>
     </>
+  );
+}
+
+function JobOutputLoadingRow(props: {
+  counter: number;
+  queryJobOutputEvent: (counter: number) => void;
+}) {
+  useEffect(() => props.queryJobOutputEvent(props.counter), [props]);
+  return (
+    <tr>
+      <td className="expand-column"></td>
+      <td className="stdout-column">
+        <Skeleton>{`Loading ${props.counter}`}</Skeleton>
+      </td>
+    </tr>
   );
 }
 
@@ -89,7 +133,7 @@ function JobOutputRow(props: {
   const { index, row, collapsed, setCollapsed } = props;
   const ref = useRef<HTMLTableRowElement>(null);
   useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
-  const isCollapsed = collapsed[row.jobEvent.uuid ?? ''] === true;
+  const isCollapsed = collapsed[row.uuid ?? ''] === true;
   return (
     <tr ref={ref}>
       {/* <td className="expand-div">{row.playUuid}</td>
@@ -120,10 +164,9 @@ function JobOutputRow(props: {
 
       <td className="stdout-column">
         <Ansi input={row.stdout} />
-        {row.isHeaderLine && (
+        {row.isHeaderLine && row.canCollapse && (
           <>
-            &nbsp;{' '}
-            <Label isCompact>{new Date(row.jobEvent.created ?? '').toLocaleTimeString()}</Label>
+            &nbsp; <Label isCompact>{new Date(row.created ?? '').toLocaleTimeString()}</Label>
           </>
         )}
       </td>
