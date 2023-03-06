@@ -35,6 +35,7 @@ export function SelectMultipleDialog<T extends object>(props: SelectMultipleDial
         <Button
           key="confirm"
           variant="primary"
+          id="confirm"
           onClick={() => {
             onClose();
             onSelect(view.selectedItems);
