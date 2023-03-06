@@ -242,8 +242,8 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
   if (filter !== false && typeof name === 'string') {
     cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
       cy.get('#filter-input').type(name, { delay: 0 });
+      cy.get('[aria-label="apply filter"]').click();
     });
-    cy.get('[aria-label="apply filter"]').click();
   }
   cy.contains('td', name)
     .parent()

@@ -469,21 +469,18 @@ function ToolbarTextFilter(props: {
         )}
       </TextInputGroup>
 
-      {!value ? (
-        <></>
-      ) : (
-        <Button
-          variant={value ? 'primary' : 'control'}
-          aria-label="apply filter"
-          onClick={() => {
-            props.addFilter(value);
-            setValue('');
-          }}
-          tabIndex={-1}
-        >
-          <ArrowRightIcon />
-        </Button>
-      )}
+      <Button
+        variant={value ? 'primary' : 'control'}
+        aria-label="apply filter"
+        onClick={() => {
+          props.addFilter(value);
+          setValue('');
+        }}
+        tabIndex={-1}
+        isDisabled={!value}
+      >
+        <ArrowRightIcon />
+      </Button>
     </InputGroup>
   );
 }
