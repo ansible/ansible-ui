@@ -17,6 +17,7 @@ export function useSelectAndRemoveUsersFromTeam(onClose?: (users: User[]) => voi
         (users: User[]) => {
           removeUsersFromTeams(users, team, onClose);
         },
+        t('Remove user(s)'),
         `/api/v2/teams/${team.id}/access_list/`
       );
     },
