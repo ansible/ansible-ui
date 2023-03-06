@@ -11,9 +11,13 @@ export function useSelectUsersRemoveTeams(onClose?: (users: User[]) => void) {
   const removeUsersFromTeams = useRemoveUsersFromTeams();
   const selectUsersRemoveTeams = useCallback(
     (teams: Team[]) => {
-      selectUsers(t('Remove users from teams', { count: teams.length }), (users: User[]) => {
-        removeUsersFromTeams(users, teams, onClose);
-      });
+      selectUsers(
+        t('Remove users from teams', { count: teams.length }),
+        (users: User[]) => {
+          removeUsersFromTeams(users, teams, onClose);
+        },
+        t('Remove user(s)')
+      );
     },
     [removeUsersFromTeams, onClose, selectUsers, t]
   );
