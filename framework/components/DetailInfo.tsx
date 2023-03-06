@@ -1,16 +1,12 @@
-import { PageSection } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { Alert, PageSection } from '@patternfly/react-core';
 
-export function DetailInfo(props: { children: ReactNode; disablePaddingTop?: boolean }) {
+export function DetailInfo(props: { title: string; description?: string }) {
+  const { title, description } = props;
   return (
-    <PageSection
-      className="pf-c-alert pf-m-inline pf-m-info"
-      style={{
-        border: 0,
-        paddingTop: props.disablePaddingTop ? 0 : undefined,
-      }}
-    >
-      {props.children}
+    <PageSection variant="light">
+      <Alert isInline isPlain variant="info" title={title}>
+        {description && <p>{description}</p>}
+      </Alert>
     </PageSection>
   );
 }
