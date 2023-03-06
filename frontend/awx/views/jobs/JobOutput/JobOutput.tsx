@@ -6,11 +6,13 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobEventsComponent } from './JobOutputEvents';
 
 export function JobOutput(props: { job: Job }) {
+  const { t } = useTranslation();
   const { job } = props;
   if (!job) return <Skeleton />;
   return (
@@ -22,20 +24,20 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
           <div style={{ flexGrow: 1 }} />
           <ToolbarItem>
-            Plays <Label>{job.playbook_counts.play_count ?? 0}</Label>
+            {t('Plays')} <Label>{job.playbook_counts.play_count ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Tasks <Label>{job.playbook_counts.task_count ?? 0}</Label>
+            {t('Tasks')} <Label>{job.playbook_counts.task_count ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Hosts{' '}
+            {t('Hosts')}{' '}
             <Label>{job.host_status_counts.ok ?? 0 + job.host_status_counts.failures ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Failed <Label>{job.host_status_counts.failures ?? 0}</Label>
+            {t('Failed')} <Label>{job.host_status_counts.failures ?? 0}</Label>
           </ToolbarItem>
           <ToolbarItem>
-            Elapsed <Label>{job.elapsed}</Label>
+            {t('Elapsed')} <Label>{job.elapsed}</Label>
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>

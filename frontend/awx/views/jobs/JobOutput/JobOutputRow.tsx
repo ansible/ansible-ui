@@ -1,5 +1,60 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Label, Split, SplitItem } from '@patternfly/react-core';
+import { AngleRightIcon } from '@patternfly/react-icons';
+import useResizeObserver from '@react-hook/resize-observer';
+import { useRef } from 'react';
+import { Ansi } from '../../../../common/Ansi';
 import { JobEvent } from '../../../interfaces/JobEvent';
+import './JobOutput.css';
+import { ICollapsed } from './JobOutputEvents';
+
+export function JobOutputRow(props: {
+  index: number;
+  row: IJobOutputRow;
+  collapsed: ICollapsed;
+  setCollapsed: (uuid: string, counter: number, collapsed: boolean) => void;
+  setHeight: (index: number, height: number) => void;
+  canCollapseEvents?: boolean;
+}) {
+  const { index, row, collapsed, setCollapsed, canCollapseEvents } = props;
+  const ref = useRef<HTMLTableRowElement>(null);
+  useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
+  const isCollapsed = collapsed[row.uuid ?? ''] === true;
+  return (
+    <tr ref={ref}>
+      <td className="expand-column">
+        <div className="expand-div">
+          <Split hasGutter>
+            <SplitItem isFilled>
+              {canCollapseEvents && row.canCollapse && (
+                <button
+                  className={'expand-button'}
+                  onClick={() => setCollapsed(row.uuid, row.counter, !isCollapsed)}
+                >
+                  <AngleRightIcon
+                    style={{
+                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                      transition: 'transform',
+                    }}
+                  />
+                </button>
+              )}
+            </SplitItem>
+            <SplitItem>{row.line}</SplitItem>
+          </Split>
+        </div>
+      </td>
+      <td className="stdout-column">
+        <Ansi input={row.stdout} />
+        {row.isHeaderLine && row.canCollapse && (
+          <>
+            &nbsp; <Label isCompact>{new Date(row.created ?? '').toLocaleTimeString()}</Label>
+          </>
+        )}
+      </td>
+    </tr>
+  );
+}
 
 export interface IJobOutputRow {
   counter: number;
@@ -10,7 +65,6 @@ export interface IJobOutputRow {
   stdout: string;
   eventLine: number;
   canCollapse: boolean;
-  // jobEvent: JobEvent;
   isHeaderLine: boolean;
   created?: string;
 }
@@ -45,14 +99,13 @@ export function jobEventToRows(jobEvent: JobEvent): IJobOutputRow[] {
     }
     const jobOutputRow: IJobOutputRow = {
       line: jobEvent.start_line! + eventLine,
-      counter: jobEvent.counter!,
+      counter: jobEvent.counter,
       stdout,
       uuid: jobEvent.uuid ?? '',
       playUuid: playUuid ?? '',
       taskUuid: taskUuid ?? '',
       eventLine,
       canCollapse: canCollapse && isHeaderLine,
-      // jobEvent,
       isHeaderLine,
       created: jobEvent.created,
     };

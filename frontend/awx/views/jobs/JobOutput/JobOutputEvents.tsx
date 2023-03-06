@@ -1,21 +1,10 @@
-import {
-  Divider,
-  Label,
-  LabelGroup,
-  PageSection,
-  Skeleton,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
-import { AngleRightIcon } from '@patternfly/react-icons';
-import useResizeObserver from '@react-hook/resize-observer';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Job } from '../../../interfaces/Job';
-import { Ansi } from './Ansi';
 import './JobOutput.css';
-import { IJobOutputRow, jobEventToRows } from './JobOutputRow';
+import { JobOutputLoadingRow } from './JobOutputLoadingRow';
+import { IJobOutputRow, jobEventToRows, JobOutputRow } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
-import { useJobOutputChildrenSummary } from './useJobOutputSummary';
+import { useJobOutputChildrenSummary } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
 
 export interface ICollapsed {
@@ -24,7 +13,7 @@ export interface ICollapsed {
 
 export function JobEventsComponent(props: { job: Job }) {
   const childrenSummary = useJobOutputChildrenSummary(props.job);
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(props.job, 3);
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(props.job, 10);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -88,7 +77,7 @@ export function JobEventsComponent(props: { job: Job }) {
 
   return (
     <>
-      <PageSection variant="light">
+      {/* <PageSection variant="light">
         <LabelGroup numLabels={999}>
           <Label variant="outline">Event Count: {jobEventCount}</Label>
           <Label variant="outline">Row Count: {jobOutputRows.length}</Label>
@@ -97,10 +86,23 @@ export function JobEventsComponent(props: { job: Job }) {
           <Label variant="outline">After Spacing: {afterRowsHeight}px</Label>
         </LabelGroup>
       </PageSection>
-      <Divider />
-      <div ref={containerRef} style={{ overflow: 'auto' }}>
-        <pre style={{ fontSize: 'smaller', flexGrow: 1 }}>
-          <table style={{ width: '100%', height: '100%' }}>
+      <Divider /> */}
+      <div
+        ref={containerRef}
+        style={{
+          display: 'flex',
+          overflow: 'auto',
+          flexGrow: 1,
+          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+        }}
+      >
+        <pre
+          style={{
+            fontSize: 'smaller',
+            flexGrow: 1,
+          }}
+        >
+          <table style={{ width: '100%', height: '100%', minHeight: '100%' }}>
             <tbody>
               <tr style={{ height: beforeRowsHeight }} />
               {visibleItems.map((row, index) => {
@@ -127,77 +129,16 @@ export function JobEventsComponent(props: { job: Job }) {
                 );
               })}
               <tr style={{ height: afterRowsHeight }} />
+              <tr
+                style={{
+                  height: '100%',
+                  borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+                }}
+              />
             </tbody>
           </table>
         </pre>
       </div>
     </>
-  );
-}
-
-function JobOutputLoadingRow(props: {
-  counter: number;
-  queryJobOutputEvent: (counter: number) => void;
-}) {
-  useEffect(() => props.queryJobOutputEvent(props.counter), [props]);
-  return (
-    <tr>
-      <td className="expand-column"></td>
-      <td className="stdout-column">
-        <Skeleton>{`Loading ${props.counter}`}</Skeleton>
-      </td>
-    </tr>
-  );
-}
-
-function JobOutputRow(props: {
-  index: number;
-  row: IJobOutputRow;
-  collapsed: ICollapsed;
-  setCollapsed: (uuid: string, counter: number, collapsed: boolean) => void;
-  setHeight: (index: number, height: number) => void;
-  canCollapseEvents?: boolean;
-}) {
-  const { index, row, collapsed, setCollapsed, canCollapseEvents } = props;
-  const ref = useRef<HTMLTableRowElement>(null);
-  useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
-  const isCollapsed = collapsed[row.uuid ?? ''] === true;
-  return (
-    <tr ref={ref}>
-      {/* <td className="expand-div">{row.playUuid}</td>
-      <td className="expand-div">{row.taskUuid}</td>
-      <td className="expand-div">{row.uuid}</td> */}
-      <td className="expand-column">
-        <div className="expand-div">
-          <Split hasGutter>
-            <SplitItem isFilled>
-              {canCollapseEvents && row.canCollapse && (
-                <button
-                  className={'expand-button'}
-                  onClick={() => setCollapsed(row.uuid, row.counter, !isCollapsed)}
-                >
-                  <AngleRightIcon
-                    style={{
-                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                      transition: 'transform',
-                    }}
-                  />
-                </button>
-              )}
-            </SplitItem>
-            <SplitItem>{row.line}</SplitItem>
-          </Split>
-        </div>
-      </td>
-
-      <td className="stdout-column">
-        <Ansi input={row.stdout} />
-        {row.isHeaderLine && row.canCollapse && (
-          <>
-            &nbsp; <Label isCompact>{new Date(row.created ?? '').toLocaleTimeString()}</Label>
-          </>
-        )}
-      </td>
-    </tr>
   );
 }
