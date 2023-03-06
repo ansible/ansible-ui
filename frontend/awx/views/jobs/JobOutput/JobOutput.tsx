@@ -2,12 +2,10 @@ import {
   Label,
   SearchInput,
   Skeleton,
-  Stack,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Scrollable } from '../../../../../framework';
 import { ItemsResponse, useGet2 } from '../../../../Data';
 import { JobEvent } from '../../../interfaces/generated-from-swagger/api';
 import { Job } from '../../../interfaces/Job';
@@ -21,7 +19,7 @@ export function JobOutput(props: { job: Job }) {
       ? // ? `/api/v2/jobs/${job.id.toString()}/events/?order_by=counter&page=1&page_size=50`
         `/api/v2/jobs/${job.id.toString()}/job_events/`
       : '',
-    query: { order_by: 'counter', page: 1, page_size: 50 },
+    query: { order_by: 'counter', page: 1, page_size: 10 },
   });
 
   if (!job) return <Skeleton />;
@@ -56,13 +54,7 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      {/* <div style={{ backgroundColor: 'green', flexGrow: 1 }}>kk</div> */}
-      <Scrollable>
-        <Stack>
-          <JobEventsComponent jobEvents={jobEvents} />
-          {/* <Test jobEvents={jobEvents} /> */}
-        </Stack>
-      </Scrollable>
+      <JobEventsComponent jobEvents={jobEvents} />
     </>
   );
 }

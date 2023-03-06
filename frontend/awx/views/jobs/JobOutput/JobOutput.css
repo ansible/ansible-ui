@@ -18,6 +18,7 @@
   position: sticky;
   left: 0;
   background-color: var(--pf-global--BackgroundColor--200);
+  width: 1px;
 }
 
 :root:where(.pf-theme-dark) .expand-column {
@@ -42,4 +43,11 @@
   padding-top: 2px;
   padding-bottom: 2px;
   border-right: thin solid var(--pf-global--BorderColor--100);
+}
+
+.expand-button {
+  background-color: unset;
+  border: 0;
+  margin-top: -1px;
+  margin-bottom: -1px;
 }
