@@ -12,7 +12,7 @@ import {
   Spinner,
   Title,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon, SearchIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
@@ -37,6 +37,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { EmptyStateCustom } from '../components/EmptyStateCustom';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { IPageAction } from '../PageActions/PageAction';
@@ -99,7 +100,7 @@ export type PageTableProps<T extends object> = {
   emptyStateTitle: string;
   emptyStateDescription?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emptyStateIcon?: React.ComponentType<any>;
+  emptyStateIcon?: React.ComponentClass<any>;
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string;
   emptyStateButtonClick?: () => void;
@@ -184,24 +185,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
       <PageSection>
-        <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
-          <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
-          <Title headingLevel="h4" size="lg">
-            {props.emptyStateTitle}
-          </Title>
-          {props.emptyStateDescription && (
-            <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
-          )}
-          {props.emptyStateButtonClick && (
-            <Button
-              variant="primary"
-              onClick={props.emptyStateButtonClick}
-              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-            >
-              {props.emptyStateButtonText}
-            </Button>
-          )}
-        </EmptyState>
+        <EmptyStateCustom
+          title={props.emptyStateTitle}
+          description={props.emptyStateDescription}
+          icon={props.emptyStateIcon ?? PlusCircleIcon}
+          button={props.emptyStateButtonIcon}
+        />
       </PageSection>
     );
   }
