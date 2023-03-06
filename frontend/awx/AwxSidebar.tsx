@@ -167,7 +167,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.ExecutionEnvironments)}
         >
-          {t('Execution Environments')}
+          {t('Execution environments')}
         </NavItem>
         {/* <NavItem
           isActive={isRouteActive(RouteObj.TopologyView, location)}
