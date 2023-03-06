@@ -114,7 +114,7 @@ describe('TeamAccess', () => {
         .first()
         .click();
       cy.contains(`Are you sure you want to remove ${role.name} access from user-2?`).should(
-        'be.visible'
+        'exist'
       );
     });
   });

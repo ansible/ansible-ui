@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useActiveUser } from '../../../common/useActiveUser';
@@ -7,46 +7,35 @@ import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';
 
-export function useRemoveUsersFromResource(resource: ResourceType) {
+export function useRemoveUsersFromResource() {
   const { t } = useTranslation();
-
   const activeUser = useActiveUser();
-  const canRemoveUsers: boolean = useMemo(
-    () => activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit,
-    [activeUser?.is_superuser, resource?.summary_fields?.user_capabilities?.edit]
-  );
-
-  const cannotRemoveUser = useCallback(
-    (user: User) => {
-      if (user.is_superuser) {
-        return t('System administrators have unrestricted access to all resources.');
-      }
-      if (user.is_system_auditor) {
-        return t('System auditors have read access to all resources.');
-      }
-      if (!canRemoveUsers) {
-        return t('The user cannot be deleted due to insufficient permissions.');
-      }
-      return undefined;
-    },
-    [canRemoveUsers, t]
-  );
-
-  const title = useMemo(() => {
-    const titleMap: { [key: string]: string } = {
-      organization: 'Remove user from organization',
-      team: 'Remove user from team',
-      // TODO: Expand map for other resource types
-    };
-    return resource.type ? titleMap[resource.type] : 'Remove user';
-  }, [resource.type]);
-
   const confirmationColumns = useUsersColumns();
   const removeUserConfirmationDialog = useBulkConfirmation<User>();
 
   const removeUsersFromResource = useCallback(
-    (users: User[], onComplete?: (users: User[]) => void) => {
+    (users: User[], resource: ResourceType, onComplete?: (users: User[]) => void) => {
+      const canRemoveUsers: boolean =
+        activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit;
+      const cannotRemoveUser = (user: User) => {
+        if (user.is_superuser) {
+          return t('System administrators have unrestricted access to all resources.');
+        }
+        if (user.is_system_auditor) {
+          return t('System auditors have read access to all resources.');
+        }
+        if (!canRemoveUsers) {
+          return t('The user cannot be deleted due to insufficient permissions.');
+        }
+        return undefined;
+      };
       const undeletableUsers = users.filter(cannotRemoveUser);
+      const titleMap: { [key: string]: string } = {
+        organization: 'Remove user from organization',
+        team: 'Remove user from team',
+        // TODO: Expand map for other resource types
+      };
+      const title = resource.type ? titleMap[resource.type] : 'Remove user';
 
       removeUserConfirmationDialog({
         title: t(title, { count: users.length }),
@@ -85,7 +74,7 @@ export function useRemoveUsersFromResource(resource: ResourceType) {
         },
       });
     },
-    [cannotRemoveUser, confirmationColumns, removeUserConfirmationDialog, t, title]
+    [activeUser?.is_superuser, confirmationColumns, removeUserConfirmationDialog, t]
   );
   return removeUsersFromResource;
 }
