@@ -1,15 +1,6 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
-import {
-  Divider,
-  PageSection,
-  Stack,
-  Title,
-  TitleSizes,
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@patternfly/react-core';
-import { TachometerAltIcon } from '@patternfly/react-icons';
+import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/react-core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
@@ -36,7 +27,7 @@ export default function Jobs() {
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
 
-  const [showGraph, setShowGraph] = useState(true);
+  const [showGraph] = useState(false);
 
   const { refresh } = view;
   const handleWebSocketMessage = useCallback(
@@ -69,16 +60,16 @@ export default function Jobs() {
         titleHelp={t('jobs.title.help')}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t('jobs.title.description')}
-        headerActions={
-          <ToggleGroup aria-label={t('show graph toggle')}>
-            <ToggleGroupItem
-              icon={<TachometerAltIcon />}
-              aria-label={t('toggle show graph')}
-              isSelected={showGraph}
-              onChange={() => setShowGraph((show) => !show)}
-            />
-          </ToggleGroup>
-        }
+        // headerActions={
+        //   <ToggleGroup aria-label={t('show graph toggle')}>
+        //     <ToggleGroupItem
+        //       icon={<TachometerAltIcon />}
+        //       aria-label={t('toggle show graph')}
+        //       isSelected={showGraph}
+        //       onChange={() => setShowGraph((show) => !show)}
+        //     />
+        //   </ToggleGroup>
+        // }
       />
       {showGraph && (
         <>
