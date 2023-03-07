@@ -105,7 +105,7 @@ export function Instances() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Node instances')}
+        title={t('Instances')}
         description={t(
           'Ansible node instances dedicated for a particular purpose indicated by node type.'
         )}
