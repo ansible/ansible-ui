@@ -134,6 +134,13 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
   borderTop: 'thin solid var(--pf-global--BorderColor--100)'
   `;
 
+  const ConfirmBoxDiv = styled.div`
+    margin-left: 32;
+    height: 64;
+    display: 'flex';
+    alignitems: 'center';
+  `;
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -187,14 +194,14 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             />
           </ModalBodyDiv>
           {confirmText && actionableItems.length > 0 && (
-            <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
+            <ConfirmBoxDiv>
               <Checkbox
                 id="confirm"
                 label={confirmText}
                 isChecked={confirmed}
                 onChange={setConfirmed}
               />
-            </div>
+            </ConfirmBoxDiv>
           )}
         </ModalBoxBody>
       )}
