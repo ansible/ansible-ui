@@ -18,6 +18,20 @@ import { useFrameworkTranslations } from './useFrameworkTranslations';
 import { compareStrings } from './utils/compare';
 import styled from 'styled-components';
 
+const ModalBodyDiv = styled.div`
+  display: flex,
+  flex-direction: column,
+  max-height: 560px,
+  overflow: hidden,
+  border-top: thin solid var(--pf-global--BorderColor--100)
+`;
+const ConfirmBoxDiv = styled.div`
+  margin-left: 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+`;
+
 export interface BulkConfirmationDialog<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
@@ -125,21 +139,6 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     }
     return items;
   }, [isItemNonActionable, items]);
-
-  const ModalBodyDiv = styled.div`
-  display: 'flex',
-  flexDirection: 'column',
-  maxHeight: 560,
-  overflow: 'hidden',
-  borderTop: 'thin solid var(--pf-global--BorderColor--100)'
-  `;
-
-  const ConfirmBoxDiv = styled.div`
-    margin-left: 32;
-    height: 64;
-    display: 'flex';
-    alignitems: 'center';
-  `;
 
   return (
     <Modal
