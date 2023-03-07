@@ -16,6 +16,7 @@ import { ITableColumn, PageTable } from './PageTable/PageTable';
 import { usePaged } from './PageTable/useTableItems';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 import { compareStrings } from './utils/compare';
+import styled from 'styled-components';
 
 export interface BulkConfirmationDialog<T extends object> {
   /** The title of the model.
@@ -125,6 +126,14 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     return items;
   }, [isItemNonActionable, items]);
 
+  const ModalBodyDiv = styled.div`
+  display: 'flex',
+  flexDirection: 'column',
+  maxHeight: 560,
+  overflow: 'hidden',
+  borderTop: 'thin solid var(--pf-global--BorderColor--100)'
+  `;
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -154,15 +163,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     >
       {items.length > 0 && (
         <ModalBoxBody style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              maxHeight: 560,
-              overflow: 'hidden',
-              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-            }}
-          >
+          <ModalBodyDiv>
             {alertPrompts &&
               alertPrompts.length > 0 &&
               alertPrompts.map((alertPrompt, i) => (
@@ -184,7 +185,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               autoHidePagination={true}
               disableBodyPadding
             />
-          </div>
+          </ModalBodyDiv>
           {confirmText && actionableItems.length > 0 && (
             <div style={{ marginLeft: 32, height: 64, display: 'flex', alignItems: 'center' }}>
               <Checkbox
