@@ -107,6 +107,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_PASSWORD') as string,
         'EDA server'
       );
+      cy.hasTitle(/^Projects$/);
     },
     { cacheAcrossSpecs: true }
   );
