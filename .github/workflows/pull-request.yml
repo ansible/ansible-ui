@@ -157,7 +157,7 @@ jobs:
         run: |
           mkdir eda
           cd eda
-          echo "${{ secrets.EDA_DOCKER_COMPOSE }}"" > docker-compose.yaml
+          echo "${{ secrets.EDA_DOCKER_COMPOSE }}" > docker-compose.yaml
           docker compose up -d --quiet-pull
       - uses: actions/download-artifact@v3
         with:
