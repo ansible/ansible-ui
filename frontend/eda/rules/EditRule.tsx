@@ -45,7 +45,7 @@ export function EditRule() {
         navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
       }
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);

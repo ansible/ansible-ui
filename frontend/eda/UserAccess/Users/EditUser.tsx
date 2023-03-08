@@ -49,7 +49,7 @@ export function EditUser() {
         navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
       }
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);

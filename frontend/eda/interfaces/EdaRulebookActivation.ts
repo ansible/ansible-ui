@@ -9,7 +9,6 @@ export interface EdaRulebookActivation {
   id: number;
   name: string;
   description?: string;
-  inventory?: { id: string; name: string };
   execution_environment?: string;
   rulebook?: { id: string; name: string };
   restart_policy?: string;
@@ -19,8 +18,11 @@ export interface EdaRulebookActivation {
   is_enabled?: boolean;
   throttle?: boolean;
   variables_template?: string;
+  instances_count?: number;
+  rules_count?: number;
   last_restarted?: string;
-  restarted_count?: string;
+  restarted_count?: number;
+  fired_count?: number;
   created_at?: string;
   modified_at?: string;
   extra_var?: { id: string; name: string };

@@ -94,13 +94,12 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             loginPage2 = loginPage2.substring(loginPage2.indexOf('"') + 1);
             csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
           }
-
           const searchParams = new URLSearchParams();
           searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
+          setCookie('csrftoken', csrfmiddlewaretoken);
           searchParams.set('username', data.username);
           searchParams.set('password', data.password);
           searchParams.set('next', '/');
-
           try {
             await ky.post(loginPageUrl, {
               credentials: 'include',

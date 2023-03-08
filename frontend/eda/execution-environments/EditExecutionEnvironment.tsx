@@ -61,7 +61,7 @@ export function EditExecutionEnvironment() {
         );
       }
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);

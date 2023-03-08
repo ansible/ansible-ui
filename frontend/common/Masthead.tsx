@@ -291,7 +291,11 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              await fetch('/api/logout/');
+              await fetch(
+                automationServer && automationServer.type === AutomationServerType.EDA
+                  ? '/api/eda/v1/auth/logout/?next=/'
+                  : '/api/logout/'
+              );
               history('/');
             }
             void logout();
