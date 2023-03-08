@@ -4,16 +4,13 @@ Cypress is being used for both end-to-end tests and component tests.
 
 ## NPM Test Scripts
 
-| Command                          | Description                                             |
-| -------------------------------- | ------------------------------------------------------- |
-| `npm run cypress:run`            | Run E2E and component tests headless.                   |
-| `npm run cypress:run:e2e`        | Run E2E tests headless.                                 |
-| `npm run cypress:run:component`  | Run component tests headless.                           |
-| `npm run cypress:open`           | Open the Cypress UI to run tests.                       |
-| `npm run cypress:open:e2e`       | Open the Cypress UI to run e2e tests.                   |
-| `npm run cypress:open:component` | Open the Cypress UI to run component tests.             |
-| `npm run cypress:coverage`       | After tests have finished, view test coverage.          |
-| `npm run cypress:start:e2e`      | Start the frontend and proxy and then run e2e headless. |
+| Command                         | Description                                    |
+| ------------------------------- | ---------------------------------------------- |
+| `npm run cypress:run`           | Run E2E and component tests headless.          |
+| `npm run cypress:run:e2e`       | Run E2E tests headless.                        |
+| `npm run cypress:run:component` | Run component tests headless.                  |
+| `npm run cypress:open`          | Open the Cypress UI to run tests.              |
+| `npm run cypress:coverage`      | After tests have finished, view test coverage. |
 
 ## E2E Testing
 
