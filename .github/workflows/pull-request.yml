@@ -128,6 +128,8 @@ jobs:
           config: specPattern=cypress/e2e/awx/**/*.cy.ts,projectId=${{ secrets.CYPRESS_AWX_PROJECT_ID }}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
