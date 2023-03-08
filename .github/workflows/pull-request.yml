@@ -143,6 +143,18 @@ jobs:
       matrix:
         containers: [1]
     steps:
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      - name: Setup EDA
+        run: |
+          echo "$EDA" > docker-compose.yaml
+          docker compose up -d --quiet-pull
+        env:
+          EDA: ${{ secrets.EDA }}
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
@@ -164,18 +176,6 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: Login to Quay
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_TOKEN }}
-      - name: Setup EDA
-        run: |
-          echo "$EDA" > docker-compose.yaml
-          docker compose up -d --quiet-pull
-        env:
-          EDA: ${{ secrets.EDA }}
       - uses: cypress-io/github-action@v4
         with:
           install: false
