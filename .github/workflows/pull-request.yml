@@ -155,9 +155,9 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
       - name: Setup EDA Server
         run: |
-          mkdir -p eda
+          mkdir eda
           cd eda
-          echo ${EDA_DOCKER_COMPOSE} > docker-compose.yaml
+          echo ${{ env.EDA_DOCKER_COMPOSE }} > docker-compose.yaml
           docker compose up -d --quiet-pull
       - uses: actions/download-artifact@v3
         with:
