@@ -152,7 +152,7 @@ jobs:
       - name: Setup EDA
         run: |
           echo "$EDA" > docker-compose.yaml
-          docker compose up -d --quiet-pull
+          docker compose up --detach --wait --quiet-pull --abort-on-container-exit
         env:
           EDA: ${{ secrets.EDA }}
       - uses: actions/download-artifact@v3
