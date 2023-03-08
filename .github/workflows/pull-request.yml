@@ -155,8 +155,6 @@ jobs:
       - name: Setup EDA Server
         working-directory: compose/eda
         run: docker compose up -d --quiet-pull
-      - name: EDA Server Logs
-        run: docker logs eda-server
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
