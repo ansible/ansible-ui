@@ -29,6 +29,9 @@ services:
     healthcheck:
       test: [ 'CMD', 'curl', '-q', 'http://localhost:8000/_healthz' ]
       interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
 
   eda-worker:
     container_name: eda-worker
