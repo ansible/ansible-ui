@@ -125,8 +125,59 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          env: server=${{ secrets.AWX_SERVER }},username=${{ secrets.AWX_USERNAME }},password=${{ secrets.AWX_PASSWORD }},servertype=AWX
           config: specPattern=cypress/e2e/awx/**/*.cy.ts
+        env:
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+  eda-e2e:
+    name: EDA E2E
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+      - container-image
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ansible-ui.tar
+      - run: docker load --input ansible-ui.tar
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Setup EDA
+        run: |
+          cat $EDA > docker-compose.yaml
+          docker compose up
+        env:
+          EDA: ${{ secrets.EDA }}
+      - uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: npm run docker:run
+          wait-on: 'https://localhost:3002'
+          record: true
+          parallel: true
+          config: specPattern=cypress/e2e/eda/**/*.cy.ts
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
