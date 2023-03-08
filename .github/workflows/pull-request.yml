@@ -154,7 +154,7 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
       - name: Setup EDA Server
         working-directory: compose/eda
-        run: docker compose up -d --wait --quiet-pull
+        run: docker compose up -d --quiet-pull
       - name: EDA Server Logs
         run: docker logs eda-server
       - uses: actions/download-artifact@v3

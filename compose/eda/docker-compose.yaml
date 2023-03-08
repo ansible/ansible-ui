@@ -26,12 +26,6 @@ services:
         condition: service_healthy
       eda-postgres:
         condition: service_healthy
-    healthcheck:
-      test: [ 'CMD', 'curl', '-q', 'http://localhost:8000/_healthz' ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-      start_period: 10s
 
   eda-worker:
     container_name: eda-worker
@@ -39,8 +33,6 @@ services:
     environment: *eda-env
     command: aap-eda-manage rqworker --worker-class aap_eda.core.tasking.Worker
     depends_on:
-      eda-server:
-        condition: service_healthy
       eda-redis:
         condition: service_healthy
       eda-postgres:
