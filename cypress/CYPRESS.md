@@ -82,5 +82,5 @@ npm run cypress:run
 Open the coverage report
 
 ```
-npm run cypress:coverage
+npm run coverage
 ```
