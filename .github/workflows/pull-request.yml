@@ -173,7 +173,7 @@ jobs:
       - name: Setup EDA
         run: |
           echo "$EDA" > docker-compose.yaml
-          docker compose up
+          docker compose up -d --quiet-pull
         env:
           EDA: ${{ secrets.EDA }}
       - uses: cypress-io/github-action@v4
