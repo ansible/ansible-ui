@@ -19,11 +19,11 @@ import { compareStrings } from './utils/compare';
 import styled from 'styled-components';
 
 const ModalBodyDiv = styled.div`
-  display: flex,
-  flex-direction: column,
-  max-height: 560px,
-  overflow: hidden,
-  border-top: thin solid var(--pf-global--BorderColor--100)
+  display: flex;
+  flex-direction: column;
+  max-height: 560px;
+  overflow: hidden;
+  border-top: thin solid var(--pf-global--BorderColor--100);
 `;
 const ConfirmBoxDiv = styled.div`
   margin-left: 32px;
