@@ -125,10 +125,10 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/awx/**/*.cy.ts
+          config: specPattern=cypress/e2e/awx/**/*.cy.ts,projectId=${{ secrets.CYPRESS_AWX_PROJECT_ID }}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
@@ -182,9 +182,9 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/eda/**/*.cy.ts
+          config: specPattern=cypress/e2e/eda/**/*.cy.ts,projectId=${{ secrets.CYPRESS_EDA_PROJECT_ID }}
         env:
           CYPRESS_EDA_SERVER: http://eda-server:8000/
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
