@@ -154,8 +154,11 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
       - name: Setup EDA Server
-        working-directory: compose/eda
-        run: docker compose up -d --quiet-pull
+        run: |
+          mkdir -p eda
+          cd eda
+          echo ${EDA_DOCKER_COMPOSE} > docker-compose.yaml
+          docker compose up -d --quiet-pull
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
