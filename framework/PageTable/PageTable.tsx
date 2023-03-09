@@ -188,8 +188,18 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         <EmptyStateCustom
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}
-          icon={props.emptyStateIcon ?? PlusCircleIcon}
-          button={props.emptyStateButtonIcon}
+          icon={props.emptyStateIcon ? PlusCircleIcon : undefined}
+          button={
+            props.emptyStateButtonClick && (
+              <Button
+                variant="primary"
+                onClick={props.emptyStateButtonClick}
+                icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+              >
+                {props.emptyStateButtonText}
+              </Button>
+            )
+          }
         />
       </PageSection>
     );
