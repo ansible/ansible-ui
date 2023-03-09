@@ -13,6 +13,8 @@ describe('teams', () => {
   let user2: User;
 
   before(() => {
+    cy.awxLogin();
+
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
     }).then((testOrg) => {

@@ -3,9 +3,8 @@
 import '@cypress/code-coverage/support';
 import './commands';
 
-before(() => {
-  cy.login();
-});
+// before(() => {
+// });
 
 // afterEach(() => {
 //   // cy.checkA11y()
