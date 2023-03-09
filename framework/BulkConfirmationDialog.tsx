@@ -129,6 +129,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
+      aria-label={title}
       description={prompt}
       variant={ModalVariant.medium}
       isOpen
