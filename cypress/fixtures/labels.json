@@ -1,0 +1,139 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "label",
+      "url": "/api/v2/labels/1/",
+      "related": {
+        "created_by": "/api/v2/users/1/",
+        "modified_by": "/api/v2/users/1/",
+        "organization": "/api/v2/organizations/1/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2023-01-05T18:35:37.582633Z",
+      "modified": "2023-01-05T18:35:37.582646Z",
+      "name": "alex label",
+      "organization": 1
+    },
+    {
+      "id": 111,
+      "type": "label",
+      "url": "/api/v2/labels/111/",
+      "related": {
+        "created_by": "/api/v2/users/14/",
+        "modified_by": "/api/v2/users/8/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 14,
+          "username": "user-7",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 8,
+          "username": "user-1",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2023-01-27T18:54:37.637762Z",
+      "modified": "2023-01-27T18:54:37.637776Z",
+      "name": "L_10o0",
+      "organization": 2
+    },
+    {
+      "id": 112,
+      "type": "label",
+      "url": "/api/v2/labels/112/",
+      "related": {
+        "created_by": "/api/v2/users/15/",
+        "modified_by": "/api/v2/users/9/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 15,
+          "username": "user-8",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 9,
+          "username": "user-2",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2023-01-27T18:54:37.640991Z",
+      "modified": "2023-01-27T18:54:37.641005Z",
+      "name": "L_11o0",
+      "organization": 2
+    },
+    {
+      "id": 113,
+      "type": "label",
+      "url": "/api/v2/labels/113/",
+      "related": {
+        "created_by": "/api/v2/users/16/",
+        "modified_by": "/api/v2/users/10/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 16,
+          "username": "user-9",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 10,
+          "username": "user-3",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2023-01-27T18:54:37.644299Z",
+      "modified": "2023-01-27T18:54:37.644313Z",
+      "name": "L_12o0",
+      "organization": 2
+    }
+  ]
+}

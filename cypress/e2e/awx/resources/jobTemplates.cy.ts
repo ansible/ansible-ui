@@ -1,6 +1,7 @@
-import { randomString } from '../../../../framework/utils/random-string';
-
 describe('Job Templates Form', () => {
+  before(() => {
+    cy.awxLogin();
+  });
   it('should navigate to job templates list', () => {
     cy.navigateTo(/^Templates$/, false);
     cy.hasTitle(/^Templates$/);
