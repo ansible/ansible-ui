@@ -5,15 +5,12 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaUser {
+export interface EdaGroup {
   id: number;
-  email: string;
   name: string;
-  first_name?: string;
-  last_name?: string;
-  type?: string;
-  password: string;
-  is_active: boolean;
-  is_superuser: boolean;
-  is_verified: boolean;
+  description?: string;
+  created_at?: string;
+  modified_at?: string;
+  roles?: { id: number; name: string }[];
+  users?: { id: number; name: string }[];
 }

@@ -21,6 +21,14 @@ import { Rules } from './rules/Rules';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
 import { Users } from './UserAccess/Users/Users';
 import { Actions } from './views/actions/Actions';
+import { EditGroup } from './UserAccess/Groups/EditGroup';
+import { GroupDetails } from './UserAccess/Groups/GroupDetails';
+import { Groups } from './UserAccess/Groups/Groups';
+import { EditRole } from './UserAccess/Roles/EditRole';
+import { RoleDetails } from './UserAccess/Roles/RoleDetails';
+import { Roles } from './UserAccess/Roles/Roles';
+import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
+import { UserDetails } from './UserAccess/Users/UserDetails';
 
 export function EventDrivenRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Eda);
@@ -88,6 +96,19 @@ export function EventDrivenRouter() {
       <Route path={RouteObjWithoutPrefix.EdaRules} element={<Rules />} />
 
       <Route path={RouteObjWithoutPrefix.EdaUsers} element={<Users />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaUser} element={<CreateUser />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaUser} element={<EditUser />} />
+      <Route path={RouteObjWithoutPrefix.EdaUserDetails} element={<UserDetails />} />
+
+      <Route path={RouteObjWithoutPrefix.EdaGroups} element={<Groups />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaGroup} element={<EditGroup />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaGroup} element={<EditGroup />} />
+      <Route path={RouteObjWithoutPrefix.EdaGroupDetails} element={<GroupDetails />} />
+
+      <Route path={RouteObjWithoutPrefix.EdaRoles} element={<Roles />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaRole} element={<EditRole />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaRole} element={<EditRole />} />
+      <Route path={RouteObjWithoutPrefix.EdaRoleDetails} element={<RoleDetails />} />
     </Routes>
   );
 }
