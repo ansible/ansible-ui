@@ -31,9 +31,9 @@ graph LR;
 
    | Environment Variable | Description                                                                         |
    | -------------------- | ----------------------------------------------------------------------------------- |
-   | `AWX_SERVER`         | URL of the AWX server to run E2E tests against. `Default: <https://localhost:8043>` |
-   | `AWX_USERNAME`       | username for logging into the AWX server. `Default: admin`                          |
-   | `AWX_PASSWORD`       | password for logging into the AWX server. `Default: admin`                          |
+   | `CYPRESS_AWX_SERVER`         | URL of the AWX server to run E2E tests against. `Default: <https://localhost:8043>` |
+   | `CYPRESS_AWX_USERNAME`       | username for logging into the AWX server. `Default: admin`                          |
+   | `CYPRESS_AWX_PASSWORD`       | password for logging into the AWX server. `Default: admin`                          |
 
    > NOTE: Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
 
