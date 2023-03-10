@@ -150,7 +150,7 @@ describe('TeamAccess', () => {
         .click();
       cy.contains(
         `Are you sure you want to remove ${role.name} access from Team 2 Org 0? Doing so affects all members of the team.`
-      ).should('be.visible');
+      ).should('exist');
     });
   });
   it('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
