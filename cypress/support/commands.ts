@@ -214,7 +214,9 @@ Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
-  cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  cy.get('.page-table-toolbar').within(() => {
+    cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  });
 });
 
 Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
@@ -274,5 +276,5 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
 });
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-  cy.get('#toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
