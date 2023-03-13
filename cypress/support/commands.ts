@@ -77,7 +77,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
-    (Cypress.env('SESSION') as string) ?? randomString(8),
+    'AWX',
     () => {
       cy.login(
         Cypress.env('AWX_SERVER') as string,
@@ -87,14 +87,19 @@ Cypress.Commands.add('awxLogin', () => {
       );
       cy.hasTitle(/^Welcome to AWX$/);
     },
-    { cacheAcrossSpecs: true }
+    {
+      cacheAcrossSpecs: true,
+      validate: () => {
+        cy.request({ method: 'GET', url: '/api/v2/me/' });
+      },
+    }
   );
   cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('edaLogin', () => {
   cy.session(
-    (Cypress.env('SESSION') as string) ?? randomString(8),
+    'EDA',
     () => {
       cy.login(
         Cypress.env('EDA_SERVER') as string,
@@ -104,7 +109,12 @@ Cypress.Commands.add('edaLogin', () => {
       );
       cy.hasTitle(/^Projects$/);
     },
-    { cacheAcrossSpecs: true }
+    {
+      cacheAcrossSpecs: true,
+      validate: () => {
+        cy.request({ method: 'GET', url: '/api/v2/me/' });
+      },
+    }
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
