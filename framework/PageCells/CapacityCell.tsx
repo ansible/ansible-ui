@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useSettings } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';

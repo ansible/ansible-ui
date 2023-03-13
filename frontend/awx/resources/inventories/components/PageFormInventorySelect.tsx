@@ -17,7 +17,7 @@ export function PageFormInventorySelect(props: {
     <PageFormTextInput
       name={props.name}
       label={t('Inventory')}
-      placeholder="Enter inventory"
+      placeholder={t('Enter inventory')}
       selectTitle={t('Select an inventory')}
       selectValue={(inventory: Inventory) => inventory.name}
       selectOpen={selectInventory}

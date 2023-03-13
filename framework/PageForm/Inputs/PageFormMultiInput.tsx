@@ -1,6 +1,5 @@
-import { Button, ChipGroup, Chip, InputGroup } from '@patternfly/react-core';
+import { Button, Chip, ChipGroup, InputGroup } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import {
   Controller,
   FieldPath,
@@ -11,6 +10,7 @@ import {
   ValidationRule,
 } from 'react-hook-form';
 import styled from 'styled-components';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
@@ -50,7 +50,7 @@ export function PageFormMultiInput<
     setValue,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
-  const { t } = useTranslation();
+  const [translations] = useFrameworkTranslations();
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -72,8 +72,8 @@ export function PageFormMultiInput<
               <ChipHolder isDisabled={isSubmitting} className="pf-c-form-control">
                 <ChipGroup
                   numChips={5}
-                  expandedText={t('Show less')}
-                  collapsedText={t(`${value?.length - 5} more`)}
+                  expandedText={translations.showLess}
+                  collapsedText={translations.countMore.replace('{count}', `${value?.length - 5}`)}
                 >
                   {value?.map((item) => (
                     <Chip key={item.id} onClick={() => removeItem(item)}>

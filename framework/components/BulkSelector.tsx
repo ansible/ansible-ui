@@ -5,6 +5,7 @@ import {
   DropdownToggleCheckbox,
 } from '@patternfly/react-core';
 import { useCallback, useMemo, useState } from 'react';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { useBreakpoint } from './useBreakPoint';
 
 export interface BulkSelectorProps<T> {
@@ -20,6 +21,7 @@ export interface BulkSelectorProps<T> {
 export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const isSmallOrLarger = useBreakpoint('sm');
+  const [translations] = useFrameworkTranslations();
 
   const { pageItems, selectedItems, selectItems, unselectAll } = props;
 
@@ -82,10 +84,10 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
           setIsOpen(false);
         }}
       >
-        {props.selectNoneText ?? 'Select none'}
+        {props.selectNoneText ?? translations.selectNone}
       </DropdownItem>
     );
-  }, [props.selectNoneText, unselectAll]);
+  }, [props.selectNoneText, translations.selectNone, unselectAll]);
 
   const selectPageDropdownItem = useMemo(() => {
     return (

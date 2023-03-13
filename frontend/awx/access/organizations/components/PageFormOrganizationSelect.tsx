@@ -16,7 +16,7 @@ export function PageFormOrganizationSelect<
     <PageFormTextInput<TFieldValues, TFieldName, Organization>
       name={props.name}
       label={t('Organization')}
-      placeholder="Enter organization"
+      placeholder={t('Enter organization')}
       selectTitle={t('Select a organization')}
       selectValue={(organization: Organization) => organization.name}
       selectOpen={selectOrganization}

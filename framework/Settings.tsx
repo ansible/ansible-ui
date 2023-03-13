@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { usePageDialog } from './PageDialog';

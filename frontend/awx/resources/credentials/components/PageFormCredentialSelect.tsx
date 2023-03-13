@@ -17,7 +17,7 @@ export function PageFormCredentialSelect(props: {
     <PageFormTextInput
       name={props.name}
       label={t('Credential')}
-      placeholder="Enter credential"
+      placeholder={t('Enter credential')}
       selectTitle={t('Select a credential')}
       selectValue={(credential: Credential) => credential.name}
       selectOpen={selectCredential}

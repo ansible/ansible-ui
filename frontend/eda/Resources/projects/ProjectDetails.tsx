@@ -1,24 +1,24 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetail,
   PageDetails,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { PageDetail } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { EdaProject } from '../../interfaces/EdaProject';
 import { API_PREFIX } from '../../constants';
-import { useMemo } from 'react';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function ProjectDetails() {
@@ -58,7 +58,7 @@ export function ProjectDetails() {
       <PageDetails>
         <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
-        <PageDetail label={t('SCM type')}>{project?.type || 'Git'}</PageDetail>
+        <PageDetail label={t('SCM type')}>{project?.type || t('Git')}</PageDetail>
         <PageDetail label={t('SCM URL')}>{project?.type || ''}</PageDetail>
         <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>

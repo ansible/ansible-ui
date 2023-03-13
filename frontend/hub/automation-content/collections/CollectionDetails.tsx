@@ -221,7 +221,7 @@ function CollectionDocumentationTabPanel(props: {
       <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
         <Nav theme="light">
           <NavList>
-            <NavExpandable key="documentation" title="Documentation" isExpanded>
+            <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
               <NavItem key="readme">{t('Readme')}</NavItem>
             </NavExpandable>
             {groups.map((group) => (
@@ -248,6 +248,8 @@ function CollectionDocumentationTabPanel(props: {
     </DrawerPanelContent>
   );
 }
+
+const splitString = '- name';
 
 function CollectionDocumentationTabContent(props: {
   content: IContents | undefined;
@@ -334,12 +336,12 @@ function CollectionDocumentationTabContent(props: {
           <Stack hasGutter>
             <Title headingLevel="h2">{t('Examples')}</Title>
             {content.doc_strings.examples
-              .split('- name')
+              .split(splitString)
               .filter((example) => !!example.trim())
               .map((example, index) => (
                 <CodeBlock key={index} style={{ overflowY: 'auto' }}>
                   <pre>
-                    {'- name'}
+                    {splitString}
                     {example
                       .split('\n')
                       .filter((example) => !!example.trim())

@@ -194,9 +194,9 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
       />
       {mode === 'create' && (
         <PageFormTextInput
-          label="Organization"
+          label={t('Organization')}
           name="user.summary_fields.organization.name"
-          placeholder="Enter organization"
+          placeholder={t('Enter organization')}
           selectTitle={t('Select an organization')}
           selectValue={(organization: Organization) => organization.name}
           selectOpen={selectOrganization}

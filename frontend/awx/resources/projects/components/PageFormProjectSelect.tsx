@@ -17,7 +17,7 @@ export function PageFormProjectSelect(props: {
     <PageFormTextInput
       name={props.name}
       label={t('Project')}
-      placeholder="Enter project"
+      placeholder={t('Enter project')}
       selectTitle={t('Select an project')}
       selectValue={(project: Project) => project.name}
       selectOpen={selectProject}

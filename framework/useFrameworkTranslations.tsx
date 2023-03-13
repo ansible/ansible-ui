@@ -14,6 +14,17 @@ export interface IFrameworkTranslations {
   submitText: string;
   submittingText: string;
   successText: string;
+  manageColumns: string;
+  moreInformation: string;
+  showLess: string;
+  countMore: string;
+  documentation: string;
+  noResultsFound: string;
+  noResultsMatchCriteria: string;
+  clearAllFilters: string;
+  by: string;
+  selectNone: string;
+  pleaseFixValidationErrors: string;
 }
 
 const defaultTranslations: IFrameworkTranslations = {
@@ -30,6 +41,17 @@ const defaultTranslations: IFrameworkTranslations = {
   submitText: 'Submit',
   submittingText: 'Submitting',
   successText: 'Success',
+  manageColumns: 'Manage columns',
+  moreInformation: 'More information',
+  showLess: 'Show less',
+  countMore: '{count} more',
+  documentation: 'Documnetation',
+  noResultsFound: 'No results found',
+  noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
+  clearAllFilters: 'Clear all filters',
+  by: 'by',
+  selectNone: 'Select none',
+  pleaseFixValidationErrors: 'Please fix validation errors.',
 };
 
 const FrameworkTranslationsContext = createContext<

@@ -13,18 +13,15 @@ import {
 } from '@patternfly/react-core';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { ITableColumn } from './PageTable/PageTable';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
-export function useColumnModal<T extends object>(
-  columns: ITableColumn<T>[],
-  t?: (t: string) => string
-) {
-  t = t ? t : (t: string) => t;
-
+export function useColumnModal<T extends object>(columns: ITableColumn<T>[]) {
   const [columnModalOpen, setColumnModalOpen] = useState(false);
   const openColumnModal = useCallback(() => {
     setColumnModalOpen(true);
   }, []);
   const [managedColumns, setManagedColumns] = useState<ITableColumn<T>[]>(() => columns);
+  const [translations] = useFrameworkTranslations();
 
   useEffect(() => {
     setManagedColumns((managedColumns) =>
@@ -68,7 +65,7 @@ export function useColumnModal<T extends object>(
   const columnModal = (
     <Modal
       variant={ModalVariant.medium}
-      title="Manage columns"
+      title={translations.manageColumns}
       // description={
       //     <TextContent>
       //         <Text component={TextVariants.p}>Selected categories will be displayed in the table.</Text>
@@ -81,7 +78,7 @@ export function useColumnModal<T extends object>(
       onClose={onClose}
       actions={[
         <Button key="save" variant="primary" onClick={onClose}>
-          {t('Close')}
+          {translations.closeText}
         </Button>,
         // <Button key="cancel" variant="link" onClick={onClose}>
         //     Cancel

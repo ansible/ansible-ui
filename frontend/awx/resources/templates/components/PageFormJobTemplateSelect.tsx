@@ -17,7 +17,7 @@ export function PageFormJobTemplateSelect(props: {
     <PageFormTextInput
       name={props.name}
       label={t('Job template')}
-      placeholder="Enter job template"
+      placeholder={t('Enter job template')}
       selectTitle={t('Select a job template')}
       selectValue={(jobTemplate: JobTemplate) => jobTemplate.name}
       selectOpen={selectJobTemplate}
