@@ -1,8 +1,21 @@
 import codeCoverage from '@cypress/code-coverage/task';
 import { defineConfig } from 'cypress';
 import pkg from 'webpack';
+import { Inventory, JobTemplate } from './frontend/awx/interfaces/generated-from-swagger/api';
+import { Organization } from './frontend/awx/interfaces/Organization';
+import { Project } from './frontend/awx/interfaces/Project';
 
 const { DefinePlugin } = pkg;
+
+export type Resources = {
+  organization: Organization;
+  inventory?: Inventory;
+  project?: Project;
+  jobTemplate?: JobTemplate;
+  // We can expand this type to include EDA/hub resources
+};
+
+let globalResources: Resources | null;
 
 export default defineConfig({
   viewportWidth: 1600,
@@ -14,6 +27,22 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('task', {
+        setBaselineResources: (resources: Resources | null) => {
+          globalResources = resources;
+          return null;
+        },
+        getBaselineResources: (): Resources | null => {
+          return globalResources ? globalResources : null;
+        },
+      });
+      on('task', {
+        log(args) {
+          // eslint-disable-next-line
+          console.log(...args);
+          return null;
+        },
+      });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
       codeCoverage(on, config);
       return config;

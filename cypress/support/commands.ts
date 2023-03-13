@@ -3,8 +3,25 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
-import { Group, Host, Inventory } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import {
+  Group,
+  Host,
+  Inventory,
+  JobTemplate,
+} from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Project } from '../../frontend/awx/interfaces/Project';
+import { Resources } from '../../cypress.config';
+
+export type AwxOrgResource = {
+  organization: Organization;
+};
+export type AwxResources = {
+  organization: Organization;
+  inventory: Inventory;
+  project: Project;
+  jobTemplate: JobTemplate;
+};
 
 declare global {
   namespace Cypress {
@@ -43,6 +60,10 @@ declare global {
       requestGet<T>(url: string): Chainable<T>;
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
+      createBaselineResourcesForAWX(options?: {
+        onlyCreateOrg?: boolean;
+      }): Chainable<AwxOrgResource | AwxResources>;
+      cleanupBaselineResourcesForAWX(organization?: Organization): Chainable<void>;
       createInventoryHostGroup(
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
@@ -75,6 +96,7 @@ Cypress.Commands.add(
   }
 );
 
+// Logs into the live server on AWX and triggers creation of baseline resources (Org, Project, Inventory, Template)
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
     'AWX',
@@ -146,30 +168,6 @@ Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: P
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
-
-Cypress.Commands.add(
-  'createInventoryHostGroup',
-  function createInventoryHostGroup(organization: Organization) {
-    cy.requestPost<Inventory>('/api/v2/inventories/', {
-      name: 'E2E Inventory ' + randomString(4),
-      organization: organization.id,
-    }).then((inventory) => {
-      cy.requestPost<Host>('/api/v2/hosts/', {
-        name: 'E2E Host ' + randomString(4),
-        inventory: inventory.id,
-      }).then((host) => {
-        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
-          name: 'E2E Group ' + randomString(4),
-          inventory: inventory.id,
-        }).then((group) => ({
-          inventory,
-          host,
-          group,
-        }));
-      });
-    });
-  }
-);
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   cy.getCookie('csrftoken').then((cookie) =>
@@ -287,4 +285,139 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+});
+
+/**
+ * Resources for testing AWX
+ */
+
+// Create Organization and optionally Project, Inventory & Template
+Cypress.Commands.add('createBaselineResourcesForAWX', (options?: { onlyCreateOrg?: boolean }) => {
+  const onlyCreateOrg = options?.onlyCreateOrg;
+
+  // Return if resources have been previously created
+  cy.task('getBaselineResources').then((resources) => {
+    if (resources) {
+      return;
+    }
+  });
+
+  // Create org
+  cy.requestPost<Organization>('/api/v2/organizations/', {
+    name: 'E2E Organization ' + randomString(4),
+  }).then((organization) => {
+    if (onlyCreateOrg) {
+      cy.task('setBaselineResources', {
+        organization,
+      }).then(() => ({
+        organization,
+      }));
+    }
+    // Create project in the org created above
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'https://github.com/ansible/ansible-tower-samples',
+    }).then((project) => {
+      // Create inventory in the org created above
+      cy.requestPost<Inventory>('/api/v2/inventories/', {
+        name: 'E2E Inventory ' + randomString(4),
+        organization: organization.id,
+      }).then((inventory) => {
+        // Create job template using the project and inventory created above
+        waitForProjectToFinishSyncing(project.id);
+        cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
+          name: 'E2E Job Template ' + randomString(4),
+          playbook: 'hello_world.yml',
+          project: project.id.toString(),
+          inventory: inventory.id,
+        }).then((jobTemplate) => {
+          cy.task('setBaselineResources', {
+            organization,
+            inventory,
+            project,
+            jobTemplate,
+          }).then(() => ({
+            organization,
+            inventory,
+            project,
+            jobTemplate,
+          }));
+        });
+      });
+    });
+  });
+});
+
+// Polling to wait till a project is synced
+function waitForProjectToFinishSyncing(projectId: number) {
+  cy.requestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+    if (project.status === 'successful') return;
+
+    waitForProjectToFinishSyncing(projectId);
+  });
+}
+
+// Clean up org (and its underlying resources)
+Cypress.Commands.add('cleanupBaselineResourcesForAWX', () => {
+  cy.task('getBaselineResources').then((resources) => {
+    if (resources && (resources as AwxResources | AwxOrgResource).organization) {
+      cy.requestDelete(`/api/v2/organizations/${(resources as Resources).organization.id}/`, true);
+    }
+    if (resources && (resources as AwxResources).project) {
+      // Delete sync job related to project
+      const project = (resources as AwxResources).project;
+      if (project && project.related && typeof project.related.last_job === 'string') {
+        const projectUpdateEndpoint: string = project.related.last_job;
+        cy.requestDelete(projectUpdateEndpoint);
+      }
+      // Delete project
+      cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+    }
+    if (resources && (resources as AwxResources).jobTemplate) {
+      const jobTemplate = (resources as AwxResources).jobTemplate;
+      if (jobTemplate && jobTemplate.id) {
+        const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
+        cy.requestDelete(`/api/v2/job_templates/${templateId}/`, true);
+      }
+    }
+    cy.task('setBaselineResources', null);
+  });
+});
+
+Cypress.Commands.add(
+  'createInventoryHostGroup',
+  function createInventoryHostGroup(organization: Organization) {
+    cy.requestPost<Inventory>('/api/v2/inventories/', {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => {
+      cy.requestPost<Host>('/api/v2/hosts/', {
+        name: 'E2E Host ' + randomString(4),
+        inventory: inventory.id,
+      }).then((host) => {
+        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
+          name: 'E2E Group ' + randomString(4),
+          inventory: inventory.id,
+        }).then((group) => ({
+          inventory,
+          host,
+          group,
+        }));
+      });
+    });
+  }
+);
+
+Cypress.Commands.overwrite('log', function (log, ...args) {
+  if (Cypress.browser.isHeadless) {
+    return cy.task('log', args, { log: false }).then(() => {
+      return log(...args);
+    });
+  } else {
+    // eslint-disable-next-line
+    console.log(...args);
+    return log(...args);
+  }
 });

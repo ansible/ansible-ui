@@ -1,7 +1,14 @@
+// import { JobTemplate } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+// import { ItemsResponse } from '../../../../frontend/Data';
+
 describe('Job Templates Form', () => {
   before(() => {
     cy.awxLogin();
   });
+  after(() => {
+    cy.cleanupBaselineResourcesForAWX();
+  });
+
   it('can render the templates list page', () => {
     cy.navigateTo(/^Templates$/, false);
     cy.hasTitle(/^Templates$/);
