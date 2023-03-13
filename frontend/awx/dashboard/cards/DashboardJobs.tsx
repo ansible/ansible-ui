@@ -2,7 +2,7 @@ import { CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/rea
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { FormGroupSelectOption } from '../../../../framework';
+import { FormGroupSelectEnhanced } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
@@ -21,7 +21,7 @@ export function DashboardJobsCard() {
             </Link>
           </FlexItem>
           <FlexItem>
-            <FormGroupSelectOption<DashboardJobPeriod>
+            <FormGroupSelectEnhanced<DashboardJobPeriod>
               placeholderText={t('Select period')}
               value={period}
               onSelect={(e, v) => {
@@ -37,7 +37,7 @@ export function DashboardJobsCard() {
             />
           </FlexItem>
           <FlexItem>
-            <FormGroupSelectOption<DashboardJobType>
+            <FormGroupSelectEnhanced<DashboardJobType>
               placeholderText={t('Select job types')}
               value={jobType}
               onSelect={(e, v) => {

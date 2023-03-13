@@ -7,7 +7,7 @@ import {
   Validate,
 } from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
-import { FormGroupSelectOption, FormGroupSelectOptionProps } from './FormGroupSelectOption';
+import { FormGroupSelectEnhanced, FormGroupSelectEnhancedProps } from './FormGroupSelectEnhanced';
 
 export type PageFormSelectOptionProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -18,7 +18,7 @@ export type PageFormSelectOptionProps<
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
-} & Omit<FormGroupSelectOptionProps<TSelection>, 'onSelect' | 'value'>;
+} & Omit<FormGroupSelectEnhancedProps<TSelection>, 'onSelect' | 'value'>;
 
 /**  Select wrapper for use with react-hook-form */
 export function PageFormSelectOption<
@@ -37,7 +37,7 @@ export function PageFormSelectOption<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupSelectOption
+        <FormGroupSelectEnhanced
           {...props}
           id={props.id ?? props.name}
           value={value as TSelection}

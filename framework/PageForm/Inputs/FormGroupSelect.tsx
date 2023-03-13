@@ -4,13 +4,19 @@ import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type FormGroupSelectProps = Pick<
   SelectProps,
-  'footer' | 'isCreatable' | 'isGrouped' | 'onSelect' | 'placeholderText' | 'value' | 'isDisabled'
+  | 'footer'
+  | 'onCreateOption'
+  | 'isGrouped'
+  | 'onSelect'
+  | 'placeholderText'
+  | 'value'
+  | 'isDisabled'
 > &
   PageFormGroupProps & { isReadOnly?: boolean; placeholderText: string | React.ReactNode };
 
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupSelect(props: FormGroupSelectProps) {
-  const { children, helperTextInvalid, isReadOnly, onSelect, value } = props;
+  const { children, helperTextInvalid, isReadOnly, onSelect, value, onCreateOption } = props;
 
   const [open, setOpen] = useState(false);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
@@ -32,7 +38,7 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
       <Select
         {...props}
         label={undefined}
-        variant={SelectVariant.single}
+        variant={!onCreateOption ? SelectVariant.single : SelectVariant.typeahead}
         aria-describedby={props.id ? `${props.id}-form-group` : undefined}
         selections={value}
         onSelect={onSelectHandler}
@@ -41,6 +47,8 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         maxHeight={280}
         validated={helperTextInvalid ? 'error' : undefined}
         isDisabled={props.isDisabled || isReadOnly}
+        isCreatable={!!onCreateOption}
+        onCreateOption={onCreateOption}
       >
         {children as ReactElement[]}
       </Select>

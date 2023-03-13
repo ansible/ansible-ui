@@ -9,7 +9,7 @@ export interface IFormGroupSelectOption<T> {
   value: T;
 }
 
-export type FormGroupSelectOptionProps<T> = {
+export type FormGroupSelectEnhancedProps<T> = {
   options: IFormGroupSelectOption<T>[];
   onSelect: (
     event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
@@ -23,7 +23,7 @@ export type FormGroupSelectOptionProps<T> = {
  *
  * This supports easy grouping and options that have values that are objects and not just strings.
  */
-export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
+export function FormGroupSelectEnhanced<T>(props: FormGroupSelectEnhancedProps<T>) {
   const { onSelect, value } = props;
 
   const onSelectHandler = useCallback(
