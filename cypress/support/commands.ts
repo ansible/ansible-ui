@@ -9,7 +9,15 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(): Chainable<void>;
+      login(
+        server: string,
+        username: string,
+        password: string,
+        serverType: string
+      ): Chainable<void>;
+      awxLogin(): Chainable<void>;
+      edaLogin(): Chainable<void>;
+
       getByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -42,50 +50,63 @@ declare global {
   }
 }
 
-const sessionID = randomString(8);
+Cypress.Commands.add(
+  'login',
+  (server: string, username: string, password: string, serverType: string) => {
+    window.localStorage.setItem('theme', 'light');
+    window.localStorage.setItem('disclaimer', 'true');
 
-Cypress.Commands.add('login', () => {
+    cy.visit(`/automation-servers`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+
+    cy.clickButton(/^Add automation server$/);
+    cy.typeByLabel(/^Name$/, 'E2E');
+    cy.typeByLabel(/^Url$/, server);
+    cy.get('.pf-c-select__toggle').click();
+    cy.clickButton(serverType);
+    cy.get('button[type=submit]').click();
+
+    cy.contains('a', /^E2E$/).click();
+    cy.typeByLabel(/^Username$/, username);
+    cy.typeByLabel(/^Password$/, password);
+    cy.get('button[type=submit]').click();
+  }
+);
+
+Cypress.Commands.add('awxLogin', () => {
   cy.session(
-    sessionID,
+    (Cypress.env('SESSION') as string) ?? randomString(8),
     () => {
-      window.localStorage.setItem('theme', 'light');
-      window.localStorage.setItem('disclaimer', 'true');
-
-      cy.visit(`/automation-servers`, {
-        retryOnStatusCodeFailure: true,
-        retryOnNetworkFailure: true,
-      });
-
-      const server = Cypress.env('server')
-        ? (Cypress.env('server') as string)
-        : 'https://localhost:8043/';
-      cy.setCookie('server', server);
-      const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
-      const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'admin';
-      let serverType = 'AWX Ansible server';
-      switch (Cypress.env('servertype')) {
-        case 'EDA':
-          serverType = 'EDA server';
-          break;
-      }
-
-      cy.clickButton(/^Add automation server$/);
-      cy.typeByLabel(/^Name$/, 'E2E');
-      cy.typeByLabel(/^Url$/, server);
-      cy.get('.pf-c-select__toggle').click();
-      cy.clickButton(serverType);
-      cy.get('button[type=submit]').click();
-
-      cy.contains('a', /^E2E$/).click();
-      cy.typeByLabel(/^Username$/, username);
-      cy.typeByLabel(/^Password$/, password);
-      cy.get('button[type=submit]').click();
-
-      cy.contains(/^Welcome to/);
-      cy.wait(2000);
+      cy.login(
+        Cypress.env('AWX_SERVER') as string,
+        Cypress.env('AWX_USERNAME') as string,
+        Cypress.env('AWX_PASSWORD') as string,
+        'AWX Ansible server'
+      );
+      cy.hasTitle(/^Welcome to AWX$/);
     },
     { cacheAcrossSpecs: true }
   );
+  cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('edaLogin', () => {
+  cy.session(
+    (Cypress.env('SESSION') as string) ?? randomString(8),
+    () => {
+      cy.login(
+        Cypress.env('EDA_SERVER') as string,
+        Cypress.env('EDA_USERNAME') as string,
+        Cypress.env('EDA_PASSWORD') as string,
+        'EDA server'
+      );
+      cy.hasTitle(/^Projects$/);
+    },
+    { cacheAcrossSpecs: true }
+  );
+  cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
@@ -242,8 +263,8 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
   if (filter !== false && typeof name === 'string') {
     cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
       cy.get('#filter-input').type(name, { delay: 0 });
+      cy.get('[aria-label="apply filter"]').click();
     });
-    cy.get('[aria-label="apply filter"]').click();
   }
   cy.contains('td', name)
     .parent()

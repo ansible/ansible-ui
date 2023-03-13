@@ -89,7 +89,6 @@ export function RulebookActivationDetails() {
             <PageDetail label={t('Description')}>
               {rulebookActivation?.description || ''}
             </PageDetail>
-            <PageDetail label={t('Inventory')}>{rulebookActivation?.inventory?.name}</PageDetail>
             <PageDetail label={t('Execution environment')}>
               {rulebookActivation?.execution_environment || ''}
             </PageDetail>

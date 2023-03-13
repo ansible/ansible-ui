@@ -15,18 +15,17 @@ import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaProject } from '../interfaces/EdaProject';
-import { EdaInventory } from '../interfaces/EdaInventory';
 import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitch';
 import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
+import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: rulebooks } = useGet<EdaResult<EdaRulebook>>(`${API_PREFIX}/rulebooks/`);
   const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
-  const { data: inventories } = useGet<EdaResult<EdaInventory>>(`${API_PREFIX}/inventories/`);
-  const { data: extra_vars } = useGet<EdaResult<EdaInventory>>(`${API_PREFIX}/extra-vars/`);
+  const { data: extra_vars } = useGet<EdaResult<EdaExtraVars>>(`${API_PREFIX}/extra-vars/`);
   const { cache } = useSWRConfig();
 
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation> = async (
@@ -75,19 +74,6 @@ export function EditRulebookActivation() {
           label={t('Description')}
           id={'description'}
           placeholder={t('Insert description here')}
-        />
-        <PageFormSelectOption
-          name={'inventory_id'}
-          label={t('Inventory')}
-          placeholderText={t('Select inventory')}
-          options={
-            inventories?.results
-              ? inventories.results.map((item: { name: string; id: number }) => ({
-                  label: item.name,
-                  value: item.id,
-                }))
-              : []
-          }
         />
         <PageFormTextInput
           name={'execution_environment'}

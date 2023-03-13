@@ -7,6 +7,7 @@ import {
   Skeleton,
   Stack,
 } from '@patternfly/react-core';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -17,13 +18,12 @@ import {
   PageTab,
   PageTabs,
 } from '../../../framework';
+import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
 import { RouteObj } from '../../Routes';
-import { EdaRule } from '../interfaces/EdaRule';
-import { formatDateString } from '../../../framework/utils/formatDateString';
-import React from 'react';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
+import { EdaRule } from '../interfaces/EdaRule';
 
 export function RuleDetails() {
   const { t } = useTranslation();
@@ -52,7 +52,7 @@ export function RuleDetails() {
           variant="plain"
           onTooltipHidden={() => setCopied(false)}
         >
-          {copied ? 'Successfully copied to clipboard!' : 'Copy to clipboard'}
+          {copied ? t('Successfully copied to clipboard!') : t('Copy to clipboard')}
         </ClipboardCopyButton>
       </CodeBlockAction>
     </React.Fragment>

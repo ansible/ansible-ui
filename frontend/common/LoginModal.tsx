@@ -15,6 +15,12 @@ import { AutomationServerType } from '../automation-servers/interfaces/Automatio
 import { setCookie } from '../Data';
 import { RouteObj } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+import styled from 'styled-components';
+
+const LoginModalDiv = styled.div`
+  padding: 24px;
+`;
+
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
@@ -34,9 +40,9 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <LoginModalDiv>
         <LoginForm defaultServer={props.server} onLogin={props.onLogin} />
-      </div>
+      </LoginModalDiv>
     </Modal>
   );
 }
@@ -79,20 +85,27 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             ? '/api/login/'
             : automationServer.type === AutomationServerType.Galaxy
             ? '/api/automation-hub/_ui/v1/auth/login/'
-            : undefined;
+            : '/api/eda/v1/auth/session/login/';
 
         if (loginPageUrl !== undefined) {
           setCookie('server', data.server);
-          let loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
-          loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '));
-          loginPage = loginPage.substring(loginPage.indexOf('"') + 1);
-          const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'));
-
+          const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
+          let csrfmiddlewaretoken: string;
+          if (loginPage.includes('csrfmiddlewaretoken')) {
+            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfmiddlewaretoken'));
+            loginPage2 = loginPage2.substring(loginPage2.indexOf('value=') + 7);
+            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
+          } else {
+            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfToken: '));
+            loginPage2 = loginPage2.substring(loginPage2.indexOf('"') + 1);
+            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
+          }
           const searchParams = new URLSearchParams();
           searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
+          setCookie('csrftoken', csrfmiddlewaretoken);
           searchParams.set('username', data.username);
           searchParams.set('password', data.password);
-
+          searchParams.set('next', '/');
           try {
             await ky.post(loginPageUrl, {
               credentials: 'include',

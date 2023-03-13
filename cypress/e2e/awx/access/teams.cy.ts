@@ -13,6 +13,8 @@ describe('teams', () => {
   let user2: User;
 
   before(() => {
+    cy.awxLogin();
+
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
     }).then((testOrg) => {
@@ -65,6 +67,24 @@ describe('teams', () => {
     cy.typeByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName);
+  });
+
+  it('team: remove users from team', () => {
+    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+      id: team.summary_fields.object_roles.member_role.id,
+    });
+    cy.requestPost<User>(`/api/v2/users/${user2.id.toString()}/roles/`, {
+      id: team.summary_fields.object_roles.member_role.id,
+    });
+    cy.navigateTo(/^Teams$/, true);
+    cy.clickRowAction(team.name, /^Remove users from team$/);
+    cy.selectRowInDialog(user1.username);
+    cy.selectRowInDialog(user2.username);
+    cy.get('#confirm').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Remove user/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
   });
 
   it('edit team', () => {

@@ -103,6 +103,7 @@ export function SelectDialog<T extends { id: number }, TMultiple = false>(
   return (
     <Modal
       title={title}
+      aria-label={title}
       isOpen={open}
       onClose={onClose}
       variant={ModalVariant.medium}

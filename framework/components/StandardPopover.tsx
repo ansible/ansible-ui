@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 const PopoverButton = styled.button`
   padding: var(--pf-global--spacer--xs);
@@ -20,7 +20,7 @@ function StandardPopover(props: {
   maxWidth?: string;
 }) {
   const { ariaLabel = '', content, header, id = '', maxWidth = '', ...rest } = props;
-  const { t } = useTranslation();
+  const [translations] = useFrameworkTranslations();
   if (!content) {
     return null;
   }
@@ -35,7 +35,7 @@ function StandardPopover(props: {
       {...rest}
     >
       <PopoverButton
-        aria-label={ariaLabel ?? t('More information`')}
+        aria-label={ariaLabel ?? translations.moreInformation}
         aria-haspopup="true"
         className="pf-c-form__group-label-help"
         onClick={(e) => e.preventDefault()}
