@@ -10,6 +10,8 @@ describe('credentials', () => {
   let credential: Credential;
 
   before(() => {
+    cy.awxLogin();
+
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Credentials ' + randomString(4),
     }).then((testOrg) => (organization = testOrg));
