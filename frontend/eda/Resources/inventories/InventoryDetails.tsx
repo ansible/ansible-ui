@@ -8,6 +8,8 @@ import {
   Skeleton,
   Stack,
 } from '@patternfly/react-core';
+import { TrashIcon } from '@patternfly/react-icons';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -21,14 +23,12 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
-import { EdaInventory } from '../../interfaces/EdaInventory';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import React, { useMemo } from 'react';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { API_PREFIX } from '../../constants';
-import { TrashIcon } from '@patternfly/react-icons';
+import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useDeleteInventories } from './hooks/useDeleteInventories';
 
 export function InventoryDetails() {
@@ -77,7 +77,7 @@ export function InventoryDetails() {
           variant="plain"
           onTooltipHidden={() => setCopied(false)}
         >
-          {copied ? 'Successfully copied to clipboard!' : 'Copy to clipboard'}
+          {copied ? t('Successfully copied to clipboard!') : t('Copy to clipboard')}
         </ClipboardCopyButton>
       </CodeBlockAction>
     </React.Fragment>

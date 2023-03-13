@@ -1,6 +1,7 @@
 import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);
@@ -16,10 +17,8 @@ export function SinceCell(props: {
   value: string | number | undefined | null;
   author?: string;
   onClick?: () => void;
-  t?: (t: string) => string;
 }) {
-  let { t } = props;
-  t = t ? t : (t: string) => t;
+  const translations = useFrameworkTranslations();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
   useEffect(() => {
@@ -41,7 +40,7 @@ export function SinceCell(props: {
   return (
     <span style={{ whiteSpace: 'nowrap' }}>
       {dateTime}
-      {author && <span>&nbsp;{t('by')}&nbsp;</span>}
+      {author && <span>&nbsp;{translations.by}&nbsp;</span>}
       {onClick ? (
         <Button variant="link" isInline onClick={onClick}>
           {author}
