@@ -15,6 +15,12 @@ import { AutomationServerType } from '../automation-servers/interfaces/Automatio
 import { setCookie } from '../Data';
 import { RouteObj } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+import styled from 'styled-components';
+
+const LoginModalDiv = styled.div`
+  padding: 24px;
+`;
+
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
@@ -34,9 +40,9 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <LoginModalDiv>
         <LoginForm defaultServer={props.server} onLogin={props.onLogin} />
-      </div>
+      </LoginModalDiv>
     </Modal>
   );
 }
