@@ -16,14 +16,14 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
 import { RouteObj } from '../../Routes';
+import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
 import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulesetActions } from './hooks/useRulesetActions';
 import { useRulesetColumns } from './hooks/useRulesetColumns';
 import { useRulesetFilters } from './hooks/useRulesetFilters';
-import { API_PREFIX } from '../constants';
-import { EdaResult } from '../interfaces/EdaResult';
 
 export function RulebookDetails() {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function RulebookDetails() {
             <PageDetail label={t('Name')}>{rulebook?.name || ''}</PageDetail>
             <PageDetail label={t('Description')}>{rulebook?.description || ''}</PageDetail>
             <PageDetail label={t('Number of rule sets')}>
-              {rulebook?.ruleset_count || 'Git'}
+              {rulebook?.ruleset_count || t('Git')}
             </PageDetail>
             <PageDetail label={t('Fire count')}>{rulebook?.fire_count || ''}</PageDetail>
             <PageDetail label={t('Created')}>

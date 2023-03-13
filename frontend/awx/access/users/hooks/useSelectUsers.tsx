@@ -1,26 +1,38 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
 import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
+import { useUserAndTeamRolesLists } from '../../common/useUserAndTeamRolesLists';
 import { useUsersColumns } from './useUsersColumns';
 import { useUsersFilters } from './useUsersFilters';
 
-function SelectUsers(props: { title: string; onSelect: (users: User[]) => void }) {
+function SelectUsers(props: {
+  accessUrl?: string;
+  title: string;
+  onSelect: (users: User[]) => void;
+  confirmText?: string;
+}) {
+  const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
   const view = useAwxView<User>({
-    url: '/api/v2/users/',
+    url: props.accessUrl ?? '/api/v2/users/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
   });
+  useUserAndTeamRolesLists(view.pageItems as User[]);
+
   return (
     <SelectMultipleDialog
-      {...props}
+      title={props.title}
+      onSelect={props.onSelect}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
+      confirmText={props.confirmText || t('Add user(s)')}
     />
   );
 }
@@ -28,8 +40,20 @@ function SelectUsers(props: { title: string; onSelect: (users: User[]) => void }
 export function useSelectUsers() {
   const [_, setDialog] = usePageDialog();
   const openSelectUsers = useCallback(
-    (title: string, onSelect: (users: User[]) => void) => {
-      setDialog(<SelectUsers title={title} onSelect={onSelect} />);
+    (
+      title: string,
+      onSelect: (users: User[]) => void,
+      confirmText?: string,
+      accessUrl?: string
+    ) => {
+      setDialog(
+        <SelectUsers
+          accessUrl={accessUrl}
+          title={title}
+          onSelect={onSelect}
+          confirmText={confirmText}
+        />
+      );
     },
     [setDialog]
   );

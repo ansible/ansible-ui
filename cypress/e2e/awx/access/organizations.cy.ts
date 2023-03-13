@@ -8,6 +8,10 @@ import { ItemsResponse } from '../../../../frontend/Data';
 describe('organizations', () => {
   let organization: Organization;
 
+  before(() => {
+    cy.awxLogin();
+  });
+
   after(() => {
     // Sometimes if tests are stopped in the middle, we get left over organizations
     // Cleanup E2E organizations older than 2 hours

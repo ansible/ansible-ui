@@ -7,6 +7,8 @@ describe('inventories', () => {
   let organization: Organization;
 
   before(() => {
+    cy.awxLogin();
+
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Teams ' + randomString(4),
     }).then((testOrg) => {

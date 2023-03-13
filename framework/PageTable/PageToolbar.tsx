@@ -35,6 +35,7 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons';
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { BulkSelector } from '../components/BulkSelector';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { IPageAction } from '../PageActions/PageAction';
@@ -45,6 +46,14 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 
 import './PageToolbar.css';
+
+const ToolbarGroupsDiv = styled.div`
+  flex-grow: 1;
+`;
+
+const SelectionSpan = styled.span`
+  opacity: 0.7;
+`;
 
 export interface IItemFilter<T extends object> {
   label: string;
@@ -221,7 +230,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                   id="filter"
                   onSelect={(_, v) => setSeletedFilter(v.toString())}
                   value={selectedFilter}
-                  placeholderText="Select filter"
+                  placeholderText=""
                 >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
@@ -311,7 +320,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <div style={{ flexGrow: 1 }} />
+        <ToolbarGroupsDiv />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
@@ -469,21 +478,18 @@ function ToolbarTextFilter(props: {
         )}
       </TextInputGroup>
 
-      {!value ? (
-        <></>
-      ) : (
-        <Button
-          variant={value ? 'primary' : 'control'}
-          aria-label="apply filter"
-          onClick={() => {
-            props.addFilter(value);
-            setValue('');
-          }}
-          tabIndex={-1}
-        >
-          <ArrowRightIcon />
-        </Button>
-      )}
+      <Button
+        variant={value ? 'primary' : 'control'}
+        aria-label="apply filter"
+        onClick={() => {
+          props.addFilter(value);
+          setValue('');
+        }}
+        tabIndex={-1}
+        isDisabled={!value}
+      >
+        <ArrowRightIcon />
+      </Button>
     </InputGroup>
   );
 }
@@ -521,7 +527,7 @@ function ToolbarSelectFilter(props: {
           values.length ? (
             translations.selectedText
           ) : (
-            <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+            <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
       >

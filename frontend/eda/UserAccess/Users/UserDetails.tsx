@@ -22,7 +22,7 @@ export function UserDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: User } = useGet<EdaUser>(`${API_PREFIX}/Users/${params.id ?? ''}/`);
+  const { data: User } = useGet<EdaUser>(`${API_PREFIX}/users/${params.id ?? ''}/`);
   const tableColumns = useUserColumns();
 
   const deleteUsers = useDeleteUsers((deleted) => {

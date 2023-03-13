@@ -17,7 +17,7 @@ export function PageFormWorkflowJobTemplateSelect(props: {
     <PageFormTextInput
       name={props.name}
       label={t('Workflow job template')}
-      placeholder="Enter workflow job template"
+      placeholder={t('Enter workflow job template')}
       selectTitle={t('Select a workflow job template')}
       selectValue={(workflowJobTemplate: WorkflowJobTemplate) => workflowJobTemplate.name}
       selectOpen={selectWorkflowJobTemplate}

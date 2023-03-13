@@ -74,7 +74,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
    */
   const selectUsersAddTeams = useSelectUsersAddTeams(() => void view.refresh());
 
-  const removeUsersFromResource = useRemoveUsersFromResource(resource);
+  const removeUsersFromResource = useRemoveUsersFromResource();
 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
@@ -100,7 +100,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
           : t(
               'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
             ),
-        onClick: (users) => removeUsersFromResource(users, view.unselectItemsAndRefresh),
+        onClick: (users) => removeUsersFromResource(users, resource, view.unselectItemsAndRefresh),
       },
     ],
     [
@@ -119,7 +119,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         type: PageActionType.single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
-        onClick: (user) => removeUsersFromResource([user], view.unselectItemsAndRefresh),
+        onClick: (user) => removeUsersFromResource([user], resource, view.unselectItemsAndRefresh),
         isDisabled: (user: User) => {
           if (user.is_superuser) {
             return t('System administrators have unrestricted access to all resources.');
@@ -139,7 +139,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         },
       },
     ],
-    [canAddAndRemoveUsers, removeUsersFromResource, t, view.unselectItemsAndRefresh]
+    [canAddAndRemoveUsers, removeUsersFromResource, resource, t, view.unselectItemsAndRefresh]
   );
 
   const navigate = useNavigate();

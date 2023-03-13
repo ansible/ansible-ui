@@ -15,17 +15,17 @@ function JobTemplateInputs() {
   const { data: playbooks } = useGet<string[]>(`/api/v2/projects/${projectId}/playbooks/`);
   return (
     <>
-      <PageFormTextInput name="name" label="Name" isRequired />
-      <PageFormTextInput name="description" label="Description" />
+      <PageFormTextInput name="name" label={t('Name')} isRequired />
+      <PageFormTextInput name="description" label={t('Description')} />
       <PageFormSelectOption
         name="job_type"
         id="job_type"
-        label="Job Type"
+        label={t('Job Type')}
         options={[
           { label: 'Check', value: 'check' },
           { label: 'Run', value: 'run' },
         ]}
-        placeholderText="Select Job Type"
+        placeholderText={t('Select Job Type')}
       />
       <PageFormInventorySelect name="summary_fields.inventory.name" inventoryIdPath="inventory" />
       <PageFormProjectSelect

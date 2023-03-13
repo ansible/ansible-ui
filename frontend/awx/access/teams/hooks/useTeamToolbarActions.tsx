@@ -1,11 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import {
-  MinusCircleIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  SyncIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
+import { PlusCircleIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +9,7 @@ import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
-import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
+// import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
 import { useDeleteTeams } from './useDeleteTeams';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 
@@ -24,7 +18,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
   const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
-  const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
+  // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/teams/' });
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
@@ -49,12 +43,18 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         label: t('Add users to selected teams'),
         onClick: () => selectUsersAddTeams(view.selectedItems),
       },
-      {
-        type: PageActionType.bulk,
-        icon: MinusCircleIcon,
-        label: t('Remove users from selected teams'),
-        onClick: () => selectUsersRemoveTeams(view.selectedItems),
-      },
+      /**
+       * TODO: This feature is being hidden for the time being as it is not implemented accurately
+       * at the moment. It is also not a feature in the awx UI.
+       * With each team having its own access_list of users, we will need to design an experience
+       * and implementation to handle removal of users from multiple teams.
+       */
+      // {
+      //   type: PageActionType.bulk,
+      //   icon: MinusCircleIcon,
+      //   label: t('Remove users from selected teams'),
+      //   onClick: () => selectUsersRemoveTeams(view.selectedItems), // This hook has been repurposed as useSelectAndRemoveUsersFromTeam to handle removing users from a single team
+      // },
       { type: PageActionType.seperator },
       {
         type: PageActionType.bulk,
@@ -71,6 +71,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         onClick: () => void view.refresh(),
       },
     ],
-    [canCreateTeam, deleteTeams, navigate, selectUsersAddTeams, selectUsersRemoveTeams, t, view]
+    [canCreateTeam, deleteTeams, navigate, selectUsersAddTeams, t, view]
   );
 }

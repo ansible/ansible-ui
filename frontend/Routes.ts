@@ -196,6 +196,12 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaUser: `${edaRoutePrefix}/users/create`,
   EdaUserDetails: `${edaRoutePrefix}/user/details/:id`,
   EditEdaUser: `${edaRoutePrefix}/user/edit/:id`,
+  CreateEdaGroup: `${edaRoutePrefix}/groups/create`,
+  EdaGroupDetails: `${edaRoutePrefix}/group/details/:id`,
+  EditEdaGroup: `${edaRoutePrefix}/group/edit/:id`,
+  CreateEdaRole: `${edaRoutePrefix}/roles/create`,
+  EdaRoleDetails: `${edaRoutePrefix}/role/details/:id`,
+  EditEdaRole: `${edaRoutePrefix}/role/edit/:id`,
 };
 
 export function useRoutesWithoutPrefix(prefix: RouteType) {

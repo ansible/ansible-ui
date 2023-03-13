@@ -48,6 +48,7 @@ import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
 import { useColumnModal } from '../PageColumnModal';
 import { useSettings } from '../Settings';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import { PageTableCards } from './PageTableCards';
 import { PageTableList } from './PageTableList';
@@ -103,8 +104,6 @@ export type PageTableProps<T extends object> = {
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string;
   emptyStateButtonClick?: () => void;
-
-  t?: (t: string) => string;
 
   showSelect?: boolean;
 
@@ -280,8 +279,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     unselectAll,
     expandedRow,
   } = props;
-  let { t } = props;
-  t = t ? t : (t: string) => t;
+  const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
@@ -396,15 +394,13 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         <EmptyState style={{ paddingTop: 48 }}>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
-            {t('No results found')}
+            {translations.noResultsFound}
           </Title>
-          <EmptyStateBody>
-            {t('No results match this filter criteria. Clear all filters and try again.')}
-          </EmptyStateBody>
+          <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
           {clearAllFilters && (
             <EmptyStateSecondaryActions>
               <Button variant="primary" onClick={clearAllFilters}>
-                {t('Clear all filters')}
+                {translations.clearAllFilters}
               </Button>
             </EmptyStateSecondaryActions>
           )}
