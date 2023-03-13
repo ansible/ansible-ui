@@ -18,7 +18,7 @@ export function SinceCell(props: {
   author?: string;
   onClick?: () => void;
 }) {
-  const translations = useFrameworkTranslations();
+  const [translations] = useFrameworkTranslations();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
   useEffect(() => {
