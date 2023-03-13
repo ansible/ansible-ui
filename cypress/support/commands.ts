@@ -53,37 +53,31 @@ declare global {
 Cypress.Commands.add(
   'login',
   (server: string, username: string, password: string, serverType: string) => {
-    cy.session(
-      randomString(8),
-      () => {
-        window.localStorage.setItem('theme', 'light');
-        window.localStorage.setItem('disclaimer', 'true');
+    window.localStorage.setItem('theme', 'light');
+    window.localStorage.setItem('disclaimer', 'true');
 
-        cy.visit(`/automation-servers`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
+    cy.visit(`/automation-servers`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
 
-        cy.clickButton(/^Add automation server$/);
-        cy.typeByLabel(/^Name$/, 'E2E');
-        cy.typeByLabel(/^Url$/, server);
-        cy.get('.pf-c-select__toggle').click();
-        cy.clickButton(serverType);
-        cy.get('button[type=submit]').click();
+    cy.clickButton(/^Add automation server$/);
+    cy.typeByLabel(/^Name$/, 'E2E');
+    cy.typeByLabel(/^Url$/, server);
+    cy.get('.pf-c-select__toggle').click();
+    cy.clickButton(serverType);
+    cy.get('button[type=submit]').click();
 
-        cy.contains('a', /^E2E$/).click();
-        cy.typeByLabel(/^Username$/, username);
-        cy.typeByLabel(/^Password$/, password);
-        cy.get('button[type=submit]').click();
-      },
-      { cacheAcrossSpecs: true }
-    );
+    cy.contains('a', /^E2E$/).click();
+    cy.typeByLabel(/^Username$/, username);
+    cy.typeByLabel(/^Password$/, password);
+    cy.get('button[type=submit]').click();
   }
 );
 
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
-    randomString(8),
+    (Cypress.env('SESSION') as string) ?? randomString(8),
     () => {
       cy.login(
         Cypress.env('AWX_SERVER') as string,
@@ -95,11 +89,12 @@ Cypress.Commands.add('awxLogin', () => {
     },
     { cacheAcrossSpecs: true }
   );
+  cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('edaLogin', () => {
   cy.session(
-    randomString(8),
+    (Cypress.env('SESSION') as string) ?? randomString(8),
     () => {
       cy.login(
         Cypress.env('EDA_SERVER') as string,
@@ -111,6 +106,7 @@ Cypress.Commands.add('edaLogin', () => {
     },
     { cacheAcrossSpecs: true }
   );
+  cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
