@@ -98,8 +98,8 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
     >
       <PageFormSelectOption
         name="role"
-        label="Role"
-        placeholderText="Select role"
+        label={t('Role')}
+        placeholderText={t('Select role')}
         options={[
           { value: 'credential', label: t('Credential') },
           { value: 'job_template', label: t('Job template') },

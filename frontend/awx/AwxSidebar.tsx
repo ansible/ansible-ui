@@ -24,7 +24,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
       <NavExpandable
         key="views"
-        title="Views"
+        title={t('Views')}
         isExpanded
         isActive={isRouteActive([RouteObj.Dashboard, RouteObj.Jobs], location)}
       >
@@ -123,7 +123,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
       </NavExpandable>
       <NavExpandable
         key="administration"
-        title="Administration"
+        title={t('Administration')}
         isExpanded
         isActive={isRouteActive(
           [

@@ -20,7 +20,7 @@ export function PageFormExecutionEnvironmentSelect(props: {
     <PageFormTextInput
       name={props.name}
       label={props.label || t('Execution environment')}
-      placeholder="Enter execution environment"
+      placeholder={t('Enter execution environment')}
       selectTitle={t('Select an execution environment')}
       selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
       selectOpen={selectExecutionEnvironment}

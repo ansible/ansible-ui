@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { Split, SplitItem } from '@patternfly/react-core';
 import { useEffect, useMemo, useState } from 'react';
 

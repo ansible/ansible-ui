@@ -35,6 +35,7 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons';
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { BulkSelector } from '../components/BulkSelector';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { IPageAction } from '../PageActions/PageAction';
@@ -43,7 +44,6 @@ import { PageActionType } from '../PageActions/PageActionType';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
-import styled from 'styled-components';
 
 import './PageToolbar.css';
 
@@ -230,7 +230,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                   id="filter"
                   onSelect={(_, v) => setSeletedFilter(v.toString())}
                   value={selectedFilter}
-                  placeholderText="Select filter"
+                  placeholderText=""
                 >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
