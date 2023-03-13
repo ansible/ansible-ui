@@ -6,6 +6,11 @@ import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTe
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
 import { AutomationServer } from '../interfaces/AutomationServer';
 import { AutomationServerType } from '../interfaces/AutomationServerType';
+import styled from 'styled-components';
+
+const ModalFormDiv = styled.div`
+  padding: 24px;
+`;
 
 export function useAddAutomationServer() {
   const [_, setDialog] = usePageDialog();
@@ -37,7 +42,7 @@ export function AddAutomationServerDialog() {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <ModalFormDiv>
         <PageForm
           submitText={t('Add automation server')}
           onSubmit={onSubmit}
@@ -103,7 +108,7 @@ export function AddAutomationServerDialog() {
             isRequired
           />
         </PageForm>
-      </div>
+      </ModalFormDiv>
     </Modal>
   );
 }
