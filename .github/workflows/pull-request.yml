@@ -127,6 +127,7 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/awx/**/*.cy.ts
         env:
+          CYPRESS_SESSION: ${{ secrets.CYPRESS_SESSION }}
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
@@ -188,6 +189,7 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.ts
         env:
+          CYPRESS_SESSION: ${{ secrets.CYPRESS_SESSION }}
           CYPRESS_EDA_SERVER: http://eda-server:8000/
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
