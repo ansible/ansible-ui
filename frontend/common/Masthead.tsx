@@ -41,6 +41,28 @@ import { swrOptions, useFetcher } from '../Data';
 import AnsibleIcon from '../icons/ansible.svg';
 import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
+import styled from 'styled-components';
+
+const MastheadBrandDiv = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+const IconDiv = styled.div`
+  color: white;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TruncateContentSpan = styled.span`
+  font-weight: 900;
+  margin-top: -4px;
+`;
+
+const ToolbarSpan = styled.span`
+  flex-grow: 1;
+`;
 
 export function AnsibleMasthead(props: {
   isNavOpen: boolean;
@@ -68,20 +90,13 @@ export function AnsibleMasthead(props: {
       {isSmallOrLarger ? (
         <MastheadMain>
           <MastheadBrand>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <MastheadBrandDiv>
               <AnsibleIcon width={48} />
-              <div
-                style={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
+              <IconDiv>
                 {brand && (
-                  <span style={{ fontWeight: 900, marginTop: -4 }}>
+                  <TruncateContentSpan>
                     <Truncate content={brand} style={{ minWidth: 0 }} />
-                  </span>
+                  </TruncateContentSpan>
                 )}
                 <Title
                   headingLevel="h1"
@@ -90,8 +105,8 @@ export function AnsibleMasthead(props: {
                 >
                   <Truncate content={product} style={{ minWidth: 0 }} />
                 </Title>
-              </div>
-            </div>
+              </IconDiv>
+            </MastheadBrandDiv>
           </MastheadBrand>
         </MastheadMain>
       ) : (
@@ -105,7 +120,7 @@ export function AnsibleMasthead(props: {
       )}
       {!hideLogin && (
         <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
-          <span style={{ flexGrow: 1 }} />
+          <ToolbarSpan />
           {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
           <Toolbar id="toolbar" style={{ padding: 0 }}>
             <ToolbarContent>
