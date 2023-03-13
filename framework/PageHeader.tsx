@@ -23,7 +23,11 @@ import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
 import { PageAlertsArrayContext, PageAlertsContext } from './PageAlerts';
 import './PageFramework.css';
+import styled from 'styled-components';
 
+const PageAlertsDiv = styled.div`
+  border-bottom: thin solid rgba(0, 0, 0, 0.12);
+`;
 export interface ICatalogBreadcrumb {
   id?: string;
   label?: string;
@@ -245,7 +249,7 @@ export function PageHeader(props: PageHeaderProps) {
             {(pageAlertsArray) => {
               if (pageAlertsArray.length === 0) return <></>;
               return (
-                <div style={{ borderBottom: 'thin solid rgba(0, 0, 0, 0.12)' }}>
+                <PageAlertsDiv>
                   {pageAlertsArray.map((alertProps, index) => (
                     <Alert
                       {...alertProps}
@@ -259,7 +263,7 @@ export function PageHeader(props: PageHeaderProps) {
                       isExpandable={!!alertProps.children}
                     />
                   ))}
-                </div>
+                </PageAlertsDiv>
               );
             }}
           </PageAlertsArrayContext.Consumer>
