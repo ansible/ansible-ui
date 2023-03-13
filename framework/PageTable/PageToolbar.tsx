@@ -43,8 +43,17 @@ import { PageActionType } from '../PageActions/PageActionType';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
+import styled from 'styled-components';
 
 import './PageToolbar.css';
+
+const ToolbarGroupsDiv = styled.div`
+  flex-grow: 1;
+`;
+
+const SelectionSpan = styled.span`
+  opacity: 0.7;
+`;
 
 export interface IItemFilter<T extends object> {
   label: string;
@@ -311,7 +320,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <div style={{ flexGrow: 1 }} />
+        <ToolbarGroupsDiv />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
@@ -518,7 +527,7 @@ function ToolbarSelectFilter(props: {
           values.length ? (
             translations.selectedText
           ) : (
-            <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+            <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
       >
