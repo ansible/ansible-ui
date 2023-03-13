@@ -9,13 +9,14 @@ import {
   useRelaunchActivation,
   useRestartActivation,
 } from './useActivationDialogs';
+import { IEdaView } from '../../useEventDrivenView';
 
-export function useRulebookActivationActions(refresh: () => Promise<unknown>) {
+export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const relaunchActivation = useRelaunchActivation();
   const restartActivation = useRestartActivation();
   const disableActivation = useDisableActivation();
-  const deleteRulebookActivations = useDeleteRulebookActivations(() => void refresh());
+  const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {

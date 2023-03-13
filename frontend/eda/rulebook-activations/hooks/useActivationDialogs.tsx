@@ -81,8 +81,8 @@ export function ActionDialog({
   description: string;
   submitText: string;
   is_danger: boolean;
-  resource: { id: string; name: string };
-  submitFn?: (id: string) => void;
+  resource: { id: number; name: string };
+  submitFn?: (id: number) => void;
 }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();

@@ -1,25 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
-import { useGet } from '../../common/useItem';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useRuleColumns } from './hooks/useRuleColumns';
 import { useRuleFilters } from './hooks/useRuleFilters';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
+import { useEdaView } from '../useEventDrivenView';
 
 export function Rules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRuleFilters();
-  const { data: rules } = useGet<EdaRule[]>(`${API_PREFIX}/rules`);
   const tableColumns = useRuleColumns();
-  const view = useInMemoryView<EdaRule>({
-    items: rules,
+  const view = useEdaView<EdaRule>({
+    url: `${API_PREFIX}/rules/`,
     tableColumns,
     toolbarFilters,
-    keyFn: (rule: EdaRule) => rule.id,
   });
   return (
     <PageLayout>
@@ -31,7 +28,7 @@ export function Rules() {
         emptyStateTitle={t('No rules yet')}
         emptyStateDescription={t('Please add a project by using the button below')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaProject)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
         defaultSubtitle={t('Rules')}
       />

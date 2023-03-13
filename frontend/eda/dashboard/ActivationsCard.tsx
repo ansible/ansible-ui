@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
 import { useInMemoryView } from '../../../framework';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationColumns } from './hooks/useActivationColumns';
 import {
@@ -18,14 +18,15 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaResult } from '../interfaces/EdaResult';
 
 export function ActivationsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: activations } = useGet<EdaRulebookActivation[]>(`${API_PREFIX}/activations`);
+  const { data: data } = useGet<EdaResult<EdaRulebookActivation>>(`${API_PREFIX}/activations/`);
   const tableColumns = useActivationColumns();
   const view = useInMemoryView<EdaRulebookActivation>({
-    items: activations?.slice(-4),
+    items: data?.results ? data.results.slice(-4) : [],
     tableColumns,
     keyFn: (activation: EdaRulebookActivation) => activation.id,
   });
@@ -37,7 +38,7 @@ export function ActivationsCard() {
             <Title headingLevel="h2">{t('Rulebook Activations')}</Title>
           </LevelItem>
           <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteE.EdaRulebookActivations)}>
+            <Button variant="link" onClick={() => navigate(RouteObj.EdaRulebookActivations)}>
               {t('Go to Rulebook Activations')}
             </Button>
           </LevelItem>
@@ -57,7 +58,7 @@ export function ActivationsCard() {
         <Button
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => navigate(RouteE.CreateEdaRulebookActivation)}
+          onClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         >
           {t('Create rulebook activation')}
         </Button>

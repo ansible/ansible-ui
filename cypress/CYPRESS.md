@@ -1,90 +1,94 @@
 # Cypress Testing
 
-Cypress is being used for both unit and E2E tests.
+Cypress is being used for both end-to-end tests and component tests.
 
-## 1. Component Testing
+## NPM Test Scripts
 
-### Goals
+| Command                         | Description                                    |
+| ------------------------------- | ---------------------------------------------- |
+| `npm run cypress:run`           | Run E2E and component tests headless.          |
+| `npm run cypress:run:e2e`       | Run E2E tests headless.                        |
+| `npm run cypress:run:component` | Run component tests headless.                  |
+| `npm run cypress:open`          | Open the Cypress UI to run tests.              |
+| `npm run cypress:coverage`      | After tests have finished, view test coverage. |
 
-- Unit test components, hooks and other functions.
+## E2E Testing
 
-### Getting started
+The Cypress E2E tests run against a live backend API.
 
-- Run the unit tests headlessly.
-
-  ```
-  npm run cypress:run:unit
-  ```
-
-  OR
-
-- Run the unit tests by opening Cypress and launching the browser. (For visual rendering of the components being tested)
-
-  ```
-  npm run cypress:open:unit
-  ```
-
----
-
-## 2. E2E Testing
-
-### Goals
-
-- Test major user flows theough the UI such as creating, editing, and deleting.
-- Run E2E tests against both a mock API and a live API.
-
-### Getting started
-
-1. Run the Ansible-UI frontend.
-
-   ```
-   npm run frontend
-   ```
-
-2. Run the Cypress UI in mock mode. Mock mode intercepts API calls and runs them against a mock.
-
-   ```
-   npm run cypress:open
-   ```
-
-### NPM E2E Commands
-
-| Command                     | Description                                                            |
-| --------------------------- | ---------------------------------------------------------------------- |
-| `npm run cypress`           | Runs the frontend and Cypress headless in parallel using the mock API. |
-| `npm run cypress:frontend`  | Runs the frontend without opening the UI in the browser.               |
-| `npm run cypress:run`       | Run Cypress headless against the mock API.                             |
-| `npm run cypress:run:e2e`   | Run Cypress headless against a live API.                               |
-| `npm run cypress:open`      | Run Cypress UI against the mock API.                                   |
-| `npm run cypress:open:live` | Run Cypress UI against a live API.                                     |
-| `npm run coverage`          | After tests have finished, view test coverage.                         |
-
-### Testing Philosophy
-
-#### Tests should be self contained
-
-This is so that tests do not interfere with each other.
-
-#### Tests should be able to be run without fixtures
-
-This is so that it can run against not only a mock server but also a live server.
-
-To facilitate this, there are functions to setup state using the REST api.
-
-##### Example
-
-Creating a team that does not exist for use in a test.
-
-```ts
-cy.requestPost<Team>('/api/v2/teams/', {
-  name: 'Team ' + randomString(4),
-  organization: organization.id,
-}).then((team) => {
-  // use created team for test
-  cy.navigateTo(/^Teams$/);
-  cy.clickRow(team.name);
-
-  // cleanup the team after the test
-  cy.requestDelete(`/api/v2/teams/${team.id}/`);
-});
+```mermaid
+graph LR;
+    cypress --> frontend
+    frontend --> proxy
+    proxy --> api
 ```
+
+### E2E Getting started
+
+1. Setup Environment Variables
+
+   The E2E tests need a live API to test against. The following environment variables can be used to setup the E2E test server.
+
+   | Environment Variable   | Description                                                                         |
+   | ---------------------- | ----------------------------------------------------------------------------------- |
+   | `CYPRESS_AWX_SERVER`   | URL of the AWX server to run E2E tests against. `Default: <https://localhost:8043>` |
+   | `CYPRESS_AWX_USERNAME` | username for logging into the AWX server. `Default: admin`                          |
+   | `CYPRESS_AWX_PASSWORD` | password for logging into the AWX server. `Default: admin`                          |
+
+   > NOTE: Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
+
+2. Run the Ansible-UI frontend and proxy
+
+   ```
+   npm start
+   ```
+
+3. Run Cypress
+
+   Run Cypress E2E tests headless
+
+   ```
+   npm run cypress:run:e2e
+   ```
+
+   Open the Cypress UI to run e2e tests
+
+   ```
+   npm run cypress:open:e2e
+   ```
+
+## Component Testing
+
+Run Cypress component tests headless
+
+```
+npm run cypress:run:component
+```
+
+Open the Cypress UI to run component tests
+
+```
+npm run cypress:open:component
+```
+
+## Coverage
+
+To get total coverage, run both e2e and component tests.
+
+```
+npm run cypress:run
+```
+
+Open the coverage report
+
+```
+npm run coverage
+```
+
+## AWX Cleanup during tests
+
+Many AWX resources have an organization and if the organization is deleted the resource gets deleted. By creating an organization at the start of the tests and using it with resources and then deleting the organization, most resources clean up.
+
+There are a few cases where resources do not get cleaned up, such as when a project is syncing, deleting the organization leaves the project around without an associated organization.
+
+To handle this, the tests delete E2E organizations older than 2 hours old. Then the other tests delete resources that do not have an organization. This makes the system eventually cleanup the E2E resources.

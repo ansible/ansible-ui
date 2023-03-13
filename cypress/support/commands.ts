@@ -1,12 +1,23 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
+import { Group, Host, Inventory } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
 
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(): Chainable<void>;
+      login(
+        server: string,
+        username: string,
+        password: string,
+        serverType: string
+      ): Chainable<void>;
+      awxLogin(): Chainable<void>;
+      edaLogin(): Chainable<void>;
+
       getByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -16,12 +27,14 @@ declare global {
       hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
       clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      getRowFromList(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickRowAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
@@ -29,45 +42,72 @@ declare global {
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
       requestGet<T>(url: string): Chainable<T>;
       requestDelete(url: string, ignoreError?: boolean): Chainable;
+
+      createInventoryHostGroup(
+        organization: Organization
+      ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
     }
   }
 }
 
-const sessionID = randomString(8);
+Cypress.Commands.add(
+  'login',
+  (server: string, username: string, password: string, serverType: string) => {
+    cy.session(
+      randomString(8),
+      () => {
+        window.localStorage.setItem('theme', 'light');
+        window.localStorage.setItem('disclaimer', 'true');
 
-Cypress.Commands.add('login', () => {
+        cy.visit(`/automation-servers`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+
+        cy.clickButton(/^Add automation server$/);
+        cy.typeByLabel(/^Name$/, 'E2E');
+        cy.typeByLabel(/^Url$/, server);
+        cy.get('.pf-c-select__toggle').click();
+        cy.clickButton(serverType);
+        cy.get('button[type=submit]').click();
+
+        cy.contains('a', /^E2E$/).click();
+        cy.typeByLabel(/^Username$/, username);
+        cy.typeByLabel(/^Password$/, password);
+        cy.get('button[type=submit]').click();
+      },
+      { cacheAcrossSpecs: true }
+    );
+  }
+);
+
+Cypress.Commands.add('awxLogin', () => {
   cy.session(
-    sessionID,
+    randomString(8),
     () => {
-      window.localStorage.setItem('theme', 'light');
-      window.localStorage.setItem('disclaimer', 'true');
+      cy.login(
+        Cypress.env('AWX_SERVER') as string,
+        Cypress.env('AWX_USERNAME') as string,
+        Cypress.env('AWX_PASSWORD') as string,
+        'AWX Ansible server'
+      );
+      cy.hasTitle(/^Welcome to AWX$/);
+    },
+    { cacheAcrossSpecs: true }
+  );
+});
 
-      cy.visit(`/automation-servers`, {
-        retryOnStatusCodeFailure: true,
-        retryOnNetworkFailure: true,
-      });
-
-      const server = Cypress.env('server')
-        ? (Cypress.env('server') as string)
-        : 'https://localhost:8043/';
-      cy.setCookie('server', server);
-      const username = Cypress.env('username') ? (Cypress.env('username') as string) : 'admin';
-      const password = Cypress.env('password') ? (Cypress.env('password') as string) : 'admin';
-
-      cy.clickButton(/^Add automation server$/);
-      cy.typeByLabel(/^Name$/, 'Controller');
-      cy.typeByLabel(/^Url$/, server);
-      cy.get('.pf-c-select__toggle').click();
-      cy.clickButton('AWX Ansible server');
-      cy.get('button[type=submit]').click();
-
-      cy.contains('a', /^Controller$/).click();
-      cy.typeByLabel(/^Username$/, username);
-      cy.typeByLabel(/^Password$/, password);
-      cy.get('button[type=submit]').click();
-
-      cy.contains(/^Welcome to/);
-      cy.wait(2000);
+Cypress.Commands.add('edaLogin', () => {
+  cy.session(
+    randomString(8),
+    () => {
+      cy.login(
+        Cypress.env('EDA_SERVER') as string,
+        Cypress.env('EDA_USERNAME') as string,
+        Cypress.env('EDA_PASSWORD') as string,
+        'EDA server'
+      );
+      cy.hasTitle(/^Projects$/);
     },
     { cacheAcrossSpecs: true }
   );
@@ -90,15 +130,50 @@ Cypress.Commands.add('filterByText', (text: string) => {
 });
 
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
-  return cy.request<T>({ method: 'POST', url, body }).then((response) => response.body);
+  cy.getCookie('csrftoken').then((cookie) =>
+    cy
+      .request<T>({ method: 'POST', url, body, headers: { 'X-CSRFToken': cookie?.value } })
+      .then((response) => response.body)
+  );
 });
 
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
 
+Cypress.Commands.add(
+  'createInventoryHostGroup',
+  function createInventoryHostGroup(organization: Organization) {
+    cy.requestPost<Inventory>('/api/v2/inventories/', {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => {
+      cy.requestPost<Host>('/api/v2/hosts/', {
+        name: 'E2E Host ' + randomString(4),
+        inventory: inventory.id,
+      }).then((host) => {
+        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
+          name: 'E2E Group ' + randomString(4),
+          inventory: inventory.id,
+        }).then((group) => ({
+          inventory,
+          host,
+          group,
+        }));
+      });
+    });
+  }
+);
+
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
-  return cy.request({ method: 'Delete', url, failOnStatusCode: ignoreError ? false : true });
+  cy.getCookie('csrftoken').then((cookie) =>
+    cy.request({
+      method: 'Delete',
+      url,
+      failOnStatusCode: ignoreError ? false : true,
+      headers: { 'X-CSRFToken': cookie?.value },
+    })
+  );
 });
 
 Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
@@ -155,6 +230,13 @@ Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
   });
 });
 
+Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterByText(name);
+  }
+  cy.contains('tr', name);
+});
+
 Cypress.Commands.add(
   'clickRowAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
@@ -173,6 +255,20 @@ Cypress.Commands.add(
 Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
+  }
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+});
+
+Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('#filter-input').type(name, { delay: 0 });
+      cy.get('[aria-label="apply filter"]').click();
+    });
   }
   cy.contains('td', name)
     .parent()

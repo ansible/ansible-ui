@@ -13,8 +13,14 @@ import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextI
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from '../Data';
-import { RouteE } from '../Routes';
+import { RouteObj } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+import styled from 'styled-components';
+
+const LoginModalDiv = styled.div`
+  padding: 24px;
+`;
+
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
@@ -34,9 +40,9 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <LoginModalDiv>
         <LoginForm defaultServer={props.server} onLogin={props.onLogin} />
-      </div>
+      </LoginModalDiv>
     </Modal>
   );
 }
@@ -79,20 +85,27 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             ? '/api/login/'
             : automationServer.type === AutomationServerType.Galaxy
             ? '/api/automation-hub/_ui/v1/auth/login/'
-            : undefined;
+            : '/api/eda/v1/auth/session/login/';
 
         if (loginPageUrl !== undefined) {
           setCookie('server', data.server);
-          let loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
-          loginPage = loginPage.substring(loginPage.indexOf('csrfToken: '));
-          loginPage = loginPage.substring(loginPage.indexOf('"') + 1);
-          const csrfmiddlewaretoken = loginPage.substring(0, loginPage.indexOf('"'));
-
+          const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
+          let csrfmiddlewaretoken: string;
+          if (loginPage.includes('csrfmiddlewaretoken')) {
+            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfmiddlewaretoken'));
+            loginPage2 = loginPage2.substring(loginPage2.indexOf('value=') + 7);
+            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
+          } else {
+            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfToken: '));
+            loginPage2 = loginPage2.substring(loginPage2.indexOf('"') + 1);
+            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
+          }
           const searchParams = new URLSearchParams();
           searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
+          setCookie('csrftoken', csrfmiddlewaretoken);
           searchParams.set('username', data.username);
           searchParams.set('password', data.password);
-
+          searchParams.set('next', '/');
           try {
             await ky.post(loginPageUrl, {
               credentials: 'include',
@@ -113,13 +126,13 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         switch (automationServer.type) {
           case AutomationServerType.EDA:
             setCookie('server', data.server);
-            navigate(RouteE.EdaProjects);
+            navigate(RouteObj.EdaProjects);
             break;
           case AutomationServerType.Galaxy:
-            navigate(RouteE.HubDashboard);
+            navigate(RouteObj.HubDashboard);
             break;
           default:
-            navigate(RouteE.Dashboard);
+            navigate(RouteObj.Dashboard);
             break;
         }
 
@@ -137,7 +150,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
 
   return (
     <PageForm
-      submitText={t('Log In')}
+      submitText={t('Log in')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       isVertical
@@ -167,7 +180,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
               : automationServer?.type === AutomationServerType.Galaxy
               ? t('Galaxy Ansible server')
               : automationServer?.type === AutomationServerType.EDA
-              ? t('Event-driven Ansible server')
+              ? t('EDA server')
               : t('Unknown'),
         }))}
         isRequired

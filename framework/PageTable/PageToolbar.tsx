@@ -43,8 +43,17 @@ import { PageActionType } from '../PageActions/PageActionType';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
+import styled from 'styled-components';
 
 import './PageToolbar.css';
+
+const ToolbarGroupsDiv = styled.div`
+  flex-grow: 1;
+`;
+
+const SelectionSpan = styled.span`
+  opacity: 0.7;
+`;
 
 export interface IItemFilter<T extends object> {
   label: string;
@@ -125,6 +134,7 @@ export type PagetableToolbarProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
   disableColumnManagement?: boolean;
+  bottomBorder?: boolean;
 };
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -140,6 +150,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     setFilters,
     clearAllFilters,
     openColumnModal,
+    bottomBorder,
   } = props;
 
   const sm = useBreakpoint('md');
@@ -197,7 +208,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     <Toolbar
       clearAllFilters={clearAllFilters}
       className="dark-2"
-      style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+      style={{
+        paddingBottom: sm ? undefined : 8,
+        paddingTop: sm ? undefined : 8,
+        borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+      }}
     >
       <ToolbarContent>
         {showSelect && (
@@ -305,7 +320,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <div style={{ flexGrow: 1 }} />
+        <ToolbarGroupsDiv />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
@@ -434,7 +449,10 @@ function ToolbarTextFilter(props: {
           id={props.id}
           // ref={ref}
           value={value}
-          onChange={setValue}
+          onChange={(e, v) => {
+            if (typeof e === 'string') setValue(e);
+            else setValue(v);
+          }}
           onKeyUp={(event) => {
             if (value && event.key === 'Enter') {
               props.addFilter(value);
@@ -460,21 +478,18 @@ function ToolbarTextFilter(props: {
         )}
       </TextInputGroup>
 
-      {!value ? (
-        <></>
-      ) : (
-        <Button
-          variant={value ? 'primary' : 'control'}
-          aria-label="apply filter"
-          onClick={() => {
-            props.addFilter(value);
-            setValue('');
-          }}
-          tabIndex={-1}
-        >
-          <ArrowRightIcon />
-        </Button>
-      )}
+      <Button
+        variant={value ? 'primary' : 'control'}
+        aria-label="apply filter"
+        onClick={() => {
+          props.addFilter(value);
+          setValue('');
+        }}
+        tabIndex={-1}
+        isDisabled={!value}
+      >
+        <ArrowRightIcon />
+      </Button>
     </InputGroup>
   );
 }
@@ -512,7 +527,7 @@ function ToolbarSelectFilter(props: {
           values.length ? (
             translations.selectedText
           ) : (
-            <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+            <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
       >

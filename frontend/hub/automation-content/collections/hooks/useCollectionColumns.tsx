@@ -7,7 +7,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteE } from '../../../../Routes';
+import { RouteObj } from '../../../../Routes';
 import { Collection } from '../Collection';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -20,7 +20,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         cell: (collection) => (
           <TextCell
             text={collection.name}
-            to={RouteE.CollectionDetails.replace(':id', collection.name)}
+            to={RouteObj.CollectionDetails.replace(':id', collection.name)}
           />
         ),
         card: 'name',

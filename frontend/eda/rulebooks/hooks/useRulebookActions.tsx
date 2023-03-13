@@ -4,12 +4,9 @@ import { IPageAction, PageActionType } from '../../../../framework';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 import { useDisableRulebook } from './useDisableRulebook';
 
-export function useRulebookActions(
-  rulebook: EdaRulebook | undefined,
-  refresh: () => Promise<unknown>
-) {
+export function useRulebookActions(rulebook: EdaRulebook | undefined) {
   const { t } = useTranslation();
-  const disableRulebook = useDisableRulebook(() => void refresh());
+  const disableRulebook = useDisableRulebook();
   return useMemo<IPageAction<EdaRulebook>[]>(
     () => [
       {

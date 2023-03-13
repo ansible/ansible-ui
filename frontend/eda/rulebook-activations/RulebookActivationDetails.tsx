@@ -1,8 +1,10 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  IPageAction,
   PageActions,
+  PageActionType,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -15,23 +17,66 @@ import {
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaJob } from '../interfaces/EdaJob';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationActionColumns } from './hooks/useActivationActionColumns';
 import { useActivationActionFilters } from './hooks/useActivationActionFilters';
 import { useActivationActionsActions } from './hooks/useActivationActionsActions';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { API_PREFIX } from '../constants';
+import { useMemo } from 'react';
+import { TrashIcon } from '@patternfly/react-icons';
+import {
+  useDisableActivation,
+  useRelaunchActivation,
+  useRestartActivation,
+} from './hooks/useActivationDialogs';
+import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rulebookActivation, mutate: refresh } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${params.id ?? ''}`
+  const navigate = useNavigate();
+  const relaunchActivation = useRelaunchActivation();
+  const restartActivation = useRestartActivation();
+  const disableActivation = useDisableActivation();
+  const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
+    if (deleted.length > 0) {
+      navigate(RouteObj.EdaRulebookActivations);
+    }
+  });
+  const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
+    `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
-  const itemActions = useRulebookActivationActions(refresh);
+  const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
+    () => [
+      {
+        type: PageActionType.single,
+        label: 'Relaunch',
+        onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
+      },
+      {
+        type: PageActionType.single,
+        label: 'Restart',
+        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
+      },
+      {
+        type: PageActionType.single,
+        label: 'Disable',
+        onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
+      },
+      {
+        type: PageActionType.single,
+        icon: TrashIcon,
+        label: t('Delete rulebookActivation'),
+        onClick: (rulebookActivation: EdaRulebookActivation) =>
+          deleteRulebookActivations([rulebookActivation]),
+        isDanger: true,
+      },
+    ],
+    [relaunchActivation, restartActivation, deleteRulebookActivations, disableActivation, t]
+  );
 
   const renderActivationDetailsTab = (
     rulebookActivation: EdaRulebookActivation | undefined
@@ -44,7 +89,6 @@ export function RulebookActivationDetails() {
             <PageDetail label={t('Description')}>
               {rulebookActivation?.description || ''}
             </PageDetail>
-            <PageDetail label={t('Inventory')}>{rulebookActivation?.inventory?.name}</PageDetail>
             <PageDetail label={t('Execution environment')}>
               {rulebookActivation?.execution_environment || ''}
             </PageDetail>
@@ -94,7 +138,7 @@ export function RulebookActivationDetails() {
     const tableColumns = useActivationActionColumns();
 
     function useGetActivationActions(id: string) {
-      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}/`);
     }
 
     const { data: actions } = useGetActivationActions('8' || '');
@@ -129,7 +173,7 @@ export function RulebookActivationDetails() {
     const toolbarFilters = useActivationActionFilters();
 
     function useGetActivationHistory(id: string) {
-      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}`);
+      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}/`);
     }
     const { data: actions } = useGetActivationHistory(params?.id || '');
     const tableColumns = useActivationHistoryColumns();
@@ -159,7 +203,7 @@ export function RulebookActivationDetails() {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteE.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

@@ -39,8 +39,30 @@ import { useAutomationServers } from '../automation-servers/contexts/AutomationS
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { swrOptions, useFetcher } from '../Data';
 import AnsibleIcon from '../icons/ansible.svg';
-import { RouteE } from '../Routes';
+import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
+import styled from 'styled-components';
+
+const MastheadBrandDiv = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+const IconDiv = styled.div`
+  color: white;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TruncateContentSpan = styled.span`
+  font-weight: 900;
+  margin-top: -4px;
+`;
+
+const ToolbarSpan = styled.span`
+  flex-grow: 1;
+`;
 
 export function AnsibleMasthead(props: {
   isNavOpen: boolean;
@@ -68,20 +90,13 @@ export function AnsibleMasthead(props: {
       {isSmallOrLarger ? (
         <MastheadMain>
           <MastheadBrand>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <MastheadBrandDiv>
               <AnsibleIcon width={48} />
-              <div
-                style={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
+              <IconDiv>
                 {brand && (
-                  <span style={{ fontWeight: 900, marginTop: -4 }}>
+                  <TruncateContentSpan>
                     <Truncate content={brand} style={{ minWidth: 0 }} />
-                  </span>
+                  </TruncateContentSpan>
                 )}
                 <Title
                   headingLevel="h1"
@@ -90,8 +105,8 @@ export function AnsibleMasthead(props: {
                 >
                   <Truncate content={product} style={{ minWidth: 0 }} />
                 </Title>
-              </div>
-            </div>
+              </IconDiv>
+            </MastheadBrandDiv>
           </MastheadBrand>
         </MastheadMain>
       ) : (
@@ -105,7 +120,7 @@ export function AnsibleMasthead(props: {
       )}
       {!hideLogin && (
         <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
-          <span style={{ flexGrow: 1 }} />
+          <ToolbarSpan />
           {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
           <Toolbar id="toolbar" style={{ padding: 0 }}>
             <ToolbarContent>
@@ -185,7 +200,7 @@ export function AnsibleMasthead(props: {
   );
 }
 
-export function isRouteActive(route: RouteE | RouteE[], location: { pathname: string }) {
+export function isRouteActive(route: RouteType | RouteType[], location: { pathname: string }) {
   if (Array.isArray(route)) {
     for (const r of route) {
       if (location.pathname.startsWith(r)) return true;
@@ -282,7 +297,7 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            history(RouteE.Users);
+            history(RouteObj.Users);
           }}
         >
           {t('User details')}
@@ -291,7 +306,11 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              await fetch('/api/logout/');
+              await fetch(
+                automationServer && automationServer.type === AutomationServerType.EDA
+                  ? '/api/eda/v1/auth/logout/?next=/'
+                  : '/api/logout/'
+              );
               history('/');
             }
             void logout();
@@ -323,7 +342,7 @@ function NotificationsInternal() {
       variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
       count={workflowApprovals.length}
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-      // onClick={() => history(RouteE.WorkflowApprovals)}
+      // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
   );
 }

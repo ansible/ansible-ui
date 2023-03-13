@@ -129,6 +129,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
+      aria-label={title}
       description={prompt}
       variant={ModalVariant.medium}
       isOpen
@@ -181,6 +182,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               errorStateTitle="Error"
               emptyStateTitle="No items"
               autoHidePagination={true}
+              disableBodyPadding
             />
           </div>
           {confirmText && actionableItems.length > 0 && (

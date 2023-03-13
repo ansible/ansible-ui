@@ -7,7 +7,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
 import { useGet } from '../../common/useItem';
 import { requestPatch, requestPost } from '../../Data';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { API_PREFIX } from '../constants';
 
@@ -17,7 +17,7 @@ export function EditExecutionEnvironment() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
-    `${API_PREFIX}/executionEnvironments/${id.toString()}`
+    `${API_PREFIX}/executionEnvironments/${id.toString()}/`
   );
 
   const ExecutionEnvironmentSchemaType = useMemo(
@@ -42,26 +42,26 @@ export function EditExecutionEnvironment() {
     try {
       if (Number.isInteger(id)) {
         executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
-          `${API_PREFIX}/executionEnvironments/${id}`,
+          `${API_PREFIX}/executionEnvironments/${id}/`,
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
         const newExecutionEnvironment = await requestPost<EdaExecutionEnvironment>(
-          `${API_PREFIX}/executionEnvironments`,
+          `${API_PREFIX}/executionEnvironments/`,
           executionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(
-          RouteE.EdaExecutionEnvironmentDetails.replace(
+          RouteObj.EdaExecutionEnvironmentDetails.replace(
             ':id',
             newExecutionEnvironment.id.toString()
           )
         );
       }
     } catch (err) {
-      setError('TODO');
+      setError(err instanceof Error ? err.message : t('Unknown error'));
     }
   };
   const onCancel = () => navigate(-1);
@@ -72,7 +72,7 @@ export function EditExecutionEnvironment() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
               { label: t('Edit execution environment') },
             ]}
           />
@@ -84,7 +84,7 @@ export function EditExecutionEnvironment() {
           <PageHeader
             title={t('Edit execution environment')}
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
               { label: t('Edit execution environment') },
             ]}
           />
@@ -107,7 +107,7 @@ export function EditExecutionEnvironment() {
         <PageHeader
           title={t('Create execution environment')}
           breadcrumbs={[
-            { label: t('ExecutionEnvironments'), to: RouteE.EdaExecutionEnvironments },
+            { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
             { label: t('Create execution environment') },
           ]}
         />

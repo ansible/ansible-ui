@@ -1,13 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  PageHeader,
-  PageLayout,
-  PageTab,
-  PageTable,
-  PageTabs,
-  useInMemoryView,
-} from '../../../../framework';
-import { useGet } from '../../../common/useItem';
+import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
 import { EdaAction } from '../../interfaces/EdaAction';
 import { useActionsColumns } from './hooks/useActionsColumns';
 import { useActionsFilters } from './hooks/useActionsFilters';
@@ -15,25 +7,22 @@ import { useHostsFilters } from './hooks/useHostsFilters';
 import { EdaHost } from '../../interfaces/EdaHost';
 import { useHostsColumns } from './hooks/useHostsColumns';
 import { API_PREFIX } from '../../constants';
+import { useEdaView } from '../../useEventDrivenView';
 
-const actionsRulesEndpoint = `${API_PREFIX}/audit/rules_fired`;
-const actionsHostsEndpoint = `${API_PREFIX}/audit/hosts_changed`;
+const actionsRulesEndpoint = `${API_PREFIX}/audit/rules_fired/`;
+const actionsHostsEndpoint = `${API_PREFIX}/audit/hosts_changed/`;
 
 export function Actions() {
   const { t } = useTranslation();
-  const useFetchHosts = () => useGet<EdaHost[]>(actionsHostsEndpoint);
-  const useFetchRecentActions = () => useGet<EdaAction[]>(actionsRulesEndpoint);
 
   function ActionsTab() {
     const { t } = useTranslation();
     const toolbarFilters = useActionsFilters();
-    const { data: actions } = useFetchRecentActions();
     const tableColumns = useActionsColumns();
-    const view = useInMemoryView<EdaAction>({
-      items: actions,
-      tableColumns,
+    const view = useEdaView<EdaAction>({
+      url: actionsRulesEndpoint,
       toolbarFilters,
-      keyFn: (item) => item?.rule?.id,
+      tableColumns,
     });
 
     return (
@@ -54,13 +43,11 @@ export function Actions() {
   function HostsTab() {
     const { t } = useTranslation();
     const toolbarFilters = useHostsFilters();
-    const { data: hosts } = useFetchHosts();
     const tableColumns = useHostsColumns();
-    const view = useInMemoryView<EdaHost>({
-      items: hosts,
-      tableColumns,
+    const view = useEdaView<EdaHost>({
+      url: actionsHostsEndpoint,
       toolbarFilters,
-      keyFn: (item) => item?.id,
+      tableColumns,
     });
 
     return (

@@ -1,32 +1,27 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
-import { useGet } from '../../common/useItem';
-import { RouteE } from '../../Routes';
+import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
 import { API_PREFIX } from '../constants';
+import { useEdaView } from '../useEventDrivenView';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useRulebookActivationFilters();
-  const { data: rulebookActivations, mutate: refresh } = useGet<EdaRulebookActivation[]>(
-    `${API_PREFIX}/activations`
-  );
   const tableColumns = useRulebookActivationColumns();
-  const view = useInMemoryView<EdaRulebookActivation>({
-    items: rulebookActivations,
-    tableColumns,
+  const view = useEdaView<EdaRulebookActivation>({
+    url: `${API_PREFIX}/activations/`,
     toolbarFilters,
-    keyFn: (item) => item?.id,
+    tableColumns,
   });
-  const toolbarActions = useRulebookActivationsActions(refresh);
-  const rowActions = useRulebookActivationActions(refresh);
+  const toolbarActions = useRulebookActivationsActions(view);
+  const rowActions = useRulebookActivationActions(view);
   return (
     <PageLayout>
       <PageHeader title={t('Rulebook activations')} />
@@ -39,7 +34,7 @@ export function RulebookActivations() {
         emptyStateTitle={t('No rulebook activations yet')}
         emptyStateDescription={t('To get started, create a rulebook activation.')}
         emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => navigate(RouteE.CreateEdaRulebookActivation)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         {...view}
         defaultSubtitle={t('Rulebook activation')}
       />

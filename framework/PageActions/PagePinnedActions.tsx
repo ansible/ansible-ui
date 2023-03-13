@@ -75,10 +75,7 @@ export function PagePinnedAction<T extends object>(props: {
       return (
         <PageButtonAction
           action={action}
-          isSecondary={
-            (selectedItems !== undefined && selectedItems.length !== 0) ||
-            selectedItem !== undefined
-          }
+          isSecondary={selectedItems !== undefined && selectedItems.length !== 0}
           iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
@@ -100,6 +97,7 @@ export function PagePinnedAction<T extends object>(props: {
           position={DropdownPosition.right}
           isDisabled={Boolean(isDisabled)}
           tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
+          variant={action.variant}
           // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
         />
       );
