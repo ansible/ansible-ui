@@ -7,7 +7,7 @@ import {
   PageForm,
   PageFormSelectOption,
   PageFormSubmitHandler,
-  usePageDialog,
+  usePageDialog
 } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
@@ -79,7 +79,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             ? '/api/login/'
             : automationServer.type === AutomationServerType.Galaxy
             ? '/api/automation-hub/_ui/v1/auth/login/'
-            : '/api/eda/v1/auth/login/';
+            : '/api/eda/v1/auth/session/login/';
 
         if (loginPageUrl !== undefined) {
           setCookie('server', data.server);
