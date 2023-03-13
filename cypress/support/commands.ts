@@ -112,7 +112,7 @@ Cypress.Commands.add('edaLogin', () => {
     {
       cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/v2/me/' });
+        cy.request({ method: 'GET', url: '/api/eda/v1/users/me/' });
       },
     }
   );
