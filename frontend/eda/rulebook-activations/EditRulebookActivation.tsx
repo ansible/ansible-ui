@@ -12,13 +12,14 @@ import { useGet } from '../../common/useItem';
 import { requestPost } from '../../Data';
 import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormTextInput } from '../../../framework';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaProject } from '../interfaces/EdaProject';
-import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitch';
+import { PageFormSwitch } from '../../../framework';
 import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
+import { PageFormCodeEditor } from '../common/PageFormCodeEditor';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
@@ -28,14 +29,26 @@ export function EditRulebookActivation() {
   const { data: extra_vars } = useGet<EdaResult<EdaExtraVars>>(`${API_PREFIX}/extra-vars/`);
   const { cache } = useSWRConfig();
 
-  const onSubmit: PageFormSubmitHandler<EdaRulebookActivation> = async (
+  const onSubmit: PageFormSubmitHandler<EdaRulebookActivation & { new_extra_var: string }> = async (
     rulebookActivation,
     setError
   ) => {
+    let extra_var_id;
+    try {
+      extra_var_id = await requestPost<EdaExtraVars>(`${API_PREFIX}/extra-vars/`, {
+        name: rulebookActivation.name,
+        extra_var: rulebookActivation.new_extra_var,
+        project: rulebookActivation.project,
+      });
+      (cache as unknown as { clear: () => void }).clear?.();
+    } catch (err) {
+      extra_var_id = undefined;
+      setError(err instanceof Error ? err.message : t('Unknown error'));
+    }
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
         `${API_PREFIX}/activations/`,
-        rulebookActivation
+        extra_var_id ? { ...rulebookActivation, extra_var_id: extra_var_id } : rulebookActivation
       );
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(
@@ -101,7 +114,7 @@ export function EditRulebookActivation() {
           options={[]}
         />
         <PageFormSelectOption
-          name={'project_id'}
+          name={'project'}
           label={t('Project')}
           placeholderText={t('Select project')}
           options={
@@ -145,6 +158,14 @@ export function EditRulebookActivation() {
                 }))
               : []
           }
+        />
+        <PageFormCodeEditor
+          name={'new_extra_var'}
+          shortcutsPopoverButtonText={t('Extra vars')}
+          toolTipCopyExitDelay={1}
+          toolTipDelay={1}
+          toolTipMaxWidth={'20'}
+          height={'250'}
         />
       </PageForm>
     </PageLayout>
