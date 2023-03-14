@@ -8,7 +8,7 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 
-module.exports = function (_env, argv) {
+module.exports = function (env, argv) {
   var isProduction = argv.mode === 'production' || argv.mode === undefined;
   var isDevelopment = !isProduction;
   var config = {
@@ -66,18 +66,18 @@ module.exports = function (_env, argv) {
         'process.env.DELAY': isProduction
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),
-        'process.env.PWA': _env.pwa ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.AWX': _env.awx ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.HUB': _env.hub ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.EDA': _env.eda ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.AWX_ROUTE_PREFIX': _env.awx_route_prefix
-          ? JSON.stringify(_env.awx_route_prefix)
+        'process.env.PWA': env.pwa ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.AWX': env.awx ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.HUB': env.hub ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.EDA': env.eda ? JSON.stringify('true') : JSON.stringify(''),
+        'process.env.AWX_ROUTE_PREFIX': env.awx_route_prefix
+          ? JSON.stringify(env.awx_route_prefix)
           : JSON.stringify('/ui_next'),
-        'process.env.HUB_ROUTE_PREFIX': _env.hub_route_prefix
-          ? JSON.stringify(_env.hub_route_prefix)
+        'process.env.HUB_ROUTE_PREFIX': env.hub_route_prefix
+          ? JSON.stringify(env.hub_route_prefix)
           : JSON.stringify('/hub'),
-        'process.env.EDA_ROUTE_PREFIX': _env.eda_route_prefix
-          ? JSON.stringify(_env.eda_route_prefix)
+        'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
+          ? JSON.stringify(env.eda_route_prefix)
           : JSON.stringify('/eda'),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
@@ -100,7 +100,7 @@ module.exports = function (_env, argv) {
         chunkFilename: '[id].[contenthash:8].css',
         ignoreOrder: false,
       }),
-      _env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
+      env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
       new CopyPlugin({
         patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }],
       }),
@@ -109,7 +109,7 @@ module.exports = function (_env, argv) {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, 'build/public'),
-      publicPath: _env.awx ? '/static/awx/' : '/',
+      publicPath: env.awx ? '/static/awx/' : '/',
     },
     optimization: {
       minimizer: [

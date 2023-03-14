@@ -115,7 +115,7 @@ export function useAutomationServersColumns(_options?: {
           switch (server.type) {
             case AutomationServerType.AWX:
               return <TextCell text={t('AWX Ansible server')} />;
-            case AutomationServerType.Galaxy:
+            case AutomationServerType.HUB:
               return <TextCell text={t('Galaxy Ansible server')} />;
             case AutomationServerType.EDA:
               return <TextCell text={t('EDA server')} />;
