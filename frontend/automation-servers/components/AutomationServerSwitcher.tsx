@@ -35,7 +35,7 @@ export function AutomationServerSwitcher() {
             <Text component="small" style={{ opacity: 0.7 }}>
               {automationServer?.type === AutomationServerType.AWX
                 ? t('AWX Ansible server')
-                : automationServer?.type === AutomationServerType.Galaxy
+                : automationServer?.type === AutomationServerType.HUB
                 ? t('Galaxy Ansible server')
                 : automationServer?.type === AutomationServerType.EDA
                 ? t('EDA server')
@@ -65,7 +65,7 @@ export function AutomationServerSwitcher() {
               <Text component="small" style={{ opacity: 0.7 }}>
                 {automationServer?.type === AutomationServerType.AWX
                   ? t('AWX Ansible server')
-                  : automationServer?.type === AutomationServerType.Galaxy
+                  : automationServer?.type === AutomationServerType.HUB
                   ? t('Galaxy Ansible server')
                   : automationServer?.type === AutomationServerType.EDA
                   ? t('EDA server')
