@@ -1,0 +1,103 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "instance_group",
+      "url": "/api/v2/instance_groups/1/",
+      "related": {
+        "jobs": "/api/v2/instance_groups/1/jobs/",
+        "instances": "/api/v2/instance_groups/1/instances/"
+      },
+      "name": "controlplane",
+      "created": "2022-12-09T15:26:58.492885Z",
+      "modified": "2022-12-09T15:26:58.503037Z",
+      "capacity": 611,
+      "consumed_capacity": 0,
+      "percent_capacity_remaining": 100.0,
+      "jobs_running": 0,
+      "max_concurrent_jobs": 0,
+      "max_forks": 0,
+      "jobs_total": 48,
+      "instances": 1,
+      "is_container_group": false,
+      "credential": null,
+      "policy_instance_percentage": 100,
+      "policy_instance_minimum": 0,
+      "policy_instance_list": [],
+      "pod_spec_override": "",
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": false
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "instance_group",
+      "url": "/api/v2/instance_groups/2/",
+      "related": {
+        "jobs": "/api/v2/instance_groups/2/jobs/",
+        "instances": "/api/v2/instance_groups/2/instances/"
+      },
+      "name": "default",
+      "created": "2022-12-09T15:27:01.388268Z",
+      "modified": "2022-12-09T15:27:01.397624Z",
+      "capacity": 611,
+      "consumed_capacity": 0,
+      "percent_capacity_remaining": 100.0,
+      "jobs_running": 0,
+      "max_concurrent_jobs": 0,
+      "max_forks": 0,
+      "jobs_total": 77804,
+      "instances": 1,
+      "is_container_group": false,
+      "credential": null,
+      "policy_instance_percentage": 100,
+      "policy_instance_minimum": 0,
+      "policy_instance_list": [],
+      "pod_spec_override": "",
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "instance_group",
+      "url": "/api/v2/instance_groups/3/",
+      "related": {
+        "jobs": "/api/v2/instance_groups/3/jobs/",
+        "instances": "/api/v2/instance_groups/3/instances/"
+      },
+      "name": "Container Group 01",
+      "created": "2023-01-11T16:59:22.019930Z",
+      "modified": "2023-01-11T16:59:22.019961Z",
+      "capacity": 0,
+      "consumed_capacity": 0,
+      "percent_capacity_remaining": 0.0,
+      "jobs_running": 0,
+      "max_concurrent_jobs": 0,
+      "max_forks": 0,
+      "jobs_total": 3,
+      "instances": 0,
+      "is_container_group": true,
+      "credential": null,
+      "policy_instance_percentage": 0,
+      "policy_instance_minimum": 0,
+      "policy_instance_list": [],
+      "pod_spec_override": "",
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      }
+    }
+  ]
+}

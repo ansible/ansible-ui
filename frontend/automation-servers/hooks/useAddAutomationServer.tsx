@@ -1,11 +1,16 @@
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { PageForm, PageFormSelectOption, usePageDialog } from '../../../framework';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
 import { AutomationServer } from '../interfaces/AutomationServer';
 import { AutomationServerType } from '../interfaces/AutomationServerType';
+
+const ModalFormDiv = styled.div`
+  padding: 24px;
+`;
 
 export function useAddAutomationServer() {
   const [_, setDialog] = usePageDialog();
@@ -37,7 +42,7 @@ export function AddAutomationServerDialog() {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <ModalFormDiv>
         <PageForm
           submitText={t('Add automation server')}
           onSubmit={onSubmit}
@@ -46,14 +51,15 @@ export function AddAutomationServerDialog() {
           disableScrolling
           disableBody
           disablePadding
+          defaultValue={{ name: '', url: '', type: AutomationServerType.AWX }}
         >
-          <PageFormTextInput
+          <PageFormTextInput<AutomationServer>
             label={t('Name')}
             name="name"
             placeholder={t('Enter a friendly name for the automation server')}
             isRequired
           />
-          <PageFormTextInput
+          <PageFormTextInput<AutomationServer>
             label={t('Url')}
             name="url"
             placeholder={t('Enter the url of the automation server')}
@@ -75,7 +81,7 @@ export function AddAutomationServerDialog() {
             }}
             isRequired
           />
-          <PageFormSelectOption
+          <PageFormSelectOption<AutomationServer>
             label={t('Automation type')}
             name="type"
             placeholderText={t('Select automation type')}
@@ -90,7 +96,7 @@ export function AddAutomationServerDialog() {
               {
                 label: t('Galaxy Ansible server'),
                 description: t('Discover, publish, and manage your Ansible collections.'),
-                value: AutomationServerType.Galaxy,
+                value: AutomationServerType.HUB,
               },
               {
                 label: t('EDA server'),
@@ -103,7 +109,7 @@ export function AddAutomationServerDialog() {
             isRequired
           />
         </PageForm>
-      </div>
+      </ModalFormDiv>
     </Modal>
   );
 }

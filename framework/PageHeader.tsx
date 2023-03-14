@@ -19,11 +19,16 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
+import styled from 'styled-components';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
 import { PageAlertsArrayContext, PageAlertsContext } from './PageAlerts';
 import './PageFramework.css';
+import { useFrameworkTranslations } from './useFrameworkTranslations';
 
+const PageAlertsDiv = styled.div`
+  border-bottom: thin solid rgba(0, 0, 0, 0.12);
+`;
 export interface ICatalogBreadcrumb {
   id?: string;
   label?: string;
@@ -77,7 +82,6 @@ export interface PageHeaderProps {
   controls?: ReactNode;
   headerActions?: ReactNode;
   footer?: ReactNode;
-  t?: (t: string) => string;
 }
 
 /**
@@ -108,8 +112,7 @@ export function PageHeader(props: PageHeaderProps) {
   const lg = useBreakpoint('lg');
   const xl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
-  let { t } = props;
-  t = t ? t : (t: string) => t;
+  const [translations] = useFrameworkTranslations();
   return (
     <>
       {navigation && (
@@ -179,7 +182,7 @@ export function PageHeader(props: PageHeaderProps) {
                               onClick={() => window.open(props.titleDocLink, '_blank')}
                               isInline
                             >
-                              {t('Documentation')}
+                              {translations.documentation}
                             </Button>
                           </StackItem>
                         )}
@@ -245,7 +248,7 @@ export function PageHeader(props: PageHeaderProps) {
             {(pageAlertsArray) => {
               if (pageAlertsArray.length === 0) return <></>;
               return (
-                <div style={{ borderBottom: 'thin solid rgba(0, 0, 0, 0.12)' }}>
+                <PageAlertsDiv>
                   {pageAlertsArray.map((alertProps, index) => (
                     <Alert
                       {...alertProps}
@@ -259,7 +262,7 @@ export function PageHeader(props: PageHeaderProps) {
                       isExpandable={!!alertProps.children}
                     />
                   ))}
-                </div>
+                </PageAlertsDiv>
               );
             }}
           </PageAlertsArrayContext.Consumer>

@@ -19,30 +19,31 @@ export type FormGroupTextInputProps = Pick<
   | 'innerRef'
   | 'minLength'
   | 'maxLength'
+  | 'onBlur'
 > &
-  PageFormGroupProps & { children?: ReactNode };
+  PageFormGroupProps & {
+    children?: ReactNode;
+  };
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
 export function FormGroupTextInput(props: FormGroupTextInputProps) {
   const [showSecret, setShowSecret] = useState(false);
-  const {
-    helperTextInvalid: _helperTextInvalid,
-    children: _children,
-    isReadOnly,
-    ...textInputProps
-  } = props;
+  const { children: _children, isReadOnly, placeholder, ...formGroupProps } = props;
   const id = props.id
     ? props.id
     : typeof props.label === 'string'
     ? props.label.toLowerCase().split(' ').join('-')
     : undefined;
   return (
-    <PageFormGroup {...props} id={id}>
+    <PageFormGroup {...formGroupProps} id={id}>
       <InputGroup>
         <TextInput
-          {...textInputProps}
+          placeholder={placeholder}
+          onChange={props.onChange}
           id={id}
+          onBlur={props.onBlur}
           label={undefined}
+          value={props.value}
           aria-describedby={id ? `${id}-form-group` : undefined}
           validated={props.helperTextInvalid ? 'error' : undefined}
           type={props.type === 'password' ? (showSecret ? 'text' : 'password') : props.type}

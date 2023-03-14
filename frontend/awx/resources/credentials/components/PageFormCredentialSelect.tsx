@@ -1,30 +1,44 @@
+import { ReactElement } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../Data';
 import { Credential } from '../../../interfaces/Credential';
 import { useSelectCredential } from '../hooks/useSelectCredential';
+import { FieldPath, FieldValues } from 'react-hook-form';
+import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
 
-export function PageFormCredentialSelect(props: {
-  name: string;
+export function PageFormCredentialSelect<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: {
+  name: TFieldName;
   credentialPath?: string;
   credentialIdPath?: string;
+  additionalControls?: ReactElement;
+  isRequired?: boolean;
 }) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredential();
+  const selectCredential = useSelectCredential(true);
   const { setValue } = useFormContext();
   return (
-    <PageFormTextInput
+    <PageFormMultiInput<Credential, TFieldValues, TFieldName>
+      {...props}
+      placeholder={t('Add credentials')}
+      labelHelpTitle={t('Credentials')}
+      labelHelp={t(
+        'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+      )}
       name={props.name}
       label={t('Credential')}
-      placeholder="Enter credential"
       selectTitle={t('Select a credential')}
-      selectValue={(credential: Credential) => credential.name}
       selectOpen={selectCredential}
-      validate={async (credentialName: string) => {
+      validate={async (credentials: Credential[]) => {
+        if (!props.isRequired) {
+          return;
+        }
         try {
           const itemsResponse = await requestGet<ItemsResponse<Credential>>(
-            `/api/v2/credentials/?name=${credentialName}`
+            `/api/v2/credentials/?name=${credentials[0].name}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
           if (props.credentialPath) setValue(props.credentialPath, itemsResponse.results[0]);
@@ -35,7 +49,7 @@ export function PageFormCredentialSelect(props: {
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }

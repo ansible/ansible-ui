@@ -35,6 +35,7 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons';
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { BulkSelector } from '../components/BulkSelector';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { IPageAction } from '../PageActions/PageAction';
@@ -45,6 +46,14 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 
 import './PageToolbar.css';
+
+const ToolbarGroupsDiv = styled.div`
+  flex-grow: 1;
+`;
+
+const SelectionSpan = styled.span`
+  opacity: 0.7;
+`;
 
 export interface IItemFilter<T extends object> {
   label: string;
@@ -221,7 +230,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
                   id="filter"
                   onSelect={(_, v) => setSeletedFilter(v.toString())}
                   value={selectedFilter}
-                  placeholderText="Select filter"
+                  placeholderText=""
                 >
                   {toolbarFilters.map((filter) => (
                     <SelectOption key={filter.key} value={filter.key}>
@@ -311,7 +320,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <div style={{ flexGrow: 1 }} />
+        <ToolbarGroupsDiv />
 
         <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
@@ -438,7 +447,6 @@ function ToolbarTextFilter(props: {
       <TextInputGroup style={{ minWidth: 220 }}>
         <TextInputGroupMain
           id={props.id}
-          // ref={ref}
           value={value}
           onChange={(e, v) => {
             if (typeof e === 'string') setValue(e);
@@ -448,7 +456,6 @@ function ToolbarTextFilter(props: {
             if (value && event.key === 'Enter') {
               props.addFilter(value);
               setValue('');
-              // ref.current?.focus() // Does not work because PF does not expose ref
             }
           }}
           placeholder={props.placeholder}
@@ -460,7 +467,6 @@ function ToolbarTextFilter(props: {
               aria-label="clear filter"
               onClick={() => setValue('')}
               style={{ opacity: value ? undefined : 0 }}
-              // tabIndex={value ? undefined : -1}
               tabIndex={-1}
             >
               <TimesIcon />
@@ -518,7 +524,7 @@ function ToolbarSelectFilter(props: {
           values.length ? (
             translations.selectedText
           ) : (
-            <span style={{ opacity: 0.7 }}>{props.placeholder}</span>
+            <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
       >

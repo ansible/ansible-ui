@@ -3,6 +3,7 @@ import ky, { HTTPError } from 'ky';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   PageForm,
   PageFormSelectOption,
@@ -11,10 +12,16 @@ import {
 } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
+import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from '../Data';
 import { RouteObj } from '../Routes';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+
+const LoginModalDiv = styled.div`
+  padding: 24px;
+`;
+
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
@@ -34,9 +41,9 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 24 }}>
+      <LoginModalDiv>
         <LoginForm defaultServer={props.server} onLogin={props.onLogin} />
-      </div>
+      </LoginModalDiv>
     </Modal>
   );
 }
@@ -72,61 +79,77 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
   >(
     async (data, setError) => {
       try {
-        const automationServer = automationServers.find((server) => server.url === data.server);
+        let automationServer: AutomationServer | undefined;
+        if (process.env.AWX === 'true') {
+          automationServer = { name: '', url: '', type: AutomationServerType.AWX };
+        } else if (process.env.HUB === 'true') {
+          automationServer = { name: '', url: '', type: AutomationServerType.HUB };
+        } else if (process.env.EDA === 'true') {
+          automationServer = { name: '', url: '', type: AutomationServerType.EDA };
+        } else {
+          automationServer = automationServers.find((server) => server.url === data.server);
+        }
         if (!automationServer) return;
-        const loginPageUrl =
-          automationServer.type === AutomationServerType.AWX
-            ? '/api/login/'
-            : automationServer.type === AutomationServerType.Galaxy
-            ? '/api/automation-hub/_ui/v1/auth/login/'
-            : '/api/eda/v1/auth/login/';
 
-        if (loginPageUrl !== undefined) {
-          setCookie('server', data.server);
-          const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
-          let csrfmiddlewaretoken: string;
-          if (loginPage.includes('csrfmiddlewaretoken')) {
-            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfmiddlewaretoken'));
-            loginPage2 = loginPage2.substring(loginPage2.indexOf('value=') + 7);
-            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
-          } else {
-            let loginPage2 = loginPage.substring(loginPage.indexOf('csrfToken: '));
-            loginPage2 = loginPage2.substring(loginPage2.indexOf('"') + 1);
-            csrfmiddlewaretoken = loginPage2.substring(0, loginPage2.indexOf('"'));
-          }
-          const searchParams = new URLSearchParams();
+        let loginPageUrl: string;
+        switch (automationServer.type) {
+          case AutomationServerType.AWX:
+            loginPageUrl = '/api/login/';
+            break;
+          case AutomationServerType.HUB:
+            loginPageUrl = '/api/automation-hub/_ui/v1/auth/login/';
+            break;
+          case AutomationServerType.EDA:
+            loginPageUrl = '/api/eda/v1/auth/session/login/';
+            break;
+        }
+        if (!loginPageUrl) return;
+
+        setCookie('server', data.server);
+        const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
+        let searchString = 'name="csrfmiddlewaretoken" value="';
+        if (automationServer.type === AutomationServerType.EDA) searchString = 'csrfToken: "';
+        const searchStringIndex = loginPage.indexOf(searchString);
+        let csrfmiddlewaretoken: string | undefined;
+        if (searchStringIndex !== -1) {
+          csrfmiddlewaretoken = loginPage.substring(
+            searchStringIndex + searchString.length,
+            loginPage.indexOf('"', searchStringIndex + searchString.length)
+          );
+        }
+        const searchParams = new URLSearchParams();
+        if (csrfmiddlewaretoken) {
           searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
           setCookie('csrftoken', csrfmiddlewaretoken);
-          searchParams.set('username', data.username);
-          searchParams.set('password', data.password);
-          searchParams.set('next', '/');
-          try {
-            await ky.post(loginPageUrl, {
-              credentials: 'include',
-              body: searchParams,
-              redirect: 'manual',
-            });
-          } catch (err) {
-            if (err instanceof HTTPError && err.response.status === 0) {
-              // Do nothing
-            } else {
-              throw err;
-            }
+        }
+        searchParams.set('username', data.username);
+        searchParams.set('password', data.password);
+        searchParams.set('next', '/');
+        try {
+          await ky.post(loginPageUrl, {
+            credentials: 'include',
+            body: searchParams,
+            redirect: 'manual',
+          });
+        } catch (err) {
+          if (err instanceof HTTPError && err.response.status === 0) {
+            // Do nothing
+          } else {
+            throw err;
           }
         }
 
         localStorage.setItem('server', data.server);
         setAutomationServer(automationServer);
         switch (automationServer.type) {
+          case AutomationServerType.AWX:
+            navigate(RouteObj.Dashboard);
+            break;
           case AutomationServerType.EDA:
-            setCookie('server', data.server);
             navigate(RouteObj.EdaProjects);
             break;
-          case AutomationServerType.Galaxy:
+          case AutomationServerType.HUB:
             navigate(RouteObj.HubDashboard);
-            break;
-          default:
-            navigate(RouteObj.Dashboard);
             break;
         }
 
@@ -149,36 +172,42 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       cancelText={t('Cancel')}
       isVertical
       singleColumn
-      defaultValue={{
-        server: automationServers.find((automationServer) =>
-          props.defaultServer
-            ? automationServer.url === props.defaultServer
-            : localStorage.getItem('server')
-        )?.url,
-      }}
+      defaultValue={
+        process.env.EDA === 'true'
+          ? {}
+          : {
+              server: automationServers.find((automationServer) =>
+                props.defaultServer
+                  ? automationServer.url === props.defaultServer
+                  : localStorage.getItem('server')
+              )?.url,
+            }
+      }
       disableBody
       disablePadding
       disableScrolling
     >
-      <PageFormSelectOption
-        name="server"
-        label={t('Automation server')}
-        placeholderText={t('Select automation server')}
-        options={automationServers.map((automationServer) => ({
-          label: automationServer.name,
-          description: automationServer.url,
-          value: automationServer.url,
-          group:
-            automationServer?.type === AutomationServerType.AWX
-              ? t('AWX Ansible server')
-              : automationServer?.type === AutomationServerType.Galaxy
-              ? t('Galaxy Ansible server')
-              : automationServer?.type === AutomationServerType.EDA
-              ? t('EDA server')
-              : t('Unknown'),
-        }))}
-        isRequired
-      />
+      {process.env.AWX !== 'true' && process.env.HUB !== 'true' && process.env.EDA !== 'true' && (
+        <PageFormSelectOption
+          name="server"
+          label={t('Automation server')}
+          placeholderText={t('Select automation server')}
+          options={automationServers.map((automationServer) => ({
+            label: automationServer.name,
+            description: automationServer.url,
+            value: automationServer.url,
+            group:
+              automationServer?.type === AutomationServerType.AWX
+                ? t('AWX Ansible server')
+                : automationServer?.type === AutomationServerType.HUB
+                ? t('Galaxy Ansible server')
+                : automationServer?.type === AutomationServerType.EDA
+                ? t('EDA server')
+                : t('Unknown'),
+          }))}
+          isRequired
+        />
+      )}
       <PageFormTextInput
         name="username"
         label={t('Username')}

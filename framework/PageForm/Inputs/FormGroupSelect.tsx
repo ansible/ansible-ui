@@ -16,8 +16,21 @@ export type FormGroupSelectProps = Pick<
 
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupSelect(props: FormGroupSelectProps) {
-  const { children, helperTextInvalid, isReadOnly, onSelect, value, onCreateOption } = props;
-
+  const {
+    value,
+    onSelect,
+    children,
+    helperTextInvalid,
+    labelHelpTitle,
+    labelHelp,
+    helperText,
+    isRequired,
+    isReadOnly,
+    additionalControls,
+    placeholderText,
+    onCreateOption,
+    ...selectProps
+  } = props;
   const [open, setOpen] = useState(false);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
 
@@ -36,8 +49,9 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
   return (
     <PageFormGroup {...props}>
       <Select
-        {...props}
+        {...selectProps}
         label={undefined}
+        placeholderText={placeholderText}
         variant={!onCreateOption ? SelectVariant.single : SelectVariant.typeahead}
         aria-describedby={props.id ? `${props.id}-form-group` : undefined}
         selections={value}

@@ -1,6 +1,12 @@
-import { Button, ChipGroup, Chip, InputGroup } from '@patternfly/react-core';
+import {
+  Button,
+  ChipGroup,
+  Chip,
+  InputGroup,
+  TextInput,
+  ChipGroupProps,
+} from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import {
   Controller,
   FieldPath,
@@ -11,6 +17,7 @@ import {
   ValidationRule,
 } from 'react-hook-form';
 import styled from 'styled-components';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
@@ -26,13 +33,15 @@ export type PageFormMultiInputProps<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   name: TFieldName;
+  placeholder?: string;
   minLength?: number | ValidationRule<number>;
   maxLength?: number | ValidationRule<number>;
   pattern?: ValidationRule<RegExp>;
   validate?: Validate<T[], TFieldValues>;
   selectTitle?: string;
   selectOpen?: (callback: (selection: T[]) => void, title: string) => void;
-} & Omit<PageFormGroupProps, 'onChange' | 'value'>;
+} & Omit<PageFormGroupProps, 'onChange' | 'value'> &
+  ChipGroupProps;
 
 interface FieldValuesWithArray<T> extends FieldValues {
   [key: string]: T[];
@@ -43,14 +52,14 @@ export function PageFormMultiInput<
   TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
-  const { validate, selectTitle, selectOpen, ...formGroupInputProps } = props;
+  const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
   const { label, name, isRequired, minLength, maxLength, pattern } = props;
   const {
     control,
     setValue,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
-  const { t } = useTranslation();
+  const [translations] = useFrameworkTranslations();
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -69,20 +78,26 @@ export function PageFormMultiInput<
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
             <InputGroup>
-              <ChipHolder isDisabled={isSubmitting} className="pf-c-form-control">
-                <ChipGroup
-                  numChips={5}
-                  expandedText={t('Show less')}
-                  collapsedText={t(`${value?.length - 5} more`)}
-                >
-                  {value?.map((item) => (
-                    <Chip key={item.id} onClick={() => removeItem(item)}>
-                      {/* TODO: add renderChip() callback prop? */}
-                      {item.name}
-                    </Chip>
-                  ))}
-                </ChipGroup>
-              </ChipHolder>
+              {value?.length ? (
+                <ChipHolder isDisabled={isSubmitting} className="pf-c-form-control">
+                  <ChipGroup
+                    numChips={5}
+                    expandedText={translations.showLess}
+                    collapsedText={translations.countMore.replace(
+                      '{count}',
+                      `${value?.length - 5}`
+                    )}
+                  >
+                    {value?.map((item) => (
+                      <Chip key={item.id} onClick={() => removeItem(item)}>
+                        {item.name}
+                      </Chip>
+                    ))}
+                  </ChipGroup>
+                </ChipHolder>
+              ) : (
+                <TextInput aria-label={placeholder} isDisabled placeholder={placeholder} />
+              )}
               {selectTitle && (
                 <Button
                   variant="control"

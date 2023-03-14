@@ -71,7 +71,7 @@ describe('Teams.cy.ts', () => {
           <Teams />
         </MemoryRouter>
       );
-      cy.contains('button', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Create Team button is enabled if the user has permission to create teams', () => {
       cy.stub(requests, 'useOptions').callsFake(() => ({
@@ -95,7 +95,7 @@ describe('Teams.cy.ts', () => {
           <Teams />
         </MemoryRouter>
       );
-      cy.contains('button', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
     });
     it('Displays error if teams are not successfully loaded', () => {
       cy.intercept(

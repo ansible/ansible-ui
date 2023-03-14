@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { useNameColumn } from '../../../common/columns';
-import { getItemKey, requestDelete } from '../../../Data';
-import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { useInstanceGroupsColumns } from './InstanceGroups';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { useNameColumn } from '../../../../common/columns';
+import { getItemKey, requestDelete } from '../../../../Data';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { useInstanceGroupsColumns } from '../InstanceGroups';
 
 export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGroup[]) => void) {
   const { t } = useTranslation();
