@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
+  PageFormCodeEditor,
   PageFormSelectOption,
   PageFormSubmitHandler,
   PageHeader,
@@ -12,30 +13,43 @@ import { useGet } from '../../common/useItem';
 import { requestPost } from '../../Data';
 import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormTextInput } from '../../../framework';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaProject } from '../interfaces/EdaProject';
-import { PageFormSwitch } from '../../../framework/PageForm/Inputs/PageFormSwitch';
+import { PageFormSwitch } from '../../../framework';
 import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
+import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: rulebooks } = useGet<EdaResult<EdaRulebook>>(`${API_PREFIX}/rulebooks/`);
   const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
-  const { data: extra_vars } = useGet<EdaResult<EdaExtraVars>>(`${API_PREFIX}/extra-vars/`);
+  const { data: environments } = useGet<EdaResult<EdaExecutionEnvironment>>(
+    `${API_PREFIX}/decision_environments/`
+  );
   const { cache } = useSWRConfig();
 
-  const onSubmit: PageFormSubmitHandler<EdaRulebookActivation> = async (
+  const onSubmit: PageFormSubmitHandler<EdaRulebookActivation & { variables: string }> = async (
     rulebookActivation,
     setError
   ) => {
+    let extra_var_id;
+    try {
+      extra_var_id = await requestPost<EdaExtraVars>(`${API_PREFIX}/extra-vars/`, {
+        extra_var: rulebookActivation.variables,
+      });
+      (cache as unknown as { clear: () => void }).clear?.();
+    } catch (err) {
+      extra_var_id = undefined;
+      setError(err instanceof Error ? err.message : t('Unknown error'));
+    }
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
         `${API_PREFIX}/activations/`,
-        rulebookActivation
+        extra_var_id ? { ...rulebookActivation, extra_var_id: extra_var_id } : rulebookActivation
       );
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(
@@ -75,11 +89,18 @@ export function EditRulebookActivation() {
           id={'description'}
           placeholder={t('Insert description here')}
         />
-        <PageFormTextInput
-          name={'execution_environment'}
-          label={t('Execution environment')}
-          id={'execution_environment'}
-          placeholder={t('Insert execution environment here')}
+        <PageFormSelectOption
+          name={'decision_environment_id'}
+          label={t('Decision environment')}
+          placeholderText={t('Select decision environment')}
+          options={
+            environments?.results
+              ? environments.results.map((item: { name: string; id: number }) => ({
+                  label: item.name,
+                  value: item.id,
+                }))
+              : []
+          }
         />
         <PageFormSelectOption
           name={'rulebook_id'}
@@ -101,7 +122,7 @@ export function EditRulebookActivation() {
           options={[]}
         />
         <PageFormSelectOption
-          name={'project_id'}
+          name={'project'}
           label={t('Project')}
           placeholderText={t('Select project')}
           options={
@@ -126,26 +147,7 @@ export function EditRulebookActivation() {
           labelOff={t('Disabled')}
           name="is_enabled"
         />
-        <PageFormSwitch<EdaRulebook>
-          id="rulebook-throttle"
-          formLabel={t('Throttle')}
-          label={t('Enabled')}
-          labelOff={t('Disabled')}
-          name="throttle"
-        />
-        <PageFormSelectOption
-          name={'extra_var_id'}
-          label={t('Extra vars')}
-          placeholderText={t('Select extra vars')}
-          options={
-            extra_vars?.results
-              ? extra_vars.results.map((item: { name: string; id: number }) => ({
-                  label: item.name,
-                  value: item.id,
-                }))
-              : []
-          }
-        />
+        <PageFormCodeEditor name={'variables'} label={t('Variables')} />
       </PageForm>
     </PageLayout>
   );
