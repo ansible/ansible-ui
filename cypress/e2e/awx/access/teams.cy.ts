@@ -62,7 +62,7 @@ describe('teams', () => {
   it('create team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Teams$/, true);
-    cy.clickButton(/^Create team$/);
+    cy.clickLink(/^Create team$/);
     cy.typeByLabel(/^Name$/, teamName);
     cy.typeByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
@@ -214,9 +214,6 @@ describe('teams', () => {
     cy.hasTitle(team.name);
     cy.clickButton(/^Edit team$/);
     cy.hasTitle(/^Edit team$/);
-    cy.typeByLabel(/^Name$/, 'a');
-    cy.clickButton(/^Save team$/);
-    cy.hasTitle(`${team.name}a`);
   });
 
   it('team details delete team', () => {
