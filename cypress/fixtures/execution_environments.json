@@ -1,0 +1,59 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "type": "execution_environment",
+      "url": "/api/v2/execution_environments/2/",
+      "related": {
+        "activity_stream": "/api/v2/execution_environments/2/activity_stream/",
+        "unified_job_templates": "/api/v2/execution_environments/2/unified_job_templates/",
+        "copy": "/api/v2/execution_environments/2/copy/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": false,
+          "copy": true
+        }
+      },
+      "created": "2022-12-09T15:26:52.693508Z",
+      "modified": "2022-12-09T15:26:52.700258Z",
+      "name": "Control Plane Execution Environment",
+      "description": "",
+      "organization": null,
+      "image": "quay.io/ansible/awx-ee:latest",
+      "managed": true,
+      "credential": null,
+      "pull": ""
+    },
+    {
+      "id": 1,
+      "type": "execution_environment",
+      "url": "/api/v2/execution_environments/1/",
+      "related": {
+        "activity_stream": "/api/v2/execution_environments/1/activity_stream/",
+        "unified_job_templates": "/api/v2/execution_environments/1/unified_job_templates/",
+        "copy": "/api/v2/execution_environments/1/copy/"
+      },
+      "summary_fields": {
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true
+        }
+      },
+      "created": "2022-12-09T15:26:52.674669Z",
+      "modified": "2022-12-09T15:26:52.687954Z",
+      "name": "AWX EE (latest)",
+      "description": "",
+      "organization": null,
+      "image": "quay.io/ansible/awx-ee:latest",
+      "managed": false,
+      "credential": null,
+      "pull": ""
+    }
+  ]
+}

@@ -1,0 +1,1159 @@
+{
+  "count": 11,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "type": "project",
+      "url": "/api/v2/projects/6/",
+      "related": {
+        "created_by": "/api/v2/users/1/",
+        "modified_by": "/api/v2/users/1/",
+        "last_job": "/api/v2/project_updates/56023/",
+        "next_schedule": "/api/v2/schedules/71/",
+        "teams": "/api/v2/projects/6/teams/",
+        "playbooks": "/api/v2/projects/6/playbooks/",
+        "inventory_files": "/api/v2/projects/6/inventories/",
+        "update": "/api/v2/projects/6/update/",
+        "project_updates": "/api/v2/projects/6/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/6/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/6/schedules/",
+        "activity_stream": "/api/v2/projects/6/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/6/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/6/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/6/notification_templates_error/",
+        "access_list": "/api/v2/projects/6/access_list/",
+        "object_roles": "/api/v2/projects/6/object_roles/",
+        "copy": "/api/v2/projects/6/copy/",
+        "organization": "/api/v2/organizations/1/",
+        "last_update": "/api/v2/project_updates/56023/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "last_job": {
+          "id": 56023,
+          "name": "Demo Project",
+          "description": "",
+          "finished": "2023-01-23T20:00:19.163488Z",
+          "status": "successful",
+          "failed": false
+        },
+        "last_update": {
+          "id": 56023,
+          "name": "Demo Project",
+          "description": "",
+          "status": "successful",
+          "failed": false
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 16
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 17
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 18
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 19
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2022-12-09T15:26:49.367219Z",
+      "modified": "2023-02-03T15:23:34.380643Z",
+      "name": "Demo Project",
+      "description": "",
+      "local_path": "_6__demo_project",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/ansible-tower-samples",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "347e44fea036c94d5f60e544de006453ee5c71ad",
+      "last_job_run": "2023-01-23T20:00:19.163488Z",
+      "last_job_failed": false,
+      "next_job_run": "2023-01-23T20:00:00Z",
+      "status": "successful",
+      "organization": 1,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": true,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": "2023-01-23T20:00:19.163488Z"
+    },
+    {
+      "id": 9,
+      "type": "project",
+      "url": "/api/v2/projects/9/",
+      "related": {
+        "created_by": "/api/v2/users/15/",
+        "modified_by": "/api/v2/users/9/",
+        "last_job": "/api/v2/project_updates/78032/",
+        "teams": "/api/v2/projects/9/teams/",
+        "playbooks": "/api/v2/projects/9/playbooks/",
+        "inventory_files": "/api/v2/projects/9/inventories/",
+        "update": "/api/v2/projects/9/update/",
+        "project_updates": "/api/v2/projects/9/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/9/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/9/schedules/",
+        "activity_stream": "/api/v2/projects/9/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/9/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/9/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/9/notification_templates_error/",
+        "access_list": "/api/v2/projects/9/access_list/",
+        "object_roles": "/api/v2/projects/9/object_roles/",
+        "copy": "/api/v2/projects/9/copy/",
+        "organization": "/api/v2/organizations/2/",
+        "last_update": "/api/v2/project_updates/78032/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "last_job": {
+          "id": 78032,
+          "name": " Project 1 Org 0",
+          "description": "",
+          "finished": "2023-02-14T18:48:21.209513Z",
+          "status": "successful",
+          "failed": false
+        },
+        "last_update": {
+          "id": 78032,
+          "name": " Project 1 Org 0",
+          "description": "",
+          "status": "successful",
+          "failed": false
+        },
+        "created_by": {
+          "id": 15,
+          "username": "user-8",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 9,
+          "username": "user-2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 117
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 118
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 119
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 120
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:33.687318Z",
+      "modified": "2023-01-10T14:43:33.687333Z",
+      "name": " Project 1 Org 0",
+      "description": "",
+      "local_path": "_9__project_1_org_0",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "e088ad8c25e8d33b5ecafa23e5e2d8c0f1edcbf1",
+      "last_job_run": "2023-02-14T18:48:21.209513Z",
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "successful",
+      "organization": 2,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": "2023-02-14T18:48:21.209513Z"
+    },
+    {
+      "id": 10,
+      "type": "project",
+      "url": "/api/v2/projects/10/",
+      "related": {
+        "created_by": "/api/v2/users/16/",
+        "modified_by": "/api/v2/users/10/",
+        "teams": "/api/v2/projects/10/teams/",
+        "playbooks": "/api/v2/projects/10/playbooks/",
+        "inventory_files": "/api/v2/projects/10/inventories/",
+        "update": "/api/v2/projects/10/update/",
+        "project_updates": "/api/v2/projects/10/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/10/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/10/schedules/",
+        "activity_stream": "/api/v2/projects/10/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/10/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/10/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/10/notification_templates_error/",
+        "access_list": "/api/v2/projects/10/access_list/",
+        "object_roles": "/api/v2/projects/10/object_roles/",
+        "copy": "/api/v2/projects/10/copy/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 16,
+          "username": "user-9",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 10,
+          "username": "user-3",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 121
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 122
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 123
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 124
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.122183Z",
+      "modified": "2023-01-10T14:43:34.122226Z",
+      "name": " Project 2 Org 0",
+      "description": "",
+      "local_path": "_10__project_2_org_0",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 2,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 11,
+      "type": "project",
+      "url": "/api/v2/projects/11/",
+      "related": {
+        "created_by": "/api/v2/users/17/",
+        "modified_by": "/api/v2/users/11/",
+        "teams": "/api/v2/projects/11/teams/",
+        "playbooks": "/api/v2/projects/11/playbooks/",
+        "inventory_files": "/api/v2/projects/11/inventories/",
+        "update": "/api/v2/projects/11/update/",
+        "project_updates": "/api/v2/projects/11/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/11/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/11/schedules/",
+        "activity_stream": "/api/v2/projects/11/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/11/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/11/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/11/notification_templates_error/",
+        "access_list": "/api/v2/projects/11/access_list/",
+        "object_roles": "/api/v2/projects/11/object_roles/",
+        "copy": "/api/v2/projects/11/copy/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 17,
+          "username": "user-10",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 11,
+          "username": "user-4",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 125
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 126
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 127
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 128
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.190173Z",
+      "modified": "2023-01-10T14:43:34.190188Z",
+      "name": " Project 3 Org 0",
+      "description": "",
+      "local_path": "_11__project_3_org_0",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 2,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 12,
+      "type": "project",
+      "url": "/api/v2/projects/12/",
+      "related": {
+        "created_by": "/api/v2/users/8/",
+        "modified_by": "/api/v2/users/12/",
+        "teams": "/api/v2/projects/12/teams/",
+        "playbooks": "/api/v2/projects/12/playbooks/",
+        "inventory_files": "/api/v2/projects/12/inventories/",
+        "update": "/api/v2/projects/12/update/",
+        "project_updates": "/api/v2/projects/12/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/12/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/12/schedules/",
+        "activity_stream": "/api/v2/projects/12/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/12/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/12/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/12/notification_templates_error/",
+        "access_list": "/api/v2/projects/12/access_list/",
+        "object_roles": "/api/v2/projects/12/object_roles/",
+        "copy": "/api/v2/projects/12/copy/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 8,
+          "username": "user-1",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 12,
+          "username": "user-5",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 129
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 130
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 131
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 132
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.258563Z",
+      "modified": "2023-01-10T14:43:34.258578Z",
+      "name": " Project 4 Org 0",
+      "description": "",
+      "local_path": "_12__project_4_org_0",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 2,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 13,
+      "type": "project",
+      "url": "/api/v2/projects/13/",
+      "related": {
+        "created_by": "/api/v2/users/9/",
+        "modified_by": "/api/v2/users/13/",
+        "teams": "/api/v2/projects/13/teams/",
+        "playbooks": "/api/v2/projects/13/playbooks/",
+        "inventory_files": "/api/v2/projects/13/inventories/",
+        "update": "/api/v2/projects/13/update/",
+        "project_updates": "/api/v2/projects/13/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/13/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/13/schedules/",
+        "activity_stream": "/api/v2/projects/13/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/13/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/13/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/13/notification_templates_error/",
+        "access_list": "/api/v2/projects/13/access_list/",
+        "object_roles": "/api/v2/projects/13/object_roles/",
+        "copy": "/api/v2/projects/13/copy/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 9,
+          "username": "user-2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 13,
+          "username": "user-6",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 133
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 134
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 135
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 136
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.326065Z",
+      "modified": "2023-01-10T14:43:34.326080Z",
+      "name": " Project 5 Org 0",
+      "description": "",
+      "local_path": "_13__project_5_org_0",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 2,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 14,
+      "type": "project",
+      "url": "/api/v2/projects/14/",
+      "related": {
+        "created_by": "/api/v2/users/10/",
+        "modified_by": "/api/v2/users/14/",
+        "teams": "/api/v2/projects/14/teams/",
+        "playbooks": "/api/v2/projects/14/playbooks/",
+        "inventory_files": "/api/v2/projects/14/inventories/",
+        "update": "/api/v2/projects/14/update/",
+        "project_updates": "/api/v2/projects/14/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/14/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/14/schedules/",
+        "activity_stream": "/api/v2/projects/14/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/14/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/14/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/14/notification_templates_error/",
+        "access_list": "/api/v2/projects/14/access_list/",
+        "object_roles": "/api/v2/projects/14/object_roles/",
+        "copy": "/api/v2/projects/14/copy/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 3,
+          "name": " Organization 1",
+          "description": ""
+        },
+        "created_by": {
+          "id": 10,
+          "username": "user-3",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 14,
+          "username": "user-7",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 137
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 138
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 139
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 140
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.394080Z",
+      "modified": "2023-01-10T14:43:34.394095Z",
+      "name": " Project 6 Org 1",
+      "description": "",
+      "local_path": "_14__project_6_org_1",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 3,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 15,
+      "type": "project",
+      "url": "/api/v2/projects/15/",
+      "related": {
+        "created_by": "/api/v2/users/11/",
+        "modified_by": "/api/v2/users/15/",
+        "teams": "/api/v2/projects/15/teams/",
+        "playbooks": "/api/v2/projects/15/playbooks/",
+        "inventory_files": "/api/v2/projects/15/inventories/",
+        "update": "/api/v2/projects/15/update/",
+        "project_updates": "/api/v2/projects/15/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/15/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/15/schedules/",
+        "activity_stream": "/api/v2/projects/15/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/15/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/15/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/15/notification_templates_error/",
+        "access_list": "/api/v2/projects/15/access_list/",
+        "object_roles": "/api/v2/projects/15/object_roles/",
+        "copy": "/api/v2/projects/15/copy/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 3,
+          "name": " Organization 1",
+          "description": ""
+        },
+        "created_by": {
+          "id": 11,
+          "username": "user-4",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 15,
+          "username": "user-8",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 141
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 142
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 143
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 144
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.462254Z",
+      "modified": "2023-01-10T14:43:34.462270Z",
+      "name": " Project 7 Org 1",
+      "description": "",
+      "local_path": "_15__project_7_org_1",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 3,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 16,
+      "type": "project",
+      "url": "/api/v2/projects/16/",
+      "related": {
+        "created_by": "/api/v2/users/12/",
+        "modified_by": "/api/v2/users/16/",
+        "teams": "/api/v2/projects/16/teams/",
+        "playbooks": "/api/v2/projects/16/playbooks/",
+        "inventory_files": "/api/v2/projects/16/inventories/",
+        "update": "/api/v2/projects/16/update/",
+        "project_updates": "/api/v2/projects/16/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/16/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/16/schedules/",
+        "activity_stream": "/api/v2/projects/16/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/16/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/16/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/16/notification_templates_error/",
+        "access_list": "/api/v2/projects/16/access_list/",
+        "object_roles": "/api/v2/projects/16/object_roles/",
+        "copy": "/api/v2/projects/16/copy/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 3,
+          "name": " Organization 1",
+          "description": ""
+        },
+        "created_by": {
+          "id": 12,
+          "username": "user-5",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 16,
+          "username": "user-9",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 145
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 146
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 147
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 148
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.529941Z",
+      "modified": "2023-01-10T14:43:34.529956Z",
+      "name": " Project 8 Org 1",
+      "description": "",
+      "local_path": "_16__project_8_org_1",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 3,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 17,
+      "type": "project",
+      "url": "/api/v2/projects/17/",
+      "related": {
+        "created_by": "/api/v2/users/13/",
+        "modified_by": "/api/v2/users/17/",
+        "teams": "/api/v2/projects/17/teams/",
+        "playbooks": "/api/v2/projects/17/playbooks/",
+        "inventory_files": "/api/v2/projects/17/inventories/",
+        "update": "/api/v2/projects/17/update/",
+        "project_updates": "/api/v2/projects/17/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/17/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/17/schedules/",
+        "activity_stream": "/api/v2/projects/17/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/17/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/17/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/17/notification_templates_error/",
+        "access_list": "/api/v2/projects/17/access_list/",
+        "object_roles": "/api/v2/projects/17/object_roles/",
+        "copy": "/api/v2/projects/17/copy/",
+        "organization": "/api/v2/organizations/4/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 4,
+          "name": " Organization 2",
+          "description": ""
+        },
+        "created_by": {
+          "id": 13,
+          "username": "user-6",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 17,
+          "username": "user-10",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 149
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 150
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 151
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 152
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.597963Z",
+      "modified": "2023-01-10T14:43:34.597978Z",
+      "name": " Project 9 Org 2",
+      "description": "",
+      "local_path": "_17__project_9_org_2",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "",
+      "last_job_run": null,
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "never updated",
+      "organization": 4,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": null
+    },
+    {
+      "id": 18,
+      "type": "project",
+      "url": "/api/v2/projects/18/",
+      "related": {
+        "created_by": "/api/v2/users/14/",
+        "modified_by": "/api/v2/users/8/",
+        "last_job": "/api/v2/project_updates/78031/",
+        "teams": "/api/v2/projects/18/teams/",
+        "playbooks": "/api/v2/projects/18/playbooks/",
+        "inventory_files": "/api/v2/projects/18/inventories/",
+        "update": "/api/v2/projects/18/update/",
+        "project_updates": "/api/v2/projects/18/project_updates/",
+        "scm_inventory_sources": "/api/v2/projects/18/scm_inventory_sources/",
+        "schedules": "/api/v2/projects/18/schedules/",
+        "activity_stream": "/api/v2/projects/18/activity_stream/",
+        "notification_templates_started": "/api/v2/projects/18/notification_templates_started/",
+        "notification_templates_success": "/api/v2/projects/18/notification_templates_success/",
+        "notification_templates_error": "/api/v2/projects/18/notification_templates_error/",
+        "access_list": "/api/v2/projects/18/access_list/",
+        "object_roles": "/api/v2/projects/18/object_roles/",
+        "copy": "/api/v2/projects/18/copy/",
+        "organization": "/api/v2/organizations/4/",
+        "last_update": "/api/v2/project_updates/78031/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 4,
+          "name": " Organization 2",
+          "description": ""
+        },
+        "last_job": {
+          "id": 78031,
+          "name": " Project 10 Org 2",
+          "description": "",
+          "finished": "2023-02-14T18:48:12.115360Z",
+          "status": "successful",
+          "failed": false
+        },
+        "last_update": {
+          "id": 78031,
+          "name": " Project 10 Org 2",
+          "description": "",
+          "status": "successful",
+          "failed": false
+        },
+        "created_by": {
+          "id": 14,
+          "username": "user-7",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 8,
+          "username": "user-1",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the project",
+            "name": "Admin",
+            "id": 153
+          },
+          "use_role": {
+            "description": "Can use the project in a job template",
+            "name": "Use",
+            "id": 154
+          },
+          "update_role": {
+            "description": "May update the project",
+            "name": "Update",
+            "id": 155
+          },
+          "read_role": {
+            "description": "May view settings for the project",
+            "name": "Read",
+            "id": 156
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        }
+      },
+      "created": "2023-01-10T14:43:34.665778Z",
+      "modified": "2023-01-10T14:43:34.665793Z",
+      "name": " Project 10 Org 2",
+      "description": "",
+      "local_path": "_18__project_10_org_2",
+      "scm_type": "git",
+      "scm_url": "https://github.com/ansible/test-playbooks.git",
+      "scm_branch": "",
+      "scm_refspec": "",
+      "scm_clean": false,
+      "scm_track_submodules": false,
+      "scm_delete_on_update": false,
+      "credential": null,
+      "timeout": 0,
+      "scm_revision": "e088ad8c25e8d33b5ecafa23e5e2d8c0f1edcbf1",
+      "last_job_run": "2023-02-14T18:48:12.115360Z",
+      "last_job_failed": false,
+      "next_job_run": null,
+      "status": "successful",
+      "organization": 4,
+      "scm_update_on_launch": false,
+      "scm_update_cache_timeout": 0,
+      "allow_override": false,
+      "custom_virtualenv": null,
+      "default_environment": null,
+      "signature_validation_credential": null,
+      "last_update_failed": false,
+      "last_updated": "2023-02-14T18:48:12.115360Z"
+    }
+  ]
+}
