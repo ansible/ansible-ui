@@ -15,7 +15,7 @@ export function PageFormCheckbox<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormCheckboxProps<TFieldValues, TFieldName>) {
-  const { name, readOnly, validate } = props;
+  const { name, readOnly, validate, ...rest } = props;
   const {
     control,
     formState: { isSubmitting },
@@ -29,7 +29,7 @@ export function PageFormCheckbox<
       render={({ field: { onChange, value } }) => {
         return (
           <Checkbox
-            {...props}
+            {...rest}
             id={props.id ?? name.split('.').join('-')}
             isChecked={!!value}
             onChange={onChange}

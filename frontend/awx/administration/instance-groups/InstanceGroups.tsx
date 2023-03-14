@@ -18,7 +18,7 @@ import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteObj } from '../../../Routes';
 import { useAwxView } from '../../useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
+import { useDeleteInstanceGroups } from './hooks/useDeleteInstanceGroups';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
@@ -88,6 +88,8 @@ export function InstanceGroups() {
     <PageLayout>
       <PageHeader
         title={t('Instance groups')}
+        titleHelpTitle={t('Instance groups')}
+        titleHelp={t('An instance group defines grouped instances or grouped containers')}
         description={t(
           'An Instance Group provides the ability to group instances in a clustered environment.'
         )}
@@ -131,8 +133,10 @@ export function useInstanceGroupsColumns(options?: {
 }) {
   const { t } = useTranslation();
   const disableLinks = options && options.disableLinks;
+
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
+
   const tableColumns = useMemo<ITableColumn<InstanceGroup>[]>(
     () => [
       {
@@ -176,7 +180,9 @@ export function useInstanceGroupsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
+
     [t, disableLinks, createdColumn, modifiedColumn]
   );
+
   return tableColumns;
 }

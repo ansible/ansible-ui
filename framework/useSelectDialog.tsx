@@ -1,5 +1,7 @@
 import {
   Button,
+  Chip,
+  ChipGroup,
   Modal,
   ModalBoxBody,
   ModalVariant,
@@ -25,9 +27,10 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
   isMultiple?: TMultiple extends true ? true : false;
 }
 
-export function useSelectDialog<T extends { id: number }, TMultiple = false>(
-  options: ISelectDialogOptions<T, TMultiple>
-) {
+export function useSelectDialog<
+  T extends { id: number; name: string | undefined },
+  TMultiple = false
+>(options: ISelectDialogOptions<T, TMultiple>) {
   const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
   const [title, setTitle] = useState('');
   type ISetter = TMultiple extends true ? (item: T[]) => void : (item: T) => void;
@@ -83,7 +86,7 @@ export type SelectDialogProps<T extends object, TMultiple> = {
   keyFn: (item: T) => string | number;
 } & ISelectDialogOptions<T, TMultiple>;
 
-export function SelectDialog<T extends { id: number }, TMultiple = false>(
+export function SelectDialog<T extends { id: number; name: string | undefined }, TMultiple = false>(
   props: SelectDialogProps<T, TMultiple>
 ) {
   const {
@@ -135,25 +138,25 @@ export function SelectDialog<T extends { id: number }, TMultiple = false>(
           <SplitItem style={{ opacity: view.selectedItems.length === 0 ? 0 : undefined }}>
             {selected}
           </SplitItem>
-          <b>
+          <ChipGroup>
             {view.selectedItems.map((item, i) => {
               if (tableColumns && tableColumns.length > 0) {
                 return (
-                  <TableColumnCell
-                    key={i}
-                    item={item}
-                    column={
-                      tableColumns.find(
-                        (column) => column.card === 'name' || column.list === 'name'
-                      ) ?? tableColumns[0]
-                    }
-                  />
+                  <Chip key={i} onClick={() => view.unselectItem(item)}>
+                    <TableColumnCell
+                      item={item}
+                      column={
+                        tableColumns.find(
+                          (column) => column.card === 'name' || column.list === 'name'
+                        ) ?? tableColumns[0]
+                      }
+                    />
+                  </Chip>
                 );
               }
               return <></>;
             })}
-            <></>
-          </b>
+          </ChipGroup>
         </Split>
       </ModalBoxBody>
       <Collapse open={view.itemCount === undefined}>

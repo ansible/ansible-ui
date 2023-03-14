@@ -14,4 +14,6 @@ export interface EdaRulebook {
   fire_count: number;
   created_at: string;
   modified_at: string;
+  is_enabled: boolean;
+  throttle: boolean;
 }

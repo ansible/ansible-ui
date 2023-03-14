@@ -160,15 +160,18 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
     ...options,
     onClick: nameClick,
   });
-  const makeReadable: (type: string) => string = (type) => {
-    if (type === 'workflow_job_template') {
+  const makeReadable: (template: JobTemplate | WorkflowJobTemplate) => string = (template) => {
+    if (template.type === 'workflow_job_template') {
       return t('Workflow Job Template');
     }
     return t('Job Template');
   };
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const typeOfTemplate = useTypeColumn({ makeReadable });
+  const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
+    ...options,
+    makeReadable,
+  });
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
     () => [nameColumn, typeOfTemplate, createdColumn, modifiedColumn],
     [nameColumn, typeOfTemplate, createdColumn, modifiedColumn]

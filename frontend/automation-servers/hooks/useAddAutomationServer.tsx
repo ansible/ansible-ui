@@ -51,14 +51,15 @@ export function AddAutomationServerDialog() {
           disableScrolling
           disableBody
           disablePadding
+          defaultValue={{ name: '', url: '', type: AutomationServerType.AWX }}
         >
-          <PageFormTextInput
+          <PageFormTextInput<AutomationServer>
             label={t('Name')}
             name="name"
             placeholder={t('Enter a friendly name for the automation server')}
             isRequired
           />
-          <PageFormTextInput
+          <PageFormTextInput<AutomationServer>
             label={t('Url')}
             name="url"
             placeholder={t('Enter the url of the automation server')}
@@ -80,7 +81,7 @@ export function AddAutomationServerDialog() {
             }}
             isRequired
           />
-          <PageFormSelectOption
+          <PageFormSelectOption<AutomationServer>
             label={t('Automation type')}
             name="type"
             placeholderText={t('Select automation type')}

@@ -536,7 +536,6 @@ function TableRow<T extends object>(props: {
     columns,
     selectItem,
     unselectItem,
-    unselectAll,
     isItemSelected,
     isSelectMultiple,
     item,
@@ -598,12 +597,12 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: () => {
-                if (!isSelectMultiple) {
-                  unselectAll?.();
+              onSelect: (_event, isSelecting) => {
+                if (isSelecting) {
+                  selectItem?.(item);
+                } else {
+                  unselectItem?.(item);
                 }
-                selectItem?.(item);
-                onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
@@ -724,23 +723,9 @@ export interface ITableColumnCommon<T extends object> {
   defaultSortDirection?: 'asc' | 'desc';
   defaultSort?: boolean;
 
-  // card?: 'description' | 'hidden' | 'count'
-
-  // list?: 'primary' | 'secondary'
-
-  // hideLabel?: boolean
-
-  // primary?: boolean
-
   icon?: (item: T) => ReactNode;
   card?: 'name' | 'subtitle' | 'description' | 'hidden';
   list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
-}
-
-export enum TableColumnSomething {
-  'id',
-  'name',
-  'description',
 }
 
 export enum TableColumnCardType {

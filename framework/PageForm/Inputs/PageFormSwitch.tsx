@@ -1,47 +1,76 @@
 import { FormGroup, Switch } from '@patternfly/react-core';
-import { useController, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  useFormContext,
+  Validate,
+  ValidationRule,
+} from 'react-hook-form';
+import { SwitchProps } from '@patternfly/react-core';
+import { ReactElement } from 'react';
+import { Help } from '../../components/Help';
 
-export function PageFormSwitch(props: {
-  id?: string;
-  label: string;
-  labelOn?: string;
-  labelOff?: string;
-  name: string;
+export type PageFormSwitchProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  name: TFieldName;
   helperText?: string;
-  required?: boolean;
+  isRequired?: boolean;
+  pattern?: ValidationRule<RegExp>;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   autoFocus?: boolean;
-}) {
+  additionalControls?: ReactElement;
+  formLabel?: string;
+  labelHelp?: string;
+  labelHelpTitle?: string;
+} & Omit<SwitchProps, 'onChange' | 'ref' | 'instance'>;
+
+export function PageFormSwitch<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: PageFormSwitchProps<TFieldValues, TFieldName>) {
   const {
-    formState: { isSubmitting },
-  } = useFormContext();
-  const { field, fieldState } = useController({ name: props.name });
-  const error = fieldState.error;
-  const id = props.id ?? props.name;
+    name,
+    id,
+    helperText,
+    validate,
+    additionalControls,
+    formLabel,
+    labelHelp,
+    labelHelpTitle,
+    ...rest
+  } = props;
+  const {
+    control,
+    formState: { isSubmitting, isValidating },
+  } = useFormContext<TFieldValues>();
   return (
-    <FormGroup
-      id={`${id}-form-group`}
-      fieldId={id}
-      label={props.label}
-      helperText={props.helperText}
-      isRequired={props.required}
-      validated={error?.message ? 'error' : undefined}
-      helperTextInvalid={error?.message}
-    >
-      <Switch
-        id={id}
-        label={props.labelOn}
-        labelOff={props.labelOff}
-        aria-describedby={`${id}-form-group`}
-        // isRequired={props.required}
-        // validated={error?.message ? 'error' : undefined}
-        autoFocus={props.autoFocus}
-        // placeholder={props.placeholder}
-        // {...registration}
-        isChecked={typeof field.value === 'boolean' ? field.value : false}
-        onChange={(e) => field.onChange(e)}
-        // innerRef={registration.ref}
-        isDisabled={isSubmitting}
-      />
-    </FormGroup>
+    <Controller<TFieldValues, TFieldName>
+      name={name}
+      control={control}
+      shouldUnregister
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        return (
+          <FormGroup
+            helperTextInvalid={!(validate && isValidating) && error?.message}
+            fieldId={id}
+            label={formLabel}
+            helperText={helperText}
+            validated={error?.message ? 'error' : undefined}
+            labelInfo={additionalControls}
+            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+          >
+            <Switch
+              {...rest}
+              isChecked={value}
+              onChange={(e) => onChange(e)}
+              isDisabled={isSubmitting}
+            />
+          </FormGroup>
+        );
+      }}
+    />
   );
 }

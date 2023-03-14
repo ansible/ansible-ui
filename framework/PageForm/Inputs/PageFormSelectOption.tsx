@@ -31,21 +31,30 @@ export function PageFormSelectOption<
     control,
     formState: { isSubmitting },
   } = useFormContext<TFieldValues>();
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={props.name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupSelectOption
-          {...props}
-          id={props.id ?? props.name}
-          value={value as TSelection}
-          onSelect={(_, value) => onChange(value)}
-          helperTextInvalid={error?.message}
-          isReadOnly={props.isReadOnly || isSubmitting}
-        />
-      )}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        if (value === '') {
+          if (props.options.length === 1 && isRequired) {
+            onChange(props.options[0].value);
+          }
+        }
+
+        return (
+          <FormGroupSelectOption
+            {...props}
+            id={props.id ?? props.name}
+            value={value as TSelection}
+            onSelect={(_, value) => onChange(value)}
+            helperTextInvalid={error?.message}
+            isReadOnly={props.isReadOnly || isSubmitting}
+          />
+        );
+      }}
       rules={{
         required:
           typeof label === 'string' && typeof isRequired === 'boolean'
