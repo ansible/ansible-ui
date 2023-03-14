@@ -2,7 +2,7 @@ import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { CSSProperties, useRef } from 'react';
 import { ChangeHandler } from 'react-monaco-editor';
-import { useSettings } from '../../../../framework';
+import { useSettings } from '../..';
 import './PageCodeEditor.css';
 
 export function PageCodeEditor(props: {

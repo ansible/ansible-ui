@@ -1,10 +1,10 @@
 import { CSSProperties } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
-import { FormGroupTextInputProps } from '../../../../framework';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { capitalizeFirstLetter } from '../../../../framework/utils/capitalize';
+import { FormGroupTextInputProps } from '../..';
+import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { PageCodeEditor } from './PageCodeEditor';
 import './PageFormCodeEditor.css';
+import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormTextInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -12,7 +12,8 @@ export type PageFormTextInputProps<
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
-  style: CSSProperties;
+  style?: CSSProperties;
+  lines?: number;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
@@ -47,7 +48,7 @@ export function PageFormCodeEditor<
               value={value as unknown as string}
               onChange={onChange}
               isReadOnly={isReadOnly || isSubmitting}
-              style={{ ...props.style }}
+              style={{ ...props.style, height: props.lines ? `${props.lines}rem` : '20rem' }}
               className="pf-c-form-control"
               invalid={!(validate && isValidating) && error?.message !== undefined}
             />
