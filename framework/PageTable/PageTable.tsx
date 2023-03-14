@@ -138,7 +138,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { toolbarActions, filters, error, itemCount } = props;
+  const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const showSelect =
     props.showSelect ||
@@ -159,7 +159,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         : PageTableViewTypeE.Cards)
   );
 
-  const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true;
+  const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   if (error) {
     return (
@@ -226,7 +226,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         bottomBorder
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody>
+        <PageBody disablePadding={disableBodyPadding}>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
