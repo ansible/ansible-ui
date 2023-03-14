@@ -6,7 +6,7 @@ export const AutomationServerSchema = Type.Object({
   url: Type.String(),
   type: Type.Union([
     Type.Literal(AutomationServerType.AWX),
-    Type.Literal(AutomationServerType.Galaxy),
+    Type.Literal(AutomationServerType.HUB),
     Type.Literal(AutomationServerType.EDA),
   ]),
 });
