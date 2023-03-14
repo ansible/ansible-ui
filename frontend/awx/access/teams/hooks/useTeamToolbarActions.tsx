@@ -2,8 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, IPageActionButton, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionType } from '../../../../../framework';
 import { useOptions } from '../../../../Data';
 import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
@@ -15,7 +14,6 @@ import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsRes
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
@@ -34,8 +32,8 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
           : t(
               'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
             ),
-        onClick: () => navigate(RouteObj.CreateTeam),
-      } as IPageActionButton,
+        href: RouteObj.CreateTeam,
+      },
       { type: PageActionType.seperator },
       {
         type: PageActionType.bulk,
@@ -71,6 +69,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         onClick: () => void view.refresh(),
       },
     ],
-    [canCreateTeam, deleteTeams, navigate, selectUsersAddTeams, t, view]
+    [canCreateTeam, deleteTeams, selectUsersAddTeams, t, view]
   );
 }
