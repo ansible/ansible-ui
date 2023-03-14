@@ -90,7 +90,12 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              <img src="/brand-logo.svg" alt={t('brand logo')} width={48} />
+              <img
+                src="/brand-logo.svg"
+                alt={t('brand logo')}
+                height="45"
+                style={{ height: '45px' }}
+              />
               <IconDiv>
                 {brand && (
                   <TruncateContentSpan>
