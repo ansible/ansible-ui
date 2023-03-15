@@ -28,6 +28,7 @@ export * from './PageForm/Inputs/FormGroupSelectOption';
 export * from './PageForm/Inputs/FormGroupTextArea';
 export * from './PageForm/Inputs/FormGroupTextInput';
 export * from './PageForm/Inputs/PageFormCheckbox';
+export * from './PageForm/Inputs/PageFormCodeEditor';
 export * from './PageForm/Inputs/PageFormSelect';
 export * from './PageForm/Inputs/PageFormSelectOption';
 export * from './PageForm/Inputs/PageFormSwitch';
