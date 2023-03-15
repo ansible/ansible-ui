@@ -15,6 +15,10 @@
     ".": {
       "import": "./index.js",
       "require": "./index.umd.cjs"
+    },
+    "./style.css": {
+      "import": "./style.css",
+      "require": "./style.css"
     }
   },
   "keywords": [
