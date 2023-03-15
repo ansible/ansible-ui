@@ -66,7 +66,7 @@ export function PageForm<T extends object>(props: {
   const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
   const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
-  const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800;
+  const maxWidth: number | undefined = multipleColumns ? 1600 : isHorizontal ? 960 : 800;
 
   let Component = (
     <FormProvider {...form}>
@@ -133,6 +133,32 @@ export function PageForm<T extends object>(props: {
   if (!disableBody) {
     Component = <PageBody>{Component}</PageBody>;
   }
+
+  return Component;
+}
+
+export function PageFormGrid(props: {
+  children?: ReactNode;
+  isVertical?: boolean;
+  singleColumn?: boolean;
+}) {
+  const [settings] = useContext(SettingsContext);
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+
+  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
+  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
+  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
+
+  const Component = (
+    <>
+      <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+        {props.children}
+      </Grid>
+    </>
+  );
 
   return Component;
 }
