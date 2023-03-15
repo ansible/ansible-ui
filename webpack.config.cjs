@@ -93,7 +93,6 @@ module.exports = function (env, argv) {
       }),
       new HtmlWebpackPlugin({
         title: 'AnsibleDev',
-        favicon: 'frontend/icons/favicon.png',
         template: 'frontend/index.html',
       }),
       new MiniCssExtractPlugin({
@@ -116,7 +115,7 @@ module.exports = function (env, argv) {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, 'build/public'),
-      publicPath: env.awx ? '/static/media/' : '/',
+      publicPath: env.awx ? '/static/awx/' : '/',
     },
     optimization: {
       minimizer: [
