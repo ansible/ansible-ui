@@ -10,8 +10,6 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
       external: [
         'react',
         'react-dom',
@@ -19,11 +17,10 @@ export default defineConfig({
         '@patternfly/react-icons',
         '@patternfly/patternfly',
         '@patternfly/react-table',
+        'monaco-editor',
       ],
       output: {
         dir: 'publish',
-        // Provide global variables to use in the UMD build
-        // for externalized deps
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
@@ -31,6 +28,7 @@ export default defineConfig({
           '@patternfly/react-icons': 'PatternflyReactIcons',
           '@patternfly/react-table': 'PatternflyReactTable',
           '@patternfly/patternfly': 'Patternfly',
+          'monaco-editor': 'MonacoEditor',
         },
       },
     },

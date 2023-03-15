@@ -29,6 +29,7 @@
     "@patternfly/react-icons": "^4",
     "@patternfly/react-table": "^4",
     "react": "^17 || ^18",
-    "react-dom": "^17 || ^18"
+    "react-dom": "^17 || ^18",
+    "monaco-editor": "^0.36.1"
   }
 }
