@@ -1,26 +1,123 @@
-import { CSSProperties } from 'react';
+import * as monaco from 'monaco-editor';
+import { useEffect, useRef } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
-import { FormGroupTextInputProps } from '../..';
+import { FormGroupTextInputProps, useSettings } from '../..';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
-import { PageCodeEditor } from './PageCodeEditor';
-import './PageFormCodeEditor.css';
 import { PageFormGroup } from './PageFormGroup';
 
-export type PageFormTextInputProps<
+export function MonacoEditor(props: {
+  id?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  isReadOnly?: boolean;
+  invalid?: boolean;
+}) {
+  const { onChange } = props;
+
+  const divEl = useRef<HTMLDivElement>(null);
+
+  const editorRef = useRef<{
+    editor?: monaco.editor.IStandaloneCodeEditor;
+  }>({});
+
+  const settings = useSettings();
+
+  useEffect(() => {
+    let editor: monaco.editor.IStandaloneCodeEditor;
+
+    monaco.editor.defineTheme('my-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      colors: {
+        'editor.background': '#00000000',
+        'minimap.background': '#00000000',
+        'scrollbarSlider.background': '#FFFFFF22',
+      },
+      rules: [{ token: '', background: '#222222' }],
+    });
+
+    monaco.editor.defineTheme('my-light', {
+      base: 'vs',
+      inherit: true,
+      colors: {
+        'editor.background': '#FFFFFF00',
+        'minimap.background': '#FFFFFF00',
+        'scrollbarSlider.background': '#FFFFFF22',
+      },
+      rules: [],
+    });
+
+    if (divEl.current) {
+      editor = monaco.editor.create(divEl.current, {
+        language: 'yaml',
+        lineNumbers: 'off',
+        theme: 'my-dark',
+        lineDecorationsWidth: 8,
+        // lineNumbersMinChars: 0,
+        // glyphMargin: false,
+        // folding: false,
+        padding: { top: 6, bottom: 8 },
+        fontSize: 14,
+        fontFamily: 'RedHatMono',
+        scrollBeyondLastLine: false,
+        minimap: { enabled: false },
+        renderLineHighlightOnlyWhenFocus: true,
+      });
+      editorRef.current.editor = editor;
+
+      editor.getModel()?.onDidChangeContent(() => {
+        onChange?.(editor.getValue() ?? '');
+      });
+    }
+    return () => {
+      editor.dispose();
+    };
+  }, [onChange]);
+
+  useEffect(() => {
+    if (editorRef.current?.editor) {
+      const currentValue = editorRef.current.editor.getValue();
+      if (currentValue !== props.value) editorRef.current.editor.setValue(props.value ?? '');
+    }
+  }, [props.value]);
+
+  useEffect(() => {
+    if (editorRef.current?.editor) {
+      editorRef.current.editor.updateOptions({ readOnly: props.isReadOnly });
+    }
+  }, [props.isReadOnly]);
+
+  useEffect(() => {
+    if (editorRef.current?.editor) {
+      editorRef.current.editor.updateOptions({
+        theme: settings.activeTheme === 'dark' ? 'my-dark' : 'my-light',
+      });
+    }
+  }, [settings.activeTheme]);
+
+  return (
+    <div
+      className={`pf-c-form-control`}
+      style={{ padding: 0, height: 400 }}
+      aria-invalid={props.invalid ? 'true' : undefined}
+    >
+      <div id={props.id} ref={divEl} style={{ height: '100%' }}></div>
+    </div>
+  );
+}
+
+export type PageFormCodeEditorInputProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
-  style?: CSSProperties;
-  lines?: number;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
-/** PatternFly TextInput wrapper for use with react-hook-form */
 export function PageFormCodeEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: PageFormTextInputProps<TFieldValues, TFieldName>) {
+>(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
   const { isReadOnly, validate, ...formGroupInputProps } = props;
   const { label, name, isRequired } = props;
   const {
@@ -42,14 +139,11 @@ export function PageFormCodeEditor<
             id={id}
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
-            <PageCodeEditor
+            <MonacoEditor
               id={id}
-              // aria-describedby={id ? `${id}-form-group` : undefined}
               value={value as unknown as string}
               onChange={onChange}
               isReadOnly={isReadOnly || isSubmitting}
-              style={{ ...props.style, height: props.lines ? `${props.lines}rem` : '20rem' }}
-              className="pf-c-form-control"
               invalid={!(validate && isValidating) && error?.message !== undefined}
             />
           </PageFormGroup>
@@ -63,6 +157,7 @@ export function PageFormCodeEditor<
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
             : isRequired,
+        validate: props.validate,
       }}
     />
   );
