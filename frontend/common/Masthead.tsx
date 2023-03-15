@@ -91,7 +91,7 @@ export function AnsibleMasthead(props: {
           <MastheadBrand>
             <MastheadBrandDiv>
               <img
-                src="/brand-logo.svg"
+                src="/static/media/brand-logo.svg"
                 alt={t('brand logo')}
                 height="45"
                 style={{ height: '45px' }}

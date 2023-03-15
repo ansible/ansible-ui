@@ -103,7 +103,10 @@ module.exports = function (env, argv) {
       }),
       env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
       new CopyPlugin({
-        patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }],
+        patterns: [
+          { from: 'frontend/icons', to: 'static/media' },
+          { from: 'frontend/manifest.webmanifest' },
+        ],
       }),
       new MonacoWebpackPlugin({
         languages: ['json', 'yaml', 'shell'],
