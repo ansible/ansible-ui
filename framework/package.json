@@ -10,7 +10,7 @@
   "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
   "main": "./index.umd.cjs",
   "module": "./index.js",
-  "types": "./index.d.ts",
+  "types": "./framework/index.d.ts",
   "exports": {
     ".": {
       "import": "./index.js",
