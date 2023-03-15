@@ -8,16 +8,15 @@ import {
   Validate,
 } from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
-import { Label } from '../../../frontend/awx/interfaces/Label';
 import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
 
-export type PageFormSelectOptionProps<
+export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   name: TFieldName;
   id?: string;
-  options: { value: string | Label; label: string }[];
+  options: { value: string | { name: string }; label: string }[];
   isRequired?: boolean;
   label: string;
   additionalControls?: ReactElement;
@@ -33,7 +32,7 @@ export type PageFormSelectOptionProps<
 export function PageFormCreatableSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: PageFormSelectOptionProps<TFieldValues, TFieldName>) {
+>(props: PageFormCreatableSelectProps<TFieldValues, TFieldName>) {
   const { isRequired, validate, ...rest } = props;
   const {
     control,
@@ -58,7 +57,6 @@ export function PageFormCreatableSelect<
           }}
           onHandleSelection={(v) => {
             const values: string[] = getValues(props.name);
-
             if (values) {
               return onChange([...values, v]);
             }
