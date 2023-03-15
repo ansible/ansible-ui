@@ -1,18 +1,20 @@
 import {
+  Chip,
+  ChipGroup,
+  FormGroupProps,
   Select,
+  SelectOption,
   SelectOptionObject,
   SelectProps,
   SelectVariant,
-  FormGroupProps,
-  SelectOption,
-  ChipGroup,
-  Chip,
 } from '@patternfly/react-core';
 import React, { useState } from 'react';
-import { Label } from '../../../frontend/awx/interfaces/Label';
 import { PageFormGroup } from './PageFormGroup';
 
-export type FormGroupSelectProps = Pick<FormGroupProps, 'helperTextInvalid' | 'children'> &
+export type FormGroupTypeAheadMultiSelectProps = Pick<
+  FormGroupProps,
+  'helperTextInvalid' | 'children'
+> &
   Pick<
     SelectProps,
     | 'footer'
@@ -27,7 +29,7 @@ export type FormGroupSelectProps = Pick<FormGroupProps, 'helperTextInvalid' | 'c
     isReadOnly?: boolean;
     placeholderText?: string | React.ReactNode;
     name: string;
-    options: { value: string | Label; label: string }[];
+    options: { value: string | { name: string }; label: string }[];
     id?: string;
     onSelect?: (
       event: React.MouseEvent | React.ChangeEvent,
@@ -36,12 +38,12 @@ export type FormGroupSelectProps = Pick<FormGroupProps, 'helperTextInvalid' | 'c
     ) => void;
     onHandleSelection: (value: string | SelectOptionObject | { name: string }) => void;
     isSubmitting: boolean;
-    value: Partial<Label>[];
+    value: Partial<{ name: string }>[];
     onHandleClear: (chip?: string) => void;
   };
 
 /** A PatternFly FormGroup with a PatternFly Select */
-export function FormGroupTypeAheadMultiSelect(props: FormGroupSelectProps) {
+export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSelectProps) {
   const {
     onHandleSelection,
     onHandleClear,
