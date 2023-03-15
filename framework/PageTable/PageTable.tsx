@@ -98,11 +98,11 @@ export type PageTableProps<T extends object> = {
   error?: Error;
 
   emptyStateTitle: string;
-  emptyStateDescription?: string;
+  emptyStateDescription?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyStateIcon?: React.ComponentType<any>;
   emptyStateButtonIcon?: React.ReactNode;
-  emptyStateButtonText?: string;
+  emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
 
   showSelect?: boolean;
