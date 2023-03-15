@@ -116,7 +116,7 @@ module.exports = function (env, argv) {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, 'build/public'),
-      publicPath: env.awx ? '/static/awx/' : '/',
+      publicPath: env.awx ? '/static/media/' : '/',
     },
     optimization: {
       minimizer: [
