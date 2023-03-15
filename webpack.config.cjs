@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = function (env, argv) {
   var isProduction = argv.mode === 'production' || argv.mode === undefined;
@@ -103,6 +104,9 @@ module.exports = function (env, argv) {
       env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
       new CopyPlugin({
         patterns: [{ from: 'frontend/icons' }, { from: 'frontend/manifest.webmanifest' }],
+      }),
+      new MonacoWebpackPlugin({
+        languages: ['json', 'yaml', 'shell'],
       }),
     ].filter(Boolean),
     output: {
