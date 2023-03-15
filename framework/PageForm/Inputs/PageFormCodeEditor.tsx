@@ -5,6 +5,63 @@ import { FormGroupTextInputProps, useSettings } from '../..';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { PageFormGroup } from './PageFormGroup';
 
+export type PageFormCodeEditorInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  name: TFieldName;
+  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
+} & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
+
+export function PageFormCodeEditor<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
+  const { isReadOnly, validate, ...formGroupInputProps } = props;
+  const { label, name, isRequired } = props;
+  const {
+    control,
+    formState: { isSubmitting, isValidating },
+  } = useFormContext<TFieldValues>();
+
+  const id = props.id ?? name.split('.').join('-');
+
+  return (
+    <Controller<TFieldValues, TFieldName>
+      name={name}
+      control={control}
+      shouldUnregister
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        return (
+          <PageFormGroup
+            {...formGroupInputProps}
+            id={id}
+            helperTextInvalid={!(validate && isValidating) && error?.message}
+          >
+            <MonacoEditor
+              id={id}
+              value={value as unknown as string}
+              onChange={onChange}
+              isReadOnly={isReadOnly || isSubmitting}
+              invalid={!(validate && isValidating) && error?.message !== undefined}
+            />
+          </PageFormGroup>
+        );
+      }}
+      rules={{
+        required:
+          typeof label === 'string' && typeof isRequired === 'boolean'
+            ? {
+                value: true,
+                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
+              }
+            : isRequired,
+        validate: props.validate,
+      }}
+    />
+  );
+}
+
 export function MonacoEditor(props: {
   id?: string;
   value?: string;
@@ -103,62 +160,5 @@ export function MonacoEditor(props: {
     >
       <div id={props.id} ref={divEl} style={{ height: '100%' }}></div>
     </div>
-  );
-}
-
-export type PageFormCodeEditorInputProps<
-  TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> = {
-  name: TFieldName;
-  validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
-} & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
-
-export function PageFormCodeEditor<
-  TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
-  const { isReadOnly, validate, ...formGroupInputProps } = props;
-  const { label, name, isRequired } = props;
-  const {
-    control,
-    formState: { isSubmitting, isValidating },
-  } = useFormContext<TFieldValues>();
-
-  const id = props.id ?? name.split('.').join('-');
-
-  return (
-    <Controller<TFieldValues, TFieldName>
-      name={name}
-      control={control}
-      shouldUnregister
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
-        return (
-          <PageFormGroup
-            {...formGroupInputProps}
-            id={id}
-            helperTextInvalid={!(validate && isValidating) && error?.message}
-          >
-            <MonacoEditor
-              id={id}
-              value={value as unknown as string}
-              onChange={onChange}
-              isReadOnly={isReadOnly || isSubmitting}
-              invalid={!(validate && isValidating) && error?.message !== undefined}
-            />
-          </PageFormGroup>
-        );
-      }}
-      rules={{
-        required:
-          typeof label === 'string' && typeof isRequired === 'boolean'
-            ? {
-                value: true,
-                message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
-              }
-            : isRequired,
-        validate: props.validate,
-      }}
-    />
   );
 }
