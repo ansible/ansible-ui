@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
-import { PageFormCodeEditor } from '../../../../framework/PageForm/Inputs/PageFormCodeEditor';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -124,12 +123,6 @@ function TeamInputs() {
           label={t('Description')}
           placeholder={t('Enter description')}
         />
-      </PageFormSection>
-      <PageFormSection singleColumn>
-        <PageFormCodeEditor label="HHH" name="hhh" isRequired />
-      </PageFormSection>
-      <PageFormSection singleColumn>
-        <PageFormCodeEditor label="HHH" name="hhh" isRequired />
       </PageFormSection>
     </>
   );
