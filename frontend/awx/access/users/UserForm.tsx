@@ -12,6 +12,7 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
+import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
@@ -26,10 +27,11 @@ export function CreateUser() {
     setError,
     setFieldError
   ) => {
-    const { user, userType, confirmPassword, organization } = userInput;
+    const { user, userType, confirmPassword } = userInput;
     try {
+      let organization: Organization | undefined;
       try {
-        const organization = await getOrganizationByName(user.summary_fields.organization.name);
+        organization = await getOrganizationByName(user.summary_fields.organization.name);
         if (!organization) throw new Error(t('Organization not found.'));
         user.organization = organization.id;
       } catch {
@@ -42,7 +44,7 @@ export function CreateUser() {
         return false;
       }
       const newUser = await requestPost<User>(
-        `/api/v2/organizations/${organization.toString()}/users/`,
+        `/api/v2/organizations/${user.organization.toString()}/users/`,
         user
       );
       navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
@@ -86,8 +88,9 @@ export function EditUser() {
   ) => {
     const { user, userType, confirmPassword } = userInput;
     try {
+      let organization: Organization | undefined;
       try {
-        const organization = await getOrganizationByName(user.summary_fields.organization.name);
+        organization = await getOrganizationByName(user.summary_fields.organization.name);
         if (!organization) throw new Error(t('Organization not found.'));
         user.organization = organization.id;
       } catch {
@@ -151,7 +154,6 @@ interface IUserInput {
   user: User;
   userType: string;
   confirmPassword: string;
-  organization: number;
 }
 
 function UserInputs(props: { mode: 'create' | 'edit' }) {
@@ -159,7 +161,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput
+      <PageFormTextInput<IUserInput>
         name="user.username"
         label={t('Username')}
         placeholder={t('Enter username')}
@@ -176,7 +178,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           }
         }}
       />
-      <PageFormSelectOption
+      <PageFormSelectOption<IUserInput>
         name="userType"
         label={t('User type')}
         placeholderText={t('Select user type')}
@@ -204,9 +206,9 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
       />
       {mode === 'create' && (
-        <PageFormOrganizationSelect<User> name="summary_fields.organization.name" />
+        <PageFormOrganizationSelect<IUserInput> name="user.summary_fields.organization.name" />
       )}
-      <PageFormTextInput
+      <PageFormTextInput<IUserInput>
         name="user.password"
         label={t('Password')}
         placeholder={t('Enter password')}
@@ -214,7 +216,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         autoComplete="new-password"
         isRequired={mode === 'create'}
       />
-      <PageFormTextInput
+      <PageFormTextInput<IUserInput>
         name="confirmPassword"
         label={t('Confirm password')}
         placeholder={t('Enter password')}
@@ -222,19 +224,23 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         autoComplete="new-password"
         isRequired={mode === 'create'}
       />
-      <PageFormTextInput
-        name="user.firstName"
+      <PageFormTextInput<IUserInput>
+        name="user.first_name"
         label={t('First name')}
         placeholder={t('Enter first name')}
         maxLength={150}
       />
-      <PageFormTextInput
-        name="user.lastName"
+      <PageFormTextInput<IUserInput>
+        name="user.last_name"
         label={t('Last name')}
         placeholder={t('Enter last name')}
         maxLength={150}
       />
-      <PageFormTextInput name="user.email" label={t('Email')} placeholder={t('Enter email')} />
+      <PageFormTextInput<IUserInput>
+        name="user.email"
+        label={t('Email')}
+        placeholder={t('Enter email')}
+      />
     </>
   );
 }
