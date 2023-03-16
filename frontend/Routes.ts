@@ -107,8 +107,8 @@ export const RouteObj: { [key: string]: RouteType } = {
   Settings: `${awxRoutePrefix}/settings`,
 
   //Analytics
-  ControllerReports: `${awxRoutePrefix}/controller/reports`,
-  ControllerReport: `${awxRoutePrefix}/controller/report/:id`,
+  ControllerReports: `${awxRoutePrefix}/reports`,
+  ControllerReport: `${awxRoutePrefix}/report/:id`,
 
   Hub: `${hubRoutePrefix}`,
 

@@ -36,6 +36,7 @@ import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemp
 import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
+import Reports from './analytics/Reports/Reports';
 import { PageNotFound } from '../common/PageNotFound';
 
 export function AwxRouter() {
@@ -117,6 +118,8 @@ export function AwxRouter() {
         />
 
         <Route path={RouteObjWithoutPrefix.Settings} element={<Settings />} />
+        /* Analytics */
+        <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
 
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
         <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />

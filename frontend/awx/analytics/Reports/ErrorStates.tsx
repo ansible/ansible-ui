@@ -45,6 +45,22 @@ export function AnalyticsErrorState(props: { error: string }) {
       description: t("Please contact your organization's administrator to add a subscription."),
     },
   };
+
+  function ErrorState(error: string) {
+    if (!!errorTexts[error]) {
+      return <EmptyStateCustom
+          title={errorTexts[error]?.title}
+          description={errorTexts[error]?.description}
+          icon={KeyIcon}
+          button={errorTexts[error]?.button}
+      />
+    }
+    return <EmptyStateCustom
+        title={t('ERROR')}
+        description={t('WHO KNOWS WHAT HAPPENED')}
+        icon={KeyIcon}
+    />
+  }
   function DisabledState() {
     return (
       <>
@@ -72,14 +88,7 @@ export function AnalyticsErrorState(props: { error: string }) {
     );
   }
 
-  return !activeUser?.is_superuser ? (
-    <EmptyStateCustom
-      title={errorTexts[error]?.title}
-      description={errorTexts[error]?.description}
-      icon={KeyIcon}
-      button={errorTexts[error]?.button}
-    />
-  ) : (
+  return activeUser?.is_superuser ? ErrorState(error) : (
     <DisabledState />
   );
 }

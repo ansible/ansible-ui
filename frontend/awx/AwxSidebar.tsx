@@ -182,6 +182,12 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             </NavItem>
                         </NavGroup> */}
       {/* </NavExpandable> */}
+        <NavItem
+            isActive={isRouteActive(RouteObj.ControllerReports, location)}
+            onClick={() => onClick(RouteObj.ControllerReports)}
+        >
+            {t('Reports')}
+        </NavItem>
       {process.env.NODE_ENV === 'development' && (
         <NavItem
           isActive={isRouteActive(RouteObj.AwxDebug, location)}
