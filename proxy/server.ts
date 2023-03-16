@@ -43,7 +43,9 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
     cert = readFileSync('./certs/tls.crt');
     key = readFileSync('./certs/tls.key');
   } catch (err) {
-    const pems = selfsigned.generate();
+    const pems = selfsigned.generate(undefined, {
+      keySize: 2048,
+    });
     cert = Buffer.from(pems.cert);
     key = Buffer.from(pems.private);
     logger.info({ msg: 'using self signed certificates' });
