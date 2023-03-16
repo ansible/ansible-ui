@@ -88,14 +88,6 @@ export function EditUser() {
   ) => {
     const { user, userType, confirmPassword } = userInput;
     try {
-      let organization: Organization | undefined;
-      try {
-        organization = await getOrganizationByName(user.summary_fields.organization.name);
-        if (!organization) throw new Error(t('Organization not found.'));
-        user.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
       user.is_superuser = userType === t('System administrator');
       user.is_system_auditor = userType === t('System auditor');
       if (user.password) {
