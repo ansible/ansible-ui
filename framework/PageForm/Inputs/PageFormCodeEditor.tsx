@@ -1,3 +1,4 @@
+import useResizeObserver from '@react-hook/resize-observer';
 import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
@@ -143,6 +144,12 @@ export function MonacoEditor(props: {
       editorRef.current.editor.updateOptions({ readOnly: props.isReadOnly });
     }
   }, [props.isReadOnly]);
+
+  useResizeObserver(divEl, () => {
+    if (editorRef.current?.editor) {
+      editorRef.current.editor.layout();
+    }
+  });
 
   useEffect(() => {
     if (editorRef.current?.editor) {

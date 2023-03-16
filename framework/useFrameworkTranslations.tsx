@@ -25,6 +25,7 @@ export interface IFrameworkTranslations {
   by: string;
   selectNone: string;
   pleaseFixValidationErrors: string;
+  validating: string;
 }
 
 const defaultTranslations: IFrameworkTranslations = {
@@ -52,6 +53,7 @@ const defaultTranslations: IFrameworkTranslations = {
   by: 'by',
   selectNone: 'Select none',
   pleaseFixValidationErrors: 'Please fix validation errors.',
+  validating: 'Validating...',
 };
 
 const FrameworkTranslationsContext = createContext<

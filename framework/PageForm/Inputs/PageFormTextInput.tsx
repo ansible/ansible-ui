@@ -11,6 +11,7 @@ import {
   Validate,
   ValidationRule,
 } from 'react-hook-form';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
@@ -58,6 +59,7 @@ export function PageFormTextInput<
     trigger,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
+  const [translations] = useFrameworkTranslations();
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -73,7 +75,13 @@ export function PageFormTextInput<
             id={id ?? name.split('.').join('-')}
             value={value}
             onChange={onChange}
-            helperTextInvalid={!(validate && isValidating) && error?.message}
+            helperTextInvalid={
+              error?.message
+                ? validate && isValidating
+                  ? translations.validating
+                  : error?.message
+                : undefined
+            }
             isReadOnly={isReadOnly || isSubmitting}
             minLength={undefined}
             maxLength={undefined}
