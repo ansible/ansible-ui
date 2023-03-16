@@ -21,6 +21,7 @@ import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();
@@ -32,6 +33,11 @@ export function EditRulebookActivation() {
   );
   const { cache } = useSWRConfig();
 
+  const RESTART_OPTIONS = [
+    { label: t('On failure'), value: 'on-failure' },
+    { label: t('Always'), value: 'always' },
+    { label: t('Never'), value: 'never' },
+  ];
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation & { variables: string }> = async (
     rulebookActivation,
     setError
@@ -71,7 +77,7 @@ export function EditRulebookActivation() {
         ]}
       />
       <PageForm
-        submitText={t('Create rulebook activation')}
+        submitText={t('Add rulebook activation')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -119,7 +125,7 @@ export function EditRulebookActivation() {
           name={'restart_policy'}
           label={t('Restart policy')}
           placeholderText={t('Select  a restart policy')}
-          options={[]}
+          options={RESTART_OPTIONS}
         />
         <PageFormSelectOption
           name={'project'}
@@ -147,7 +153,9 @@ export function EditRulebookActivation() {
           labelOff={t('Disabled')}
           name="is_enabled"
         />
-        <PageFormCodeEditor name={'variables'} label={t('Variables')} />
+        <PageFormSection singleColumn>
+          <PageFormCodeEditor name={'variables'} label={t('Variables')} />
+        </PageFormSection>
       </PageForm>
     </PageLayout>
   );
