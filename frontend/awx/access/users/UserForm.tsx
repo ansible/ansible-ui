@@ -11,6 +11,7 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -216,22 +217,24 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           isRequired
         />
       )}
-      <PageFormTextInput
-        name="user.password"
-        label={t('Password')}
-        placeholder={t('Enter password')}
-        type="password"
-        autoComplete="new-password"
-        isRequired={mode === 'create'}
-      />
-      <PageFormTextInput
-        name="confirmPassword"
-        label={t('Confirm password')}
-        placeholder={t('Enter password')}
-        type="password"
-        autoComplete="new-password"
-        isRequired={mode === 'create'}
-      />
+      <PageFormSection>
+        <PageFormTextInput
+          name="user.password"
+          label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          autoComplete="new-password"
+          isRequired={mode === 'create'}
+        />
+        <PageFormTextInput
+          name="confirmPassword"
+          label={t('Confirm password')}
+          placeholder={t('Enter password')}
+          type="password"
+          autoComplete="new-password"
+          isRequired={mode === 'create'}
+        />
+      </PageFormSection>
       <PageFormTextInput
         name="user.firstName"
         label={t('First name')}

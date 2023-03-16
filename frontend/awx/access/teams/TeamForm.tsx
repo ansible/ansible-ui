@@ -5,6 +5,7 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -115,12 +116,14 @@ function TeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextArea<Team>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter description')}
-      />
       <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" />
+      <PageFormSection singleColumn>
+        <PageFormTextArea<Team>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description')}
+        />
+      </PageFormSection>
     </>
   );
 }
