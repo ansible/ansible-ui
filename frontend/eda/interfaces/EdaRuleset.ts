@@ -6,13 +6,15 @@
  */
 
 interface FiredStats {
-  total_type: string;
-  status: string;
-  status_total: number;
-  object_total: number;
-  pct_object_total: number;
-  window_total: number;
-  pct_window_total: number;
+  fired_count?: number;
+  last_fired_at?: string;
+  total_type?: string;
+  status?: string;
+  status_total?: number;
+  object_total?: number;
+  pct_object_total?: number;
+  window_total?: number;
+  pct_window_total?: number;
 }
 
 export interface EdaRuleset {
@@ -20,6 +22,5 @@ export interface EdaRuleset {
   name: string;
   status: string;
   rule_count: number;
-  fired_count: number;
-  fired_stats: FiredStats;
+  fired_stats?: FiredStats;
 }
