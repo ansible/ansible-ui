@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -11,12 +10,12 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
-import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
-import { useSelectOrganization } from '../organizations/hooks/useSelectOrganization';
+import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
+import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 
 export function CreateUser() {
   const { t } = useTranslation();
@@ -29,6 +28,13 @@ export function CreateUser() {
   ) => {
     const { user, userType, confirmPassword, organization } = userInput;
     try {
+      try {
+        const organization = await getOrganizationByName(user.summary_fields.organization.name);
+        if (!organization) throw new Error(t('Organization not found.'));
+        user.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
+      }
       user.is_superuser = userType === t('System administrator');
       user.is_system_auditor = userType === t('System auditor');
       if (confirmPassword !== user.password) {
@@ -80,6 +86,13 @@ export function EditUser() {
   ) => {
     const { user, userType, confirmPassword } = userInput;
     try {
+      try {
+        const organization = await getOrganizationByName(user.summary_fields.organization.name);
+        if (!organization) throw new Error(t('Organization not found.'));
+        user.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
+      }
       user.is_superuser = userType === t('System administrator');
       user.is_system_auditor = userType === t('System auditor');
       if (user.password) {
@@ -143,9 +156,7 @@ interface IUserInput {
 
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
-  const { setValue } = useFormContext();
   const { t } = useTranslation();
-  const selectOrganization = useSelectOrganization();
   return (
     <>
       <PageFormTextInput
@@ -193,28 +204,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
       />
       {mode === 'create' && (
-        <PageFormTextInput
-          label={t('Organization')}
-          name="user.summary_fields.organization.name"
-          placeholder={t('Enter organization')}
-          selectTitle={t('Select an organization')}
-          selectValue={(organization: Organization) => organization.name}
-          selectOpen={selectOrganization}
-          validate={async (organizationName: string) => {
-            try {
-              const itemsResponse = await requestGet<ItemsResponse<Organization>>(
-                `/api/v2/organizations/?name=${organizationName}`
-              );
-              if (itemsResponse.results.length === 0) return t('Organization not found.');
-              setValue('organization', itemsResponse.results[0].id);
-            } catch (err) {
-              if (err instanceof Error) return err.message;
-              else return 'Unknown error';
-            }
-            return undefined;
-          }}
-          isRequired
-        />
+        <PageFormOrganizationSelect<User> name="summary_fields.organization.name" />
       )}
       <PageFormTextInput
         name="user.password"
