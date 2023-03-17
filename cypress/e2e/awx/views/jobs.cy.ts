@@ -45,7 +45,8 @@ describe('jobs', () => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
-    cy.contains('td', job.name)
+    const jobName = job.name ? job.name : '';
+    cy.contains('td', jobName)
       .parent()
       .within(() => {
         cy.get('.pf-c-dropdown__toggle').click();
@@ -81,7 +82,8 @@ describe('jobs', () => {
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
       const jobId = testJob.id ? testJob.id.toString() : '';
-      cy.contains('td', testJob.name)
+      const jobName = testJob.name ? testJob.name : '';
+      cy.contains('td', jobName)
         .parent()
         .within(() => {
           cy.contains('.pf-c-alert__title', 'Successful');
@@ -106,7 +108,8 @@ describe('jobs', () => {
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
       const jobId = testJob.id ? testJob.id.toString() : '';
-      cy.contains('td', testJob.name)
+      const jobName = job.name ? job.name : '';
+      cy.contains('td', jobName)
         .parent()
         .within(() => {
           cy.contains('.pf-c-alert__title', 'Successful');
