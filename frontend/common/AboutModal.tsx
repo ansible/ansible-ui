@@ -18,9 +18,9 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         props.onClose?.();
       }}
       trademark="Trademark and copyright information here"
-      brandImageSrc="Ansible.svg"
-      brandImageAlt="Ansible Logo"
-      productName={process.env.PRODUCT ?? t('Ansible')}
+      brandImageSrc="/static/media/brand-logo.svg"
+      brandImageAlt={t('Brand Logo')}
+      productName={process.env.PRODUCT ?? t('AWX')}
     >
       <TextContent>
         <TextList component="dl">

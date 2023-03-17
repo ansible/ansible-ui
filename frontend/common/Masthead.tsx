@@ -38,7 +38,6 @@ import { useSettingsDialog } from '../../framework/Settings';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { swrOptions, useFetcher } from '../Data';
-import AnsibleIcon from '../icons/ansible.svg';
 import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
 import styled from 'styled-components';
@@ -91,7 +90,12 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              <AnsibleIcon width={48} />
+              <img
+                src="/static/media/brand-logo.svg"
+                alt={t('brand logo')}
+                height="45"
+                style={{ height: '45px' }}
+              />
               <IconDiv>
                 {brand && (
                   <TruncateContentSpan>

@@ -78,7 +78,7 @@ export interface PageHeaderProps {
   titleHelpTitle?: string;
   titleHelp?: string | string[];
   titleDocLink?: string;
-  description?: string | string[];
+  description?: null | string | string[];
   controls?: ReactNode;
   headerActions?: ReactNode;
   footer?: ReactNode;

@@ -1,5 +1,6 @@
 import { Button } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import { ReactElement } from 'react';
 import {
   Controller,
   FieldPath,
@@ -10,6 +11,7 @@ import {
   Validate,
   ValidationRule,
 } from 'react-hook-form';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
@@ -26,6 +28,7 @@ export type PageFormTextInputProps<
   selectTitle?: string;
   selectValue?: (selection: TSelection) => FieldPathValue<TSelection, FieldPath<TSelection>>;
   selectOpen?: (callback: (selection: TSelection) => void, title: string) => void;
+  button?: ReactElement;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
@@ -34,34 +37,58 @@ export function PageFormTextInput<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TSelection extends FieldValues = FieldValues
 >(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection>) {
-  const { isReadOnly, validate, selectTitle, selectValue, selectOpen, ...formGroupInputProps } =
-    props;
-  const { label, name, isRequired, minLength, maxLength, pattern } = props;
+  const {
+    name,
+    isReadOnly,
+    isRequired,
+    minLength,
+    maxLength,
+    pattern,
+    validate,
+    selectTitle,
+    button,
+    id,
+    selectOpen,
+    selectValue,
+    ...rest
+  } = props;
+  const { label } = props;
   const {
     control,
     setValue,
+    trigger,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
+  const [translations] = useFrameworkTranslations();
 
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
+      render={({ field: { onChange, value, name }, fieldState: { error } }) => {
         return (
           <FormGroupTextInput
-            {...formGroupInputProps}
-            id={props.id ?? name.split('.').join('-')}
-            value={value as string}
+            {...rest}
+            onBlur={() => trigger(name) as unknown as () => void}
+            isRequired={isRequired}
+            id={id ?? name.split('.').join('-')}
+            value={value}
             onChange={onChange}
-            helperTextInvalid={!(validate && isValidating) && error?.message}
+            helperTextInvalid={
+              error?.message
+                ? validate && isValidating
+                  ? translations.validating
+                  : error?.message
+                : undefined
+            }
             isReadOnly={isReadOnly || isSubmitting}
             minLength={undefined}
             maxLength={undefined}
           >
             {selectTitle && (
               <Button
+                ouiaId={`lookup-${name}-button`}
                 variant="control"
                 onClick={() =>
                   selectOpen?.((item: TSelection) => {
@@ -71,7 +98,7 @@ export function PageFormTextInput<
                         shouldValidate: true,
                       });
                     }
-                  }, props.selectTitle as string)
+                  }, selectTitle)
                 }
                 aria-label="Options menu"
                 isDisabled={isSubmitting}
@@ -84,12 +111,12 @@ export function PageFormTextInput<
       }}
       rules={{
         required:
-          typeof label === 'string' && typeof isRequired === 'boolean'
+          typeof label === 'string' && isRequired === true
             ? {
                 value: true,
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
-            : isRequired,
+            : undefined,
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'

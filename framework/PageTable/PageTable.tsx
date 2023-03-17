@@ -98,11 +98,11 @@ export type PageTableProps<T extends object> = {
   error?: Error;
 
   emptyStateTitle: string;
-  emptyStateDescription?: string;
+  emptyStateDescription?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyStateIcon?: React.ComponentType<any>;
   emptyStateButtonIcon?: React.ReactNode;
-  emptyStateButtonText?: string;
+  emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
 
   showSelect?: boolean;
@@ -138,7 +138,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { toolbarActions, filters, error, itemCount } = props;
+  const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const showSelect =
     props.showSelect ||
@@ -159,7 +159,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         : PageTableViewTypeE.Cards)
   );
 
-  const usePadding = useBreakpoint('md') && props.disableBodyPadding !== true;
+  const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   if (error) {
     return (
@@ -226,7 +226,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         bottomBorder
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody>
+        <PageBody disablePadding={disableBodyPadding}>
           <PageTableView {...props} tableColumns={managedColumns} />
         </PageBody>
       )}
@@ -536,7 +536,6 @@ function TableRow<T extends object>(props: {
     columns,
     selectItem,
     unselectItem,
-    unselectAll,
     isItemSelected,
     isSelectMultiple,
     item,
@@ -598,12 +597,12 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: () => {
-                if (!isSelectMultiple) {
-                  unselectAll?.();
+              onSelect: (_event, isSelecting) => {
+                if (isSelecting) {
+                  selectItem?.(item);
+                } else {
+                  unselectItem?.(item);
                 }
-                selectItem?.(item);
-                onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
@@ -724,23 +723,9 @@ export interface ITableColumnCommon<T extends object> {
   defaultSortDirection?: 'asc' | 'desc';
   defaultSort?: boolean;
 
-  // card?: 'description' | 'hidden' | 'count'
-
-  // list?: 'primary' | 'secondary'
-
-  // hideLabel?: boolean
-
-  // primary?: boolean
-
   icon?: (item: T) => ReactNode;
   card?: 'name' | 'subtitle' | 'description' | 'hidden';
   list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
-}
-
-export enum TableColumnSomething {
-  'id',
-  'name',
-  'description',
 }
 
 export enum TableColumnCardType {

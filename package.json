@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.605",
+  "version": "0.0.622",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -15,7 +15,7 @@
     "frontend": "webpack serve --mode development --env awx_route_prefix='/ui_next' --env hub_route_prefix='/hub' --env eda_route_prefix='/eda'",
     "frontend:awx": "webpack serve --mode development --env awx --env awx_route_prefix='/ui_next'",
     "frontend:hub": "webpack serve --mode development --env hub --env hub_route_prefix='/hub'",
-    "frontend:eda": "webpack serve --mode development --env eda --env eda_route_prefix='/eda'",
+    "frontend:eda": "PRODUCT='Event Driven Automation' webpack serve --config ./webpack.eda.cjs --mode development --env eda --env eda_route_prefix='/eda'",
     "proxy": "NODE_ENV=development PORT=3001 nodemon --watch './proxy/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' proxy/main.ts | pino-zen",
     "build": "npm run clean && concurrently --kill-others-on-fail npm:build:frontend npm:build:proxy --prefix-colors cyan,green,blue,magenta,gray",
     "build:proxy": "cd proxy && rollup --config rollup.config.ts --configPlugin typescript",
@@ -47,7 +47,6 @@
     "prepare": "husky install",
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint:changed npm:prettier:changed --prefix-colors cyan,green,blue,magenta,gray",
     "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
-    "build:framework": "npx tsc -p tsconfig.cjs.json && cpy 'framework/**/*.css' publish/cjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -114,6 +113,9 @@
     "luxon": "3.3.0",
     "merge-jsons-webpack-plugin": "2.0.1",
     "mini-css-extract-plugin": "2.7.3",
+    "monaco-editor": "^0.36.1",
+    "monaco-editor-webpack-plugin": "^7.0.1",
+    "monaco-yaml": "^4.0.4",
     "node-util": "0.0.6",
     "os-browserify": "0.3.0",
     "p-limit": "4.0.0",
@@ -135,6 +137,7 @@
     "type-fest": "3.6.1",
     "typescript": "4.9.5",
     "typescript-plugin-styled-components": "2.0.0",
+    "vite": "^4.1.4",
     "webpack": "5.76.1",
     "webpack-cli": "5.0.1",
     "workbox-webpack-plugin": "6.5.4",

@@ -1,0 +1,898 @@
+{
+  "count": 9,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 9,
+      "type": "inventory",
+      "url": "/api/v2/inventories/9/",
+      "related": {
+        "created_by": "/api/v2/users/1/",
+        "modified_by": "/api/v2/users/1/",
+        "hosts": "/api/v2/inventories/9/hosts/",
+        "groups": "/api/v2/inventories/9/groups/",
+        "root_groups": "/api/v2/inventories/9/root_groups/",
+        "variable_data": "/api/v2/inventories/9/variable_data/",
+        "script": "/api/v2/inventories/9/script/",
+        "tree": "/api/v2/inventories/9/tree/",
+        "inventory_sources": "/api/v2/inventories/9/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/9/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/9/activity_stream/",
+        "job_templates": "/api/v2/inventories/9/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/9/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/9/access_list/",
+        "object_roles": "/api/v2/inventories/9/object_roles/",
+        "instance_groups": "/api/v2/inventories/9/instance_groups/",
+        "copy": "/api/v2/inventories/9/copy/",
+        "labels": "/api/v2/inventories/9/labels/",
+        "organization": "/api/v2/organizations/1/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 483
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 484
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 485
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 486
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 487
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-02-08T21:10:41.447053Z",
+      "modified": "2023-02-08T21:10:41.447067Z",
+      "name": "alex inv 1",
+      "description": "",
+      "organization": 1,
+      "kind": "",
+      "host_filter": null,
+      "variables": "---",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 10,
+      "type": "inventory",
+      "url": "/api/v2/inventories/10/",
+      "related": {
+        "created_by": "/api/v2/users/1/",
+        "modified_by": "/api/v2/users/1/",
+        "hosts": "/api/v2/inventories/10/hosts/",
+        "groups": "/api/v2/inventories/10/groups/",
+        "root_groups": "/api/v2/inventories/10/root_groups/",
+        "variable_data": "/api/v2/inventories/10/variable_data/",
+        "script": "/api/v2/inventories/10/script/",
+        "tree": "/api/v2/inventories/10/tree/",
+        "inventory_sources": "/api/v2/inventories/10/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/10/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/10/activity_stream/",
+        "job_templates": "/api/v2/inventories/10/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/10/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/10/access_list/",
+        "object_roles": "/api/v2/inventories/10/object_roles/",
+        "instance_groups": "/api/v2/inventories/10/instance_groups/",
+        "copy": "/api/v2/inventories/10/copy/",
+        "labels": "/api/v2/inventories/10/labels/",
+        "organization": "/api/v2/organizations/1/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 488
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 489
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 490
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 491
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 492
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-02-08T21:10:53.571140Z",
+      "modified": "2023-02-08T21:10:53.571155Z",
+      "name": "alex inv 2",
+      "description": "",
+      "organization": 1,
+      "kind": "",
+      "host_filter": null,
+      "variables": "---",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 1,
+      "type": "inventory",
+      "url": "/api/v2/inventories/1/",
+      "related": {
+        "created_by": "/api/v2/users/1/",
+        "modified_by": "/api/v2/users/1/",
+        "hosts": "/api/v2/inventories/1/hosts/",
+        "groups": "/api/v2/inventories/1/groups/",
+        "root_groups": "/api/v2/inventories/1/root_groups/",
+        "variable_data": "/api/v2/inventories/1/variable_data/",
+        "script": "/api/v2/inventories/1/script/",
+        "tree": "/api/v2/inventories/1/tree/",
+        "inventory_sources": "/api/v2/inventories/1/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/1/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/1/activity_stream/",
+        "job_templates": "/api/v2/inventories/1/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/1/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/1/access_list/",
+        "object_roles": "/api/v2/inventories/1/object_roles/",
+        "instance_groups": "/api/v2/inventories/1/instance_groups/",
+        "copy": "/api/v2/inventories/1/copy/",
+        "labels": "/api/v2/inventories/1/labels/",
+        "organization": "/api/v2/organizations/1/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 26
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 27
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 28
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 29
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 30
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2022-12-09T15:26:49.614511Z",
+      "modified": "2022-12-09T15:26:49.614525Z",
+      "name": "Demo Inventory",
+      "description": "",
+      "organization": 1,
+      "kind": "",
+      "host_filter": null,
+      "variables": "",
+      "has_active_failures": false,
+      "total_hosts": 1,
+      "hosts_with_active_failures": 0,
+      "total_groups": 2,
+      "has_inventory_sources": true,
+      "total_inventory_sources": 1,
+      "inventory_sources_with_failures": 1,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 3,
+      "type": "inventory",
+      "url": "/api/v2/inventories/3/",
+      "related": {
+        "created_by": "/api/v2/users/15/",
+        "modified_by": "/api/v2/users/9/",
+        "hosts": "/api/v2/inventories/3/hosts/",
+        "groups": "/api/v2/inventories/3/groups/",
+        "root_groups": "/api/v2/inventories/3/root_groups/",
+        "variable_data": "/api/v2/inventories/3/variable_data/",
+        "script": "/api/v2/inventories/3/script/",
+        "tree": "/api/v2/inventories/3/tree/",
+        "inventory_sources": "/api/v2/inventories/3/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/3/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/3/activity_stream/",
+        "job_templates": "/api/v2/inventories/3/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/3/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/3/access_list/",
+        "object_roles": "/api/v2/inventories/3/object_roles/",
+        "instance_groups": "/api/v2/inventories/3/instance_groups/",
+        "copy": "/api/v2/inventories/3/copy/",
+        "labels": "/api/v2/inventories/3/labels/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 15,
+          "username": "user-8",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 9,
+          "username": "user-2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 157
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 158
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 159
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 160
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 161
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-10T14:43:34.737355Z",
+      "modified": "2023-01-10T14:43:34.737370Z",
+      "name": " Inventory 1 Org 0",
+      "description": "",
+      "organization": 2,
+      "kind": "",
+      "host_filter": null,
+      "variables": "{\"ansible_connection\": \"local\"}",
+      "has_active_failures": false,
+      "total_hosts": 33,
+      "hosts_with_active_failures": 0,
+      "total_groups": 4,
+      "has_inventory_sources": true,
+      "total_inventory_sources": 1,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 4,
+      "type": "inventory",
+      "url": "/api/v2/inventories/4/",
+      "related": {
+        "created_by": "/api/v2/users/16/",
+        "modified_by": "/api/v2/users/10/",
+        "hosts": "/api/v2/inventories/4/hosts/",
+        "groups": "/api/v2/inventories/4/groups/",
+        "root_groups": "/api/v2/inventories/4/root_groups/",
+        "variable_data": "/api/v2/inventories/4/variable_data/",
+        "script": "/api/v2/inventories/4/script/",
+        "tree": "/api/v2/inventories/4/tree/",
+        "inventory_sources": "/api/v2/inventories/4/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/4/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/4/activity_stream/",
+        "job_templates": "/api/v2/inventories/4/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/4/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/4/access_list/",
+        "object_roles": "/api/v2/inventories/4/object_roles/",
+        "instance_groups": "/api/v2/inventories/4/instance_groups/",
+        "copy": "/api/v2/inventories/4/copy/",
+        "labels": "/api/v2/inventories/4/labels/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 16,
+          "username": "user-9",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 10,
+          "username": "user-3",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 162
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 163
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 164
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 165
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 166
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-10T14:43:34.796519Z",
+      "modified": "2023-01-10T14:43:34.796534Z",
+      "name": " Inventory 2 Org 0",
+      "description": "",
+      "organization": 2,
+      "kind": "",
+      "host_filter": null,
+      "variables": "{\"ansible_connection\": \"local\"}",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 5,
+      "type": "inventory",
+      "url": "/api/v2/inventories/5/",
+      "related": {
+        "created_by": "/api/v2/users/17/",
+        "modified_by": "/api/v2/users/11/",
+        "hosts": "/api/v2/inventories/5/hosts/",
+        "groups": "/api/v2/inventories/5/groups/",
+        "root_groups": "/api/v2/inventories/5/root_groups/",
+        "variable_data": "/api/v2/inventories/5/variable_data/",
+        "script": "/api/v2/inventories/5/script/",
+        "tree": "/api/v2/inventories/5/tree/",
+        "inventory_sources": "/api/v2/inventories/5/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/5/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/5/activity_stream/",
+        "job_templates": "/api/v2/inventories/5/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/5/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/5/access_list/",
+        "object_roles": "/api/v2/inventories/5/object_roles/",
+        "instance_groups": "/api/v2/inventories/5/instance_groups/",
+        "copy": "/api/v2/inventories/5/copy/",
+        "labels": "/api/v2/inventories/5/labels/",
+        "organization": "/api/v2/organizations/2/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": " Organization 0",
+          "description": ""
+        },
+        "created_by": {
+          "id": 17,
+          "username": "user-10",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 11,
+          "username": "user-4",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 167
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 168
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 169
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 170
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 171
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-10T14:43:34.848545Z",
+      "modified": "2023-01-10T14:43:34.848561Z",
+      "name": " Inventory 3 Org 0",
+      "description": "",
+      "organization": 2,
+      "kind": "",
+      "host_filter": null,
+      "variables": "{\"ansible_connection\": \"local\"}",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 6,
+      "type": "inventory",
+      "url": "/api/v2/inventories/6/",
+      "related": {
+        "created_by": "/api/v2/users/8/",
+        "modified_by": "/api/v2/users/12/",
+        "hosts": "/api/v2/inventories/6/hosts/",
+        "groups": "/api/v2/inventories/6/groups/",
+        "root_groups": "/api/v2/inventories/6/root_groups/",
+        "variable_data": "/api/v2/inventories/6/variable_data/",
+        "script": "/api/v2/inventories/6/script/",
+        "tree": "/api/v2/inventories/6/tree/",
+        "inventory_sources": "/api/v2/inventories/6/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/6/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/6/activity_stream/",
+        "job_templates": "/api/v2/inventories/6/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/6/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/6/access_list/",
+        "object_roles": "/api/v2/inventories/6/object_roles/",
+        "instance_groups": "/api/v2/inventories/6/instance_groups/",
+        "copy": "/api/v2/inventories/6/copy/",
+        "labels": "/api/v2/inventories/6/labels/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 3,
+          "name": " Organization 1",
+          "description": ""
+        },
+        "created_by": {
+          "id": 8,
+          "username": "user-1",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 12,
+          "username": "user-5",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 172
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 173
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 174
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 175
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 176
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-10T14:43:34.900892Z",
+      "modified": "2023-01-10T14:43:34.900906Z",
+      "name": " Inventory 4 Org 1",
+      "description": "",
+      "organization": 3,
+      "kind": "",
+      "host_filter": null,
+      "variables": "{\"ansible_connection\": \"local\"}",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 7,
+      "type": "inventory",
+      "url": "/api/v2/inventories/7/",
+      "related": {
+        "created_by": "/api/v2/users/9/",
+        "modified_by": "/api/v2/users/13/",
+        "hosts": "/api/v2/inventories/7/hosts/",
+        "groups": "/api/v2/inventories/7/groups/",
+        "root_groups": "/api/v2/inventories/7/root_groups/",
+        "variable_data": "/api/v2/inventories/7/variable_data/",
+        "script": "/api/v2/inventories/7/script/",
+        "tree": "/api/v2/inventories/7/tree/",
+        "inventory_sources": "/api/v2/inventories/7/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/7/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/7/activity_stream/",
+        "job_templates": "/api/v2/inventories/7/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/7/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/7/access_list/",
+        "object_roles": "/api/v2/inventories/7/object_roles/",
+        "instance_groups": "/api/v2/inventories/7/instance_groups/",
+        "copy": "/api/v2/inventories/7/copy/",
+        "labels": "/api/v2/inventories/7/labels/",
+        "organization": "/api/v2/organizations/3/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 3,
+          "name": " Organization 1",
+          "description": ""
+        },
+        "created_by": {
+          "id": 9,
+          "username": "user-2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 13,
+          "username": "user-6",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 177
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 178
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 179
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 180
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 181
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-10T14:43:34.952703Z",
+      "modified": "2023-01-10T14:43:34.952718Z",
+      "name": " Inventory 5 Org 1",
+      "description": "",
+      "organization": 3,
+      "kind": "",
+      "host_filter": null,
+      "variables": "{\"ansible_connection\": \"local\"}",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    },
+    {
+      "id": 2,
+      "type": "inventory",
+      "url": "/api/v2/inventories/2/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "modified_by": "/api/v2/users/2/",
+        "hosts": "/api/v2/inventories/2/hosts/",
+        "groups": "/api/v2/inventories/2/groups/",
+        "root_groups": "/api/v2/inventories/2/root_groups/",
+        "variable_data": "/api/v2/inventories/2/variable_data/",
+        "script": "/api/v2/inventories/2/script/",
+        "tree": "/api/v2/inventories/2/tree/",
+        "inventory_sources": "/api/v2/inventories/2/inventory_sources/",
+        "update_inventory_sources": "/api/v2/inventories/2/update_inventory_sources/",
+        "activity_stream": "/api/v2/inventories/2/activity_stream/",
+        "job_templates": "/api/v2/inventories/2/job_templates/",
+        "ad_hoc_commands": "/api/v2/inventories/2/ad_hoc_commands/",
+        "access_list": "/api/v2/inventories/2/access_list/",
+        "object_roles": "/api/v2/inventories/2/object_roles/",
+        "instance_groups": "/api/v2/inventories/2/instance_groups/",
+        "copy": "/api/v2/inventories/2/copy/",
+        "labels": "/api/v2/inventories/2/labels/",
+        "organization": "/api/v2/organizations/1/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "created_by": {
+          "id": 2,
+          "username": "adminn",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 2,
+          "username": "adminn",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the inventory",
+            "name": "Admin",
+            "id": 34
+          },
+          "update_role": {
+            "description": "May update the inventory",
+            "name": "Update",
+            "id": 35
+          },
+          "adhoc_role": {
+            "description": "May run ad hoc commands on the inventory",
+            "name": "Ad Hoc",
+            "id": 36
+          },
+          "use_role": {
+            "description": "Can use the inventory in a job template",
+            "name": "Use",
+            "id": 37
+          },
+          "read_role": {
+            "description": "May view settings for the inventory",
+            "name": "Read",
+            "id": 38
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "copy": true,
+          "adhoc": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        }
+      },
+      "created": "2023-01-06T19:03:55.391586Z",
+      "modified": "2023-01-06T19:03:55.391600Z",
+      "name": "test",
+      "description": "",
+      "organization": 1,
+      "kind": "",
+      "host_filter": null,
+      "variables": "---",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": false,
+      "total_inventory_sources": 0,
+      "inventory_sources_with_failures": 0,
+      "pending_deletion": false,
+      "prevent_instance_group_fallback": false
+    }
+  ]
+}

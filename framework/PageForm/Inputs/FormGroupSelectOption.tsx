@@ -1,5 +1,5 @@
 import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core';
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, ReactNode, useCallback } from 'react';
 import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect';
 
 export interface IFormGroupSelectOption<T> {
@@ -7,6 +7,7 @@ export interface IFormGroupSelectOption<T> {
   label: string;
   description?: string;
   value: T;
+  additionalControls?: ReactNode;
 }
 
 export type FormGroupSelectOptionProps<T> = {

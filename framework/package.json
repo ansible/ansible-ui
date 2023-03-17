@@ -8,8 +8,19 @@
     "url": "https://github.com/ansible/ansible-ui.git"
   },
   "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
-  "main": "cjs/index.js",
-  "types": "cjs/index.d.ts",
+  "main": "./index.umd.cjs",
+  "module": "./index.js",
+  "types": "./framework/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
+    },
+    "./style.css": {
+      "import": "./style.css",
+      "require": "./style.css"
+    }
+  },
   "keywords": [
     "ansible",
     "react",
@@ -17,22 +28,12 @@
     "framework"
   ],
   "peerDependencies": {
-    "@hookform/resolvers": "^2",
     "@patternfly/patternfly": "^4",
     "@patternfly/react-core": "^4",
     "@patternfly/react-icons": "^4",
     "@patternfly/react-table": "^4",
-    "@react-hook/resize-observer": "^1",
-    "@types/json-schema": "^7",
-    "@types/react": "^17 || ^18",
-    "@types/react-dom": "^17 || ^18",
-    "@types/styled-components": "^5",
-    "debounce": "^1",
-    "get-value": "^3",
-    "luxon": "^3",
-    "p-limit": "^4",
     "react": "^17 || ^18",
-    "react-hook-form": "^7",
-    "styled-components": "^5"
+    "react-dom": "^17 || ^18",
+    "monaco-editor": "^0.36.1"
   }
 }

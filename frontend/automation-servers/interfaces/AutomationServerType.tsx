@@ -1,5 +1,5 @@
 export enum AutomationServerType {
   AWX = 'AWX',
-  Galaxy = 'Galaxy',
+  HUB = 'Galaxy',
   EDA = 'EDA',
 }

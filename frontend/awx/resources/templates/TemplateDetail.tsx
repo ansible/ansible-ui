@@ -217,7 +217,7 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
         <Link
           to={RouteObj.CredentialDetails.replace(
             ':id',
-            summaryFields.webhook_credential?.id.toString()
+            summaryFields.webhook_credential?.id?.toString() as string
           )}
         >
           {summaryFields.webhook_credential?.name}

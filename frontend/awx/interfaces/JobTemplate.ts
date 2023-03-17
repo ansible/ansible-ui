@@ -1,4 +1,5 @@
 import { JobTemplate as SwaggerJobTemplate } from './generated-from-swagger/api';
+import { Label } from './Label';
 
 interface RecentJob {
   id: number;
@@ -18,7 +19,16 @@ interface Credential {
 export interface JobTemplate
   extends Omit<
     SwaggerJobTemplate,
-    'id' | 'name' | 'summary_fields' | 'related' | 'status' | 'job_type' | 'verbosity'
+    | 'id'
+    | 'name'
+    | 'summary_fields'
+    | 'related'
+    | 'status'
+    | 'job_type'
+    | 'verbosity'
+    | 'job_tags'
+    | 'skip_tags'
+    | 'project'
   > {
   id: number;
   type: 'job_template';
@@ -29,7 +39,11 @@ export interface JobTemplate
   name: string;
   status: string;
   verbosity: 0 | 1 | 2 | 3 | 4 | 5;
+  job_tags: string | '';
+  skip_tags: string | '';
+  execution_environment?: number;
   related: {
+    callback: string;
     named_url: string;
     created_by: string;
     modified_by: string;
@@ -83,6 +97,7 @@ export interface JobTemplate
       scm_type: string;
       allow_override: boolean;
     };
+    execution_environment?: { id: number; name: string };
     last_job: {
       id: number;
       name: string;
@@ -136,7 +151,7 @@ export interface JobTemplate
     };
     labels: {
       count: number;
-      results: string[];
+      results: Label[];
     };
     resolved_environment: {
       id: number;
@@ -146,9 +161,14 @@ export interface JobTemplate
     };
     recent_jobs: RecentJob[];
     credentials: Credential[];
-    webhook_credential: {
+    webhook_credential?: {
       id: number;
       name: string;
     };
   };
+  webhook_credential?: number;
+  webhook_url: string;
+  webhook_key: string;
+  webhook_service?: 'github' | 'gitlab';
+  project: number;
 }
