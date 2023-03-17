@@ -9,7 +9,7 @@ import { AwxResources } from '../../../support/commands';
 
 describe('jobs', () => {
   let jobTemplate: JobTemplate;
-  let job: UnifiedJobList, job1: UnifiedJobList, job2: UnifiedJobList;
+  let job: UnifiedJobList;
 
   before(() => {
     cy.awxLogin();
