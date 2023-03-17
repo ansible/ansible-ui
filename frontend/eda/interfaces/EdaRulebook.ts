@@ -11,6 +11,7 @@ export interface EdaRulebook {
   description: string;
   status?: string;
   ruleset_count: number;
+  rule_count: number;
   fire_count: number;
   created_at: string;
   modified_at: string;
