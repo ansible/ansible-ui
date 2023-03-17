@@ -103,6 +103,6 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
-      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:dependencies --target dependencies --tag dependencies --tag quay.io/ansible/ansible-ui:dependencies .
-      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:source --target source --tag source --tag quay.io/ansible/ansible-ui:source .
+      - run: DOCKER_BUILDKIT=1 docker build --cache-from source --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
       - run: docker push quay.io/ansible/ansible-ui --all-tags
