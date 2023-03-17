@@ -97,13 +97,9 @@ jobs:
           record: true
           parallel: true
         env:
-          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AWX_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
 
   awx-e2e:
     name: AWX E2E
@@ -146,8 +142,11 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/awx/**/*.cy.ts
         env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AWX_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
