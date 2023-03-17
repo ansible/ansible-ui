@@ -10,6 +10,7 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
@@ -200,22 +201,24 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
       {mode === 'create' && (
         <PageFormOrganizationSelect<IUserInput> name="user.summary_fields.organization.name" />
       )}
-      <PageFormTextInput<IUserInput>
-        name="user.password"
-        label={t('Password')}
-        placeholder={t('Enter password')}
-        type="password"
-        autoComplete="new-password"
-        isRequired={mode === 'create'}
-      />
-      <PageFormTextInput<IUserInput>
-        name="confirmPassword"
-        label={t('Confirm password')}
-        placeholder={t('Enter password')}
-        type="password"
-        autoComplete="new-password"
-        isRequired={mode === 'create'}
-      />
+      <PageFormSection>
+        <PageFormTextInput<IUserInput>
+          name="user.password"
+          label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          autoComplete="new-password"
+          isRequired={mode === 'create'}
+        />
+        <PageFormTextInput<IUserInput>
+          name="confirmPassword"
+          label={t('Confirm password')}
+          placeholder={t('Enter password')}
+          type="password"
+          autoComplete="new-password"
+          isRequired={mode === 'create'}
+        />
+      </PageFormSection>
       <PageFormTextInput<IUserInput>
         name="user.first_name"
         label={t('First name')}
