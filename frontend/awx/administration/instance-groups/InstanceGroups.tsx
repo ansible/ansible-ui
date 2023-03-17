@@ -14,7 +14,7 @@ import {
   PageTable,
   TextCell,
 } from '../../../../framework';
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { useCreatedColumn, useModifiedColumn, useTypeColumn } from '../../../common/columns';
 import { RouteObj } from '../../../Routes';
 import { useAwxView } from '../../useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
@@ -136,7 +136,11 @@ export function useInstanceGroupsColumns(options?: {
 
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-
+  const instanceGroupType = useTypeColumn({
+    ...options,
+    makeReadable: (instanceGroup: InstanceGroup) =>
+      instanceGroup.is_container_group ? t('Container group') : t('Instance group'),
+  });
   const tableColumns = useMemo<ITableColumn<InstanceGroup>[]>(
     () => [
       {
@@ -151,19 +155,13 @@ export function useInstanceGroupsColumns(options?: {
             text={instanceGroup.name}
           />
         ),
+        showOnModal: true,
         sort: 'name',
       },
-      {
-        header: t('Type'),
-        cell: (instanceGroup) => (
-          <TextCell
-            text={instanceGroup.is_container_group ? t('Container group') : t('Instance group')}
-          />
-        ),
-        card: 'description',
-      },
+      instanceGroupType,
       {
         header: t('Running jobs'),
+        showOnModal: true,
         cell: (instanceGroup) => instanceGroup.jobs_running,
       },
       {
@@ -181,7 +179,7 @@ export function useInstanceGroupsColumns(options?: {
       modifiedColumn,
     ],
 
-    [t, disableLinks, createdColumn, modifiedColumn]
+    [t, instanceGroupType, disableLinks, createdColumn, modifiedColumn]
   );
 
   return tableColumns;

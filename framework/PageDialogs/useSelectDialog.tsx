@@ -39,14 +39,27 @@ export function useSelectDialog<
   T extends { id: number; name: string | undefined },
   TMultiple = false
 >(options: ISelectDialogOptions<T, TMultiple>) {
-  const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
+  const {
+    view,
+    tableColumns: columns,
+    toolbarFilters,
+    confirm,
+    cancel,
+    selected,
+    isMultiple,
+  } = options;
   const [title, setTitle] = useState('');
   type ISetter = TMultiple extends true ? (item: T[]) => void : (item: T) => void;
   const [onSelect, setOnSelect] = useState<ISetter>();
-  const openSetting = useCallback((onSelect?: ISetter, title?: string) => {
-    setTitle(title ?? '');
-    setOnSelect(() => onSelect);
-  }, []);
+  const [tableColumns, setTableColumns] = useState<ITableColumn<T>[]>(columns);
+  const openSetting = useCallback(
+    (onSelect?: ISetter, title?: string) => {
+      setTitle(title ?? '');
+      setOnSelect(() => onSelect);
+      setTableColumns(columns.filter((column) => (column.showOnModal ? column : null)));
+    },
+    [columns]
+  );
   const [_, setDialog] = usePageDialog();
   useEffect(() => {
     if (onSelect !== undefined) {

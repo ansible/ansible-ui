@@ -234,6 +234,7 @@ export function useBulkConfirmation<T extends object>() {
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
         Omit<BulkActionDialogProps<T>, 'onClose'>
     ) => {
+      const { confirmationColumns } = options;
       const bulkActionOptions = Object.assign({}, options);
       if (options.isItemNonActionable && options.isItemNonActionable !== undefined) {
         bulkActionOptions.items = options.items.filter(
@@ -242,6 +243,9 @@ export function useBulkConfirmation<T extends object>() {
       }
       return bulkConfirmationDialog({
         ...options,
+        confirmationColumns: confirmationColumns.filter((column) =>
+          column.showOnModal ? column : null
+        ),
         onConfirm: () => bulkActionDialog(bulkActionOptions),
       });
     },

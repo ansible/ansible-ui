@@ -10,7 +10,7 @@ export function PageFormInstanceGroupSelect<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: { name: TFieldName; additionalControls?: ReactNode; isRequired?: boolean }) {
   const { t } = useTranslation();
-  const selectInstanceGroup = useSelectInstanceGroups(true);
+  const selectInstanceGroup = useSelectInstanceGroups();
 
   return (
     <PageFormMultiInput<InstanceGroup, TFieldValues, TFieldName>

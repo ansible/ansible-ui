@@ -21,24 +21,28 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         list: 'name',
         sort: 'username',
         maxWidth: 200,
+        showOnModal: true,
       },
       {
         header: t('User type'),
         cell: (user) => <UserType user={user} />,
         card: 'subtitle',
         list: 'subtitle',
+        showOnModal: true,
       },
       {
         header: t('First name'),
         type: 'text',
         value: (user) => user.first_name,
         sort: 'first_name',
+        showOnModal: true,
       },
       {
         header: t('Last name'),
         type: 'text',
         value: (user) => user.last_name,
         sort: 'last_name',
+        showOnModal: true,
       },
       {
         header: t('Email'),

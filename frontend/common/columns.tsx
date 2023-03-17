@@ -32,6 +32,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: options?.header ?? t('Name'),
+      showOnModal: true,
       cell: (item: T) => (
         <TextCell
           text={item.name}
@@ -166,6 +167,7 @@ export function useOrganizationNameColumn(options?: {
   }> = useMemo(
     () => ({
       header: t('Organization'),
+      showOnModal: true,
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
@@ -193,6 +195,7 @@ export function useTypeColumn<T extends object>(options: {
   const { t } = useTranslation();
   const column: ITableColumn<T> = useMemo(
     () => ({
+      showOnModal: true,
       header: t('Type'),
       value: (item) => makeReadable(item),
       type: 'text',

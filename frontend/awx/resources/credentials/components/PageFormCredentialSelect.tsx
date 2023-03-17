@@ -17,7 +17,7 @@ export function PageFormCredentialSelect<
   isRequired?: boolean;
 }) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredential(true);
+  const selectCredential = useSelectCredential();
   const { setValue } = useFormContext();
   return (
     <PageFormMultiInput<Credential, TFieldValues, TFieldName>

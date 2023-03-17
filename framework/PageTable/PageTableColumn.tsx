@@ -12,7 +12,7 @@ export interface ITableColumnCommon<T extends object> {
   maxWidth?: number;
   enabled?: boolean;
   isIdColumn?: boolean;
-
+  showOnModal?: boolean;
   sort?: string;
   defaultSortDirection?: 'asc' | 'desc';
   defaultSort?: boolean;

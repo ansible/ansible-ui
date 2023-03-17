@@ -11,26 +11,27 @@ export function PageFormInventorySelect<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: {
   name: TFieldName;
-  inventoryPath?: string;
+  inventoryPath: string;
   inventoryIdPath?: string;
   isRequired?: boolean;
   additionalControls?: ReactElement;
 }) {
+  const { inventoryPath, inventoryIdPath, name, ...rest } = props;
   const { t } = useTranslation();
   const {
     useSelectDialog: selectInventory,
-    view: { pageItems },
-  } = useSelectInventory(true);
+    view: { pageItems, selectItem },
+  } = useSelectInventory();
 
   const { setValue } = useFormContext();
-  const { inventoryPath, inventoryIdPath, name, ...rest } = props;
   useEffect(() => {
     if (pageItems?.length === 1) {
       setValue(name as string, pageItems[0]?.name);
-      setValue(inventoryPath as string, pageItems[0]);
+      setValue(inventoryPath, pageItems[0]);
       setValue(inventoryIdPath as string, pageItems[0].id);
+      selectItem(pageItems[0]);
     }
-  }, [inventoryPath, inventoryIdPath, pageItems, name, setValue]);
+  }, [inventoryPath, selectItem, inventoryIdPath, pageItems, name, setValue]);
   return (
     <PageFormTextInput<TFieldValues, TFieldName, Inventory>
       {...rest}

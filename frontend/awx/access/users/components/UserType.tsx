@@ -1,4 +1,4 @@
-import { Text, Label } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { User } from '../../../interfaces/User';
 
@@ -11,5 +11,5 @@ export function UserType(props: { user: User }) {
   if (user.is_system_auditor) {
     return <Label>{t('System auditor')}</Label>;
   }
-  return <Text>{t('Normal user')}</Text>;
+  return <Label>{t('Normal user')}</Label>;
 }

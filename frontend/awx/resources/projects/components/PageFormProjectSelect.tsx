@@ -9,19 +9,19 @@ import { useSelectProject } from '../hooks/useSelectProject';
 export function PageFormProjectSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: { name: TFieldName; projectPath?: string; project?: string }) {
+>(props: { name: TFieldName; projectPath: string; project?: string }) {
   const { projectPath, project, name, ...rest } = props;
 
   const { t } = useTranslation();
   const {
     useSelectDialog: selectProject,
     view: { pageItems },
-  } = useSelectProject(true);
+  } = useSelectProject();
   const { setValue } = useFormContext();
   useEffect(() => {
     if (pageItems?.length === 1) {
       setValue(name as string, pageItems[0]?.name);
-      setValue(projectPath as string, pageItems[0]);
+      setValue(projectPath, pageItems[0]);
       setValue(project as string, pageItems[0].id);
     }
   }, [projectPath, project, pageItems, name, setValue]);

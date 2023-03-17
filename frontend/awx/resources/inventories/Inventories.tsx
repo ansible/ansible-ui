@@ -11,7 +11,12 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
+import {
+  useCreatedColumn,
+  useModifiedColumn,
+  useNameColumn,
+  useTypeColumn,
+} from '../../../common/columns';
 import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import {
@@ -106,6 +111,19 @@ export function useInventoriesFilters() {
 }
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+  const makeReadable: (inventory: Inventory) => string = (inventory) => {
+    let type = 'Inventory';
+    if (inventory.kind === 'smart') {
+      type = 'Smart Inventory';
+      return type;
+    }
+    if (inventory.kind === 'constructed') {
+      type = 'Constructed Inventory';
+      return type;
+    }
+    return type;
+  };
+
   const navigate = useNavigate();
 
   const nameClick = useCallback(
@@ -124,6 +142,10 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
     },
     [navigate]
   );
+  const inventoryType = useTypeColumn({
+    ...options,
+    makeReadable,
+  });
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
@@ -131,8 +153,8 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Inventory>[]>(
-    () => [nameColumn, createdColumn, modifiedColumn],
-    [nameColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, createdColumn, modifiedColumn, inventoryType],
+    [nameColumn, createdColumn, modifiedColumn, inventoryType]
   );
   return tableColumns;
 }

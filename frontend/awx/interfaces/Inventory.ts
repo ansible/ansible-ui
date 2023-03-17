@@ -37,6 +37,7 @@ export interface CommonInventory
     };
   };
   organization: number;
+  kind: 'constructed' | 'smart' | '';
 }
 
 export interface ConstructedInventory extends CommonInventory {

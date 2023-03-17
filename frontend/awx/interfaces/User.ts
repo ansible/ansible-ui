@@ -38,6 +38,8 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
       role: AccessRole;
     }[];
   };
+  first_name: string;
+  last_name: string;
   user_roles?: AccessRole[];
   team_roles?: AccessRole[];
   auth: string[];
