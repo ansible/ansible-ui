@@ -16,19 +16,19 @@ import { OnboardInventories } from './cards/OnboardInventories';
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   return (
     <PageLayout>
       <Banner variant="info">
         <Trans>
           <p>
-            <InfoCircleIcon /> You are currently viewing a tech preview of the new Ansible
-            Automation Platform user interface. To return to the original interface, click{' '}
-            <a href="/">here</a>.
+            <InfoCircleIcon /> You are currently viewing a tech preview of the new {product} user
+            interface. To return to the original interface, click <a href="/">here</a>.
           </p>
         </Trans>
       </Banner>
       <PageHeader
-        title={t('Welcome to AWX')}
+        title={t(`Welcome to ${product}`)}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
       <DashboardInternal />
