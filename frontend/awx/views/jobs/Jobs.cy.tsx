@@ -1,7 +1,8 @@
-import Jobs from './Jobs';
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { Page } from '@patternfly/react-core';
 import { ItemsResponse } from '../../../Data';
+import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import * as deleteJobs from './hooks/useDeleteJobs';
+import Jobs from './Jobs';
 
 describe('Jobs.cy.ts', () => {
   beforeEach(() => {
@@ -17,13 +18,21 @@ describe('Jobs.cy.ts', () => {
     );
   });
   it('Component renders', () => {
-    cy.mount(<Jobs />);
+    cy.mount(
+      <Page>
+        <Jobs />
+      </Page>
+    );
     cy.hasTitle(/^Jobs$/);
     cy.get('table').find('tr').should('have.length', 11);
   });
   it('Triggers delete action from toolbar menu', () => {
     const spy = cy.spy(deleteJobs, 'useDeleteJobs');
-    cy.mount(<Jobs />);
+    cy.mount(
+      <Page>
+        <Jobs />
+      </Page>
+    );
     cy.fixture('jobs.json').then((response: ItemsResponse<UnifiedJob>) => {
       const job = response.results[0];
       cy.selectRow(job.name, false);

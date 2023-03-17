@@ -71,7 +71,7 @@ export default defineConfig({
         ],
       },
     },
-    specPattern: 'frontend/awx/**/*.cy.tsx',
+    specPattern: 'frontend/**/*.cy.tsx',
     supportFile: 'cypress/support/component.ts',
   },
 });
