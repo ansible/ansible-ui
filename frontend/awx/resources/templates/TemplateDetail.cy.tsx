@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { TemplateDetail } from './TemplateDetail';
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
+import { TemplateDetail } from './TemplateDetail';
 
 describe('TemplateDetails', () => {
   beforeEach(() => {
@@ -19,7 +20,9 @@ describe('TemplateDetails', () => {
   it('Component renders and displays jobTemplate', () => {
     cy.mount(
       <MemoryRouter>
-        <TemplateDetail />
+        <Page>
+          <TemplateDetail />
+        </Page>
       </MemoryRouter>
     );
     cy.contains('dd#name>div', 'JT with Default Cred').should('exist');
@@ -36,7 +39,9 @@ describe('TemplateDetails', () => {
 
     cy.mount(
       <MemoryRouter>
-        <TemplateDetail />
+        <Page>
+          <TemplateDetail />
+        </Page>
       </MemoryRouter>
     );
     cy.get('button#toggle-kebab').click();

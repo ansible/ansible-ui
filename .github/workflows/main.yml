@@ -13,19 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
+
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - id: version
         run: |
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{ env.VERSION }} [skip ci]
@@ -35,16 +39,20 @@ jobs:
     name: Publish Framework
     needs: tag
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.tag.outputs.VERSION }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
+
       - name: PreCache
         run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -53,11 +61,14 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
+
       - name: PostCache
         run: rm package-lock-copy.json
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+
       - name: Publish Framework
         run: |
           ./node_modules/.bin/vite build
@@ -75,16 +86,42 @@ jobs:
     name: Docker Build and Push
     needs: tag
     runs-on: ubuntu-latest
+
+    env:
+      REGISTRY: quay.io
+      IMAGE_NAME: ${{ github.repository }}
+
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.tag.outputs.VERSION }}
+
       - name: Login to Quay
         uses: docker/login-action@v2
         with:
-          registry: quay.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
-      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:dependencies --target dependencies --tag dependencies --tag quay.io/ansible/ansible-ui:dependencies .
-      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
-      - run: docker push quay.io/ansible/ansible-ui --all-tags
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: true
+          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
