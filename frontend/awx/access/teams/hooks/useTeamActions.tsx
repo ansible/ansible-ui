@@ -11,8 +11,11 @@ import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndR
 import { useDeleteTeams } from './useDeleteTeams';
 import { useActiveUser } from '../../../../common/useActiveUser';
 
-export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => void }) {
-  const { onTeamsDeleted } = options;
+export function useTeamActions(options: {
+  onTeamsDeleted: (teams: Team[]) => void;
+  isDetailsPageAction?: boolean;
+}) {
+  const { onTeamsDeleted, isDetailsPageAction } = options;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
@@ -45,7 +48,7 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
     return [
       {
         type: PageActionType.single,
-        variant: ButtonVariant.primary,
+        variant: isDetailsPageAction ? ButtonVariant.primary : undefined, // Edit Team shows up as a primary button on the details page, but as a kebab menu option on a row
         icon: EditIcon,
         label: t('Edit team'),
         isDisabled: (team: Team) => cannotEditTeam(team),
@@ -79,6 +82,7 @@ export function useTeamActions(options: { onTeamsDeleted: (teams: Team[]) => voi
   }, [
     activeUser?.is_superuser,
     deleteTeams,
+    isDetailsPageAction,
     navigate,
     selectAndRemoveUsersFromTeam,
     selectUsersAddTeams,

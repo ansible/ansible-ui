@@ -207,7 +207,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   return (
     <Toolbar
       clearAllFilters={clearAllFilters}
-      className="dark-2"
+      className="dark-2 page-table-toolbar"
       style={{
         paddingBottom: sm ? undefined : 8,
         paddingTop: sm ? undefined : 8,
