@@ -1,3 +1,4 @@
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { TeamPage } from './TeamPage';
 
@@ -17,7 +18,9 @@ describe('TeamPage', () => {
   it('Component renders and displays team in breadcrumb', () => {
     cy.mount(
       <MemoryRouter initialEntries={['/api/v2/teams/2']}>
-        <TeamPage />
+        <Page>
+          <TeamPage />
+        </Page>
       </MemoryRouter>
     );
     cy.get('nav[aria-label="Breadcrumb"]').should('contain.text', 'Team 2 Org 0');
@@ -25,7 +28,9 @@ describe('TeamPage', () => {
   it('Edit button is visible and enabled', () => {
     cy.mount(
       <MemoryRouter initialEntries={['/api/v2/teams/2']}>
-        <TeamPage />
+        <Page>
+          <TeamPage />
+        </Page>
       </MemoryRouter>
     );
     cy.contains('button[id="edit-team"]', 'Edit team').should(
@@ -37,7 +42,9 @@ describe('TeamPage', () => {
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
     cy.mount(
       <MemoryRouter initialEntries={['/api/v2/teams/2']}>
-        <TeamPage />
+        <Page>
+          <TeamPage />
+        </Page>
       </MemoryRouter>
     );
     cy.get('button[aria-label="Actions"]').click();
@@ -50,7 +57,9 @@ describe('TeamPage', () => {
   it('Displays tabs for Details, Access and Roles', () => {
     cy.mount(
       <MemoryRouter initialEntries={['/api/v2/teams/2']}>
-        <TeamPage />
+        <Page>
+          <TeamPage />
+        </Page>
       </MemoryRouter>
     );
     cy.get('button[data-ouia-component-type="PF4/TabButton"]').should('have.length', 3);

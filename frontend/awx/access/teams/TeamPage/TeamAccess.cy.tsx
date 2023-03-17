@@ -1,3 +1,4 @@
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../../framework';
 import { ActiveUserProvider } from '../../../../common/useActiveUser';
@@ -38,7 +39,9 @@ describe('TeamAccess', () => {
       cy.mount(
         <MemoryRouter>
           <ActiveUserProvider>
-            <TeamAccess team={team} />
+            <Page>
+              <TeamAccess team={team} />
+            </Page>
           </ActiveUserProvider>
         </MemoryRouter>
       );
@@ -69,7 +72,9 @@ describe('TeamAccess', () => {
       cy.mount(
         <MemoryRouter>
           <ActiveUserProvider>
-            <TeamAccess team={team} />
+            <Page>
+              <TeamAccess team={team} />
+            </Page>
           </ActiveUserProvider>
         </MemoryRouter>
       );
@@ -103,7 +108,9 @@ describe('TeamAccess', () => {
         <MemoryRouter>
           <ActiveUserProvider>
             <PageDialogProvider>
-              <TeamAccess team={team} />
+              <Page>
+                <TeamAccess team={team} />
+              </Page>
             </PageDialogProvider>
           </ActiveUserProvider>
         </MemoryRouter>
@@ -138,7 +145,9 @@ describe('TeamAccess', () => {
         <MemoryRouter>
           <ActiveUserProvider>
             <PageDialogProvider>
-              <TeamAccess team={team} />
+              <Page>
+                <TeamAccess team={team} />
+              </Page>
             </PageDialogProvider>
           </ActiveUserProvider>
         </MemoryRouter>
@@ -173,7 +182,9 @@ describe('TeamAccess', () => {
         <MemoryRouter>
           <ActiveUserProvider>
             <PageDialogProvider>
-              <TeamAccess team={team} />
+              <Page>
+                <TeamAccess team={team} />
+              </Page>
             </PageDialogProvider>
           </ActiveUserProvider>
         </MemoryRouter>

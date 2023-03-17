@@ -14,6 +14,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import '@patternfly/patternfly/patternfly-base.css';
+
 import 'cypress-react-selector';
 
 // Import commands.js using ES2015 syntax:

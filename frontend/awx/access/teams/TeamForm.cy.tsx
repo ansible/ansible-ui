@@ -1,3 +1,4 @@
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { CreateTeam } from './TeamForm';
 
@@ -25,7 +26,9 @@ describe('TeamForm.cy.ts', () => {
     );
     cy.mount(
       <MemoryRouter>
-        <CreateTeam />
+        <Page>
+          <CreateTeam />
+        </Page>
       </MemoryRouter>
     );
     cy.typeByLabel(/^Name$/, 'Test');
@@ -36,7 +39,9 @@ describe('TeamForm.cy.ts', () => {
   it('Create Team - Validation on name and organization', () => {
     cy.mount(
       <MemoryRouter>
-        <CreateTeam />
+        <Page>
+          <CreateTeam />
+        </Page>
       </MemoryRouter>
     );
     cy.clickButton(/^Create team$/);
