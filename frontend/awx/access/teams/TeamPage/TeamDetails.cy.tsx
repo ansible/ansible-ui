@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Team } from '../../../interfaces/Team';
 import { TeamDetails } from './TeamDetails';
@@ -8,7 +9,9 @@ describe('TeamDetails', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(
         <MemoryRouter initialEntries={['/teams']} initialIndex={0}>
-          <TeamDetails team={team} />
+          <Page>
+            <TeamDetails team={team} />
+          </Page>
         </MemoryRouter>
       );
       cy.get('dd').first().should('have.text', 'Team 2 Org 0');
@@ -20,7 +23,14 @@ describe('TeamDetails', () => {
       cy.mount(
         <MemoryRouter initialEntries={['/ui_next/teams/2/details']}>
           <Routes>
-            <Route element={<TeamDetails team={team} />} path="/ui_next/teams/2/details" />
+            <Route
+              element={
+                <Page>
+                  <TeamDetails team={team} />
+                </Page>
+              }
+              path="/ui_next/teams/2/details"
+            />
             <Route
               element={<div data-test-id="user-details">user-8 details</div>}
               path="/ui_next/users/15/details"

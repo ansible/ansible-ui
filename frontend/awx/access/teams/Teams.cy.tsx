@@ -1,7 +1,8 @@
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../framework';
-import { Teams } from './Teams';
 import * as requests from '../../../Data';
+import { Teams } from './Teams';
 
 describe('Teams.cy.ts', () => {
   describe('Non-empty list', () => {
@@ -19,7 +20,9 @@ describe('Teams.cy.ts', () => {
     it('Component renders', () => {
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       cy.hasTitle(/^Teams$/);
@@ -28,7 +31,9 @@ describe('Teams.cy.ts', () => {
     it('List has filters for Name, Organization, Created By and Modified By', () => {
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
@@ -54,7 +59,9 @@ describe('Teams.cy.ts', () => {
       cy.mount(
         <MemoryRouter>
           <PageDialogProvider>
-            <Teams />
+            <Page>
+              <Teams />
+            </Page>
           </PageDialogProvider>
         </MemoryRouter>
       );
@@ -68,7 +75,9 @@ describe('Teams.cy.ts', () => {
     it('Create Team button is disabled if the user does not have permission to create teams', () => {
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
@@ -92,7 +101,9 @@ describe('Teams.cy.ts', () => {
       }));
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
@@ -109,7 +120,9 @@ describe('Teams.cy.ts', () => {
       ).as('teamsError');
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
@@ -148,7 +161,9 @@ describe('Teams.cy.ts', () => {
       }));
       cy.mount(
         <MemoryRouter initialEntries={['/teams']}>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
@@ -166,7 +181,9 @@ describe('Teams.cy.ts', () => {
       }));
       cy.mount(
         <MemoryRouter>
-          <Teams />
+          <Page>
+            <Teams />
+          </Page>
         </MemoryRouter>
       );
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
