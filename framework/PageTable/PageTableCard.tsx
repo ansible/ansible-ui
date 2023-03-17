@@ -30,6 +30,7 @@ import {
   ITableColumnTypeLabels,
   TableColumnCell,
 } from './PageTableColumn';
+import styled from 'styled-components';
 
 export interface IPageTableCard {
   id: string | number;
@@ -46,6 +47,35 @@ export interface IPageTableCard {
   alertContent?: ReactNode;
   alertVariant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
 }
+
+const CardHeaderDiv = styled.div`
+  display: 'flex';
+  flex-wrap: 'nowrap';
+  max-width: '100%';
+`;
+
+const CardTopDiv = styled.div`
+  display: 'flex';
+  flex-wrap: 'wrap';
+  align-items: 'center';
+  gap: 16;
+  max-width: '100%';
+`;
+
+const CardDiv = styled.div`
+  max=-idth: '100%';
+`;
+
+const CardFooterDiv = styled.div`
+  display: 'flex';
+  flex-direction: 'row';
+  align-items: 'end';
+  gap: 16;
+`;
+
+const CardFooterLabelsDiv = styled.div`
+  flex-grow: 1;
+`;
 
 export function PageTableCard<T extends object>(props: {
   item: T;
@@ -99,18 +129,10 @@ export function PageTableCard<T extends object>(props: {
       }}
     >
       <CardHeader style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
-        <div style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 16,
-              maxWidth: '100%',
-            }}
-          >
+        <CardHeaderDiv>
+          <CardTopDiv>
             {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
-            <div style={{ maxWidth: '100%' }}>
+            <CardDiv>
               <CardTitle>
                 <Truncate content={card.title as string} />
               </CardTitle>
@@ -125,8 +147,8 @@ export function PageTableCard<T extends object>(props: {
                   </Text>
                 )
               )}
-            </div>
-          </div>
+            </CardDiv>
+          </CardTopDiv>
           {card.badge && card.badgeTooltip && (
             <FlexItem>
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -146,7 +168,7 @@ export function PageTableCard<T extends object>(props: {
               <Label color={card.badgeColor}>{card.badge}</Label>
             </FlexItem>
           )}
-        </div>
+        </CardHeaderDiv>
         {showActions && (
           <CardActions>
             {itemActions && itemActions.length && (
@@ -173,15 +195,8 @@ export function PageTableCard<T extends object>(props: {
       {card.cardBody}
       {card.labels && (
         <CardFooter>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'end',
-              gap: 16,
-            }}
-          >
-            <div style={{ flexGrow: 1 }}>
+          <CardFooterDiv>
+            <CardFooterLabelsDiv>
               {card.labels && (
                 <LabelGroup numLabels={999}>
                   {card.labels.map((item) => (
@@ -191,8 +206,8 @@ export function PageTableCard<T extends object>(props: {
                   ))}
                 </LabelGroup>
               )}
-            </div>
-          </div>
+            </CardFooterLabelsDiv>
+          </CardFooterDiv>
         </CardFooter>
       )}
       {card.alertTitle && (
