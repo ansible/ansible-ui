@@ -66,7 +66,12 @@ jobs:
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
-    needs: packages
+    needs:
+      - packages
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -82,9 +87,24 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - run: npm run cypress:run:component
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: cypress-io/github-action@v4
+        with:
+          component: true
+          install: false
+          record: true
+          parallel: true
+          config: specPattern=frontend/**/*.cy.ts
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AWX_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
 
   awx-e2e:
     name: AWX E2E
@@ -127,12 +147,8 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/awx/**/*.cy.ts
         env:
-          CYPRESS_SESSION: ${{ secrets.CYPRESS_SESSION }}
-          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AWX_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
@@ -189,7 +205,6 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.ts
         env:
-          CYPRESS_SESSION: ${{ secrets.CYPRESS_SESSION }}
           CYPRESS_EDA_SERVER: http://eda-server:8000/
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}

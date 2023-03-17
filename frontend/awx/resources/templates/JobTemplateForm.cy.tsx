@@ -1,3 +1,4 @@
+import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../framework';
 import { CreateJobTemplate } from './TemplateForm';
@@ -95,7 +96,9 @@ describe('Create job template ', () => {
   it('Create Template - Displays error message on internal server error', () => {
     cy.mount(
       <MemoryRouter>
-        <CreateJobTemplate />
+        <Page>
+          <CreateJobTemplate />
+        </Page>
       </MemoryRouter>
     );
     cy.typeByLabel(/^Name$/, 'Test');
@@ -104,7 +107,9 @@ describe('Create job template ', () => {
   it('Component renders', () => {
     cy.mount(
       <MemoryRouter>
-        <CreateJobTemplate />
+        <Page>
+          <CreateJobTemplate />
+        </Page>
       </MemoryRouter>
     );
     cy.hasTitle(/^Create job template$/);
@@ -112,7 +117,9 @@ describe('Create job template ', () => {
   it('Validates properly', () => {
     cy.mount(
       <MemoryRouter>
-        <CreateJobTemplate />
+        <Page>
+          <CreateJobTemplate />
+        </Page>
       </MemoryRouter>
     );
     cy.clickButton(/^Create job template$/);
@@ -124,7 +131,9 @@ describe('Create job template ', () => {
     cy.mount(
       <MemoryRouter>
         <PageDialogProvider>
-          <CreateJobTemplate />
+          <Page>
+            <CreateJobTemplate />
+          </Page>
         </PageDialogProvider>
       </MemoryRouter>
     );
