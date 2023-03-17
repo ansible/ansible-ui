@@ -36,13 +36,6 @@ export default defineConfig({
           return globalResources ? globalResources : null;
         },
       });
-      on('task', {
-        log(args) {
-          // eslint-disable-next-line
-          console.log(...args);
-          return null;
-        },
-      });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
       codeCoverage(on, config);
       return config;

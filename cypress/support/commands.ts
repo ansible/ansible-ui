@@ -409,15 +409,3 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.overwrite('log', function (log, ...args) {
-  if (Cypress.browser.isHeadless) {
-    return cy.task('log', args, { log: false }).then(() => {
-      return log(...args);
-    });
-  } else {
-    // eslint-disable-next-line
-    console.log(...args);
-    return log(...args);
-  }
-});
