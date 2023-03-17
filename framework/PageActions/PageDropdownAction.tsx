@@ -73,7 +73,7 @@ export function PageDropdownAction<T extends object>(props: {
       </DropdownToggle>
     ) : (
       <KebabToggle
-        id="toggle-kebab"
+        className="toggle-kebab"
         isDisabled={isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}

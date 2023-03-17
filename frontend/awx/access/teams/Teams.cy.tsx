@@ -66,8 +66,7 @@ describe('Teams.cy.ts', () => {
         </MemoryRouter>
       );
       cy.get('[type="checkbox"][id="select-all"]').check();
-      cy.get('#toggle-kebab').click();
-      cy.contains('a[role="menuitem"]', 'Delete selected teams').click();
+      cy.clickToolbarAction(/^Delete selected teams$/);
       cy.contains(
         '{{count}} of the selected teams cannot be deleted due to insufficient permissions.'
       ).should('be.visible');

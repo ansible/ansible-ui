@@ -44,7 +44,7 @@ describe('TemplateDetails', () => {
         </Page>
       </MemoryRouter>
     );
-    cy.get('button#toggle-kebab').click();
+    cy.get('button.toggle-kebab').click();
     cy.contains('a', 'Launch template').click();
 
     cy.wait('@getLaunchConfig');

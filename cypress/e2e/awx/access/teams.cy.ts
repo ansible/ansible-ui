@@ -228,7 +228,7 @@ describe('teams', () => {
 
   it('teams table row edit team', () => {
     cy.navigateTo(/^Teams$/, true);
-    cy.get('#edit-team').click();
+    cy.clickRowAction(team.name, /^Edit team$/);
     cy.hasTitle(/^Edit team$/);
   });
 
