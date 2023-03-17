@@ -12,9 +12,15 @@ WORKDIR /ansible-ui
 COPY --from=package /ansible-ui/package*.json ./
 RUN npm ci --omit=dev --omit=optional --ignore-scripts
 
+# get source with version set to 0.0.0
+# this enabled docker to reused cached layers if only the version changed
+FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as source
+COPY . .
+RUN npm version 0.0.0 --no-git-tag-version
+
 # build the product
 FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as builder
-COPY . .
+COPY --from=source /ansible-ui/ .
 ARG VERSION
 RUN VERSION=$VERSION DISCLAIMER=true npm run build
 
