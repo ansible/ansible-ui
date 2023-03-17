@@ -96,7 +96,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/**/*.cy.ts
+          config: specPattern=frontend/awx/**/*.cy.tsx
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
