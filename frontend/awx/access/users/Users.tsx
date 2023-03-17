@@ -52,7 +52,7 @@ export function Users() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create user'),
-        onClick: () => navigate(RouteObj.CreateUser),
+        href: RouteObj.CreateUser,
       },
       { type: PageActionType.seperator },
       {
@@ -92,7 +92,6 @@ export function Users() {
     [
       t,
       deleteUsers,
-      navigate,
       selectTeamsAddUsers,
       view.selectedItems,
       selectTeamsRemoveUsers,

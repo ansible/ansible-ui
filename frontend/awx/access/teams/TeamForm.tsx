@@ -6,12 +6,12 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
-import { Organization } from '../../interfaces/Organization';
 import { Team } from '../../interfaces/Team';
 import { getAwxError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
+import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 
 export function CreateTeam() {
   const { t } = useTranslation();
@@ -44,16 +44,6 @@ export function CreateTeam() {
       </PageForm>
     </PageLayout>
   );
-}
-
-async function getOrganizationByName(organizationName: string) {
-  const itemsResponse = await requestGet<ItemsResponse<Organization>>(
-    `/api/v2/organizations/?name=${organizationName}`
-  );
-  if (itemsResponse.results.length >= 1) {
-    return itemsResponse.results[0];
-  }
-  return undefined;
 }
 
 export function EditTeam() {

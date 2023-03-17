@@ -51,12 +51,12 @@ export function PageFormCodeEditor<
       }}
       rules={{
         required:
-          typeof label === 'string' && typeof isRequired === 'boolean'
+          typeof label === 'string' && isRequired === true
             ? {
                 value: true,
                 message: `${capitalizeFirstLetter(label.toLocaleLowerCase())} is required.`,
               }
-            : isRequired,
+            : undefined,
         validate: props.validate,
       }}
     />
