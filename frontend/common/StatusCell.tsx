@@ -1,46 +1,54 @@
-import {
-  BanIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-  InfoIcon,
-} from '@patternfly/react-icons';
+import { BanIcon, ClockIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PFColorE, RunningIcon, TextCell } from '../../framework';
+import { Alert } from '@patternfly/react-core';
+import { PFColorE, RunningIcon } from '../../framework';
 
 export function StatusCell(props: { status?: string }) {
   const { t } = useTranslation();
   switch (props.status) {
     case 'disabled':
-      return <TextCell icon={<BanIcon />} text={t('Disabled')} color={PFColorE.Grey} />;
+      return (
+        <Alert
+          customIcon={<BanIcon color={PFColorE.Grey} />}
+          title={<div style={{ color: PFColorE.Grey }}>{t('Disabled')}</div>}
+          isInline
+          isPlain
+        />
+      );
     case 'healthy':
-      return <TextCell icon={<CheckCircleIcon />} text={t('Healthy')} color={PFColorE.Green} />;
+      return <Alert variant="success" title={t('Healthy')} isPlain isInline />;
     case 'completed':
-      return <TextCell icon={<CheckCircleIcon />} text={t('Completed')} color={PFColorE.Green} />;
+      return <Alert variant="success" title={t('Completed')} isPlain isInline />;
     case 'successful':
-      return <TextCell icon={<CheckCircleIcon />} text={t('Successful')} color={PFColorE.Green} />;
+      return <Alert variant="success" title={t('Successful')} isPlain isInline />;
     case 'failed':
-      return <TextCell icon={<ExclamationCircleIcon />} text={t('Failed')} color={PFColorE.Red} />;
+      return <Alert variant="danger" title={t('Failed')} isPlain isInline />;
     case 'error':
-      return <TextCell icon={<ExclamationCircleIcon />} text={t('Error')} color={PFColorE.Red} />;
+      return <Alert variant="danger" title={t('Error')} isPlain isInline />;
     case 'waiting':
-      return <TextCell icon={<ClockIcon />} text={t('Waiting')} color={PFColorE.Grey} />;
+      return (
+        <Alert
+          customIcon={<ClockIcon color={PFColorE.Grey} />}
+          title={<div style={{ color: PFColorE.Grey }}>{t('Waiting')}</div>}
+          isInline
+          isPlain
+        />
+      );
     case 'pending':
-      return <TextCell icon={<ClockIcon />} text={t('Pending')} color={PFColorE.Blue} />;
+      return (
+        <Alert customIcon={<ClockIcon />} title={t('Pending')} variant="info" isPlain isInline />
+      );
     case 'new':
-      return <TextCell icon={<InfoIcon />} text={t('Pending')} color={PFColorE.Blue} />;
+      return <Alert variant="info" title={t('Pending')} isPlain isInline />;
     case 'running':
-      return <TextCell icon={<RunningIcon />} text={t('Running')} color={PFColorE.Blue} />;
+      return (
+        <Alert customIcon={<RunningIcon />} title={t('Running')} variant="info" isPlain isInline />
+      );
     case 'canceled':
-      return (
-        <TextCell icon={<ExclamationTriangleIcon />} text={t('Canceled')} color={PFColorE.Yellow} />
-      );
+      return <Alert variant="warning" title={t('Canceled')} isPlain isInline />;
     case 'never-updated':
-      return <TextCell icon={<InfoIcon />} text={t('Never updated')} color={PFColorE.Blue} />;
+      return <Alert variant="info" title={t('Never updated')} isPlain isInline />;
     default:
-      return (
-        <TextCell icon={<ExclamationTriangleIcon />} text={t('Unknown')} color={PFColorE.Yellow} />
-      );
+      return <Alert variant="warning" title={t('Unknown')} isPlain isInline />;
   }
 }

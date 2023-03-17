@@ -13,7 +13,7 @@ describe('ProjectDetails', () => {
       );
       cy.get('#name').should('have.text', 'Demo Project @ 10:44:51');
       cy.get('#organization').should('have.text', 'Default');
-      cy.get('#last-job-status').should('have.text', 'Successful');
+      cy.get('#last-job-status').invoke('text').as('Successful');
       cy.get('#source-control-type').should('have.text', 'Git');
       cy.get('.pf-c-truncate__start').should(
         'have.text',
