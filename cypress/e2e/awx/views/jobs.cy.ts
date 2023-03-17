@@ -9,7 +9,7 @@ import { AwxResources } from '../../../support/commands';
 
 describe('jobs', () => {
   let jobTemplate: JobTemplate;
-  let job: UnifiedJobList;
+  let job: UnifiedJobList, job1: UnifiedJobList, job2: UnifiedJobList;
 
   before(() => {
     cy.awxLogin();
@@ -31,6 +31,7 @@ describe('jobs', () => {
     // Delete launched job
     const jobId = job.id ? job.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
+    cy.cleanupBaselineResourcesForAWX();
   });
 
   it('jobs list', () => {
@@ -39,16 +40,21 @@ describe('jobs', () => {
   });
 
   it('toolbar and row actions', () => {
-    cy.get('pf-c-toolbar__content #toggle-kebab').click();
-    cy.get('pf-c-dropdown__menu').within(() => {
-      cy.contains('/^Delete selected jobs$/').should('be.visible');
-      cy.contains('/^Cancel selected jobs$/').should('be.visible');
+    cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
+    cy.get('.pf-c-dropdown__menu').within(() => {
+      cy.contains(/^Delete selected jobs$/).should('exist');
+      cy.contains(/^Cancel selected jobs$/).should('exist');
     });
-    cy.get('tr .toggle-kebab')
-      .first()
+    cy.contains('td', job.name)
+      .parent()
       .within(() => {
-        cy.contains('/^Delete job$/').should('be.visible');
-        cy.contains('/^Cancel job$/').should('be.visible');
+        cy.get('.pf-c-dropdown__toggle').click();
+        cy.get('.pf-c-dropdown__menu-item')
+          .contains(/^Delete job$/)
+          .should('exist');
+        cy.get('.pf-c-dropdown__menu-item')
+          .contains(/^Cancel job$/)
+          .should('exist');
       });
   });
 
@@ -62,6 +68,7 @@ describe('jobs', () => {
     if (job.name) {
       cy.contains(job.name).should('be.visible');
     }
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('jobs table row: delete job', () => {
@@ -74,6 +81,11 @@ describe('jobs', () => {
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.contains('td', testJob.name)
+        .parent()
+        .within(() => {
+          cy.contains('.pf-c-alert__title', 'Successful');
+        });
       cy.clickRowAction(jobId, /^Delete job$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
@@ -94,6 +106,11 @@ describe('jobs', () => {
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.contains('td', testJob.name)
+        .parent()
+        .within(() => {
+          cy.contains('.pf-c-alert__title', 'Successful');
+        });
       cy.selectRow(jobId);
       cy.clickToolbarAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
