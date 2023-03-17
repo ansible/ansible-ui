@@ -21,6 +21,11 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
       confirmText: t('Yes, I confirm that I want to delete these {{count}} credentials.', {
         count: credentials.length,
       }),
+      alertPrompts: [
+        t(
+          'Deleting these credentials could impact other resources that rely on them. Are you sure you want to delete anyway?.'
+        ),
+      ],
       actionButtonText: t('Delete credential', { count: credentials.length }),
       items: credentials.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
