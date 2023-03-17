@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
-import { useRulebookActions } from './hooks/useRulebookActions';
 import { useRulebookColumns } from './hooks/useRulebookColumns';
 import { useRulebookFilters } from './hooks/useRulebookFilters';
 import { API_PREFIX } from '../constants';
@@ -20,14 +19,12 @@ export function Rulebooks() {
     tableColumns,
   });
 
-  const rowActions = useRulebookActions(undefined);
   return (
     <PageLayout>
       <PageHeader title={t('Rulebooks')} />
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading rulebooks')}
         emptyStateTitle={t('No rulebooks yet')}
         emptyStateDescription={t('Please add a project by using the button below')}
