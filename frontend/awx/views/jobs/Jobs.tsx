@@ -14,6 +14,7 @@ import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 
 export default function Jobs() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
   const view = useAwxView<UnifiedJob>({
@@ -57,9 +58,13 @@ export default function Jobs() {
       <PageHeader
         title={t('Jobs')}
         titleHelpTitle={t('Jobs')}
-        titleHelp={t('jobs.title.help')}
+        titleHelp={t(
+          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+        )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
-        description={t('jobs.title.description')}
+        description={t(
+          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+        )}
         // headerActions={
         //   <ToggleGroup aria-label={t('show graph toggle')}>
         //     <ToggleGroupItem
