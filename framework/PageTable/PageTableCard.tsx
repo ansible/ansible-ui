@@ -63,7 +63,7 @@ const CardTopDiv = styled.div`
 `;
 
 const CardDiv = styled.div`
-  max=-idth: '100%';
+  max-width: '100%';
 `;
 
 const CardFooterDiv = styled.div`
@@ -75,6 +75,19 @@ const CardFooterDiv = styled.div`
 
 const CardFooterLabelsDiv = styled.div`
   flex-grow: 1;
+`;
+
+const PageDetailDiv = styled.div`
+  display: 'flex';
+  gap: 16;
+  margin-top: 8;
+  flex-wrap: 'wrap';
+`;
+
+const ColumnsDiv = styled.div`
+  display: 'flex';
+  gap: 6;
+  align-items: 'baseline';
 `;
 
 export function PageTableCard<T extends object>(props: {
@@ -308,14 +321,14 @@ export function useColumnsToTableCardFn<T extends object>(
                 ))}
               {countColumns.length > 0 && (
                 <PageDetail>
-                  <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
+                  <PageDetailDiv>
                     {countColumns.map((column, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                      <ColumnsDiv key={i}>
                         <TableColumnCell column={column} item={item} />
                         <small style={{ opacity: 0.7 }}>{column.header}</small>
-                      </div>
+                      </ColumnsDiv>
                     ))}
-                  </div>
+                  </PageDetailDiv>
                 </PageDetail>
               )}
             </DescriptionList>
