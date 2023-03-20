@@ -183,6 +183,7 @@ export function SelectDialog<T extends { id: number; name: string | undefined },
             disableListView
             disableColumnManagement
             compact
+            disableBodyPadding
           />
         </div>
       </Collapse>
