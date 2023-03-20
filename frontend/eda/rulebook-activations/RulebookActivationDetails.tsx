@@ -1,6 +1,6 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActions,
@@ -33,6 +33,7 @@ import {
   useRestartActivation,
 } from './hooks/useActivationDialogs';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ export function RulebookActivationDetails() {
       navigate(RouteObj.EdaRulebookActivations);
     }
   });
+
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
@@ -89,12 +91,27 @@ export function RulebookActivationDetails() {
             <PageDetail label={t('Description')}>
               {rulebookActivation?.description || ''}
             </PageDetail>
-            <PageDetail label={t('Execution environment')}>
-              {rulebookActivation?.execution_environment || ''}
+            <PageDetail label={t('Decision environment')}>
+              {rulebookActivation?.decision_environment || ''}
             </PageDetail>
-            <PageDetail label={t('Rulebook')}>{rulebookActivation?.rulebook?.name}</PageDetail>
+            <PageDetail label={t('Rulebook')}>
+              {rulebookActivation && rulebookActivation.rulebook?.id ? (
+                <Link
+                  to={RouteObj.EdaRulebookDetails.replace(
+                    ':id',
+                    `${rulebookActivation.rulebook?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.rulebook?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.rulebook?.name || ''
+              )}
+            </PageDetail>
             <PageDetail label={t('Restart policy')}>
-              {rulebookActivation?.restart_policy || ''}
+              {rulebookActivation?.restart_policy
+                ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
+                : ''}
             </PageDetail>
             <PageDetail label={t('Project')}>{rulebookActivation?.project?.name || ''}</PageDetail>
             <PageDetail label={t('Working directory')}>

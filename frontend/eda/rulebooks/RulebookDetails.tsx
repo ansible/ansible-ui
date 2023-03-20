@@ -1,8 +1,7 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
-  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -20,8 +19,6 @@ import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
-import { useRulebookActions } from './hooks/useRulebookActions';
-import { useRulesetActions } from './hooks/useRulesetActions';
 import { useRulesetColumns } from './hooks/useRulesetColumns';
 import { useRulesetFilters } from './hooks/useRulesetFilters';
 
@@ -29,7 +26,6 @@ export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebook } = useGet<EdaRulebook>(`${API_PREFIX}/rulebooks/${params.id ?? ''}/`);
-  const itemActions = useRulebookActions(rulebook);
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
     return (
@@ -38,9 +34,7 @@ export function RulebookDetails() {
           <PageDetails>
             <PageDetail label={t('Name')}>{rulebook?.name || ''}</PageDetail>
             <PageDetail label={t('Description')}>{rulebook?.description || ''}</PageDetail>
-            <PageDetail label={t('Number of rule sets')}>
-              {rulebook?.ruleset_count || t('Git')}
-            </PageDetail>
+            <PageDetail label={t('Number of rules')}>{rulebook?.rule_count || ''}</PageDetail>
             <PageDetail label={t('Fire count')}>{rulebook?.fire_count || ''}</PageDetail>
             <PageDetail label={t('Created')}>
               {rulebook?.created_at ? formatDateString(rulebook.created_at) : ''}
@@ -70,13 +64,11 @@ export function RulebookDetails() {
       keyFn: (item) => item?.id,
     });
 
-    const rowActions = useRulesetActions(undefined);
     return (
       <PageLayout>
         <PageTable
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
-          rowActions={rowActions}
           errorStateTitle={t('Error loading rulesets')}
           emptyStateTitle={t('No rulesets yet')}
           emptyStateDescription={t('No rule sets in this rulebook')}
@@ -95,13 +87,6 @@ export function RulebookDetails() {
           { label: t('Rulebooks'), to: RouteObj.EdaRulebooks },
           { label: rulebook?.name },
         ]}
-        headerActions={
-          <PageActions<EdaRulebook>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={rulebook}
-          />
-        }
       />
       {rulebook ? (
         <PageTabs>
