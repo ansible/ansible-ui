@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { formatDateString } from '../utils/formatDateString';
+import styled from 'styled-components';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);
@@ -13,6 +14,10 @@ export function DateCell(props: { value: number | string }) {
     </Split>
   );
 }
+
+const DateCellSpan = styled.span`
+  white-space: nowrap;
+`;
 
 export function DateTimeCell(props: {
   value: string | number | undefined | null;
@@ -45,7 +50,7 @@ export function DateTimeCell(props: {
   }, [props.format, props.value]);
   if (props.value === undefined) return <></>;
   return (
-    <span style={{ whiteSpace: 'nowrap' }}>
+    <DateCellSpan>
       {dateTime}
       {author && <span>&nbsp;{translations.by}&nbsp;</span>}
       {onClick ? (
@@ -55,6 +60,6 @@ export function DateTimeCell(props: {
       ) : (
         <span>{author}</span>
       )}
-    </span>
+    </DateCellSpan>
   );
 }
