@@ -2,7 +2,7 @@ describe('Job Templates Form', () => {
   before(() => {
     cy.awxLogin();
   });
-  it('should navigate to job templates list', () => {
+  it('can render the templates list page', () => {
     cy.navigateTo(/^Templates$/, false);
     cy.hasTitle(/^Templates$/);
   });
