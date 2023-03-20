@@ -37,7 +37,7 @@ export function JobEventsComponent(props: { job: Job }) {
     }));
   };
 
-  const visibleRows = useMemo(() => {
+  const nonCollapsedRows = useMemo(() => {
     return jobOutputRows.filter((row) => {
       // Check if row is a number, if it is, it has not loaded and is the counter for the event
       if (typeof row === 'number') {
@@ -70,7 +70,7 @@ export function JobEventsComponent(props: { job: Job }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
     containerRef,
-    visibleRows
+    nonCollapsedRows
   );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;

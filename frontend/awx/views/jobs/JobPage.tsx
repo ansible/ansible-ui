@@ -10,8 +10,9 @@ import { JobOutput } from './JobOutput/JobOutput';
 
 export function JobPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
-  const { data: job } = useGet2<Job>({ url: params.id ? `/api/v2/jobs/${params.id}/` : '' });
+  const params = useParams<{ id: string; job_type: string }>();
+  const job = useGetJob(params.id, params.job_type);
+  // TODO handle 404/no job
   return (
     <PageLayout>
       <PageHeader
@@ -28,4 +29,20 @@ export function JobPage() {
       </PageTabs>
     </PageLayout>
   );
+}
+
+function useGetJob(id?: string, type?: string) {
+  const apiPaths: { [key: string]: string } = {
+    project: 'project_updates',
+    inventory: 'inventory_updates',
+    playbook: 'jobs',
+    command: 'ad_hoc_commands',
+    management: 'system_jobs',
+    workflow: 'workflow_jobs',
+  };
+  const path = type ? apiPaths[type] : 'jobs';
+  const { data: job } = useGet2<Job>({
+    url: id ? `/api/v2/${path}/${id}/` : '',
+  });
+  return job;
 }
