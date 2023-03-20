@@ -36,12 +36,12 @@ describe('organizations', () => {
     cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
   });
 
-  it('organization page', () => {
+  it('renders the organizations list page', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.hasTitle(/^Organizations$/);
   });
 
-  it('create organization', () => {
+  it('creates and then deletes a basic organization', () => {
     const organizationName = 'E2E Organization ' + randomString(4);
     cy.navigateTo(/^Organizations$/, false);
     cy.clickLink(/^Create organization$/);
@@ -55,7 +55,7 @@ describe('organizations', () => {
     cy.hasTitle(/^Organizations$/);
   });
 
-  it('organization details', () => {
+  it('renders the organization details page', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.clickRow(organization.name);
     cy.hasTitle(organization.name);
@@ -63,7 +63,7 @@ describe('organizations', () => {
     cy.contains('#name', organization.name);
   });
 
-  it('organization details edit organization', () => {
+  it('edits an organization from the details page', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.clickRow(organization.name);
     cy.hasTitle(organization.name);
@@ -74,7 +74,7 @@ describe('organizations', () => {
     cy.hasTitle(`${organization.name}a`);
   });
 
-  it('organization details delete organization', () => {
+  it('deletes an organization from the details page', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.clickRow(organization.name);
     cy.hasTitle(organization.name);
@@ -84,13 +84,13 @@ describe('organizations', () => {
     cy.hasTitle(/^Organizations$/);
   });
 
-  it('organizations table row edit organization', () => {
+  it('navigates to the edit form from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.clickRowAction(organization.name, /^Edit organization$/);
     cy.hasTitle(/^Edit organization$/);
   });
 
-  it('organizations table row delete organization', () => {
+  it('deletes an organization from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.clickRowAction(organization.name, /^Delete organization$/);
     cy.get('#confirm').click();
@@ -100,7 +100,7 @@ describe('organizations', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('organizations toolbar delete organizations', () => {
+  it('deletes an organization from the organizations list toolbar', () => {
     cy.navigateTo(/^Organizations$/, false);
     cy.selectRow(organization.name);
     cy.clickToolbarAction(/^Delete selected organizations$/);
