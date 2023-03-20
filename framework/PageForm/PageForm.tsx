@@ -85,16 +85,7 @@ export function PageForm<T extends object>(props: {
         }}
       >
         {props.disableScrolling ? (
-          <div
-            style={{
-              maxWidth,
-              padding: disablePadding ? undefined : 24,
-              backgroundColor:
-                settings.activeTheme === 'light'
-                  ? 'var(--pf-global--BackgroundColor--200)'
-                  : undefined,
-            }}
-          >
+          <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
             <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
               {props.children}
             </PageFormGrid>
@@ -104,18 +95,9 @@ export function PageForm<T extends object>(props: {
             style={{
               height: '100%',
               flexGrow: 1,
-              backgroundColor:
-                settings.activeTheme === 'light'
-                  ? 'var(--pf-global--BackgroundColor--200)'
-                  : undefined,
             }}
           >
-            <div
-              style={{
-                maxWidth,
-                padding: disablePadding ? undefined : 24,
-              }}
-            >
+            <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
               <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
                 {props.children}
               </PageFormGrid>
