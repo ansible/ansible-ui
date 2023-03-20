@@ -10,6 +10,7 @@ import {
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../../common/useItem';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
@@ -22,19 +23,21 @@ import { getAwxError } from '../../useAwxView';
 export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
+  const onSubmit: PageFormSubmitHandler<Credential> = async (credential, setError) => {
     try {
-      try {
-        const organization = await getOrganizationByName(
-          editedCredential.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedCredential.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
+      if (credential.summary_fields.organization.name) {
+        try {
+          const organization = await getOrganizationByName(
+            credential.summary_fields.organization.name
+          );
+          if (!organization) throw new Error(t('Organization not found.'));
+          credential.organization = organization.id;
+        } catch {
+          throw new Error(t('Organization not found.'));
+        }
       }
-      const credential = await requestPost<Credential>('/api/v2/credentials/', editedCredential);
-      navigate(RouteObj.CredentialDetails.replace(':id', credential.id.toString()));
+      const newCredential = await requestPost<Credential>('/api/v2/credentials/', credential);
+      navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -81,14 +84,16 @@ export function EditCredential() {
   );
   const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
     try {
-      try {
-        const organization = await getOrganizationByName(
-          editedCredential.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedCredential.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
+      if (editedCredential.summary_fields.organization.name) {
+        try {
+          const organization = await getOrganizationByName(
+            editedCredential.summary_fields.organization.name
+          );
+          if (!organization) throw new Error(t('Organization not found.'));
+          editedCredential.organization = organization.id;
+        } catch {
+          throw new Error(t('Organization not found.'));
+        }
       }
       await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
       navigate(-1);
@@ -142,12 +147,6 @@ function CredentialInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextArea<Credential>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter description')}
-      />
-      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" />
       <PageFormSelectOption<Credential>
         label={t('Credential type')}
         placeholderText={t('Select credential type')}
@@ -162,6 +161,14 @@ function CredentialInputs() {
         }
         isRequired
       />
+      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" isRequired />
+      <PageFormSection singleColumn>
+        <PageFormTextArea<Credential>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description')}
+        />
+      </PageFormSection>
     </>
   );
 }
