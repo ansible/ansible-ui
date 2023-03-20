@@ -10,25 +10,16 @@ import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data
 import { RouteObj } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { getAwxError } from '../../useAwxView';
-import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
+  const onSubmit: PageFormSubmitHandler<Team> = async (team, setError) => {
     try {
-      try {
-        const organization = await getOrganizationByName(
-          editedTeam.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedTeam.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-      const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
-      navigate(RouteObj.TeamDetails.replace(':id', team.id.toString()));
+      team.organization = team.summary_fields?.organization?.id;
+      const createdTeam = await requestPost<Team>('/api/v2/teams/', team);
+      navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
     }
@@ -52,18 +43,10 @@ export function EditTeam() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: team } = useSWR<Team>(`/api/v2/teams/${id.toString()}/`, requestGet, swrOptions);
-  const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
+  const onSubmit: PageFormSubmitHandler<Team> = async (team, setError) => {
     try {
-      try {
-        const organization = await getOrganizationByName(
-          editedTeam.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedTeam.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-      await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
+      team.organization = team.summary_fields?.organization?.id;
+      await requestPatch<Team>(`/api/v2/teams/${id}/`, team);
       navigate(-1);
     } catch (err) {
       setError(await getAwxError(err));
@@ -106,7 +89,7 @@ function TeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" />
+      <PageFormSelectOrganization<Team> name="summary_fields.organization" isRequired />
       <PageFormSection singleColumn>
         <PageFormTextArea<Team>
           name="description"
