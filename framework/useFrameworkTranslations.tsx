@@ -46,7 +46,7 @@ const defaultTranslations: IFrameworkTranslations = {
   moreInformation: 'More information',
   showLess: 'Show less',
   countMore: '{count} more',
-  documentation: 'Documnetation',
+  documentation: 'Documentation',
   noResultsFound: 'No results found',
   noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
   clearAllFilters: 'Clear all filters',

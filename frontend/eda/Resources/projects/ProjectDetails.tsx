@@ -20,6 +20,7 @@ import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
+import { StatusLabelCell } from '../../common/StatusLabelCell';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -59,9 +60,12 @@ export function ProjectDetails() {
         <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
         <PageDetail label={t('SCM type')}>{project?.type || t('Git')}</PageDetail>
-        <PageDetail label={t('SCM URL')}>{project?.type || ''}</PageDetail>
+        <PageDetail label={t('SCM URL')}>{project?.url || ''}</PageDetail>
         <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
+        <PageDetail label={t('Status')}>
+          <StatusLabelCell status={project?.status || ''} />
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>

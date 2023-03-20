@@ -27,14 +27,14 @@ export function useRuleColumns() {
       },
       {
         header: t('Rule set'),
-        cell: (rule) => <TextCell text={`Ruleset ${rule?.ruleset || ''} `} />,
+        cell: (rule) => <TextCell text={rule?.ruleset?.name || ''} />,
         sort: 'ruleset',
         card: 'name',
         list: 'name',
         defaultSort: true,
       },
       {
-        header: t('Action Type'),
+        header: t('Action'),
         cell: (rule) => <TextCell text={rule.action ? Object.keys(rule.action)[0] : ''} />,
         sort: 'action',
         defaultSort: true,
@@ -44,7 +44,9 @@ export function useRuleColumns() {
         cell: (rule) => (
           <TextCell
             text={
-              rule?.fired_stats?.fired_date ? formatDateString(rule.fired_stats.fired_date) : ''
+              rule?.fired_stats?.last_fired_at
+                ? formatDateString(rule.fired_stats.last_fired_at)
+                : ''
             }
           />
         ),

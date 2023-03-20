@@ -20,7 +20,7 @@ describe('inventories', () => {
     cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
   });
 
-  it('inventories page', () => {
+  it('renders the inventories list page', () => {
     cy.navigateTo(/^Inventories$/, false);
     cy.hasTitle(/^Inventories$/);
   });

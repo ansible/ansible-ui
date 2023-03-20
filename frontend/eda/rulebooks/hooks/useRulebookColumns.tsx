@@ -26,10 +26,8 @@ export function useRulebookColumns() {
         list: 'name',
       },
       {
-        header: t('Number of rule sets'),
-        cell: (rulebook) => (
-          <TextCell text={`${rulebook?.ruleset_count ? rulebook.ruleset_count : 0}`} />
-        ),
+        header: t('Number of rules'),
+        cell: (rulebook) => <TextCell text={`${rulebook?.rule_count ? rulebook.rule_count : 0}`} />,
         sort: 'rule_count',
         defaultSort: true,
         card: 'name',
@@ -38,7 +36,7 @@ export function useRulebookColumns() {
       {
         header: t('Fire count'),
         cell: (rulebook) => <TextCell text={`${rulebook?.fire_count ? rulebook.fire_count : 0}`} />,
-        sort: 'fired_count',
+        sort: 'fire_count',
         defaultSort: true,
         card: 'name',
         list: 'name',

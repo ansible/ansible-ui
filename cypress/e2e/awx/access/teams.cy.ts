@@ -54,12 +54,12 @@ describe('teams', () => {
     cy.requestDelete(`/api/v2/teams/${team.id}/`, true);
   });
 
-  it('teams page', () => {
+  it('can render the teams list page', () => {
     cy.navigateTo(/^Teams$/, false);
     cy.hasTitle(/^Teams$/);
   });
 
-  it('create team', () => {
+  it('can create and then delete a basic team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Teams$/, true);
     cy.clickLink(/^Create team$/);
@@ -69,7 +69,7 @@ describe('teams', () => {
     cy.hasTitle(teamName);
   });
 
-  it('team: remove users from team', () => {
+  it('can remove users from the team via the teams list row item', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -87,7 +87,15 @@ describe('teams', () => {
     cy.clickButton(/^Close$/);
   });
 
-  it('edit team', () => {
+  it('can render the team details page', () => {
+    cy.navigateTo(/^Teams$/, true);
+    cy.clickRow(team.name);
+    cy.hasTitle(team.name);
+    cy.clickButton(/^Details$/);
+    cy.contains('#name', team.name);
+  });
+
+  it('can edit a team from the details page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.clickButton(/^Edit team$/);
@@ -97,15 +105,7 @@ describe('teams', () => {
     cy.hasTitle(`${team.name}a`);
   });
 
-  it('team details', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.clickRow(team.name);
-    cy.hasTitle(team.name);
-    cy.clickButton(/^Details$/);
-    cy.contains('#name', team.name);
-  });
-
-  it('team access: add users using toolbar button', () => {
+  it('can add users to the team via the team access tab toolbar', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
@@ -130,7 +130,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove users using toolbar button', () => {
+  it('can remove users from the team via the team access tab toolbar', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -154,7 +154,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove a single user using the row action', () => {
+  it('can remove a single user from the team via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -172,7 +172,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove a role from user', () => {
+  it('can remove a role from a user via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -201,14 +201,14 @@ describe('teams', () => {
     });
   });
 
-  it('team roles', () => {
+  it('Can render the team roles page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Roles$/);
   });
 
-  it('team details edit team', () => {
+  it('can navigate to the edit form from the team details page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
@@ -216,7 +216,7 @@ describe('teams', () => {
     cy.hasTitle(/^Edit team$/);
   });
 
-  it('team details delete team', () => {
+  it('can delete a team from the details page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
@@ -226,13 +226,13 @@ describe('teams', () => {
     cy.hasTitle(/^Teams$/);
   });
 
-  it('teams table row edit team', () => {
+  it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRowAction(team.name, /^Edit team$/);
     cy.hasTitle(/^Edit team$/);
   });
 
-  it('teams table row delete team', () => {
+  it('can delete a team from the teams list row item', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRowAction(team.name, /^Delete team$/);
     cy.get('#confirm').click();
@@ -242,7 +242,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('teams toolbar delete teams', () => {
+  it('can delete a team from the teams list toolbar', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.selectRow(team.name);
     cy.clickToolbarAction(/^Delete selected teams$/);
