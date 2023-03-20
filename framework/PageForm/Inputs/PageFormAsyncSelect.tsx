@@ -8,7 +8,7 @@ import {
   SelectVariant,
   Spinner,
 } from '@patternfly/react-core';
-import { SyncAltIcon } from '@patternfly/react-icons';
+import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
@@ -65,14 +65,20 @@ export function PageFormAsyncSelect<
     formState: { isSubmitting },
   } = useFormContext<TFieldValues>();
 
+  const [loadingError, setLoadingError] = useState<Error>();
+
   const queryHandler = useCallback(
-    (page: number) =>
-      query(page).then((result) => {
-        if (result.total === 1 && result.values.length === 1) {
-          setValue(name, result.values[0] as FieldPathValue<TFieldValues, TFieldName>);
-        }
-        return result;
-      }),
+    (page: number) => {
+      setLoadingError(undefined);
+      return query(page)
+        .then((result) => {
+          if (result.total === 1 && result.values.length === 1) {
+            setValue(name, result.values[0] as FieldPathValue<TFieldValues, TFieldName>);
+          }
+          return result;
+        })
+        .catch((err) => (err instanceof Error ? setLoadingError(err) : 'Unknown error'));
+    },
     [name, query, setValue]
   );
 
@@ -86,7 +92,7 @@ export function PageFormAsyncSelect<
           <PageFormGroup
             id={id}
             label={label}
-            helperTextInvalid={error?.message}
+            helperTextInvalid={loadingError ? 'Error loading organizations.' : error?.message}
             isRequired={isRequired}
           >
             <AsyncSelect<SelectionType>
@@ -98,10 +104,11 @@ export function PageFormAsyncSelect<
               value={value}
               onSelect={onChange}
               isReadOnly={props.isReadOnly || isSubmitting}
-              validated={error?.message ? 'error' : undefined}
+              validated={loadingError?.message || error?.message ? 'error' : undefined}
               isRequired={isRequired}
               limit={props.limit}
               openSelectDialog={openSelectDialog}
+              loadingError={!!loadingError}
             />
           </PageFormGroup>
         );
@@ -134,6 +141,7 @@ export interface AsyncSelectProps<SelectionType> {
   showRefreshButton?: boolean;
   isRequired?: boolean;
   limit: number;
+  loadingError?: boolean;
   openSelectDialog?: (
     onSelect: (value: SelectionType | undefined) => void,
     defaultSelection?: SelectionType
@@ -150,6 +158,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
     valueToString,
     query,
     validated,
+    loadingError,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -209,24 +218,15 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         id={id}
         aria-labelledby={labeledBy}
         variant={SelectVariant.single}
+        hasPlaceholderStyle
         placeholderText={
-          <span style={{ opacity: 0.7 }}>
-            {loadingPlaceholder ? (
-              loading ? (
-                <span>
-                  <Spinner
-                    size="md"
-                    style={{ marginTop: -1, marginBottom: -3, marginRight: 10, marginLeft: 2 }}
-                  />
-                  {loadingPlaceholder}
-                </span>
-              ) : (
-                placeholder
-              )
-            ) : (
-              placeholder
-            )}
-          </span>
+          loadingError
+            ? 'Click to refresh'
+            : loadingPlaceholder
+            ? loading
+              ? loadingPlaceholder
+              : placeholder
+            : placeholder
         }
         typeAheadAriaLabel={placeholder}
         selections={value}
@@ -239,6 +239,10 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         onClear={value && !props.isRequired ? () => onSelect(undefined) : undefined}
         isOpen={open}
         onToggle={(open) => {
+          if (loadingError) {
+            reload();
+            return;
+          }
           if (open) {
             if (useSelectDialog && props.openSelectDialog) {
               props.openSelectDialog(onSelect, props.value);
@@ -249,10 +253,21 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
             setOpen(false);
           }
         }}
+        toggleIndicator={
+          loading ? (
+            <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} />
+          ) : loadingError ? (
+            <SyncAltIcon />
+          ) : useSelectDialog ? (
+            <SearchIcon />
+          ) : undefined
+        }
         validated={validated}
         isDisabled={loading}
         onFilter={onFilter}
         hasInlineFilter={true}
+        menuAppendTo="parent"
+        maxHeight={500}
       >
         {options.map((option) => (
           <SelectOption key={option.toString()} value={option}>
