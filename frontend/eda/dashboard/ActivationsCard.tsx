@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
-import { useInMemoryView } from '../../../framework';
-import { useGet } from '../../common/useItem';
 import { RouteObj } from '../../Routes';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationColumns } from './hooks/useActivationColumns';
@@ -16,22 +14,22 @@ import {
   LevelItem,
   Title,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
-import { EdaResult } from '../interfaces/EdaResult';
+import { useEdaView } from '../useEventDrivenView';
 
 export function ActivationsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: data } = useGet<EdaResult<EdaRulebookActivation>>(`${API_PREFIX}/activations/`);
   const tableColumns = useActivationColumns();
-  const view = useInMemoryView<EdaRulebookActivation>({
-    items: data?.results ? data.results.slice(-4) : [],
+  const view = useEdaView<EdaRulebookActivation>({
+    url: `${API_PREFIX}/activations/`,
+    viewPage: 1,
+    viewPerPage: 4,
     tableColumns,
-    keyFn: (activation: EdaRulebookActivation) => activation.id,
   });
   return (
-    <Card style={{ transition: 'box-shadow 0.25s', minHeight: 500 }}>
+    <Card style={{ transition: 'box-shadow 0.25s', minHeight: 503 }}>
       <CardTitle>
         <Level>
           <LevelItem>
@@ -46,23 +44,33 @@ export function ActivationsCard() {
       </CardTitle>
       <CardBody>
         <PageTable
+          disableBodyPadding={true}
           tableColumns={tableColumns}
           autoHidePagination={true}
           errorStateTitle={t('Error loading activations')}
-          emptyStateTitle={t('No activations yet')}
+          emptyStateIcon={CubesIcon}
+          emptyStateVariant={'light'}
+          emptyStateTitle={t('There are currently no rulebook activations')}
+          emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
+          emptyStateButtonText={t('Create rulebook activation')}
+          emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
           {...view}
           defaultSubtitle={t('Activation')}
         />
       </CardBody>
-      <CardFooter>
-        <Button
-          variant="link"
-          icon={<PlusCircleIcon />}
-          onClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
-        >
-          {t('Create rulebook activation')}
-        </Button>
-      </CardFooter>
+      {view?.itemCount && view.itemCount > 0 ? (
+        <CardFooter>
+          <Button
+            variant="link"
+            icon={<PlusCircleIcon />}
+            onClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
+          >
+            {t('Create rulebook activation')}
+          </Button>
+        </CardFooter>
+      ) : (
+        <div />
+      )}
     </Card>
   );
 }
