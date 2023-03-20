@@ -24,7 +24,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   Dashboard: `${awxRoutePrefix}/dashboard`,
   Jobs: `${awxRoutePrefix}/jobs`,
   JobOutput: `${awxRoutePrefix}/jobs/:job_type/output/:id`,
-  JobDetails: `${awxRoutePrefix}/jobs/details/:id`,
+  JobDetails: `${awxRoutePrefix}/jobs/:job_type/details/:id`,
   Schedules: `${awxRoutePrefix}/schedules`,
   ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
   WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
