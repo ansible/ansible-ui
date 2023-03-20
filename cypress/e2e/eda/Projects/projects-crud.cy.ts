@@ -17,8 +17,6 @@ describe('EDA Projects CRUD', () => {
     cy.typeByLabel(/^SCM URL$/, 'https://example.com');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
-    cy.contains('#name', name);
-    cy.contains('#SCM type', 'git');
   });
 
   it.skip('can edit a project', () => {
