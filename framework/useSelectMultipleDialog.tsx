@@ -69,6 +69,7 @@ export function SelectMultipleDialog<T extends object>(props: SelectMultipleDial
           disableListView
           disableColumnManagement
           compact
+          disableBodyPadding
         />
       </div>
     </Modal>
