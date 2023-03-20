@@ -64,22 +64,22 @@ import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
 import styled from 'styled-components';
 
 const ScrollDiv = styled.div`
-  height: '100%';
-  margin-bottom: -1;
+  height: 100%;
+  margin-bottom: -1px;
 `;
 
 const EmptyStateDiv = styled.div`
-  height: '100%';
+  height: 100%;
 `;
 
 const TableCellDiv = styled.div`
-  padding-top: 5;
-  padding-bottom: 5;
+  padding-top: 5px;
+  padding-bottom: 5px;
 `;
 
 const ColumnCellDiv = styled.div`
-  padding-top: 5;
-  padding-bottom: 5;
+  padding-top: 5px;
+  padding-bottom: 5px;
 `;
 
 export type PageTableProps<T extends object> = {
