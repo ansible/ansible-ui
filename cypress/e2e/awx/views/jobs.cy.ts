@@ -32,12 +32,12 @@ describe('jobs', () => {
     const jobId = job.id ? job.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     cy.cleanupBaselineResourcesForAWX();
-    cy.contains(job.name);
   });
 
   it('renders jobs list', () => {
     cy.navigateTo(/^Jobs$/, false);
     cy.hasTitle(/^Jobs$/);
+    cy.contains(job.name as string);
   });
 
   it('renders the toolbar and row actions', () => {
