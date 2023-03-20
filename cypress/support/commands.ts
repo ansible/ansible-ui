@@ -350,11 +350,22 @@ Cypress.Commands.add('createBaselineResourcesForAWX', (options?: { onlyCreateOrg
   });
 });
 
+let requestCount = 1;
+
 // Polling to wait till a project is synced
 function waitForProjectToFinishSyncing(projectId: number) {
   cy.requestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
-    if (project.status === 'successful') return;
-
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (project.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
     waitForProjectToFinishSyncing(projectId);
   });
 }
