@@ -32,14 +32,15 @@ describe('jobs', () => {
     const jobId = job.id ? job.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     cy.cleanupBaselineResourcesForAWX();
+    cy.contains(job.name);
   });
 
-  it('jobs list', () => {
+  it('renders jobs list', () => {
     cy.navigateTo(/^Jobs$/, false);
     cy.hasTitle(/^Jobs$/);
   });
 
-  it('toolbar and row actions', () => {
+  it('renders the toolbar and row actions', () => {
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
@@ -59,7 +60,7 @@ describe('jobs', () => {
       });
   });
 
-  it('filter job by id', () => {
+  it('filters jobs by id', () => {
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
     const jobId = job.id ? job.id.toString() : '';
@@ -72,7 +73,7 @@ describe('jobs', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('jobs table row: delete job', () => {
+  it('deletes a job from the jobs list row', () => {
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
@@ -98,7 +99,7 @@ describe('jobs', () => {
     });
   });
 
-  it('jobs toolbar: delete job', () => {
+  it('deletes a job from the jobs list toolbar', () => {
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
