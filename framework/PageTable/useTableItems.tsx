@@ -92,9 +92,19 @@ export interface ISelected<T extends object> {
 
 export function useSelected<T extends object>(
   items: T[],
-  keyFn: (item: T) => string | number
+  keyFn: (item: T) => string | number,
+  defaultSelection?: T[]
 ): ISelected<T> {
-  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>({});
+  const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>(() => {
+    if (defaultSelection) {
+      return defaultSelection.reduce<Record<string | number, T>>((selectedMap, item) => {
+        selectedMap[keyFn(item)] = item;
+        return selectedMap;
+      }, {});
+    } else {
+      return {};
+    }
+  });
 
   useEffect(() => {
     setSelectedMap((selectedMap) => {

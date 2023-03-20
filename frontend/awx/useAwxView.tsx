@@ -31,6 +31,7 @@ export function useAwxView<T extends { id: number }>(options: {
   tableColumns?: ITableColumn<T>[];
   queryParams?: QueryParams;
   disableQueryString?: boolean;
+  defaultSelection?: T[];
 }): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
@@ -110,7 +111,7 @@ export function useAwxView<T extends { id: number }>(options: {
     }
   }
 
-  const selection = useSelected(data?.results ?? [], getItemKey);
+  const selection = useSelected(data?.results ?? [], getItemKey, options.defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;
