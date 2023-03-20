@@ -27,6 +27,8 @@ function getQueryString(queryParams: QueryParams) {
 
 export function useEdaView<T extends { id: number }>(options: {
   url: string;
+  viewPage?: number;
+  viewPerPage?: number;
   toolbarFilters?: IToolbarFilter[];
   tableColumns?: ITableColumn<T>[];
   queryParams?: QueryParams;
@@ -82,10 +84,10 @@ export function useEdaView<T extends { id: number }>(options: {
   }
 
   queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page=${page}`;
+  queryString += `page=${options?.viewPage || page}`;
 
   queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page_size=${perPage}`;
+  queryString += `page_size=${options?.viewPerPage || perPage}`;
 
   url += queryString;
   const fetcher = useFetcher();

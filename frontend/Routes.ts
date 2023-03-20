@@ -159,11 +159,6 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaExecutionEnvironment: `${edaRoutePrefix}/execution-environments/create`,
   EditEdaExecutionEnvironment: `${edaRoutePrefix}/execution-environments/edit/:id`,
 
-  EdaInventories: `${edaRoutePrefix}/inventories`,
-  EdaInventoryDetails: `${edaRoutePrefix}/inventories/details/:id`,
-  CreateEdaInventory: `${edaRoutePrefix}/inventories/create`,
-  EditEdaInventory: `${edaRoutePrefix}/inventories/edit/:id`,
-
   EdaActions: `${edaRoutePrefix}/actions`,
   EdaActionDetails: `${edaRoutePrefix}/actions/details/:id`,
 
