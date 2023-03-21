@@ -59,12 +59,12 @@ describe('teams', () => {
     cy.hasTitle(/^Teams$/);
   });
 
-  it('can create and then delete a basic team', () => {
+  it('can create a team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Teams$/, true);
     cy.clickLink(/^Create team$/);
     cy.typeByLabel(/^Name$/, teamName);
-    cy.typeByLabel(/^Organization$/, organization.name);
+    cy.selectByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName);
   });
@@ -201,7 +201,7 @@ describe('teams', () => {
     });
   });
 
-  it('Can render the team roles page', () => {
+  it('can render the team roles page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);

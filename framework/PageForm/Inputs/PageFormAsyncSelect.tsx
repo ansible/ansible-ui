@@ -59,7 +59,7 @@ export function PageFormAsyncSelect<
     query,
     valueToString,
   } = props;
-  const id = props.id ?? name;
+  const id = props.id ?? name.split('.').join('-');
 
   const {
     control,
@@ -119,6 +119,7 @@ export function PageFormAsyncSelect<
               limit={props.limit}
               openSelectDialog={openSelectDialog}
               loadingError={!!loadingError}
+              labeledBy={`${id ?? ''}-form-group`}
             />
           </PageFormGroup>
         );
@@ -231,7 +232,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   return (
     <InputGroup>
       <Select
-        id={id}
+        toggleId={id}
         aria-labelledby={labeledBy}
         variant={SelectVariant.single}
         hasPlaceholderStyle
