@@ -534,6 +534,7 @@ function TableRow<T extends object>(props: {
 }) {
   const {
     columns,
+    unselectAll,
     selectItem,
     unselectItem,
     isItemSelected,
@@ -597,12 +598,12 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: (_event, isSelecting) => {
-                if (isSelecting) {
-                  selectItem?.(item);
-                } else {
-                  unselectItem?.(item);
+              onSelect: () => {
+                if (!isSelectMultiple) {
+                  unselectAll?.();
                 }
+                selectItem?.(item);
+                onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
