@@ -2,9 +2,6 @@ describe('Job Templates Form', () => {
   before(() => {
     cy.awxLogin();
   });
-  after(() => {
-    cy.cleanupBaselineResourcesForAWX();
-  });
 
   it('can render the templates list page', () => {
     cy.navigateTo(/^Templates$/, false);

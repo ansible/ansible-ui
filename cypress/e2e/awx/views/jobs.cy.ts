@@ -5,7 +5,6 @@ import {
   JobTemplate,
   UnifiedJobList,
 } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
-import { AwxResources } from '../../../support/commands';
 
 describe('jobs', () => {
   let jobTemplate: JobTemplate;
@@ -14,8 +13,8 @@ describe('jobs', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.createBaselineResourcesForAWX().then((resources) => {
-      jobTemplate = (resources as AwxResources).jobTemplate;
+    cy.createAwxJobTemplate().then((template) => {
+      jobTemplate = template;
       // Launch job to populate jobs list
       const templateId = jobTemplate.id ? jobTemplate.id.toString() : '';
       cy.requestPost<UnifiedJobList>(
@@ -31,7 +30,7 @@ describe('jobs', () => {
     // Delete launched job
     const jobId = job.id ? job.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
-    cy.cleanupBaselineResourcesForAWX();
+    cy.deleteAwxJobTemplate(jobTemplate);
   });
 
   it('renders jobs list', () => {

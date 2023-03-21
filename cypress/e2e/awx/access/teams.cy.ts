@@ -5,7 +5,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { User } from '../../../../frontend/awx/interfaces/User';
-import { AwxOrgResource } from '../../../support/commands';
 
 describe('teams', () => {
   let organization: Organization;
@@ -16,36 +15,25 @@ describe('teams', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.createBaselineResourcesForAWX({ onlyCreateOrg: true }).then((resources) => {
-      organization = (resources as AwxOrgResource).organization;
-      // Create team
-      cy.requestPost<Team>('/api/v2/teams/', {
-        name: 'E2E Team ' + randomString(4),
-        organization: organization.id,
-      }).then((testTeam) => (team = testTeam));
-      // Create users for testing access UI
-      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
-        username: 'e2e-user-' + randomString(4),
-        is_superuser: false,
-        is_system_auditor: false,
-        password: 'pw',
-        user_type: 'normal',
-      }).then((testUser) => (user1 = testUser));
-      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
-        username: 'e2e-user-' + randomString(4),
-        is_superuser: false,
-        is_system_auditor: false,
-        password: 'pw',
-        user_type: 'normal',
-      }).then((testUser) => (user2 = testUser));
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxTeam(organization).then((createdTeam) => {
+        team = createdTeam;
+      });
+      cy.createAwxUser(organization).then((user) => {
+        user1 = user;
+      });
+      cy.createAwxUser(organization).then((user) => {
+        user2 = user;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/users/${user1.id}/`, true);
-    cy.requestDelete(`/api/v2/users/${user2.id}/`, true);
-    cy.requestDelete(`/api/v2/teams/${team.id}/`, true);
-    cy.cleanupBaselineResourcesForAWX();
+    cy.deleteAwxUser(user1);
+    cy.deleteAwxUser(user2);
+    cy.deleteAwxTeam(team);
+    cy.deleteAwxOrganization(organization);
   });
 
   it('can render the teams list page', () => {
@@ -53,14 +41,14 @@ describe('teams', () => {
     cy.hasTitle(/^Teams$/);
   });
 
-  it('can create and then delete a basic team', () => {
+  it('can create a basic team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Teams$/, true);
     cy.clickLink(/^Create team$/);
     cy.typeByLabel(/^Name$/, teamName);
     cy.typeByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
-    cy.hasTitle(teamName);
+    cy.hasTitle(teamName); // This team will be cleaned up when we delete the org at the end of the tests
   });
 
   it('can remove users from the team via the teams list row item', () => {
@@ -211,10 +199,7 @@ describe('teams', () => {
   });
 
   it('can delete a team from the details page', () => {
-    cy.requestPost<Team>('/api/v2/teams/', {
-      name: 'E2E Team ' + randomString(4),
-      organization: organization.id,
-    }).then((testTeam) => {
+    cy.createAwxTeam(organization).then((testTeam) => {
       cy.navigateTo(/^Teams$/, true);
       cy.clickRow(testTeam.name);
       cy.hasTitle(testTeam.name);
@@ -222,7 +207,6 @@ describe('teams', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
       cy.hasTitle(/^Teams$/);
-      cy.requestDelete(`/api/v2/teams/${testTeam.id}/`, true);
     });
   });
 
@@ -233,10 +217,7 @@ describe('teams', () => {
   });
 
   it('can delete a team from the teams list row item', () => {
-    cy.requestPost<Team>('/api/v2/teams/', {
-      name: 'E2E Team ' + randomString(4),
-      organization: organization.id,
-    }).then((testTeam) => {
+    cy.createAwxTeam(organization).then((testTeam) => {
       cy.navigateTo(/^Teams$/, true);
       cy.clickRowAction(testTeam.name, /^Delete team$/);
       cy.get('#confirm').click();
@@ -244,18 +225,19 @@ describe('teams', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.requestDelete(`/api/v2/teams/${testTeam.id}/`, true);
     });
   });
 
   it('can delete a team from the teams list toolbar', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.selectRow(team.name);
-    cy.clickToolbarAction(/^Delete selected teams$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete team/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.createAwxTeam(organization).then((testTeam) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.selectRow(testTeam.name);
+      cy.clickToolbarAction(/^Delete selected teams$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete team/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });

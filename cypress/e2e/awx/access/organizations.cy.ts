@@ -4,7 +4,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { ItemsResponse } from '../../../../frontend/Data';
-import { AwxOrgResource } from '../../../support/commands';
 
 describe('organizations', () => {
   let organization: Organization;
@@ -12,13 +11,13 @@ describe('organizations', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.createBaselineResourcesForAWX({ onlyCreateOrg: true }).then((resources) => {
-      organization = (resources as AwxOrgResource).organization;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
   });
 
   after(() => {
-    cy.cleanupBaselineResourcesForAWX();
+    cy.deleteAwxOrganization(organization);
     // Sometimes if tests are stopped in the middle, we get left over organizations
     // Cleanup E2E organizations older than 2 hours
     cy.requestGet<ItemsResponse<Organization>>(
@@ -71,9 +70,7 @@ describe('organizations', () => {
   });
 
   it('deletes an organization from the details page', () => {
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Organization ' + randomString(4),
-    }).then((testOrganization) => {
+    cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo(/^Organizations$/, false);
       cy.clickRow(testOrganization.name);
       cy.hasTitle(testOrganization.name);
@@ -81,7 +78,6 @@ describe('organizations', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.hasTitle(/^Organizations$/);
-      cy.requestDelete(`/api/v2/organizations/${testOrganization.id}/`, true);
     });
   });
 
@@ -92,9 +88,7 @@ describe('organizations', () => {
   });
 
   it('deletes an organization from the organizations list row item', () => {
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Organization ' + randomString(4),
-    }).then((testOrganization) => {
+    cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo(/^Organizations$/, false);
       cy.clickRowAction(testOrganization.name, /^Delete organization$/);
       cy.get('#confirm').click();
@@ -102,14 +96,11 @@ describe('organizations', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.requestDelete(`/api/v2/organizations/${testOrganization.id}/`, true);
     });
   });
 
   it('deletes an organization from the organizations list toolbar', () => {
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Organization ' + randomString(4),
-    }).then((testOrganization) => {
+    cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo(/^Organizations$/, false);
       cy.selectRow(testOrganization.name);
       cy.clickToolbarAction(/^Delete selected organizations$/);
@@ -118,7 +109,6 @@ describe('organizations', () => {
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.requestDelete(`/api/v2/organizations/${testOrganization.id}/`, true);
     });
   });
 });

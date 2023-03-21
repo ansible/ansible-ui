@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { AwxOrgResource } from '../../../support/commands';
 
 describe('inventories', () => {
   let organization: Organization;
@@ -8,13 +7,13 @@ describe('inventories', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.createBaselineResourcesForAWX({ onlyCreateOrg: true }).then((resources) => {
-      organization = (resources as AwxOrgResource).organization;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
   });
 
   after(() => {
-    cy.cleanupBaselineResourcesForAWX();
+    cy.deleteAwxOrganization(organization);
   });
 
   it('renders the inventories list page', () => {

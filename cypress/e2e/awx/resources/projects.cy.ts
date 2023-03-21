@@ -5,7 +5,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { ItemsResponse } from '../../../../frontend/Data';
-import { AwxResources } from '../../../support/commands';
 
 describe('projects', () => {
   let organization: Organization;
@@ -13,16 +12,17 @@ describe('projects', () => {
 
   before(() => {
     cy.awxLogin();
-    cy.createBaselineResourcesForAWX().then((resources) => {
-      organization = (resources as AwxResources).organization;
-      if ((resources as AwxResources).project) {
-        project = (resources as AwxResources).project;
-      }
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+    });
+    cy.createAwxProject().then((proj) => {
+      project = proj;
     });
   });
 
   after(() => {
-    cy.cleanupBaselineResourcesForAWX().then(() => {
+    cy.deleteAwxProject(project);
+    cy.deleteAwxOrganization(organization).then(() => {
       /**
        * Deleting the organization does not delete the underlying projects.
        * So get all projects without an organization and delete them. Multiple test runs
