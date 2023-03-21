@@ -12,10 +12,8 @@ describe('users', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Users ' + randomString(4),
-    }).then((testOrg) => {
-      organization = testOrg;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
   });
 
@@ -24,14 +22,11 @@ describe('users', () => {
   });
 
   beforeEach(() => {
-    cy.requestPost<User>('/api/v2/users/', {
-      username: 'E2E_User_' + randomString(4),
-      password: randomString(12),
-    }).then((testUser) => (user = testUser));
+    cy.createAwxUser(organization).then((testUser) => (user = testUser));
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/users/${user.id}/`, true);
+    cy.deleteAwxUser(user);
   });
 
   it('renders the users list page', () => {
