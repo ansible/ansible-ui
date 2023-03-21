@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v3
@@ -39,6 +40,7 @@ jobs:
     name: Publish Framework
     needs: tag
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v3
@@ -86,6 +88,7 @@ jobs:
     name: Docker Build and Push
     needs: tag
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       REGISTRY: quay.io
