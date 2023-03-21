@@ -8,11 +8,15 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
-const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => (
+
+const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
+    const { t } = useTranslation();
+    return (
   <>
     <p>
-      <strong>Savings per template</strong>
+      <strong>{t('Savings per template')}</strong>
     </p>
     <p>
       Savings per template is the difference between the manual cost and
@@ -24,25 +28,23 @@ const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => (
       automated processes.
     </p>
     <br />
-    <p>The formula used to calculate manual cost:</p>
+    <p>{t('The formula used to calculate manual cost:')}</p>
     <CodeBlock>
       <CodeBlockCode>
-        {`manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs 
-manual cost = manual time * configurable manual cost of automation (e.g. average salary of mid-level Software Engineer)`}
+        {t('manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs manual cost = manual time * configurable manual cost of automation (e.g. average salary of mid-level Software Engineer)')}
       </CodeBlockCode>
     </CodeBlock>
     <br />
 
-    <p>The formula used to calculate automation cost:</p>
+    <p>{t('The formula used to calculate automation cost:')}</p>
     <CodeBlock>
       <CodeBlockCode>
-        {`automation time = successful elapsed total / 3600
-automation cost = automation time * configurable automated process cost`}
+        {t('automation time = successful elapsed total / 3600 automation cost = automation time * configurable automated process cost')}
       </CodeBlockCode>
     </CodeBlock>
     <br />
 
-    <p>The formula used to calculate automation cost:</p>
+    <p>{t('The formula used to calculate automation cost:')}</p>
     <CodeBlock>
       <CodeBlockCode>
         {`savings per template = manual cost - automation cost`}
@@ -50,7 +52,7 @@ automation cost = automation time * configurable automated process cost`}
     </CodeBlock>
     <br />
   </>
-);
+)};
 
 const FailedHostPerTemplateText: FunctionComponent<Record<string, never>> =
   () => (

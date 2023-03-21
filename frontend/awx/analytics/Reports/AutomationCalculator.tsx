@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
     Card,
     CardBody,
@@ -9,7 +10,15 @@ import {
     Spinner,
     Stack,
     StackItem,
-    Toolbar, ToolbarContent, ToolbarItem, Skeleton, ToolbarItemVariant, Pagination, PageSection, PaginationVariant
+    Toolbar,
+    ToolbarContent,
+    ToolbarItem,
+    Skeleton,
+    ToolbarItemVariant,
+    Pagination,
+    PageSection,
+    PaginationVariant,
+    Bullseye
 } from '@patternfly/react-core';
 import useSWR from 'swr';
 import { requestPost } from '../../../Data';
@@ -18,7 +27,7 @@ import TotalSavings from './TotalSavings';
 import CalculationCost from './CalculationCost';
 import AutomationFormula from './AutomationFormula';
 import TemplatesTable from './TemplatesTable';
-import {PageLayout} from "../../../../framework";
+import { useSearchParams } from 'react-router-dom';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -27,12 +36,25 @@ const SpinnerDiv = styled.div`
 `;
 
 export default function AutomationCalculator() {
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const {data, isLoading, error} = useSWR(`/api/v2/analytics/roi_templates/`, requestPost);
-    const response = useSWR(`/api/v2/analytics/roi_templates_options/`, requestPost);
+    const updateSearchParams = (key: string, value: string) => {
+        let updatedSearchParams = new URLSearchParams(searchParams.toString());
+        updatedSearchParams.set(key, value);
+        setSearchParams(updatedSearchParams.toString());
+    };
 
+    let {data, isLoading, error} =
+        useSWR(`/api/v2/analytics/roi_templates/?limit=${searchParams.get('limit') || '6'}&offset=${searchParams.get('offset') || 1}&sort_by=${searchParams.get('sort_by') || 'successful_hosts_savings'}`,
+            requestPost);
+    const { data: options, isLoading: optionsIsLoading, error: optionsError }  = useSWR(`/api/v2/analytics/roi_templates_options/`, requestPost);
+
+
+    // only interval <0,25> is supported by API
     const defaultPerPageOptions = [
-        { title: '5', value: 5 },
+        { title: '4', value: 4 },
+        { title: '6', value: 6 },
+        { title: '8', value: 8 },
         { title: '10', value: 10 },
         { title: '15', value: 15 },
         { title: '20', value: 20 },
@@ -40,6 +62,14 @@ export default function AutomationCalculator() {
     ];
 
     if (!isLoading) console.log(data);
+    if (isLoading || optionsIsLoading) return <PageSection isFilled>
+        <Bullseye>
+            <Spinner />
+        </Bullseye>
+    </PageSection>;
+
+    //TODO render 500 if error || optionsError
+    //TODO loading state if loading || optionsIsLoading
 
     const renderLeft = () => (
         <Card isPlain>
@@ -97,13 +127,13 @@ export default function AutomationCalculator() {
                   <Pagination
                       itemCount={data.meta.count}
                       perPageOptions={defaultPerPageOptions}
-                      perPage={10}
-                      page={1}
+                      perPage={parseInt(searchParams.get('limit') || '20')}
+                      page={parseInt(searchParams.get('offset') || '1')}
                       onPerPageSelect={(_e, perPage: number, page: number) => {
-                          console.log('TODO');
+                          updateSearchParams('limit', perPage.toString());
                       }}
                       onSetPage={(_e, page: number) => {
-                          console.log('TODO');
+                          updateSearchParams('offset', page.toString());
                       }}
                       isCompact
                   />
@@ -144,13 +174,13 @@ export default function AutomationCalculator() {
           <Pagination
               itemCount={data.meta.count}
               perPageOptions={defaultPerPageOptions}
-              perPage={10}
-              page={1}
+              perPage={parseInt(searchParams.get('limit') || '20')}
+              page={parseInt(searchParams.get('offset') || '1' )}
               onPerPageSelect={(_e, perPage: number, page: number) => {
-                  console.log('TODO');
+                  updateSearchParams('limit', perPage.toString());
               }}
               onSetPage={(_e, page: number) => {
-                  console.log('TODO');
+                  updateSearchParams('offset', page.toString());
               }}
               variant={PaginationVariant.bottom}
           />
