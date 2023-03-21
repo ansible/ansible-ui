@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../framework';
-import * as requests from '../../../Data';
+import * as requests from '../../../common/crud/Data';
 import { Teams } from './Teams';
 
 describe('Teams.cy.ts', () => {

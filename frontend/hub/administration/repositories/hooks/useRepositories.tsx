@@ -1,4 +1,4 @@
-import { useGet } from '../../../../common/useItem';
+import { useGet } from '../../../../common/crud/useGet';
 import { HubItemsResponse } from '../../../useHubView';
 import { Repository } from '../Repository';
 

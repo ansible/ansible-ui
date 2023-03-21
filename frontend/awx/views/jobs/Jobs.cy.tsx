@@ -1,5 +1,5 @@
 import { Page } from '@patternfly/react-core';
-import { ItemsResponse } from '../../../Data';
+import { ItemsResponse } from '../../../common/crud/Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import * as deleteJobs from './hooks/useDeleteJobs';
 import Jobs from './Jobs';

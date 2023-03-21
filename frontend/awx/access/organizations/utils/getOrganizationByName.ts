@@ -1,4 +1,4 @@
-import { ItemsResponse, requestGet } from '../../../../Data';
+import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { Organization } from '../../../interfaces/Organization';
 
 export async function getOrganizationByName(organizationName: string) {

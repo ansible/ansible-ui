@@ -32,15 +32,15 @@ import {
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import useSWR from 'swr';
 import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { swrOptions, useFetcher } from '../Data';
 import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
-import styled from 'styled-components';
+import { swrOptions, useFetcher } from './crud/Data';
 
 const MastheadBrandDiv = styled.div`
   display: flex;

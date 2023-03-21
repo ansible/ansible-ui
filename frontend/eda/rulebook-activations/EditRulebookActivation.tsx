@@ -6,22 +6,22 @@ import {
   PageFormCodeEditor,
   PageFormSelectOption,
   PageFormSubmitHandler,
+  PageFormSwitch,
+  PageFormTextInput,
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { useGet } from '../../common/useItem';
-import { requestPost } from '../../Data';
-import { RouteObj } from '../../Routes';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { PageFormTextInput } from '../../../framework';
-import { EdaRulebook } from '../interfaces/EdaRulebook';
-import { EdaProject } from '../interfaces/EdaProject';
-import { PageFormSwitch } from '../../../framework';
-import { API_PREFIX } from '../constants';
-import { EdaResult } from '../interfaces/EdaResult';
-import { EdaExtraVars } from '../interfaces/EdaExtraVars';
-import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+import { requestPost } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
+import { RouteObj } from '../../Routes';
+import { API_PREFIX } from '../constants';
+import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
+import { EdaExtraVars } from '../interfaces/EdaExtraVars';
+import { EdaProject } from '../interfaces/EdaProject';
+import { EdaResult } from '../interfaces/EdaResult';
+import { EdaRulebook } from '../interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 
 export function EditRulebookActivation() {
   const { t } = useTranslation();

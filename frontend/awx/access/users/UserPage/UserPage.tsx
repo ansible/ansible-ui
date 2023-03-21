@@ -13,7 +13,7 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../../framework';
-import { useItem } from '../../../../common/useItem';
+import { useItem } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';

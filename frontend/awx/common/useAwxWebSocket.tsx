@@ -10,7 +10,7 @@ import {
 import useReactWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue, WebSocketHook } from 'react-use-websocket/dist/lib/types';
 import { useAutomationServers } from '../../automation-servers/contexts/AutomationServerProvider';
-import { getCookie } from '../../Data';
+import { getCookie } from '../../common/crud/cookie';
 
 interface Subscriptions {
   [group: string]: { [event: string]: number };

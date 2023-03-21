@@ -4,7 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { ItemsResponse } from '../../../../frontend/Data';
+import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('projects', () => {
   let organization: Organization;
