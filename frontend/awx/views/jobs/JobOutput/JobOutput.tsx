@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
-import { JobEventsComponent } from './JobOutputEvents';
+import { JobOutputEvents } from './JobOutputEvents';
 
 export function JobOutput(props: { job: Job }) {
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      <JobEventsComponent job={job} />
+      <JobOutputEvents job={job} />
     </>
   );
 }
