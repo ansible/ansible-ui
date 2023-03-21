@@ -3,8 +3,16 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
-import { Group, Host, Inventory } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import {
+  Group,
+  Host,
+  Inventory,
+  JobTemplate,
+} from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Project } from '../../frontend/awx/interfaces/Project';
+import { Team } from '../../frontend/awx/interfaces/Team';
+import { User } from '../../frontend/awx/interfaces/User';
 
 declare global {
   namespace Cypress {
@@ -45,6 +53,20 @@ declare global {
       requestGet<T>(url: string): Chainable<T>;
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
+      createAwxOrganization(): Chainable<Organization>;
+      createAwxProject(): Chainable<Project>;
+      createAwxInventory(): Chainable<Inventory>;
+      createAwxJobTemplate(): Chainable<JobTemplate>;
+      createAwxTeam(organization: Organization): Chainable<Team>;
+      createAwxUser(organization: Organization): Chainable<User>;
+
+      deleteAwxOrganization(organization: Organization): Chainable<void>;
+      deleteAwxProject(project: Project): Chainable<void>;
+      deleteAwxInventory(inventory: Inventory): Chainable<void>;
+      deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
+      deleteAwxTeam(team: Team): Chainable<void>;
+      deleteAwxUser(user: User): Chainable<void>;
+
       createInventoryHostGroup(
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
@@ -77,6 +99,7 @@ Cypress.Commands.add(
   }
 );
 
+// Logs into the live server on AWX and triggers creation of baseline resources (Org, Project, Inventory, Template)
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
     'AWX',
@@ -152,30 +175,6 @@ Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: P
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
-
-Cypress.Commands.add(
-  'createInventoryHostGroup',
-  function createInventoryHostGroup(organization: Organization) {
-    cy.requestPost<Inventory>('/api/v2/inventories/', {
-      name: 'E2E Inventory ' + randomString(4),
-      organization: organization.id,
-    }).then((inventory) => {
-      cy.requestPost<Host>('/api/v2/hosts/', {
-        name: 'E2E Host ' + randomString(4),
-        inventory: inventory.id,
-      }).then((host) => {
-        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
-          name: 'E2E Group ' + randomString(4),
-          inventory: inventory.id,
-        }).then((group) => ({
-          inventory,
-          host,
-          group,
-        }));
-      });
-    });
-  }
-);
 
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   cy.getCookie('csrftoken').then((cookie) =>
@@ -304,3 +303,160 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
+
+/**
+ * Resources for testing AWX
+ */
+Cypress.Commands.add('createAwxOrganization', () => {
+  cy.requestPost<Organization>('/api/v2/organizations/', {
+    name: 'E2E Organization ' + randomString(4),
+  }).then((organization) => organization);
+});
+
+Cypress.Commands.add('deleteAwxOrganization', (organization: Organization) => {
+  cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+});
+
+Cypress.Commands.add('createAwxTeam', (organization: Organization) => {
+  cy.requestPost<Team>('/api/v2/teams/', {
+    name: 'E2E Team ' + randomString(4),
+    organization: organization.id,
+  }).then((team) => team);
+});
+
+Cypress.Commands.add('deleteAwxTeam', (team: Team) => {
+  if (team.id) {
+    cy.requestDelete(`/api/v2/teams/${team.id.toString()}/`, true);
+  }
+});
+
+Cypress.Commands.add('createAwxUser', (organization: Organization) => {
+  cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
+    username: 'e2e-user-' + randomString(4),
+    is_superuser: false,
+    is_system_auditor: false,
+    password: 'pw',
+    user_type: 'normal',
+  }).then((user) => user);
+});
+
+Cypress.Commands.add('deleteAwxUser', (user: User) => {
+  if (user.id) {
+    cy.requestDelete(`/api/v2/users/${user.id}/`, true);
+  }
+});
+
+Cypress.Commands.add('createAwxProject', () => {
+  cy.createAwxOrganization().then((organization) => {
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'https://github.com/ansible/ansible-tower-samples',
+    }).then((project) => {
+      waitForProjectToFinishSyncing(project.id);
+    });
+  });
+});
+
+Cypress.Commands.add('deleteAwxProject', (project: Project) => {
+  const organizationId = project.organization;
+  // Delete sync job related to project
+  if (project && project.related && typeof project.related.last_job === 'string') {
+    const projectUpdateEndpoint: string = project.related.last_job;
+    cy.requestDelete(projectUpdateEndpoint);
+  }
+  // Delete project
+  cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+  // Delete organization for the project
+  cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, true);
+});
+
+Cypress.Commands.add('createAwxInventory', () => {
+  cy.createAwxOrganization().then((organization) => {
+    cy.requestPost<Inventory>('/api/v2/inventories/', {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => inventory);
+  });
+});
+
+Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
+  const organizationId = inventory.organization;
+  // Delete organization created for this inventory (this will also delete the inventory)
+  if (organizationId) {
+    cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, true);
+  }
+});
+
+Cypress.Commands.add('createAwxJobTemplate', () => {
+  cy.createAwxProject().then((project) => {
+    cy.createAwxInventory().then((inventory) => {
+      cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
+        name: 'E2E Job Template ' + randomString(4),
+        playbook: 'hello_world.yml',
+        project: project.id.toString(),
+        inventory: inventory.id,
+      }).then((jobTemplate) => jobTemplate);
+    });
+  });
+});
+
+Cypress.Commands.add('deleteAwxJobTemplate', (jobTemplate: JobTemplate) => {
+  const projectId = jobTemplate.project;
+
+  if (jobTemplate.id) {
+    const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
+    cy.requestDelete(`/api/v2/job_templates/${templateId}/`, true);
+  }
+  if (projectId) {
+    cy.requestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
+      // This will take care of deleting the project and the associated org, inventory
+      cy.deleteAwxProject(project);
+    });
+  }
+});
+
+let requestCount = 1;
+
+// Polling to wait till a project is synced
+function waitForProjectToFinishSyncing(projectId: number) {
+  cy.requestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (project.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    waitForProjectToFinishSyncing(projectId);
+  });
+}
+
+Cypress.Commands.add(
+  'createInventoryHostGroup',
+  function createInventoryHostGroup(organization: Organization) {
+    cy.requestPost<Inventory>('/api/v2/inventories/', {
+      name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
+    }).then((inventory) => {
+      cy.requestPost<Host>('/api/v2/hosts/', {
+        name: 'E2E Host ' + randomString(4),
+        inventory: inventory.id,
+      }).then((host) => {
+        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
+          name: 'E2E Group ' + randomString(4),
+          inventory: inventory.id,
+        }).then((group) => ({
+          inventory,
+          host,
+          group,
+        }));
+      });
+    });
+  }
+);

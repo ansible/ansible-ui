@@ -12,36 +12,32 @@ describe('projects', () => {
 
   before(() => {
     cy.awxLogin();
-
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Projects ' + randomString(4),
-    }).then((testOrg) => (organization = testOrg));
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+    });
+    cy.createAwxProject().then((proj) => {
+      project = proj;
+    });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
-    // Deleting the organization does not delete the projects...
-    // So get all projects without an organization and delete them
-    // Multiple test runs could be running, so only delete projects without an organization as those are not being used.
-    // This does cleanup projects that were sync and could not be deleted by other runs, making a self cleaning E2E system for the live server.
-    cy.requestGet<ItemsResponse<Project>>(`/api/v2/projects/?limit=100&organization=null`).then(
-      (itemsResponse) => {
-        for (const project of itemsResponse.results) {
-          cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+    cy.deleteAwxProject(project);
+    cy.deleteAwxOrganization(organization).then(() => {
+      /**
+       * Deleting the organization does not delete the underlying projects.
+       * So get all projects without an organization and delete them. Multiple test runs
+       * could be running, so only delete projects without an organization as those are not being used.
+       * This also cleans up projects that were syncing and could not be deleted by other runs,
+       * making a self cleaning E2E system for the live server.
+       */
+      cy.requestGet<ItemsResponse<Project>>(`/api/v2/projects/?limit=100&organization=null`).then(
+        (itemsResponse) => {
+          for (const project of itemsResponse.results) {
+            cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+          }
         }
-      }
-    );
-  });
-
-  beforeEach(() => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-    }).then((testProject) => (project = testProject));
-  });
-
-  afterEach(() => {
-    cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+      );
+    });
   });
 
   it('projects page', () => {
@@ -122,12 +118,13 @@ describe('projects', () => {
       organization: organization.id,
       scm_type: 'git', // Only projects with scm_type and scm_url can be copied
       scm_url: 'foo',
-    }).then((project) => {
+    }).then((testProject) => {
       cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
+      cy.clickRow(testProject.name);
+      cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
-      cy.hasAlert(`${project.name} copied`);
+      cy.hasAlert(`${testProject.name} copied`);
+      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
     });
   });
 
@@ -137,23 +134,29 @@ describe('projects', () => {
       organization: organization.id,
       scm_type: 'git', // Only projects with scm_type and scm_url can be synced
       scm_url: 'foo',
-    }).then((project) => {
+    }).then((testProject) => {
       cy.navigateTo(/^Projects$/, false);
-      cy.clickRow(project.name);
-      cy.hasTitle(project.name);
+      cy.clickRow(testProject.name);
+      cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Sync project$/);
-      cy.hasAlert(`Syncing ${project.name}`);
+      cy.hasAlert(`Syncing ${testProject.name}`);
+      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
     });
   });
 
   it('project details delete project', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.clickRow(project.name);
-    cy.hasTitle(project.name);
-    cy.clickPageAction(/^Delete project/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/);
-    cy.hasTitle(/^Projects$/);
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+    }).then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.clickRow(testProject.name);
+      cy.hasTitle(testProject.name);
+      cy.clickPageAction(/^Delete project/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.hasTitle(/^Projects$/);
+    });
   });
 
   //   it('projects table row edit project', () => {
@@ -163,23 +166,33 @@ describe('projects', () => {
   //   });
 
   it('projects table row delete project', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.clickRowAction(project.name, /^Delete project$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+    }).then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.clickRowAction(testProject.name, /^Delete project$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
   it('projects toolbar delete projects', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.selectRow(project.name);
-    cy.clickToolbarAction(/^Delete selected projects$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+    }).then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.selectRow(testProject.name);
+      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });
