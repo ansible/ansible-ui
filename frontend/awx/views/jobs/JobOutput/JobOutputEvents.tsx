@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
-import { IJobOutputRow, jobEventToRows, JobOutputRow } from './JobOutputRow';
+import { IJobOutputRow, jobEventToRows, tracebackToRows, JobOutputRow } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
 import { useJobOutputChildrenSummary } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
@@ -19,10 +19,15 @@ export function JobOutputEvents(props: { job: Job }) {
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(job, isJobRunning);
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(job, 10);
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(job, 50);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
+    if (job.result_traceback) {
+      for (const row of tracebackToRows(job.result_traceback)) {
+        jobOutputRows.push(row);
+      }
+    }
     for (let counter = 0; counter < jobEventCount; counter++) {
       const jobEvent = getJobOutputEvent(counter);
       if (!jobEvent) jobOutputRows.push(counter);
@@ -32,7 +37,7 @@ export function JobOutputEvents(props: { job: Job }) {
         }
     }
     return jobOutputRows;
-  }, [getJobOutputEvent, jobEventCount]);
+  }, [getJobOutputEvent, jobEventCount, job.result_traceback]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
   const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => {
@@ -74,7 +79,7 @@ export function JobOutputEvents(props: { job: Job }) {
 
       return true;
     });
-  }, [childrenSummary, collapsed, jobOutputRows]);
+  }, [isFlatMode, childrenSummary, collapsed, jobOutputRows]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(

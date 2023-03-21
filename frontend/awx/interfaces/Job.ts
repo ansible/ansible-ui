@@ -32,6 +32,7 @@ export interface Job {
     source_workflow_job?: string;
     schedule?: string;
   };
+  result_traceback?: string;
   summary_fields: {
     organization: {
       id: number;

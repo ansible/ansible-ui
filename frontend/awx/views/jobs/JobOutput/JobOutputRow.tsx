@@ -61,7 +61,7 @@ export interface IJobOutputRow {
   uuid: string;
   playUuid: string;
   taskUuid: string;
-  line: number;
+  line: number | undefined;
   stdout: string;
   eventLine: number;
   canCollapse: boolean;
@@ -108,6 +108,25 @@ export function jobEventToRows(jobEvent: JobEvent): IJobOutputRow[] {
       canCollapse: canCollapse && isHeaderLine,
       isHeaderLine,
       created: jobEvent.created,
+    };
+    return jobOutputRow;
+  });
+}
+
+export function tracebackToRows(output: string): IJobOutputRow[] {
+  const lines = output.split('\n');
+  return lines.map((stdout, eventLine) => {
+    const jobOutputRow: IJobOutputRow = {
+      line: undefined,
+      counter: 0,
+      stdout,
+      uuid: '',
+      playUuid: '',
+      taskUuid: '',
+      eventLine,
+      canCollapse: false,
+      isHeaderLine: false,
+      created: undefined,
     };
     return jobOutputRow;
   });
