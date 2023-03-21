@@ -11,9 +11,15 @@ export interface ICollapsed {
   [uuid: string]: boolean;
 }
 
-export function JobEventsComponent(props: { job: Job }) {
-  const childrenSummary = useJobOutputChildrenSummary(props.job);
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(props.job, 10);
+const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
+
+export function JobOutputEvents(props: { job: Job }) {
+  const { job } = props;
+  // TODO set job status on ws event change
+  const isJobRunning = !job.status || runningJobTypes.includes(job.status);
+
+  const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(job, isJobRunning);
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(job, 10);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -39,6 +45,9 @@ export function JobEventsComponent(props: { job: Job }) {
 
   const nonCollapsedRows = useMemo(() => {
     return jobOutputRows.filter((row) => {
+      if (isFlatMode) {
+        return true;
+      }
       // Check if row is a number, if it is, it has not loaded and is the counter for the event
       if (typeof row === 'number') {
         if (childrenSummary) {

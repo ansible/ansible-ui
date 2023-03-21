@@ -18,8 +18,11 @@ export function useJobOutput(job: Job, pageSize: number) {
 
         const page = Math.floor((counter + 1) / pageSize) + 1;
 
+        const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
         requestGet<ItemsResponse<JobEvent>>(
-          `/api/v2/jobs/${job.id.toString()}/job_events/?order_by=counter&page=${page}&page_size=${pageSize}`
+          `/api/v2/${
+            job.type
+          }s/${job.id.toString()}/${eventsSlug}/?order_by=counter&page=${page}&page_size=${pageSize}`
         )
           .then((itemsResponse) => {
             setJobEventCount(itemsResponse.count);
@@ -38,7 +41,7 @@ export function useJobOutput(job: Job, pageSize: number) {
       }
       return jobEvent;
     },
-    [job.id, jobEvents, pageSize]
+    [job.id, job.type, jobEvents, pageSize]
   );
 
   return { jobEventCount, getJobOutputEvent, queryJobOutputEvent };
