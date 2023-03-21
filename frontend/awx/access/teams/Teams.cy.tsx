@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import { MemoryRouter } from 'react-router-dom';
 import { PageDialogProvider } from '../../../../framework';
-import * as requests from '../../../common/crud/Data';
+import { useOptions } from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
 describe('Teams.cy.ts', () => {
@@ -82,7 +82,7 @@ describe('Teams.cy.ts', () => {
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Create Team button is enabled if the user has permission to create teams', () => {
-      cy.stub(requests, 'useOptions').callsFake(() => ({
+      cy.stub(useOptions).callsFake(() => ({
         data: {
           actions: {
             POST: {
@@ -142,7 +142,7 @@ describe('Teams.cy.ts', () => {
       ).as('emptyList');
     });
     it('Empty state is displayed correctly for user with permission to create teams', () => {
-      cy.stub(requests, 'useOptions').callsFake(() => ({
+      cy.stub(useOptions).callsFake(() => ({
         data: {
           actions: {
             POST: {
@@ -173,7 +173,7 @@ describe('Teams.cy.ts', () => {
       cy.contains('button', /^Create team$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
-      cy.stub(requests, 'useOptions').callsFake(() => ({
+      cy.stub(useOptions).callsFake(() => ({
         data: {
           actions: {},
         },
