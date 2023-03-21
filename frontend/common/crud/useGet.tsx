@@ -28,7 +28,9 @@ export function useGet<T>(url: string, query?: Record<string, string | number | 
     url += '?' + new URLSearchParams(normalizedQuery).toString();
   }
 
-  const response = useSWR<T>(url, getRequest);
+  const response = useSWR<T>(url, getRequest, {
+    dedupingInterval: 0,
+  });
 
   const refresh = useCallback(() => {
     void response.mutate();

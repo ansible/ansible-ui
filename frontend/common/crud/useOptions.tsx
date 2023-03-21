@@ -10,7 +10,9 @@ export function useOptions<T>(url: string) {
   const abortController = useRef(new AbortController());
   useEffect(() => () => abortController.current.abort(), []);
 
-  const response = useSWR<T>(url, optionsRequest);
+  const response = useSWR<T>(url, optionsRequest, {
+    dedupingInterval: 0,
+  });
 
   const refresh = useCallback(() => {
     void response.mutate();
