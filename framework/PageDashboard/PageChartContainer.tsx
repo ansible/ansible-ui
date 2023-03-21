@@ -1,19 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-
-const SizingDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  flex-grow: 1;
-  align-self: stretch;
-  justify-self: stretch;
-  position: relative;
-`;
-
-const ChildrenPropsDiv = styled.div`
-  position: absolute;
-`;
 
 export interface PageContainerSize {
   width: number;
@@ -46,8 +32,18 @@ export function PageChartContainer(props: { children: (size: PageContainerSize) 
   useEffect(() => updateSize(), [ref, updateSize]);
   useResizeObserver(ref, () => updateSize());
   return (
-    <SizingDiv ref={ref}>
-      <ChildrenPropsDiv>{props.children(containerSize)}</ChildrenPropsDiv>
-    </SizingDiv>
+    <div
+      ref={ref}
+      style={{
+        width: '100%',
+        height: '100%',
+        flexGrow: 1,
+        alignSelf: 'stretch',
+        justifySelf: 'stretch',
+        position: 'relative',
+      }}
+    >
+      <div style={{ position: 'absolute' }}>{props.children(containerSize)}</div>
+    </div>
   );
 }
