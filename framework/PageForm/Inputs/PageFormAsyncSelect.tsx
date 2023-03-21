@@ -17,6 +17,7 @@ import {
   FieldValues,
   useFormContext,
 } from 'react-hook-form';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/capitalize';
 import { PageFormGroup } from './PageFormGroup';
 
@@ -30,6 +31,7 @@ export interface PageFormAsyncSelectProps<
   label: string;
   placeholder: string;
   loadingPlaceholder: string;
+  loadingErrorText: string;
   query: (page: number) => Promise<{ total: number; values: SelectionType[] }>;
   valueToString: (value: SelectionType | undefined) => string;
   isRequired?: boolean;
@@ -47,14 +49,15 @@ export function PageFormAsyncSelect<
   SelectionType = any
 >(props: PageFormAsyncSelectProps<TFieldValues, TFieldName, SelectionType>) {
   const {
-    name,
+    isRequired,
     label,
+    loadingErrorText,
+    loadingPlaceholder,
+    name,
+    openSelectDialog,
+    placeholder,
     query,
     valueToString,
-    isRequired,
-    placeholder,
-    loadingPlaceholder,
-    openSelectDialog,
   } = props;
   const id = props.id ?? name;
 
@@ -67,6 +70,8 @@ export function PageFormAsyncSelect<
 
   const [loadingError, setLoadingError] = useState<Error>();
 
+  const [frameworkTranslations] = useFrameworkTranslations();
+
   const queryHandler = useCallback(
     (page: number) => {
       setLoadingError(undefined);
@@ -77,9 +82,14 @@ export function PageFormAsyncSelect<
           }
           return result;
         })
-        .catch((err) => (err instanceof Error ? setLoadingError(err) : 'Unknown error'));
+        .catch((err) => {
+          err instanceof Error
+            ? setLoadingError(err)
+            : setLoadingError(new Error(frameworkTranslations.unknownError));
+          return { total: 0, values: [] };
+        });
     },
-    [name, query, setValue]
+    [frameworkTranslations.unknownError, name, query, setValue]
   );
 
   return (
@@ -92,7 +102,7 @@ export function PageFormAsyncSelect<
           <PageFormGroup
             id={id}
             label={label}
-            helperTextInvalid={loadingError ? 'Error loading organizations.' : error?.message}
+            helperTextInvalid={loadingError ? loadingErrorText : error?.message}
             isRequired={isRequired}
           >
             <AsyncSelect<SelectionType>
@@ -131,7 +141,7 @@ export interface AsyncSelectProps<SelectionType> {
   value: SelectionType | undefined;
   valueToString: (value: SelectionType | undefined) => string;
   onSelect: (value: SelectionType | undefined) => void;
-  query: (page: number) => Promise<{ total: number; values: SelectionType[] }>;
+  query: (pageSize: number) => Promise<{ total: number; values: SelectionType[] }>;
   placeholder: string;
   loadingPlaceholder: string;
   labeledBy?: string;
@@ -155,13 +165,14 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
     placeholder,
     loadingPlaceholder,
     labeledBy,
-    valueToString,
     query,
     validated,
     loadingError,
   } = props;
 
   const [open, setOpen] = useState(false);
+
+  const [valueToString] = useState(() => props.valueToString);
 
   const value = useMemo(() => {
     if (!props.value) return undefined;
@@ -171,12 +182,17 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   const [options, setOptions] = useState<SelectOptionObject[]>([]);
   const [useSelectDialog, setUseSelectDialog] = useState(false);
 
+  const [frameworkTranslations] = useFrameworkTranslations();
+
   const [loading, setLoading] = useState(false);
   const reload = useCallback(() => {
     setLoading((loading) => {
       if (loading) return loading;
       query(props.limit)
         .then((result) => {
+          if (result.total === 1 && result.values.length === 1) {
+            onSelect(result.values[0]);
+          }
           if (result.total > props.limit) {
             setUseSelectDialog(true);
           } else {
@@ -190,7 +206,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         .finally(() => setLoading(false));
       return true;
     });
-  }, [props.limit, query, valueToString]);
+  }, [onSelect, props.limit, query, valueToString]);
 
   useEffect(reload, [reload]);
 
@@ -221,7 +237,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         hasPlaceholderStyle
         placeholderText={
           loadingError
-            ? 'Click to refresh'
+            ? frameworkTranslations.clickToRefresh
             : loadingPlaceholder
             ? loading
               ? loadingPlaceholder

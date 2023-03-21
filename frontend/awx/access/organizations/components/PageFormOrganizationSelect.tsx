@@ -70,6 +70,7 @@ export function PageFormSelectOrganization<
       valueToString={(value) => (value as Organization)?.name ?? ''}
       placeholder={t('Select organization')}
       loadingPlaceholder={t('Loading organizations...')}
+      loadingErrorText={t('Error loading organizations')}
       isRequired={props.isRequired}
       limit={200}
       openSelectDialog={openSelectDialog}
