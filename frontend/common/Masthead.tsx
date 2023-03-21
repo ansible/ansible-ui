@@ -75,7 +75,7 @@ export function AnsibleMasthead(props: {
   const openAnsibleAboutModal = useAnsibleAboutModal();
 
   const brand: string = process.env.BRAND ?? '';
-  const product: string = process.env.PRODUCT ?? t('Ansible');
+  const product: string = process.env.PRODUCT ?? t('AWX');
 
   return (
     <Masthead display={{ default: 'inline' }}>

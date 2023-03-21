@@ -32,7 +32,7 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
         <Stack style={{ paddingBottom: 8 }}>
           {t('Welcome to')}
           <Title headingLevel="h1" size={TitleSizes['2xl']}>
-            {process.env.PRODUCT ?? t('Ansible')}
+            {process.env.PRODUCT ?? t('AWX')}
           </Title>
         </Stack>
       }
