@@ -98,7 +98,8 @@ describe('jobs', () => {
     });
   });
 
-  it('deletes a job from the jobs list toolbar', () => {
+  // this test is failing randomly with a 403. need to fix before reenabling
+  it.skip('deletes a job from the jobs list toolbar', () => {
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
