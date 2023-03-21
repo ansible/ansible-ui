@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
+import { useBulkActionDialog } from '../../../../../framework/PageDialogs/BulkActionDialog';
 import { requestPost } from '../../../../Data';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';

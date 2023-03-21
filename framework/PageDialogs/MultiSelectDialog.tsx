@@ -1,25 +1,25 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
+import { ITableColumn, PageTable } from '../PageTable/PageTable';
+import { IToolbarFilter } from '../PageTable/PageToolbar';
+import { ISelected } from '../PageTable/useTableItems';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
-import { ITableColumn, PageTable } from './PageTable/PageTable';
-import { IToolbarFilter } from './PageTable/PageToolbar';
-import { ISelected } from './PageTable/useTableItems';
-import { useFrameworkTranslations } from './useFrameworkTranslations';
-import { IView } from './useView';
 
-export type SelectSingleDialogProps<T extends object> = {
+export type MultiSelectDialogProps<T extends object> = {
   title: string;
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
   toolbarFilters: IToolbarFilter[];
-  onSelect: (item: T) => void;
+  onSelect: (items: T[]) => void;
   confirmText?: string;
   cancelText?: string;
   emptyStateTitle?: string;
   errorStateTitle?: string;
 };
 
-export function SelectSingleDialog<T extends object>(props: SelectSingleDialogProps<T>) {
+export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
@@ -38,9 +38,7 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           id="confirm"
           onClick={() => {
             onClose();
-            if (view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0]);
-            }
+            onSelect(view.selectedItems);
           }}
           isAriaDisabled={view.selectedItems.length === 0}
         >
@@ -66,15 +64,12 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           {...view}
           emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
           errorStateTitle={props.errorStateTitle ?? translations.errorText}
+          showSelect
           disableCardView
           disableListView
           disableColumnManagement
           compact
           disableBodyPadding
-          onSelect={(item) => {
-            view.unselectAll();
-            view.selectItem(item);
-          }}
         />
       </div>
     </Modal>

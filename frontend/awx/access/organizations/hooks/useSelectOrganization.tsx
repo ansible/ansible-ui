@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog, useSelectDialog } from '../../../../../framework';
-import { SelectSingleDialog } from '../../../../../framework/SelectSingleDialog';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { Organization } from '../../../interfaces/Organization';
 import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
