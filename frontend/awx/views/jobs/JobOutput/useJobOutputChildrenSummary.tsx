@@ -10,14 +10,9 @@ export interface IJobOutputChildrenSummary {
 
 export function useJobOutputChildrenSummary(job: Job, isJobRunning: boolean) {
   let isFlatMode = isJobRunning || location.search.length > 1 || job.type !== 'job';
-  let response;
-  try {
-    response = useGet2<IJobOutputChildrenSummary>({
-      url: `/api/v2/jobs/${job.id}/job_events/children_summary/`,
-    });
-  } catch {
-    isFlatMode = true;
-  }
+  const response = useGet2<IJobOutputChildrenSummary>({
+    url: `/api/v2/jobs/${job.id}/job_events/children_summary/`,
+  });
   const { data, error } = response;
 
   if (error) {
