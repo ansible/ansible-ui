@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
 import { Team } from '../../interfaces/Team';
 import { getAwxError } from '../../useAwxView';
@@ -16,6 +17,7 @@ import { getOrganizationByName } from '../organizations/utils/getOrganizationByN
 export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const postRequest = usePostRequest<Omit<Team, 'id'>, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       try {
@@ -27,7 +29,7 @@ export function CreateTeam() {
       } catch {
         throw new Error(t('Organization not found.'));
       }
-      const team = await requestPost<Team>('/api/v2/teams/', editedTeam);
+      const team = await postRequest('/api/v2/teams/', editedTeam);
       navigate(RouteObj.TeamDetails.replace(':id', team.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));
@@ -51,7 +53,8 @@ export function EditTeam() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: team } = useSWR<Team>(`/api/v2/teams/${id.toString()}/`, requestGet, swrOptions);
+  const { data: team } = useGet<Team>(`/api/v2/teams/${id.toString()}/`);
+  const patchRequest = usePatchRequest<Team, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (editedTeam, setError) => {
     try {
       try {
@@ -63,7 +66,7 @@ export function EditTeam() {
       } catch {
         throw new Error(t('Organization not found.'));
       }
-      await requestPatch<Team>(`/api/v2/teams/${id}/`, editedTeam);
+      await patchRequest(`/api/v2/teams/${id}/`, editedTeam);
       navigate(-1);
     } catch (err) {
       setError(await getAwxError(err));

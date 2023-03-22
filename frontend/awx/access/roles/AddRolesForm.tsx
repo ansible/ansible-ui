@@ -5,7 +5,7 @@ import { PageForm, PageFormSelectOption, useBulkActionDialog } from '../../../..
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPost } from '../../../Data';
+import { requestPost } from '../../../common/crud/Data';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';

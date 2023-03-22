@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import { requestPatch, requestPost } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { useGet } from '../../../common/useItem';
-import { requestPatch, requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
-import { EdaRole } from '../../interfaces/EdaRole';
 import { API_PREFIX } from '../../constants';
+import { EdaRole } from '../../interfaces/EdaRole';
 
 export function EditRole() {
   const { t } = useTranslation();

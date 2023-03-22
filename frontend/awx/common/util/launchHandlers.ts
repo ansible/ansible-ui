@@ -1,4 +1,4 @@
-import { requestGet, requestPost } from '../../../Data';
+import { requestGet, requestPost } from '../../../common/crud/Data';
 import { Launch } from '../../interfaces/Launch';
 
 import { Job } from '../../interfaces/Job';

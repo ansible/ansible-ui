@@ -2,7 +2,7 @@ import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/reac
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CopyCell, PageHeader, PageLayout } from '../../../../framework';
-import { requestPost } from '../../../Data';
+import { requestPost } from '../../../common/crud/Data';
 
 export function Token() {
   const { t } = useTranslation();

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../common/columns';
-import { getItemKey, requestDelete } from '../../../Data';
+import { getItemKey, requestDelete } from '../../../common/crud/Data';
 import { Credential } from '../../interfaces/Credential';
 import { useCredentialsColumns } from './Credentials';
 

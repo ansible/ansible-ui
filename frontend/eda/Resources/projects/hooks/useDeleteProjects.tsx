@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
-import { requestDelete } from '../../../../Data';
+import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../hub/useHubView';
+import { API_PREFIX } from '../../../constants';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { useProjectColumns } from './useProjectColumns';
-import { API_PREFIX } from '../../../constants';
 
 export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) {
   const { t } = useTranslation();

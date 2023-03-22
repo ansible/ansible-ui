@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useGet } from '../common/useItem';
 import { User } from '../awx/interfaces/User';
+import { useGet } from './crud/useGet';
 
 const ActiveUserContext = createContext<User | null | undefined>(undefined);
 

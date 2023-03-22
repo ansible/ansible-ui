@@ -6,7 +6,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestGet, requestPatch, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { getAwxError } from '../../useAwxView';

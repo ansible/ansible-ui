@@ -15,9 +15,9 @@ import {
   PageLayout,
   SinceCell,
 } from '../../../../framework';
+import { requestPost } from '../../../common/crud/Data';
+import { useItem } from '../../../common/crud/useGet';
 import { StatusCell } from '../../../common/StatusCell';
-import { useItem } from '../../../common/useItem';
-import { requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { NodeTypeCell } from './Instances';

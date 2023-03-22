@@ -10,7 +10,7 @@ import {
   PageTable,
 } from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
-import { useOptions } from '../../../../Data';
+import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
@@ -32,7 +32,7 @@ export function UserTeams(props: { user: User }) {
   });
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/users/' });
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/users/');
   const canAddTeam = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(

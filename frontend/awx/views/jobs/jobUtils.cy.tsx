@@ -1,5 +1,5 @@
+import { ItemsResponse } from '../../../common/crud/Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { ItemsResponse } from '../../../Data';
 import { getJobsAPIUrl, getRelaunchEndpoint } from './jobUtils';
 
 describe('jobUtils', () => {

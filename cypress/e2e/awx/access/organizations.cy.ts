@@ -3,7 +3,7 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { ItemsResponse } from '../../../../frontend/Data';
+import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('organizations', () => {
   let organization: Organization;

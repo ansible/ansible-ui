@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet } from '../../../../Data';
+import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTemplate';
 

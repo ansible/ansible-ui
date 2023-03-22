@@ -5,8 +5,8 @@ import { PageHeader } from '../../framework';
 import { useBulkActionDialog } from '../../framework/BulkActionDialog';
 import { randomString } from '../../framework/utils/random-string';
 import { Team } from '../awx/interfaces/Team';
-import { requestPost } from '../Data';
 import { RouteObj } from '../Routes';
+import { requestPost } from './crud/Data';
 
 export default function Debug() {
   const breadcrumbs = useMemo(

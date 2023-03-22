@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestPost } from '../../../common/crud/Data';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { requestPost } from '../../../Data';
 import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';

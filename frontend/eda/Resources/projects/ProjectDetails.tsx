@@ -15,12 +15,12 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/useItem';
+import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { StatusLabelCell } from '../../common/StatusLabelCell';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
 
 export function ProjectDetails() {
   const { t } = useTranslation();

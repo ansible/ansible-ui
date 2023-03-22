@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
 import { Chart, ChartAxis, ChartLine, ChartTooltip } from '@patternfly/react-charts';
+import { useState } from 'react';
 
+import { Card, CardBody, CardHeader } from '@patternfly/react-core';
+import { c_content_small_FontSize } from '@patternfly/react-tokens';
 import chart_color_green_400 from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import chart_color_red_300 from '@patternfly/react-tokens/dist/js/chart_color_red_300';
-import { c_content_small_FontSize } from '@patternfly/react-tokens';
-import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useGet } from '../../common/useItem';
-import { EdaAction } from '../interfaces/EdaAction';
+import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
+import { EdaAction } from '../interfaces/EdaAction';
 import { EdaResult } from '../interfaces/EdaResult';
 
 interface TickType {

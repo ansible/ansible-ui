@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
-import { requestDelete } from '../../../../Data';
+import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../hub/useHubView';
+import { API_PREFIX } from '../../../constants';
 import { EdaRole } from '../../../interfaces/EdaRole';
 import { useRoleColumns } from './useRoleColumns';
-import { API_PREFIX } from '../../../constants';
 
 export function useDeleteRoles(onComplete: (roles: EdaRole[]) => void) {
   const { t } = useTranslation();

@@ -1,17 +1,17 @@
+import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
-import { FieldValues } from 'react-hook-form';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../common/crud/Data';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
-import { Organization } from '../../interfaces/Organization';
-import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { getAwxError } from '../../useAwxView';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { Organization } from '../../interfaces/Organization';
+import { getAwxError } from '../../useAwxView';
 
 interface OrganizationFields extends FieldValues {
   organization: Organization;

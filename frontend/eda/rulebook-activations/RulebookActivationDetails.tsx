@@ -1,4 +1,6 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -15,25 +17,23 @@ import {
   Scrollable,
   useInMemoryView,
 } from '../../../framework';
+import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/useItem';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
+import { API_PREFIX } from '../constants';
 import { EdaJob } from '../interfaces/EdaJob';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useActivationActionColumns } from './hooks/useActivationActionColumns';
 import { useActivationActionFilters } from './hooks/useActivationActionFilters';
 import { useActivationActionsActions } from './hooks/useActivationActionsActions';
-import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { API_PREFIX } from '../constants';
-import { useMemo } from 'react';
-import { TrashIcon } from '@patternfly/react-icons';
 import {
   useDisableActivation,
   useRelaunchActivation,
   useRestartActivation,
 } from './hooks/useActivationDialogs';
+import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();

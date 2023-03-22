@@ -24,10 +24,10 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { useItem } from '../../../common/useItem';
+import { useItem } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
-import { handleLaunch } from '../../common/util/launchHandlers';
 import { UserDateDetail } from '../../common/UserDateDetail';
+import { handleLaunch } from '../../common/util/launchHandlers';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 

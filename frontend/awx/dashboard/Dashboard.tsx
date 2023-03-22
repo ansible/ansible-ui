@@ -1,13 +1,13 @@
 /* eslint-disable i18next/no-literal-string */
 import { Banner, Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, pfDanger, pfSuccess, Scrollable } from '../../../framework';
 import { PageGrid } from '../../../framework/components/PageGrid';
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
-import { ItemsResponse, useGet2 } from '../../Data';
+import { ItemsResponse } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { DashboardJobsCard } from './cards/DashboardJobs';
@@ -200,21 +200,21 @@ interface IDashboardData {
 }
 
 function useExecutionEnvironments(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
   return useAwxItemsResponse<ExecutionEnvironment>({
     url: '/api/v2/execution_environments/',
     query,
-    errorTitle: t('Error querying execution environments.'),
   });
 }
 
 function useAwxItemsResponse<T>(options: {
   url: string;
   query?: Record<string, string | number | boolean>;
-  errorTitle?: string;
 }) {
-  const { url, query, errorTitle } = options;
-  const response = useGet2<ItemsResponse<T>>({ url, query, errorTitle });
-  const refresh = useCallback(() => void response.mutate(), [response]);
-  return { ...response.data, loading: !response.data && !response.error, refresh };
+  const { url, query } = options;
+  const response = useGet<ItemsResponse<T>>(url, query);
+  return {
+    ...response.data,
+    loading: !response.data && !response.error,
+    refresh: response.refresh,
+  };
 }
