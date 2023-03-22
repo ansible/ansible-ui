@@ -4,7 +4,10 @@ import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, jobEventToRows, tracebackToRows, JobOutputRow } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
-import { useJobOutputChildrenSummary } from './useJobOutputChildrenSummary';
+import {
+  useJobOutputChildrenSummary,
+  IJobOutputChildrenSummary,
+} from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
 
 export interface ICollapsed {
@@ -48,38 +51,12 @@ export function JobOutputEvents(props: { job: Job }) {
     }));
   };
 
-  const nonCollapsedRows = useMemo(() => {
-    return jobOutputRows.filter((row) => {
-      if (isFlatMode) {
-        return true;
-      }
-      // Check if row is a number, if it is, it has not loaded and is the counter for the event
-      if (typeof row === 'number') {
-        if (childrenSummary) {
-          for (const counterKey in childrenSummary.children_summary) {
-            const summary = childrenSummary.children_summary[counterKey];
-            if (summary) {
-              const counter = Number(counterKey);
-              if (counter < row) {
-                if (counter + summary.numChildren > row) {
-                  if (collapsed[counter]) {
-                    return false;
-                  }
-                }
-              }
-            }
-          }
-        }
-        return true;
-      }
-
-      // Only collapse the row if it is not the main event for the play or task, which should still show
-      if (collapsed[row.playUuid] && row.playUuid !== row.uuid) return false;
-      if (collapsed[row.taskUuid] && row.taskUuid !== row.uuid) return false;
-
-      return true;
-    });
-  }, [isFlatMode, childrenSummary, collapsed, jobOutputRows]);
+  const nonCollapsedRows = useNonCollapsedRows(
+    isFlatMode,
+    childrenSummary,
+    collapsed,
+    jobOutputRows
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
@@ -155,4 +132,49 @@ export function JobOutputEvents(props: { job: Job }) {
       </div>
     </>
   );
+}
+
+function useNonCollapsedRows(
+  isFlatMode: boolean,
+  childrenSummary: IJobOutputChildrenSummary | undefined,
+  collapsed: ICollapsed,
+  jobOutputRows: (IJobOutputRow | number)[]
+) {
+  return useMemo(() => {
+    return jobOutputRows.filter((row) => {
+      if (isFlatMode) {
+        return true;
+      }
+
+      // If row is a number, it has not loaded and is the counter for the event
+      if (typeof row !== 'number') {
+        // Only collapse the row if it is not the main event for the play or task,
+        // which should still show
+        if (collapsed[row.playUuid] && row.playUuid !== row.uuid) return false;
+        if (collapsed[row.taskUuid] && row.taskUuid !== row.uuid) return false;
+
+        return true;
+      }
+
+      if (!childrenSummary) {
+        return true;
+      }
+
+      for (const counterKey in childrenSummary.children_summary) {
+        const summary = childrenSummary.children_summary[counterKey];
+        if (!summary) {
+          return true;
+        }
+        const counter = Number(counterKey);
+
+        if (counter >= row) {
+          return true;
+        }
+        if (counter + summary.numChildren > row && collapsed[counter]) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [isFlatMode, childrenSummary, collapsed, jobOutputRows]);
 }

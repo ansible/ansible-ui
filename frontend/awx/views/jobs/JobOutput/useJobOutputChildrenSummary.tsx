@@ -19,7 +19,7 @@ export function useJobOutputChildrenSummary(job: Job, isJobRunning: boolean) {
     isFlatMode = true;
   }
   return {
-    childrenSummary: isFlatMode || !data ? {} : data,
+    childrenSummary: isFlatMode || !data ? undefined : data,
     isFlatMode: isFlatMode || !data,
   };
 }
