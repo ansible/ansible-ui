@@ -101,7 +101,11 @@ export function TemplateDetail() {
         title={template?.name}
         breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
-          <PageActions<JobTemplate> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<JobTemplate>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={template}
+          />
         }
       />
       {template ? (

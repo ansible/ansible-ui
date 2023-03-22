@@ -23,9 +23,7 @@ export function useGet<T>(
     url += '?' + new URLSearchParams(normalizedQuery).toString();
   }
 
-  const response = useSWR<T>(url, getRequest, {
-    dedupingInterval: 0,
-  });
+  const response = useSWR<T>(url, getRequest, { dedupingInterval: 0 });
 
   const refresh = useCallback(() => {
     void response.mutate();

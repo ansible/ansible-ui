@@ -1,5 +1,3 @@
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
 import { CreateTeam } from './TeamForm';
 
 describe('TeamForm.cy.ts', () => {
@@ -24,26 +22,14 @@ describe('TeamForm.cy.ts', () => {
         message: 'Internal Server Error',
       }
     );
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateTeam />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateTeam />);
     cy.typeByLabel(/^Name$/, 'Test');
     cy.typeByLabel(/^Organization$/, 'Default');
     cy.clickButton(/^Create team$/);
     cy.contains('Error validating organization').should('be.visible');
   });
   it('Create Team - Validation on name and organization', () => {
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateTeam />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateTeam />);
     cy.clickButton(/^Create team$/);
     cy.contains('Name is required.').should('be.visible');
     cy.contains('Organization is required.').should('be.visible');
