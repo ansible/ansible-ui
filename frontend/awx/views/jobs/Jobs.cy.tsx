@@ -1,4 +1,5 @@
 import { Page } from '@patternfly/react-core';
+import { MemoryRouter } from 'react-router';
 import { ItemsResponse } from '../../../common/crud/Data';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import * as deleteJobs from './hooks/useDeleteJobs';
@@ -19,9 +20,11 @@ describe('Jobs.cy.ts', () => {
   });
   it('Component renders', () => {
     cy.mount(
-      <Page>
-        <Jobs />
-      </Page>
+      <MemoryRouter>
+        <Page>
+          <Jobs />
+        </Page>
+      </MemoryRouter>
     );
     cy.hasTitle(/^Jobs$/);
     cy.get('table').find('tr').should('have.length', 11);
@@ -29,9 +32,11 @@ describe('Jobs.cy.ts', () => {
   it('Triggers delete action from toolbar menu', () => {
     const spy = cy.spy(deleteJobs, 'useDeleteJobs');
     cy.mount(
-      <Page>
-        <Jobs />
-      </Page>
+      <MemoryRouter>
+        <Page>
+          <Jobs />
+        </Page>
+      </MemoryRouter>
     );
     cy.fixture('jobs.json').then((response: ItemsResponse<UnifiedJob>) => {
       const job = response.results[0];
