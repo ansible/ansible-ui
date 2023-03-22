@@ -6,7 +6,6 @@ import {
   Spinner,
   Title,
 } from '@patternfly/react-core';
-//import currencyFormatter from '../../../../Utilities/currencyFormatter';
 import styled from 'styled-components';
 import currencyFormatter from '../utilities/currencyFormatter';
 

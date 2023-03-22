@@ -8,7 +8,6 @@ import {
     Tooltip,
     TooltipPosition,
     Label,
-    ToolbarContent, ToolbarItem, Skeleton, Toolbar, ToolbarItemVariant, Pagination
 } from '@patternfly/react-core';
 import { AnalyticsErrorState } from './ErrorStates';
 import { useActiveUser } from '../../../common/useActiveUser';
@@ -17,15 +16,11 @@ import { requestGet } from '../../../Data';
 import { TAGS }from './constants';
 import useSWR from 'swr';
 import AutomationCalculator from './AutomationCalculator'
-import { PageBody } from '../../../../framework/PageBody';
-import {PageTableViewTypeE} from "../../../../framework/PageTable/PageTableViewType";
 
 
 export default function Reports() {
   const activeUser = useActiveUser();
     const { data, isLoading, error } = useSWR(`/api/v2/analytics/report/automation_calculator/`, requestGet);
-    //const data = useSWR(`/api/v2/analytics/roi_templates/`, requestPost);
-    //const response = useSWR(`/api/v2/analytics/roi_templates_options/`, requestPost);
 
     if (isLoading) {
         return (
