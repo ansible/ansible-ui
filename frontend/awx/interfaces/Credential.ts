@@ -6,6 +6,7 @@ export interface Credential extends Omit<SwaggerCredential, 'id' | 'name' | 'sum
   name: string;
   credential_type: number;
   inputs?: { url?: string; vault_id?: number | string };
+  user?: number | null;
   summary_fields: {
     organization: SummaryFieldsOrganization;
     credential_type: { id: number; name: string };

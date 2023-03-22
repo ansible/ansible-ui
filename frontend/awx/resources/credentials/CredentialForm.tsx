@@ -11,6 +11,7 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { useActiveUser } from '../../../common/useActiveUser';
 import { useGet } from '../../../common/useItem';
 import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
@@ -23,6 +24,7 @@ import { getAwxError } from '../../useAwxView';
 export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const me = useActiveUser();
   const onSubmit: PageFormSubmitHandler<Credential> = async (credential, setError) => {
     try {
       if (credential.summary_fields.organization.name) {
@@ -35,6 +37,8 @@ export function CreateCredential() {
         } catch {
           throw new Error(t('Organization not found.'));
         }
+      } else {
+        credential.user = me?.id;
       }
       const newCredential = await requestPost<Credential>('/api/v2/credentials/', credential);
       navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
@@ -82,6 +86,7 @@ export function EditCredential() {
     requestGet,
     swrOptions
   );
+  const me = useActiveUser();
   const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
     try {
       if (editedCredential.summary_fields.organization.name) {
@@ -94,6 +99,8 @@ export function EditCredential() {
         } catch {
           throw new Error(t('Organization not found.'));
         }
+      } else {
+        editedCredential.user = me?.id;
       }
       await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
       navigate(-1);
@@ -161,7 +168,7 @@ function CredentialInputs() {
         }
         isRequired
       />
-      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" isRequired />
+      <PageFormOrganizationSelect<Credential> name="summary_fields.organization.name" />
       <PageFormSection singleColumn>
         <PageFormTextArea<Credential>
           name="description"
