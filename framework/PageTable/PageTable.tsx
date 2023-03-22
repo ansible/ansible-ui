@@ -14,7 +14,7 @@ import {
   Stack,
   Title,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
@@ -40,8 +40,20 @@ import {
   useRef,
   useState,
 } from 'react';
+<<<<<<< HEAD
 import styled from 'styled-components';
+=======
+<<<<<<< HEAD
+>>>>>>> ea9ec1f3 (error state component)
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
+=======
+import { EmptyStateNoData } from '../components/EmptyStateNoData';
+import { EmptyStateError } from '../components/EmptyStateError';
+import { Scrollable } from '../components/Scrollable';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { IPageAction } from '../PageActions/PageAction';
+import { PageActionType } from '../PageActions/PageActionType';
+>>>>>>> 787e35d0 (error state component)
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
@@ -281,6 +293,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
+<<<<<<< HEAD
       <EmptyStateDiv>
         <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
@@ -295,11 +308,17 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <EmptyStateBody>{error.message}</EmptyStateBody>
         </EmptyState>
       </EmptyStateDiv>
+=======
+      <div className="dark-2" style={{ height: '100%' }}>
+        <EmptyStateError message={error.message} />
+      </div>
+>>>>>>> ea9ec1f3 (error state component)
     );
   }
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
+<<<<<<< HEAD
       <EmptyStateDiv>
         <EmptyState variant={EmptyStateVariant.large}>
           <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
@@ -325,6 +344,25 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           )}
         </EmptyState>
       </EmptyStateDiv>
+=======
+      <PageSection>
+        <EmptyStateNoData
+          title={props.emptyStateTitle}
+          description={props.emptyStateDescription}
+          button={
+            props.emptyStateButtonClick && (
+              <Button
+                variant="primary"
+                onClick={props.emptyStateButtonClick}
+                icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+              >
+                {props.emptyStateButtonText}
+              </Button>
+            )
+          }
+        />
+      </PageSection>
+>>>>>>> ea9ec1f3 (error state component)
     );
   }
 
