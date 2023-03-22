@@ -3,7 +3,7 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
-import { useItem } from '../../../../common/useItem';
+import { useItem } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
