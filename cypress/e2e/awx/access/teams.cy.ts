@@ -15,61 +15,43 @@ describe('teams', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Teams ' + randomString(4),
-    }).then((testOrg) => {
-      organization = testOrg;
-      // Create users for testing access UI
-      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
-        username: 'e2e-user-' + randomString(4),
-        is_superuser: false,
-        is_system_auditor: false,
-        password: 'pw',
-        user_type: 'normal',
-      }).then((testUser) => (user1 = testUser));
-      cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
-        username: 'e2e-user-' + randomString(4),
-        is_superuser: false,
-        is_system_auditor: false,
-        password: 'pw',
-        user_type: 'normal',
-      }).then((testUser) => (user2 = testUser));
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxTeam(organization).then((createdTeam) => {
+        team = createdTeam;
+      });
+      cy.createAwxUser(organization).then((user) => {
+        user1 = user;
+      });
+      cy.createAwxUser(organization).then((user) => {
+        user2 = user;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/users/${user1.id}/`, true);
-    cy.requestDelete(`/api/v2/users/${user2.id}/`, true);
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+    cy.deleteAwxUser(user1);
+    cy.deleteAwxUser(user2);
+    cy.deleteAwxTeam(team);
+    cy.deleteAwxOrganization(organization);
   });
 
-  beforeEach(() => {
-    cy.requestPost<Team>('/api/v2/teams/', {
-      name: 'E2E Team ' + randomString(4),
-      organization: organization.id,
-    }).then((testTeam) => (team = testTeam));
-  });
-
-  afterEach(() => {
-    cy.requestDelete(`/api/v2/teams/${team.id}/`, true);
-  });
-
-  it('teams page', () => {
+  it('can render the teams list page', () => {
     cy.navigateTo(/^Teams$/, false);
     cy.hasTitle(/^Teams$/);
   });
 
-  it('create team', () => {
+  it('can create a basic team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Teams$/, true);
     cy.clickLink(/^Create team$/);
     cy.typeByLabel(/^Name$/, teamName);
     cy.typeByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
-    cy.hasTitle(teamName);
+    cy.hasTitle(teamName); // This team will be cleaned up when we delete the org at the end of the tests
   });
 
-  it('team: remove users from team', () => {
+  it('can remove users from the team via the teams list row item', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -87,7 +69,15 @@ describe('teams', () => {
     cy.clickButton(/^Close$/);
   });
 
-  it('edit team', () => {
+  it('can render the team details page', () => {
+    cy.navigateTo(/^Teams$/, true);
+    cy.clickRow(team.name);
+    cy.hasTitle(team.name);
+    cy.clickButton(/^Details$/);
+    cy.contains('#name', team.name);
+  });
+
+  it('can edit a team from the details page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.clickButton(/^Edit team$/);
@@ -97,15 +87,7 @@ describe('teams', () => {
     cy.hasTitle(`${team.name}a`);
   });
 
-  it('team details', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.clickRow(team.name);
-    cy.hasTitle(team.name);
-    cy.clickButton(/^Details$/);
-    cy.contains('#name', team.name);
-  });
-
-  it('team access: add users using toolbar button', () => {
+  it('can add users to the team via the team access tab toolbar', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
@@ -130,7 +112,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove users using toolbar button', () => {
+  it('can remove users from the team via the team access tab toolbar', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -154,7 +136,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove a single user using the row action', () => {
+  it('can remove a single user from the team via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -172,7 +154,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('team access: remove a role from user', () => {
+  it('can remove a role from a user via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -201,14 +183,14 @@ describe('teams', () => {
     });
   });
 
-  it('team roles', () => {
+  it('Can render the team roles page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Roles$/);
   });
 
-  it('team details edit team', () => {
+  it('can navigate to the edit form from the team details page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);
@@ -216,40 +198,46 @@ describe('teams', () => {
     cy.hasTitle(/^Edit team$/);
   });
 
-  it('team details delete team', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.clickRow(team.name);
-    cy.hasTitle(team.name);
-    cy.clickPageAction(/^Delete team/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete team/);
-    cy.hasTitle(/^Teams$/);
+  it('can delete a team from the details page', () => {
+    cy.createAwxTeam(organization).then((testTeam) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.clickRow(testTeam.name);
+      cy.hasTitle(testTeam.name);
+      cy.clickPageAction(/^Delete team/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete team/);
+      cy.hasTitle(/^Teams$/);
+    });
   });
 
-  it('teams table row edit team', () => {
+  it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/, true);
-    cy.get('#edit-team').click();
+    cy.clickRowAction(team.name, /^Edit team$/);
     cy.hasTitle(/^Edit team$/);
   });
 
-  it('teams table row delete team', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.clickRowAction(team.name, /^Delete team$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete team/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+  it('can delete a team from the teams list row item', () => {
+    cy.createAwxTeam(organization).then((testTeam) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.clickRowAction(testTeam.name, /^Delete team$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete team/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 
-  it('teams toolbar delete teams', () => {
-    cy.navigateTo(/^Teams$/, true);
-    cy.selectRow(team.name);
-    cy.clickToolbarAction(/^Delete selected teams$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete team/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+  it('can delete a team from the teams list toolbar', () => {
+    cy.createAwxTeam(organization).then((testTeam) => {
+      cy.navigateTo(/^Teams$/, true);
+      cy.selectRow(testTeam.name);
+      cy.clickToolbarAction(/^Delete selected teams$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete team/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });

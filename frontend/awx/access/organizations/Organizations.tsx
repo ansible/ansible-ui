@@ -40,6 +40,7 @@ import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 
 export function Organizations() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
 
   const toolbarFilters = useOrganizationsFilters();
@@ -137,9 +138,13 @@ export function Organizations() {
       <PageHeader
         title={t('Organizations')}
         titleHelpTitle={t('Organizations')}
-        titleHelp={t('organizations.title.help')}
+        titleHelp={t(
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+        )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
-        description={t('organizations.title.description')}
+        description={t(
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+        )}
         navigation={<AccessNav active="organizations" />}
       />
       <PageTable<Organization>

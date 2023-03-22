@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v3
@@ -39,6 +40,7 @@ jobs:
     name: Publish Framework
     needs: tag
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v3
@@ -86,6 +88,7 @@ jobs:
     name: Docker Build and Push
     needs: tag
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       REGISTRY: quay.io
@@ -103,25 +106,6 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          push: true
-          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
+      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:source --target source --tag source --tag quay.io/ansible/ansible-ui:source .
+      - run: DOCKER_BUILDKIT=1 docker build --cache-from source --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: docker push quay.io/ansible/ansible-ui --all-tags

@@ -12,6 +12,7 @@ import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions
 
 export function Credentials() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns();
@@ -27,9 +28,13 @@ export function Credentials() {
       <PageHeader
         title={t('Credentials')}
         titleHelpTitle={t('Credentials')}
-        titleHelp={t('credentials.title.help')}
+        titleHelp={t(
+          `Credentials are utilized by ${product} for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system. You can grant users and teams the ability to use these credentials, without actually exposing the credential to the user. If you have a user move to a different team or leave the organization, you don’t have to re-key all of your systems just because that credential was available in ${product}.`
+        )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html"
-        description={t('credentials.title.description')}
+        description={t(
+          `Credentials are utilized by ${product} for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.`
+        )}
       />
       <PageTable<Credential>
         toolbarFilters={toolbarFilters}

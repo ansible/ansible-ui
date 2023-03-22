@@ -104,7 +104,7 @@ export type PageTableProps<T extends object> = {
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
-
+  emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
   showSelect?: boolean;
 
   disableTableView?: boolean;
@@ -182,7 +182,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection>
+      <PageSection variant={props.emptyStateVariant || 'default'}>
         <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
           <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
           <Title headingLevel="h4" size="lg">
@@ -534,6 +534,7 @@ function TableRow<T extends object>(props: {
 }) {
   const {
     columns,
+    unselectAll,
     selectItem,
     unselectItem,
     isItemSelected,
@@ -597,12 +598,12 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: (_event, isSelecting) => {
-                if (isSelecting) {
-                  selectItem?.(item);
-                } else {
-                  unselectItem?.(item);
+              onSelect: () => {
+                if (!isSelectMultiple) {
+                  unselectAll?.();
                 }
+                selectItem?.(item);
+                onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',

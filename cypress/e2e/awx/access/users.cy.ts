@@ -12,10 +12,8 @@ describe('users', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Users ' + randomString(4),
-    }).then((testOrg) => {
-      organization = testOrg;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
   });
 
@@ -24,22 +22,19 @@ describe('users', () => {
   });
 
   beforeEach(() => {
-    cy.requestPost<User>('/api/v2/users/', {
-      username: 'E2E_User_' + randomString(4),
-      password: randomString(12),
-    }).then((testUser) => (user = testUser));
+    cy.createAwxUser(organization).then((testUser) => (user = testUser));
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/users/${user.id}/`, true);
+    cy.deleteAwxUser(user);
   });
 
-  it('user page', () => {
+  it('renders the users list page', () => {
     cy.navigateTo(/^Users$/, false);
     cy.hasTitle(/^Users$/);
   });
 
-  it('create user', () => {
+  it('creates and then deletes a basic user', () => {
     const userName = 'E2E_User_' + randomString(4);
     const password = randomString(12);
     cy.navigateTo(/^Users$/, false);
@@ -57,7 +52,7 @@ describe('users', () => {
     cy.hasTitle(/^Users$/);
   });
 
-  it('user details', () => {
+  it('renders the user details page', () => {
     cy.navigateTo(/^Users$/, false);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
@@ -65,7 +60,7 @@ describe('users', () => {
     cy.contains('#username', user.username);
   });
 
-  it('user details edit user', () => {
+  it('edits a user from the details page', () => {
     cy.navigateTo(/^Users$/, false);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
@@ -76,7 +71,7 @@ describe('users', () => {
     cy.hasTitle(`${user.username}a`);
   });
 
-  it('user details delete user', () => {
+  it('deletes a user from the details page', () => {
     cy.navigateTo(/^Users$/, false);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
@@ -86,13 +81,13 @@ describe('users', () => {
     cy.hasTitle(/^Users$/);
   });
 
-  it('users table row edit user', () => {
+  it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo(/^Users$/, false);
     cy.clickRowAction(user.username, /^Edit user$/);
     cy.hasTitle(/^Edit user$/);
   });
 
-  it('users table row delete user', () => {
+  it('deletes a user from the users list row item', () => {
     cy.navigateTo(/^Users$/, false);
     cy.clickRowAction(user.username, /^Delete user$/);
     cy.get('#confirm').click();
@@ -102,7 +97,7 @@ describe('users', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('users toolbar delete users', () => {
+  it('deletes a user from the users list toolbar', () => {
     cy.navigateTo(/^Users$/, false);
     cy.selectRow(user.username);
     cy.clickToolbarAction(/^Delete selected users$/);

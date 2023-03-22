@@ -30,6 +30,7 @@ import { useUsersFilters } from './hooks/useUsersFilters';
 
 export function Users() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
 
   const toolbarFilters = useUsersFilters();
@@ -160,9 +161,13 @@ export function Users() {
       <PageHeader
         title={t('Users')}
         titleHelpTitle={t('User')}
-        titleHelp={t('users.title.help')}
+        titleHelp={t(
+          `A user is someone who has access to ${product} with associated permissions and credentials.`
+        )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
-        description={t('users.title.description')}
+        description={t(
+          `A user is someone who has access to ${product} with associated permissions and credentials.`
+        )}
         navigation={<AccessNav active="users" />}
       />
       <PageTable<User>

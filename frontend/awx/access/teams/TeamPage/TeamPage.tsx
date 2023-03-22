@@ -17,7 +17,10 @@ export function TeamPage() {
   const params = useParams<{ id: string }>();
   const team = useItem<Team>('/api/v2/teams', params.id ?? '0');
   const navigate = useNavigate();
-  const itemActions = useTeamActions({ onTeamsDeleted: () => navigate(RouteObj.Teams) });
+  const itemActions = useTeamActions({
+    onTeamsDeleted: () => navigate(RouteObj.Teams),
+    isDetailsPageAction: true,
+  });
   const viewActivityStreamAction = useViewActivityStream('team');
   const pageActions = [...viewActivityStreamAction, ...itemActions];
   return (

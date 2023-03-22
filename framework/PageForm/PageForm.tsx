@@ -91,7 +91,12 @@ export function PageForm<T extends object>(props: {
             </PageFormGrid>
           </div>
         ) : (
-          <Scrollable style={{ height: '100%', flexGrow: 1 }}>
+          <Scrollable
+            style={{
+              height: '100%',
+              flexGrow: 1,
+            }}
+          >
             <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
               <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
                 {props.children}

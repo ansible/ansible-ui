@@ -9,7 +9,7 @@ export interface EdaRulebookActivation {
   id: number;
   name: string;
   description?: string;
-  execution_environment?: string;
+  decision_environment?: string;
   rulebook?: { id: string; name: string };
   restart_policy?: string;
   project?: { id: string; name: string };
