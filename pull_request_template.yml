@@ -1,0 +1,30 @@
+---
+name: Pull Request
+description: "Pull Request template"
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Pull Request Summary
+      describe:
+        Explain the bug, feature, or enhancement or link to a open source issue. Briefly explain the code and provide any screen shots or gifs that might make reviewing the Pull Request easier.
+
+  - type: dropdown
+    id: PR_type
+    attributes:
+      label: This Pull request provides
+      options:
+        - label: Bug fix
+        - label: Feature
+        - label: Enhancement
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: Include any relevant log output, links to sosreport, database dumps, screenshots, or other information.
+    validations:
+      required: false
+
