@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, RocketIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { RocketIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
@@ -84,9 +84,10 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       },
       {
         type: PageActionType.single,
-        icon: BanIcon,
+        icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
+        isHidden: (job: UnifiedJob) => Boolean(!cannotCancelJob(job)), // Hidden when a job is running and cancellable since we have the iconOnly row action will also be available to trigger cancel in that scenario
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
     ];
