@@ -34,9 +34,10 @@ export function PageActions<T extends object>(props: {
   /** Indicates if only to show the icon when not collapsed */
   iconOnly?: boolean;
 
+  /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (open: boolean) => void;
 }) {
-  const { actions, selectedItem, selectedItems, iconOnly } = props;
+  const { actions, selectedItem, selectedItems, iconOnly, onOpen } = props;
 
   const collapseBreakpoint = useBreakpoint(
     props.collapse !== 'never' && props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg'
@@ -62,21 +63,25 @@ export function PageActions<T extends object>(props: {
     return visibleActions?.filter((action) => !isPinnedAction(action)) ?? [];
   }, [collapseButtons, visibleActions]);
 
-  return (
-    <Split
-      hasGutter={
-        (!iconOnly && selectedItem !== undefined) || (selectedItems && selectedItems.length > 0)
-      }
-    >
-      {pinnedActions !== undefined && pinnedActions.length > 0 && (
-        <PagePinnedActions {...props} actions={pinnedActions} />
-      )}
-      {dropdownActions.length > 0 && (
-        <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <PageDropdownAction {...props} actions={dropdownActions} onOpen={props.onOpen} />
-        </SplitItem>
-      )}
-    </Split>
+  // Must use memo here, otherwise the components reinitialize causing onOpen to be called incorrectly.
+  return useMemo(
+    () => (
+      <Split
+        hasGutter={
+          (!iconOnly && selectedItem !== undefined) || (selectedItems && selectedItems.length > 0)
+        }
+      >
+        {pinnedActions !== undefined && pinnedActions.length > 0 && (
+          <PagePinnedActions {...props} actions={pinnedActions} onOpen={onOpen} />
+        )}
+        {dropdownActions.length > 0 && (
+          <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <PageDropdownAction {...props} actions={dropdownActions} onOpen={onOpen} />
+          </SplitItem>
+        )}
+      </Split>
+    ),
+    [dropdownActions, iconOnly, onOpen, pinnedActions, props, selectedItem, selectedItems]
   );
 }
 

@@ -50,6 +50,7 @@ export function PageDropdownAction<T extends object>(props: {
   useEffect(() => {
     props.onOpen?.(dropdownOpen);
   }, [dropdownOpen, props]);
+
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;
@@ -99,7 +100,8 @@ export function PageDropdownAction<T extends object>(props: {
         />
       ))}
       position={props.position}
-      style={{ zIndex: dropdownOpen ? 201 : undefined }}
+      // ZIndex 400 is needed for PF table stick headers
+      style={{ zIndex: dropdownOpen ? 400 : undefined }}
     />
   );
   return tooltip && (iconOnly || isDisabled) ? (
