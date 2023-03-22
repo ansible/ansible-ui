@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data';
+import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../common/crud/Data';
 
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {
@@ -26,11 +26,23 @@ function getQueryString(queryParams: QueryParams) {
 }
 
 export function useAwxView<T extends { id: number }>(options: {
+  /** The base url for the view. */
   url: string;
+
+  /** The filters for the view. Used to manage the keys used in the brower querystrings which store the filter results. */
   toolbarFilters?: IToolbarFilter[];
+
+  /** The table columns for the view. Used to determine the default sort. */
   tableColumns?: ITableColumn<T>[];
+
+  /** Extra querystring params passed to the backed API.  */
   queryParams?: QueryParams;
+
+  /** Disable the brower querystring updating. Used when a table is in a details page or modal. */
   disableQueryString?: boolean;
+
+  /** The default items that should be initially selected. */
+  defaultSelection?: T[];
 }): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
@@ -110,7 +122,7 @@ export function useAwxView<T extends { id: number }>(options: {
     }
   }
 
-  const selection = useSelected(data?.results ?? [], getItemKey);
+  const selection = useSelected(data?.results ?? [], getItemKey, options.defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;

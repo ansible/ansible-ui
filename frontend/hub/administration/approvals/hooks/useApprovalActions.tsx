@@ -3,7 +3,7 @@ import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
+import { requestPost } from '../../../../common/crud/Data';
 import { Approval } from '../Approval';
 
 export function useApprovalActions(callback: (approval: Approval[]) => void) {

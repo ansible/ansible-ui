@@ -1,21 +1,20 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageHeader, PageLayout } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { getAddedAndRemoved } from '../../../controller/utils/getAddedAndRemoved';
-import { useGet } from '../../../common/useItem';
-import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
-import { JobTemplate } from '../../interfaces/JobTemplate';
-import { Label } from '../../interfaces/Label';
-import JobTemplateInputs from './JobTemplateInputs';
-import { PageFormSubmitHandler } from '../../../../framework';
-import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { useMemo } from 'react';
-import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
+import { Label } from '../../interfaces/Label';
 import { getAwxError } from '../../useAwxView';
+import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
+import JobTemplateInputs from './JobTemplateInputs';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();

@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../Data';
+import { requestDelete } from '../../../common/crud/Data';
+import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
-import { API_PREFIX } from '../../constants';
 
 export function useDeleteRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void

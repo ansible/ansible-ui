@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   compareStrings,
   PageFormSelectOption,
@@ -11,14 +10,14 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { ItemsResponse, requestPatch, requestPost } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { useGet } from '../../../common/useItem';
-import { ItemsResponse, requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
-import { Organization } from '../../interfaces/Organization';
 import { getAwxError } from '../../useAwxView';
 
 export function CreateCredential() {
@@ -66,26 +65,12 @@ export function CreateCredential() {
   );
 }
 
-async function getOrganizationByName(organizationName: string) {
-  const itemsResponse = await requestGet<ItemsResponse<Organization>>(
-    `/api/v2/organizations/?name=${organizationName}`
-  );
-  if (itemsResponse.results.length >= 1) {
-    return itemsResponse.results[0];
-  }
-  return undefined;
-}
-
 export function EditCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useSWR<Credential>(
-    `/api/v2/credentials/${id.toString()}/`,
-    requestGet,
-    swrOptions
-  );
+  const { data: credential } = useGet<Credential>(`/api/v2/credentials/${id.toString()}/`);
   const activeUser = useActiveUser();
   const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
     try {

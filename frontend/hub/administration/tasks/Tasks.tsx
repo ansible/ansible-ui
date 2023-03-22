@@ -12,8 +12,8 @@ import {
   TextCell,
 } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
+import { useGet } from '../../../common/crud/useGet';
 import { StatusCell } from '../../../common/StatusCell';
-import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
 import { pulpHRefKeyFn } from '../../useHubView';
 import { getIdFromPulpHref } from '../../usePulpView';

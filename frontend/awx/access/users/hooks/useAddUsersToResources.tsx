@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
-import { requestPost } from '../../../../Data';
+import { requestPost } from '../../../../common/crud/Data';
 import { User } from '../../../interfaces/User';
 import { ResourceType } from '../../common/ResourceAccessList';
 

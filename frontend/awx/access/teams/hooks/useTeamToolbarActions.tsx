@@ -3,21 +3,21 @@ import { PlusCircleIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
-import { useOptions } from '../../../../Data';
 import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 // import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteTeams } from './useDeleteTeams';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/teams/' });
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
   return useMemo<IPageAction<Team>[]>(

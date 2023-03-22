@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
-import { getItemKey, requestPost } from '../../../../Data';
+import { getItemKey, requestPost } from '../../../../common/crud/Data';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobsAPIUrl } from '../jobUtils';
 import { useJobsColumns } from './useJobsColumns';

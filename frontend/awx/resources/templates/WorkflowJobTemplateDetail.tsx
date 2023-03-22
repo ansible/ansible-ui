@@ -24,7 +24,7 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { useItem } from '../../../common/useItem';
+import { useItem } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
