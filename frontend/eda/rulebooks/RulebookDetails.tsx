@@ -13,7 +13,7 @@ import {
   useInMemoryView,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/useItem';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';

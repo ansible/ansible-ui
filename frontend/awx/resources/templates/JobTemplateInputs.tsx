@@ -1,24 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
 import { Button, FormSection } from '@patternfly/react-core';
-import { useWatch, useForm } from 'react-hook-form';
+import { SyncAltIcon } from '@patternfly/react-icons';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageFormSelectOption } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet } from '../../../Data';
+import { ItemsResponse, requestGet } from '../../../common/crud/Data';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
 import { Project } from '../../interfaces/Project';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
-import { useParams } from 'react-router-dom';
-import { SyncAltIcon } from '@patternfly/react-icons';
-import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { JobTemplate } from '../../interfaces/JobTemplate';
 
 function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate }) {
   const { jobtemplate } = props;

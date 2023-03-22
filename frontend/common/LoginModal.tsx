@@ -14,8 +14,8 @@ import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextI
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { setCookie } from '../Data';
 import { RouteObj } from '../Routes';
+import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
 const LoginModalDiv = styled.div`

@@ -11,7 +11,7 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, requestPost, swrOptions } from '../../../common/crud/Data';
 import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';

@@ -19,8 +19,8 @@ import {
 import { Dotted } from '../../../../framework/components/Dotted';
 import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { requestPost } from '../../../common/crud/Data';
 import { StatusCell } from '../../../common/StatusCell';
-import { requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';

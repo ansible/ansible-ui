@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { swrOptions, useFetcher } from '../Data';
+import { swrOptions, useFetcher } from '../common/crud/Data';
 
 export function hubKeyFn(item: { pulp_id: string }) {
   return item.pulp_id;

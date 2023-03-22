@@ -5,11 +5,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
-import { useGet } from '../../common/useItem';
-import { requestPatch, requestPost } from '../../Data';
+import { requestPatch, requestPost } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
-import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 import { API_PREFIX } from '../constants';
+import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
 
 export function EditExecutionEnvironment() {
   const { t } = useTranslation();

@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertActionCloseButton,
   Breadcrumb,
   BreadcrumbItem,
   Button,
@@ -19,16 +17,11 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
-import styled from 'styled-components';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
-import { PageAlertsArrayContext, PageAlertsContext } from './PageAlerts';
 import './PageFramework.css';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
-const PageAlertsDiv = styled.div`
-  border-bottom: thin solid rgba(0, 0, 0, 0.12);
-`;
 export interface ICatalogBreadcrumb {
   id?: string;
   label?: string;
@@ -242,32 +235,6 @@ export function PageHeader(props: PageHeaderProps) {
           {footer}
         </Stack>
       </PageSection>
-      <PageAlertsContext.Consumer>
-        {(pageAlerts) => (
-          <PageAlertsArrayContext.Consumer>
-            {(pageAlertsArray) => {
-              if (pageAlertsArray.length === 0) return <></>;
-              return (
-                <PageAlertsDiv>
-                  {pageAlertsArray.map((alertProps, index) => (
-                    <Alert
-                      {...alertProps}
-                      key={alertProps.key ?? alertProps.id ?? index}
-                      actionClose={
-                        <AlertActionCloseButton
-                          onClose={() => pageAlerts.removeAlert(alertProps)}
-                        />
-                      }
-                      isInline
-                      isExpandable={!!alertProps.children}
-                    />
-                  ))}
-                </PageAlertsDiv>
-              );
-            }}
-          </PageAlertsArrayContext.Consumer>
-        )}
-      </PageAlertsContext.Consumer>
     </>
   );
 }
