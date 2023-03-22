@@ -90,9 +90,15 @@ export interface ISelected<T extends object> {
   keyFn: (item: T) => string | number;
 }
 
+/** Hook to track selection from a list of items. */
 export function useSelected<T extends object>(
+  /** The items in which selections are being tracked. Used to update the selected items when an item changes.  */
   items: T[],
+
+  /** A function that returns a unique key for each item, used to track selection. */
   keyFn: (item: T) => string | number,
+
+  /** The default items that should be initially selected. */
   defaultSelection?: T[]
 ): ISelected<T> {
   const [selectedMap, setSelectedMap] = useState<Record<string | number, T>>(() => {
