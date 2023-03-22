@@ -18,15 +18,34 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
     [t]
   );
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+  const cannotDeleteUser = (user: User) => {
+    return user?.summary_fields?.user_capabilities?.delete
+      ? undefined
+      : t('The user cannot be deleted due to insufficient permissions.');
+  };
   const bulkAction = useBulkConfirmation<User>();
   const deleteUsers = (users: User[]) => {
+    const undeletableUsers = users.filter(cannotDeleteUser);
+
     bulkAction({
       title: t('Permanently delete users', { count: users.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} users.', {
-        count: users.length,
+        count: undeletableUsers.length,
       }),
       actionButtonText: t('Delete users', { count: users.length }),
       items: users.sort((l, r) => compareStrings(l.username, r.username)),
+      alertPrompts:
+        undeletableUsers.length > 0
+          ? [
+              t(
+                '{{count}} of the selected users cannot be deleted due to insufficient permissions.',
+                {
+                  count: undeletableUsers.length,
+                }
+              ),
+            ]
+          : undefined,
+      isItemNonActionable: cannotDeleteUser,
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
