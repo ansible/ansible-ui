@@ -7,7 +7,7 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { requestPostFile } from '../../../Data';
+import { requestPostFile } from '../../../common/crud/Data';
 import { RouteObj } from '../../../Routes';
 import { useRepositories } from '../../administration/repositories/hooks/useRepositories';
 import { useNamespaces } from '../namespaces/hooks/useNamespaces';

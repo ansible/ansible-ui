@@ -3,7 +3,7 @@ import { FieldPath, FieldPathValue, FieldValues, Path, useFormContext } from 're
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet } from '../../../../Data';
+import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { Organization } from '../../../interfaces/Organization';
 import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelectOrganization';
 

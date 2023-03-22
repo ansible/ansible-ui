@@ -11,6 +11,7 @@ jobs:
     if: (github.event_name == 'schedule' && github.repository == 'ansible/ansible-ui') || (github.event_name != 'schedule')
     runs-on: ubuntu-latest
     concurrency: upgrade
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:

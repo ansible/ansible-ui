@@ -47,8 +47,8 @@ import {
 } from '../../../../framework';
 import { Scrollable } from '../../../../framework/components/Scrollable';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
+import { useGet } from '../../../common/crud/useGet';
 import { StatusCell } from '../../../common/StatusCell';
-import { useGet } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
 import { HubItemsResponse } from '../../useHubView';
 import { Collection } from './Collection';
@@ -58,7 +58,7 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 export function CollectionDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data, mutate: refresh } = useGet<HubItemsResponse<Collection>>(
+  const { data, refresh } = useGet<HubItemsResponse<Collection>>(
     `/api/automation-hub/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
   );
   let collection: Collection | undefined = undefined;

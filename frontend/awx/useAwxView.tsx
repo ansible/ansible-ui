@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../Data';
+import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../common/crud/Data';
 
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {

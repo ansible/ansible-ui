@@ -1,10 +1,10 @@
-import { ButtonVariant, AlertProps } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
+import { requestPost } from '../../../../common/crud/Data';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';

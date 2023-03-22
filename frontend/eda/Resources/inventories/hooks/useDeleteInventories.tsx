@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
-import { requestDelete } from '../../../../Data';
+import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../hub/useHubView';
+import { API_PREFIX } from '../../../constants';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './useInventoryColumns';
-import { API_PREFIX } from '../../../constants';
 
 export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) => void) {
   const { t } = useTranslation();

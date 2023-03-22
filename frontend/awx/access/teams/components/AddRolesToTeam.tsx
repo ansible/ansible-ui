@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useItem } from '../../../../common/useItem';
+import { useItem } from '../../../../common/crud/useGet';
 import { Team } from '../../../interfaces/Team';
 import { AddRolesForm } from '../../roles/AddRolesForm';
 

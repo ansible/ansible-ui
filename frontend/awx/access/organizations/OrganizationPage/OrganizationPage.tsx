@@ -13,7 +13,7 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../../framework';
-import { useItem } from '../../../../common/useItem';
+import { useItem } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
@@ -73,19 +73,27 @@ export function OrganizationPage() {
           />
         }
       />
-      <PageTabs loading={!organization}>
-        <PageTab label={t('Details')}>
-          <OrganizationDetails organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Access')}>
-          <OrganizationAccess organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Teams')}>
-          <OrganizationTeams organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Execution environments')}>TODO</PageTab>
-        <PageTab label={t('Notifications')}>TODO</PageTab>
-      </PageTabs>
+      {organization && <OrganizationPageTabs organization={organization} />}
     </PageLayout>
+  );
+}
+
+export function OrganizationPageTabs(props: { organization: Organization }) {
+  const { organization } = props;
+  const { t } = useTranslation();
+  return (
+    <PageTabs>
+      <PageTab label={t('Details')}>
+        <OrganizationDetails organization={organization} />
+      </PageTab>
+      <PageTab label={t('Access')}>
+        <OrganizationAccess organization={organization} />
+      </PageTab>
+      <PageTab label={t('Teams')}>
+        <OrganizationTeams organization={organization} />
+      </PageTab>
+      <PageTab label={t('Execution environments')}>TODO</PageTab>
+      <PageTab label={t('Notifications')}>TODO</PageTab>
+    </PageTabs>
   );
 }

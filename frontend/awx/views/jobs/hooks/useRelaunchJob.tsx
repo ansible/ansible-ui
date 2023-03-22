@@ -1,7 +1,7 @@
 import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../../../../../framework';
-import { ItemsResponse, requestGet, requestPost } from '../../../../Data';
+import { ItemsResponse, requestGet, requestPost } from '../../../../common/crud/Data';
 import {
   AdHocCommandRelaunch,
   InventorySourceUpdate,
