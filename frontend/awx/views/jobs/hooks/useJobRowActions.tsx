@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { BanIcon, RocketIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
@@ -35,6 +35,14 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
     };
 
     return [
+      {
+        type: PageActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: MinusCircleIcon,
+        label: t(`Cancel job`),
+        isHidden: (job: UnifiedJob) => Boolean(cannotCancelJob(job)),
+        onClick: (job: UnifiedJob) => cancelJobs([job]),
+      },
       {
         type: PageActionType.single,
         variant: ButtonVariant.secondary,
