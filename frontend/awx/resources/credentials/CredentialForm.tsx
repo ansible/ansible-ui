@@ -24,7 +24,7 @@ import { getAwxError } from '../../useAwxView';
 export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const me = useActiveUser();
+  const activeUser = useActiveUser();
   const onSubmit: PageFormSubmitHandler<Credential> = async (credential, setError) => {
     try {
       if (credential.summary_fields.organization.name) {
@@ -38,7 +38,7 @@ export function CreateCredential() {
           throw new Error(t('Organization not found.'));
         }
       } else {
-        credential.user = me?.id;
+        credential.user = activeUser?.id;
       }
       const newCredential = await requestPost<Credential>('/api/v2/credentials/', credential);
       navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
@@ -86,7 +86,7 @@ export function EditCredential() {
     requestGet,
     swrOptions
   );
-  const me = useActiveUser();
+  const activeUser = useActiveUser();
   const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
     try {
       if (editedCredential.summary_fields.organization.name) {
@@ -100,7 +100,7 @@ export function EditCredential() {
           throw new Error(t('Organization not found.'));
         }
       } else {
-        editedCredential.user = me?.id;
+        editedCredential.user = activeUser?.id;
       }
       await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
       navigate(-1);
