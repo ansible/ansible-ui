@@ -27,15 +27,19 @@ import CalculationCost from './CalculationCost';
 import AutomationFormula from './AutomationFormula';
 import TemplatesTable from './TemplatesTable';
 import { useSearchParams } from 'react-router-dom';
-
+import Chart from '../components/Chart';
+import hydrateSchema from '../components/Chart/hydrateSchema';
+import currencyFormatter from '../utilities/currencyFormatter';
 const SpinnerDiv = styled.div`
   height: 400px;
   padding-top: 200px;
   padding-left: 400px;
 `;
 
-export default function AutomationCalculator() {
+export default function AutomationCalculator({schema}) {
     const [searchParams, setSearchParams] = useSearchParams();
+    console.log("schema: ", schema);
+    schema[2].props.y = 'elapsed';
 
     const updateSearchParams = (key: string, value: string) => {
         let updatedSearchParams = new URLSearchParams(searchParams.toString());
@@ -60,7 +64,7 @@ export default function AutomationCalculator() {
         { title: '25', value: 25 },
     ];
 
-    if (!isLoading) console.log(data);
+    if (!isLoading) console.log("data:", data);
     if (isLoading || optionsIsLoading) return <PageSection isFilled>
         <Bullseye>
             <Spinner />
@@ -70,14 +74,70 @@ export default function AutomationCalculator() {
     //TODO render 500 if error || optionsError
     //TODO loading state if loading || optionsIsLoading
 
+    const formattedValue = (key: string, value: number) => {
+        let val;
+        switch (key) {
+            case 'elapsed':
+                val = value.toFixed(2) + ' seconds';
+                break;
+            case 'template_automation_percentage':
+                val = value.toFixed(2) + '%';
+                break;
+            case 'successful_hosts_savings':
+            case 'failed_hosts_costs':
+            case 'monetary_gain':
+                val = currencyFormatter(value);
+                break;
+            default:
+                val = value.toFixed(2);
+        }
+        return val;
+    };
+
+    const customTooltipFormatting = ({ datum }) => {
+        const tooltip =
+            chartParams.label +
+            ' for ' +
+            datum.name +
+            ': ' +
+            formattedValue('successful_hosts_savings', datum.y);
+        return tooltip;
+    };
+
+    const chartParams = {
+        y: 'successful_hosts_savings',
+        tooltip: 'Savings for',
+        field: 'successful_hosts_savings',
+        label:
+            options?.sort_options?.find(({ key }) => key === 'successful_hosts_savings')
+                ?.value || 'Label Y',
+    };
+
     const renderLeft = () => (
         <Card isPlain>
                 <CardHeader>
                     <CardTitle>Automation savings</CardTitle>
                 </CardHeader>
-                <SpinnerDiv>
-                    <Spinner data-cy={'spinner'} isSVG />
-                </SpinnerDiv>
+            {isLoading && !!data ? (<SpinnerDiv>
+                <Spinner data-cy={'spinner'} isSVG />
+            </SpinnerDiv>) : (
+                <Chart
+                    schema={hydrateSchema(schema)({
+                        label: chartParams.label,
+                        tooltip: chartParams.tooltip,
+                        field: chartParams.field,
+                    })}
+                    data={{
+                        items: data?.meta?.legend,
+                    }}
+                    specificFunctions={{
+                        labelFormat: {
+                            customTooltipFormatting,
+                        },
+                    }}
+                />
+            )}
+
         </Card>
     );
     const renderRight = () => (

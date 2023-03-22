@@ -25,6 +25,7 @@ export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
 };
 
 export const convertApiToData = (result: ApiReturnType): ChartData => {
+  console.log(result);
   const data: ChartData = {
     series: [],
     legend: [],

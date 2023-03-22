@@ -6,7 +6,6 @@ import ChartBuilder, {
   ChartSchemaElement,
   functions,
 } from 'react-json-chart-builder';
-import { useQueryParams } from '../../QueryParams';
 import { convertApiToData } from './convertApi';
 import { ApiReturnType } from './types';
 import { ChartDataSerie } from 'react-json-chart-builder/dist/cjs';
@@ -80,18 +79,9 @@ const Chart: FC<Props> = ({
   schema,
   data,
   specificFunctions,
-  namespace = 'settings',
 }) => {
-  const {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    queryParams: { chartSeriesHiddenProps },
-    dispatch,
-  } = useQueryParams(
-    {
-      chartSeriesHiddenProps: [],
-    },
-    namespace
-  );
+
+  const chartSeriesHiddenProps: string[]= [];
 
   const [chartData, setChartData] = useState<ChartData>({
     series: [],
@@ -99,11 +89,7 @@ const Chart: FC<Props> = ({
   });
 
   const setChartDataHook = (newChartData: ChartData) => {
-    dispatch({
-      type: 'SET_CHART_SERIES_HIDDEN_PROPS',
-      value: newChartData.series.map((line) => [line.serie[0].id, line.hidden]),
-    });
-
+    //TODO set hidden
     setChartData(newChartData);
   };
 
