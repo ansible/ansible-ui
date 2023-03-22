@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
-import { requestPost } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 
 export function useRemoveOrganizationsFromUsers() {
   const { t } = useTranslation();
   const organizationProgressDialog = useBulkActionDialog<Organization>();
+  const postRequest = usePostRequest<{ id: number; disassociate: boolean }, Organization>();
   const removeUserToOrganizations = useCallback(
     (
       users: User[],
@@ -25,7 +26,7 @@ export function useRemoveOrganizationsFromUsers() {
         ],
         actionFn: async (organization: Organization, signal: AbortSignal) => {
           for (const user of users) {
-            await requestPost(
+            await postRequest(
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
@@ -38,7 +39,7 @@ export function useRemoveOrganizationsFromUsers() {
         onComplete,
       });
     },
-    [organizationProgressDialog, t]
+    [organizationProgressDialog, postRequest, t]
   );
   return removeUserToOrganizations;
 }

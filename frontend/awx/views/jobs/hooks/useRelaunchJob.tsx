@@ -1,7 +1,8 @@
 import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../../../../../framework';
-import { ItemsResponse, requestGet, requestPost } from '../../../../common/crud/Data';
+import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import {
   AdHocCommandRelaunch,
   InventorySourceUpdate,
@@ -18,6 +19,7 @@ export function useRelaunchJob(
 ) {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
+  const postRequest = usePostRequest();
 
   return async (job: UnifiedJob) => {
     const relaunchEndpoint = getRelaunchEndpoint(job);
@@ -65,24 +67,24 @@ export function useRelaunchJob(
       } else {
         switch (job.type) {
           case 'ad_hoc_command': {
-            await requestPost<AdHocCommandRelaunch>(relaunchEndpoint, {} as AdHocCommandRelaunch);
+            await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
             break;
           }
           case 'workflow_job': {
-            await requestPost<WorkflowJobRelaunch>(relaunchEndpoint, {} as WorkflowJobRelaunch);
+            await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
             break;
           }
           case 'job': {
-            await requestPost<JobRelaunch>(relaunchEndpoint, {
+            await postRequest(relaunchEndpoint, {
               ...jobRelaunchParams,
             } as JobRelaunch);
             break;
           }
           case 'inventory_update':
-            await requestPost<InventorySourceUpdate>(relaunchEndpoint, {} as InventorySourceUpdate);
+            await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
             break;
           case 'project_update':
-            await requestPost<ProjectUpdateView>(relaunchEndpoint, {} as ProjectUpdateView);
+            await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
             break;
         }
 

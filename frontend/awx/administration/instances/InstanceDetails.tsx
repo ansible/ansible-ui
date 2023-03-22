@@ -15,8 +15,8 @@ import {
   PageLayout,
   SinceCell,
 } from '../../../../framework';
-import { requestPost } from '../../../common/crud/Data';
 import { useItem } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { StatusCell } from '../../../common/StatusCell';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
@@ -27,7 +27,7 @@ export function InstanceDetails() {
   const params = useParams<{ id: string }>();
   const instance = useItem<Instance>('/api/v2/instances', params.id ?? '0');
   const history = useNavigate();
-
+  const postRequest = usePostRequest();
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
@@ -43,7 +43,7 @@ export function InstanceDetails() {
         variant: ButtonVariant.secondary,
         label: t('Run health check'),
         onClick: () => {
-          requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
+          postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
             // eslint-disable-next-line no-console
             console.error
           );
@@ -51,7 +51,7 @@ export function InstanceDetails() {
       },
     ];
     return itemActions;
-  }, [t, history, instance]);
+  }, [t, history, instance?.id, postRequest]);
 
   return (
     <PageLayout>

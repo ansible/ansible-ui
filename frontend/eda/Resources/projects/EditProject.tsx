@@ -5,8 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestPatch, requestPost } from '../../../common/crud/Data';
+import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
@@ -57,6 +58,7 @@ export function EditProject() {
   type ProjectSchema = Static<typeof ProjectSchemaType>;
 
   const { cache } = useSWRConfig();
+  const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<ProjectSchema> = async (project, setError) => {
     try {
@@ -65,7 +67,7 @@ export function EditProject() {
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newProject = await requestPost<EdaProject>(`${API_PREFIX}/projects/`, project);
+        const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
       }

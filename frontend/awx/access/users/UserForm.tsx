@@ -11,7 +11,8 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../common/crud/Data';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
@@ -22,7 +23,7 @@ import { getOrganizationByName } from '../organizations/utils/getOrganizationByN
 export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const postRequest = usePostRequest<User, User>();
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput,
     setError,
@@ -44,7 +45,7 @@ export function CreateUser() {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
         return false;
       }
-      const newUser = await requestPost<User>(
+      const newUser = await postRequest(
         `/api/v2/organizations/${user.organization.toString()}/users/`,
         user
       );

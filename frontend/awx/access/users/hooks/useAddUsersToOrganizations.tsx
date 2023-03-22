@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework/BulkActionDialog';
-import { requestPost } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 
 export function useAddUsersToOrganizations(onComplete?: (users: User[]) => void) {
   const { t } = useTranslation();
   const userProgressDialog = useBulkActionDialog<User>();
+  const postRequest = usePostRequest();
   const addUserToOrganizations = useCallback(
     (users: User[], organizations: Organization[]) => {
       userProgressDialog({
@@ -19,7 +20,7 @@ export function useAddUsersToOrganizations(onComplete?: (users: User[]) => void)
         actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const organization of organizations) {
-            await requestPost(
+            await postRequest(
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id },
               signal
@@ -32,7 +33,7 @@ export function useAddUsersToOrganizations(onComplete?: (users: User[]) => void)
         onComplete,
       });
     },
-    [userProgressDialog, t, onComplete]
+    [userProgressDialog, t, onComplete, postRequest]
   );
   return addUserToOrganizations;
 }

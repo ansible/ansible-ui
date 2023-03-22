@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../common/crud/Data';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { RouteObj } from '../../../Routes';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
@@ -24,16 +25,15 @@ export function CreateOrganization() {
   const navigate = useNavigate();
   useInvalidateCacheOnUnmount();
 
+  const postRequest = usePostRequest<{ id: number }, Organization>();
+
   const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values, setError) => {
     try {
-      const organization = await requestPost<Organization>(
-        '/api/v2/organizations/',
-        values.organization
-      );
+      const organization = await postRequest('/api/v2/organizations/', values.organization);
       const igRequests = [];
       for (const ig of values.instanceGroups || []) {
         igRequests.push(
-          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+          postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
             id: ig.id,
           })
         );
@@ -68,6 +68,7 @@ export function EditOrganization() {
 
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const postRequest = usePostRequest();
 
   const { data: organization } = useSWR<Organization>(
     `/api/v2/organizations/${id.toString()}/`,
@@ -92,7 +93,7 @@ export function EditOrganization() {
       const disassociateRequests = [];
       for (const ig of instanceGroups || []) {
         disassociateRequests.push(
-          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+          postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
             id: ig.id,
             disassociate: true,
           })
@@ -102,7 +103,7 @@ export function EditOrganization() {
       const igRequests = [];
       for (const ig of values.instanceGroups || []) {
         igRequests.push(
-          requestPost(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+          postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
             id: ig.id,
           })
         );

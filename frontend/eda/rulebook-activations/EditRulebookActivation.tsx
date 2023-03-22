@@ -12,8 +12,8 @@ import {
   PageLayout,
 } from '../../../framework';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { requestPost } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { usePostRequest } from '../../common/crud/usePostRequest';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
@@ -38,13 +38,17 @@ export function EditRulebookActivation() {
     { label: t('Always'), value: 'always' },
     { label: t('Never'), value: 'never' },
   ];
+
+  const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, EdaExtraVars>();
+  const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
+
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation & { variables: string }> = async (
     rulebookActivation,
     setError
   ) => {
     let extra_var_id;
     try {
-      extra_var_id = await requestPost<EdaExtraVars>(`${API_PREFIX}/extra-vars/`, {
+      extra_var_id = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
         extra_var: rulebookActivation.variables,
       });
       (cache as unknown as { clear: () => void }).clear?.();
@@ -53,7 +57,7 @@ export function EditRulebookActivation() {
       setError(err instanceof Error ? err.message : t('Unknown error'));
     }
     try {
-      const newRulebookActivation = await requestPost<EdaRulebookActivation>(
+      const newRulebookActivation = await postEdaRulebookActivation(
         `${API_PREFIX}/activations/`,
         extra_var_id ? { ...rulebookActivation, extra_var_id: extra_var_id } : rulebookActivation
       );
