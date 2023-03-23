@@ -9,6 +9,7 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { Collapse } from './components/Collapse';
 import { usePageDialog } from './PageDialog';
@@ -103,6 +104,7 @@ export function SelectDialog<T extends { id: number; name: string | undefined },
     selected,
   } = props;
   const onClose = () => setOpen(false);
+  const { t } = useTranslation();
   return (
     <Modal
       title={title}
@@ -135,28 +137,32 @@ export function SelectDialog<T extends { id: number; name: string | undefined },
     >
       <ModalBoxBody style={{ overflow: 'hidden' }}>
         <Split hasGutter>
-          <SplitItem style={{ opacity: view.selectedItems.length === 0 ? 0 : undefined }}>
-            {selected}
-          </SplitItem>
-          <ChipGroup>
-            {view.selectedItems.map((item, i) => {
-              if (tableColumns && tableColumns.length > 0) {
-                return (
-                  <Chip key={i} onClick={() => view.unselectItem(item)}>
-                    <TableColumnCell
-                      item={item}
-                      column={
-                        tableColumns.find(
-                          (column) => column.card === 'name' || column.list === 'name'
-                        ) ?? tableColumns[0]
-                      }
-                    />
-                  </Chip>
-                );
-              }
-              return <></>;
-            })}
-          </ChipGroup>
+          <SplitItem style={{ fontWeight: 'bold' }}>{selected}</SplitItem>
+          {view.selectedItems.length > 0 ? (
+            <ChipGroup>
+              {view.selectedItems.map((item, i) => {
+                if (tableColumns && tableColumns.length > 0) {
+                  return (
+                    <Chip key={i} onClick={() => view.unselectItem(item)}>
+                      <TableColumnCell
+                        item={item}
+                        column={
+                          tableColumns.find(
+                            (column) => column.card === 'name' || column.list === 'name'
+                          ) ?? tableColumns[0]
+                        }
+                      />
+                    </Chip>
+                  );
+                }
+                return <></>;
+              })}
+            </ChipGroup>
+          ) : (
+            <SplitItem
+              style={{ fontStyle: 'italic' }}
+            >{t`None - Please make a selection below.`}</SplitItem>
+          )}
         </Split>
       </ModalBoxBody>
       <Collapse open={view.itemCount === undefined}>
