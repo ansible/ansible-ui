@@ -51,8 +51,6 @@ export function PageFormSelectOrganization<
   const { t } = useTranslation();
   const openSelectDialog = useSelectOrganization2();
   const query = useCallback(async () => {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-    // throw new Error('Error');
     const response = await requestGet<ItemsResponse<Organization>>(
       `/api/v2/organizations/?limit=200`
     );

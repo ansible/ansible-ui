@@ -285,6 +285,19 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         hasInlineFilter={true}
         menuAppendTo="parent"
         maxHeight={500}
+        footer={
+          props.openSelectDialog ? (
+            <Button
+              variant="link"
+              onClick={() => {
+                setOpen(false);
+                props.openSelectDialog?.(onSelect, props.value);
+              }}
+            >
+              Browse
+            </Button>
+          ) : undefined
+        }
       >
         {options.map((option) => (
           <SelectOption key={option.toString()} value={option}>
