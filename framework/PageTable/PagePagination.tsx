@@ -31,7 +31,8 @@ export function PagePagination(props: PagePaginationProps) {
       style={{
         ...props.style,
         boxShadow: 'none',
-        zIndex: 301,
+        // ZIndex 400 is needed for PF table stick headers
+        zIndex: 400,
         // marginTop: -1,
         paddingTop: compact ? 4 : 6,
         paddingBottom: compact ? 4 : 6,

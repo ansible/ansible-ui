@@ -1,0 +1,17 @@
+AWX:
+  - frontend/awx/**/*
+  - cypress/e2e/awx/**/*
+
+EDA:
+  - frontend/eda/**/*
+  - cypress/eda/awx/**/*
+
+e2e:
+  - cypress/e2e/**
+
+component:
+  - framework/**/*.cy.*
+  - frontend/**/*.cy.*
+
+framework:
+  - framework/**/*

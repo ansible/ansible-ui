@@ -527,6 +527,8 @@ function ToolbarSelectFilter(props: {
             <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
+        // ZIndex 400 is needed for PF table stick headers
+        style={{ zIndex: open ? 400 : 0 }}
       >
         {options.map((option) => (
           <SelectOption id={option.value} key={option.value} value={option.value}>
