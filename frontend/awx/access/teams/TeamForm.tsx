@@ -109,7 +109,7 @@ function TeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" />
+      <PageFormOrganizationSelect<Team> name="summary_fields.organization.name" isRequired />
       <PageFormSection singleColumn>
         <PageFormTextArea<Team>
           name="description"
