@@ -12,7 +12,15 @@ import {
 import * as Ajv from 'ajv';
 import { JSONSchema6 } from 'json-schema';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
-import { DeepPartial, FieldValues, FormProvider, useForm, useFormState } from 'react-hook-form';
+import {
+  DeepPartial,
+  ErrorOption,
+  FieldPath,
+  FieldValues,
+  FormProvider,
+  useForm,
+  useFormState,
+} from 'react-hook-form';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
@@ -62,9 +70,13 @@ export function PageForm<T extends object>(props: {
         onSubmit={handleSubmit(async (data) => {
           setError(null);
           try {
-            await props.onSubmit(data);
+            await props.onSubmit(
+              data,
+              (error: string) => setError(new Error(error)),
+              setFieldError
+            );
           } catch (err) {
-            err instanceof Error ? setError(err) : setError('Unknown error');
+            err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
           }
         })}
         isHorizontal={isHorizontal}
@@ -158,7 +170,11 @@ export function PageFormGrid(props: {
   return Component;
 }
 
-export type PageFormSubmitHandler<T extends FieldValues> = (data: T) => Promise<unknown>;
+export type PageFormSubmitHandler<T extends FieldValues> = (
+  data: T,
+  setError: (error: string) => void,
+  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
+) => Promise<unknown>;
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();

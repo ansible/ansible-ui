@@ -32,23 +32,15 @@ export function CreateUser() {
 
   const postRequest = usePostRequest<Partial<EdaUser>, EdaUser>();
 
-  const onSubmit: PageFormSubmitHandler<IUserInput> = async (
-    userInput,
-    setError,
-    setFieldError
-  ) => {
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userInput, _, setFieldError) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      if (confirmPassword !== user.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') });
-        return false;
-      }
-      const newUser = await postRequest(`${API_PREFIX}/activations/`, user);
-      navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(await getEdaError(err));
+    user.is_superuser = userType === t('System administrator');
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
     }
+    const newUser = await postRequest(`${API_PREFIX}/activations/`, user);
+    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
