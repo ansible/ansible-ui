@@ -177,7 +177,7 @@ function UserOrganizationRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'organization'}>
-      <PageFormOrganizationSelect name="organizationName" organizationPath="resource" />
+      <PageFormOrganizationSelect name="organizationName" organizationPath="resource" isRequired />
       <Permissions roles={rolesMetadata.organization} />
     </PageFormHidden>
   );

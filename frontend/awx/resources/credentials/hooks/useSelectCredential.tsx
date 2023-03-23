@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Credential } from '../../../interfaces/Credential';
 import { useAwxView } from '../../../useAwxView';
-import { useCredentialsColumns, useCredentialsFilters } from '../Credentials';
+import { useCredentialsColumns } from './useCredentialsColumns';
+import { useCredentialsFilters } from './useCredentialsFilters';
 
 export function useSelectCredential(isLookup: boolean) {
   const { t } = useTranslation();

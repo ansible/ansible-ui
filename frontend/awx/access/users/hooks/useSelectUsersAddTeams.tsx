@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { useAddUsersToTeams } from './useAddUsersToTeams';
+import { ResourceType } from '../../common/ResourceAccessList';
+import { useAddUsersToResources } from './useAddUsersToResources';
 import { useSelectUsers } from './useSelectUsers';
 
 export function useSelectUsersAddTeams(onClose?: (users: User[]) => void) {
   const { t } = useTranslation();
   const selectUsers = useSelectUsers();
-  const addUsersToTeams = useAddUsersToTeams();
+  const addUsersToResources = useAddUsersToResources();
   const selectUsersAddTeams = useCallback(
-    (teams: Team[]) => {
+    (teams: ResourceType[]) => {
       selectUsers(t('Add users to teams', { count: teams.length }), (users: User[]) => {
-        addUsersToTeams(users, teams, onClose);
+        addUsersToResources(users, teams, onClose);
       });
     },
-    [addUsersToTeams, onClose, selectUsers, t]
+    [addUsersToResources, onClose, selectUsers, t]
   );
   return selectUsersAddTeams;
 }
