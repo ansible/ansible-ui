@@ -18,8 +18,11 @@ export function PagePinnedActions<T extends object>(props: {
    * Example: Table rows only show the icon but toolbars and details page actions show label
    */
   iconOnly?: boolean;
+
+  /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
+  onOpen?: (label: string, open: boolean) => void;
 }) {
-  const { actions, selectedItems, selectedItem, wrapper, iconOnly } = props;
+  const { actions, selectedItems, selectedItem, wrapper, iconOnly, onOpen } = props;
   if (actions.length === 0) return <></>;
   return (
     <Split hasGutter>
@@ -31,6 +34,7 @@ export function PagePinnedActions<T extends object>(props: {
           selectedItems={selectedItems}
           wrapper={wrapper}
           iconOnly={iconOnly}
+          onOpen={onOpen}
         />
       ))}
     </Split>
@@ -43,8 +47,11 @@ export function PagePinnedAction<T extends object>(props: {
   selectedItems?: T[];
   wrapper?: ComponentClass | FunctionComponent;
   iconOnly?: boolean;
+
+  /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
+  onOpen?: (label: string, open: boolean) => void;
 }) {
-  const { action, selectedItems, selectedItem, wrapper } = props;
+  const { action, selectedItems, selectedItem, wrapper, onOpen } = props;
 
   switch (action.type) {
     case PageActionType.seperator: {
@@ -99,6 +106,7 @@ export function PagePinnedAction<T extends object>(props: {
           tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
           variant={action.variant}
           // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
+          onOpen={onOpen}
         />
       );
     }

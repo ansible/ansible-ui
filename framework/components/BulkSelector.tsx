@@ -114,7 +114,8 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
       isOpen={isOpen}
       toggle={toggle}
       dropdownItems={dropdownItems}
-      style={{ zIndex: 302 }}
+      // ZIndex 400 is needed for PF table stick headers
+      style={{ zIndex: 400 }}
     />
   );
 }
