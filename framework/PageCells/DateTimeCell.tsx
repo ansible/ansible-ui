@@ -50,7 +50,7 @@ export function DateTimeCell(props: {
   }, [props.format, props.value]);
   if (props.value === undefined) return <></>;
   return (
-    <DateCellSpan>
+    <DateCellSpan className="date-time">
       {dateTime}
       {author && <span>&nbsp;{translations.by}&nbsp;</span>}
       {onClick ? (
