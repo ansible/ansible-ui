@@ -97,8 +97,8 @@ describe('Jobs.cy.ts', () => {
         const jobs: UnifiedJob[] = results;
         let job: UnifiedJob;
         if (jobs && jobs.length) {
-          job = jobs[0];
-          jobs[0].status = 'running';
+          job = jobs[3];
+          jobs[3].status = 'running';
           cy.intercept(
             {
               method: 'GET',
@@ -111,12 +111,13 @@ describe('Jobs.cy.ts', () => {
               previous: null,
               results: jobs,
             }
-          );
+          ).as('jobsList');
           cy.mount(
             <Page>
               <Jobs />
             </Page>
           );
+          cy.wait('@jobsList');
           cy.contains('tr', job.name).within(() => {
             cy.get('button.cancel-job').should('be.visible');
             cy.get('button.cancel-job').click();
