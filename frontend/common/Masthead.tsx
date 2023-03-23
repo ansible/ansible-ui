@@ -40,7 +40,8 @@ import { useAutomationServers } from '../automation-servers/contexts/AutomationS
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
-import { swrOptions, useFetcher } from './crud/Data';
+import { requestPost, swrOptions, useFetcher } from './crud/Data';
+import { API_PREFIX } from '../eda/constants';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -254,19 +255,28 @@ function AccountDropdown() {
   );
 }
 
-function AccountDropdownInternal() {
-  const isSmallOrLarger = useBreakpoint('sm');
+function EdaUserInfo() {
   const fetcher = useFetcher();
+  const meResponse = useSWR<{ username: string }>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
+  return meResponse?.data;
+}
+
+function UserInfo() {
   const { automationServer } = useAutomationServers();
+  const fetcher = useFetcher();
   const meResponse = useSWR<{ results: { username: string }[] }>(
-    automationServer
-      ? automationServer.type !== AutomationServerType.EDA
-        ? '/api/v2/me/'
-        : undefined
-      : undefined,
+    automationServer ? '/api/v2/me/' : undefined,
     fetcher,
     swrOptions
   );
+  return meResponse.data?.results?.[0];
+}
+
+function AccountDropdownInternal() {
+  const isSmallOrLarger = useBreakpoint('sm');
+  const { automationServer } = useAutomationServers();
+  const userInfo = automationServer?.type === AutomationServerType.EDA ? EdaUserInfo() : UserInfo();
+
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -289,9 +299,7 @@ function AccountDropdownInternal() {
             <FlexItem>
               <UserCircleIcon size="md" />
             </FlexItem>
-            {isSmallOrLarger && (
-              <FlexItem wrap="nowrap">{meResponse.data?.results?.[0]?.username}</FlexItem>
-            )}
+            {isSmallOrLarger && <FlexItem wrap="nowrap">{userInfo?.username}</FlexItem>}
           </Flex>
         </DropdownToggle>
       }
@@ -301,7 +309,9 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            history(RouteObj.Users);
+            automationServer?.type === AutomationServerType.EDA
+              ? history(RouteObj.EdaUsers)
+              : history(RouteObj.Users);
           }}
         >
           {t('User details')}
@@ -310,11 +320,9 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              await fetch(
-                automationServer && automationServer.type === AutomationServerType.EDA
-                  ? '/api/eda/v1/auth/logout/?next=/'
-                  : '/api/logout/'
-              );
+              automationServer?.type === AutomationServerType.EDA
+                ? await requestPost(`${API_PREFIX}/auth/session/logout/`, {})
+                : await fetch('/api/logout/');
               history('/');
             }
             void logout();
