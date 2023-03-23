@@ -53,7 +53,7 @@ describe('Jobs.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
-        const job = results[0];
+        const job = results[4];
         cy.contains('tr', job.name).within(() => {
           cy.get('button.toggle-kebab').click();
           cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Cancel job$/).should(
@@ -74,7 +74,7 @@ describe('Jobs.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
-        const job = results[0];
+        const job = results[4];
         if (job && job.summary_fields && job.summary_fields.user_capabilities) {
           job.summary_fields.user_capabilities.delete = false;
         }
@@ -97,27 +97,12 @@ describe('Jobs.cy.ts', () => {
         const jobs: UnifiedJob[] = results;
         let job: UnifiedJob;
         if (jobs && jobs.length) {
-          job = jobs[3];
-          jobs[3].status = 'running';
-          cy.intercept(
-            {
-              method: 'GET',
-              url: '/api/v2/unified_jobs/*',
-              hostname: 'localhost',
-            },
-            {
-              count: 310,
-              next: '/api/v2/unified_jobs/?not__launch_type=sync&order_by=-finished&page=2&page_size=10',
-              previous: null,
-              results: jobs,
-            }
-          ).as('jobsList');
+          job = jobs[3]; // job with status "running"
           cy.mount(
             <Page>
               <Jobs />
             </Page>
           );
-          cy.wait('@jobsList');
           cy.contains('tr', job.name).within(() => {
             cy.get('button.cancel-job').should('be.visible');
             cy.get('button.cancel-job').click();

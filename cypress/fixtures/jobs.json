@@ -333,7 +333,7 @@
       "description": "",
       "unified_job_template": 7,
       "launch_type": "relaunch",
-      "status": "successful",
+      "status": "running",
       "execution_environment": 1,
       "failed": false,
       "started": "2022-12-13T15:37:33.593820Z",
