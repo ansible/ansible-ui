@@ -64,7 +64,6 @@ export function PageFormAsyncSelect<
   const {
     control,
     setValue,
-
     formState: { isSubmitting },
   } = useFormContext<TFieldValues>();
 
@@ -162,13 +161,14 @@ export interface AsyncSelectProps<SelectionType> {
 export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType>) {
   const {
     id,
+    isReadOnly,
+    labeledBy,
+    loadingError,
+    loadingPlaceholder,
     onSelect,
     placeholder,
-    loadingPlaceholder,
-    labeledBy,
     query,
     validated,
-    loadingError,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -280,7 +280,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           ) : undefined
         }
         validated={validated}
-        isDisabled={loading}
+        isDisabled={loading || isReadOnly}
         onFilter={onFilter}
         hasInlineFilter={true}
         menuAppendTo="parent"

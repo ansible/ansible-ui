@@ -46,7 +46,11 @@ declare global {
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
-      selectByLabel(label: string | RegExp, text: string): Chainable<void>;
+      selectByLabel(
+        label: string | RegExp,
+        text: string,
+        options?: { disableSearch?: boolean }
+      ): Chainable<void>;
       filterByText(text: string): Chainable<void>;
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
@@ -191,15 +195,20 @@ Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
   cy.getByLabel(label).type(text, { delay: 0 });
 });
 
-Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => {
-  cy.getFormGroupByLabel(label).within(() => {
-    cy.get('button').should('be.enabled').click();
-    cy.get('.pf-m-search').type(text, { delay: 0 });
-    cy.get('.pf-c-select__menu').within(() => {
-      cy.contains('button', text).click();
+Cypress.Commands.add(
+  'selectByLabel',
+  (label: string | RegExp, text: string, options?: { disableSearch?: boolean }) => {
+    cy.getFormGroupByLabel(label).within(() => {
+      cy.get('button').should('be.enabled').click();
+      if (!options?.disableSearch) {
+        cy.get('.pf-m-search').type(text, { delay: 0 });
+      }
+      cy.get('.pf-c-select__menu').within(() => {
+        cy.contains('button', text).click();
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.contains('a', label).click();
