@@ -53,8 +53,8 @@ describe('Jobs.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
-        const job = results[4];
-        cy.contains('tr', job.name).within(() => {
+        const job = results[4]; // job with status "successful"
+        cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
           cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Cancel job$/).should(
             'have.attr',
@@ -74,11 +74,8 @@ describe('Jobs.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
-        const job = results[4];
-        if (job && job.summary_fields && job.summary_fields.user_capabilities) {
-          job.summary_fields.user_capabilities.delete = false;
-        }
-        cy.contains('tr', job.name).within(() => {
+        const job = results[5]; // job with summary_fields.user_capabilities.start: false
+        cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
           cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Cancel job$/).should(
             'have.attr',

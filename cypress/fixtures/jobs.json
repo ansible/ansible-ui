@@ -551,7 +551,7 @@
         },
         "instance_group": { "id": 2, "name": "default", "is_container_group": false },
         "created_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
-        "user_capabilities": { "delete": true, "start": true },
+        "user_capabilities": { "delete": true, "start": false },
         "labels": { "count": 0, "results": [] },
         "credentials": [
           { "id": 1, "name": "Demo Credential", "description": "", "kind": "ssh", "cloud": false }
@@ -563,7 +563,7 @@
       "description": "",
       "unified_job_template": 7,
       "launch_type": "relaunch",
-      "status": "successful",
+      "status": "running",
       "execution_environment": 1,
       "failed": false,
       "started": "2022-12-12T20:43:51.685714Z",
