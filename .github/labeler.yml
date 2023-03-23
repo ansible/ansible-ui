@@ -1,0 +1,8 @@
+AWX:
+  - frontend/awx/**/*
+
+EDA:
+  - frontend/eda/**/*
+
+framework:
+  - framework/**/*
