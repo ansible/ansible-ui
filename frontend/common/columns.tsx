@@ -43,6 +43,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       sort: disableSort ? undefined : 'name',
       card: 'name',
       list: 'name',
+      defaultSort: true,
     }),
     [disableLinks, disableSort, onClick, options?.header, t, url]
   );
