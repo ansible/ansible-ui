@@ -25,7 +25,7 @@ export function PageDropdownAction<T extends object>(props: {
   selectedItem?: T;
   position?: DropdownPosition;
   iconOnly?: boolean;
-  onOpen?: (open: boolean) => void;
+  onOpen?: (label: string, open: boolean) => void;
   variant?: ButtonVariant;
 }) {
   const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip, variant } =
@@ -47,9 +47,10 @@ export function PageDropdownAction<T extends object>(props: {
       ) !== undefined,
     [actions]
   );
+
   useEffect(() => {
-    props.onOpen?.(dropdownOpen);
-  }, [dropdownOpen, props]);
+    props.onOpen?.(label ?? 'default', dropdownOpen);
+  }, [dropdownOpen, label, props]);
 
   if (actions.length === 0) return <></>;
   const Icon = icon;

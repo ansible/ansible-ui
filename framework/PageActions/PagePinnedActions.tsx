@@ -20,7 +20,7 @@ export function PagePinnedActions<T extends object>(props: {
   iconOnly?: boolean;
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
-  onOpen?: (open: boolean) => void;
+  onOpen?: (label: string, open: boolean) => void;
 }) {
   const { actions, selectedItems, selectedItem, wrapper, iconOnly, onOpen } = props;
   if (actions.length === 0) return <></>;
@@ -49,7 +49,7 @@ export function PagePinnedAction<T extends object>(props: {
   iconOnly?: boolean;
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
-  onOpen?: (open: boolean) => void;
+  onOpen?: (label: string, open: boolean) => void;
 }) {
   const { action, selectedItems, selectedItem, wrapper, onOpen } = props;
 

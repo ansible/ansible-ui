@@ -1,5 +1,12 @@
 import { ButtonVariant, DropdownPosition, Split, SplitItem } from '@patternfly/react-core';
-import { ComponentClass, FunctionComponent, useMemo } from 'react';
+import {
+  ComponentClass,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useBreakpoint, WindowSize } from '../components/useBreakPoint';
 import { IPageAction } from './PageAction';
 import { PageActionType } from './PageActionType';
@@ -63,25 +70,38 @@ export function PageActions<T extends object>(props: {
     return visibleActions?.filter((action) => !isPinnedAction(action)) ?? [];
   }, [collapseButtons, visibleActions]);
 
-  // Must use memo here, otherwise the components reinitialize causing onOpen to be called incorrectly.
-  return useMemo(
-    () => (
-      <Split
-        hasGutter={
-          (!iconOnly && selectedItem !== undefined) || (selectedItems && selectedItems.length > 0)
-        }
-      >
-        {pinnedActions !== undefined && pinnedActions.length > 0 && (
-          <PagePinnedActions {...props} actions={pinnedActions} onOpen={onOpen} />
-        )}
-        {dropdownActions.length > 0 && (
-          <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <PageDropdownAction {...props} actions={dropdownActions} onOpen={onOpen} />
-          </SplitItem>
-        )}
-      </Split>
-    ),
-    [dropdownActions, iconOnly, onOpen, pinnedActions, props, selectedItem, selectedItems]
+  // Here we track if any dropdowns are open and if any are, then call onOpen
+  // onOpen is needed at a higher level to set zIndex of the open dropdown
+  const [openLabels, setOpenLabels] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    if (Object.values(openLabels).find((v) => v)) onOpen?.(true);
+    else onOpen?.(false);
+  }, [onOpen, openLabels]);
+  const handleOnOpen = useCallback((label: string, open: boolean) => {
+    setOpenLabels((labels) => {
+      if (labels[label] !== open) {
+        labels = { ...labels };
+        labels[label] = open;
+      }
+      return labels;
+    });
+  }, []);
+
+  return (
+    <Split
+      hasGutter={
+        (!iconOnly && selectedItem !== undefined) || (selectedItems && selectedItems.length > 0)
+      }
+    >
+      {pinnedActions !== undefined && pinnedActions.length > 0 && (
+        <PagePinnedActions {...props} actions={pinnedActions} onOpen={handleOnOpen} />
+      )}
+      {dropdownActions.length > 0 && (
+        <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <PageDropdownAction {...props} actions={dropdownActions} onOpen={handleOnOpen} />
+        </SplitItem>
+      )}
+    </Split>
   );
 }
 
