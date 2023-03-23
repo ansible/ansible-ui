@@ -1,5 +1,10 @@
 import { ReactNode } from 'react';
+import styled from 'styled-components';
+
+const Span = styled.span`
+  text-decoration: underline dotted;
+`;
 
 export function Dotted(props: { children: ReactNode }) {
-  return <span style={{ textDecoration: 'underline dotted' }}>{props.children}</span>;
+  return <Span>{props.children}</Span>;
 }
