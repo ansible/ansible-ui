@@ -8,7 +8,7 @@ import { useSelectOrganization } from '../hooks/useSelectOrganization';
 export function PageFormOrganizationSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: { name: TFieldName; organizationPath?: string; organizationIdPath?: string }) {
+>(props: { name: TFieldName; organizationPath?: string; isRequired?: boolean }) {
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
   const { setValue } = useFormContext();
@@ -21,14 +21,13 @@ export function PageFormOrganizationSelect<
       selectValue={(organization: Organization) => organization.name}
       selectOpen={selectOrganization}
       validate={async (organizationName: string) => {
+        if (!props.isRequired && !organizationName) return;
         try {
           const itemsResponse = await requestGet<ItemsResponse<Organization>>(
             `/api/v2/organizations/?name=${organizationName}`
           );
           if (itemsResponse.results.length === 0) return t('Organization not found.');
           if (props.organizationPath) setValue(props.organizationPath, itemsResponse.results[0]);
-          if (props.organizationIdPath)
-            setValue(props.organizationIdPath, itemsResponse.results[0].id);
         } catch (err) {
           if (err instanceof Error)
             return t('Error validating organization: {{errMessage}}. Please reload the page.', {
@@ -38,7 +37,7 @@ export function PageFormOrganizationSelect<
         }
         return undefined;
       }}
-      isRequired
+      isRequired={props.isRequired}
     />
   );
 }

@@ -21,17 +21,19 @@ import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
 import { Instances } from './administration/instances/Instances';
 import Dashboard from './dashboard/Dashboard';
+import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
+import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
-import { Projects } from './resources/projects/Projects';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
+import { Projects } from './resources/projects/Projects';
 import { TemplateDetail } from './resources/templates/TemplateDetail';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
+import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
-import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -61,6 +63,9 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
 
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
+        <Route path={RouteObjWithoutPrefix.CredentialDetails} element={<CredentialPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
+        <Route path={RouteObjWithoutPrefix.EditCredential} element={<EditCredential />} />
 
         <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />
         <Route path={RouteObjWithoutPrefix.ProjectDetails} element={<ProjectPage />} />
