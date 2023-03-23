@@ -7,8 +7,12 @@ import { HTTPError } from './http-error';
 export function useOptions<T>(url: string) {
   const optionsRequest = useOptionsRequest<T>();
 
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
+  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
+  useEffect(() => {
+    const abortController = new AbortController();
+    abortSignalRef.current.signal = abortController.signal;
+    return () => abortController.abort();
+  }, []);
 
   const response = useSWR<T>(url, optionsRequest, {
     dedupingInterval: 0,

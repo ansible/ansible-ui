@@ -12,15 +12,7 @@ import {
 import * as Ajv from 'ajv';
 import { JSONSchema6 } from 'json-schema';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
-import {
-  DeepPartial,
-  ErrorOption,
-  FieldPath,
-  FieldValues,
-  FormProvider,
-  useForm,
-  useFormState,
-} from 'react-hook-form';
+import { DeepPartial, FieldValues, FormProvider, useForm, useFormState } from 'react-hook-form';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
@@ -55,7 +47,7 @@ export function PageForm<T extends object>(props: {
   const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error | null>(null);
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
@@ -68,11 +60,11 @@ export function PageForm<T extends object>(props: {
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(async (data) => {
-          setError('');
+          setError(null);
           try {
-            await props.onSubmit(data, setError, setFieldError);
+            await props.onSubmit(data);
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            err instanceof Error ? setError(err) : setError('Unknown error');
           }
         })}
         isHorizontal={isHorizontal}
@@ -107,10 +99,13 @@ export function PageForm<T extends object>(props: {
         {error && (
           <Alert
             variant="danger"
-            title={error ?? ''}
+            title={error.message ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-          />
+            isExpandable={'description' in error ? typeof error.description === 'string' : false}
+          >
+            {'description' in error && typeof error.description === 'string' && error.description}
+          </Alert>
         )}
         {props.onCancel ? (
           <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
@@ -163,11 +158,7 @@ export function PageFormGrid(props: {
   return Component;
 }
 
-export type PageFormSubmitHandler<T extends FieldValues> = (
-  data: T,
-  setError: (error: string) => void,
-  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
-) => Promise<unknown>;
+export type PageFormSubmitHandler<T extends FieldValues> = (data: T) => Promise<unknown>;
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();

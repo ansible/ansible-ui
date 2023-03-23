@@ -7,20 +7,24 @@ import { HTTPError } from './http-error';
 export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
 
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
+  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
+  useEffect(() => {
+    const abortController = new AbortController();
+    abortSignalRef.current.signal = abortController.signal;
+    return () => abortController.abort();
+  }, []);
 
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
-    const response = await postRequest(url, body, signal ?? abortController.current.signal);
+    const response = await postRequest(url, body, signal ?? abortSignalRef.current.signal);
 
     if (!response.ok) {
       if (response.status === 401) {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
 
-      let responseBody: object | undefined;
+      let responseBody: string | undefined;
       try {
-        responseBody = (await response.json()) as object;
+        responseBody = await response.text();
       } catch {
         // Do nothing - response body was not valid json
       }
@@ -28,6 +32,10 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
       throw new HTTPError(response.statusText, response.status, responseBody);
     }
 
+    switch (response.status) {
+      case 204: // No Content
+        return null as ResponseBody;
+    }
     return (await response.json()) as ResponseBody;
   };
 }
