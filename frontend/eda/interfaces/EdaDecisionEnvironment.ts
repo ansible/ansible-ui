@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaExecutionEnvironment {
+export interface EdaDecisionEnvironment {
   id: number;
   name: string;
 }
