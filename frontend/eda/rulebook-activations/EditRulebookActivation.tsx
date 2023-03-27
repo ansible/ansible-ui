@@ -43,14 +43,16 @@ export function EditRulebookActivation() {
     setError
   ) => {
     let extra_var_id;
-    try {
-      extra_var_id = await requestPost<EdaExtraVars>(`${API_PREFIX}/extra-vars/`, {
-        extra_var: rulebookActivation.variables,
-      });
-      (cache as unknown as { clear: () => void }).clear?.();
-    } catch (err) {
-      extra_var_id = undefined;
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+    if (rulebookActivation?.variables) {
+      try {
+        extra_var_id = await requestPost<EdaExtraVars>(`${API_PREFIX}/extra-vars/`, {
+          extra_var: rulebookActivation.variables,
+        });
+        (cache as unknown as { clear: () => void }).clear?.();
+      } catch (err) {
+        extra_var_id = undefined;
+        setError(err instanceof Error ? err.message : t('Unknown error'));
+      }
     }
     try {
       const newRulebookActivation = await requestPost<EdaRulebookActivation>(
