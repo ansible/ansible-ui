@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, GitAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  TextCell,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/crud/useGet';
@@ -59,12 +60,14 @@ export function ProjectDetails() {
       <PageDetails>
         <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
-        <PageDetail label={t('SCM type')}>{project?.type || t('Git')}</PageDetail>
+        <PageDetail label={t('SCM type')}>
+          <TextCell icon={<GitAltIcon color="#F1502F" />} iconSize="md" text={'Git'} />
+        </PageDetail>
         <PageDetail label={t('SCM URL')}>{project?.url || ''}</PageDetail>
         <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
-          <StatusLabelCell status={project?.status || ''} />
+          <StatusLabelCell status={project?.import_state || ''} />
         </PageDetail>
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
