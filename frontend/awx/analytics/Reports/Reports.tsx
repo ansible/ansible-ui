@@ -12,7 +12,7 @@ import {
 import { AnalyticsErrorState } from './ErrorStates';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { EmptyStateUnauthorized } from '../../../../framework/components/EmptyStateUnauthorized';
-import { requestGet } from '../../../Data';
+import { requestGet } from '../../../common/crud/Data';
 import { TAGS }from './constants';
 import useSWR from 'swr';
 import AutomationCalculator from './AutomationCalculator'

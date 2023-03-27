@@ -19,7 +19,7 @@ import {
     Bullseye
 } from '@patternfly/react-core';
 import useSWR from 'swr';
-import { requestPost } from '../../../Data';
+import { requestPost } from '../../../common/crud/Data';
 import styled from 'styled-components';
 import TotalSavings from './TotalSavings';
 import CalculationCost from './CalculationCost';
