@@ -13,7 +13,6 @@ describe('EDA Projects CRUD', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.clickButton(/^Create project$/);
     cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^SCM type$/, 'git');
     cy.typeByLabel(/^SCM URL$/, 'https://example.com');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);

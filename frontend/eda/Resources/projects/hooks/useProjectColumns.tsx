@@ -28,11 +28,11 @@ export function useProjectColumns() {
       },
       {
         header: t('Status'),
-        cell: (project) => <StatusLabelCell status={project.status} />,
+        cell: (project) => <StatusLabelCell status={project.import_state} />,
       },
       {
         header: t('Revision'),
-        cell: (project) => <TextCell text={project?.revision ? project.revision : '00000'} />,
+        cell: (project) => <TextCell text={project?.git_hash ? project.git_hash : ''} />,
       },
     ],
 
