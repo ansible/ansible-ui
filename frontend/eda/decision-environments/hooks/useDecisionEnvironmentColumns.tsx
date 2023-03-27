@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
+import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 
-export function useExecutionEnvironmentColumns() {
+export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  return useMemo<ITableColumn<EdaExecutionEnvironment>[]>(
+  return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
     () => [
       {
         header: t('ID'),
-        cell: (inventory) => inventory.id,
+        cell: (decisionEnv) => decisionEnv.id,
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
@@ -20,14 +20,14 @@ export function useExecutionEnvironmentColumns() {
       },
       {
         header: t('Name'),
-        cell: (executionEnvironment) => (
+        cell: (DecisionEnvironment) => (
           <TextCell
-            text={executionEnvironment.name}
+            text={DecisionEnvironment.name}
             onClick={() =>
               navigate(
-                RouteObj.EdaExecutionEnvironmentDetails.replace(
+                RouteObj.EdaDecisionEnvironmentDetails.replace(
                   ':id',
-                  executionEnvironment.id.toString()
+                  DecisionEnvironment.id.toString()
                 )
               )
             }
