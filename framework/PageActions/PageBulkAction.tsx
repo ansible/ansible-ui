@@ -1,6 +1,11 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
 import { IPageBulkAction } from './PageAction';
+import styled from 'styled-components';
+
+const IconSpan = styled.span`
+  padding-right: 4px;
+`;
 
 export function PageBulkAction<T extends object>(props: {
   action: IPageBulkAction<T>;
@@ -27,9 +32,9 @@ export function PageBulkAction<T extends object>(props: {
           variant={variant}
           icon={
             Icon ? (
-              <span style={{ paddingRight: 4 }}>
+              <IconSpan>
                 <Icon />
-              </span>
+              </IconSpan>
             ) : undefined
           }
           isAriaDisabled={isDisabled}
