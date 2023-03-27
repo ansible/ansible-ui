@@ -84,7 +84,7 @@ describe('credentials', () => {
   });
 
   it('credentials table row edit credential', () => {
-    cy.get('#edit-credential').click();
+    cy.get('button.edit-credential').first().click();
     cy.hasTitle(/^Edit credential$/);
   });
 

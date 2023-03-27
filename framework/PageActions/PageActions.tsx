@@ -1,10 +1,10 @@
-import { ButtonVariant, DropdownPosition, Split, SplitItem } from '@patternfly/react-core';
+import { ButtonVariant, DropdownPosition, Flex, FlexItem } from '@patternfly/react-core';
 import {
   ComponentClass,
   FunctionComponent,
+  useMemo,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import { useBreakpoint, WindowSize } from '../components/useBreakPoint';
@@ -44,7 +44,7 @@ export function PageActions<T extends object>(props: {
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (open: boolean) => void;
 }) {
-  const { actions, selectedItem, selectedItems, iconOnly, onOpen } = props;
+  const { actions, selectedItem, iconOnly, onOpen } = props;
 
   const collapseBreakpoint = useBreakpoint(
     props.collapse !== 'never' && props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg'
@@ -88,20 +88,22 @@ export function PageActions<T extends object>(props: {
   }, []);
 
   return (
-    <Split
-      hasGutter={
-        (!iconOnly && selectedItem !== undefined) || (selectedItems && selectedItems.length > 0)
-      }
+    <Flex
+      flexWrap={{ default: 'nowrap' }}
+      spaceItems={{ default: iconOnly ? 'spaceItemsNone' : 'spaceItemsMd' }}
+      justifyContent={{ default: 'justifyContentFlexEnd' }}
     >
       {pinnedActions !== undefined && pinnedActions.length > 0 && (
-        <PagePinnedActions {...props} actions={pinnedActions} onOpen={handleOnOpen} />
+        <FlexItem>
+          <PagePinnedActions {...props} actions={pinnedActions} onOpen={handleOnOpen} />
+        </FlexItem>
       )}
       {dropdownActions.length > 0 && (
-        <SplitItem isFilled style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <FlexItem>
           <PageDropdownAction {...props} actions={dropdownActions} onOpen={handleOnOpen} />
-        </SplitItem>
+        </FlexItem>
       )}
-    </Split>
+    </Flex>
   );
 }
 

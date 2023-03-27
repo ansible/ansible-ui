@@ -28,7 +28,7 @@ export function PageSingleAction<T extends object>(props: {
     <Wrapper>
       <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
         <Button
-          id={props.action.label.toLowerCase().split(' ').join('-')}
+          className={props.action.label.toLowerCase().split(' ').join('-')}
           variant={variant}
           icon={
             Icon ? (

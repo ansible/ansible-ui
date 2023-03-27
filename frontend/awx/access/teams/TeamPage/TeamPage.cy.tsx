@@ -33,11 +33,7 @@ describe('TeamPage', () => {
         </Page>
       </MemoryRouter>
     );
-    cy.contains('button[id="edit-team"]', 'Edit team').should(
-      'have.attr',
-      'aria-disabled',
-      'false'
-    );
+    cy.contains('button.edit-team', 'Edit team').should('have.attr', 'aria-disabled', 'false');
   });
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
     cy.mount(

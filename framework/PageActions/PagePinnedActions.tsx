@@ -25,7 +25,7 @@ export function PagePinnedActions<T extends object>(props: {
   const { actions, selectedItems, selectedItem, wrapper, iconOnly, onOpen } = props;
   if (actions.length === 0) return <></>;
   return (
-    <Split hasGutter>
+    <Split hasGutter={!iconOnly}>
       {actions.map((action, index) => (
         <PagePinnedAction
           key={index}
