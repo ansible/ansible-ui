@@ -453,6 +453,6 @@ Cypress.Commands.add(
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
     name: 'E2E Project ' + randomString(4),
-    url: 'https://github.com/ansible/ansible-tower-samples',
+    url: 'https://github.com/ansible/event-driven-ansible',
   });
 });
