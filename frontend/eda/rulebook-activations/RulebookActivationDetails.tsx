@@ -114,9 +114,6 @@ export function RulebookActivationDetails() {
                 : ''}
             </PageDetail>
             <PageDetail label={t('Project')}>{rulebookActivation?.project?.name || ''}</PageDetail>
-            <PageDetail label={t('Working directory')}>
-              {rulebookActivation?.working_directory || ''}
-            </PageDetail>
             <PageDetail label={t('Activation status')}>
               {rulebookActivation?.status || ''}
             </PageDetail>

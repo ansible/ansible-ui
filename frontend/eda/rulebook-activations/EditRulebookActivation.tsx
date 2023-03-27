@@ -140,12 +140,6 @@ export function EditRulebookActivation() {
               : []
           }
         />
-        <PageFormTextInput
-          name={'working_directory'}
-          label={t('Working directory')}
-          id={'working_directory'}
-          placeholder={t('Insert working directory here')}
-        />
         <PageFormSwitch<EdaRulebook>
           id="rulebook-activation"
           formLabel={t('Rulebook activation enabled?')}
