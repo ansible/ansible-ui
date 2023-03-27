@@ -13,6 +13,7 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 
 declare global {
   namespace Cypress {
@@ -58,6 +59,8 @@ declare global {
       createAwxJobTemplate(): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
+
+      createEdaProject(): Chainable<EdaProject>;
 
       deleteAwxOrganization(organization: Organization): Chainable<void>;
       deleteAwxProject(project: Project): Chainable<void>;
@@ -451,3 +454,12 @@ Cypress.Commands.add(
     });
   }
 );
+
+//EDA Specific Commands
+
+Cypress.Commands.add('createEdaProject', () => {
+  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
+    name: 'E2E Project ' + randomString(4),
+    url: 'https://github.com/ansible/event-driven-ansible',
+  });
+});
