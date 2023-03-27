@@ -30,7 +30,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
     bulkAction({
       title: t('Permanently delete users', { count: users.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} users.', {
-        count: undeletableUsers.length,
+        count: users.length - undeletableUsers.length,
       }),
       actionButtonText: t('Delete users', { count: users.length }),
       items: users.sort((l, r) => compareStrings(l.username, r.username)),
