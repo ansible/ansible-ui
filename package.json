@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.650",
+  "version": "0.0.651",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
