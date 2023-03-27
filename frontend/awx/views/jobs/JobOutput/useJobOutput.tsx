@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { ItemsResponse, requestGet } from '../../../../Data';
+import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';
 

@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework';
-import { useGet2 } from '../../../Data';
+import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
 import { Job } from '../../interfaces/Job';
 import { JobDetails } from './JobDetails';
@@ -41,8 +41,6 @@ function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const { data: job } = useGet2<Job>({
-    url: id ? `/api/v2/${path}/${id}/` : '',
-  });
+  const { data: job } = useGet<Job>(id ? `/api/v2/${path}/${id}/` : '');
   return job;
 }

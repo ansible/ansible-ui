@@ -37,7 +37,9 @@ export function useGet<T>(url: string, query?: Record<string, string | number | 
   }, [response]);
 
   let error = response.error as Error | undefined;
-  if (!(error instanceof Error)) error = new Error('Unknown error');
+  if (error && !(error instanceof Error)) {
+    error = new Error('Unknown error');
+  }
 
   return useMemo(
     () => ({
