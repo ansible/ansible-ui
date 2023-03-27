@@ -1,4 +1,5 @@
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import {
   Title,
   EmptyStateBody,
@@ -9,9 +10,10 @@ import {
 } from '@patternfly/react-core';
 
 export function EmptyStateError(props: { message?: string }) {
-  const title = 'Something went wrong';
-  const description = 'Please refresh the page by using the button below.';
-  const button = 'Refresh';
+  const { t } = useTranslation();
+  const title = t('Something went wrong');
+  const description = t('Please refresh the page by using the button below.');
+  const button = t('Refresh');
   const { message } = props;
   return (
     <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
