@@ -4,33 +4,33 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaExecutionEnvironment } from '../../interfaces/EdaExecutionEnvironment';
+import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
-import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
+import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
 import { useMemo } from 'react';
 
-export function useExecutionEnvironmentsActions(view: IEdaView<EdaExecutionEnvironment>) {
+export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnvironment>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
-  return useMemo<IPageAction<EdaExecutionEnvironment>[]>(
+  const deleteDecisionEnvironments = useDeleteDecisionEnvironments(view.unselectItemsAndRefresh);
+  return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
         type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create execution environment'),
-        onClick: () => navigate(RouteObj.CreateEdaExecutionEnvironment),
+        onClick: () => navigate(RouteObj.CreateEdaDecisionEnvironment),
       },
       {
         type: PageActionType.bulk,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
-        onClick: (executionEnvironments: EdaExecutionEnvironment[]) =>
-          deleteExecutionEnvironments(executionEnvironments),
+        onClick: (DecisionEnvironments: EdaDecisionEnvironment[]) =>
+          deleteDecisionEnvironments(DecisionEnvironments),
         isDanger: true,
       },
     ],
-    [deleteExecutionEnvironments, navigate, t]
+    [deleteDecisionEnvironments, navigate, t]
   );
 }

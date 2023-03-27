@@ -36,7 +36,7 @@ export function EventDrivenSidebar(props: {
         title={t('Resources')}
         isExpanded
         isActive={isRouteActive(
-          [RouteObj.EdaProjects, RouteObj.EdaExecutionEnvironments],
+          [RouteObj.EdaProjects, RouteObj.EdaProjects, RouteObj.EdaDecisionEnvironments],
           location
         )}
       >
@@ -47,10 +47,16 @@ export function EventDrivenSidebar(props: {
           {t('Projects')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteObj.EdaExecutionEnvironments, location)}
-          onClick={() => onClick(RouteObj.EdaExecutionEnvironments)}
+          isActive={isRouteActive(RouteObj.EdaCredentials, location)}
+          onClick={() => onClick(RouteObj.EdaCredentials)}
         >
-          {t('Execution environments')}
+          {t('Credentials')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.EdaDecisionEnvironments, location)}
+          onClick={() => onClick(RouteObj.EdaDecisionEnvironments)}
+        >
+          {t('Decision environments')}
         </NavItem>
       </NavExpandable>
       <NavExpandable
