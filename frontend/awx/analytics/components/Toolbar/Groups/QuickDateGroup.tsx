@@ -6,6 +6,7 @@ import {
   SelectOptionProps,
   ToolbarGroupVariant,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import ToolbarInput from './ToolbarInput';
 
@@ -43,6 +44,7 @@ const QuickDateGroup: FunctionComponent<Props> = ({
 }) => {
   const endDate = (filters.end_date as string) || getDateByDays(0);
   const startDate = (filters.start_date as string) || getDateByDays(-30);
+  const { t } = useTranslation();
 
   return (
     <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
@@ -71,7 +73,7 @@ const QuickDateGroup: FunctionComponent<Props> = ({
               setValue={(e) => setFilters('start_date', e)}
               validators={[
                 (date: Date) =>
-                  date > strToDate(endDate) ? 'Must not be after end date' : '',
+                  date > strToDate(endDate) ? t('Must not be after end date') : '',
               ]}
             />
           </SplitItem>
@@ -84,8 +86,8 @@ const QuickDateGroup: FunctionComponent<Props> = ({
               validators={[
                 (date: Date) => {
                   if (date < strToDate(startDate))
-                    return 'Must not be before start date';
-                  if (date > today()) return 'Must not be after today';
+                    return t('Must not be before start date');
+                  if (date > today()) return t('Must not be after today');
                   return '';
                 },
               ]}

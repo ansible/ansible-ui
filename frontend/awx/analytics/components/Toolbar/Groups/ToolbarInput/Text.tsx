@@ -6,6 +6,7 @@ import {
   InputGroup,
   Button,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { SearchIcon } from '@patternfly/react-icons';
 import { optionsForCategories } from '../../constants';
@@ -27,6 +28,8 @@ const Text: FunctionComponent<Props> = ({
 }) => {
   const [searchVal, setSearchVal] = useState(value);
   const options = optionsForCategories[categoryKey];
+
+  const { t } = useTranslation();
 
   const onDelete = () => {
     setValue('');
@@ -64,7 +67,7 @@ const Text: FunctionComponent<Props> = ({
         />
         <Button
           variant="control"
-          aria-label={`Search button for ${options.name}`}
+          aria-label={t(`Search button for ${options.name}`)}
           onClick={() => {
             setValue(searchVal);
           }}

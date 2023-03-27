@@ -8,7 +8,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 
 const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
@@ -19,6 +19,7 @@ const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
       <strong>{t('Savings per template')}</strong>
     </p>
     <p>
+      <Trans>
       Savings per template is the difference between the manual cost and
       automation cost of successfully running templates across hosts. Manual
       cost is calculated by multiplying the number of hours spent manually
@@ -26,6 +27,7 @@ const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
       Automation cost is the total amount of time, in seconds, spent running
       templates automatically multiplied by the average monthly cost for
       automated processes.
+      </Trans>
     </p>
     <br />
     <p>{t('The formula used to calculate manual cost:')}</p>
@@ -47,7 +49,7 @@ const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
     <p>{t('The formula used to calculate automation cost:')}</p>
     <CodeBlock>
       <CodeBlockCode>
-        {`savings per template = manual cost - automation cost`}
+        {t(`savings per template = manual cost - automation cost`)}
       </CodeBlockCode>
     </CodeBlock>
     <br />
@@ -55,50 +57,59 @@ const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
 )};
 
 const FailedHostPerTemplateText: FunctionComponent<Record<string, never>> =
-  () => (
+  () => {
+      const { t } = useTranslation();
+      return (
     <>
       <p>
-        <strong>Failed hosts cost per template</strong>
+        <strong>{t('Failed hosts cost per template')}</strong>
       </p>
       <p>
+        <Trans>
         Failed hosts cost per template is the total amount of time spent on
         failed automated job runs multiplied by the configured automated process
         cost.
+        </Trans>
       </p>
       <br />
-      <p>The formula used to calculate failed host cost per template:</p>
+      <p>{t('The formula used to calculate failed host cost per template:')}</p>
       <CodeBlock>
         <CodeBlockCode>
-          {`failed cost per template = (failed elapsed total / 3600) * configurable automated process cost`}
+          {t('failed cost per template = (failed elapsed total / 3600) * configurable automated process cost')}
         </CodeBlockCode>
       </CodeBlock>
       <br />
     </>
-  );
+  )};
 
 const MonetaryGainPerTemplateText: FunctionComponent<Record<string, never>> =
-  () => (
+  () => {
+      const { t } = useTranslation();
+      return (
     <>
       <p>
-        <strong>Monetary gain per template</strong>
+        <strong>{t('Monetary gain per template')}</strong>
       </p>
       <p>
+        <Trans>
         Monetary gain per template is the difference between total savings per
         template and failed hosts cost per template.
+        </Trans>
       </p>
       <br />
-      <p>The formula for monetary gain per template:</p>
+      <p>{t('The formula for monetary gain per template:')}</p>
       <CodeBlock>
         <CodeBlockCode>
-          {`monetary gain per template = savings per template - failed host cost per template`}
+          {t(`monetary gain per template = savings per template - failed host cost per template`)}
         </CodeBlockCode>
       </CodeBlock>
       <br />
     </>
-  );
+  )};
 
 const AutomationFormula: FunctionComponent<Record<string, never>> = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -111,7 +122,7 @@ const AutomationFormula: FunctionComponent<Record<string, never>> = () => {
         Automation formula
       </Button>
       <Modal
-        title="Automation formula"
+        title={t("Automation formula")}
         data-cy={'automation_formula_modal'}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -123,11 +134,12 @@ const AutomationFormula: FunctionComponent<Record<string, never>> = () => {
             onClick={() => setIsOpen(false)}
             data-cy={'automation_formula_cancel_button'}
           >
-            Close
+              {t('Close')}
           </Button>,
         ]}
       >
         <p>
+          <Trans>
           We use manual effort versus time spent on automation as factors to
           create formulas for cost and savings related to automation. While we
           aim to provide as accurate an account of the cost and savings as
@@ -135,6 +147,7 @@ const AutomationFormula: FunctionComponent<Record<string, never>> = () => {
           information breaks down where we get the data, the factors we use, the
           assumptions we make, and the formula used to compute the values as
           displayed in the chart.
+          </Trans>
         </p>
         <br />
 
