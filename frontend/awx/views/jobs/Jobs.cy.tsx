@@ -120,14 +120,17 @@ describe('Jobs.cy.ts', () => {
         </PageDialogProvider>
       </Page>
     );
-    cy.fixture('jobs.json').then((response: ItemsResponse<UnifiedJob>) => {
-      const job = response.results[0];
-      cy.selectRow(job.name, false);
-      cy.clickToolbarAction(/^Cancel selected jobs$/);
-      expect(spy).to.be.called;
-      cy.contains(
-        '{{count}} of the selected jobs cannot be canceled because they are not running.'
-      ).should('be.visible');
-    });
+    cy.fixture('jobs.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then((results: UnifiedJob[]) => {
+        const job = results[0];
+        cy.selectRow(job.name, false);
+        cy.clickToolbarAction(/^Cancel selected jobs$/);
+        expect(spy).to.be.called;
+        cy.contains(
+          '{{count}} of the selected jobs cannot be canceled because they are not running.'
+        ).should('be.visible');
+      });
   });
 });
