@@ -130,7 +130,7 @@ export function EditRulebookActivation() {
           options={RESTART_OPTIONS}
         />
         <PageFormSelectOption
-          name={'project'}
+          name={'project_id'}
           label={t('Project')}
           placeholderText={t('Select project')}
           options={

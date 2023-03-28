@@ -111,7 +111,20 @@ export function RulebookActivationDetails() {
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
             </PageDetail>
-            <PageDetail label={t('Project')}>{rulebookActivation?.project?.name || ''}</PageDetail>
+            <PageDetail label={t('Project')}>
+              {rulebookActivation && rulebookActivation.project?.id ? (
+                <Link
+                  to={RouteObj.EdaRulebookDetails.replace(
+                    ':id',
+                    `${rulebookActivation.project?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.project?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.project?.name || ''
+              )}
+            </PageDetail>
             <PageDetail label={t('Activation status')}>
               {rulebookActivation?.status || ''}
             </PageDetail>
