@@ -46,7 +46,7 @@ export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
               ...(uncancellableJobsDueToStatus.length
                 ? [
                     t(
-                      '{{count}} of the selected jobs cannot be cancelled because they are not running.',
+                      '{{count}} of the selected jobs cannot be canceled because they are not running.',
                       {
                         count: uncancellableJobsDueToStatus.length,
                       }
