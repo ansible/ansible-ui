@@ -6,14 +6,10 @@ import 'cypress-network-idle';
 import { randomString } from '../../framework/utils/random-string';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  Group,
-  Host,
-  Inventory,
-  JobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
