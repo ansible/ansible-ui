@@ -26,8 +26,9 @@ graph LR;
 ### E2E Getting started
 
 1. Setup Environment Variables
+   <br>The E2E tests need a live API to test against. The following environment variables can be used to setup the E2E test server.
 
-   The E2E tests need a live API to test against. The following environment variables can be used to setup the E2E test server.
+   ##### AWX
 
    | Environment Variable   | Description                                                                         |
    | ---------------------- | ----------------------------------------------------------------------------------- |
@@ -36,6 +37,15 @@ graph LR;
    | `CYPRESS_AWX_PASSWORD` | password for logging into the AWX server. `Default: admin`                          |
 
    > NOTE: Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
+
+   ##### EDA
+
+   | Environment Variable      | Description                                                                                                                          |
+   | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+   | `CYPRESS_EDA_SERVER`      | URL of the EDA server to run E2E tests against. `Default: <https://localhost:8000>`                                                  |
+   | `CYPRESS_EDA_USERNAME`    | username for logging into the EDA server. `Default: testuser`                                                                        |
+   | `CYPRESS_EDA_PASSWORD`    | password for logging into the EDA server. `Default: testpass`                                                                        |
+   | `CYPRESS_TEST_STANDALONE` | flag to indicate if EDA UI should be tested standalone. (Login via route `/login` instead of `/automation-servers`) `Default: false` |
 
 2. Run the Ansible-UI frontend and proxy
 
@@ -54,7 +64,7 @@ graph LR;
    Open the Cypress UI to run e2e tests
 
    ```
-   npm run cypress:open:e2e
+   npm run cypress:open
    ```
 
 ## Component Testing
@@ -68,7 +78,7 @@ npm run cypress:run:component
 Open the Cypress UI to run component tests
 
 ```
-npm run cypress:open:component
+npm run cypress:open
 ```
 
 ## Coverage
