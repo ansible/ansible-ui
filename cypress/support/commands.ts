@@ -82,6 +82,18 @@ Cypress.Commands.add(
     window.localStorage.setItem('theme', 'light');
     window.localStorage.setItem('disclaimer', 'true');
 
+    if (serverType === 'EDA server' && Cypress.env('TEST_STANDALONE') === true) {
+      // Standalone EDA login
+      cy.visit(`/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.typeByLabel(/^Username$/, username);
+      cy.typeByLabel(/^Password$/, password);
+      cy.get('button[type=submit]').click();
+      return;
+    }
+
     cy.visit(`/automation-servers`, {
       retryOnStatusCodeFailure: true,
       retryOnNetworkFailure: true,
