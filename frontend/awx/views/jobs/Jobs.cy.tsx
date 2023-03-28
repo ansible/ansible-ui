@@ -1,5 +1,6 @@
 import { Page } from '@patternfly/react-core';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { PageDialogProvider } from '../../../../framework';
 import * as deleteJobs from './hooks/useDeleteJobs';
 import * as cancelJobs from './hooks/useCancelJobs';
 import Jobs from './Jobs';
@@ -109,5 +110,24 @@ describe('Jobs.cy.ts', () => {
           throw new Error('Error retrieving jobs from fixture');
         }
       });
+  });
+  it('Bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
+    const spy = cy.spy(cancelJobs, 'useCancelJobs');
+    cy.mount(
+      <Page>
+        <PageDialogProvider>
+          <Jobs />
+        </PageDialogProvider>
+      </Page>
+    );
+    cy.fixture('jobs.json').then((response: ItemsResponse<UnifiedJob>) => {
+      const job = response.results[0];
+      cy.selectRow(job.name, false);
+      cy.clickToolbarAction(/^Cancel selected jobs$/);
+      expect(spy).to.be.called;
+      cy.contains(
+        '{{count}} of the selected jobs cannot be canceled because they are not running.'
+      ).should('be.visible');
+    });
   });
 });
