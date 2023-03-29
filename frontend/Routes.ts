@@ -166,18 +166,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/create`,
   EditEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/edit/:id`,
 
-  EdaActions: `${edaRoutePrefix}/actions`,
-  EdaActionDetails: `${edaRoutePrefix}/actions/details/:id`,
+  EdaRuleAudit: `${edaRoutePrefix}/rule-audit`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/rule-audit/details/:id`,
 
   EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,
   CreateEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/create`,
   EditEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/edit/:id`,
-
-  EdaActivities: `${edaRoutePrefix}/activities`,
-  EdaActivityDetails: `${edaRoutePrefix}/activities/details/:id`,
-  CreateEdaActivity: `${edaRoutePrefix}/activities/create`,
-  EditEdaActivity: `${edaRoutePrefix}/activities/edit/:id`,
 
   EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
   EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
