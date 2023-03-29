@@ -16,8 +16,12 @@ describe('Jobs.cy.ts', () => {
       }
     );
   });
-  it('Component renders', () => {
-    cy.mount(<Jobs />);
+  it('renders job list', () => {
+    cy.mount(
+      <Page>
+        <Jobs />
+      </Page>
+    );
     cy.hasTitle(/^Jobs$/);
     cy.get('table').find('tr').should('have.length', 11);
   });
@@ -32,6 +36,70 @@ describe('Jobs.cy.ts', () => {
         cy.selectRow(job.name, false);
         cy.clickToolbarAction(/^Delete selected jobs$/);
         expect(spy).to.be.called;
+      });
+  });
+  it('row action to delete job is disabled if the selected job is running', () => {
+    cy.mount(
+      <Page>
+        <Jobs />
+      </Page>
+    );
+    cy.fixture('jobs.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then((results: UnifiedJob[]) => {
+        const job = results[5]; // job with status "running"
+        cy.contains('tr', job.id).within(() => {
+          cy.get('button.toggle-kebab').click();
+          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Delete job$/).should(
+            'have.attr',
+            'aria-disabled',
+            'true'
+          );
+        });
+      });
+  });
+  it('row action to delete job  is disabled if the user does not have permissions', () => {
+    cy.mount(
+      <Page>
+        <Jobs />
+      </Page>
+    );
+    cy.fixture('jobs.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then((results: UnifiedJob[]) => {
+        const job = results[4]; // job with summary_fields.user_capabilities.delete: false
+        cy.contains('tr', job.id).within(() => {
+          cy.get('button.toggle-kebab').click();
+          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Delete job$/).should(
+            'have.attr',
+            'aria-disabled',
+            'true'
+          );
+        });
+      });
+  });
+  it('bulk deletion confirmation contains message about selected jobs that cannot be deleted', () => {
+    cy.mount(
+      <Page>
+        <PageDialogProvider>
+          <Jobs />
+        </PageDialogProvider>
+      </Page>
+    );
+    cy.fixture('jobs.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then((results: UnifiedJob[]) => {
+        const job = results[4]; // job with summary_fields.user_capabilities.delete: false
+        cy.get('.pf-c-select__toggle').click();
+        cy.clickButton('ID');
+        cy.selectRow(job.id.toString(), false);
+        cy.clickToolbarAction(/^Delete selected jobs$/);
+        cy.contains(
+          '{{count}} of the selected jobs cannot be deleted due to insufficient permissions.'
+        ).should('be.visible');
       });
   });
   it('row action to cancel job  is disabled if the selected job is not running', () => {
@@ -89,14 +157,22 @@ describe('Jobs.cy.ts', () => {
         }
       });
   });
-  it('Bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
-    cy.mount(<Jobs />);
+  it('bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
+    cy.mount(
+      <Page>
+        <PageDialogProvider>
+          <Jobs />
+        </PageDialogProvider>
+      </Page>
+    );
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
         const job = results[0];
-        cy.selectRow(job.name, false);
+        cy.get('.pf-c-select__toggle').click();
+        cy.clickButton('ID');
+        cy.selectRow(job.id.toString(), false);
         cy.clickToolbarAction(/^Cancel selected jobs$/);
         cy.contains(
           '{{count}} of the selected jobs cannot be canceled because they are not running.'
