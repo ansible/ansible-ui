@@ -20,13 +20,26 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Name'),
-        cell: (job: UnifiedJob) => (
-          <TextCell
-            text={job.name}
-            to={RouteObj.JobDetails.replace(':id', job.id.toString())}
-            disableLinks={options?.disableLinks}
-          />
-        ),
+        cell: (job: UnifiedJob) => {
+          const paths: { [key: string]: string } = {
+            project_update: 'project',
+            inventory_update: 'inventory',
+            job: 'playbook',
+            ad_hoc_command: 'command',
+            system_job: 'management',
+            workflow_job: 'workflow',
+          };
+          return (
+            <TextCell
+              text={job.name}
+              to={RouteObj.JobDetails.replace(':job_type', paths[job.type]).replace(
+                ':id',
+                job.id.toString()
+              )}
+              disableLinks={options?.disableLinks}
+            />
+          );
+        },
         sort: 'name',
         card: 'name',
         list: 'name',
