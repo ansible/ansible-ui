@@ -11,9 +11,12 @@ describe('EDA Projects List', () => {
   before(() => {
     cy.edaLogin();
 
-    cy.createEdaProject().then((proj) => {
-      edaproject = proj;
+    cy.createEdaProject().then((project) => {
+      edaproject = project;
     });
+  });
+  after(() => {
+    cy.deleteEdaProject(edaproject);
   });
 
   it('renders the EDA projects page', () => {
@@ -29,16 +32,44 @@ describe('EDA Projects List', () => {
     cy.contains('#name', edaproject.name);
   });
 
-  it.only('can filter the Projects list based on Name', () => {
+  it('can filter the Projects list based on Name', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.getRowFromList(edaproject.name);
   });
+});
 
-  it.skip('can bulk delete Projects from the Projects list', () => {
-    //write this once Project deletion has been implemented
+describe('EDA Projects List Deletion from UI', () => {
+  let edaproject: EdaProject;
+
+  beforeEach(() => {
+    cy.edaLogin();
+
+    cy.createEdaProject().then((project) => {
+      edaproject = project;
+    });
   });
 
-  it.skip('can verify the functionality of items in the kebab menu on the Projects list view', () => {
-    //write this once Project deletion has been implemented
+  it('can bulk delete Projects from the Projects list', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.createEdaProject().then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.selectRow(testProject.name);
+      cy.selectRow(edaproject.name);
+      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
+  });
+
+  it('deletes a Project from kebab menu from the project details page', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(edaproject.name);
+    cy.hasTitle(edaproject.name);
+    cy.clickPageAction(/^Delete project$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
   });
 });

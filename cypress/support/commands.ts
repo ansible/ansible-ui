@@ -54,14 +54,17 @@ declare global {
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
       createAwxOrganization(): Chainable<Organization>;
+
+      /**
+       * `createAwxProject` creates an AWX Project via API,
+       *  with the name `E2E Project` and appends a random string at the end of the name
+       * @returns {Chainable<Project>}
+       */
       createAwxProject(): Chainable<Project>;
       createAwxInventory(): Chainable<Inventory>;
       createAwxJobTemplate(): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
-
-      createEdaProject(): Chainable<EdaProject>;
-
       deleteAwxOrganization(organization: Organization): Chainable<void>;
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
@@ -72,6 +75,25 @@ declare global {
       createInventoryHostGroup(
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
+
+      /*  EDA related custom commands  */
+
+      /**
+       * `createEdaProject()` creates an EDA Project via API,
+       *  with the name `E2E Project` and appends a random string at the end of the name
+       *
+       * @returns {Chainable<EdaProject>}
+       */
+      createEdaProject(): Chainable<EdaProject>;
+      
+      /**
+       * `deleteEdaProject(projectName: Project)`
+       * deletes an EDA project via API,
+       * accepts the project name as parameter
+       *
+       * @returns {Chainable<void>}
+       */
+      deleteEdaProject(project: Project): Chainable<void>;
     }
   }
 }
@@ -467,11 +489,30 @@ Cypress.Commands.add(
   }
 );
 
-//EDA Specific Commands
+/*  EDA related custom command implementation  */
 
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
     name: 'E2E Project ' + randomString(4),
     url: 'https://github.com/ansible/event-driven-ansible',
+  }).then((response) => {
+    Cypress.log({
+      displayName: 'EDA PROJECT CREATION :',
+      message: [`Created 👉  ${response.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('deleteEdaProject', (project: Project) => {
+  if (project && project.related && typeof project.related.last_job === 'string') {
+    const projectUpdateEndpoint: string = project.related.last_job;
+    cy.requestDelete(projectUpdateEndpoint);
+  }
+  // Delete project
+  cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA PROJECT DELETION :',
+      message: [`Deleted 👉  ${project.name}`],
+    });
   });
 });
