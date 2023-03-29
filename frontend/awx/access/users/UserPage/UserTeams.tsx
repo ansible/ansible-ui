@@ -33,7 +33,7 @@ export function UserTeams(props: { user: User }) {
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/users/');
-  const canAddTeam = Boolean(data && data.actions && data.actions['POST']);
+  const canAddUserToTeam = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
@@ -42,7 +42,7 @@ export function UserTeams(props: { user: User }) {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to teams'),
-        isDisabled: canAddTeam
+        isDisabled: canAddUserToTeam
           ? undefined
           : t(
               'You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.'
@@ -56,7 +56,7 @@ export function UserTeams(props: { user: User }) {
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
       },
     ],
-    [t, canAddTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
+    [t, canAddUserToTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
   );
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
@@ -81,21 +81,21 @@ export function UserTeams(props: { user: User }) {
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
         emptyStateTitle={
-          canAddTeam
+          canAddUserToTeam
             ? t('This user currently does not belong to any teams.')
             : t('You do not have permissions to add this user to a team.')
         }
         emptyStateDescription={
-          canAddTeam
+          canAddUserToTeam
             ? t('Please add a team by using the button below.')
             : t(
                 'Please contact your Organization Administrator if there is an issue with your access.'
               )
         }
-        emptyStateIcon={canAddTeam ? undefined : CubesIcon}
-        emptyStateButtonText={canAddTeam ? t('Add team') : undefined}
-        emptyStateButtonIcon={canAddTeam ? <PlusIcon /> : null}
-        emptyStateButtonClick={canAddTeam ? () => selectTeamsAddUsers([user]) : undefined}
+        emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}
+        emptyStateButtonText={canAddUserToTeam ? t('Add team') : undefined}
+        emptyStateButtonIcon={canAddUserToTeam ? <PlusIcon /> : null}
+        emptyStateButtonClick={canAddUserToTeam ? () => selectTeamsAddUsers([user]) : undefined}
         {...view}
       />
     </>
