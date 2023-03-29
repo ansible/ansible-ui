@@ -13,7 +13,7 @@ export function PageDetailsFromColumns<T extends object>(props: {
   return (
     <PageDetails>
       {columns.map((column) => (
-        <PageDetail key={column.id} label={column.header}>
+        <PageDetail key={column.id ?? column.header} label={column.header}>
           <TableColumnCell column={column} item={item} />
         </PageDetail>
       ))}
