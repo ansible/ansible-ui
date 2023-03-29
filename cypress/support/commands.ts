@@ -85,7 +85,7 @@ declare global {
        * @returns {Chainable<EdaProject>}
        */
       createEdaProject(): Chainable<EdaProject>;
-      
+
       /**
        * `deleteEdaProject(projectName: Project)`
        * deletes an EDA project via API,
@@ -93,7 +93,7 @@ declare global {
        *
        * @returns {Chainable<void>}
        */
-      deleteEdaProject(project: Project): Chainable<void>;
+      deleteEdaProject(project: EdaProject): Chainable<void>;
     }
   }
 }
@@ -503,11 +503,7 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('deleteEdaProject', (project: Project) => {
-  if (project && project.related && typeof project.related.last_job === 'string') {
-    const projectUpdateEndpoint: string = project.related.last_job;
-    cy.requestDelete(projectUpdateEndpoint);
-  }
+Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
   // Delete project
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
     Cypress.log({
