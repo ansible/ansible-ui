@@ -59,8 +59,6 @@ import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { useSettings } from '../Settings';
-import { Scrollable } from '../components/Scrollable';
-import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
@@ -310,7 +308,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       </EmptyStateDiv>
 =======
       <div className="dark-2" style={{ height: '100%' }}>
-        <EmptyStateError message={error.message} />
+        <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />
       </div>
 >>>>>>> ea9ec1f3 (error state component)
     );
