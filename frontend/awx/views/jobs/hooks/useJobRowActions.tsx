@@ -27,11 +27,11 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
     };
 
     const cannotCancelJob = (job: UnifiedJob) => {
-      if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
-        return t(`The job cannot be canceled due to insufficient permission`);
-      else if (!isJobRunning(job.status))
+      if (!isJobRunning(job.status))
         return t(`The job cannot be canceled because it is not running`);
-      return '';
+      else if (!job.summary_fields.user_capabilities.start)
+        return t(`The job cannot be canceled due to insufficient permission`);
+      else return '';
     };
 
     return [
