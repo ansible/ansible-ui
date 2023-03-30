@@ -19,6 +19,7 @@ describe('EDA Projects List', () => {
   it('renders the EDA projects page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.hasTitle(/^Projects$/);
+    cy.get('h1').should('contain', edaproject.name)
   });
 
   it('renders the Project details page', () => {
