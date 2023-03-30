@@ -43,7 +43,7 @@ describe('EDA Projects CRUD', () => {
     cy.get('h1').should('contain', edaproject.name);
   });
 
-  it.only('deletes a Project from kebab menu from the project details page', () => {
+  it('deletes a Project from kebab menu from the project details page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.clickRow(edaproject.name);
     cy.get('h1').should('contain', edaproject.name);
