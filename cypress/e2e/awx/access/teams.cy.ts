@@ -46,7 +46,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickLink(/^Create team$/);
     cy.typeByLabel(/^Name$/, teamName);
-    cy.typeByLabel(/^Organization$/, organization.name);
+    cy.selectByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName); // This team will be cleaned up when we delete the org at the end of the tests
   });
@@ -183,7 +183,7 @@ describe('teams', () => {
     });
   });
 
-  it('Can render the team roles page', () => {
+  it('can render the team roles page', () => {
     cy.navigateTo(/^Teams$/, true);
     cy.clickRow(team.name);
     cy.hasTitle(team.name);

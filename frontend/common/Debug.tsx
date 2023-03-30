@@ -2,7 +2,7 @@
 import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { PageHeader } from '../../framework';
-import { useBulkActionDialog } from '../../framework/BulkActionDialog';
+import { useBulkActionDialog } from '../../framework/PageDialogs/BulkActionDialog';
 import { randomString } from '../../framework/utils/random-string';
 import { Team } from '../awx/interfaces/Team';
 import { RouteObj } from '../Routes';

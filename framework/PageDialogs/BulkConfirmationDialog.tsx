@@ -10,13 +10,13 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { ITableColumn, PageTable } from '../PageTable/PageTable';
+import { usePaged } from '../PageTable/useTableItems';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { compareStrings } from '../utils/compare';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
-import { ITableColumn, PageTable } from './PageTable/PageTable';
-import { usePaged } from './PageTable/useTableItems';
-import { useFrameworkTranslations } from './useFrameworkTranslations';
-import { compareStrings } from './utils/compare';
-import styled from 'styled-components';
 
 const ModalBodyDiv = styled.div`
   display: flex;

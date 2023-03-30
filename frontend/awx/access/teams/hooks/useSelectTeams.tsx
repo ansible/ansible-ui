@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
-import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
+import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from './useTeamsColumns';
@@ -16,7 +16,7 @@ function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }
     disableQueryString: true,
   });
   return (
-    <SelectMultipleDialog
+    <MultiSelectDialog
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

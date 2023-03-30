@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
-import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
+import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useUserAndTeamRolesLists } from '../../common/useUserAndTeamRolesLists';
@@ -26,7 +26,7 @@ function SelectUsers(props: {
   useUserAndTeamRolesLists(view.pageItems as User[]);
 
   return (
-    <SelectMultipleDialog
+    <MultiSelectDialog
       title={props.title}
       onSelect={props.onSelect}
       toolbarFilters={toolbarFilters}
