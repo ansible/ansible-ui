@@ -14,6 +14,7 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import 'cypress-network-idle';
 
 declare global {
   namespace Cypress {
@@ -27,6 +28,7 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
+      optionsWait(idleTime: number): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -35,6 +37,8 @@ declare global {
       hasTitle(label: string | RegExp): Chainable<void>;
       hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
+      confirmModalAction(label: string | RegExp): Chainable<void>;
+      assertModalSuccess(): Chainable<void>;
       clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       getRowFromList(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickRowAction(
@@ -180,6 +184,12 @@ Cypress.Commands.add('edaLogin', () => {
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+//this command allows a user to insert a wait time into a test to account for items that sync.
+//Number is in milliseconds. ie: 5000 would be 5 seconds.
+Cypress.Commands.add('optionsWait', (idleTime: number) => {
+  cy.waitForNetworkIdle('GET', '/api/eda/v1**', idleTime);
+});
+
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
     .parent()
@@ -199,7 +209,15 @@ Cypress.Commands.add('filterByText', (text: string) => {
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
   cy.getCookie('csrftoken').then((cookie) =>
     cy
-      .request<T>({ method: 'POST', url, body, headers: { 'X-CSRFToken': cookie?.value } })
+      .request<T>({
+        method: 'POST',
+        url,
+        body,
+        headers: {
+          'X-CSRFToken': cookie?.value,
+          Referer: Cypress.config().baseUrl,
+        },
+      })
       .then((response) => response.body)
   );
 });
@@ -326,6 +344,25 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
     .within(() => {
       cy.get('input[type=checkbox]').click();
     });
+});
+
+//This command enables the user to select a check box in a modal and then click a button with a certain label name.
+Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
+  cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+    cy.get('input[id="confirm"]').click();
+    cy.contains('button', label).click();
+  });
+});
+
+//This command enables the user to assert a successful result in a modal window.
+Cypress.Commands.add('assertModalSuccess', () => {
+  cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+    cy.get('tbody>tr')
+      .find('[data-label="Status"]')
+      .each(($li) => {
+        cy.wrap($li).should('contain', 'Success');
+      });
+  });
 });
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {

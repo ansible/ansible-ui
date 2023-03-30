@@ -157,6 +157,7 @@
     "@typescript-eslint/eslint-plugin": "5.55.0",
     "@typescript-eslint/parser": "5.55.0",
     "cypress": "12.8.1",
+    "cypress-network-idle": "^1.14.2",
     "cypress-react-selector": "3.0.0",
     "eslint": "8.36.0",
     "eslint-config-prettier": "8.7.0",
