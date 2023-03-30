@@ -43,7 +43,7 @@ describe('credentials', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeByLabel(/^Name$/, credentialName);
     cy.typeByLabel(/^Organization$/, organization.name);
-    cy.selectByLabel(/^Credential type$/, 'Amazon Web Services');
+    cy.selectByLabel(/^Credential type$/, 'Amazon Web Services', { disableSearch: true });
     cy.clickButton(/^Create credential$/);
     cy.hasTitle(credentialName);
   });

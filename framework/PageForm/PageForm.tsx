@@ -21,7 +21,6 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
-import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
@@ -95,10 +94,11 @@ export function PageForm<T extends object>(props: {
             </PageFormGrid>
           </div>
         ) : (
-          <Scrollable
+          <div
             style={{
               height: '100%',
               flexGrow: 1,
+              overflow: 'auto',
             }}
           >
             <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
@@ -106,7 +106,7 @@ export function PageForm<T extends object>(props: {
                 {props.children}
               </PageFormGrid>
             </div>
-          </Scrollable>
+          </div>
         )}
         {error && (
           <Alert

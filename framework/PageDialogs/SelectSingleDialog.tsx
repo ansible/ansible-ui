@@ -1,25 +1,25 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
+import { ITableColumn, PageTable } from '../PageTable/PageTable';
+import { IToolbarFilter } from '../PageTable/PageToolbar';
+import { ISelected } from '../PageTable/useTableItems';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
-import { ITableColumn, PageTable } from './PageTable/PageTable';
-import { IToolbarFilter } from './PageTable/PageToolbar';
-import { ISelected } from './PageTable/useTableItems';
-import { useFrameworkTranslations } from './useFrameworkTranslations';
-import { IView } from './useView';
 
-export type SelectMultipleDialogProps<T extends object> = {
+export type SelectSingleDialogProps<T extends object> = {
   title: string;
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
   toolbarFilters: IToolbarFilter[];
-  onSelect: (items: T[]) => void;
+  onSelect: (item: T) => void;
   confirmText?: string;
   cancelText?: string;
   emptyStateTitle?: string;
   errorStateTitle?: string;
 };
 
-export function SelectMultipleDialog<T extends object>(props: SelectMultipleDialogProps<T>) {
+export function SelectSingleDialog<T extends object>(props: SelectSingleDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
@@ -38,7 +38,9 @@ export function SelectMultipleDialog<T extends object>(props: SelectMultipleDial
           id="confirm"
           onClick={() => {
             onClose();
-            onSelect(view.selectedItems);
+            if (view.selectedItems.length > 0) {
+              onSelect(view.selectedItems[0]);
+            }
           }}
           isAriaDisabled={view.selectedItems.length === 0}
         >
@@ -64,23 +66,17 @@ export function SelectMultipleDialog<T extends object>(props: SelectMultipleDial
           {...view}
           emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
           errorStateTitle={props.errorStateTitle ?? translations.errorText}
-          showSelect
           disableCardView
           disableListView
           disableColumnManagement
           compact
           disableBodyPadding
+          onSelect={(item) => {
+            view.unselectAll();
+            view.selectItem(item);
+          }}
         />
       </div>
     </Modal>
   );
-}
-
-export function useSelectMultipleDialog<T extends object>() {
-  const [_, setDialog] = usePageDialog();
-  const openSelectMultipleDialog = useCallback(
-    (props: SelectMultipleDialogProps<T>) => setDialog(<SelectMultipleDialog<T> {...props} />),
-    [setDialog]
-  );
-  return openSelectMultipleDialog;
 }

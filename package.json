@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.670",
+  "version": "0.0.671",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -41,7 +41,7 @@
     "cypress:run": "concurrently npm:cypress:run:e2e npm:cypress:run:component --prefix-colors cyan,blue",
     "cypress:run:e2e": "cypress run --e2e",
     "cypress:run:component": "cypress run --component",
-    "cypress:open": "cypress open --e2e --browser chrome",
+    "cypress:open": "cypress open --browser chrome",
     "coverage": "open coverage/lcov-report/index.html",
     "cypress:check": "npx nyc report --check-coverage --statements 20 --branches 20 --functions 19 --lines 20 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
     "prepare": "husky install",
