@@ -106,6 +106,18 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
-      - run: DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from quay.io/ansible/ansible-ui:source --target source --tag source --tag quay.io/ansible/ansible-ui:source .
-      - run: DOCKER_BUILDKIT=1 docker build --cache-from source --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: dependencies.tar
+          key: dependencies-${{ hashFiles('dependencies.tar') }}
+
+      - if: steps.cache.outputs.cache-hit == 'true'
+        run: docker load --input dependencies.tar
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          DOCKER_BUILDKIT=1 docker build --target dependencies --tag dependencies .
+          docker save --output dependencies.tar dependencies
+      - run: DOCKER_BUILDKIT=1 docker build --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
       - run: docker push quay.io/ansible/ansible-ui --all-tags
