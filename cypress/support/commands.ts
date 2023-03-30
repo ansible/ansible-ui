@@ -306,6 +306,20 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
     });
 });
 
+Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('#filter-input').type(name, { delay: 0 });
+      cy.get('[aria-label="apply filter"]').click();
+    });
+  }
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+});
+
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
