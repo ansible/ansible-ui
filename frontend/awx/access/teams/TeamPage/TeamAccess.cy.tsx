@@ -1,7 +1,3 @@
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
-import { PageDialogProvider } from '../../../../../framework';
-import { ActiveUserProvider } from '../../../../common/useActiveUser';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
 import { TeamAccess } from './TeamAccess';
@@ -36,15 +32,7 @@ describe('TeamAccess', () => {
 
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(
-        <MemoryRouter>
-          <ActiveUserProvider>
-            <Page>
-              <TeamAccess team={team} />
-            </Page>
-          </ActiveUserProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<TeamAccess team={team} />);
       cy.contains('button[id="add-users"]', 'Add users').should(
         'have.attr',
         'aria-disabled',
@@ -69,15 +57,7 @@ describe('TeamAccess', () => {
 
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(
-        <MemoryRouter>
-          <ActiveUserProvider>
-            <Page>
-              <TeamAccess team={team} />
-            </Page>
-          </ActiveUserProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<TeamAccess team={team} />);
       cy.contains('td', 'user-2')
         .parent()
         .within(() => {
@@ -104,17 +84,7 @@ describe('TeamAccess', () => {
 
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(
-        <MemoryRouter>
-          <ActiveUserProvider>
-            <PageDialogProvider>
-              <Page>
-                <TeamAccess team={team} />
-              </Page>
-            </PageDialogProvider>
-          </ActiveUserProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<TeamAccess team={team} />);
       const role = team.summary_fields.object_roles.read_role;
       cy.contains('tr', 'user-2')
         .get(`button[data-ouia-component-id="${role.name}-${role.id}"]`)
@@ -141,17 +111,7 @@ describe('TeamAccess', () => {
 
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(
-        <MemoryRouter>
-          <ActiveUserProvider>
-            <PageDialogProvider>
-              <Page>
-                <TeamAccess team={team} />
-              </Page>
-            </PageDialogProvider>
-          </ActiveUserProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<TeamAccess team={team} />);
       const role = team.summary_fields.object_roles.read_role;
       cy.contains('tr', 'user-2')
         .get(`button[data-ouia-component-id="team-role-${role.name}-${role.id}"]`)
@@ -178,17 +138,7 @@ describe('TeamAccess', () => {
     cy.intercept('POST', '/api/v2/users/**/roles/', cy.spy().as('removeUser'));
 
     cy.fixture('team').then((team: Team) => {
-      cy.mount(
-        <MemoryRouter>
-          <ActiveUserProvider>
-            <PageDialogProvider>
-              <Page>
-                <TeamAccess team={team} />
-              </Page>
-            </PageDialogProvider>
-          </ActiveUserProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<TeamAccess team={team} />);
       // Remove users
       cy.selectRow('admin'); //  User cannot be removed as they are a System Administrator
       cy.selectRow('user-2');

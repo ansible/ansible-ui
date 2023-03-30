@@ -3,8 +3,10 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
-import { useItem } from '../../../../common/crud/useGet';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
@@ -12,9 +14,13 @@ import { ProjectDetails } from './ProjectDetails';
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const project = useItem<Project>('/api/v2/projects', params.id ?? '0');
+  const { error, data: project, refresh } = useGetItem<Project>('/api/v2/projects', params.id);
   const navigate = useNavigate();
   const itemActions = useProjectActions({ onProjectsDeleted: () => navigate(RouteObj.Projects) });
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!project) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <PageHeader
@@ -30,7 +36,7 @@ export function ProjectPage() {
       />
       <PageTabs loading={!project}>
         <PageTab label={t('Details')}>
-          <ProjectDetails project={project!} />
+          <ProjectDetails project={project} />
         </PageTab>
         <PageTab label={t('Access')}>TODO</PageTab>
         <PageTab label={t('Job Templates')}>TODO</PageTab>

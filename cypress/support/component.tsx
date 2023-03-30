@@ -16,15 +16,17 @@
 
 import '@patternfly/patternfly/patternfly-base.css';
 
+import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
-
-// Import commands.js using ES2015 syntax:
+import { mount } from 'cypress/react18';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { PageFramework } from '../../framework';
+import { User } from '../../frontend/awx/interfaces/User';
+import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-
-import { mount } from 'cypress/react18';
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -42,7 +44,34 @@ declare global {
   }
 }
 
-Cypress.Commands.add('mount', mount);
+Cypress.Commands.add('mount', (component, options) => {
+  cy.fixture('activeUser').then((activeUser: User) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/v2/me/',
+        hostname: 'localhost',
+      },
+      {
+        activeUser,
+      }
+    );
+  });
+  return mount(
+    <MemoryRouter initialEntries={['/1']}>
+      <PageFramework>
+        <ActiveUserProvider>
+          <Page>
+            <Routes>
+              <Route path="/:id" element={component} />
+            </Routes>
+          </Page>
+        </ActiveUserProvider>
+      </PageFramework>
+    </MemoryRouter>,
+    options
+  );
+});
 
 // Example use:
 // cy.mount(<MyComponent />)

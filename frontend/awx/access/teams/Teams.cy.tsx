@@ -1,6 +1,3 @@
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
-import { PageDialogProvider } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
@@ -18,24 +15,12 @@ describe('Teams.cy.ts', () => {
       ).as('teamsList');
     });
     it('Component renders', () => {
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       cy.hasTitle(/^Teams$/);
       cy.get('table').find('tr').should('have.length', 4);
     });
     it('List has filters for Name, Organization, Created By and Modified By', () => {
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
         'orgFilterRequest'
       );
@@ -56,15 +41,7 @@ describe('Teams.cy.ts', () => {
     });
     it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
       // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
-      cy.mount(
-        <MemoryRouter>
-          <PageDialogProvider>
-            <Page>
-              <Teams />
-            </Page>
-          </PageDialogProvider>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       cy.get('[type="checkbox"][id="select-all"]').check();
       cy.clickToolbarAction(/^Delete selected teams$/);
       cy.contains(
@@ -72,13 +49,7 @@ describe('Teams.cy.ts', () => {
       ).should('be.visible');
     });
     it('Create Team button is disabled if the user does not have permission to create teams', () => {
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Create Team button is enabled if the user has permission to create teams', () => {
@@ -98,13 +69,7 @@ describe('Teams.cy.ts', () => {
           },
         },
       }));
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
     });
     it('Displays error if teams are not successfully loaded', () => {
@@ -117,13 +82,7 @@ describe('Teams.cy.ts', () => {
           statusCode: 500,
         }
       ).as('teamsError');
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
       cy.contains('Error loading teams');
@@ -158,13 +117,7 @@ describe('Teams.cy.ts', () => {
           },
         },
       }));
-      cy.mount(
-        <MemoryRouter initialEntries={['/teams']}>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
 
@@ -178,13 +131,7 @@ describe('Teams.cy.ts', () => {
           actions: {},
         },
       }));
-      cy.mount(
-        <MemoryRouter>
-          <Page>
-            <Teams />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<Teams />);
       // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
       cy.get('button[id="refresh"]').click();
       cy.contains(/^You do not have permission to create a team$/);

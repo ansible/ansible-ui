@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { RouteObj } from '../../Routes';
+import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
 export function useOptions<T>(url: string) {
@@ -39,6 +40,8 @@ function useOptionsRequest<ResponseBody = unknown>() {
   useEffect(() => () => abortController.current.abort(), []);
 
   return async (url: string) => {
+    await Delay();
+
     const response = await fetch(url, {
       method: 'OPTIONS',
       credentials: 'include',

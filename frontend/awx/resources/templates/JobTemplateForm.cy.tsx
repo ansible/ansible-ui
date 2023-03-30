@@ -1,6 +1,3 @@
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
-import { PageDialogProvider } from '../../../../framework';
 import { CreateJobTemplate } from './TemplateForm';
 
 describe('Create job template ', () => {
@@ -94,49 +91,23 @@ describe('Create job template ', () => {
     ).as('selectedProject');
   });
   it('Create Template - Displays error message on internal server error', () => {
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateJobTemplate />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateJobTemplate />);
     cy.typeByLabel(/^Name$/, 'Test');
   });
 
   it('Component renders', () => {
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateJobTemplate />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateJobTemplate />);
     cy.hasTitle(/^Create job template$/);
   });
   it('Validates properly', () => {
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateJobTemplate />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateJobTemplate />);
     cy.clickButton(/^Create job template$/);
     ['Name', 'Inventory', 'Project', 'Playbook'].map((field) =>
       cy.contains(`${field} is required.`).should('be.visible')
     );
   });
-  it('Shouold update fields properly', () => {
-    cy.mount(
-      <MemoryRouter>
-        <PageDialogProvider>
-          <Page>
-            <CreateJobTemplate />
-          </Page>
-        </PageDialogProvider>
-      </MemoryRouter>
-    );
+  it('Should update fields properly', () => {
+    cy.mount(<CreateJobTemplate />);
     cy.typeByLabel(/^Name$/, 'Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);

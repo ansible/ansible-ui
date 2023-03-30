@@ -1,19 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
 import { Project } from '../../../interfaces/Project';
 import { ProjectDetails } from './ProjectDetails';
 
 describe('ProjectDetails', () => {
   it('Component renders and displays project', () => {
     cy.fixture('project').then((project: Project) => {
-      cy.mount(
-        <MemoryRouter initialEntries={['/projects']} initialIndex={0}>
-          <Page>
-            <ProjectDetails project={project} />
-          </Page>
-        </MemoryRouter>
-      );
+      cy.mount(<ProjectDetails project={project} />);
       cy.get('#name').should('have.text', 'Demo Project @ 10:44:51');
       cy.get('#organization').should('have.text', 'Default');
       cy.get('#last-job-status').invoke('text').as('Successful');

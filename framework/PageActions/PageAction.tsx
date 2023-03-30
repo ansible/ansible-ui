@@ -55,7 +55,7 @@ type IPageSingleActionWithLink<T extends object> = IPageActionCommon & {
 type IPageSingleActionWithOnClick<T extends object> = IPageActionCommon & {
   type: PageActionType.single;
   variant?: ButtonVariant;
-  onClick: (item: T) => void | (() => Promise<unknown>);
+  onClick: (item: T) => void | Promise<unknown>;
   href?: never;
   isDisabled?: (item: T) => string | undefined;
   isHidden?: (item: T) => boolean;

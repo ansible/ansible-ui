@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { getCookie } from './cookie';
+import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
 export function useDeleteRequest() {
@@ -11,6 +12,8 @@ export function useDeleteRequest() {
   useEffect(() => () => abortController.current.abort(), []);
 
   return async (url: string) => {
+    await Delay();
+
     const response = await fetch(url, {
       method: 'DELETE',
       credentials: 'include',

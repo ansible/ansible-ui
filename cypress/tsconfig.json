@@ -5,5 +5,5 @@
     "types": ["cypress", "node"],
     "jsx": "react"
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "support/component.ts"]
 }
