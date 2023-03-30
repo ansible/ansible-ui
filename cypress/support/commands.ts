@@ -13,6 +13,7 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 
 declare global {
   namespace Cypress {
@@ -64,6 +65,8 @@ declare global {
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
 
+      createEdaProject(): Chainable<EdaProject>;
+
       deleteAwxOrganization(organization: Organization): Chainable<void>;
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
@@ -83,6 +86,18 @@ Cypress.Commands.add(
   (server: string, username: string, password: string, serverType: string) => {
     window.localStorage.setItem('theme', 'light');
     window.localStorage.setItem('disclaimer', 'true');
+
+    if (serverType === 'EDA server' && Cypress.env('TEST_STANDALONE') === true) {
+      // Standalone EDA login
+      cy.visit(`/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.typeByLabel(/^Username$/, username);
+      cy.typeByLabel(/^Password$/, password);
+      cy.get('button[type=submit]').click();
+      return;
+    }
 
     cy.visit(`/automation-servers`, {
       retryOnStatusCodeFailure: true,
@@ -469,3 +484,12 @@ Cypress.Commands.add(
     });
   }
 );
+
+//EDA Specific Commands
+
+Cypress.Commands.add('createEdaProject', () => {
+  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
+    name: 'E2E Project ' + randomString(4),
+    url: 'https://github.com/ansible/event-driven-ansible',
+  });
+});

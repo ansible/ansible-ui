@@ -28,7 +28,7 @@ export function useProjectColumns() {
       },
       {
         header: t('Status'),
-        cell: (project) => <StatusCell status={project.status} />,
+        cell: (project) => <StatusCell status={project.import_state} />,
         sort: 'status',
         defaultSort: true,
       },

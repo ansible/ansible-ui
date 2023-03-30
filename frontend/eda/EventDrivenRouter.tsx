@@ -2,11 +2,9 @@ import { Route, Routes } from 'react-router-dom';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import Dashboard from './dashboard/Dashboard';
-import { EditExecutionEnvironment } from './execution-environments/EditExecutionEnvironment';
-import { ExecutionEnvironmentDetails } from './execution-environments/ExecutionEnvironmentDetails';
-import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
-import { Inventories } from './Resources/inventories/Inventories';
-import { InventoryDetails } from './Resources/inventories/InventoryDetails';
+import { EditDecisionEnvironment } from './decision-environments/EditDecisionEnvironment';
+import { DecisionEnvironmentDetails } from './decision-environments/DecisionEnvironmentDetails';
+import { DecisionEnvironments } from './decision-environments/DecisionEnvironments';
 import { EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
@@ -29,6 +27,9 @@ import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { UserDetails } from './UserAccess/Users/UserDetails';
+import { CredentialDetails } from './Resources/credentials/CredentialDetails';
+import { EditCredential } from './Resources/credentials/EditCredential';
+import { Credentials } from './Resources/credentials/Credentials';
 
 export function EventDrivenRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Eda);
@@ -44,24 +45,26 @@ export function EventDrivenRouter() {
       <Route path={RouteObjWithoutPrefix.EdaProjectDetails} element={<ProjectDetails />} />
       <Route path={RouteObjWithoutPrefix.EdaProjects} element={<Projects />} />
 
+      <Route path={RouteObjWithoutPrefix.CreateEdaCredential} element={<EditCredential />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaCredential} element={<EditCredential />} />
+      <Route path={RouteObjWithoutPrefix.EdaCredentialDetails} element={<CredentialDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaCredentials} element={<Credentials />} />
       <Route
-        path={RouteObjWithoutPrefix.CreateEdaExecutionEnvironment}
-        element={<EditExecutionEnvironment />}
+        path={RouteObjWithoutPrefix.CreateEdaDecisionEnvironment}
+        element={<EditDecisionEnvironment />}
       />
       <Route
-        path={RouteObjWithoutPrefix.EditEdaExecutionEnvironment}
-        element={<EditExecutionEnvironment />}
+        path={RouteObjWithoutPrefix.EditEdaDecisionEnvironment}
+        element={<EditDecisionEnvironment />}
       />
       <Route
-        path={RouteObjWithoutPrefix.EdaExecutionEnvironmentDetails}
-        element={<ExecutionEnvironmentDetails />}
+        path={RouteObjWithoutPrefix.EdaDecisionEnvironmentDetails}
+        element={<DecisionEnvironmentDetails />}
       />
       <Route
-        path={RouteObjWithoutPrefix.EdaExecutionEnvironments}
-        element={<ExecutionEnvironments />}
+        path={RouteObjWithoutPrefix.EdaDecisionEnvironments}
+        element={<DecisionEnvironments />}
       />
-      <Route path={RouteObjWithoutPrefix.EdaInventoryDetails} element={<InventoryDetails />} />
-      <Route path={RouteObjWithoutPrefix.EdaInventories} element={<Inventories />} />
 
       <Route path={RouteObjWithoutPrefix.EdaActionDetails} element={<UnderDevelopment />} />
       <Route path={RouteObjWithoutPrefix.EdaActions} element={<Actions />} />

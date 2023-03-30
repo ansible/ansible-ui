@@ -16,7 +16,7 @@ import { requestPost } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
-import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
+import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -28,7 +28,7 @@ export function EditRulebookActivation() {
   const navigate = useNavigate();
   const { data: rulebooks } = useGet<EdaResult<EdaRulebook>>(`${API_PREFIX}/rulebooks/`);
   const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
-  const { data: environments } = useGet<EdaResult<EdaExecutionEnvironment>>(
+  const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
     `${API_PREFIX}/decision_environments/`
   );
   const { cache } = useSWRConfig();
