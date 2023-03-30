@@ -24,3 +24,89 @@ export interface SummaryFieldsExecutionEnvironment {
   description: string;
   image: string;
 }
+
+export interface SummaryFieldsUnifiedJob {
+  organization?: SummaryFieldsOrganization;
+  inventory?: {
+    id: number;
+    name: string;
+    description: string;
+    has_active_failures: boolean;
+    total_hosts: number;
+    hosts_with_active_failures: number;
+    total_groups: number;
+    has_inventory_sources: boolean;
+    total_inventory_sources: number;
+    inventory_sources_with_failures: number;
+    organization_id: number;
+    kind: string;
+  };
+  execution_environment?: SummaryFieldsExecutionEnvironment;
+  project?: {
+    id: number;
+    name: string;
+    description: string;
+    status: string;
+    scm_type: string;
+    allow_override: boolean;
+  };
+  project_update?: {
+    id: number;
+    name: string;
+    description: string;
+    status: string;
+    failed: boolean;
+  };
+  job_template?: {
+    id: number;
+    name: string;
+    description: string;
+  };
+  unified_job_template?: {
+    id: number;
+    name: string;
+    description: string;
+    unified_job_type: string;
+  };
+  instance_group?: {
+    id: number;
+    name: string;
+    is_container_group: boolean;
+  };
+  created_by?: SummaryFieldsByUser;
+  user_capabilities: {
+    delete: boolean;
+    start: boolean;
+  };
+  labels?: {
+    count: number;
+    results: unknown[];
+  };
+  credentials?: {
+    id: number;
+    name: string;
+    description: string;
+    kind: string;
+    cloud: boolean;
+  }[];
+  workflow_job_template?: {
+    id: number;
+    name: string;
+    description: string;
+  };
+  modified_by?: SummaryFieldsByUser;
+  source_workflow_job?: {
+    id: number;
+    name: string;
+    description: string;
+    status: string;
+    failed: boolean;
+    elapsed: number;
+  };
+  schedule?: {
+    id: number;
+    name: string;
+    description: string;
+    next_run: string;
+  };
+}
