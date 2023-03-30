@@ -6,7 +6,7 @@ import {
   EmptyStateIcon,
   Title,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon, SyncIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { HTTPError } from '../../common/crud/http-error';
 
@@ -24,7 +24,7 @@ export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
           <EmptyStateBody>{JSON.stringify(error.responseBody)}</EmptyStateBody>
         )}
         {handleRefresh && (
-          <Button variant="primary" onClick={handleRefresh}>
+          <Button variant="primary" onClick={handleRefresh} icon={<SyncIcon />}>
             {t('Refresh')}
           </Button>
         )}
