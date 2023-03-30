@@ -40,7 +40,11 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
   };
 }
 
-function postRequest<RequestBody = object>(url: string, body: RequestBody, signal?: AbortSignal) {
+export function postRequest<RequestBody = object>(
+  url: string,
+  body: RequestBody,
+  signal?: AbortSignal
+) {
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(body),
