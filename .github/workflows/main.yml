@@ -121,7 +121,9 @@ jobs:
           key: dependencies-${{ hashFiles('package-lock.json') }}
 
       - if: steps.cache.outputs.cache-hit == 'true'
-        run: docker load --input dependencies.tar
+        run: |
+          docker load --input dependencies.tar
+          rm -f dependencies.tar
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
