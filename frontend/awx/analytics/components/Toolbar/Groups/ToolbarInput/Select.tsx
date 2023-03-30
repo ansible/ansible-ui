@@ -51,13 +51,11 @@ const Select: FunctionComponent<Props> = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const options = optionsForCategories[categoryKey];
-  let selectOptions = nonTypedSelectOptions.map(
-    ({ key, value, description }) => ({
-      key: key?.toString(),
-      value: value?.toString(),
-      description: description?.toString(),
-    })
-  );
+  let selectOptions = nonTypedSelectOptions.map(({ key, value, description }) => ({
+    key: key?.toString(),
+    value: value?.toString(),
+    description: description?.toString(),
+  }));
 
   const selectOptionsMasterCopy = selectOptions;
 
@@ -65,9 +63,7 @@ const Select: FunctionComponent<Props> = ({
 
   const onDelete = (chip: string) => {
     if (Array.isArray(value)) {
-      const keyToDelete = selectOptionsMasterCopy.find(
-        ({ value }) => value === chip
-      )?.key;
+      const keyToDelete = selectOptionsMasterCopy.find(({ value }) => value === chip)?.key;
 
       const stringValues: string[] = value.map((i) => i.toString());
       const filteredArr = stringValues.filter((item) => item !== keyToDelete);
@@ -81,19 +77,13 @@ const Select: FunctionComponent<Props> = ({
     if (textInput === '') return renderValues(selectOptions);
     return renderValues(
       selectOptionsMasterCopy
-        .filter(({ value }) =>
-          value.toString().toLowerCase().includes(textInput.toLowerCase())
-        )
+        .filter(({ value }) => value.toString().toLowerCase().includes(textInput.toLowerCase()))
         .slice(0, 50)
     );
   };
 
   const handleChips = (): string[] => {
-    if (
-      (Array.isArray(value) && value.length === 0) ||
-      typeof value === 'undefined'
-    )
-      return [];
+    if ((Array.isArray(value) && value.length === 0) || typeof value === 'undefined') return [];
     if (Array.isArray(value))
       return handleCheckboxChips(
         value.map((i) => i.toString()),
@@ -130,9 +120,7 @@ const Select: FunctionComponent<Props> = ({
       }
     >
       <PFSelect
-        variant={
-          Array.isArray(value) ? SelectVariant.checkbox : SelectVariant.single
-        }
+        variant={Array.isArray(value) ? SelectVariant.checkbox : SelectVariant.single}
         aria-label={options.name}
         onToggle={() => setExpanded(!expanded)}
         onSelect={onSelect}

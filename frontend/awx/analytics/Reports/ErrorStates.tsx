@@ -18,48 +18,66 @@ export function AnalyticsErrorState(props: { error: string }) {
   }
 
   const errorTexts: Record<string, errorTextsType> = {
-    no_credentials: {
-      title: t('You have no credentials available.'),
-      description: activeUser?.is_superuser
-        ? t('Please click the button below to visit the settings page to set your credentials.')
-        : t("Please contact your organization's administrator to add credentials."),
-      button: activeUser?.is_superuser ? (
-        <Button onClick={() => null}>{t('Go to Settings')}</Button>
-      ) : undefined,
+    'analytics-upload-not-enabled': {
+      title: t('Missing Gather data for Automation Analytics.'),
+      description: t(
+        "Please contact your organization's administrator to enable Gather data for Automation Analytics."
+      ),
     },
-    incorrect_credentials: {
-      title: t('You do not have correct credentials to view this area.'),
-      description: activeUser?.is_superuser
-        ? t('Please click the button below to visit the settings page to fix your credentials.')
-        : t("Please contact your organization's administrator to add the correct credentials."),
-      button: activeUser?.is_superuser ? (
-        <Button onClick={() => null}>{t('Go to Settings')}</Button>
-      ) : undefined,
+    'missing-user': {
+      title: t('Missing User for Automation Analytics.'),
+      description: t(
+        "Please contact your organization's administrator to add User for Automation Analytics."
+      ),
     },
-    no_entitlements: {
-      title: t('You do not have entitlements available.'),
+    'missing-password': {
+      title: t('Missing Password for Automation Analytics.'),
+      description: t(
+        "Please contact your organization's administrator to add Password for Automation Analytics."
+      ),
+    },
+    'missing-url': {
+      title: t('Missing URL for Automation Analytics.'),
+      description: t(
+        "Please contact your organization's administrator to add URL for Automation Analytics."
+      ),
+    },
+    unauthorized: {
+      title: t('Missing Authentication for Automation Analytics.'),
+      description: t("Please contact your organization's administrator to add credentials."),
+    },
+    'no-data-or-entitlement': {
+      title: t("You have no entitlement available. Or there's no data."),
       description: t("Please contact your organization's administrator to add entitlements."),
     },
-    no_subscription: {
-      title: t('You do not have Ansible Automation Platform subscription.'),
-      description: t("Please contact your organization's administrator to add a subscription."),
+    'not-found': {
+      title: t('Not Found'),
+      description: t('Not Found'),
+    },
+    unkonown: {
+      title: t('There was an error on the server.'),
+      description: t("Please contact your organization's administrator."),
     },
   };
 
   function ErrorState(error: string) {
-    if (!!errorTexts[error]) {
-      return <EmptyStateCustom
+    if (errorTexts[error]) {
+      return (
+        <EmptyStateCustom
           title={errorTexts[error]?.title}
           description={errorTexts[error]?.description}
           icon={KeyIcon}
           button={errorTexts[error]?.button}
-      />
+        />
+      );
     }
-    return <EmptyStateCustom
+    return (
+      <EmptyStateCustom
         title={t('ERROR')}
         description={t('WHO KNOWS WHAT HAPPENED')}
         icon={KeyIcon}
-    />
+      />
+    );
   }
   function DisabledState() {
     return (
@@ -88,7 +106,5 @@ export function AnalyticsErrorState(props: { error: string }) {
     );
   }
 
-  return activeUser?.is_superuser ? ErrorState(error) : (
-    <DisabledState />
-  );
+  return activeUser?.is_superuser ? ErrorState(error) : <DisabledState />;
 }

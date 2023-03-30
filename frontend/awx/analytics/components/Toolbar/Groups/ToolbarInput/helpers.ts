@@ -3,10 +3,7 @@ import { SelectOptionProps } from '../../types';
 /**
  * Get comparator values if their key is in the item list
  */
-export const handleCheckboxChips = (
-  item: string[],
-  comparator: SelectOptionProps[]
-): string[] => {
+export const handleCheckboxChips = (item: string[], comparator: SelectOptionProps[]): string[] => {
   if (item && comparator) {
     return item.reduce((acc: string[], i) => {
       comparator.forEach(({ key, value }) => {
@@ -25,10 +22,7 @@ export const handleCheckboxChips = (
 /**
  * Convert a list of objects to a list of the last value if defined
  */
-export const handleSingleChips = (
-  item: string,
-  comparator: SelectOptionProps[]
-): string[] => {
+export const handleSingleChips = (item: string, comparator: SelectOptionProps[]): string[] => {
   if (item && typeof item === 'string' && comparator) {
     let val;
     comparator.forEach(({ key, value }) => {

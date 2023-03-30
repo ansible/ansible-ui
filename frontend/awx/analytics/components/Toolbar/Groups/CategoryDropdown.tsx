@@ -1,10 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import {
-  ToolbarItem,
-  Select,
-  SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core';
+import { ToolbarItem, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   categoryKey: string;
@@ -23,6 +19,7 @@ const CategoryDropdown: FunctionComponent<Props> = ({
   categories = [],
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslation();
   return (
     <ToolbarItem data-cy={categoryKey}>
       <Select
@@ -35,7 +32,7 @@ const CategoryDropdown: FunctionComponent<Props> = ({
           setIsExpanded(false);
         }}
         selections={selected}
-        placeholderText={'Filter by'}
+        placeholderText={t('Filter by')}
       >
         {categories.map(({ key, name }) => (
           <SelectOption key={key} value={key}>

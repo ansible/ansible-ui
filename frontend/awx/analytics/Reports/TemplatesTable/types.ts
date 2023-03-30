@@ -12,13 +12,14 @@ export interface Template {
   template_success_rate: number;
   successful_hosts_savings: number;
   failed_hosts_costs: number;
+  manual_effort_minutes: number;
   // Calculated fields
   //delta: number;
   //avgRunTime: number;
   //manualCost: number;
   //automatedCost: number;
   //enabled: boolean;
-  monetary_gain?: number;
+  monetary_gain?: number | any;
   // Anything else accidentally having it
   [key: string]: string | number | boolean;
 }

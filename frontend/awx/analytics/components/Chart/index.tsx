@@ -22,15 +22,11 @@ interface Props {
   y?: number;
   [key: string]: any;
 }
-
+// eslint-disable-next-line react/prop-types
 const CustomPoint: FC<Props> = ({ x, y, disableInlineStyles, ...props }) => {
   return x != undefined && y != undefined ? (
-    <ExclamationCircleIcon
-      x={x - 8}
-      y={y - 8}
-      {...props}
-      {...props.events}
-    ></ExclamationCircleIcon>
+    // eslint-disable-next-line react/prop-types
+    <ExclamationCircleIcon x={x - 8} y={y - 8} {...props} {...props.events}></ExclamationCircleIcon>
   ) : null;
 };
 
@@ -57,10 +53,7 @@ const customFunctions = (specificFunctions?: ChartFunctions) => ({
   },
 });
 
-const applyHiddenFilter = (
-  chartData: ChartData,
-  chartSeriesHidden: string[] = []
-): ChartData => ({
+const applyHiddenFilter = (chartData: ChartData, chartSeriesHidden: string[] = []): ChartData => ({
   ...chartData,
   series: chartData.series.map((series: ChartDataSerie) => ({
     ...series,
@@ -75,13 +68,8 @@ const applyHiddenFilter = (
   })),
 });
 
-const Chart: FC<Props> = ({
-  schema,
-  data,
-  specificFunctions,
-}) => {
-
-  const chartSeriesHiddenProps: string[]= [];
+const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
+  const chartSeriesHiddenProps: string[] = [];
 
   const [chartData, setChartData] = useState<ChartData>({
     series: [],
@@ -94,12 +82,7 @@ const Chart: FC<Props> = ({
   };
 
   useEffect(() => {
-    setChartData(
-      applyHiddenFilter(
-        convertApiToData(data),
-        chartSeriesHiddenProps as string[]
-      )
-    );
+    setChartData(applyHiddenFilter(convertApiToData(data), chartSeriesHiddenProps));
   }, [data]);
   return (
     <ChartBuilder

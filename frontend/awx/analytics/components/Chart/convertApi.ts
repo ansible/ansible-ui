@@ -1,5 +1,5 @@
 import { ChartData, ChartDataSerie } from 'react-json-chart-builder';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 import { ApiReturnType, ApiType, GroupedApi } from './types';
 
 export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
@@ -7,12 +7,12 @@ export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
   const items: ChartDataSerie[] = [];
   dates.forEach((el) => {
     // Add items to the correct serie
-    el.items.forEach((item, idx) => {
+    el?.items?.forEach((item, idx) => {
       if (!items[idx]) {
         items[idx] = {
           serie: [],
           hidden: false,
-          name: uuidv4(),
+          name: v4(),
         };
       }
       items[idx].serie.push({
@@ -25,7 +25,6 @@ export const convertGroupedByData = (data: GroupedApi): ChartDataSerie[] => {
 };
 
 export const convertApiToData = (result: ApiReturnType): ChartData => {
-  console.log(result);
   const data: ChartData = {
     series: [],
     legend: [],
@@ -44,9 +43,9 @@ export const convertApiToData = (result: ApiReturnType): ChartData => {
     case ApiType.nonGrouped:
       data.series = [
         {
-          serie: result.items || result.meta.legend,
+          serie: result.items || result.meta?.legend || [],
           hidden: false,
-          name: uuidv4(),
+          name: v4(),
         },
       ];
       break;

@@ -6,7 +6,7 @@ import { optionsForCategories } from '../../constants';
 interface Props {
   categoryKey: string;
   value?: string;
-  setValue?: (value: string) => void;
+  setValue?: (event: React.FormEvent<HTMLInputElement>, value: string) => void;
   otherProps?: {
     [x: string]: unknown;
   };

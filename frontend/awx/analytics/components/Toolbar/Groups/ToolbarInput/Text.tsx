@@ -1,11 +1,6 @@
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ToolbarFilter,
-  TextInput,
-  InputGroup,
-  Button,
-} from '@patternfly/react-core';
+import { ToolbarFilter, TextInput, InputGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { SearchIcon } from '@patternfly/react-icons';

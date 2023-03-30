@@ -10,19 +10,18 @@ import { ChartSchemaElement } from 'react-json-chart-builder';
  * @param schema The stringified version of the schema.
  * @returns The hidrated schema with passed variables.
  */
-const hydrateSchema =
-  (schema: unknown) =>
-  (props: unknown) => {
-    if (!props) {
-      return schema;
-    }
-    let hydratedSchema = JSON.stringify(schema);
-    Object.entries(props).forEach((arr) => {
-      const regVar = new RegExp(`VAR_${arr[0]}`, 'g');
-      hydratedSchema = hydratedSchema.replace(regVar, `${arr[1]}`);
-    });
+const hydrateSchema = (schema: ChartSchemaElement[]) => (props: unknown) => {
+  if (!props) {
+    return schema;
+  }
+  let hydratedSchema = JSON.stringify(schema);
+  Object.entries(props).forEach((arr) => {
+    const regVar = new RegExp(`VAR_${arr[0]}`, 'g');
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    hydratedSchema = hydratedSchema.replace(regVar, `${arr[1]}`);
+  });
 
-    return JSON.parse(hydratedSchema) as ChartSchemaElement[];
-  };
+  return JSON.parse(hydratedSchema) as ChartSchemaElement[];
+};
 
 export default hydrateSchema;

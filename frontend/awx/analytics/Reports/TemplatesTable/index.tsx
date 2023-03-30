@@ -1,101 +1,30 @@
-import React, { FunctionComponent, useState } from 'react';
-
-import { Dropdown, DropdownItem, KebabToggle } from '@patternfly/react-core';
-import {
-  TableComposable,
-  TableVariant,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
-//import { Template } from './types';
+import React, { FunctionComponent } from 'react';
+import { TableComposable, TableVariant, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import Row from './Row';
+import { ChartLegendEntry } from 'react-json-chart-builder';
 
 interface Props {
-  data: any; //Template[];
- // variableRow: { key: string; value: string };
+  data: ChartLegendEntry[];
   readOnly: boolean;
 }
 
-const TopTemplates: FunctionComponent<Props> = ({
-  data = [],
-  //variableRow,
-  readOnly = true,
-}) => {
-  const [isKebabOpen, setIsKebabOpen] = useState(false);
-  //const defaultParams = reportDefaultParams('automation_calculator');
-  //const { setFromToolbar } = useQueryParams(defaultParams); setFromToolbar -> console.log
-
-  const kebabDropdownItems = [
-    <DropdownItem
-      key="showAll"
-      component="button"
-      onClick={() => console.log('template_weigh_in', undefined)}
-    >
-      Display all template rows
-    </DropdownItem>,
-    <DropdownItem
-      key="hideHiddenTemplates"
-      component="button"
-      onClick={() => console.log('template_weigh_in', true)}
-    >
-      Display only shown template rows
-    </DropdownItem>,
-    <DropdownItem
-      key="showHiddenTemplates"
-      component="button"
-      onClick={() => console.log('template_weigh_in', false)}
-    >
-      Display only hidden template rows
-    </DropdownItem>,
-  ];
+const TopTemplates: FunctionComponent<Props> = ({ data = [], readOnly = true }) => {
+  const { t } = useTranslation();
 
   return (
-    <TableComposable
-      data-cy={'table'}
-      aria-label="ROI Table"
-      variant={TableVariant.compact}
-    >
+    <TableComposable data-cy={'table'} aria-label="ROI Table" variant={TableVariant.compact}>
       <Thead>
         <Tr>
           <Th />
-          <Th>Name</Th>
-          <Th>Manual time</Th>
-          <Th>Savings</Th>
-          <Th
-            style={{
-              float: 'right',
-              overflow: 'visible',
-              zIndex: 1,
-            }}
-          >
-            <Dropdown
-              onSelect={() => {
-                setIsKebabOpen(true);
-              }}
-              toggle={
-                <KebabToggle
-                  style={{ paddingBottom: '0px' }}
-                  id="table-kebab"
-                  onToggle={() => setIsKebabOpen(!isKebabOpen)}
-                />
-              }
-              isOpen={isKebabOpen}
-              isPlain
-              dropdownItems={kebabDropdownItems}
-              position={'right'}
-            />
-          </Th>
+          <Th>{t('Name')}</Th>
+          <Th>{t('Manual time')}</Th>
+          <Th>{t('Savings')}</Th>
         </Tr>
       </Thead>
       <Tbody>
         {data.map((template) => (
-          <Row
-            key={template.id}
-            template={template}
-            readOnly={readOnly}
-          />
+          <Row key={template.id} template={template} readOnly={readOnly} />
         ))}
       </Tbody>
     </TableComposable>

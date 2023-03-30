@@ -19,9 +19,7 @@ const today = (days = 0): Date => {
   return date;
 };
 
-const getDateByDays = (days: number): string =>
-  today(days).toISOString().split(/T/)[0];
-
+const getDateByDays = (days: number): string => today(days).toISOString().split(/T/)[0];
 
 const strToDate = (date: string): Date => {
   const nums = date.split('-');
@@ -37,11 +35,7 @@ interface Props {
   };
 }
 
-const QuickDateGroup: FunctionComponent<Props> = ({
-  filters,
-  setFilters,
-  values,
-}) => {
+const QuickDateGroup: FunctionComponent<Props> = ({ filters, setFilters, values }) => {
   const endDate = (filters.end_date as string) || getDateByDays(0);
   const startDate = (filters.start_date as string) || getDateByDays(-30);
   const { t } = useTranslation();
@@ -62,9 +56,7 @@ const QuickDateGroup: FunctionComponent<Props> = ({
         selectOptions={values.quick_date_range}
         setValue={(value) => setFilters('quick_date_range', value)}
       />
-      {['custom', 'roi_custom'].includes(
-        filters.quick_date_range as string
-      ) && (
+      {['custom', 'roi_custom'].includes(filters.quick_date_range as string) && (
         <Split hasGutter>
           <SplitItem>
             <ToolbarInput
@@ -72,12 +64,11 @@ const QuickDateGroup: FunctionComponent<Props> = ({
               value={startDate}
               setValue={(e) => setFilters('start_date', e)}
               validators={[
-                (date: Date) =>
-                  date > strToDate(endDate) ? t('Must not be after end date') : '',
+                (date: Date) => (date > strToDate(endDate) ? t('Must not be after end date') : ''),
               ]}
             />
           </SplitItem>
-          <SplitItem style={{ paddingTop: '6px' }}>to</SplitItem>
+          <SplitItem style={{ paddingTop: '6px' }}>{t('to')}</SplitItem>
           <SplitItem>
             <ToolbarInput
               categoryKey="end_date"
@@ -85,8 +76,7 @@ const QuickDateGroup: FunctionComponent<Props> = ({
               setValue={(e) => setFilters('end_date', e)}
               validators={[
                 (date: Date) => {
-                  if (date < strToDate(startDate))
-                    return t('Must not be before start date');
+                  if (date < strToDate(startDate)) return t('Must not be before start date');
                   if (date > today()) return t('Must not be after today');
                   return '';
                 },

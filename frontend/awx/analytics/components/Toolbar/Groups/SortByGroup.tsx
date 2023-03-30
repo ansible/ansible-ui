@@ -18,11 +18,7 @@ interface Props {
   sort_options: SelectOptionProps[];
 }
 
-const SortByGroup: FunctionComponent<Props> = ({
-  filters,
-  setFilters,
-  sort_options,
-}) => (
+const SortByGroup: FunctionComponent<Props> = ({ filters, setFilters, sort_options }) => (
   <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
     <ToolbarItem>
       <ToolbarInput
@@ -36,12 +32,7 @@ const SortByGroup: FunctionComponent<Props> = ({
       <Button
         variant={ButtonVariant.control}
         data-cy={filters.sort_order === 'asc' ? 'desc' : 'asc'}
-        onClick={() =>
-          setFilters(
-            'sort_order',
-            filters.sort_order === 'asc' ? 'desc' : 'asc'
-          )
-        }
+        onClick={() => setFilters('sort_order', filters.sort_order === 'asc' ? 'desc' : 'asc')}
       >
         {filters.sort_order === 'asc' && <SortAmountUpIcon />}
         {filters.sort_order === 'desc' && <SortAmountDownIcon />}

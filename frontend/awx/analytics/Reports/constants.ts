@@ -52,14 +52,12 @@ export const TAGS: Tag[] = [
   {
     key: TagName.catalog,
     name: 'Catalog',
-    description:
-      'This report provides information gathered from Automation Services Catalog.',
+    description: 'This report provides information gathered from Automation Services Catalog.',
   },
   {
     key: TagName.automationHub,
     name: 'Automation Hub',
-    description:
-      'This report provides information gathered from Automation Hub.',
+    description: 'This report provides information gathered from Automation Hub.',
   },
   {
     key: TagName.modules,

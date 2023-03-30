@@ -7,9 +7,9 @@ export enum ApiType {
 
 export interface NonGroupedApi {
   type?: ApiType.nonGrouped;
-  items: Record<string, string | number>[];
-  meta: {
-    legend: ChartLegendEntry[];
+  items: ChartLegendEntry[] | undefined;
+  meta?: {
+    legend: ChartLegendEntry[] | undefined;
     count: number;
   };
 }
@@ -18,7 +18,7 @@ export interface GroupedApi {
   type?: ApiType.grouped;
   dates: {
     date: string;
-    items: Record<string, string | number>[];
+    items: ChartLegendEntry[] | undefined;
   }[];
   meta: {
     legend: ChartLegendEntry[];

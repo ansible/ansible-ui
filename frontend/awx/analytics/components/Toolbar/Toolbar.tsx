@@ -1,7 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import {
-  ToolbarToggleGroup,
-} from '@patternfly/react-core';
+import { ToolbarToggleGroup } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 
 import { optionsForCategories } from './constants';
@@ -22,8 +20,7 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
   defaultSelected = '',
   setFilters: setQueryParams,
 }) => {
-  const { quick_date_range, sort_options, granularity, ...restCategories } =
-    categories;
+  const { quick_date_range, sort_options, granularity, ...restCategories } = categories;
 
   // Sets name attribute as a dropdown if it has predefined values
   if (Object.keys(categories).includes('name')) {
@@ -35,47 +32,38 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
   // Filter out elements which are not in the option object and in defaultParams
   const filterCategories = Object.keys(restCategories)
     .filter(
-      (key) =>
-        Object.keys(optionsForCategories).includes(key) &&
-        Object.keys(filters).includes(key)
+      (key) => Object.keys(optionsForCategories).includes(key) && Object.keys(filters).includes(key)
     )
     .reduce((obj: ApiOptionsType, key) => {
       obj[key] = restCategories[key];
       return obj;
     }, {});
 
-  const setFilters = (
-    key: string | undefined,
-    value: AttributeType | undefined
-  ) => {
+  const setFilters = (key: string | undefined, value: AttributeType | undefined) => {
     setQueryParams(key, value);
   };
 
   return (
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-          {Object.keys(filterCategories).length > 0 && (
-            <FilterCategoriesGroup
-              filterCategories={filterCategories}
-              defaultSelected={defaultSelected}
-              filters={filters}
-              setFilters={setFilters}
-            />
-          )}
-          {(quick_date_range || granularity) && (
-            <QuickDateGroup
-              filters={filters}
-              values={{ quick_date_range, granularity }}
-              setFilters={setFilters}
-            />
-          )}
-          {sort_options && (
-            <SortByGroup
-              filters={filters}
-              setFilters={setFilters}
-              sort_options={sort_options}
-            />
-          )}
-        </ToolbarToggleGroup>
+    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+      {Object.keys(filterCategories).length > 0 && (
+        <FilterCategoriesGroup
+          filterCategories={filterCategories}
+          defaultSelected={defaultSelected}
+          filters={filters}
+          setFilters={setFilters}
+        />
+      )}
+      {(quick_date_range || granularity) && (
+        <QuickDateGroup
+          filters={filters}
+          values={{ quick_date_range, granularity }}
+          setFilters={setFilters}
+        />
+      )}
+      {sort_options && (
+        <SortByGroup filters={filters} setFilters={setFilters} sort_options={sort_options} />
+      )}
+    </ToolbarToggleGroup>
   );
 };
 
