@@ -25,6 +25,14 @@ export interface SummaryFieldsExecutionEnvironment {
   image: string;
 }
 
+export interface SummaryFieldCredential {
+  id: number;
+  name: string;
+  description: string;
+  kind: string;
+  cloud: boolean;
+}
+
 export interface SummaryFieldsUnifiedJob {
   organization?: SummaryFieldsOrganization;
   inventory?: {
@@ -80,15 +88,9 @@ export interface SummaryFieldsUnifiedJob {
   };
   labels?: {
     count: number;
-    results: unknown[];
+    results: { id: number; name: string }[];
   };
-  credentials?: {
-    id: number;
-    name: string;
-    description: string;
-    kind: string;
-    cloud: boolean;
-  }[];
+  credentials?: SummaryFieldCredential[];
   workflow_job_template?: {
     id: number;
     name: string;
