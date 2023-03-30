@@ -51,7 +51,7 @@ describe('EDA Projects CRUD', () => {
     cy.clickPageAction(/^Delete project$/);
     cy.confirmModalAction('Delete projects');
     cy.wait('@deleted').then((deleted) => {
-      expect(deleted.response.statusCode).to.eql(204);
+      expect(deleted?.response?.statusCode).to.eql(204);
       cy.get('h1').should('contain', 'Projects');
     });
   });
