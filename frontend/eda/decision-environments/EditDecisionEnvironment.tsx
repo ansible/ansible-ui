@@ -5,8 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
-import { requestPatch, requestPost } from '../../common/crud/Data';
+import { requestPatch } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { usePostRequest } from '../../common/crud/usePostRequest';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
@@ -35,6 +36,8 @@ export function EditDecisionEnvironment() {
 
   const { cache } = useSWRConfig();
 
+  const postRequest = usePostRequest<Partial<DecisionEnvironmentSchema>, EdaDecisionEnvironment>();
+
   const onSubmit: PageFormSubmitHandler<DecisionEnvironmentSchema> = async (
     decisionEnvironment,
     setError
@@ -48,7 +51,7 @@ export function EditDecisionEnvironment() {
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newDecisionEnvironment = await requestPost<EdaDecisionEnvironment>(
+        const newDecisionEnvironment = await postRequest(
           `${API_PREFIX}/decision-environments/`,
           decisionEnvironment
         );

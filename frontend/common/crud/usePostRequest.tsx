@@ -5,13 +5,17 @@ import { getCookie } from './cookie';
 import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
-export function usePostRequest<RequestBody, ResponseBody>() {
+export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
 
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
+  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
+  useEffect(() => {
+    const abortController = new AbortController();
+    abortSignalRef.current.signal = abortController.signal;
+    return () => abortController.abort();
+  }, []);
 
-  return async (url: string, body: RequestBody) => {
+  return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     await Delay();
 
     const response = await fetch(url, {
@@ -23,7 +27,7 @@ export function usePostRequest<RequestBody, ResponseBody>() {
         Accepts: 'application/json',
         'X-CSRFToken': getCookie('csrftoken') ?? '',
       },
-      signal: abortController.current.signal,
+      signal: signal ?? abortSignalRef.current.signal,
     });
 
     if (!response.ok) {
@@ -31,9 +35,9 @@ export function usePostRequest<RequestBody, ResponseBody>() {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
 
-      let responseBody: object | undefined;
+      let responseBody: string | undefined;
       try {
-        responseBody = (await response.json()) as object;
+        responseBody = await response.text();
       } catch {
         // Do nothing - response body was not valid json
       }
@@ -41,6 +45,28 @@ export function usePostRequest<RequestBody, ResponseBody>() {
       throw new HTTPError(response.statusText, response.status, responseBody);
     }
 
+    switch (response.status) {
+      case 204: // No Content
+        return null as ResponseBody;
+    }
     return (await response.json()) as ResponseBody;
   };
+}
+
+export function postRequest<RequestBody = object>(
+  url: string,
+  body: RequestBody,
+  signal?: AbortSignal
+) {
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Accepts: 'application/json',
+      'X-CSRFToken': getCookie('csrftoken') ?? '',
+    },
+    signal: signal,
+  });
 }

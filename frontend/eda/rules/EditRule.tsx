@@ -5,8 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
-import { requestPatch, requestPost } from '../../common/crud/Data';
+import { requestPatch } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { usePostRequest } from '../../common/crud/usePostRequest';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
@@ -33,6 +34,8 @@ export function EditRule() {
 
   const { cache } = useSWRConfig();
 
+  const postRequest = usePostRequest<Partial<EdaRule>, EdaRule>();
+
   const onSubmit: PageFormSubmitHandler<RuleSchema> = async (rule, setError) => {
     try {
       if (Number.isInteger(id)) {
@@ -40,7 +43,7 @@ export function EditRule() {
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newRule = await requestPost<EdaRule>(`${API_PREFIX}/rules/`, rule);
+        const newRule = await postRequest(`${API_PREFIX}/rules/`, rule);
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
       }

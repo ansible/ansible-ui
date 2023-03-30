@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestPatch, requestPost } from '../../../common/crud/Data';
+import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
@@ -39,13 +40,15 @@ export function EditGroup() {
 
   useInvalidateCacheOnUnmount();
 
+  const postRequest = usePostRequest<Partial<EdaGroup>, EdaGroup>();
+
   const onSubmit: PageFormSubmitHandler<GroupSchema> = async (Group, setError) => {
     try {
       if (Number.isInteger(id)) {
         Group = await requestPatch<EdaGroup>(`${API_PREFIX}/groups/${id}/`, Group);
         navigate(-1);
       } else {
-        const newGroup = await requestPost<EdaGroup>(`${API_PREFIX}/groups/`, Group);
+        const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
         navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
       }
     } catch (err) {

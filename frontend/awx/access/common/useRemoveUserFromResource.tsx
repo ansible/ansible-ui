@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestPost } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
@@ -12,6 +12,8 @@ export function useRemoveUsersFromResource() {
   const activeUser = useActiveUser();
   const confirmationColumns = useUsersColumns();
   const removeUserConfirmationDialog = useBulkConfirmation<User>();
+
+  const postRequest = usePostRequest();
 
   const removeUsersFromResource = useCallback(
     (users: User[], resource: ResourceType, onComplete?: (users: User[]) => void) => {
@@ -64,9 +66,12 @@ export function useRemoveUsersFromResource() {
         actionFn: async (user: User, signal: AbortSignal) => {
           if (user.user_roles) {
             for (const role of user.user_roles) {
-              await requestPost(
+              await postRequest(
                 `/api/v2/users/${user.id.toString()}/roles/`,
-                { id: role.id, disassociate: true },
+                {
+                  id: role.id,
+                  disassociate: true,
+                },
                 signal
               );
             }
@@ -74,7 +79,7 @@ export function useRemoveUsersFromResource() {
         },
       });
     },
-    [activeUser?.is_superuser, confirmationColumns, removeUserConfirmationDialog, t]
+    [activeUser?.is_superuser, confirmationColumns, removeUserConfirmationDialog, postRequest, t]
   );
   return removeUsersFromResource;
 }

@@ -12,7 +12,7 @@ export async function requestGet<ResponseBody>(
   return requestCommon<ResponseBody>(url, { signal }, ky.get);
 }
 
-export async function requestPost<ResponseBody, RequestBody = unknown>(
+export async function postRequest<ResponseBody, RequestBody = unknown>(
   url: string,
   json: RequestBody,
   signal?: AbortSignal
@@ -20,7 +20,7 @@ export async function requestPost<ResponseBody, RequestBody = unknown>(
   return requestCommon<ResponseBody>(url, { json, signal }, ky.post);
 }
 
-export async function requestPostFile(
+export async function postRequestFile(
   url: string,
   file: Blob,
   signal?: AbortSignal

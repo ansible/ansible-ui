@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestPatch, requestPost } from '../../../common/crud/Data';
+import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
@@ -39,13 +40,15 @@ export function EditRole() {
 
   useInvalidateCacheOnUnmount();
 
+  const postRequest = usePostRequest<Partial<EdaRole>, EdaRole>();
+
   const onSubmit: PageFormSubmitHandler<RoleSchema> = async (Role, setError) => {
     try {
       if (Number.isInteger(id)) {
         Role = await requestPatch<EdaRole>(`${API_PREFIX}/roles/${id}/`, Role);
         navigate(-1);
       } else {
-        const newRole = await requestPost<EdaRole>(`${API_PREFIX}/roles/`, Role);
+        const newRole = await postRequest(`${API_PREFIX}/roles/`, Role);
         navigate(RouteObj.EdaRoleDetails.replace(':id', newRole.id.toString()));
       }
     } catch (err) {

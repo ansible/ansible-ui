@@ -38,10 +38,11 @@ import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { API_PREFIX } from '../eda/constants';
 import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
-import { requestPost, swrOptions, useFetcher } from './crud/Data';
-import { API_PREFIX } from '../eda/constants';
+import { swrOptions, useFetcher } from './crud/Data';
+import { postRequest } from './crud/usePostRequest';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -321,7 +322,7 @@ function AccountDropdownInternal() {
           onClick={() => {
             async function logout() {
               automationServer?.type === AutomationServerType.EDA
-                ? await requestPost(`${API_PREFIX}/auth/session/logout/`, {})
+                ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
                 : await fetch('/api/logout/');
               history('/');
             }

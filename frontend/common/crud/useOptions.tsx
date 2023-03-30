@@ -8,8 +8,12 @@ import { HTTPError } from './http-error';
 export function useOptions<T>(url: string) {
   const optionsRequest = useOptionsRequest<T>();
 
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
+  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
+  useEffect(() => {
+    const abortController = new AbortController();
+    abortSignalRef.current.signal = abortController.signal;
+    return () => abortController.abort();
+  }, []);
 
   const response = useSWR<T>(url, optionsRequest, {
     dedupingInterval: 0,
@@ -53,9 +57,9 @@ function useOptionsRequest<ResponseBody = unknown>() {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
 
-      let responseBody: object | undefined;
+      let responseBody: string | undefined;
       try {
-        responseBody = (await response.json()) as object;
+        responseBody = await response.text();
       } catch {
         // Do nothing - response body was not valid json
       }

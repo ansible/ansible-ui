@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
-import { getItemKey, requestPost } from '../../../../common/crud/Data';
+import { getItemKey } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobsAPIUrl, isJobRunning } from '../jobUtils';
 import { useJobsColumns } from './useJobsColumns';
@@ -13,6 +14,7 @@ export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
   const cancelActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn]);
   const bulkAction = useBulkConfirmation<UnifiedJob>();
+  const postRequest = usePostRequest();
   const cannotCancelJobDueToPermissions = (job: UnifiedJob) => {
     if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
       return t(`The job cannot be canceled due to insufficient permission`);
@@ -73,8 +75,7 @@ export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (job: UnifiedJob) =>
-        requestPost(`${getJobsAPIUrl(job.type)}${job.id}/cancel/`, null),
+      actionFn: (job: UnifiedJob) => postRequest(`${getJobsAPIUrl(job.type)}${job.id}/cancel/`, {}),
     });
   };
   return cancelUnifiedJobs;

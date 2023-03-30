@@ -22,7 +22,7 @@ describe('TeamForm.cy.ts', () => {
       { statusCode: 500, message: 'Internal Server Error' }
     );
     cy.clickButton(/^Create team$/);
-    cy.contains('Request failed with status code 500 Internal Server Error').should('be.visible');
+    cy.contains('Internal Server Error').should('be.visible');
   });
   it('Create Team - Validation on name and organization', () => {
     cy.intercept(
