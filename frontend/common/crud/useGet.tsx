@@ -29,8 +29,10 @@ export function useGet<T>(
     void response.mutate();
   }, [response]);
 
-  let error = response.error as Error | undefined;
-  if (error && !(error instanceof Error)) error = new Error('Unknown error');
+  let error = response.error;
+  if (error && !(error instanceof Error)) {
+    error = new Error('Unknown error');
+  }
 
   return useMemo(
     () => ({
