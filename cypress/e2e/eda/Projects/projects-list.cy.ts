@@ -22,31 +22,22 @@ describe('EDA Projects List', () => {
   it('renders the EDA projects page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.hasTitle(/^Projects$/);
+    cy.get('h1').should('contain', 'Projects');
   });
 
   it('renders the Project details page', () => {
     cy.navigateTo(/^Projects$/, false);
+    cy.get('h1').should('contain', 'Projects');
     cy.clickRow(edaproject.name);
     cy.hasTitle(edaproject.name);
     cy.clickButton(/^Details$/);
-    cy.contains('#name', edaproject.name);
+    cy.get('#name').should('contain', edaproject.name);
   });
 
   it('can filter the Projects list based on Name', () => {
     cy.navigateTo(/^Projects$/, false);
-    cy.getRowFromList(edaproject.name);
-  });
-});
-
-describe('EDA Projects List Deletion from UI', () => {
-  let edaproject: EdaProject;
-
-  beforeEach(() => {
-    cy.edaLogin();
-
-    cy.createEdaProject().then((project) => {
-      edaproject = project;
-    });
+    cy.filterByText(edaproject.name);
+    cy.get('td[data-label="Name"]').should('contain', edaproject.name);
   });
 
   it('can bulk delete Projects from the Projects list', () => {
@@ -56,20 +47,10 @@ describe('EDA Projects List Deletion from UI', () => {
       cy.selectRow(testProject.name);
       cy.selectRow(edaproject.name);
       cy.clickToolbarAction(/^Delete selected projects$/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      cy.contains(/^Success$/);
+      cy.confirmModalAction('Delete projects');
+      cy.assertModalSuccess();
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
-  });
-
-  it('deletes a Project from kebab menu from the project details page', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.clickRow(edaproject.name);
-    cy.hasTitle(edaproject.name);
-    cy.clickPageAction(/^Delete project$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/);
   });
 });

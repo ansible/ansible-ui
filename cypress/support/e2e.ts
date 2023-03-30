@@ -2,6 +2,7 @@
 // import 'cypress-axe';
 import '@cypress/code-coverage/support';
 import './commands';
+import 'cypress-network-idle';
 
 // before(() => {
 // });
