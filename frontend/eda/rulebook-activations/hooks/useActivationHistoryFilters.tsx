@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
 
-export function useRulebookActivationFilters() {
+export function useActivationHistoryFilters() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [
