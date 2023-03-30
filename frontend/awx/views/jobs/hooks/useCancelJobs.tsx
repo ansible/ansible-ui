@@ -16,7 +16,7 @@ export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
   const bulkAction = useBulkConfirmation<UnifiedJob>();
   const postRequest = usePostRequest();
   const cannotCancelJobDueToPermissions = (job: UnifiedJob) => {
-    if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
+    if (!job.summary_fields?.user_capabilities?.start && isJobRunning(job.status))
       return t(`The job cannot be canceled due to insufficient permission`);
     return '';
   };

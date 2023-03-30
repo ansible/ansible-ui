@@ -53,12 +53,16 @@ type WorkflowJobProperties = Pick<SwaggerWorkflowJob, 'workflow_job_template' | 
 type SystemJobProperties = Pick<SwaggerSystemJob, 'system_job_template' | 'result_stdout'>;
 
 export interface UnifiedJob
-  extends Omit<SwaggerUnifiedJobList, 'id' | 'type' | 'summary_fields' | 'launched_by' | 'related'>,
+  extends Omit<
+      SwaggerUnifiedJobList,
+      'id' | 'type' | 'name' | 'summary_fields' | 'launched_by' | 'related'
+    >,
     JobListProperties,
     InventoryUpdateProperties,
     ProjectUpdateProperties,
     WorkflowJobProperties,
     SystemJobProperties {
+  name: string;
   id: number;
   type: string;
   related: {

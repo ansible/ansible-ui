@@ -44,11 +44,11 @@ export function OrganizationDetails(props: { organization: Organization }) {
       <ExecutionEnvironmentDetail
         virtualEnvironment={organization.custom_virtualenv || undefined}
         executionEnvironment={organization.summary_fields?.default_environment}
-        // isDefaultEnvironment
-        // helpText={t`The execution environment that will be used for jobs
-        //   inside of this organization. This will be used a fallback when
-        //   an execution environment has not been explicitly assigned at the
-        //   project, job template or workflow level.`}
+        isDefaultEnvironment
+        helpText={t`The execution environment that will be used for jobs
+          inside of this organization. This will be used a fallback when
+          an execution environment has not been explicitly assigned at the
+          project, job template or workflow level.`}
       />
       <PageDetail label={t('Created')}>
         <SinceCell

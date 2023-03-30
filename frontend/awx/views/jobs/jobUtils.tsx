@@ -19,7 +19,19 @@ export function getJobsAPIUrl(type: string) {
   }
 }
 
-export function isJobRunning(status: string) {
+type JobStatus =
+  | 'failed'
+  | 'new'
+  | 'pending'
+  | 'waiting'
+  | 'running'
+  | 'successful'
+  | 'error'
+  | 'canceled'
+  | undefined;
+
+export function isJobRunning(status: JobStatus) {
+  if (!status) return false;
   return ['new', 'pending', 'waiting', 'running'].includes(status);
 }
 

@@ -102,7 +102,7 @@ export interface Job {
     };
     labels: {
       count: number;
-      results: unknown[];
+      results: { id: number; name: string }[];
     };
     credentials: {
       id: number;
@@ -130,7 +130,7 @@ export interface Job {
   modified: string;
   name: string;
   description: string;
-  unified_job_template: number | null;
+  unified_job_template?: string;
   launch_type: string;
   status: string;
   execution_environment: number;

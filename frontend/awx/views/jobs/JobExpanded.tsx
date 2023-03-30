@@ -111,7 +111,7 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.type !== 'workflow_job' &&
-        !isJobRunning(job.status ?? '') &&
+        !isJobRunning(job.status) &&
         job.status !== 'canceled' &&
         job.summary_fields?.execution_environment && (
           <ExecutionEnvironmentDetail
