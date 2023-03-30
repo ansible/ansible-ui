@@ -13,7 +13,6 @@ export interface EdaRulebookActivation {
   rulebook?: { id: string; name: string };
   restart_policy?: string;
   project?: { id: string; name: string };
-  working_directory?: string;
   status?: string;
   is_enabled?: boolean;
   throttle?: boolean;

@@ -5,9 +5,11 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaPlaybook {
+export interface EdaActivationInstance {
   id: number;
-  name: string;
-  playbook: string;
-  project_id: number;
+  name?: string;
+  status?: string;
+  activation: string;
+  started_at: string;
+  ended_at?: string;
 }

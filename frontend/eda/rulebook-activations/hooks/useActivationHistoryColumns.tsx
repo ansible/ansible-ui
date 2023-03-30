@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DateCell, ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaJob } from '../../interfaces/EdaJob';
 import { StatusCell } from '../../../common/StatusCell';
+import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 
 export function useActivationHistoryColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  return useMemo<ITableColumn<EdaJob>[]>(
+  return useMemo<ITableColumn<EdaActivationInstance>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (job) => (
+        cell: (instance) => (
           <TextCell
-            text={job.name || `Job ${job.id}`}
+            text={instance.name || `Instance ${instance.id}`}
             onClick={() =>
-              navigate(RouteObj.EdaRulebookActivationDetails.replace(':id', job.id.toString()))
+              navigate(RouteObj.EdaRulebookActivationDetails.replace(':id', instance.id.toString()))
             }
           />
         ),
@@ -28,17 +28,17 @@ export function useActivationHistoryColumns() {
       },
       {
         header: t('Status'),
-        cell: (job: EdaJob) => <StatusCell status={job.status} />,
+        cell: (instance: EdaActivationInstance) => <StatusCell status={instance.status} />,
         sort: 'status',
       },
       {
         header: t('Activation instance'),
-        cell: (job) => job?.activation_instance?.name,
+        cell: (instance) => instance?.activation,
         sort: 'rule',
       },
       {
-        header: t('Fired date'),
-        cell: (job) => <DateCell value={job.fired_at} />,
+        header: t('Start date'),
+        cell: (instance) => <DateCell value={instance.started_at} />,
         sort: 'fired_at',
       },
     ],
