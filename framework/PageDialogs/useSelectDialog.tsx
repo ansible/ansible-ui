@@ -11,13 +11,16 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { Collapse } from './components/Collapse';
+import { Collapse } from '../components/Collapse';
+import { ITableColumn, PageTable, TableColumnCell } from '../PageTable/PageTable';
+import { IToolbarFilter } from '../PageTable/PageToolbar';
+import { ISelected } from '../PageTable/useTableItems';
+import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
-import { ITableColumn, PageTable, TableColumnCell } from './PageTable/PageTable';
-import { IToolbarFilter } from './PageTable/PageToolbar';
-import { ISelected } from './PageTable/useTableItems';
-import { IView } from './useView';
 
+/**
+ * @deprecated use SelectSingleDialog
+ */
 interface ISelectDialogOptions<T extends object, TMultiple> {
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
   tableColumns: ITableColumn<T>[];
@@ -28,6 +31,9 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
   isMultiple?: TMultiple extends true ? true : false;
 }
 
+/**
+ * @deprecated use SelectSingleDialog
+ */
 export function useSelectDialog<
   T extends { id: number; name: string | undefined },
   TMultiple = false
@@ -78,6 +84,9 @@ export function useSelectDialog<
   return openSetting;
 }
 
+/**
+ * @deprecated use SelectSingleDialog
+ */
 export type SelectDialogProps<T extends object, TMultiple> = {
   title: string;
   open: boolean;
