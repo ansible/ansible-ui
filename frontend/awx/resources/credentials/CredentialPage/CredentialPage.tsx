@@ -3,7 +3,7 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
-import { useItem } from '../../../../common/crud/useGet';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
@@ -13,7 +13,7 @@ export function CredentialPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  const credential = useItem<Credential>('/api/v2/credentials', params.id ?? '0');
+  const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
   const actions = useCredentialActions({ onDeleted: () => navigate(RouteObj.Credentials) });
 
   return (

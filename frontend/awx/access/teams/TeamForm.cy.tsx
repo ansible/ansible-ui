@@ -1,5 +1,3 @@
-import { Page } from '@patternfly/react-core';
-import { MemoryRouter } from 'react-router-dom';
 import { CreateTeam } from './TeamForm';
 
 describe('TeamForm.cy.ts', () => {
@@ -8,13 +6,7 @@ describe('TeamForm.cy.ts', () => {
       { method: 'GET', url: '/api/v2/organizations/*' },
       { statusCode: 500, message: 'Internal Server Error' }
     );
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateTeam />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateTeam />);
     cy.contains('Error loading organizations').should('be.visible');
   });
   it('Create Team - Submit error message on internal server error', () => {
@@ -22,13 +14,7 @@ describe('TeamForm.cy.ts', () => {
       { method: 'GET', url: '/api/v2/organizations/*' },
       { count: 1, results: [{ id: 0, name: 'Default' }] }
     );
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateTeam />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateTeam />);
     cy.typeByLabel(/^Name$/, 'Test');
     cy.selectByLabel(/^Organization$/, 'Default');
     cy.intercept(
@@ -49,13 +35,7 @@ describe('TeamForm.cy.ts', () => {
         ],
       }
     );
-    cy.mount(
-      <MemoryRouter>
-        <Page>
-          <CreateTeam />
-        </Page>
-      </MemoryRouter>
-    );
+    cy.mount(<CreateTeam />);
     cy.clickButton(/^Create team$/);
     cy.contains('Name is required.').should('be.visible');
     cy.contains('Organization is required.').should('be.visible');
