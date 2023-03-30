@@ -130,6 +130,6 @@ jobs:
           DOCKER_BUILDKIT=1 docker build --target dependencies --tag dependencies .
           docker save --output dependencies.tar dependencies
 
-      - run: DOCKER_BUILDKIT=1 docker build --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
+      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
 
       - run: docker push quay.io/ansible/ansible-ui --all-tags
