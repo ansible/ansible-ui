@@ -127,7 +127,7 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          DOCKER_BUILDKIT=1 docker build --target dependencies --tag dependencies .
+          DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --target dependencies --tag dependencies .
           docker save --output dependencies.tar dependencies
 
       - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
