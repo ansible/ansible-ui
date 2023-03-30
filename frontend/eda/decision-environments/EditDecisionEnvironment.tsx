@@ -10,18 +10,18 @@ import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
-import { EdaExecutionEnvironment } from '../interfaces/EdaExecutionEnvironment';
+import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 
-export function EditExecutionEnvironment() {
+export function EditDecisionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: executionEnvironment } = useGet<EdaExecutionEnvironment>(
-    `${API_PREFIX}/executionEnvironments/${id.toString()}/`
+  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
+    `${API_PREFIX}/decision-environments/${id.toString()}/`
   );
 
-  const ExecutionEnvironmentSchemaType = useMemo(
+  const DecisionEnvironmentSchemaType = useMemo(
     () =>
       Type.Object({
         name: Type.String({
@@ -32,34 +32,34 @@ export function EditExecutionEnvironment() {
     [t]
   );
 
-  type ExecutionEnvironmentSchema = Static<typeof ExecutionEnvironmentSchemaType>;
+  type DecisionEnvironmentSchema = Static<typeof DecisionEnvironmentSchemaType>;
 
   const { cache } = useSWRConfig();
 
-  const postRequest = usePostRequest<Partial<EdaExecutionEnvironment>, EdaExecutionEnvironment>();
+  const postRequest = usePostRequest<Partial<DecisionEnvironmentSchema>, EdaDecisionEnvironment>();
 
-  const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentSchema> = async (
-    executionEnvironment,
+  const onSubmit: PageFormSubmitHandler<DecisionEnvironmentSchema> = async (
+    decisionEnvironment,
     setError
   ) => {
     try {
       if (Number.isInteger(id)) {
-        executionEnvironment = await requestPatch<EdaExecutionEnvironment>(
-          `${API_PREFIX}/executionEnvironments/${id}/`,
-          executionEnvironment
+        await requestPatch<EdaDecisionEnvironment>(
+          `${API_PREFIX}/decision-environments/${id}/`,
+          decisionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(-1);
       } else {
-        const newExecutionEnvironment = await postRequest(
-          `${API_PREFIX}/executionEnvironments/`,
-          executionEnvironment
+        const newDecisionEnvironment = await postRequest(
+          `${API_PREFIX}/decision-environments/`,
+          decisionEnvironment
         );
         (cache as unknown as { clear: () => void }).clear?.();
         navigate(
-          RouteObj.EdaExecutionEnvironmentDetails.replace(
+          RouteObj.EdaDecisionEnvironmentDetails.replace(
             ':id',
-            newExecutionEnvironment.id.toString()
+            newDecisionEnvironment.id.toString()
           )
         );
       }
@@ -70,12 +70,12 @@ export function EditExecutionEnvironment() {
   const onCancel = () => navigate(-1);
 
   if (Number.isInteger(id)) {
-    if (!executionEnvironment) {
+    if (!decisionEnvironment) {
       return (
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
               { label: t('Edit execution environment') },
             ]}
           />
@@ -85,21 +85,21 @@ export function EditExecutionEnvironment() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit execution environment')}
+            title={t('Edit decision environment')}
             breadcrumbs={[
-              { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
-              { label: t('Edit execution environment') },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Edit decision environment') },
             ]}
           />
           <PageForm
-            schema={ExecutionEnvironmentSchemaType}
+            schema={DecisionEnvironmentSchemaType}
             submitText={t('Save execution environment')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={executionEnvironment}
+            defaultValue={decisionEnvironment}
           >
-            <PageFormSchema schema={ExecutionEnvironmentSchemaType} />
+            <PageFormSchema schema={DecisionEnvironmentSchemaType} />
           </PageForm>
         </PageLayout>
       );
@@ -108,15 +108,15 @@ export function EditExecutionEnvironment() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create execution environment')}
+          title={t('Create decision environment')}
           breadcrumbs={[
-            { label: t('ExecutionEnvironments'), to: RouteObj.EdaExecutionEnvironments },
-            { label: t('Create execution environment') },
+            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Create decision environment') },
           ]}
         />
         <PageForm
-          schema={ExecutionEnvironmentSchemaType}
-          submitText={t('Create execution environment')}
+          schema={DecisionEnvironmentSchemaType}
+          submitText={t('Create decision environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

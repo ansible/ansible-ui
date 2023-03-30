@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { RocketIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
@@ -27,14 +27,22 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
     };
 
     const cannotCancelJob = (job: UnifiedJob) => {
-      if (!job.summary_fields.user_capabilities.start && isJobRunning(job.status))
-        return t(`The job cannot be canceled due to insufficient permission`);
-      else if (!isJobRunning(job.status))
+      if (!isJobRunning(job.status))
         return t(`The job cannot be canceled because it is not running`);
-      return '';
+      else if (!job.summary_fields.user_capabilities.start)
+        return t(`The job cannot be canceled due to insufficient permission`);
+      else return '';
     };
 
     return [
+      {
+        type: PageActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: MinusCircleIcon,
+        label: t(`Cancel job`),
+        isHidden: (job: UnifiedJob) => Boolean(cannotCancelJob(job)),
+        onClick: (job: UnifiedJob) => cancelJobs([job]),
+      },
       {
         type: PageActionType.single,
         variant: ButtonVariant.secondary,
@@ -76,9 +84,10 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       },
       {
         type: PageActionType.single,
-        icon: BanIcon,
+        icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
+        isHidden: (job: UnifiedJob) => Boolean(!cannotCancelJob(job)), // Hidden when a job is running and cancellable since we have the iconOnly row action will also be available to trigger cancel in that scenario
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
     ];
