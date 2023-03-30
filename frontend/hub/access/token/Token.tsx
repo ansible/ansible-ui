@@ -2,18 +2,21 @@ import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/reac
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CopyCell, PageHeader, PageLayout } from '../../../../framework';
-import { requestPost } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 
 export function Token() {
   const { t } = useTranslation();
   const [working, setWorking] = useState(false);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+
+  const postRequest = usePostRequest<object, { token: string }>();
+
   const onClick = async () => {
     try {
       setWorking(true);
       setError('');
-      const result = await requestPost<{ token: string }>('/api/automation-hub/v3/auth/token/', {});
+      const result = await postRequest('/api/automation-hub/v3/auth/token/', {});
       setToken(result.token);
     } catch (err) {
       if (err instanceof Error) {

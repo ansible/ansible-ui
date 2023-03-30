@@ -54,7 +54,7 @@ export function PageForm<T extends object>(props: {
   const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error | null>(null);
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
@@ -67,11 +67,15 @@ export function PageForm<T extends object>(props: {
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(async (data) => {
-          setError('');
+          setError(null);
           try {
-            await props.onSubmit(data, setError, setFieldError);
+            await props.onSubmit(
+              data,
+              (error: string) => setError(new Error(error)),
+              setFieldError
+            );
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
           }
         })}
         isHorizontal={isHorizontal}
@@ -107,10 +111,13 @@ export function PageForm<T extends object>(props: {
         {error && (
           <Alert
             variant="danger"
-            title={error ?? ''}
+            title={error.message ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-          />
+            isExpandable={'description' in error ? typeof error.description === 'string' : false}
+          >
+            {'description' in error && typeof error.description === 'string' && error.description}
+          </Alert>
         )}
         {props.onCancel ? (
           <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>

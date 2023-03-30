@@ -10,10 +10,10 @@ import {
 } from '../../../../framework';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 
 function ProjectInputs() {
   const { t } = useTranslation();

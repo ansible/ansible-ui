@@ -12,7 +12,8 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../common/crud/Data';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
@@ -29,23 +30,17 @@ export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const onSubmit: PageFormSubmitHandler<IUserInput> = async (
-    userInput,
-    setError,
-    setFieldError
-  ) => {
+  const postRequest = usePostRequest<Partial<EdaUser>, EdaUser>();
+
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userInput, _, setFieldError) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      if (confirmPassword !== user.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') });
-        return false;
-      }
-      const newUser = await requestPost<EdaUser>(`${API_PREFIX}/activations/`, user);
-      navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(await getEdaError(err));
+    user.is_superuser = userType === t('System administrator');
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
     }
+    const newUser = await postRequest(`${API_PREFIX}/activations/`, user);
+    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);

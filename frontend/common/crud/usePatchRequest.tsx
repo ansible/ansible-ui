@@ -8,8 +8,12 @@ import { HTTPError } from './http-error';
 export function usePatchRequest<RequestBody, ResponseBody>() {
   const navigate = useNavigate();
 
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
+  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
+  useEffect(() => {
+    const abortController = new AbortController();
+    abortSignalRef.current.signal = abortController.signal;
+    return () => abortController.abort();
+  }, []);
 
   return async (url: string, body: RequestBody) => {
     await Delay();
@@ -23,7 +27,7 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
         Accepts: 'application/json',
         'X-CSRFToken': getCookie('csrftoken') ?? '',
       },
-      signal: abortController.current.signal,
+      signal: abortSignalRef.current.signal,
     });
 
     if (!response.ok) {
@@ -31,9 +35,9 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
 
-      let responseBody: object | undefined;
+      let responseBody: string | undefined;
       try {
-        responseBody = (await response.json()) as object;
+        responseBody = await response.text();
       } catch {
         // Do nothing - response body was not valid json
       }

@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBulkActionDialog } from '../../../../../framework/PageDialogs/BulkActionDialog';
-import { requestPost } from '../../../../common/crud/Data';
+import { useBulkActionDialog } from '../../../../../framework';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 
 export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => void) {
   const { t } = useTranslation();
   const userProgressDialog = useBulkActionDialog<User>();
+  const postRequest = usePostRequest();
   const removeUserToOrganizations = useCallback(
     (users: User[], organizations: Organization[]) => {
       userProgressDialog({
@@ -19,7 +20,7 @@ export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => 
         actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const organization of organizations) {
-            await requestPost(
+            await postRequest(
               `/api/v2/users/${user.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
@@ -32,7 +33,7 @@ export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => 
         onComplete,
       });
     },
-    [userProgressDialog, t, onComplete]
+    [userProgressDialog, t, onComplete, postRequest]
   );
   return removeUserToOrganizations;
 }

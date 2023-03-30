@@ -5,7 +5,7 @@ import { PageForm, PageFormSelectOption, useBulkActionDialog } from '../../../..
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPost } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
@@ -38,6 +38,7 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
   const { t } = useTranslation();
   const navigate = useNavigate();
   const openBulkActionDialog = useBulkActionDialog<AddRole>();
+  const postRequest = usePostRequest();
   return (
     <PageForm
       onSubmit={(
@@ -85,8 +86,8 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
           ],
           actionFn: (addRole) => {
             return 'user' in addRole
-              ? requestPost(`/api/v2/users/${addRole.user.id}/roles/`, { id: addRole.roleId })
-              : requestPost(`/api/v2/teams/${addRole.team.id}/roles/`, { id: addRole.roleId });
+              ? postRequest(`/api/v2/users/${addRole.user.id}/roles/`, { id: addRole.roleId })
+              : postRequest(`/api/v2/teams/${addRole.team.id}/roles/`, { id: addRole.roleId });
           },
           onClose: props.onClose,
         });

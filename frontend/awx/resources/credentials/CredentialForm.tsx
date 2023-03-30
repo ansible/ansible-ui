@@ -10,8 +10,9 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { ItemsResponse, requestPatch, requestPost } from '../../../common/crud/Data';
+import { ItemsResponse, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { RouteObj } from '../../../Routes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
@@ -24,6 +25,7 @@ export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const activeUser = useActiveUser();
+  const postRequest = usePostRequest<Credential>();
   const onSubmit: PageFormSubmitHandler<Credential> = async (credential, setError) => {
     try {
       if (credential.summary_fields.organization.name) {
@@ -39,7 +41,7 @@ export function CreateCredential() {
       } else {
         credential.user = activeUser?.id;
       }
-      const newCredential = await requestPost<Credential>('/api/v2/credentials/', credential);
+      const newCredential = await postRequest('/api/v2/credentials/', credential);
       navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
     } catch (err) {
       setError(await getAwxError(err));

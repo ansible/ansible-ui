@@ -16,8 +16,8 @@ import {
   SinceCell,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { requestPost } from '../../../common/crud/Data';
 import { useGetItem } from '../../../common/crud/useGetItem';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { StatusCell } from '../../../common/StatusCell';
 import { RouteObj } from '../../../Routes';
 import { AwxError } from '../../common/AwxError';
@@ -29,7 +29,7 @@ export function InstanceDetails() {
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>('/api/v2/instances', params.id);
   const history = useNavigate();
-
+  const postRequest = usePostRequest();
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
@@ -45,13 +45,13 @@ export function InstanceDetails() {
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
         label: t('Run health check'),
-        onClick: (instance) => {
-          void requestPost(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});
+        onClick: () => {
+          void postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});
         },
       },
     ];
     return itemActions;
-  }, [t, history]);
+  }, [t, history, postRequest, instance?.id]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;

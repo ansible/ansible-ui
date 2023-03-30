@@ -5,24 +5,21 @@ import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch, requestPost } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { Team } from '../../interfaces/Team';
-import { getAwxError } from '../../useAwxView';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const onSubmit: PageFormSubmitHandler<Team> = async (team, setError) => {
-    try {
-      team.organization = team.summary_fields?.organization?.id;
-      const createdTeam = await requestPost<Team>('/api/v2/teams/', team);
-      navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
-    } catch (err) {
-      setError(await getAwxError(err));
-    }
+  const postRequest = usePostRequest<Team>();
+  const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
+    team.organization = team.summary_fields?.organization?.id;
+    const createdTeam = await postRequest('/api/v2/teams/', team);
+    navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
   };
   return (
     <PageLayout>
@@ -43,14 +40,11 @@ export function EditTeam() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: team } = useGet<Team>(`/api/v2/teams/${id.toString()}/`);
-  const onSubmit: PageFormSubmitHandler<Team> = async (team, setError) => {
-    try {
-      team.organization = team.summary_fields?.organization?.id;
-      await requestPatch<Team>(`/api/v2/teams/${id}/`, team);
-      navigate(-1);
-    } catch (err) {
-      setError(await getAwxError(err));
-    }
+  const patchRequest = usePatchRequest<Team, Team>();
+  const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
+    team.organization = team.summary_fields?.organization?.id;
+    await patchRequest(`/api/v2/teams/${id}/`, team);
+    navigate(-1);
   };
   if (!team) {
     return (

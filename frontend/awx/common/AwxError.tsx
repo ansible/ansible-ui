@@ -20,8 +20,8 @@ export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
         <Title headingLevel="h4" size="lg">
           {error.message}
         </Title>
-        {error instanceof HTTPError && error.responseBody && (
-          <EmptyStateBody>{JSON.stringify(error.responseBody)}</EmptyStateBody>
+        {error instanceof HTTPError && error.description && (
+          <EmptyStateBody>{JSON.stringify(error.description)}</EmptyStateBody>
         )}
         {handleRefresh && (
           <Button variant="primary" onClick={handleRefresh} icon={<SyncIcon />}>
