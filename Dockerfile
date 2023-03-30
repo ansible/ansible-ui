@@ -3,7 +3,7 @@
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as source
 WORKDIR /ansible-ui
 COPY . .
-RUN npm version 0.0.0 --no-git-tag-version
+RUN npm version 0.0.0 --no-git-tag-version || true
 
 # docker should be able to cache this step unless package-lock.json changes
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as dependencies
