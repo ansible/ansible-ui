@@ -11,7 +11,7 @@ WORKDIR /ansible-ui
 COPY --from=source /ansible-ui/package*.json ./
 RUN npm ci --omit=dev --omit=optional --ignore-scripts
 
-# docker should be able to cache this step unless package-lock.json changes
+# builder
 FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as builder
 COPY --from=source /ansible-ui/ .
 ARG VERSION
