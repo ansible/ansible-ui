@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { getCookie } from './cookie';
+import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
 export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
@@ -15,7 +16,19 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
   }, []);
 
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
-    const response = await postRequest(url, body, signal ?? abortSignalRef.current.signal);
+    await Delay();
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accepts: 'application/json',
+        'X-CSRFToken': getCookie('csrftoken') ?? '',
+      },
+      signal: signal ?? abortSignalRef.current.signal,
+    });
 
     if (!response.ok) {
       if (response.status === 401) {

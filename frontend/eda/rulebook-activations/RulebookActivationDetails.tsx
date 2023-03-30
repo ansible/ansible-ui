@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { TrashIcon } from '@patternfly/react-icons';
+import { CubesIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -15,18 +15,13 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
-  useInMemoryView,
 } from '../../../framework';
 import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
-import { EdaJob } from '../interfaces/EdaJob';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useActivationActionColumns } from './hooks/useActivationActionColumns';
-import { useActivationActionFilters } from './hooks/useActivationActionFilters';
-import { useActivationActionsActions } from './hooks/useActivationActionsActions';
 import {
   useDisableActivation,
   useRelaunchActivation,
@@ -34,6 +29,9 @@ import {
 } from './hooks/useActivationDialogs';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
+import { useEdaView } from '../useEventDrivenView';
+import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -113,9 +111,19 @@ export function RulebookActivationDetails() {
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
             </PageDetail>
-            <PageDetail label={t('Project')}>{rulebookActivation?.project?.name || ''}</PageDetail>
-            <PageDetail label={t('Working directory')}>
-              {rulebookActivation?.working_directory || ''}
+            <PageDetail label={t('Project')}>
+              {rulebookActivation && rulebookActivation.project?.id ? (
+                <Link
+                  to={RouteObj.EdaRulebookDetails.replace(
+                    ':id',
+                    `${rulebookActivation.project?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.project?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.project?.name || ''
+              )}
             </PageDetail>
             <PageDetail label={t('Activation status')}>
               {rulebookActivation?.status || ''}
@@ -148,57 +156,16 @@ export function RulebookActivationDetails() {
     );
   };
 
-  function ActivationActionsTab() {
-    const _params = useParams<{ id: string }>();
-    const { t } = useTranslation();
-    const toolbarFilters = useActivationActionFilters();
-    const tableColumns = useActivationActionColumns();
-
-    function useGetActivationActions(id: string) {
-      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}/`);
-    }
-
-    const { data: actions } = useGetActivationActions('8' || '');
-
-    const view = useInMemoryView<EdaJob>({
-      items: actions,
-      tableColumns,
-      toolbarFilters,
-      keyFn: (item) => item?.id,
-    });
-
-    const rowActions = useActivationActionsActions();
-    return (
-      <PageLayout>
-        <PageTable
-          tableColumns={tableColumns}
-          toolbarFilters={toolbarFilters}
-          rowActions={rowActions}
-          errorStateTitle={t('Error loading actions')}
-          emptyStateTitle={t('No actions yet')}
-          emptyStateDescription={t('No actions for this rulebook activation')}
-          {...view}
-          defaultSubtitle={t('Rulebook activation')}
-        />
-      </PageLayout>
-    );
-  }
-
   function ActivationHistoryTab() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
-    const toolbarFilters = useActivationActionFilters();
+    const toolbarFilters = useActivationHistoryFilters();
 
-    function useGetActivationHistory(id: string) {
-      return useGet<EdaJob[]>(`${API_PREFIX}/activation_instance_job_instances/${id}/`);
-    }
-    const { data: actions } = useGetActivationHistory(params?.id || '');
     const tableColumns = useActivationHistoryColumns();
-    const view = useInMemoryView<EdaJob>({
-      items: actions,
-      tableColumns,
+    const view = useEdaView<EdaActivationInstance>({
+      url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
       toolbarFilters,
-      keyFn: (item) => item?.id,
+      tableColumns,
     });
     return (
       <PageLayout>
@@ -206,8 +173,9 @@ export function RulebookActivationDetails() {
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading history')}
-          emptyStateTitle={t('No actions history')}
-          emptyStateDescription={t('No actions history  for this rulebook activation')}
+          emptyStateTitle={t('No activation history')}
+          emptyStateIcon={CubesIcon}
+          emptyStateDescription={t('No history for this rulebook activation')}
           {...view}
           defaultSubtitle={t('Rulebook activation history')}
         />
@@ -234,9 +202,6 @@ export function RulebookActivationDetails() {
       {rulebookActivation ? (
         <PageTabs>
           <PageTab label={t('Details')}>{renderActivationDetailsTab(rulebookActivation)}</PageTab>
-          <PageTab label={t('Actions')}>
-            <ActivationActionsTab />
-          </PageTab>
           <PageTab label={t('History')}>
             <ActivationHistoryTab />
           </PageTab>

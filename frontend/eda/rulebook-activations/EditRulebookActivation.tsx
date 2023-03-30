@@ -47,14 +47,16 @@ export function EditRulebookActivation() {
     setError
   ) => {
     let extra_var_id;
-    try {
-      extra_var_id = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
-        extra_var: rulebookActivation.variables,
-      });
-      (cache as unknown as { clear: () => void }).clear?.();
-    } catch (err) {
-      extra_var_id = undefined;
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+    if (rulebookActivation?.variables) {
+      try {
+        extra_var_id = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
+          extra_var: rulebookActivation.variables,
+        });
+        (cache as unknown as { clear: () => void }).clear?.();
+      } catch (err) {
+        extra_var_id = undefined;
+        setError(err instanceof Error ? err.message : t('Unknown error'));
+      }
     }
     try {
       const newRulebookActivation = await postEdaRulebookActivation(
@@ -132,7 +134,7 @@ export function EditRulebookActivation() {
           options={RESTART_OPTIONS}
         />
         <PageFormSelectOption
-          name={'project'}
+          name={'project_id'}
           label={t('Project')}
           placeholderText={t('Select project')}
           options={
@@ -143,12 +145,6 @@ export function EditRulebookActivation() {
                 }))
               : []
           }
-        />
-        <PageFormTextInput
-          name={'working_directory'}
-          label={t('Working directory')}
-          id={'working_directory'}
-          placeholder={t('Insert working directory here')}
         />
         <PageFormSwitch<EdaRulebook>
           id="rulebook-activation"

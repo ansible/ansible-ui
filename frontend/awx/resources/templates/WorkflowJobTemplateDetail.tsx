@@ -24,8 +24,10 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { useItem } from '../../../common/crud/useGet';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
+import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
@@ -34,7 +36,11 @@ import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 export function WorkflowJobTemplateDetail() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const template = useItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id ?? '0');
+  const {
+    error,
+    data: template,
+    refresh,
+  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
   const history = useNavigate();
 
   const deleteTemplates = useDeleteTemplates((deleted) => {
@@ -46,24 +52,28 @@ export function WorkflowJobTemplateDetail() {
   const itemActions: IPageAction<WorkflowJobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<WorkflowJobTemplate>[] = [
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit workflow template'),
-        onClick: () => history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+        onClick: (template) =>
+          history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete workflow template'),
-        onClick: () => {
+        onClick: (template) => {
           if (!template) return;
           deleteTemplates([template]);
         },
       },
     ];
     return itemActions;
-  }, [deleteTemplates, history, template, t]);
+  }, [deleteTemplates, history, t]);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!template) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>

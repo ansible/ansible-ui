@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
+import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
 export function useGetRequest<ResponseBody>() {
@@ -24,6 +25,8 @@ export function useGetRequest<ResponseBody>() {
       );
       url += '?' + new URLSearchParams(normalizedQuery).toString();
     }
+
+    await Delay();
 
     const response = await fetch(url, {
       credentials: 'include',

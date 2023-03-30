@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { getCookie } from './cookie';
+import { Delay } from './delay';
 import { HTTPError } from './http-error';
 
 export function usePatchRequest<RequestBody, ResponseBody>() {
@@ -15,6 +16,8 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
   }, []);
 
   return async (url: string, body: RequestBody) => {
+    await Delay();
+
     const response = await fetch(url, {
       method: 'PATCH',
       body: JSON.stringify(body),

@@ -15,43 +15,46 @@ import {
   PageLayout,
   SinceCell,
 } from '../../../../framework';
-import { useItem } from '../../../common/crud/useGet';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { StatusCell } from '../../../common/StatusCell';
 import { RouteObj } from '../../../Routes';
+import { AwxError } from '../../common/AwxError';
 import { Instance } from '../../interfaces/Instance';
 import { NodeTypeCell } from './Instances';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const instance = useItem<Instance>('/api/v2/instances', params.id ?? '0');
+  const { error, data: instance, refresh } = useGetItem<Instance>('/api/v2/instances', params.id);
   const history = useNavigate();
   const postRequest = usePostRequest();
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit instance'),
-        onClick: () => history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
+        onClick: (instance) =>
+          history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
         label: t('Run health check'),
         onClick: () => {
-          postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {}).catch(
-            // eslint-disable-next-line no-console
-            console.error
-          );
+          void postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});
         },
       },
     ];
     return itemActions;
-  }, [t, history, instance?.id, postRequest]);
+  }, [t, history, postRequest, instance?.id]);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!instance) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
