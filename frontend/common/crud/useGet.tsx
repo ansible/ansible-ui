@@ -29,7 +29,7 @@ export function useGet<T>(
     void response.mutate();
   }, [response]);
 
-  let error = response.error;
+  let error = response.error as Error;
   if (error && !(error instanceof Error)) {
     error = new Error('Unknown error');
   }
