@@ -106,6 +106,10 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
 
