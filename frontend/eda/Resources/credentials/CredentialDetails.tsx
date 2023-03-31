@@ -20,6 +20,7 @@ import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { useDeleteCredentials } from './hooks/useDeleteCredentials';
+import { CredentialOptions } from './EditCredential';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -56,17 +57,21 @@ export function CredentialDetails() {
   );
 
   const renderCredentialDetailsTab = (credential: EdaCredential | undefined): JSX.Element => {
+    const credentialOption = CredentialOptions().find(
+      (option) => option.value === credential?.credential_type
+    );
     return (
       <PageDetails>
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
-        <PageDetail label={t('SCM type')}>{credential?.credential_type || t('Git')}</PageDetail>
-        <PageDetail label={t('SCM URL')}>{credential?.username || ''}</PageDetail>
-        <PageDetail label={t('SCM token')}>{credential?.secret || ''}</PageDetail>
+        <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
+        <PageDetail label={t('Credential type')}>
+          {credentialOption ? credentialOption?.label : credential?.credential_type}
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {credential?.created_at ? formatDateString(credential.created_at) : ''}
         </PageDetail>
-        <PageDetail label={t('Modified')}>
+        <PageDetail label={t('Last modified')}>
           {credential?.modified_at ? formatDateString(credential.modified_at) : ''}
         </PageDetail>
       </PageDetails>
