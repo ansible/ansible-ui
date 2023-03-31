@@ -20,24 +20,39 @@ describe('EDA Projects CRUD', () => {
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Team ' + randomString(4);
     cy.navigateTo(/^Projects$/);
+    cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
     cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^SCM URL$/, 'https://example.com');
+    cy.typeByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
     cy.clickButton(/^Create project$/);
-    cy.hasTitle(name);
+    cy.get('h1').should('contain', name);
+    cy.optionsWait(5000);
+    cy.clickPageAction(/^Delete project$/);
+    cy.confirmModalAction('Delete projects');
   });
 
-  it.only('can edit a project from the list view', () => {
+  it('can edit a project from the list view', () => {
     cy.navigateTo(/^Projects$/);
+    cy.get('h1').should('contain', 'Projects');
     cy.clickRow(edaproject.name);
     cy.clickPageAction(/^Edit project$/);
     cy.hasTitle(/^Edit project$/);
     cy.typeByLabel(/^Name$/, 'a');
     cy.clickButton(/^Save project$/);
     cy.hasTitle(`${edaproject.name}a`);
+    cy.get('h1').should('contain', edaproject.name);
   });
 
-  it.skip('can delete a project', () => {
-    //write this once Project deletion has been implemented
+  it('deletes a Project from kebab menu from the project details page', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.clickRow(edaproject.name);
+    cy.get('h1').should('contain', edaproject.name);
+    cy.intercept('DELETE', `/api/eda/v1/projects/${edaproject.id}/`).as('deleted');
+    cy.clickPageAction(/^Delete project$/);
+    cy.confirmModalAction('Delete projects');
+    cy.wait('@deleted').then((deleted) => {
+      expect(deleted?.response?.statusCode).to.eql(204);
+      cy.get('h1').should('contain', 'Projects');
+    });
   });
 });
