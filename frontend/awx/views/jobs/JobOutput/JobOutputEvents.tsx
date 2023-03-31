@@ -1,4 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
+import { Banner } from '@patternfly/react-core';
+import { Trans } from 'react-i18next';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -78,6 +80,16 @@ export function JobOutputEvents(props: { job: Job }) {
         </LabelGroup>
       </PageSection>
       <Divider /> */}
+      {isJobRunning ? (
+        <Banner variant="warning">
+          <Trans>
+            <p>
+              This job is currently running. Live event streaming has not been added yet to the tech
+              preview.
+            </p>
+          </Trans>
+        </Banner>
+      ) : null}
       <div
         ref={containerRef}
         style={{
