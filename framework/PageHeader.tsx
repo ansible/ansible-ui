@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertActionCloseButton,
   Breadcrumb,
   BreadcrumbItem,
   Button,
@@ -19,16 +17,11 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
-import styled from 'styled-components';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
-import { PageAlertsArrayContext, PageAlertsContext } from './PageAlerts';
 import './PageFramework.css';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
-const PageAlertsDiv = styled.div`
-  border-bottom: thin solid rgba(0, 0, 0, 0.12);
-`;
 export interface ICatalogBreadcrumb {
   id?: string;
   label?: string;
@@ -42,12 +35,12 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
   if (!props.breadcrumbs) return <Fragment />;
   return (
     <Breadcrumb style={props.style}>
-      {props.breadcrumbs.map((breadcrumb) => {
-        if (!breadcrumb.label) return null;
+      {props.breadcrumbs.map((breadcrumb, index) => {
+        if (!breadcrumb.label) return <Fragment key={index}></Fragment>;
         return (
           <BreadcrumbItem
             id={breadcrumb.id}
-            key={breadcrumb.id ?? breadcrumb.label}
+            key={breadcrumb.id ?? breadcrumb.label ?? index}
             component={breadcrumb.component}
             isActive={breadcrumb.to === undefined}
           >
@@ -78,7 +71,7 @@ export interface PageHeaderProps {
   titleHelpTitle?: string;
   titleHelp?: string | string[];
   titleDocLink?: string;
-  description?: string | string[];
+  description?: null | string | string[];
   controls?: ReactNode;
   headerActions?: ReactNode;
   footer?: ReactNode;
@@ -242,32 +235,6 @@ export function PageHeader(props: PageHeaderProps) {
           {footer}
         </Stack>
       </PageSection>
-      <PageAlertsContext.Consumer>
-        {(pageAlerts) => (
-          <PageAlertsArrayContext.Consumer>
-            {(pageAlertsArray) => {
-              if (pageAlertsArray.length === 0) return <></>;
-              return (
-                <PageAlertsDiv>
-                  {pageAlertsArray.map((alertProps, index) => (
-                    <Alert
-                      {...alertProps}
-                      key={alertProps.key ?? alertProps.id ?? index}
-                      actionClose={
-                        <AlertActionCloseButton
-                          onClose={() => pageAlerts.removeAlert(alertProps)}
-                        />
-                      }
-                      isInline
-                      isExpandable={!!alertProps.children}
-                    />
-                  ))}
-                </PageAlertsDiv>
-              );
-            }}
-          </PageAlertsArrayContext.Consumer>
-        )}
-      </PageAlertsContext.Consumer>
     </>
   );
 }

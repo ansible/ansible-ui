@@ -98,13 +98,13 @@ export type PageTableProps<T extends object> = {
   error?: Error;
 
   emptyStateTitle: string;
-  emptyStateDescription?: string;
+  emptyStateDescription?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyStateIcon?: React.ComponentType<any>;
   emptyStateButtonIcon?: React.ReactNode;
-  emptyStateButtonText?: string;
+  emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
-
+  emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
   showSelect?: boolean;
 
   disableTableView?: boolean;
@@ -182,7 +182,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection>
+      <PageSection variant={props.emptyStateVariant || 'default'}>
         <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
           <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
           <Title headingLevel="h4" size="lg">
@@ -534,6 +534,7 @@ function TableRow<T extends object>(props: {
 }) {
   const {
     columns,
+    unselectAll,
     selectItem,
     unselectItem,
     isItemSelected,
@@ -597,12 +598,12 @@ function TableRow<T extends object>(props: {
           <Td
             select={{
               rowIndex,
-              onSelect: (_event, isSelecting) => {
-                if (isSelecting) {
-                  selectItem?.(item);
-                } else {
-                  unselectItem?.(item);
+              onSelect: () => {
+                if (!isSelectMultiple) {
+                  unselectAll?.();
                 }
+                selectItem?.(item);
+                onSelect?.(item);
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
@@ -692,7 +693,8 @@ function TableCells<T extends object>(props: {
             right: 0,
             padding: 0,
             paddingRight: 0,
-            zIndex: actionsExpanded ? 301 : undefined,
+            // ZIndex 400 is needed for PF table stick headers
+            zIndex: actionsExpanded ? 400 : undefined,
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >

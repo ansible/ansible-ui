@@ -13,8 +13,10 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../../framework';
-import { useItem } from '../../../../common/useItem';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
 import { UserDetails } from './UserDetails';
@@ -25,7 +27,7 @@ import { UserTeams } from './UserTeams';
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const user = useItem<User>('/api/v2/users', params.id ?? '0');
+  const { error, data: user, refresh } = useGetItem<User>('/api/v2/users', params.id);
   const history = useNavigate();
 
   const deleteUsers = useDeleteUsers((deleted: User[]) => {
@@ -37,31 +39,31 @@ export function UserPage() {
   const itemActions: IPageAction<User>[] = useMemo(() => {
     const itemActions: IPageAction<User>[] = [
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
-        onClick: () => history(RouteObj.EditUser.replace(':id', user?.id.toString() ?? '')),
+        onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete user'),
-        onClick: () => {
-          if (!user) return;
-          deleteUsers([user]);
-        },
+        onClick: (user) => deleteUsers([user]),
         isDanger: true,
       },
     ];
     return itemActions;
-  }, [t, history, user, deleteUsers]);
+  }, [t, history, deleteUsers]);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!user) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={user?.username}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: user?.username }]}
+        title={user.username}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: user.username }]}
         headerActions={
           <PageActions<User>
             actions={itemActions}
@@ -70,18 +72,18 @@ export function UserPage() {
           />
         }
       />
-      <PageTabs loading={!user}>
+      <PageTabs>
         <PageTab label={t('Details')}>
-          <UserDetails user={user!} />
+          <UserDetails user={user} />
         </PageTab>
         <PageTab label={t('Organizations')}>
-          <UserOrganizations user={user!} />
+          <UserOrganizations user={user} />
         </PageTab>
         <PageTab label={t('Teams')}>
-          <UserTeams user={user!} />
+          <UserTeams user={user} />
         </PageTab>
         <PageTab label={t('Roles')}>
-          <UserRoles user={user!} />
+          <UserRoles user={user} />
         </PageTab>
       </PageTabs>
     </PageLayout>

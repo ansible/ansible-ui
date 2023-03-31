@@ -14,6 +14,7 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
       codeCoverage(on, config);
       return config;
@@ -71,7 +72,7 @@ export default defineConfig({
         ],
       },
     },
-    specPattern: 'frontend/awx/**/*.cy.tsx',
-    supportFile: 'cypress/support/component.ts',
+    specPattern: 'frontend/**/*.cy.tsx',
+    supportFile: 'cypress/support/component.tsx',
   },
 });

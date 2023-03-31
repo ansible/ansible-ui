@@ -7,7 +7,7 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { requestPostFile } from '../../../Data';
+import { postRequestFile } from '../../../common/crud/Data';
 import { RouteObj } from '../../../Routes';
 import { useRepositories } from '../../administration/repositories/hooks/useRepositories';
 import { useNamespaces } from '../namespaces/hooks/useNamespaces';
@@ -49,7 +49,7 @@ export function UploadCollectionByFile() {
           onCancel={onCancel}
           onSubmit={(data) => {
             const namespace = (data.file as File).name.split('-')[0];
-            return requestPostFile(
+            return postRequestFile(
               `/api/automation-hub/content/inbound-${namespace}/v3/artifacts/collections/`,
               data.file as Blob
             ).then(() => navigate(RouteObj.Approvals + '?status=staging'));

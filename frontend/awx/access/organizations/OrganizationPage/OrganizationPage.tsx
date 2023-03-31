@@ -13,8 +13,10 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../../framework';
-import { useItem } from '../../../../common/useItem';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { OrganizationAccess } from './OrganizationAccess';
@@ -24,7 +26,11 @@ import { OrganizationTeams } from './OrganizationTeams';
 export function OrganizationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const organization = useItem<Organization>('/api/v2/organizations', params.id ?? '0');
+  const {
+    data: organization,
+    error,
+    refresh,
+  } = useGetItem<Organization>('/api/v2/organizations', params.id);
   const history = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
@@ -36,18 +42,18 @@ export function OrganizationPage() {
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit organization'),
-        onClick: () =>
+        onClick: (organization) =>
           history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete organization'),
-        onClick: () => {
+        onClick: (organization) => {
           if (!organization) return;
           deleteOrganizations([organization]);
         },
@@ -55,7 +61,10 @@ export function OrganizationPage() {
       },
     ];
     return itemActions;
-  }, [deleteOrganizations, history, organization, t]);
+  }, [deleteOrganizations, history, t]);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!organization) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -73,19 +82,27 @@ export function OrganizationPage() {
           />
         }
       />
-      <PageTabs loading={!organization}>
-        <PageTab label={t('Details')}>
-          <OrganizationDetails organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Access')}>
-          <OrganizationAccess organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Teams')}>
-          <OrganizationTeams organization={organization!} />
-        </PageTab>
-        <PageTab label={t('Execution environments')}>TODO</PageTab>
-        <PageTab label={t('Notifications')}>TODO</PageTab>
-      </PageTabs>
+      {organization && <OrganizationPageTabs organization={organization} />}
     </PageLayout>
+  );
+}
+
+export function OrganizationPageTabs(props: { organization: Organization }) {
+  const { organization } = props;
+  const { t } = useTranslation();
+  return (
+    <PageTabs>
+      <PageTab label={t('Details')}>
+        <OrganizationDetails organization={organization} />
+      </PageTab>
+      <PageTab label={t('Access')}>
+        <OrganizationAccess organization={organization} />
+      </PageTab>
+      <PageTab label={t('Teams')}>
+        <OrganizationTeams organization={organization} />
+      </PageTab>
+      <PageTab label={t('Execution environments')}>TODO</PageTab>
+      <PageTab label={t('Notifications')}>TODO</PageTab>
+    </PageTabs>
   );
 }

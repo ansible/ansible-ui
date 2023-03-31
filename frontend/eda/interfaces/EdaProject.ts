@@ -13,7 +13,7 @@ export interface EdaProject {
   token?: string;
   created_at?: string;
   modified_at?: string;
-  status: string;
+  import_state: string;
   revision: string;
   url?: string;
   git_hash?: string;

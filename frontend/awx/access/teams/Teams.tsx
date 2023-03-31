@@ -2,9 +2,9 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { useOptions } from '../../../common/crud/useOptions';
 import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { useRefreshAction } from '../../../common/useRefreshAction';
-import { useOptions } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
@@ -24,7 +24,7 @@ export function Teams() {
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
   const headerActions = useRefreshAction(view.refreshing, view.refresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>({ url: '/api/v2/teams/' });
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
   return (

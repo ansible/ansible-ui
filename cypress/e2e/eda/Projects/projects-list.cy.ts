@@ -1,32 +1,64 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/// <reference types="cypress" />
+
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
 
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+
 describe('EDA Projects List', () => {
+  let edaproject: EdaProject;
+
   before(() => {
     cy.edaLogin();
+
+    cy.createEdaProject().then((project) => {
+      edaproject = project;
+    });
+  });
+  after(() => {
+    cy.deleteEdaProject(edaproject);
   });
 
-  it('EDA projects page', () => {
+  it('renders the EDA projects page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.hasTitle(/^Projects$/);
+    cy.get('h1').should('contain', 'Projects');
   });
 
-  it.skip('can filter the Projects list based on specific criteria', () => {
-    //change test stub name to stipulate what the specific criteria is
+  it('renders the Project details page', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.get('h1').should('contain', 'Projects');
+    cy.clickRow(edaproject.name);
+    cy.hasTitle(edaproject.name);
+    cy.clickButton(/^Details$/);
+    cy.get('#name').should('contain', edaproject.name);
   });
 
-  it.skip('can perform a basic search on the Projects list', () => {
-    //use mock data to test search
+  it('can filter the Projects list based on Name', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.filterByText(edaproject.name);
+    cy.get('td[data-label="Name"]').should('contain', edaproject.name);
   });
 
-  it.skip('can perform an advanced search on the Projects list', () => {
-    //use mock data to test search
-  });
-
-  it.skip('can bulk delete Projects from the Projects list', () => {
-    //write test here
-  });
-
-  it.skip('can verify the functionality of items in the kebab menu on the Projects list view', () => {
-    //write test here
+  it('can bulk delete Projects from the Projects list', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.createEdaProject().then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.selectRow(testProject.name);
+      cy.selectRow(edaproject.name);
+      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.intercept('DELETE', `/api/eda/v1/projects/${edaproject.id}/`).as('deletedA');
+      cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('deletedB');
+      cy.confirmModalAction('Delete projects');
+      cy.wait('@deletedA').then((deletedA) => {
+        expect(deletedA?.response?.statusCode).to.eql(204);
+      });
+      cy.wait('@deletedB').then((deletedB) => {
+        expect(deletedB?.response?.statusCode).to.eql(204);
+      });
+      cy.assertModalSuccess();
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });

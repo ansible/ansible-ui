@@ -1,4 +1,4 @@
-import { requestGet, requestPost } from '../../../Data';
+import { postRequest, requestGet } from '../../../common/crud/Data';
 import { Launch } from '../../interfaces/Launch';
 
 import { Job } from '../../interfaces/Job';
@@ -48,16 +48,16 @@ const launchWithParams = (resourceType: string, resourceId: number, params?: Lau
   let jobPromise;
 
   if (resourceType === 'job_template') {
-    jobPromise = requestPost<Job>(`/api/v2/job_templates/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(`/api/v2/job_templates/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'workflow_job_template') {
-    jobPromise = requestPost<Job>(
+    jobPromise = postRequest<Job>(
       `/api/v2/workflow_job_templates/${resourceId.toString()}/launch/`,
       params
     );
   } else if (resourceType === 'job') {
-    jobPromise = requestPost<Job>(`/api/v2/jobs/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(`/api/v2/jobs/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'workflow_job') {
-    jobPromise = requestPost<Job>(`/api/v2/workflow_jobs/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(`/api/v2/workflow_jobs/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'ad_hoc_command') {
     if (params?.credential_passwords) {
       // The api expects the passwords at the top level of the object instead of nested
@@ -66,7 +66,7 @@ const launchWithParams = (resourceType: string, resourceId: number, params?: Lau
         params[key] = params.credential_passwords[key];
       });
     }
-    jobPromise = requestPost<Job>(
+    jobPromise = postRequest<Job>(
       `/api/v2/ad_hoc_commands/${resourceId.toString()}/launch/`,
       params || {}
     );
@@ -102,27 +102,27 @@ export const handleRelaunch = async (resourceType: string, resourceId: number, p
       relaunchResponse.passwords_needed_to_start.length === 0
     ) {
       if (resourceType === 'inventory_update') {
-        relaunch = requestPost<Job>(
+        relaunch = postRequest<Job>(
           `/api/v2/inventory_sources/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'project_update') {
-        relaunch = relaunch = requestPost<Job>(
+        relaunch = relaunch = postRequest<Job>(
           `/api/v2/projects/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'workflow_job') {
-        relaunch = relaunch = requestPost<Job>(
+        relaunch = relaunch = postRequest<Job>(
           `/api/v2/workflow_jobs/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'ad_hoc_command') {
-        relaunch = relaunch = requestPost<Job>(
+        relaunch = relaunch = postRequest<Job>(
           `/api/v2/ad_hoc_commands/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'job') {
-        relaunch = requestPost<Job>(`/api/v2/jobs/${resourceId.toString()}/update/`, params || {});
+        relaunch = postRequest<Job>(`/api/v2/jobs/${resourceId.toString()}/update/`, params || {});
       }
       return relaunch;
     }

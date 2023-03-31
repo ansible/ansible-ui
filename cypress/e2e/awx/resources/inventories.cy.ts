@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('inventories', () => {
@@ -9,18 +7,16 @@ describe('inventories', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Teams ' + randomString(4),
-    }).then((testOrg) => {
-      organization = testOrg;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+    cy.deleteAwxOrganization(organization);
   });
 
-  it('inventories page', () => {
+  it('renders the inventories list page', () => {
     cy.navigateTo(/^Inventories$/, false);
     cy.hasTitle(/^Inventories$/);
   });

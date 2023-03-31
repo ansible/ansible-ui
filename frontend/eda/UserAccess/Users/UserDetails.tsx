@@ -1,22 +1,22 @@
 import { DropdownPosition } from '@patternfly/react-core';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActions,
   PageActionType,
+  PageDetailsFromColumns,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { PageDetailsFromColumns } from '../../../../framework';
-import { useGet } from '../../../common/useItem';
+import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { useUserColumns } from './hooks/useUserColumns';
 import { API_PREFIX } from '../../constants';
-import { useMemo } from 'react';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
+import { useUserColumns } from './hooks/useUserColumns';
 
 export function UserDetails() {
   const { t } = useTranslation();

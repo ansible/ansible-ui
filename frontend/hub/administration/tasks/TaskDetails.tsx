@@ -1,16 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageDetails, PageHeader, PageLayout, SinceCell } from '../../../../framework';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
+import { AwxError } from '../../../awx/common/AwxError';
+import { useGet } from '../../../common/crud/useGet';
 import { StatusCell } from '../../../common/StatusCell';
-import { useItem } from '../../../common/useItem';
 import { RouteObj } from '../../../Routes';
 import { Task } from './Task';
 
 export function TaskDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const task = useItem<Task>('/api/automation-hub/pulp/api/v3/tasks', params.id ?? '0');
+  const {
+    data: task,
+    error,
+    refresh,
+  } = useGet<Task>(params.id ? `/api/automation-hub/pulp/api/v3/tasks/${params.id}` : '');
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!task) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <PageHeader

@@ -25,7 +25,7 @@ export function PageDropdownAction<T extends object>(props: {
   selectedItem?: T;
   position?: DropdownPosition;
   iconOnly?: boolean;
-  onOpen?: (open: boolean) => void;
+  onOpen?: (label: string, open: boolean) => void;
   variant?: ButtonVariant;
 }) {
   const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip, variant } =
@@ -47,9 +47,11 @@ export function PageDropdownAction<T extends object>(props: {
       ) !== undefined,
     [actions]
   );
+
   useEffect(() => {
-    props.onOpen?.(dropdownOpen);
-  }, [dropdownOpen, props]);
+    props.onOpen?.(label ?? 'default', dropdownOpen);
+  }, [dropdownOpen, label, props]);
+
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;
@@ -73,7 +75,7 @@ export function PageDropdownAction<T extends object>(props: {
       </DropdownToggle>
     ) : (
       <KebabToggle
-        id="toggle-kebab"
+        className="toggle-kebab"
         isDisabled={isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
@@ -99,7 +101,8 @@ export function PageDropdownAction<T extends object>(props: {
         />
       ))}
       position={props.position}
-      style={{ zIndex: dropdownOpen ? 201 : undefined }}
+      // ZIndex 400 is needed for PF table stick headers
+      style={{ zIndex: dropdownOpen ? 400 : undefined }}
     />
   );
   return tooltip && (iconOnly || isDisabled) ? (

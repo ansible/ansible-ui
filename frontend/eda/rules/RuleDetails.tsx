@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
@@ -19,7 +19,7 @@ import {
   PageTabs,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/useItem';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
@@ -64,15 +64,32 @@ export function RuleDetails() {
         <PageDetails>
           <PageDetail label={t('Name')}>{rule?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{rule?.description || ''}</PageDetail>
-          <PageDetail label={t('Rule set')}>{rule?.ruleset || ''}</PageDetail>
-          <PageDetail label={t('Action type')}>
-            {rule?.action ? Object.keys(rule?.action) : ''}
+          <PageDetail label={t('Rule set')}>{rule?.ruleset?.name || ''}</PageDetail>
+          <PageDetail label={t('Project')}>
+            {rule?.project && rule.project?.id ? (
+              <Link to={RouteObj.EdaProjectDetails.replace(':id', `${rule.project?.id || ''}`)}>
+                {rule?.project?.name}
+              </Link>
+            ) : (
+              rule?.project?.name || ''
+            )}
           </PageDetail>
-          <PageDetail label={t('Project')}>{rule?.project?.name || ''}</PageDetail>
+          <PageDetail label={t('Rulebook')}>
+            {rule?.rulebook && rule.rulebook?.id ? (
+              <Link to={RouteObj.EdaRulebookDetails.replace(':id', `${rule.rulebook?.id || ''}`)}>
+                {rule?.rulebook?.name}
+              </Link>
+            ) : (
+              rule?.rulebook?.name || ''
+            )}
+          </PageDetail>
+
           <PageDetail label={t('Rule type')}>{rule?.type || ''}</PageDetail>
-          <PageDetail label={t('Fire count')}>{rule?.fired_stats?.fire_count || 0}</PageDetail>
+          <PageDetail label={t('Fire count')}>{rule?.fired_stats?.fired_count || 0}</PageDetail>
           <PageDetail label={t('Last fired date')}>
-            {rule?.fired_stats?.fired_date ? formatDateString(rule?.fired_stats?.fired_date) : ''}
+            {rule?.fired_stats?.last_fired_at
+              ? formatDateString(rule?.fired_stats?.last_fired_at)
+              : ''}
           </PageDetail>
           <PageDetail label={t('Created')}>
             {rule?.created_at ? formatDateString(rule.created_at) : ''}

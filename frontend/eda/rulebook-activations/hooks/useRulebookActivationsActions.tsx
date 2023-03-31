@@ -19,7 +19,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: t('Rulebook activation'),
+        label: t('Add rulebook activation'),
         onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),
       },
       {

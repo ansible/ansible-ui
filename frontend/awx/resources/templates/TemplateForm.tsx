@@ -1,21 +1,21 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageHeader, PageLayout } from '../../../../framework';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { ItemsResponse, postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { getAddedAndRemoved } from '../../../controller/utils/getAddedAndRemoved';
-import { useGet } from '../../../common/useItem';
-import { ItemsResponse, requestGet, requestPatch, requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
-import { JobTemplate } from '../../interfaces/JobTemplate';
-import { Label } from '../../interfaces/Label';
-import JobTemplateInputs from './JobTemplateInputs';
-import { PageFormSubmitHandler } from '../../../../framework';
-import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { useMemo } from 'react';
-import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
+import { Label } from '../../interfaces/Label';
 import { getAwxError } from '../../useAwxView';
+import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
+import JobTemplateInputs from './JobTemplateInputs';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();
@@ -70,6 +70,8 @@ export function EditJobTemplate() {
 export function CreateJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const postRequest = usePostRequest<JobTemplateForm, JobTemplate>();
+
   const defaultValues: Partial<JobTemplateForm> = useMemo(
     () => getJobTemplateDefaultValues(t, {} as JobTemplateForm),
     [t]
@@ -84,7 +86,7 @@ export function CreateJobTemplate() {
     } = values;
 
     try {
-      const template = await requestPost<JobTemplate>(`/api/v2/job_templates/`, values);
+      const template = await postRequest(`/api/v2/job_templates/`, values);
       const promises = [];
       if (credentials?.length > 0) {
         promises.push(submitCredentials(template, credentials));
@@ -133,14 +135,14 @@ async function submitCredentials(template: JobTemplate, newCredentials: Credenti
   );
 
   const disassociateCredentials = removed.map((cred) =>
-    requestPost(`/api/v2/job_templates/${template?.id?.toString()}/credentials`, {
+    postRequest(`/api/v2/job_templates/${template?.id?.toString()}/credentials`, {
       id: cred.id,
       disassociate: true,
     })
   );
   const disassociatePromise = await Promise.all(disassociateCredentials);
   const associateCredentials = added.map((cred: { id: number }) =>
-    requestPost(`/api/v2/job_templates/${template?.id?.toString()}/credentials/`, {
+    postRequest(`/api/v2/job_templates/${template?.id?.toString()}/credentials/`, {
       id: cred.id,
     })
   );
@@ -156,13 +158,13 @@ async function submitLabels(template: number, orgId: number, labels: Label[]) {
   );
 
   const disassociationPromises = removed.map((label: { id: number }) =>
-    requestPost(`/api/v2/job_templates/${template.toString()}/labels/`, {
+    postRequest(`/api/v2/job_templates/${template.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    requestPost(`/api/v2/job_templates/${template.toString()}/labels/`, {
+    postRequest(`/api/v2/job_templates/${template.toString()}/labels/`, {
       name: label.name,
       organization: orgId,
     })
@@ -177,13 +179,13 @@ async function submitInstanceGroups(templateId: number, newInstanceGroups: Insta
   );
   if (!isEqual(newInstanceGroups, originalInstanceGroups.results)) {
     for (const group of originalInstanceGroups.results) {
-      await requestPost(`/api/v2/job_templates/${templateId.toString()}/instance_groups/`, {
+      await postRequest(`/api/v2/job_templates/${templateId.toString()}/instance_groups/`, {
         id: group.id,
         disassociate: true,
       });
     }
     for (const group of newInstanceGroups) {
-      await await requestPost(`/api/v2/job_templates/${templateId.toString()}/instance_groups/`, {
+      await await postRequest(`/api/v2/job_templates/${templateId.toString()}/instance_groups/`, {
         id: group.id,
       });
     }

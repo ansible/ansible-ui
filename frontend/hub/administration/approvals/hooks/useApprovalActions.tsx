@@ -3,12 +3,13 @@ import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Approval } from '../Approval';
 
 export function useApprovalActions(callback: (approval: Approval[]) => void) {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
+  const postRequest = usePostRequest();
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
@@ -17,7 +18,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         icon: ThumbsUpIcon,
         label: t('Approve'),
         onClick: (approval) =>
-          void requestPost(
+          void postRequest(
             `/api/automation-hub/v3/collections/${approval.namespace}/${approval.name}/versions/${approval.version}/move/staging/published/`,
             {}
           ).then(() => {
@@ -37,6 +38,6 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         isHidden: (item) => item.repository_list.includes('published'),
       },
     ],
-    [alertToaster, callback, t]
+    [alertToaster, callback, postRequest, t]
   );
 }

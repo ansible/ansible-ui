@@ -4,18 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
-import {
-  useDisableActivation,
-  useRelaunchActivation,
-  useRestartActivation,
-} from './useActivationDialogs';
+import { useRelaunchActivation, useRestartActivation } from './useActivationDialogs';
 import { IEdaView } from '../../useEventDrivenView';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const relaunchActivation = useRelaunchActivation();
   const restartActivation = useRestartActivation();
-  const disableActivation = useDisableActivation();
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
@@ -31,11 +26,6 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       },
       {
         type: PageActionType.single,
-        label: 'Disable',
-        onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
-      },
-      {
-        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete rulebookActivation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
@@ -43,6 +33,6 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         isDanger: true,
       },
     ],
-    [relaunchActivation, restartActivation, deleteRulebookActivations, disableActivation, t]
+    [relaunchActivation, restartActivation, deleteRulebookActivations, t]
   );
 }

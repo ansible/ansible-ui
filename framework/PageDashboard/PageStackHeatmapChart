@@ -4,6 +4,11 @@ import { Chart, ChartAxis, ChartBar, ChartLabel, ChartStack } from '@patternfly/
 import { Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core'
 import { useMemo, useState } from 'react'
 import { ContainerSizeContext, SizeContainer } from './SizeContainer'
+import styled from 'styled-components';
+
+const StackItemSpan = styled.span`
+  font-size: larger;
+`;
 
 interface IOrgRuns {
   org_id: number
@@ -127,7 +132,7 @@ function HeatmapDataComponent(props: {
             content={
               <Stack>
                 <StackItem>
-                  <span style={{ fontSize: 'larger' }}>{tempalteRun.template_name}</span>
+                  <StackItemSpan>{tempalteRun.template_name}</StackItemSpan>
                 </StackItem>
                 <StackItem>
                   <span>{`${Math.round(tempalteRun.elapsed)} ms`}</span>

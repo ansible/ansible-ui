@@ -1,14 +1,14 @@
-import { LabelGroup, Label } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PageDetail, PageDetails, SinceCell } from '../../../../../framework';
-import { useGet } from '../../../../common/useItem';
+import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
-import { Organization } from '../../../interfaces/Organization';
-import { Credential } from '../../../interfaces/Credential';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
+import { Credential } from '../../../interfaces/Credential';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { Organization } from '../../../interfaces/Organization';
 
 function useGalaxyCredentials(orgId: string) {
   const { data } = useGet<{ results: Credential[] }>(

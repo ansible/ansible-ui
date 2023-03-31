@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Fragment } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -6,19 +8,18 @@ import {
   PageForm,
   PageFormSelectOption,
   PageFormSubmitHandler,
+  PageFormTextInput,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework';
-import { requestGet, requestPatch, requestPost, swrOptions } from '../../../Data';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { EdaGroup } from '../../interfaces/EdaGroup';
-import { getEdaError } from '../../useEventDrivenView';
 import { API_PREFIX } from '../../constants';
-import { Fragment } from 'react';
+import { EdaGroup } from '../../interfaces/EdaGroup';
+import { EdaUser } from '../../interfaces/EdaUser';
+import { getEdaError } from '../../useEventDrivenView';
 import { PageFormGroupSelect } from '../Groups/components/PageFormGroupSelect';
-import { FieldValues } from 'react-hook-form';
 
 interface UserFields extends FieldValues {
   user: EdaUser;
@@ -29,23 +30,17 @@ export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const onSubmit: PageFormSubmitHandler<IUserInput> = async (
-    userInput,
-    setError,
-    setFieldError
-  ) => {
+  const postRequest = usePostRequest<Partial<EdaUser>, EdaUser>();
+
+  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userInput, _, setFieldError) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      if (confirmPassword !== user.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') });
-        return false;
-      }
-      const newUser = await requestPost<EdaUser>(`${API_PREFIX}/activations/`, user);
-      navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(await getEdaError(err));
+    user.is_superuser = userType === t('System administrator');
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
     }
+    const newUser = await postRequest(`${API_PREFIX}/activations/`, user);
+    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);

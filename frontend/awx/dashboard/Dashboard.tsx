@@ -1,13 +1,13 @@
 /* eslint-disable i18next/no-literal-string */
 import { Banner, Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, pfDanger, pfSuccess, Scrollable } from '../../../framework';
 import { PageGrid } from '../../../framework/components/PageGrid';
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
-import { ItemsResponse, useGet2 } from '../../Data';
+import { ItemsResponse } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { DashboardJobsCard } from './cards/DashboardJobs';
@@ -16,19 +16,19 @@ import { OnboardInventories } from './cards/OnboardInventories';
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('AWX');
   return (
     <PageLayout>
       <Banner variant="info">
         <Trans>
           <p>
-            <InfoCircleIcon /> You are currently viewing a tech preview of the new Ansible
-            Automation Platform user interface. To return to the original interface, click{' '}
-            <a href="/">here</a>.
+            <InfoCircleIcon /> You are currently viewing a tech preview of the new {product} user
+            interface. To return to the original interface, click <a href="/">here</a>.
           </p>
         </Trans>
       </Banner>
       <PageHeader
-        title={t('Welcome to AWX')}
+        title={t(`Welcome to ${product}`)}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
       <DashboardInternal />
@@ -200,21 +200,21 @@ interface IDashboardData {
 }
 
 function useExecutionEnvironments(query?: Record<string, string | number | boolean>) {
-  const { t } = useTranslation();
   return useAwxItemsResponse<ExecutionEnvironment>({
     url: '/api/v2/execution_environments/',
     query,
-    errorTitle: t('Error querying execution environments.'),
   });
 }
 
 function useAwxItemsResponse<T>(options: {
   url: string;
   query?: Record<string, string | number | boolean>;
-  errorTitle?: string;
 }) {
-  const { url, query, errorTitle } = options;
-  const response = useGet2<ItemsResponse<T>>({ url, query, errorTitle });
-  const refresh = useCallback(() => void response.mutate(), [response]);
-  return { ...response.data, loading: !response.data && !response.error, refresh };
+  const { url, query } = options;
+  const response = useGet<ItemsResponse<T>>(url, query);
+  return {
+    ...response.data,
+    loading: !response.data && !response.error,
+    refresh: response.refresh,
+  };
 }

@@ -19,8 +19,8 @@ import {
 import { Dotted } from '../../../../framework/components/Dotted';
 import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { StatusCell } from '../../../common/StatusCell';
-import { requestPost } from '../../../Data';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
@@ -37,6 +37,7 @@ export function Instances() {
   });
 
   const alertToaster = usePageAlertToaster();
+  const postRequest = usePostRequest();
 
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
@@ -47,7 +48,7 @@ export function Instances() {
         label: t('Run health check'),
         onClick: (instances) => {
           for (const instance of instances) {
-            requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
+            postRequest(`/api/v2/instances/${instance.id}/health_check/`, {})
               .then(() => void view.refresh())
               .catch(
                 // eslint-disable-next-line no-console
@@ -57,7 +58,7 @@ export function Instances() {
         },
       },
     ],
-    [t, view]
+    [postRequest, t, view]
   );
 
   const rowActions = useMemo<IPageAction<Instance>[]>(
@@ -73,7 +74,7 @@ export function Instances() {
             title: t('Health check running'),
           };
           alertToaster.addAlert(alert);
-          void requestPost(`/api/v2/instances/${instance.id}/health_check/`, {})
+          void postRequest(`/api/v2/instances/${instance.id}/health_check/`, {})
             .catch((err) => {
               alertToaster.replaceAlert(alert, {
                 variant: 'danger',
@@ -99,7 +100,7 @@ export function Instances() {
           navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
-    [alertToaster, navigate, t, view]
+    [alertToaster, navigate, postRequest, t, view]
   );
 
   return (

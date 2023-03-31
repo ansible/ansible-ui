@@ -1,4 +1,5 @@
 import { User as SwaggerUser } from './generated-from-swagger/api';
+import { SummaryFieldsOrganization } from './summary-fields/summary-fields';
 
 export type AccessRole = {
   id: number;
@@ -21,7 +22,9 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
   username: string;
   user_type?: 'normal' | 'administrator' | 'auditor';
   disassociate?: boolean;
+  organization?: number;
   summary_fields: {
+    organization: SummaryFieldsOrganization;
     user_capabilities: {
       edit: boolean;
       delete: boolean;
@@ -37,4 +40,5 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
   };
   user_roles?: AccessRole[];
   team_roles?: AccessRole[];
+  auth: string[];
 }

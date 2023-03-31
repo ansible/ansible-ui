@@ -207,7 +207,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   return (
     <Toolbar
       clearAllFilters={clearAllFilters}
-      className="dark-2"
+      className="dark-2 page-table-toolbar"
       style={{
         paddingBottom: sm ? undefined : 8,
         paddingTop: sm ? undefined : 8,
@@ -223,7 +223,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           </ToolbarGroup>
         )}
         {toolbarFilters && toolbarFilters.length > 0 && (
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" style={{ zIndex: 302 }}>
+          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarGroup variant="filter-group">
               <ToolbarItem>
                 <FormGroupSelect
@@ -313,7 +313,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         )}
 
         {/* Action Buttons */}
-        <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
+        <ToolbarGroup variant="button-group">
           <PageActions
             actions={toolbarActions}
             selectedItems={selectedItems}
@@ -322,7 +322,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         </ToolbarGroup>
         <ToolbarGroupsDiv />
 
-        <ToolbarGroup variant="button-group" style={{ zIndex: 302 }}>
+        <ToolbarGroup variant="button-group">
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>
@@ -527,6 +527,8 @@ function ToolbarSelectFilter(props: {
             <SelectionSpan>{props.placeholder}</SelectionSpan>
           )
         }
+        // ZIndex 400 is needed for PF table stick headers
+        style={{ zIndex: open ? 400 : 0 }}
       >
         {options.map((option) => (
           <SelectOption id={option.value} key={option.value} value={option.value}>

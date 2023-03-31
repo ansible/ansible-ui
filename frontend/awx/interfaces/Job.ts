@@ -32,6 +32,7 @@ export interface Job {
     source_workflow_job?: string;
     schedule?: string;
   };
+  result_traceback?: string;
   summary_fields: {
     organization: {
       id: number;
@@ -176,4 +177,6 @@ export interface Job {
   webhook_service: string;
   webhook_credential: null;
   webhook_guid: string;
+  playbook_counts: { play_count: number; task_count: number };
+  host_status_counts: { ok: number; failures: number };
 }

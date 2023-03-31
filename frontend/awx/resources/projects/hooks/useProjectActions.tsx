@@ -1,10 +1,10 @@
-import { ButtonVariant, AlertProps } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
-import { requestPost } from '../../../../Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';
@@ -15,6 +15,7 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
   const navigate = useNavigate();
   const deleteProjects = useDeleteProjects(onProjectsDeleted);
   const alertToaster = usePageAlertToaster();
+  const postRequest = usePostRequest();
 
   return useMemo<IPageAction<Project>[]>(() => {
     const cannotDeleteProject = (project: Project) =>
@@ -56,7 +57,7 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
             title: t(`Syncing ${project.name}.`),
             timeout: 2000,
           };
-          requestPost(`/api/v2/projects/${project?.id ?? 0}/update/`, { id: project.id })
+          postRequest(`/api/v2/projects/${project?.id ?? 0}/update/`, { id: project.id })
             .then(() => {
               alertToaster.addAlert(alert);
             })
@@ -80,7 +81,7 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
             title: t(`${project.name} copied.`),
             timeout: 2000,
           };
-          requestPost(`/api/v2/projects/${project?.id ?? 0}/copy/`, {
+          postRequest(`/api/v2/projects/${project?.id ?? 0}/copy/`, {
             name: `${project.name} @ ${new Date()
               .toTimeString()
               .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
@@ -107,5 +108,5 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
         isDanger: true,
       },
     ];
-  }, [alertToaster, deleteProjects, navigate, t]);
+  }, [alertToaster, deleteProjects, navigate, postRequest, t]);
 }

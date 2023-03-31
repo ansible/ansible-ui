@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
-import { RouteObj } from '../../../../Routes';
+import { getJobOutputUrl } from '../jobUtils';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -20,13 +20,15 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Name'),
-        cell: (job: UnifiedJob) => (
-          <TextCell
-            text={job.name}
-            to={RouteObj.JobDetails.replace(':id', job.id.toString())}
-            disableLinks={options?.disableLinks}
-          />
-        ),
+        cell: (job: UnifiedJob) => {
+          return (
+            <TextCell
+              text={job.name}
+              to={getJobOutputUrl(job)}
+              disableLinks={options?.disableLinks}
+            />
+          );
+        },
         sort: 'name',
         card: 'name',
         list: 'name',

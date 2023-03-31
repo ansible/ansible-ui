@@ -21,7 +21,6 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
-import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
@@ -55,29 +54,28 @@ export function PageForm<T extends object>(props: {
   const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error | null>(null);
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
-  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
-  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
-  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
-  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
-  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
-  const maxWidth: number | undefined = multipleColumns ? undefined : isHorizontal ? 960 : 800;
+  const maxWidth: number | undefined = multipleColumns ? 1600 : isHorizontal ? 960 : 800;
 
   let Component = (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(async (data) => {
-          setError('');
+          setError(null);
           try {
-            await props.onSubmit(data, setError, setFieldError);
+            await props.onSubmit(
+              data,
+              (error: string) => setError(new Error(error)),
+              setFieldError
+            );
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
           }
         })}
         isHorizontal={isHorizontal}
@@ -91,26 +89,35 @@ export function PageForm<T extends object>(props: {
       >
         {props.disableScrolling ? (
           <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
-            <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+            <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
               {props.children}
-            </Grid>
+            </PageFormGrid>
           </div>
         ) : (
-          <Scrollable style={{ height: '100%', flexGrow: 1 }}>
+          <div
+            style={{
+              height: '100%',
+              flexGrow: 1,
+              overflow: 'auto',
+            }}
+          >
             <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
-              <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+              <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
                 {props.children}
-              </Grid>
+              </PageFormGrid>
             </div>
-          </Scrollable>
+          </div>
         )}
         {error && (
           <Alert
             variant="danger"
-            title={error ?? ''}
+            title={error.message ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-          />
+            isExpandable={'description' in error ? typeof error.description === 'string' : false}
+          >
+            {'description' in error && typeof error.description === 'string' && error.description}
+          </Alert>
         )}
         {props.onCancel ? (
           <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
@@ -133,6 +140,32 @@ export function PageForm<T extends object>(props: {
   if (!disableBody) {
     Component = <PageBody>{Component}</PageBody>;
   }
+
+  return Component;
+}
+
+export function PageFormGrid(props: {
+  children?: ReactNode;
+  isVertical?: boolean;
+  singleColumn?: boolean;
+}) {
+  const [settings] = useContext(SettingsContext);
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
+
+  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
+  const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
+  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
+  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
+
+  const Component = (
+    <>
+      <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+        {props.children}
+      </Grid>
+    </>
+  );
 
   return Component;
 }

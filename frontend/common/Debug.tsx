@@ -2,11 +2,11 @@
 import { Bullseye, Button, PageSection, Stack } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { PageHeader } from '../../framework';
-import { useBulkActionDialog } from '../../framework/BulkActionDialog';
+import { useBulkActionDialog } from '../../framework/PageDialogs/BulkActionDialog';
 import { randomString } from '../../framework/utils/random-string';
 import { Team } from '../awx/interfaces/Team';
-import { requestPost } from '../Data';
 import { RouteObj } from '../Routes';
+import { usePostRequest } from './crud/usePostRequest';
 
 export default function Debug() {
   const breadcrumbs = useMemo(
@@ -32,6 +32,8 @@ export default function Debug() {
 
 function useCreateTeams() {
   const openBulkProgressDialog = useBulkActionDialog();
+  const postRequest = usePostRequest();
+
   const createTeams = useCallback(
     (count: number) => {
       const teams = new Array(count)
@@ -42,12 +44,11 @@ function useCreateTeams() {
         keyFn: (team: Partial<Team>) => team.name ?? '',
         items: teams,
         actionColumns: [{ header: 'Name', cell: (team: Partial<Team>) => team.name ?? '' }],
-        actionFn: (team, signal) =>
-          requestPost<Team, Partial<Team>>('/api/v2/teams/', team, signal),
+        actionFn: (team, signal) => postRequest('/api/v2/teams/', team, signal),
         processingText: 'Creating teams...',
       });
     },
-    [openBulkProgressDialog]
+    [openBulkProgressDialog, postRequest]
   );
   return createTeams;
 }

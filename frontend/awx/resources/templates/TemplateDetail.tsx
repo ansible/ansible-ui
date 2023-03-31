@@ -24,17 +24,24 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { useItem } from '../../../common/useItem';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
-import { handleLaunch } from '../../common/util/launchHandlers';
+import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
+import { handleLaunch } from '../../common/util/launchHandlers';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import { getJobOutputUrl } from '../../views/jobs/jobUtils';
 
 export function TemplateDetail() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const template = useItem<JobTemplate>('/api/v2/job_templates', params.id ?? '0');
+  const {
+    error,
+    data: template,
+    refresh,
+  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
   const navigate = useNavigate();
 
   const deleteTemplates = useDeleteTemplates((deleted) => {
@@ -46,19 +53,19 @@ export function TemplateDetail() {
   const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
-        onClick: () =>
+        onClick: (template) =>
           navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete template'),
-        onClick: () => {
+        onClick: (template) => {
           if (!template) return;
           deleteTemplates([template]);
         },
@@ -66,15 +73,15 @@ export function TemplateDetail() {
         isDanger: true,
       },
       {
-        type: PageActionType.button,
+        type: PageActionType.single,
         icon: RocketIcon,
         label: t('Launch template'),
-        onClick: async () => {
+        onClick: async (template) => {
           try {
-            const data = await handleLaunch(template?.type as string, template?.id as number);
-            let jobOutputRoute = RouteObj.JobOutput.replace(':job_type', data?.type as string);
-            jobOutputRoute = jobOutputRoute.replace(':id', data?.id.toString() as string);
-            navigate(jobOutputRoute);
+            const job = await handleLaunch(template?.type as string, template?.id);
+            if (job) {
+              navigate(getJobOutputUrl(job));
+            }
           } catch {
             // handle error
           }
@@ -84,7 +91,10 @@ export function TemplateDetail() {
       },
     ];
     return itemActions;
-  }, [deleteTemplates, navigate, template, t]);
+  }, [deleteTemplates, navigate, t]);
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!template) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -92,7 +102,11 @@ export function TemplateDetail() {
         title={template?.name}
         breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
-          <PageActions<JobTemplate> actions={itemActions} position={DropdownPosition.right} />
+          <PageActions<JobTemplate>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={template}
+          />
         }
       />
       {template ? (

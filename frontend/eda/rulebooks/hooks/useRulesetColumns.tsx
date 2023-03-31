@@ -38,7 +38,9 @@ export function useRulesetColumns() {
       {
         header: t('Fire count'),
         cell: (ruleset) => (
-          <TextCell text={ruleset?.fired_count ? ruleset?.fired_count.toString() : ''} />
+          <TextCell
+            text={ruleset?.fired_stats?.fired_count ? `${ruleset.fired_stats.fired_count}` : ''}
+          />
         ),
         sort: 'fired_count',
         defaultSort: true,

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
-import { SelectMultipleDialog } from '../../../../../framework/useSelectMultipleDialog';
+import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { Organization } from '../../../interfaces/Organization';
 import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
@@ -18,7 +18,7 @@ function SelectOrganizations(props: {
     disableQueryString: true,
   });
   return (
-    <SelectMultipleDialog
+    <MultiSelectDialog
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

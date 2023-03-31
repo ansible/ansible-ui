@@ -25,33 +25,39 @@ export interface IFrameworkTranslations {
   by: string;
   selectNone: string;
   pleaseFixValidationErrors: string;
+  validating: string;
+  clickToRefresh: string;
+  unknownError: string;
 }
 
 const defaultTranslations: IFrameworkTranslations = {
+  by: 'by',
   cancelText: 'Cancel',
   canceledText: 'Canceled',
+  clearAllFilters: 'Clear all filters',
+  clickToRefresh: 'Click to refresh',
   closeText: 'Close',
   confirmText: 'Confirm',
+  countMore: '{count} more',
+  documentation: 'Documentation',
   errorText: 'Error',
+  manageColumns: 'Manage columns',
+  moreInformation: 'More information',
   noItemsFound: 'No items found',
+  noResultsFound: 'No results found',
+  noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
   ofText: 'of',
   pendingText: 'Pending',
+  pleaseFixValidationErrors: 'Please fix validation errors.',
   processingText: 'Processing',
+  selectNone: 'Select none',
   selectedText: 'Selected',
+  showLess: 'Show less',
   submitText: 'Submit',
   submittingText: 'Submitting',
   successText: 'Success',
-  manageColumns: 'Manage columns',
-  moreInformation: 'More information',
-  showLess: 'Show less',
-  countMore: '{count} more',
-  documentation: 'Documnetation',
-  noResultsFound: 'No results found',
-  noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
-  clearAllFilters: 'Clear all filters',
-  by: 'by',
-  selectNone: 'Select none',
-  pleaseFixValidationErrors: 'Please fix validation errors.',
+  unknownError: 'Unknown error',
+  validating: 'Validating...',
 };
 
 const FrameworkTranslationsContext = createContext<
