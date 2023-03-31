@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
-import { RouteObj } from '../../../../Routes';
+import { getJobOutputUrl } from '../jobUtils';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -21,21 +21,10 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       {
         header: t('Name'),
         cell: (job: UnifiedJob) => {
-          const paths: { [key: string]: string } = {
-            project_update: 'project',
-            inventory_update: 'inventory',
-            job: 'playbook',
-            ad_hoc_command: 'command',
-            system_job: 'management',
-            workflow_job: 'workflow',
-          };
           return (
             <TextCell
               text={job.name}
-              to={RouteObj.JobDetails.replace(':job_type', paths[job.type]).replace(
-                ':id',
-                job.id.toString()
-              )}
+              to={getJobOutputUrl(job)}
               disableLinks={options?.disableLinks}
             />
           );

@@ -32,6 +32,7 @@ import { UserDateDetail } from '../../common/UserDateDetail';
 import { handleLaunch } from '../../common/util/launchHandlers';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import { getJobOutputUrl } from '../../views/jobs/jobUtils';
 
 export function TemplateDetail() {
   const { t } = useTranslation();
@@ -77,10 +78,10 @@ export function TemplateDetail() {
         label: t('Launch template'),
         onClick: async (template) => {
           try {
-            const data = await handleLaunch(template?.type as string, template?.id);
-            let jobOutputRoute = RouteObj.JobOutput.replace(':job_type', data?.type as string);
-            jobOutputRoute = jobOutputRoute.replace(':id', data?.id.toString() as string);
-            navigate(jobOutputRoute);
+            const job = await handleLaunch(template?.type as string, template?.id);
+            if (job) {
+              navigate(getJobOutputUrl(job));
+            }
           } catch {
             // handle error
           }

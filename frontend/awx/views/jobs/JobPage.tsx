@@ -7,6 +7,7 @@ import { RouteObj } from '../../../Routes';
 import { Job } from '../../interfaces/Job';
 import { JobDetails } from './JobDetails';
 import { JobOutput } from './JobOutput/JobOutput';
+import { WorkflowOutput } from './WorkflowOutput';
 
 export function JobPage() {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ export function JobPage() {
       />
       <PageTabs loading={!job}>
         <PageTab label={t('Output')}>
-          <JobOutput job={job!} />
+          {job?.type === 'workflow_job' ? <WorkflowOutput job={job} /> : <JobOutput job={job!} />}
         </PageTab>
         <PageTab label={t('Details')}>
           <JobDetails job={job!} />
