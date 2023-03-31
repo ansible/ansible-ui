@@ -35,7 +35,7 @@ export function JobExpanded(job: UnifiedJob) {
   );
 
   return (
-    <PageDetails>
+    <PageDetails disablePadding>
       {job.type === 'inventory_update' && (
         <PageDetail label={t(`Source`)}>
           {inventorySourceChoices?.map(([string, label]) => (string === job.source ? label : null))}
