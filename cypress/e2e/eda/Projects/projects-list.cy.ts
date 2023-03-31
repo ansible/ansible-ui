@@ -11,34 +11,54 @@ describe('EDA Projects List', () => {
   before(() => {
     cy.edaLogin();
 
-    cy.createEdaProject().then((proj) => {
-      edaproject = proj;
+    cy.createEdaProject().then((project) => {
+      edaproject = project;
     });
+  });
+  after(() => {
+    cy.deleteEdaProject(edaproject);
   });
 
   it('renders the EDA projects page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.hasTitle(/^Projects$/);
+    cy.get('h1').should('contain', 'Projects');
   });
 
   it('renders the Project details page', () => {
     cy.navigateTo(/^Projects$/, false);
+    cy.get('h1').should('contain', 'Projects');
     cy.clickRow(edaproject.name);
     cy.hasTitle(edaproject.name);
     cy.clickButton(/^Details$/);
-    cy.contains('#name', edaproject.name);
+    cy.get('#name').should('contain', edaproject.name);
   });
 
-  it.only('can filter the Projects list based on Name', () => {
+  it('can filter the Projects list based on Name', () => {
     cy.navigateTo(/^Projects$/, false);
-    cy.getRowFromList(edaproject.name);
+    cy.filterByText(edaproject.name);
+    cy.get('td[data-label="Name"]').should('contain', edaproject.name);
   });
 
-  it.skip('can bulk delete Projects from the Projects list', () => {
-    //write this once Project deletion has been implemented
-  });
-
-  it.skip('can verify the functionality of items in the kebab menu on the Projects list view', () => {
-    //write this once Project deletion has been implemented
+  it('can bulk delete Projects from the Projects list', () => {
+    cy.navigateTo(/^Projects$/, false);
+    cy.createEdaProject().then((testProject) => {
+      cy.navigateTo(/^Projects$/, false);
+      cy.selectRow(testProject.name);
+      cy.selectRow(edaproject.name);
+      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.intercept('DELETE', `/api/eda/v1/projects/${edaproject.id}/`).as('deletedA');
+      cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('deletedB');
+      cy.confirmModalAction('Delete projects');
+      cy.wait('@deletedA').then((deletedA) => {
+        expect(deletedA?.response?.statusCode).to.eql(204);
+      });
+      cy.wait('@deletedB').then((deletedB) => {
+        expect(deletedB?.response?.statusCode).to.eql(204);
+      });
+      cy.assertModalSuccess();
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });
