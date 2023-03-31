@@ -28,6 +28,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   Schedules: `${awxRoutePrefix}/schedules`,
   ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
   WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
+  HostMetrics: `${awxRoutePrefix}/host-metrics`,
 
   // Resources
   Templates: `${awxRoutePrefix}/templates`,

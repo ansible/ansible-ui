@@ -90,6 +90,7 @@
   "Admin": "Admin",
   "Administration": "Administration",
   "All": "All",
+  "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted": "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted.",
   "Amazing Collection": "Amazing Collection",
   "An API token can be used to authenticate the ansible-galaxy client": "An API token can be used to authenticate the ansible-galaxy client.",
   "An error occured": "An error occured",
@@ -117,6 +118,7 @@
   "Are you sure you want to restart the rulebook activation below?": "Are you sure you want to restart the rulebook activation below?",
   "Auditor": "Auditor",
   "Auto": "Auto",
+  "Automation": "Automation",
   "Automation Content": "Automation Content",
   "Automation server": "Automation server",
   "Automation Servers": "Automation Servers",
@@ -247,6 +249,9 @@
   "Delete executionEnvironments_one": "Delete executionEnvironments",
   "Delete executionEnvironments_other": "Delete executionEnvironments",
   "Delete host": "Delete host",
+  "Delete hostname": "Delete hostname",
+  "Delete hostnames_one": "Delete hostname",
+  "Delete hostnames_other": "Delete hostnames",
   "Delete hosts_one": "Delete hosts",
   "Delete hosts_other": "Delete hosts",
   "Delete instance group": "Delete instance group",
@@ -298,6 +303,7 @@
   "Delete Users_one": "Delete Users",
   "Delete Users_other": "Delete Users",
   "Delete workflow template": "Delete workflow template",
+  "Deleted": "Deleted",
   "Deny collections": "Deny collections",
   "Dependencies": "Dependencies",
   "Deprecate selected collections": "Deprecate selected collections",
@@ -361,6 +367,7 @@
   "Error loading credentials": "Error loading credentials",
   "Error loading execution environments": "Error loading execution environments",
   "Error loading history": "Error loading history",
+  "Error loading host metrics": "Error loading host metrics",
   "Error loading hosts": "Error loading hosts",
   "Error loading instance groups": "Error loading instance groups",
   "Error loading instances": "Error loading instances",
@@ -432,6 +439,7 @@
   "Finished": "Finished",
   "Fire count": "Fire count",
   "Fired date": "Fired date",
+  "First automated": "First automated",
   "First name": "First name",
   "For instance, permissions may be granted to a whole Team rather than each user on the Team": "For instance, permissions may be granted to a whole Team rather than each user on the Team.",
   "Forks": "Forks",
@@ -457,6 +465,14 @@
   "Hop": "Hop",
   "HOP node": "HOP node",
   "Host config key": "Host config key",
+  "Host metrics": "Host metrics",
+  "Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted": "Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted.",
+  "hostMetrics": {
+    "title": {
+      "description": "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted."
+    }
+  },
+  "Hostname": "Hostname",
   "Hosts": "Hosts",
   "Hosts recently changed": "Hosts recently changed",
   "Hybrid": "Hybrid",
@@ -512,6 +528,7 @@
   "Key": "Key",
   "Keywords": "Keywords",
   "Label Name": "Label Name",
+  "Last automated": "Last automated",
   "Last fired": "Last fired",
   "Last fired date": "Last fired date",
   "Last health check": "Last health check",
@@ -568,6 +585,7 @@
   "No collections yet": "No collections yet",
   "No credentials yet": "No credentials yet",
   "No execution environments yet": "No execution environments yet",
+  "No host metrics found": "No host metrics found",
   "No hosts yet": "No hosts yet",
   "No instance groups yet": "No instance groups yet",
   "No instances yet": "No instances yet",
@@ -662,6 +680,7 @@
   "Please add a team by using the button below": "Please add a team by using the button below.",
   "Please contact your Organization Administrator if there is an issue with your access": "Please contact your Organization Administrator if there is an issue with your access.",
   "Please create a team by using the button below": "Please create a team by using the button below.",
+  "Please launch a job to populate this list": "Please launch a job to populate this list.",
   "Please run a job to populate this list": "Please run a job to populate this list.",
   "Plugins": "Plugins",
   "Policy type": "Policy type",
@@ -836,6 +855,8 @@
   "similar to a jump host, hop nodes will route traffic to other execution nodes": {
     " Hop nodes cannot execute automation": "similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation."
   },
+  "Soft delete hostnames_one": "Soft delete hostname",
+  "Soft delete hostnames_other": "Soft delete hostnames",
   "Source control branch": "Source control branch",
   "Source Control Branch": "Source Control Branch",
   "Source Control Revision": "Source Control Revision",
@@ -997,6 +1018,10 @@
   "Yes, I confirm that I want to delete these {{count}} executionEnvironments": {
     "_one": "Yes, I confirm that I want to delete these {{count}} executionEnvironments.",
     "_other": "Yes, I confirm that I want to delete these {{count}} executionEnvironments."
+  },
+  "Yes, I confirm that I want to delete these {{count}} hostnames": {
+    "_one": "Yes, I confirm that I want to delete this hostname.",
+    "_other": "Yes, I confirm that I want to delete these {{count}} hostnames."
   },
   "Yes, I confirm that I want to delete these {{count}} hosts": {
     "_one": "Yes, I confirm that I want to delete these {{count}} hosts.",

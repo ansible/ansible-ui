@@ -49,6 +49,12 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         <NavItem isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}>
           <Link to={RouteObj.WorkflowApprovals}>Workflow approvals</Link>
         </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.HostMetrics, location)}
+          onClick={() => onClick(RouteObj.HostMetrics)}
+        >
+          {t('Host metrics')}
+        </NavItem>
       </NavExpandable>
       <NavExpandable
         key="resources"

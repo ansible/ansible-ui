@@ -20,7 +20,9 @@ export function useIdColumn<T extends { name: string; id: number }>() {
   return column;
 }
 
-export function useNameColumn<T extends { name: string; id: number }>(options?: {
+export function useNameColumn<
+  T extends { name?: string; hostname?: string; id: number }
+>(options?: {
   header?: string;
   url?: string;
   onClick?: (item: T) => void;
@@ -34,7 +36,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
-          text={item.name}
+          text={item.name || item.hostname}
           iconSize="sm"
           to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}

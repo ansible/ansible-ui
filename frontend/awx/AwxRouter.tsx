@@ -32,6 +32,7 @@ import { Templates } from './resources/templates/Templates';
 import Settings from './settings/Settings';
 import Jobs from './views/jobs/Jobs';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
+import HostMetrics from './views/jobs/HostMetrics';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -51,6 +52,7 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
 
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplateDetail />} />
