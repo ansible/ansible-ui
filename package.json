@@ -156,7 +156,7 @@
     "@storybook/testing-library": "0.0.13",
     "@typescript-eslint/eslint-plugin": "5.55.0",
     "@typescript-eslint/parser": "5.55.0",
-    "cypress": "12.8.1",
+    "cypress": "12.9.0",
     "cypress-network-idle": "^1.14.2",
     "cypress-react-selector": "3.0.0",
     "eslint": "8.37.0",

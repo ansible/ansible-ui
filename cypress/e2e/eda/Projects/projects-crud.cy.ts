@@ -43,7 +43,7 @@ describe('EDA Projects CRUD', () => {
     cy.get('h1').should('contain', edaproject.name);
   });
 
-  it.only('deletes a Project from kebab menu from the project details page', () => {
+  it('deletes a Project from kebab menu from the project details page', () => {
     cy.navigateTo(/^Projects$/, false);
     cy.clickRow(edaproject.name);
     cy.get('h1').should('contain', edaproject.name);
@@ -51,7 +51,7 @@ describe('EDA Projects CRUD', () => {
     cy.clickPageAction(/^Delete project$/);
     cy.confirmModalAction('Delete projects');
     cy.wait('@deleted').then((deleted) => {
-      expect(deleted.response.statusCode).to.eql(204);
+      expect(deleted?.response?.statusCode).to.eql(204);
       cy.get('h1').should('contain', 'Projects');
     });
   });
