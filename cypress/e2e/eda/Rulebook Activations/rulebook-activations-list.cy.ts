@@ -5,23 +5,23 @@ describe('EDA Rulebook Activations List', () => {
     cy.edaLogin();
   });
 
-  it.skip('can filter the Rulebook Activations list based on specific criteria', () => {
-    //change test stub name to stipulate what the specific criteria is
+  it.skip('can filter the Rulebook Activations list based on Name', () => {
+    //write test here
   });
 
-  it.skip('can perform a basic search on the Rulebook Activations list', () => {
-    //use mock data to test search
+  it.skip('can Relaunch a Rulebook Activation from the list view', () => {
+    //write test here
   });
 
-  it.skip('can perform an advanced search on the Rulebook Activations list', () => {
-    //use mock data to test search
+  it.skip('can Restart a Rulebook Activation from the list view', () => {
+    //write test here
+  });
+
+  it.skip('can delete a single Rulebook Activation from the line item on the list view', () => {
+    //write test here
   });
 
   it.skip('can bulk delete Rulebook Activations from the list', () => {
     //write test here
-  });
-
-  it.skip('can verify the functionality of items in the kebab menu on the Rulebook Activations list view', () => {
-    //restart rulebook activation, delete rulebook activation
   });
 });

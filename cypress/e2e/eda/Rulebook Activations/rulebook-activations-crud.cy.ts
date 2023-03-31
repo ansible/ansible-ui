@@ -13,7 +13,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     //write test here
   });
 
-  it.skip('can delete a Rulebook Activation', () => {
+  it.skip('can delete a Rulebook Activation from the details view', () => {
     //write test here
   });
 });
