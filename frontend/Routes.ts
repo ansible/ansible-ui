@@ -209,7 +209,7 @@ export function useRoutesWithoutPrefix(prefix: RouteType) {
     const routes: { [key: string]: RouteType } = {};
     for (const route in RouteObj) {
       if (RouteObj[route].startsWith(prefix)) {
-        routes[route] = RouteObj[route].replace(prefix, '/') as RouteType;
+        routes[route] = RouteObj[route].replace(prefix, '') as RouteType;
       }
     }
     return routes;
