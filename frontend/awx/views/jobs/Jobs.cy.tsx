@@ -1,5 +1,5 @@
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import * as cancelJobs from './hooks/useCancelJobs';
+import { PageDialogProvider } from '../../../../framework';
 import * as deleteJobs from './hooks/useDeleteJobs';
 import Jobs from './Jobs';
 
@@ -90,7 +90,13 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('Bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
-    cy.mount(<Jobs />);
+    cy.mount(
+      <Page>
+        <PageDialogProvider>
+          <Jobs />
+        </PageDialogProvider>
+      </Page>
+    );
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
