@@ -17,11 +17,7 @@ describe('Jobs.cy.ts', () => {
     );
   });
   it('renders job list', () => {
-    cy.mount(
-      <Page>
-        <Jobs />
-      </Page>
-    );
+    cy.mount(<Jobs />);
     cy.hasTitle(/^Jobs$/);
     cy.get('table').find('tr').should('have.length', 11);
   });
@@ -39,11 +35,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('row action to delete job is disabled if the selected job is running', () => {
-    cy.mount(
-      <Page>
-        <Jobs />
-      </Page>
-    );
+    cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
@@ -60,11 +52,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('row action to delete job  is disabled if the user does not have permissions', () => {
-    cy.mount(
-      <Page>
-        <Jobs />
-      </Page>
-    );
+    cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
@@ -81,13 +69,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('bulk deletion confirmation contains message about selected jobs that cannot be deleted', () => {
-    cy.mount(
-      <Page>
-        <PageDialogProvider>
-          <Jobs />
-        </PageDialogProvider>
-      </Page>
-    );
+    cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
@@ -158,13 +140,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
-    cy.mount(
-      <Page>
-        <PageDialogProvider>
-          <Jobs />
-        </PageDialogProvider>
-      </Page>
-    );
+    cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
