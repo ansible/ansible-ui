@@ -19,7 +19,7 @@ import {
   Bullseye,
 } from '@patternfly/react-core';
 import useSWR from 'swr';
-import { requestPost } from '../../../common/crud/Data';
+import { postRequest as requestPost } from '../../../common/crud/Data';
 import styled from 'styled-components';
 import TotalSavings from './TotalSavings';
 import CalculationCost from './CalculationCost';
@@ -357,10 +357,29 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
                   </>
                 ) : (
                   <TemplatesTable
-                    //navigateToJobExplorer={}
                     data={data?.meta.legend || []}
-                    //variableRow={(item, item) => {return false}}
+                    variableRow={{
+                      key: getParams().sort_options.toString(),
+                      value:
+                        options?.sort_options
+                          .find((x) => x.key === getParams().sort_options.toString())
+                          ?.value.toString() || '',
+                    }}
                     readOnly={true}
+                    getSortParams={{
+                      sort: {
+                        sortBy: {
+                          index: 1,
+                          direction: getParams().sort_order.toString() === 'desc' ? 'desc' : 'asc',
+                        },
+                        onSort: () =>
+                          updateSearchParams(
+                            'sort_order',
+                            getParams().sort_order.toString() !== 'desc' ? 'desc' : 'asc'
+                          ),
+                        columnIndex: 1,
+                      },
+                    }}
                   />
                 )}
               </GridItem>

@@ -7,9 +7,25 @@ import { ChartLegendEntry } from 'react-json-chart-builder';
 interface Props {
   data: ChartLegendEntry[];
   readOnly: boolean;
+  variableRow: { key: string; value: string };
+  getSortParams?: {
+    sort?: {
+      sortBy: {
+        index: number;
+        direction: 'asc' | 'desc';
+      };
+      onSort: (_event: unknown, index: number, direction: 'asc' | 'desc') => void;
+      columnIndex: number;
+    };
+  };
 }
 
-const TopTemplates: FunctionComponent<Props> = ({ data = [], readOnly = true }) => {
+const TopTemplates: FunctionComponent<Props> = ({
+  data = [],
+  readOnly = true,
+  variableRow,
+  getSortParams,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -18,13 +34,19 @@ const TopTemplates: FunctionComponent<Props> = ({ data = [], readOnly = true }) 
         <Tr>
           <Th />
           <Th>{t('Name')}</Th>
+          {variableRow && <Th {...getSortParams}>{variableRow.value}</Th>}
           <Th>{t('Manual time')}</Th>
           <Th>{t('Savings')}</Th>
         </Tr>
       </Thead>
       <Tbody>
         {data.map((template) => (
-          <Row key={template.id} template={template} readOnly={readOnly} />
+          <Row
+            key={template.id}
+            template={template}
+            readOnly={readOnly}
+            variableRow={variableRow}
+          />
         ))}
       </Tbody>
     </TableComposable>

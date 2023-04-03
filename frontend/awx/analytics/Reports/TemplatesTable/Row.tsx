@@ -11,6 +11,8 @@ import { global_success_color_200 as globalSuccessColor200 } from '@patternfly/r
 import { global_disabled_color_200 as globalDisabledColor200 } from '@patternfly/react-tokens';
 
 import currencyFormatter from '../../utilities/currencyFormatter';
+import percentageFormatter from '../../utilities/percentageFormatter';
+import timeFormatter from '../../utilities/timeFormatter';
 import { ChartLegendEntry } from 'react-json-chart-builder';
 import ExpandedRowContents from './ExplandedRowContents';
 import { useTranslation } from 'react-i18next';
@@ -18,9 +20,10 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   template: ChartLegendEntry;
   readOnly: boolean;
+  variableRow: { key: string; value: string };
 }
 
-const Row: FunctionComponent<Props> = ({ template, readOnly = true }) => {
+const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow }) => {
   const [isExpanded, setIsExpanded] = useState(
     window.localStorage.getItem(template.id.toString()) === 'true' || false
   );
@@ -29,6 +32,26 @@ const Row: FunctionComponent<Props> = ({ template, readOnly = true }) => {
     setIsExpanded(value);
   };
   const { t } = useTranslation();
+
+  const setLabeledValue = (key: string, value: number): string => {
+    let label;
+    switch (key) {
+      case 'elapsed':
+        label = timeFormatter(value) + ' seconds';
+        break;
+      case 'template_automation_percentage':
+        label = percentageFormatter(value) + '%';
+        break;
+      case 'successful_hosts_savings':
+      case 'failed_hosts_costs':
+      case 'monetary_gain':
+        label = currencyFormatter(value);
+        break;
+      default:
+        label = (+value).toFixed(2);
+    }
+    return label;
+  };
 
   return (
     <>
@@ -41,6 +64,7 @@ const Row: FunctionComponent<Props> = ({ template, readOnly = true }) => {
           }}
         />
         <Td>{template.name}</Td>
+        {variableRow && <Td>{setLabeledValue(variableRow.key, +template[variableRow.key])}</Td>}
         <Td>
           <InputGroup>
             <TextInput
