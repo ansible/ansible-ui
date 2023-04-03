@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import 'cypress-network-idle';
 import { randomString } from '../../framework/utils/random-string';
 import {
   Group,
@@ -16,10 +17,9 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import 'cypress-network-idle';
+import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 // import { random } from 'cypress/types/lodash';
 // import { stringify } from 'querystring';
-import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 
 declare global {
   namespace Cypress {
@@ -35,6 +35,7 @@ declare global {
 
       optionsWait(idleTime: number): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
+      selectFromDropdown(label: string | RegExp, text: string): Chainable<void>;
       getFormGroupByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -286,6 +287,19 @@ Cypress.Commands.add(
     });
   }
 );
+
+//Finds a dropdown by its label and selects certain text from the dropdown menu.
+Cypress.Commands.add('selectFromDropdown', (label: string | RegExp, text: string) => {
+  cy.getFormGroupByLabel(label).within(() => {
+    cy.get('.pf-c-form__group-control')
+      .click()
+      .within(() => {
+        cy.get('ul').within(() => {
+          cy.contains('button', text).click();
+        });
+      });
+  });
+});
 
 //Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
