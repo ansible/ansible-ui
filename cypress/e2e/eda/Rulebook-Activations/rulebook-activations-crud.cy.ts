@@ -31,7 +31,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
         cy.get('h1').should('contain', 'Create rulebook activation');
         cy.typeByLabel(/^Name$/, name);
         cy.typeByLabel(/^Description$/, 'This is a new rulebook activation.');
-        cy.selectFromDropdown(/^Rulebook$/, rulebooks.results[0].name);
+        cy.selectFromDropdown(/^Rulebook$/, rulebooks?.results[0].name);
         cy.selectFromDropdown(/^Restart policy$/, 'Always');
         cy.selectFromDropdown(/^Project$/, project.name);
         cy.clickButton(/^Add rulebook activation$/);
