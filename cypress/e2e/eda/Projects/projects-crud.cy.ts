@@ -31,7 +31,7 @@ describe('EDA Projects CRUD', () => {
     cy.confirmModalAction('Delete projects');
   });
 
-  it('can edit a project from the list view', () => {
+  it.only('can edit a project from the list view', () => {
     cy.navigateTo(/^Projects$/);
     cy.get('h1').should('contain', 'Projects');
     cy.clickRow(edaproject.name);

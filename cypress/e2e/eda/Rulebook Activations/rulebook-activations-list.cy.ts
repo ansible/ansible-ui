@@ -1,4 +1,5 @@
 //Tests a user's ability to perform certain actions on the Rulebook Activations list in the EDA UI.
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Rulebook Activations List', () => {
   before(() => {

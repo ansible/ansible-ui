@@ -14,7 +14,12 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import 'cypress-network-idle';
+// import { random } from 'cypress/types/lodash';
+// import { stringify } from 'querystring';
+import { ItemsResponse } from '../../frontend/common/crud/Data';
 
 declare global {
   namespace Cypress {
@@ -94,6 +99,14 @@ declare global {
        * @returns {Chainable<EdaProject>}
        */
       createEdaProject(): Chainable<EdaProject>;
+
+      /**
+       * `createEdaRulebookActivation()` creates an EDA Rulebook Activation via API,
+       *  with the name `E2E Rulebook Activation` and appends a random string at the end of the name
+       *
+       * @returns {Chainable<EdaRulebookActivation>}
+       */
+      createEdaRulebookActivation(): Chainable<EdaRulebookActivation>;
 
       /**
        * `deleteEdaProject(projectName: Project)`
@@ -189,12 +202,13 @@ Cypress.Commands.add('edaLogin', () => {
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
-//this command allows a user to insert a wait time into a test to account for items that sync.
+//This command allows a user to insert a wait time into a test to account for items that sync.
 //Number is in milliseconds. ie: 5000 would be 5 seconds.
 Cypress.Commands.add('optionsWait', (idleTime: number) => {
   cy.waitForNetworkIdle('GET', '/api/eda/v1**', idleTime);
 });
 
+//Searches for an element with a certain label, then asserts that the element is enabled.
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
     .parent()
@@ -206,15 +220,18 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
     });
 });
 
+//Add description here
 Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
 });
 
+//Filters a list of items by name.
 Cypress.Commands.add('filterByText', (text: string) => {
   cy.get('#filter-input').type(text, { delay: 0 });
   cy.get('[aria-label="apply filter"]').click();
 });
 
+//Sends a request to the API to create a particular resource.
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
   cy.getCookie('csrftoken').then((cookie) =>
     cy
@@ -231,10 +248,12 @@ Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: P
   );
 });
 
+//Sends a request to the API to get a particular resource.
 Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
 
+//Sends a request to the API to delete a particular resource.
 Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
   cy.getCookie('csrftoken').then((cookie) =>
     cy.request({
@@ -246,10 +265,13 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError
   );
 });
 
+//Utilizes cy.getByLabel() to find an element with a certain label and then types a string in the input.
+//Common use case: Form field input
 Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
   cy.getByLabel(label).type(text, { delay: 0 });
 });
 
+//Add description here
 Cypress.Commands.add(
   'selectByLabel',
   (label: string | RegExp, text: string, options?: { disableSearch?: boolean }) => {
@@ -265,18 +287,22 @@ Cypress.Commands.add(
   }
 );
 
+//Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.contains('a', label).click();
 });
 
+//Uses a certain label string to find a tab and click it.
 Cypress.Commands.add('clickTab', (label: string | RegExp) => {
   cy.contains('button[role="tab"]', label).click();
 });
 
+//Uses a certain label string to find a button and click it.
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
   cy.contains('button:not(:disabled):not(:hidden)', label).click();
 });
 
+//Visits one of the URL addresses contained in the links of the Resource Menu on the left side of the UI.
 Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
@@ -294,20 +320,25 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) =
   }
 });
 
+//Uses a certain label string to identify the title of the page.
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
   cy.contains('.pf-c-title', label);
 });
 
+//Uses a certain label string to identify the alert showing on the screen.
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
   cy.contains('.pf-c-alert__title', label);
 });
 
+//Uses a certain label string to find a button within the kebab located within the toolbar on the page and clicks it.
 Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
   cy.get('.page-table-toolbar').within(() => {
     cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
   });
 });
 
+//Uses a name string to filter results, locates the row on the page containing that name
+//string, and then clicks the link within that row.
 Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
@@ -317,6 +348,7 @@ Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
   });
 });
 
+//Uses a name string to filter results and then locates the row on the page containing that name string.
 Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
@@ -324,6 +356,9 @@ Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean)
   cy.contains('tr', name);
 });
 
+//Uses a name string to filter results, locates the row on the page containing that name
+//string, clicks the toggle button for the row, then finds the toolbar action button using
+//a particular label and clicks that button.
 Cypress.Commands.add(
   'clickRowAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
@@ -339,6 +374,8 @@ Cypress.Commands.add(
   }
 );
 
+//Filters a list to show only particular results using a name, locates the row with that name,
+//and clicks the checkbox for that line item.
 Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
@@ -350,6 +387,8 @@ Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
     });
 });
 
+//Locates the modal box on the page and filters results in that modal by a certain name. Then
+//finds a particular line item from those filtered results and clicks the check box on that line item.
 Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
@@ -364,7 +403,7 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
     });
 });
 
-//This command enables the user to select a check box in a modal and then click a button with a certain label name.
+//Selects a check box in a modal and then clicks a button with a certain label name.
 Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
     cy.get('input[id="confirm"]').click();
@@ -372,7 +411,9 @@ Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
   });
 });
 
-//This command enables the user to assert a successful result in a modal window.
+//Asserts a successful result in a modal window.
+//This command is specific to a modal that lists one or more line items showing the deletion of
+//certain resources.
 Cypress.Commands.add('assertModalSuccess', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
     cy.get('tbody>tr')
@@ -383,6 +424,8 @@ Cypress.Commands.add('assertModalSuccess', () => {
   });
 });
 
+//Locates the kebab menu on a Details page of a resource and uses a label string to click the 
+//button that contains that label string.
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
@@ -559,11 +602,33 @@ Cypress.Commands.add('createEdaProject', () => {
 });
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  // Delete project
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA PROJECT DELETION :',
       message: [`Deleted 👉  ${project.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('createEdaRulebookActivation', () => {
+  // Create Rulebook Activation
+  //this will need to be edited when the Decision Environments are working in the API
+  cy.createEdaProject().then(() => {
+    cy.requestGet<ItemsResponse<EdaRulebook>>('/api/eda/v1/rulebooks/').then((rulebooks) => {
+      cy.log('rulebooks', rulebooks);
+      if (rulebooks && rulebooks.results && rulebooks.results.length > 0) {
+        cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
+          name: 'E2E Rulebook Activation ' + randomString(5),
+          rulebook_id: rulebooks.results[0].id,
+        }).then((response) => {
+          Cypress.log({
+            displayName: 'EDA RULEBOOK ACTIVATIONS CREATION :',
+            message: [`Created 👉  ${response.name}`],
+          });
+        });
+      } else {
+        throw new Error('No rulebooks were returned; rulebook activation cannot be created.');
+      }
     });
   });
 });
