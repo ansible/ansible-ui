@@ -3,9 +3,9 @@ import { Grid, GridItem, PageSection, Stack, StackItem } from '@patternfly/react
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../../framework';
-import ActionsChartCard from './ActionsChartCard';
 import { ProjectsCard } from './ProjectsCard';
 import { ActivationsCard } from './ActivationsCard';
+import RuleAuditChartCard from './RuleAuditChartCard';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ export default function Dashboard() {
       <PageSection>
         <Stack hasGutter>
           <StackItem>
-            <ActionsChartCard />
+            <RuleAuditChartCard />
           </StackItem>
           <StackItem>
             <Grid hasGutter>
