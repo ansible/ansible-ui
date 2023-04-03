@@ -63,13 +63,13 @@ export function EventDrivenSidebar(props: {
         key="views"
         title={t('Views')}
         isExpanded
-        isActive={isRouteActive([RouteObj.EdaActions, RouteObj.EdaRulebookActivations], location)}
+        isActive={isRouteActive([RouteObj.EdaRuleAudit, RouteObj.EdaRulebookActivations], location)}
       >
         <NavItem
-          isActive={isRouteActive(RouteObj.EdaActions, location)}
-          onClick={() => onClick(RouteObj.EdaActions)}
+          isActive={isRouteActive(RouteObj.EdaRuleAudit, location)}
+          onClick={() => onClick(RouteObj.EdaRuleAudit)}
         >
-          {t('Actions')}
+          {t('Rule audit')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.EdaRulebookActivations, location)}

@@ -5,14 +5,12 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaAction {
+export interface EdaRuleAudit {
   id: number;
-  rule: { id: number; name: string };
+  name?: string;
   description?: string;
-  activation?: { id: number; name: string };
-  type: string;
   status?: string;
-  ruleset: { id: number; name: string };
+  activation?: { id: number; name?: string };
+  created_at?: string;
   fired_date?: string;
-  rule_definition?: string;
 }

@@ -18,7 +18,8 @@ import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
 import { Users } from './UserAccess/Users/Users';
-import { Actions } from './views/actions/Actions';
+import { RuleAudit } from './views/RuleAudit/RuleAudit';
+import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
 import { EditGroup } from './UserAccess/Groups/EditGroup';
 import { GroupDetails } from './UserAccess/Groups/GroupDetails';
 import { Groups } from './UserAccess/Groups/Groups';
@@ -66,8 +67,8 @@ export function EventDrivenRouter() {
         element={<DecisionEnvironments />}
       />
 
-      <Route path={RouteObjWithoutPrefix.EdaActionDetails} element={<UnderDevelopment />} />
-      <Route path={RouteObjWithoutPrefix.EdaActions} element={<Actions />} />
+      <Route path={RouteObjWithoutPrefix.EdaRuleAuditDetails} element={<RuleAuditDetails />} />
+      <Route path={RouteObjWithoutPrefix.EdaRuleAudit} element={<RuleAudit />} />
 
       <Route
         path={RouteObjWithoutPrefix.CreateEdaRulebookActivation}
@@ -89,7 +90,6 @@ export function EventDrivenRouter() {
       <Route path={RouteObjWithoutPrefix.CreateEdaActivity} element={<UnderDevelopment />} />
       <Route path={RouteObjWithoutPrefix.EditEdaActivity} element={<UnderDevelopment />} />
       <Route path={RouteObjWithoutPrefix.EdaActivityDetails} element={<UnderDevelopment />} />
-      <Route path={RouteObjWithoutPrefix.EdaActivities} element={<UnderDevelopment />} />
       <Route path={RouteObjWithoutPrefix.EdaRulebookDetails} element={<RulebookDetails />} />
       <Route path={RouteObjWithoutPrefix.EdaRulebooks} element={<Rulebooks />} />
 

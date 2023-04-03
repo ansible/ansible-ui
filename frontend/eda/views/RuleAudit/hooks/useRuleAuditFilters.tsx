@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../../framework';
 
-export function useHostsFilters() {
+export function useRuleAuditFilters() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [

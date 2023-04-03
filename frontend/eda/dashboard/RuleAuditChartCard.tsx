@@ -8,24 +8,24 @@ import chart_color_red_300 from '@patternfly/react-tokens/dist/js/chart_color_re
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
-import { EdaAction } from '../interfaces/EdaAction';
+import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 import { EdaResult } from '../interfaces/EdaResult';
 
 interface TickType {
   x: string;
   y: number;
 }
-const actionsRulesEndpoint = `${API_PREFIX}/action/rules_fired/`;
+const auditRulesEndpoint = `${API_PREFIX}/audit/rules_fired/`;
 
-const ActionsChart = () => {
+const RuleAuditChart = () => {
   const [width, _setWidth] = useState(window.innerWidth);
   const [successfulRuns, _setSuccessfulRuns] = useState<TickType[]>([]);
   const [failedRuns, _setFailedRuns] = useState<TickType[]>([]);
   const { t } = useTranslation();
-  const useListActionsRules = () => useGet<EdaResult<EdaAction>>(actionsRulesEndpoint);
-  const { data: data } = useListActionsRules();
+  const useListRuleAuditRules = () => useGet<EdaResult<EdaRuleAudit>>(auditRulesEndpoint);
+  const { data: data } = useListRuleAuditRules();
 
-  const calculateChartPoints = (data: EdaAction[] | undefined) => {
+  const calculateChartPoints = (data: EdaRuleAudit[] | undefined) => {
     if (!data) {
       return;
     }
@@ -166,4 +166,4 @@ const ActionsChart = () => {
   );
 };
 
-export default ActionsChart;
+export default RuleAuditChart;
