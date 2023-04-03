@@ -5,7 +5,6 @@ import { RouteObj } from '../../Routes';
 import { Credential } from '../interfaces/Credential';
 import { toTitleCase } from './util/strings';
 import { SummaryFieldCredential } from '../interfaces/summary-fields/summary-fields';
-import { useMemo } from 'react';
 
 function CredentialLabel(props: { credential: Credential | SummaryFieldCredential }) {
   const { t } = useTranslation();
