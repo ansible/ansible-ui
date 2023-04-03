@@ -16,6 +16,26 @@ import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 
+export function CredentialOptions() {
+  const { t } = useTranslation();
+  return [
+    {
+      label: t('GitHub Personal Access Token'),
+      description: t('Github Personal Access Token'),
+      value: 'github',
+    },
+    {
+      label: t('GitLab Personal Access Token'),
+      description: t('Gitlab Personal Access Token'),
+      value: 'gitlab',
+    },
+    {
+      label: t('Container Registry'),
+      description: t('Container Registry Token'),
+      value: 'registry',
+    },
+  ];
+}
 function CredentialInputs() {
   const { t } = useTranslation();
   return (
@@ -31,36 +51,28 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="description"
         label={t('Description')}
+        isRequired
         placeholder={t('Insert description here ')}
         maxLength={150}
       />
       <PageFormSelectOption<EdaCredential>
         name="credential_type"
         label={t('Type')}
-        placeholderText={t('Select a credential type')}
-        options={[
-          {
-            label: t('Github Personal Access Token'),
-            description: t('Github Personal Access Token'),
-            value: 'Github',
-          },
-          {
-            label: t('Gitlab Personal Access Token'),
-            description: t('Gitlab Personal Access Token'),
-            value: 'Gitlab',
-          },
-        ]}
         isRequired
+        placeholderText={t('Select a credential type')}
+        options={CredentialOptions()}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
         label={t('User name')}
+        isRequired
         placeholder={t('Insert user name here')}
       />
       <PageFormTextInput<EdaCredential>
-        name="secret"
-        label={t('Secret')}
-        placeholder={t('Insert credential secret here')}
+        name="token"
+        label={t('Token')}
+        type="password"
+        placeholder={t('Insert credential token here')}
       />
     </>
   );
