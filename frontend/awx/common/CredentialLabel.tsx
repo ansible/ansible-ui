@@ -21,15 +21,12 @@ function CredentialLabel(props: { credential: Credential | SummaryFieldCredentia
   } else {
     type = toTitleCase(credential.kind || '');
   }
-  const vault_id = useMemo(() => {
-    if (
-      credential.kind === 'vault' &&
-      (credential as Credential).inputs &&
-      (credential as Credential).inputs?.vault_id
-    ) {
-      return (credential as Credential).inputs?.vault_id;
-    }
-  }, [credential]);
+  const vault_id =
+    credential.kind === 'vault' &&
+    (credential as Credential).inputs &&
+    (credential as Credential).inputs?.vault_id
+      ? (credential as Credential).inputs?.vault_id
+      : undefined;
 
   return (
     <Label color="blue" {...rest}>

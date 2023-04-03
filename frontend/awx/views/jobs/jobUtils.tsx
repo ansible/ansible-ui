@@ -31,8 +31,7 @@ type JobStatus =
   | undefined;
 
 export function isJobRunning(status: JobStatus) {
-  if (!status) return false;
-  return ['new', 'pending', 'waiting', 'running'].includes(status);
+  return ['new', 'pending', 'waiting', 'running'].includes(status ?? 'waiting');
 }
 
 /** Returns the jobs relaunch endpoint based on the job type */
