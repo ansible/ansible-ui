@@ -424,7 +424,7 @@ Cypress.Commands.add('assertModalSuccess', () => {
   });
 });
 
-//Locates the kebab menu on a Details page of a resource and uses a label string to click the 
+//Locates the kebab menu on a Details page of a resource and uses a label string to click the
 //button that contains that label string.
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
