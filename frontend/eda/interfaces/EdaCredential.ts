@@ -11,7 +11,7 @@ export interface EdaCredential {
   description?: string;
   credential_type: string;
   username: string;
-  secret: string;
+  token: string;
   created_at?: string;
   modified_at?: string;
 }
