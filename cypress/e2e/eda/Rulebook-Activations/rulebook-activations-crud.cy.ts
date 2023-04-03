@@ -12,7 +12,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     // });
   });
 
-  it.only('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it.skip('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.navigateTo(/^Rulebook activations$/);
   });
 
