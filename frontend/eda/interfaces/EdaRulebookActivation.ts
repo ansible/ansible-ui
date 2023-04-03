@@ -15,7 +15,6 @@ export interface EdaRulebookActivation {
   project?: { id: string; name: string };
   status?: string;
   is_enabled?: boolean;
-  throttle?: boolean;
   variables_template?: string;
   instances_count?: number;
   rules_count?: number;

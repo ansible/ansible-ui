@@ -12,5 +12,5 @@ export interface EdaRuleAudit {
   status?: string;
   activation?: { id: number; name?: string };
   created_at?: string;
-  fired_date?: string;
+  fired_at?: string;
 }

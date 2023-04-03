@@ -33,7 +33,8 @@ import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters
 import { useEdaView } from '../useEventDrivenView';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 
-export function RulebookActivationDetails() {
+// eslint-disable-next-line react/prop-types
+export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -128,7 +129,6 @@ export function RulebookActivationDetails() {
             <PageDetail label={t('Activation status')}>
               {rulebookActivation?.status || ''}
             </PageDetail>
-            <PageDetail label={t('Throttle')}>{rulebookActivation?.throttle || ''}</PageDetail>
             <PageDetail label={t('Variables template')}>
               {rulebookActivation?.variables_template || ''}
             </PageDetail>
@@ -200,7 +200,7 @@ export function RulebookActivationDetails() {
         }
       />
       {rulebookActivation ? (
-        <PageTabs>
+        <PageTabs initialTabIndex={initialTabIndex}>
           <PageTab label={t('Details')}>{renderActivationDetailsTab(rulebookActivation)}</PageTab>
           <PageTab label={t('History')}>
             <ActivationHistoryTab />
