@@ -19,7 +19,7 @@ import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import 'cypress-network-idle';
 // import { random } from 'cypress/types/lodash';
 // import { stringify } from 'querystring';
-import { ItemsResponse } from '../../frontend/common/crud/Data';
+import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 
 declare global {
   namespace Cypress {
@@ -614,7 +614,7 @@ Cypress.Commands.add('createEdaRulebookActivation', () => {
   // Create Rulebook Activation
   //this will need to be edited when the Decision Environments are working in the API
   cy.createEdaProject().then(() => {
-    cy.requestGet<ItemsResponse<EdaRulebook>>('/api/eda/v1/rulebooks/').then((rulebooks) => {
+    cy.requestGet<EdaResult<EdaRulebook>>('/api/eda/v1/rulebooks/').then((rulebooks) => {
       cy.log('rulebooks', rulebooks);
       if (rulebooks && rulebooks.results && rulebooks.results.length > 0) {
         cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
