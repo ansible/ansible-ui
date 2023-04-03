@@ -5,6 +5,7 @@ export interface ActionsResponse {
   help_text?: string;
   filterable: boolean;
   default?: string | object;
+  choices?: [string, string][];
 }
 
 export interface OptionsResponse<T extends ActionsResponse> {

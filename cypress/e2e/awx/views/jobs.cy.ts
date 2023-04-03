@@ -59,6 +59,16 @@ describe('jobs', () => {
       });
   });
 
+  it('renders additional details on expanding job row', () => {
+    // Expand top row
+    cy.get('button[id="expand-toggle0"]').click();
+    cy.contains('dt', 'Inventory').next().should('contain', 'E2E Inventory');
+    cy.contains('dt', 'Project').next().should('contain', 'E2E Project');
+    cy.contains('dt', 'Launched by').next().should('contain', 'admin');
+    cy.contains('dt', 'Execution Environment').next().should('contain', 'AWX EE (latest)');
+    cy.contains('dt', 'Job Slice').next().should('contain', '0/1');
+  });
+
   it('filters jobs by id', () => {
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');

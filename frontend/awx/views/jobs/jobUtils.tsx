@@ -19,8 +19,19 @@ export function getJobsAPIUrl(type: string) {
   }
 }
 
-export function isJobRunning(status: string) {
-  return ['new', 'pending', 'waiting', 'running'].includes(status);
+type JobStatus =
+  | 'failed'
+  | 'new'
+  | 'pending'
+  | 'waiting'
+  | 'running'
+  | 'successful'
+  | 'error'
+  | 'canceled'
+  | undefined;
+
+export function isJobRunning(status: JobStatus) {
+  return ['new', 'pending', 'waiting', 'running'].includes(status ?? 'waiting');
 }
 
 /** Returns the jobs relaunch endpoint based on the job type */
@@ -53,4 +64,87 @@ export function getJobOutputUrl(job: UnifiedJob) {
     ':id',
     job.id.toString()
   );
+}
+
+/**
+ * Returns the schedule URL for a scheduled job
+ */
+export function getScheduleUrl(job: UnifiedJob) {
+  const templateId = job.summary_fields?.unified_job_template?.id;
+  const scheduleId = job.summary_fields?.schedule?.id;
+  const inventoryId = job.summary_fields?.inventory ? job.summary_fields.inventory.id : null;
+  let scheduleUrl;
+
+  if (templateId && scheduleId) {
+    switch (job.type) {
+      case 'inventory_update':
+        scheduleUrl = inventoryId
+          ? `/inventories/inventory/${inventoryId}/sources/${templateId}/schedules/${scheduleId}/details`
+          : '';
+        break;
+      case 'job':
+        scheduleUrl = `/templates/job_template/${templateId}/schedules/${scheduleId}/details`;
+        break;
+      case 'project_update':
+        scheduleUrl = `/projects/${templateId}/schedules/${scheduleId}/details`;
+        break;
+      case 'system_job':
+        scheduleUrl = `/management_jobs/${templateId}/schedules/${scheduleId}/details`;
+        break;
+      case 'workflow_job':
+        scheduleUrl = `/templates/workflow_job_template/${templateId}/schedules/${scheduleId}/details`;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return scheduleUrl;
+}
+
+export type LaunchedBy = {
+  link?: string;
+  value?: string;
+};
+
+/**
+ * Returns "Launched by" details (value and link) for a job
+ */
+export function getLaunchedByDetails(job: UnifiedJob) {
+  const createdBy = job.summary_fields?.created_by;
+  const jobTemplate = job.summary_fields?.job_template;
+  const workflowJT = job.summary_fields?.workflow_job_template;
+  const schedule = job.summary_fields?.schedule;
+
+  if (!createdBy && !schedule) {
+    return {};
+  }
+
+  let link: string | undefined;
+  let value: string | undefined;
+
+  switch (job.launch_type) {
+    case 'webhook':
+      value = 'Webhook';
+      link = jobTemplate
+        ? `/templates/job_template/${jobTemplate.id}/details`
+        : workflowJT
+        ? `/templates/workflow_job_template/${workflowJT.id}/details`
+        : undefined;
+      break;
+    case 'scheduled':
+      value = schedule?.name;
+      link = getScheduleUrl(job);
+      break;
+    case 'manual':
+      link = createdBy?.id ? `/users/${createdBy.id.toString()}/details` : undefined;
+      value = createdBy ? createdBy.username : undefined;
+      break;
+    default:
+      link = createdBy?.id ? `/users/${createdBy.id}/details` : undefined;
+      value = createdBy ? createdBy.username : undefined;
+      break;
+  }
+
+  return { link, value };
 }
