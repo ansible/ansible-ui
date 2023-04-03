@@ -11,6 +11,7 @@ import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
+import { JobExpanded } from './JobExpanded';
 
 export default function Jobs() {
   const { t } = useTranslation();
@@ -97,6 +98,7 @@ export default function Jobs() {
         errorStateTitle={t('Error loading jobs')}
         emptyStateTitle={t('No jobs yet')}
         emptyStateDescription={t('Please run a job to populate this list.')}
+        expandedRow={JobExpanded}
         {...view}
       />
     </PageLayout>
