@@ -10,8 +10,8 @@ export function useRuleAuditEventsColumns() {
     () => [
       {
         header: t('Name'),
-        cell: (ruleAuditEvent) => <TextCell text={ruleAuditEvent?.name} />,
-        sort: 'name',
+        cell: (ruleAuditEvent) => <TextCell text={ruleAuditEvent?.source_name} />,
+        sort: 'source_name',
         defaultSort: true,
         card: 'name',
         list: 'name',
@@ -25,11 +25,13 @@ export function useRuleAuditEventsColumns() {
         cell: (ruleAuditEvent) => (
           <TextCell
             text={
-              ruleAuditEvent?.timestamp ? formatDateString(new Date(ruleAuditEvent.timestamp)) : ''
+              ruleAuditEvent?.received_at
+                ? formatDateString(new Date(ruleAuditEvent.received_at))
+                : ''
             }
           />
         ),
-        sort: 'fired_at',
+        sort: 'received_at',
       },
     ],
     [t]

@@ -7,7 +7,7 @@
 
 export interface EdaRuleAuditEvent {
   id: number;
-  name?: string;
+  source_name?: string;
   source_type?: string;
-  timestamp?: string;
+  received_at?: string;
 }
