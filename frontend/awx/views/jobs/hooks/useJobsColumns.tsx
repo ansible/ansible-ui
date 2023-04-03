@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
+import { ITableColumn, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
 import { getJobOutputUrl } from '../jobUtils';
