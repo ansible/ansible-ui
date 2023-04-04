@@ -137,4 +137,21 @@ describe('jobs', () => {
       cy.clickButton(/^Clear all filters$/);
     });
   });
+
+  it('relaunches job and navigates to job output', () => {
+    cy.navigateTo(/^Jobs$/, false);
+    cy.contains('td', job.name)
+      .parent()
+      .within(() => {
+        cy.get('button.relaunch-job').click();
+      });
+    cy.hasTitle(job.name).should('be.visible');
+    cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
+    // Clean up newly launched job
+    cy.url().then((url) => {
+      const jobId = url.substring(url.lastIndexOf('/') + 1);
+      cy.navigateTo(/^Jobs$/, false);
+      cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
+    });
+  });
 });
