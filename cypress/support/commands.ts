@@ -657,8 +657,8 @@ Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook) => {
 Cypress.Commands.add('getEdaProject', (projectName: string) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${projectName}`).then(
     (result) => {
-      if (result.count === 1) {
-        return result.results[0];
+      if (result?.count === 1) {
+        return result?.results[0];
       }
       return undefined;
     }
@@ -669,7 +669,7 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
   cy.requestGet<EdaResult<EdaRulebookActivation>>(
     `/api/eda/v1/activations/?name=${edaRulebookActivationName}`
   ).then((result) => {
-    if (result.count === 1) {
+    if (result?.count === 1) {
       return result?.results[0];
     }
     return undefined;
