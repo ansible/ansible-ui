@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageDetail, PageDetails, SinceCell, TextCell } from '../../../../../framework';
+import { PageDetail, PageDetails, DateTimeCell, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 
@@ -32,7 +32,8 @@ export function CredentialDetails(props: { credential: Credential }) {
         />
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={credential.created}
           author={credential.summary_fields?.created_by?.username}
           onClick={() =>
@@ -46,7 +47,8 @@ export function CredentialDetails(props: { credential: Credential }) {
         />
       </PageDetail>
       <PageDetail label={t('Last modified')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={credential.modified}
           author={credential.summary_fields?.modified_by?.username}
           onClick={() =>

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetails, PageHeader, PageLayout, SinceCell } from '../../../../framework';
+import { PageDetails, PageHeader, PageLayout, DateTimeCell } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { AwxError } from '../../../awx/common/AwxError';
@@ -33,13 +33,13 @@ export function TaskDetails() {
           <StatusCell status={task?.state} />
         </PageDetail>
         <PageDetail label={t('Started')}>
-          <SinceCell value={task?.finished_at} />
+          <DateTimeCell format="since" value={task?.finished_at} />
         </PageDetail>
         <PageDetail label={t('Finished')}>
-          <SinceCell value={task?.finished_at} />
+          <DateTimeCell format="since" value={task?.finished_at} />
         </PageDetail>
         <PageDetail label={t('Created')}>
-          <SinceCell value={task?.pulp_created} />
+          <DateTimeCell format="since" value={task?.pulp_created} />
         </PageDetail>
       </PageDetails>
     </PageLayout>
