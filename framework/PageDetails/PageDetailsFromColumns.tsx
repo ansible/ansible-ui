@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ITableColumn, TableColumnCell } from '../PageTable/PageTable';
+import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { PageDetail } from './PageDetail';
 import { PageDetails } from './PageDetails';
 

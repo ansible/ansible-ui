@@ -19,17 +19,17 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { IconWrapper } from '../components/IconWrapper';
-import { LabelColor } from '../components/pfcolors';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetail } from '../PageDetails/PageDetail';
+import { IconWrapper } from '../components/IconWrapper';
+import { LabelColor } from '../components/pfcolors';
 import {
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
   TableColumnCell,
-} from './PageTable';
+} from './PageTableColumn';
 
 export interface IPageTableCard {
   id: string | number;

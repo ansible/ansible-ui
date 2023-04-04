@@ -1,6 +1,6 @@
 import getValue from 'get-value';
 import { useEffect, useMemo } from 'react';
-import { ITableColumn } from './PageTable/PageTable';
+import { ITableColumn } from './PageTable/PageTableColumn';
 import { IToolbarFilter } from './PageTable/PageToolbar';
 import {
   ISelected,
