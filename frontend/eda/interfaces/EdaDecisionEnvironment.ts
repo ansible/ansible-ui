@@ -8,4 +8,8 @@
 export interface EdaDecisionEnvironment {
   id: number;
   name: string;
+  description: string;
+  registry_url: string;
+  tag: string;
+  credential: { id: string; name?: string };
 }
