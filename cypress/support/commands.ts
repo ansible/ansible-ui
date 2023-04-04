@@ -3,14 +3,14 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
-import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import 'cypress-network-idle';
+import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 
 declare global {
   namespace Cypress {
@@ -24,7 +24,6 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
-      optionsWait(idleTime: number): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
       getFormGroupByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
@@ -91,6 +90,10 @@ declare global {
        */
       createEdaProject(): Chainable<EdaProject>;
 
+      waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
+
+      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+
       /**
        * `deleteEdaProject(projectName: Project)`
        * deletes an EDA project via API,
@@ -99,6 +102,18 @@ declare global {
        * @returns {Chainable<void>}
        */
       deleteEdaProject(project: EdaProject): Chainable<void>;
+
+      /**
+       * pollEdaResults - Polls eda until results are found
+       * @param url The url for the get request
+       *
+       * @example
+       *  cy.pollEdaResults<EdaProject>(`/api/eda/v1/projects/`).then(
+       *    (projects: EdaProject[]) => {
+       *      // Do something with projects
+       *    }
+       */
+      pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
     }
   }
 }
@@ -183,12 +198,6 @@ Cypress.Commands.add('edaLogin', () => {
     }
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
-});
-
-//this command allows a user to insert a wait time into a test to account for items that sync.
-//Number is in milliseconds. ie: 5000 would be 5 seconds.
-Cypress.Commands.add('optionsWait', (idleTime: number) => {
-  cy.waitForNetworkIdle('GET', '/api/eda/v1**', idleTime);
 });
 
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
@@ -546,20 +555,60 @@ Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
     name: 'E2E Project ' + randomString(4),
     url: 'https://github.com/ansible/event-driven-ansible',
-  }).then((response) => {
+  }).then((edaProject) => {
     Cypress.log({
       displayName: 'EDA PROJECT CREATION :',
-      message: [`Created 👉  ${response.name}`],
+      message: [`Created 👉  ${edaProject.name}`],
     });
+    return edaProject;
   });
 });
 
+Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
+    (result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        const project = result.results[0];
+        if (project.import_state !== 'completed') {
+          cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+        } else {
+          cy.wrap(project);
+        }
+      } else {
+        cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+      }
+    }
+  );
+});
+
+Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProjectName}`).then(
+    (result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        return result.results[0];
+      } else {
+        return undefined;
+      }
+    }
+  );
+});
+
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  // Delete project
+  cy.waitEdaProjectSync(project);
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA PROJECT DELETION :',
       message: [`Deleted 👉  ${project.name}`],
     });
+  });
+});
+
+Cypress.Commands.add('pollEdaResults', (url: string) => {
+  cy.requestGet<EdaResult<unknown>>(url).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.wrap(result?.results);
+    } else {
+      cy.wait(100).then(() => cy.pollEdaResults(url));
+    }
   });
 });

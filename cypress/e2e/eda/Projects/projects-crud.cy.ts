@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
@@ -26,9 +27,12 @@ describe('EDA Projects CRUD', () => {
     cy.typeByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
     cy.clickButton(/^Create project$/);
     cy.get('h1').should('contain', name);
-    cy.optionsWait(5000);
-    cy.clickPageAction(/^Delete project$/);
-    cy.confirmModalAction('Delete projects');
+    cy.getEdaProjectByName(name).then((project) => {
+      cy.wrap(project).should('not.be.undefined');
+      if (project) {
+        cy.deleteEdaProject(project);
+      }
+    });
   });
 
   it('can edit a project from the list view', () => {
