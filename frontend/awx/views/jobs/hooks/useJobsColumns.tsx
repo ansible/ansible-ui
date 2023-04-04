@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
 import { getJobOutputUrl } from '../jobUtils';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -63,14 +62,16 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Started'),
-        cell: (job: UnifiedJob) => job.started && <p>{formatDateString(job.started)}</p>,
+        cell: (job: UnifiedJob) =>
+          job.started && <SinceCell format="date-time" value={job.started} />,
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',
       },
       {
         header: t('Finished'),
-        cell: (job: UnifiedJob) => job.finished && <p>{formatDateString(job.finished)}</p>,
+        cell: (job: UnifiedJob) =>
+          job.finished && <SinceCell format="date-time" value={job.started} />,
         sort: 'finished',
         card: 'hidden',
         list: 'secondary',
