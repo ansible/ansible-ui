@@ -11,12 +11,12 @@ import {
 } from '@patternfly/react-core';
 import { AnalyticsErrorState } from './ErrorStates';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { EmptyStateUnauthorized } from '../../../../framework/components/EmptyStateUnauthorized';
 import { requestGet } from '../../../common/crud/Data';
 import { TAGS } from './constants';
 import useSWR from 'swr';
 import AutomationCalculator from './AutomationCalculator';
 import { ChartSchemaElement } from 'react-json-chart-builder';
+import React, { useEffect, useState } from 'react';
 
 export interface ReportItemsResponse {
   report: {
@@ -35,6 +35,23 @@ export default function Reports() {
     `/api/v2/analytics/report/automation_calculator/`,
     requestGet
   );
+  const [specificError, setSpecificError] = useState<string>('');
+
+  useEffect(() => {
+    if (!error) {
+      setSpecificError('');
+    } else {
+      // @ts-expect-error: Cannot override type coming from useSWR
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      error?.response
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .clone()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .json()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .then((r: { error: { keyword: string } }) => setSpecificError(r.error.keyword));
+    }
+  }, [error]);
 
   if (isLoading) {
     return (
@@ -47,22 +64,11 @@ export default function Reports() {
   }
 
   function ReportsInternal() {
-    if (error) {
-      return <AnalyticsErrorState error={''} />;
+    if (error || specificError) {
+      return specificError ? <AnalyticsErrorState error={specificError} /> : <></>;
+    } else {
+      return data ? <AutomationCalculator {...data.report?.layoutProps} /> : <></>;
     }
-    if (!data) {
-      return (
-        <PageSection isFilled>
-          <Bullseye>
-            <Spinner />
-          </Bullseye>
-        </PageSection>
-      );
-    }
-    if (data) {
-      return <AutomationCalculator {...data?.report?.layoutProps} />;
-    }
-    return <EmptyStateUnauthorized />;
   }
 
   const reportTags = (
@@ -95,7 +101,7 @@ export default function Reports() {
           footer={data ? reportTags : undefined}
         />
         {!(activeUser?.is_superuser || activeUser?.is_system_auditor) ? (
-          <AnalyticsErrorState error={'no_credentials'} />
+          <AnalyticsErrorState />
         ) : (
           <ReportsInternal />
         )}

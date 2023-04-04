@@ -6,7 +6,7 @@ import { Button } from '@patternfly/react-core';
 import Picture from '../../assets/images/ansible_analytics_screenshot.png';
 import React, { ReactElement } from 'react';
 
-export function AnalyticsErrorState(props: { error: string }) {
+export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
   const activeUser = useActiveUser();
   const { error } = props;
@@ -54,20 +54,21 @@ export function AnalyticsErrorState(props: { error: string }) {
       title: t('Not Found'),
       description: t('Not Found'),
     },
-    unkonown: {
+    unknown: {
       title: t('There was an error on the server.'),
       description: t("Please contact your organization's administrator."),
     },
   };
 
-  function ErrorState(error: string) {
-    if (errorTexts[error]) {
+  function ErrorState(propsState: { error: string }) {
+    const { error: errorState } = propsState;
+    if (errorState && errorTexts[errorState]) {
       return (
         <EmptyStateCustom
-          title={errorTexts[error]?.title}
-          description={errorTexts[error]?.description}
+          title={errorTexts[errorState]?.title}
+          description={errorTexts[errorState]?.description}
           icon={KeyIcon}
-          button={errorTexts[error]?.button}
+          button={errorTexts[errorState]?.button}
         />
       );
     }
@@ -106,5 +107,9 @@ export function AnalyticsErrorState(props: { error: string }) {
     );
   }
 
-  return activeUser?.is_superuser ? ErrorState(error) : <DisabledState />;
+  return (activeUser?.is_superuser || activeUser?.is_system_auditor) && !!error ? (
+    <ErrorState error={error} />
+  ) : (
+    <DisabledState />
+  );
 }

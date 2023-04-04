@@ -34,6 +34,7 @@ import React from 'react';
 import { ApiOptionsType, AttributeType } from '../components/Toolbar/types';
 import { useTranslation } from 'react-i18next';
 import { ChartSchemaElement, ChartLegendEntry } from 'react-json-chart-builder';
+import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -144,7 +145,6 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       updatedSearchParams.delete(key);
     } else {
       if (Array.isArray(value)) {
-        //TODO remove it from params
         if (value.length === 0) {
           updatedSearchParams.delete(key);
         } else {
@@ -162,7 +162,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     return page === '0' ? 0 : (parseInt(page) - 1) * parseInt(perPage.toString());
   };
 
-  const { data, isLoading, error } = useSWR<ReportDataResponse, boolean, any>(
+  const { data, isLoading } = useSWR<ReportDataResponse, boolean, any>(
     `/api/v2/analytics/roi_templates/?limit=${searchParams.get('limit') || '6'}&offset=${getOffset(
       getParams().offset.toString(),
       getParams().limit
@@ -189,15 +189,6 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
   ];
 
   if (isLoading || optionsIsLoading)
-    return (
-      <PageSection isFilled>
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      </PageSection>
-    );
-  // TODO error state
-  if (error || optionsError)
     return (
       <PageSection isFilled>
         <Bullseye>
@@ -254,9 +245,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
           <Spinner data-cy={'spinner'} isSVG />
         </SpinnerDiv>
       ) : data?.meta?.legend.length === 0 ? (
-        <SpinnerDiv>
-          <Spinner data-cy={'spinner'} isSVG />
-        </SpinnerDiv>
+        <EmptyStateFilter clearAllFilters={() => updateSearchParams(undefined, undefined)} />
       ) : (
         <Chart
           schema={hydrateSchema(schema)({
