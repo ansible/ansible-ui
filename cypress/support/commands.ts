@@ -670,7 +670,7 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
     `/api/eda/v1/activations/?name=${edaRulebookActivationName}`
   ).then((result) => {
     if (result.count === 1) {
-      return result.results[0];
+      return result?.results[0];
     }
     return undefined;
   });
