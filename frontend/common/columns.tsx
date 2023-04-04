@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, SinceCell, TextCell } from '../../framework';
+import { ITableColumn, DateTimeCell, TextCell } from '../../framework';
 import { RouteObj } from '../Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -76,7 +76,8 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       cell: (item) => {
         if (!item.created) return <></>;
         return (
-          <SinceCell
+          <DateTimeCell
+            format="since"
             value={item.created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
@@ -120,7 +121,8 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       cell: (item) => {
         if (!item.modified) return <></>;
         return (
-          <SinceCell
+          <DateTimeCell
+            format="since"
             value={item.modified}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined

@@ -14,7 +14,7 @@ export function DateCell(props: { value: number | string }) {
   );
 }
 
-export function SinceCell(props: {
+export function DateTimeCell(props: {
   value: string | number | undefined | null;
   author?: string;
   format?: 'since' | 'date-time';

@@ -13,7 +13,7 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
-  SinceCell,
+  DateTimeCell,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../common/crud/useGetItem';
@@ -105,13 +105,13 @@ function InstanceDetailsTab(props: { instance: Instance }) {
         <BytesCell bytes={instance.memory} />
       </PageDetail>
       <PageDetail label={t('Last health check')}>
-        <SinceCell value={instance.last_health_check} />
+        <DateTimeCell format="since" value={instance.last_health_check} />
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <SinceCell value={instance.created} />
+        <DateTimeCell format="since" value={instance.created} />
       </PageDetail>
       <PageDetail label={t('Modified')}>
-        <SinceCell value={instance.modified} />
+        <DateTimeCell format="since" value={instance.modified} />
       </PageDetail>
     </PageDetails>
   );

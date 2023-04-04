@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { CopyCell, PageDetail, PageDetails, SinceCell, TextCell } from '../../../../../framework';
+import {
+  CopyCell,
+  PageDetail,
+  PageDetails,
+  DateTimeCell,
+  TextCell,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { ScmType } from '../../../../common/scm';
@@ -71,7 +77,8 @@ export function ProjectDetails(props: { project: Project }) {
         {project.local_path}
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={project.created}
           author={project.summary_fields?.created_by?.username}
           onClick={() =>
@@ -85,7 +92,8 @@ export function ProjectDetails(props: { project: Project }) {
         />
       </PageDetail>
       <PageDetail label={t('Last modified')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={project.modified}
           author={project.summary_fields?.modified_by?.username}
           onClick={() =>

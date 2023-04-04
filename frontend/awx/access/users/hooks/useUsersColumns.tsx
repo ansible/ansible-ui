@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, SinceCell, TextCell } from '../../../../../framework';
+import { ITableColumn, DateTimeCell, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';
@@ -48,7 +48,7 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
       },
       {
         header: t('Created'),
-        cell: (item) => <SinceCell value={item.created} />,
+        cell: (item) => <DateTimeCell format="since" value={item.created} />,
         card: 'hidden',
         list: 'secondary',
       },
