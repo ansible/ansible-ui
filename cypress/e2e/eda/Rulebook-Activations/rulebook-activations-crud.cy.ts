@@ -23,7 +23,9 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
         cy.clickButton(/^Add rulebook activation$/);
         cy.get('h1').should('contain', name);
         cy.getEdaRulebookActivation(name).then((edaRulebookActivation) => {
-          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          if (edaRulebookActivation) {
+            cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          }
         });
       });
       cy.deleteEdaProject(edaProject);
