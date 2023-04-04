@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { ITableColumn, TextCell } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
+import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 
 export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
@@ -11,23 +11,15 @@ export function useDecisionEnvironmentColumns() {
   return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
     () => [
       {
-        header: t('ID'),
-        cell: (decisionEnv) => decisionEnv.id,
-        sort: 'id',
-        card: 'hidden',
-        list: 'hidden',
-        isIdColumn: true,
-      },
-      {
-        header: t('Name'),
-        cell: (DecisionEnvironment) => (
+        header: t('Image name'),
+        cell: (decisionEnvironment) => (
           <TextCell
-            text={DecisionEnvironment.name}
+            text={decisionEnvironment.name}
             onClick={() =>
               navigate(
                 RouteObj.EdaDecisionEnvironmentDetails.replace(
                   ':id',
-                  DecisionEnvironment.id.toString()
+                  decisionEnvironment.id.toString()
                 )
               )
             }
@@ -38,7 +30,16 @@ export function useDecisionEnvironmentColumns() {
         list: 'name',
         defaultSort: true,
       },
+      {
+        header: t('Description'),
+        cell: (decisionEnvironment) => (
+          <TextCell
+            text={decisionEnvironment?.description ? decisionEnvironment.description : ''}
+          />
+        ),
+      },
     ],
+
     [navigate, t]
   );
 }
