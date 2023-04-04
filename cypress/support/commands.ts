@@ -674,7 +674,7 @@ Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
 Cypress.Commands.add('pollEdaResults', (url: string) => {
   cy.requestGet<EdaResult<unknown>>(url).then((result) => {
     if (Array.isArray(result?.results) && result.results.length > 0) {
-      cy.wrap(result?.results);
+      cy.wrap(result.results);
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
     }
