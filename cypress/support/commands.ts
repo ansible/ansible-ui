@@ -594,27 +594,6 @@ Cypress.Commands.add(
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('createEdaProject', () => {
-  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
-    name: 'E2E Project ' + randomString(4),
-    url: 'https://github.com/ansible/event-driven-ansible',
-  }).then((response) => {
-    Cypress.log({
-      displayName: 'EDA PROJECT CREATION :',
-      message: [`Created 👉  ${response.name}`],
-    });
-  });
-});
-
-Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
-    Cypress.log({
-      displayName: 'EDA PROJECT DELETION :',
-      message: [`Deleted 👉  ${project.name}`],
-    });
-  });
-});
-
 Cypress.Commands.add('createEdaRulebookActivation', () => {
   // Create Rulebook Activation
   //this will need to be edited when the Decision Environments are working in the API
