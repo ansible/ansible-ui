@@ -4,7 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { Project } from '../../../interfaces/Project';
-import { useProjectsColumns } from '../Projects';
+import { useProjectsColumns } from './useProjectsColumns';
 
 export function useDeleteProjects(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();

@@ -26,10 +26,14 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
       project?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(`The project cannot be edited due to insufficient permission`);
-    const cannotSyncProject = (project: Project) =>
-      project?.summary_fields?.user_capabilities?.start
-        ? ''
-        : t(`The project cannot be synced due to insufficient permission`);
+    const cannotSyncProject = (project: Project) => {
+      if (project.scm_type === '') {
+        return t(`Cannot sync project`);
+      } else if (project.scm_type !== '' && !project?.summary_fields?.user_capabilities?.start) {
+        return t(`The project cannot be synced due to insufficient permission`);
+      }
+      return '';
+    };
     const cannotCopyProject = (project: Project) =>
       project?.summary_fields?.user_capabilities?.copy
         ? ''
@@ -38,14 +42,14 @@ export function useProjectActions(options: { onProjectsDeleted: (projects: Proje
     return [
       {
         type: PageActionType.single,
-        variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit project'),
         isDisabled: (project: Project) => cannotEditProject(project),
-        onClick: (project) => navigate(RouteObj.EditTeam.replace(':id', project.id.toString())),
+        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.single,
+        variant: ButtonVariant.primary,
         icon: SyncIcon,
         label: t('Sync project'),
         isDisabled: (project: Project) => cannotSyncProject(project),

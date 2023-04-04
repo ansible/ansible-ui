@@ -202,11 +202,11 @@
           }
         },
         "user_capabilities": {
-          "edit": true,
-          "delete": true,
-          "start": true,
-          "schedule": true,
-          "copy": true
+          "edit": false,
+          "delete": false,
+          "start": false,
+          "schedule": false,
+          "copy": false
         }
       },
       "created": "2023-01-10T14:43:33.687318Z",

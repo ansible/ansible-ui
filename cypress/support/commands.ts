@@ -382,7 +382,7 @@ Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
 
 //Uses a certain label string to identify the alert showing on the screen.
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
-  cy.contains('.pf-c-alert__title', label);
+  cy.contains('.pf-c-alert__title', label).should('be.visible');
 });
 
 //Uses a certain label string to find a button within the kebab located within the toolbar on the page and clicks it.
