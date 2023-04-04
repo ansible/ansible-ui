@@ -11,7 +11,8 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ITableColumn, PageTable } from '../PageTable/PageTable';
+import { PageTable } from '../PageTable/PageTable';
+import { ITableColumn } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';

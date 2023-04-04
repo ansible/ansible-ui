@@ -17,16 +17,16 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { IconWrapper } from '../components/IconWrapper';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
+import { IconWrapper } from '../components/IconWrapper';
+import { PageTableProps } from './PageTable';
 import {
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
-  PageTableProps,
   TableColumnCell,
-} from './PageTable';
+} from './PageTableColumn';
 
 export type PageTableListProps<T extends object> = PageTableProps<T>;
 

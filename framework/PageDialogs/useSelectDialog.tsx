@@ -9,12 +9,13 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { Collapse } from '../components/Collapse';
-import { ITableColumn, PageTable, TableColumnCell } from '../PageTable/PageTable';
+import { useTranslation } from 'react-i18next';
+import { PageTable } from '../PageTable/PageTable';
+import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { IToolbarFilter } from '../PageTable/PageToolbar';
 import { ISelected } from '../PageTable/useTableItems';
+import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
 
