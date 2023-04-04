@@ -140,12 +140,13 @@ describe('jobs', () => {
 
   it('relaunches job and navigates to job output', () => {
     cy.navigateTo(/^Jobs$/, false);
-    cy.contains('td', job.name)
+    const jobName = job.name ? job.name : '';
+    cy.contains('td', jobName)
       .parent()
       .within(() => {
         cy.get('button.relaunch-job').click();
       });
-    cy.hasTitle(job.name).should('be.visible');
+    cy.hasTitle(jobName).should('be.visible');
     cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
     // Clean up newly launched job
     cy.url().then((url) => {
