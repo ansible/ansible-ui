@@ -2,24 +2,22 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import 'cypress-network-idle';
 import { randomString } from '../../framework/utils/random-string';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Project } from '../../frontend/awx/interfaces/Project';
+import { Team } from '../../frontend/awx/interfaces/Team';
+import { User } from '../../frontend/awx/interfaces/User';
 import {
   Group,
   Host,
   Inventory,
   JobTemplate,
 } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
-import { Project } from '../../frontend/awx/interfaces/Project';
-import { Team } from '../../frontend/awx/interfaces/Team';
-import { User } from '../../frontend/awx/interfaces/User';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import 'cypress-network-idle';
-// import { random } from 'cypress/types/lodash';
-// import { stringify } from 'querystring';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
+import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 
 declare global {
   namespace Cypress {
@@ -56,11 +54,7 @@ declare global {
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
-      selectByLabel(
-        label: string | RegExp,
-        text: string,
-        options?: { disableSearch?: boolean }
-      ): Chainable<void>;
+      selectByLabel(label: string | RegExp, text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
@@ -271,21 +265,23 @@ Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
   cy.getByLabel(label).type(text, { delay: 0 });
 });
 
-//Add description here
-Cypress.Commands.add(
-  'selectByLabel',
-  (label: string | RegExp, text: string, options?: { disableSearch?: boolean }) => {
-    cy.getFormGroupByLabel(label).within(() => {
-      cy.get('button').should('be.enabled').click();
-      if (!options?.disableSearch) {
+Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => {
+  cy.getFormGroupByLabel(label).within(() => {
+    // Click button once it is enabled. Async loading of select will make it disabled until loaded.
+    cy.get('button').should('be.enabled').click();
+
+    // If the select menu contains a serach, then search for the text
+    cy.get('.pf-c-select__menu').then((selectMenu) => {
+      if (selectMenu.find('.pf-m-search').length > 0) {
         cy.get('.pf-m-search').type(text, { delay: 0 });
       }
-      cy.get('.pf-c-select__menu').within(() => {
-        cy.contains('button', text).click();
-      });
     });
-  }
-);
+
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.contains('button', text).click();
+    });
+  });
+});
 
 //Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
