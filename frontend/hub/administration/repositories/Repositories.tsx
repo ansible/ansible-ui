@@ -11,7 +11,7 @@ import {
   PageTab,
   PageTable,
   PageTabs,
-  SinceCell,
+  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
@@ -80,7 +80,9 @@ export function useLocalRepositoriesColumns(_options?: {
       },
       {
         header: 'Modified',
-        cell: (repository) => <SinceCell value={repository.repository.pulp_last_updated} />,
+        cell: (repository) => (
+          <DateTimeCell format="since" value={repository.repository.pulp_last_updated} />
+        ),
       },
     ],
     []
@@ -152,15 +154,17 @@ export function useRemoteRepositoriesColumns(_options?: {
       },
       {
         header: t('Last sync'),
-        cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} />,
+        cell: (repository) => (
+          <DateTimeCell format="since" value={repository.last_sync_task.finished_at} />
+        ),
       },
       {
         header: t('Last modified'),
-        cell: (repository) => <SinceCell value={repository.updated_at} />,
+        cell: (repository) => <DateTimeCell format="since" value={repository.updated_at} />,
       },
       {
         header: t('Created'),
-        cell: (repository) => <SinceCell value={repository.created_at} />,
+        cell: (repository) => <DateTimeCell format="since" value={repository.created_at} />,
       },
     ],
     [t]

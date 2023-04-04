@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { SinceCell } from '../PageCells/DateTimeCell';
+import { DateTimeCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
 
@@ -80,7 +80,7 @@ export function TableColumnCell<T extends object>(props: { item: T; column?: ITa
     case 'count':
       return <>{column.value(item) ?? '-'}</>;
     case 'datetime':
-      return <SinceCell value={column.value(item)} />;
+      return <DateTimeCell format="since" value={column.value(item)} />;
     default:
       return <>{column.cell(item)}</>;
   }

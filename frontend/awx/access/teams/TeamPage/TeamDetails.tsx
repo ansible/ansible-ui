@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageDetail, PageDetails, SinceCell, TextCell } from '../../../../../framework';
+import { PageDetail, PageDetails, DateTimeCell, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Team } from '../../../interfaces/Team';
 
@@ -23,7 +23,8 @@ export function TeamDetails(props: { team: Team }) {
         />
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={team.created}
           author={team.summary_fields?.created_by?.username}
           onClick={() =>
@@ -37,7 +38,8 @@ export function TeamDetails(props: { team: Team }) {
         />
       </PageDetail>
       <PageDetail label={t('Last modified')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={team.modified}
           author={team.summary_fields?.modified_by?.username}
           onClick={() =>

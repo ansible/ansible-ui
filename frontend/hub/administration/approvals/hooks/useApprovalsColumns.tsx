@@ -1,7 +1,7 @@
 import { ExclamationTriangleIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, PFColorE, SinceCell, TextCell } from '../../../../../framework';
+import { ITableColumn, PFColorE, DateTimeCell, TextCell } from '../../../../../framework';
 import { Approval } from '../Approval';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -43,7 +43,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
       },
       {
         header: t('Created'),
-        cell: (approval) => <SinceCell value={approval.created_at} />,
+        cell: (approval) => <DateTimeCell format="since" value={approval.created_at} />,
         card: 'hidden',
         list: 'secondary',
       },
