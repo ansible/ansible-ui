@@ -40,6 +40,7 @@ describe('jobs', () => {
   });
 
   it('renders the toolbar and row actions', () => {
+    cy.navigateTo(/^Jobs$/, false);
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
@@ -49,10 +50,14 @@ describe('jobs', () => {
     cy.contains('td', jobName)
       .parent()
       .within(() => {
+        // Relaunch job
+        cy.get('button[aria-label="Relaunch job"]').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
+        // Delete job
         cy.get('.pf-c-dropdown__menu-item')
           .contains(/^Delete job$/)
           .should('exist');
+        // Cancel job
         cy.get('.pf-c-dropdown__menu-item')
           .contains(/^Cancel job$/)
           .should('exist');
@@ -70,9 +75,10 @@ describe('jobs', () => {
   });
 
   it('filters jobs by id', () => {
+    cy.navigateTo(/^Jobs$/, false);
+    const jobId = job.id ? job.id.toString() : '';
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
-    const jobId = job.id ? job.id.toString() : '';
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -83,14 +89,14 @@ describe('jobs', () => {
   });
 
   it('deletes a job from the jobs list row', () => {
-    cy.get('.pf-c-select__toggle').click();
-    cy.clickButton('ID');
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
+      cy.get('.pf-c-select__toggle').click();
+      cy.clickButton('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = testJob.name ? testJob.name : '';
       cy.contains('td', jobName)
@@ -108,16 +114,15 @@ describe('jobs', () => {
     });
   });
 
-  // this test is failing randomly with a 403. need to fix before reenabling
-  it.skip('deletes a job from the jobs list toolbar', () => {
-    cy.get('.pf-c-select__toggle').click();
-    cy.clickButton('ID');
+  it('deletes a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/, false);
+      cy.get('.pf-c-select__toggle').click();
+      cy.clickButton('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = job.name ? job.name : '';
       cy.contains('td', jobName)

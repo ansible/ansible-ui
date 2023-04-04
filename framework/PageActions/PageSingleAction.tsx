@@ -30,6 +30,7 @@ export function PageSingleAction<T extends object>(props: {
         <Button
           className={props.action.label.toLowerCase().split(' ').join('-')}
           variant={variant}
+          aria-label={props.iconOnly ? action.label : undefined}
           icon={
             Icon ? (
               <span style={{ marginLeft: -4, paddingRight: 4 }}>
