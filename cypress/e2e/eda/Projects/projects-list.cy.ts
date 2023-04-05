@@ -7,15 +7,13 @@ describe('EDA Projects List', () => {
   before(() => cy.edaLogin());
 
   it('renders the EDA projects page', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.hasTitle(/^Projects$/);
-    cy.get('h1').should('contain', 'Projects');
   });
 
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/, false);
-      cy.get('h1').should('contain', 'Projects');
+      cy.navigateTo(/^Projects$/);
       cy.clickRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.clickButton(/^Details$/);
@@ -26,7 +24,7 @@ describe('EDA Projects List', () => {
 
   it('can filter the Projects list based on Name', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.filterByText(edaProject.name);
       cy.get('td[data-label="Name"]').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
@@ -36,7 +34,7 @@ describe('EDA Projects List', () => {
   it('can bulk delete Projects from the Projects list', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
-        cy.navigateTo(/^Projects$/, false);
+        cy.navigateTo(/^Projects$/);
         cy.selectRow(testProject.name);
         cy.selectRow(edaProject.name);
         cy.clickToolbarAction(/^Delete selected projects$/);
