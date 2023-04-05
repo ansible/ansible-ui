@@ -4,7 +4,7 @@ describe('Job Templates Form', () => {
   });
 
   it('can render the templates list page', () => {
-    cy.navigateTo(/^Templates$/, false);
+    cy.navigateTo(/^Templates$/);
     cy.hasTitle(/^Templates$/);
   });
 
