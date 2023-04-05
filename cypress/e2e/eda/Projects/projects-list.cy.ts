@@ -13,7 +13,6 @@ describe('EDA Projects List', () => {
 
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.pollEdaResults(`/api/eda/v1/projects/?name=${edaProject.name}`);
       cy.navigateTo(/^Projects$/);
       cy.clickRow(edaProject.name);
       cy.hasTitle(edaProject.name);
