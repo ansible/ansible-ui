@@ -365,7 +365,6 @@ function NotificationsInternal() {
 }
 
 export function Refresh() {
-  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {
     setRefreshing(true);
