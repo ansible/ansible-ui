@@ -83,8 +83,6 @@ describe('Teams.cy.ts', () => {
         }
       ).as('teamsError');
       cy.mount(<Teams />);
-      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
-      cy.get('button[id="refresh"]').click();
       cy.contains('Error loading teams');
     });
   });
@@ -118,9 +116,6 @@ describe('Teams.cy.ts', () => {
         },
       }));
       cy.mount(<Teams />);
-      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
-      cy.get('button[id="refresh"]').click();
-
       cy.contains(/^There are currently no teams added to your organization.$/);
       cy.contains(/^Please create a team by using the button below.$/);
       cy.contains('button', /^Create team$/).should('be.visible');
@@ -132,8 +127,6 @@ describe('Teams.cy.ts', () => {
         },
       }));
       cy.mount(<Teams />);
-      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
-      cy.get('button[id="refresh"]').click();
       cy.contains(/^You do not have permission to create a team$/);
       cy.contains(
         /^Please contact your Organization Administrator if there is an issue with your access.$/
