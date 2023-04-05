@@ -1,3 +1,4 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
@@ -99,7 +100,7 @@ describe('Teams.cy.ts', () => {
         },
       }));
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
-      cy.mount(<Teams />);
+      cy.mount(<Teams />, {}, randomString(8));
       cy.contains(/^There are currently no teams added to your organization.$/);
       cy.contains(/^Please create a team by using the button below.$/);
       cy.contains('button', /^Create team$/).should('be.visible');
