@@ -293,7 +293,7 @@ Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => 
 
 //Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a', label).click();
+  cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
 //Uses a certain label string to find a tab and click it.
