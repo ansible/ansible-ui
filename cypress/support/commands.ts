@@ -31,6 +31,7 @@ declare global {
       edaLogin(): Chainable<void>;
 
       getByLabel(label: string | RegExp): Chainable<void>;
+      selectFromDropdown(label: string | RegExp, text: string): Chainable<void>;
       getFormGroupByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
@@ -52,6 +53,8 @@ declare global {
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
+
+      /**Finds a select component by its label and clicks on the option specified by text.*/
       selectByLabel(label: string | RegExp, text: string): Chainable<void>;
       switchToolbarFilter(text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
@@ -92,6 +95,11 @@ declare global {
        * @returns {Chainable<EdaProject>}
        */
       createEdaProject(): Chainable<EdaProject>;
+      getEdaRulebooks(edaProject: EdaProject): Chainable<EdaRulebook[]>;
+      getEdaProject(projectName: string): Chainable<EdaProject | undefined>;
+      getEdaRulebookActivation(
+        edaRulebookActivationName: string
+      ): Chainable<EdaRulebookActivation | undefined>;
 
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
 
@@ -103,7 +111,7 @@ declare global {
        *
        * @returns {Chainable<EdaRulebookActivation>}
        */
-      createEdaRulebookActivation(): Chainable<EdaRulebookActivation>;
+      createEdaRulebookActivation(edaRulebook: EdaRulebook): Chainable<EdaRulebookActivation>;
 
       /**
        * `deleteEdaProject(projectName: Project)`
@@ -114,6 +122,7 @@ declare global {
        */
       deleteEdaProject(project: EdaProject): Chainable<void>;
 
+      deleteEdaRulebookActivation(edaRulebookActivation: EdaRulebookActivation): Chainable<void>;
       /**
        * pollEdaResults - Polls eda until results are found
        * @param url The url for the get request
@@ -272,7 +281,7 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError
       method: 'Delete',
       url,
       failOnStatusCode: ignoreError ? false : true,
-      headers: { 'X-CSRFToken': cookie?.value },
+      headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
     })
   );
 });
@@ -298,6 +307,19 @@ Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => 
     cy.get('.pf-c-select__menu').within(() => {
       cy.contains('button', text).click();
     });
+  });
+});
+
+//Finds a dropdown by its label and selects certain text from the dropdown menu.
+Cypress.Commands.add('selectFromDropdown', (label: string | RegExp, text: string) => {
+  cy.getFormGroupByLabel(label).within(() => {
+    cy.get('.pf-c-form__group-control')
+      .click()
+      .within(() => {
+        cy.get('ul').within(() => {
+          cy.contains('button', text).click();
+        });
+      });
   });
 });
 
@@ -601,25 +623,76 @@ Cypress.Commands.add(
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('createEdaRulebookActivation', () => {
+Cypress.Commands.add('createEdaProject', () => {
+  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
+    name: 'E2E Project ' + randomString(4),
+    url: 'https://github.com/ansible/event-driven-ansible',
+  }).then((edaProject) => {
+    Cypress.log({
+      displayName: 'EDA PROJECT CREATION :',
+      message: [`Created 👉  ${edaProject.name}`],
+    });
+    return edaProject;
+  });
+});
+
+Cypress.Commands.add('deleteEdaProject', (edaProject) => {
+  cy.requestDelete(`/api/eda/v1/projects/${edaProject.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA PROJECT DELETION :',
+      message: [`Deleted 👉  ${edaProject.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
+  cy.requestGet<EdaResult<EdaRulebook>>('/api/eda/v1/rulebooks/').then((edaresult) => {
+    return edaresult.results;
+  });
+});
+
+Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook) => {
   // Create Rulebook Activation
   //this will need to be edited when the Decision Environments are working in the API
-  cy.createEdaProject().then(() => {
-    cy.requestGet<EdaResult<EdaRulebook>>('/api/eda/v1/rulebooks/').then((rulebooks) => {
-      cy.log('rulebooks', rulebooks);
-      if (rulebooks && rulebooks.results && rulebooks.results.length > 0) {
-        cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
-          name: 'E2E Rulebook Activation ' + randomString(5),
-          rulebook_id: rulebooks.results[0].id,
-        }).then((response) => {
-          Cypress.log({
-            displayName: 'EDA RULEBOOK ACTIVATIONS CREATION :',
-            message: [`Created 👉  ${response.name}`],
-          });
-        });
-      } else {
-        throw new Error('No rulebooks were returned; rulebook activation cannot be created.');
+  cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
+    name: 'E2E Rulebook Activation ' + randomString(5),
+    rulebook_id: edaRulebook.id,
+  }).then((edaRulebookActivation) => {
+    Cypress.log({
+      displayName: 'EDA RULEBOOK ACTIVATIONS CREATION :',
+      message: [`Created 👉  ${edaRulebookActivation.name}`],
+    });
+    return edaRulebookActivation;
+  });
+});
+
+Cypress.Commands.add('getEdaProject', (projectName: string) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${projectName}`).then(
+    (result) => {
+      if (result?.results && result.results.length === 1) {
+        return result.results[0];
       }
+      return undefined;
+    }
+  );
+});
+
+Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: string) => {
+  cy.requestGet<EdaResult<EdaRulebookActivation>>(
+    `/api/eda/v1/activations/?name=${edaRulebookActivationName}`
+  ).then((result) => {
+    if (result?.results && result.results.length === 1) {
+      return result.results[0];
+    }
+    return undefined;
+  });
+});
+
+Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
+  cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA RULEBOOK ACTIVATION DELETION :',
+      message: [`Deleted 👉  ${edaRulebookActivation.name}`],
     });
   });
 });
