@@ -31,6 +31,10 @@ export interface CommonInventory
       copy: boolean;
       adhoc: boolean;
     };
+    labels: {
+      count: number;
+      results: Label[];
+    };
   };
   organization: number;
 }
@@ -41,28 +45,6 @@ export interface ConstructedInventory extends CommonInventory {
   update_cache_timeout: number;
   limit: string;
   verbosity: number;
-  summary_fields: {
-    organization: SummaryFieldsOrganization;
-    created_by: SummaryFieldsByUser;
-    modified_by: SummaryFieldsByUser;
-    object_roles: {
-      admin_role: SummeryFieldObjectRole;
-      update_role: SummeryFieldObjectRole;
-      adhoc_role: SummeryFieldObjectRole;
-      use_role: SummeryFieldObjectRole;
-      read_role: SummeryFieldObjectRole;
-    };
-    user_capabilities: {
-      edit: boolean;
-      delete: boolean;
-      copy: boolean;
-      adhoc: boolean;
-    };
-    labels: {
-      count: number;
-      results: Label[];
-    };
-  };
 }
 
 export interface RegularInventory extends CommonInventory {

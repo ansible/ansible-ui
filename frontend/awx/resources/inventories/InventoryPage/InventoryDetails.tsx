@@ -125,20 +125,15 @@ export function InventoryDetails(props: { inventory: Inventory }) {
           </LabelGroup>
         )}
       </PageDetail>
-      {inventory.kind === 'constructed' && (
-        <PageDetail
-          label={t`Labels`}
-          isEmpty={inventory.summary_fields.labels.results.length === 0}
-        >
-          <LabelGroup>
-            {inventory.summary_fields.labels.results.map((label) => (
-              <Label color="blue" key={label.id}>
-                {label.name}
-              </Label>
-            ))}
-          </LabelGroup>
-        </PageDetail>
-      )}
+      <PageDetail label={t`Labels`} isEmpty={inventory.summary_fields.labels.results.length === 0}>
+        <LabelGroup>
+          {inventory.summary_fields.labels.results.map((label) => (
+            <Label color="blue" key={label.id}>
+              {label.name}
+            </Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
           format="since"
