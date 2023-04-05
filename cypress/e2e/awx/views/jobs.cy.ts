@@ -77,7 +77,7 @@ describe('jobs', () => {
   it('filters jobs by id', () => {
     cy.navigateTo(/^Jobs$/);
     const jobId = job.id ? job.id.toString() : '';
-    cy.switchFilter('ID');
+    cy.switchToolbarFilter('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -94,7 +94,7 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchFilter('ID');
+      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = testJob.name ? testJob.name : '';
       cy.contains('td', jobName)
@@ -119,7 +119,7 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchFilter('ID');
+      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = job.name ? job.name : '';
       cy.contains('td', jobName)

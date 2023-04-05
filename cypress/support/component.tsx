@@ -21,6 +21,7 @@ import 'cypress-react-selector';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
+import { randomString } from '../../framework/utils/random-string';
 import { User } from '../../frontend/awx/interfaces/User';
 import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
@@ -69,7 +70,8 @@ Cypress.Commands.add('mount', (component, options) => {
         </ActiveUserProvider>
       </PageFramework>
     </MemoryRouter>,
-    options
+    options,
+    randomString(8)
   );
 });
 

@@ -53,7 +53,7 @@ declare global {
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
       selectByLabel(label: string | RegExp, text: string): Chainable<void>;
-      switchFilter(text: string): Chainable<void>;
+      switchToolbarFilter(text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
@@ -228,10 +228,13 @@ Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
 });
 
-//Filters a list of items by name.
-Cypress.Commands.add('switchFilter', (text: string) => {
-  cy.contains('.pf-c-select__toggle:not(:disabled):not(:hidden)').click();
-  cy.clickButton(text);
+Cypress.Commands.add('switchToolbarFilter', (text: string) => {
+  cy.get('#filter-form-group').within(() => {
+    cy.get('.pf-c-select').click();
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.clickButton(text);
+    });
+  });
 });
 
 //Filters a list of items by name.
