@@ -231,7 +231,7 @@ Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
 //Filters a list of items by name.
 Cypress.Commands.add('switchFilter', (text: string) => {
   cy.contains('.pf-c-select__toggle:not(:disabled):not(:hidden)').click();
-  cy.clickButton('text');
+  cy.clickButton(text);
 });
 
 //Filters a list of items by name.
