@@ -2,24 +2,21 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
-import 'cypress-network-idle';
 import { randomString } from '../../framework/utils/random-string';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Project } from '../../frontend/awx/interfaces/Project';
+import { Team } from '../../frontend/awx/interfaces/Team';
+import { User } from '../../frontend/awx/interfaces/User';
 import {
   Group,
   Host,
   Inventory,
   JobTemplate,
 } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
-import { Project } from '../../frontend/awx/interfaces/Project';
-import { Team } from '../../frontend/awx/interfaces/Team';
-import { User } from '../../frontend/awx/interfaces/User';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-// import { random } from 'cypress/types/lodash';
-// import { stringify } from 'querystring';
 
 declare global {
   namespace Cypress {
@@ -33,14 +30,13 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
-      optionsWait(idleTime: number): Chainable<void>;
       getByLabel(label: string | RegExp): Chainable<void>;
       selectFromDropdown(label: string | RegExp, text: string): Chainable<void>;
       getFormGroupByLabel(label: string | RegExp): Chainable<void>;
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
       clickTab(label: string | RegExp): Chainable<void>;
-      navigateTo(label: string | RegExp, refresh?: boolean): Chainable<void>;
+      navigateTo(label: string | RegExp): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
       hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
@@ -57,12 +53,10 @@ declare global {
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
+
       /**Finds a select component by its label and clicks on the option specified by text.*/
-      selectByLabel(
-        label: string | RegExp,
-        text: string,
-        options?: { disableSearch?: boolean }
-      ): Chainable<void>;
+      selectByLabel(label: string | RegExp, text: string): Chainable<void>;
+      switchToolbarFilter(text: string): Chainable<void>;
       filterByText(text: string): Chainable<void>;
 
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
@@ -107,6 +101,10 @@ declare global {
         edaRulebookActivationName: string
       ): Chainable<EdaRulebookActivation | undefined>;
 
+      waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
+
+      getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+
       /**
        * `createEdaRulebookActivation()` creates an EDA Rulebook Activation via API,
        *  with the name `E2E Rulebook Activation` and appends a random string at the end of the name
@@ -125,6 +123,17 @@ declare global {
       deleteEdaProject(project: EdaProject): Chainable<void>;
 
       deleteEdaRulebookActivation(edaRulebookActivation: EdaRulebookActivation): Chainable<void>;
+      /**
+       * pollEdaResults - Polls eda until results are found
+       * @param url The url for the get request
+       *
+       * @example
+       *  cy.pollEdaResults<EdaProject>(`/api/eda/v1/projects/`).then(
+       *    (projects: EdaProject[]) => {
+       *      // Do something with projects
+       *    }
+       */
+      pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
     }
   }
 }
@@ -211,12 +220,6 @@ Cypress.Commands.add('edaLogin', () => {
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
-//This command allows a user to insert a wait time into a test to account for items that sync.
-//Number is in milliseconds. ie: 5000 would be 5 seconds.
-Cypress.Commands.add('optionsWait', (idleTime: number) => {
-  cy.waitForNetworkIdle('GET', '/api/eda/v1**', idleTime);
-});
-
 //Searches for an element with a certain label, then asserts that the element is enabled.
 Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
@@ -232,6 +235,15 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
 //Add description here
 Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
+});
+
+Cypress.Commands.add('switchToolbarFilter', (text: string) => {
+  cy.get('#filter-form-group').within(() => {
+    cy.get('.pf-c-select').should('not.be.disabled').click();
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.clickButton(text);
+    });
+  });
 });
 
 //Filters a list of items by name.
@@ -280,21 +292,23 @@ Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
   cy.getByLabel(label).type(text, { delay: 0 });
 });
 
-//Add description here
-Cypress.Commands.add(
-  'selectByLabel',
-  (label: string | RegExp, text: string, options?: { disableSearch?: boolean }) => {
-    cy.getFormGroupByLabel(label).within(() => {
-      cy.get('button').should('be.enabled').click();
-      if (!options?.disableSearch) {
+Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => {
+  cy.getFormGroupByLabel(label).within(() => {
+    // Click button once it is enabled. Async loading of select will make it disabled until loaded.
+    cy.get('button').should('be.enabled').click();
+
+    // If the select menu contains a serach, then search for the text
+    cy.get('.pf-c-select__menu').then((selectMenu) => {
+      if (selectMenu.find('.pf-m-search').length > 0) {
         cy.get('.pf-m-search').type(text, { delay: 0 });
       }
-      cy.get('.pf-c-select__menu').within(() => {
-        cy.contains('button', text).click();
-      });
     });
-  }
-);
+
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.contains('button', text).click();
+    });
+  });
+});
 
 //Finds a dropdown by its label and selects certain text from the dropdown menu.
 Cypress.Commands.add('selectFromDropdown', (label: string | RegExp, text: string) => {
@@ -311,7 +325,7 @@ Cypress.Commands.add('selectFromDropdown', (label: string | RegExp, text: string
 
 //Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a', label).click();
+  cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
 //Uses a certain label string to find a tab and click it.
@@ -325,7 +339,7 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 });
 
 //Visits one of the URL addresses contained in the links of the Resource Menu on the left side of the UI.
-Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) => {
+Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();
@@ -337,9 +351,7 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) =
       cy.get('#nav-toggle').click();
     }
   });
-  if (refresh) {
-    cy.get('#refresh').click();
-  }
+  cy.get('#refresh').click();
 });
 
 //Uses a certain label string to identify the title of the page.
@@ -682,5 +694,69 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
       displayName: 'EDA RULEBOOK ACTIVATION DELETION :',
       message: [`Deleted 👉  ${edaRulebookActivation.name}`],
     });
+  });
+});
+
+/*  EDA related custom command implementation  */
+
+Cypress.Commands.add('createEdaProject', () => {
+  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
+    name: 'E2E Project ' + randomString(4),
+    url: 'https://github.com/ansible/event-driven-ansible',
+  }).then((edaProject) => {
+    Cypress.log({
+      displayName: 'EDA PROJECT CREATION :',
+      message: [`Created 👉  ${edaProject.name}`],
+    });
+    return edaProject;
+  });
+});
+
+Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
+    (result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        const project = result.results[0];
+        if (project.import_state !== 'completed') {
+          cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+        } else {
+          cy.wrap(project);
+        }
+      } else {
+        cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
+      }
+    }
+  );
+});
+
+Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProjectName}`).then(
+    (result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        return result.results[0];
+      } else {
+        return undefined;
+      }
+    }
+  );
+});
+
+Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
+  cy.waitEdaProjectSync(project);
+  cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA PROJECT DELETION :',
+      message: [`Deleted 👉  ${project.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('pollEdaResults', (url: string) => {
+  cy.requestGet<EdaResult<unknown>>(url).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.wrap(result.results);
+    } else {
+      cy.wait(100).then(() => cy.pollEdaResults(url));
+    }
   });
 });

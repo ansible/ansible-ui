@@ -1,7 +1,7 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, SinceCell } from '../../../../../framework';
+import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -51,7 +51,8 @@ export function OrganizationDetails(props: { organization: Organization }) {
           project, job template or workflow level.`}
       />
       <PageDetail label={t('Created')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={organization.created}
           author={organization.summary_fields?.created_by?.username}
           onClick={() =>
@@ -65,7 +66,8 @@ export function OrganizationDetails(props: { organization: Organization }) {
         />
       </PageDetail>
       <PageDetail label={t('Last modified')}>
-        <SinceCell
+        <DateTimeCell
+          format="since"
           value={organization.modified}
           author={organization.summary_fields?.modified_by?.username}
           onClick={() =>

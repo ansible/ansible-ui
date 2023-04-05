@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.681",
+  "version": "0.0.687",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -157,13 +157,13 @@
     "@typescript-eslint/eslint-plugin": "5.57.0",
     "@typescript-eslint/parser": "5.57.0",
     "cypress": "12.9.0",
-    "cypress-network-idle": "^1.14.2",
     "cypress-react-selector": "3.0.0",
     "eslint": "8.37.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-i18next": "6.0.0-8",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",

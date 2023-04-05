@@ -1,8 +1,14 @@
 import { HTTPError } from 'ky';
 import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
-import { IView, useView } from '../../framework/useView';
+import {
+  ISelected,
+  ITableColumn,
+  IToolbarFilter,
+  IView,
+  useSelected,
+  useView,
+} from '../../framework';
 import { swrOptions, useFetcher } from '../common/crud/Data';
 
 export function hubKeyFn(item: { pulp_id: string }) {
@@ -94,7 +100,7 @@ export function useHubView<T extends object>(
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher);
+  const response = useSWR<HubItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 

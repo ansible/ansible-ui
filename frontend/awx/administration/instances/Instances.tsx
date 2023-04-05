@@ -13,7 +13,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  SinceCell,
+  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { Dotted } from '../../../../framework/components/Dotted';
@@ -219,7 +219,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Last health check'),
-        cell: (instance) => <SinceCell value={instance.last_health_check} />,
+        cell: (instance) => <DateTimeCell format="since" value={instance.last_health_check} />,
         card: 'hidden',
       },
       createdColumn,

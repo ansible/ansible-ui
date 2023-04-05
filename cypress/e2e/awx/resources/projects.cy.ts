@@ -41,13 +41,13 @@ describe('projects', () => {
   });
 
   it('projects page', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.hasTitle(/^Projects$/);
   });
 
   // it('create project', () => {
   //   const projectName = 'E2E Project ' + randomString(4);
-  //   cy.navigateTo(/^Projects$/, true);
+  //   cy.navigateTo(/^Projects$/);
   //   cy.clickButton(/^Create project$/);
   //   cy.typeByLabel(/^Name$/, projectName);
   //   cy.typeByLabel(/^Organization$/, 'Default');
@@ -56,7 +56,7 @@ describe('projects', () => {
   // });
 
   //   it('edit project', () => {
-  //       cy.navigateTo(/^Projects$/, true);
+  //       cy.navigateTo(/^Projects$/);
   //       cy.clickRow(project.name);
   //       cy.clickButton(/^Edit project$/);
   //       cy.hasTitle(/^Edit project$/);
@@ -66,7 +66,7 @@ describe('projects', () => {
   //   });
 
   it('project details', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
     cy.clickButton(/^Details$/);
@@ -74,35 +74,35 @@ describe('projects', () => {
   });
 
   it('project access', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Access$/);
   });
 
   it('project job templates', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Job Templates$/);
   });
 
   it('project notifications', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Notifications$/);
   });
 
   it('project schedules', () => {
-    cy.navigateTo(/^Projects$/, false);
+    cy.navigateTo(/^Projects$/);
     cy.clickRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Schedules$/);
   });
 
   //   it('project details edit project', () => {
-  //       cy.navigateTo(/^Projects$/, true);
+  //       cy.navigateTo(/^Projects$/);
   //       cy.clickRow(project.name);
   //       cy.hasTitle(project.name);
   //       cy.clickButton(/^Edit project$/);
@@ -119,7 +119,7 @@ describe('projects', () => {
       scm_type: 'git', // Only projects with scm_type and scm_url can be copied
       scm_url: 'foo',
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.clickRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
@@ -135,7 +135,7 @@ describe('projects', () => {
       scm_type: 'git', // Only projects with scm_type and scm_url can be synced
       scm_url: 'foo',
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.clickRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Sync project$/);
@@ -149,7 +149,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.clickRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
@@ -160,7 +160,7 @@ describe('projects', () => {
   });
 
   //   it('projects table row edit project', () => {
-  //       cy.navigateTo(/^Projects$/, true);
+  //       cy.navigateTo(/^Projects$/);
   //       cy.get('#edit-project').click();
   //       cy.hasTitle(/^Edit project$/);
   //   });
@@ -170,7 +170,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.clickRowAction(testProject.name, /^Delete project$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
@@ -185,7 +185,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.selectRow(testProject.name);
       cy.clickToolbarAction(/^Delete selected projects$/);
       cy.get('#confirm').click();

@@ -27,19 +27,20 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
+  SyncAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
-import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
+import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
+import { RouteObj, RouteType } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { API_PREFIX } from '../eda/constants';
-import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
@@ -138,6 +139,9 @@ export function AnsibleMasthead(props: {
                 {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
                                 <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
                             )} */}
+                <ToolbarItem>
+                  <Refresh />
+                </ToolbarItem>
                 <ToolbarItem>
                   <Notifications />
                 </ToolbarItem>
@@ -357,5 +361,60 @@ function NotificationsInternal() {
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
+  );
+}
+
+export function Refresh() {
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(() => {
+    setRefreshing(true);
+    void mutate((key) => typeof key === 'string').finally(() => {
+      setRefreshing(false);
+    });
+  }, []);
+  const [rotation, setRotation] = useState(0);
+
+  useLayoutEffect(() => {
+    let frame: number;
+    let start: number;
+    function rotate(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+      frame = requestAnimationFrame(rotate);
+      setRotation((rotate) => rotate + elapsed / 4);
+    }
+    function stop(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+
+      frame = requestAnimationFrame(stop);
+      setRotation((rotate) => {
+        if (Math.floor(rotate / 180) !== Math.floor((rotate + elapsed / 4) / 180)) {
+          cancelAnimationFrame(frame);
+          return 0;
+        }
+        return rotate + elapsed / 4;
+      });
+    }
+
+    if (refreshing) {
+      frame = requestAnimationFrame(rotate);
+      return () => cancelAnimationFrame(frame);
+    } else {
+      frame = requestAnimationFrame(stop);
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [refreshing]);
+
+  return (
+    <Button id="refresh" onClick={refresh} variant="plain">
+      <SyncAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
+    </Button>
   );
 }

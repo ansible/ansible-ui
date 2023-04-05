@@ -436,7 +436,7 @@
         },
         "instance_group": { "id": 2, "name": "default", "is_container_group": false },
         "created_by": { "id": 2, "username": "vnambiar", "first_name": "", "last_name": "" },
-        "user_capabilities": { "delete": true, "start": true },
+        "user_capabilities": { "delete": false, "start": true },
         "labels": { "count": 0, "results": [] },
         "credentials": [
           { "id": 1, "name": "Demo Credential", "description": "", "kind": "ssh", "cloud": false }

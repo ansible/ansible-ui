@@ -8,7 +8,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  SinceCell,
+  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
@@ -81,20 +81,20 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
       },
       {
         header: t('Started'),
-        cell: (task) => <SinceCell value={task.started_at} />,
+        cell: (task) => <DateTimeCell format="since" value={task.started_at} />,
         sort: 'started_at',
         list: 'secondary',
       },
       {
         header: t('Finished'),
-        cell: (task) => <SinceCell value={task.finished_at} />,
+        cell: (task) => <DateTimeCell format="since" value={task.finished_at} />,
         sort: 'finished_at',
         card: 'hidden',
         list: 'secondary',
       },
       {
         header: t('Created'),
-        cell: (task) => <SinceCell value={task.pulp_created} />,
+        cell: (task) => <DateTimeCell format="since" value={task.pulp_created} />,
         sort: 'pulp_created',
         card: 'hidden',
         list: 'secondary',
