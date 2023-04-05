@@ -20,7 +20,6 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
-  Tooltip,
   Truncate,
 } from '@patternfly/react-core';
 import {
@@ -31,12 +30,12 @@ import {
   SyncAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
-import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
+import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
-import { RunningIcon, useBreakpoint } from '../../framework';
+import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
 import { RouteObj, RouteType } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
@@ -376,11 +375,49 @@ export function Refresh() {
       setRefreshing(false);
     });
   }, []);
+  const [rotation, setRotation] = useState(0);
+
+  useLayoutEffect(() => {
+    let frame: number;
+    let start: number;
+    function rotate(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+      frame = requestAnimationFrame(rotate);
+      setRotation((rotate) => rotate + elapsed / 4);
+    }
+    function stop(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+
+      frame = requestAnimationFrame(stop);
+      setRotation((rotate) => {
+        if (Math.floor(rotate / 180) !== Math.floor((rotate + elapsed / 4) / 180)) {
+          cancelAnimationFrame(frame);
+          return 0;
+        }
+        return rotate + elapsed / 4;
+      });
+    }
+
+    if (refreshing) {
+      frame = requestAnimationFrame(rotate);
+      return () => cancelAnimationFrame(frame);
+    } else {
+      frame = requestAnimationFrame(stop);
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [refreshing]);
+
   return (
-    <Tooltip content={t('Refresh')} position="bottom">
-      <Button id="refresh" onClick={refresh} variant="plain">
-        {refreshing ? <RunningIcon /> : <SyncAltIcon />}
-      </Button>
-    </Tooltip>
+    <Button id="refresh" onClick={refresh} variant="plain">
+      <SyncAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
+    </Button>
   );
 }
