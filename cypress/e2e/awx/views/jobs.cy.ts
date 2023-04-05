@@ -65,8 +65,13 @@ describe('jobs', () => {
   });
 
   it('renders additional details on expanding job row', () => {
-    // Expand top row
-    cy.get('button[id="expand-toggle0"]').click();
+    cy.navigateTo(/^Jobs$/);
+    const jobName = job.name ? job.name : '';
+    cy.contains('td', jobName)
+      .parent()
+      .within(() => {
+        cy.get('button[id^="expand-toggle"]').click();
+      });
     cy.contains('dt', 'Inventory').next().should('contain', 'E2E Inventory');
     cy.contains('dt', 'Project').next().should('contain', 'E2E Project');
     cy.contains('dt', 'Launched by').next().should('contain', 'admin');
