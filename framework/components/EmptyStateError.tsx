@@ -8,6 +8,12 @@ import {
   EmptyStateVariant,
   Button,
 } from '@patternfly/react-core';
+import styled from 'styled-components';
+
+const RefreshMessageDiv = styled.div`
+  color: white;
+  margin-top: 16px;
+`;
 
 export function EmptyStateError(props: { titleProp?: string; message?: string }) {
   const { t } = useTranslation();
@@ -22,7 +28,7 @@ export function EmptyStateError(props: { titleProp?: string; message?: string })
         {titleProp || title}
       </Title>
       <EmptyStateBody>{message}</EmptyStateBody>
-      {description}
+      <RefreshMessageDiv>{description}</RefreshMessageDiv>
       <Button variant="primary" onClick={() => window.location.reload()}>
         {button}
       </Button>
