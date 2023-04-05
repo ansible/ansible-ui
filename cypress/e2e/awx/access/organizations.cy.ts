@@ -32,13 +32,13 @@ describe('organizations', () => {
   });
 
   it('renders the organizations list page', () => {
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.hasTitle(/^Organizations$/);
   });
 
   it('creates and then deletes a basic organization', () => {
     const organizationName = 'E2E Organization ' + randomString(4);
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.clickLink(/^Create organization$/);
     cy.typeByLabel(/^Name$/, organizationName);
     cy.clickButton(/^Create organization$/);
@@ -51,7 +51,7 @@ describe('organizations', () => {
   });
 
   it('renders the organization details page', () => {
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.clickRow(organization.name);
     cy.hasTitle(organization.name);
     cy.clickButton(/^Details$/);
@@ -59,7 +59,7 @@ describe('organizations', () => {
   });
 
   it('edits an organization from the details page', () => {
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.clickRow(organization.name);
     cy.hasTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
@@ -71,7 +71,7 @@ describe('organizations', () => {
 
   it('deletes an organization from the details page', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
+      cy.navigateTo(/^Organizations$/);
       cy.clickRow(testOrganization.name);
       cy.hasTitle(testOrganization.name);
       cy.clickPageAction(/^Delete organization/);
@@ -82,14 +82,14 @@ describe('organizations', () => {
   });
 
   it('navigates to the edit form from the organizations list row item', () => {
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.clickRowAction(organization.name, /^Edit organization$/);
     cy.hasTitle(/^Edit organization$/);
   });
 
   it('deletes an organization from the organizations list row item', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
+      cy.navigateTo(/^Organizations$/);
       cy.clickRowAction(testOrganization.name, /^Delete organization$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
@@ -101,7 +101,7 @@ describe('organizations', () => {
 
   it('deletes an organization from the organizations list toolbar', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
+      cy.navigateTo(/^Organizations$/);
       cy.selectRow(testOrganization.name);
       cy.clickToolbarAction(/^Delete selected organizations$/);
       cy.get('#confirm').click();

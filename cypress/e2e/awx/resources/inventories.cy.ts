@@ -17,7 +17,7 @@ describe('inventories', () => {
   });
 
   it('renders the inventories list page', () => {
-    cy.navigateTo(/^Inventories$/, false);
+    cy.navigateTo(/^Inventories$/);
     cy.hasTitle(/^Inventories$/);
   });
 

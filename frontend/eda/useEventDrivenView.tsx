@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../common/crud/Data';
+import { ItemsResponse, getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 
 export type IEdaView<T extends { id: number }> = IView &
   ISelected<T> & {
@@ -91,7 +91,7 @@ export function useEdaView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<ItemsResponse<T>>(url, fetcher);
+  const response = useSWR<ItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {

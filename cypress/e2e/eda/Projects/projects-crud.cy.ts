@@ -4,18 +4,9 @@
 //Tests a user's ability to create, edit, and delete a Project in the EDA UI.
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 
 describe('EDA Projects CRUD', () => {
-  let edaproject: EdaProject;
-
-  before(() => {
-    cy.edaLogin();
-
-    cy.createEdaProject().then((proj) => {
-      edaproject = proj;
-    });
-  });
+  before(() => cy.edaLogin());
 
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Team ' + randomString(4);
@@ -25,34 +16,39 @@ describe('EDA Projects CRUD', () => {
     cy.typeByLabel(/^Name$/, name);
     cy.typeByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
     cy.clickButton(/^Create project$/);
-    cy.get('h1').should('contain', name);
-    cy.optionsWait(5000);
-    cy.clickPageAction(/^Delete project$/);
-    cy.confirmModalAction('Delete projects');
+    cy.hasTitle(name);
+    cy.getEdaProjectByName(name).then((project) => {
+      cy.wrap(project).should('not.be.undefined');
+      if (project) cy.deleteEdaProject(project);
+    });
   });
 
   it('can edit a project from the list view', () => {
-    cy.navigateTo(/^Projects$/);
-    cy.get('h1').should('contain', 'Projects');
-    cy.clickRow(edaproject.name);
-    cy.clickPageAction(/^Edit project$/);
-    cy.hasTitle(/^Edit project$/);
-    cy.typeByLabel(/^Name$/, 'a');
-    cy.clickButton(/^Save project$/);
-    cy.hasTitle(`${edaproject.name}a`);
-    cy.get('h1').should('contain', edaproject.name);
+    cy.createEdaProject().then((edaProject) => {
+      cy.navigateTo(/^Projects$/);
+      cy.get('h1').should('contain', 'Projects');
+      cy.clickRow(edaProject.name);
+      cy.clickPageAction(/^Edit project$/);
+      cy.hasTitle(/^Edit project$/);
+      cy.typeByLabel(/^Name$/, 'a');
+      cy.clickButton(/^Save project$/);
+      cy.hasTitle(`${edaProject.name}a`);
+      cy.deleteEdaProject(edaProject);
+    });
   });
 
   it('deletes a Project from kebab menu from the project details page', () => {
-    cy.navigateTo(/^Projects$/, false);
-    cy.clickRow(edaproject.name);
-    cy.get('h1').should('contain', edaproject.name);
-    cy.intercept('DELETE', `/api/eda/v1/projects/${edaproject.id}/`).as('deleted');
-    cy.clickPageAction(/^Delete project$/);
-    cy.confirmModalAction('Delete projects');
-    cy.wait('@deleted').then((deleted) => {
-      expect(deleted?.response?.statusCode).to.eql(204);
-      cy.get('h1').should('contain', 'Projects');
+    cy.createEdaProject().then((edaProject) => {
+      cy.navigateTo(/^Projects$/);
+      cy.clickRow(edaProject.name);
+      cy.hasTitle(edaProject.name);
+      cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');
+      cy.clickPageAction(/^Delete project$/);
+      cy.confirmModalAction('Delete projects');
+      cy.wait('@deleted').then((deleted) => {
+        expect(deleted?.response?.statusCode).to.eql(204);
+        cy.hasTitle(/^Projects$/);
+      });
     });
   });
 });

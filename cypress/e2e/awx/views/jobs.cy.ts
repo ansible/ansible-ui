@@ -34,13 +34,13 @@ describe('jobs', () => {
   });
 
   it('renders jobs list', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     cy.hasTitle(/^Jobs$/);
     cy.contains(job.name as string);
   });
 
   it('renders the toolbar and row actions', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
@@ -75,10 +75,9 @@ describe('jobs', () => {
   });
 
   it('filters jobs by id', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     const jobId = job.id ? job.id.toString() : '';
-    cy.get('.pf-c-select__toggle').click();
-    cy.clickButton('ID');
+    cy.switchToolbarFilter('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -94,9 +93,8 @@ describe('jobs', () => {
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
-      cy.navigateTo(/^Jobs$/, false);
-      cy.get('.pf-c-select__toggle').click();
-      cy.clickButton('ID');
+      cy.navigateTo(/^Jobs$/);
+      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = testJob.name ? testJob.name : '';
       cy.contains('td', jobName)
@@ -120,9 +118,8 @@ describe('jobs', () => {
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
-      cy.navigateTo(/^Jobs$/, false);
-      cy.get('.pf-c-select__toggle').click();
-      cy.clickButton('ID');
+      cy.navigateTo(/^Jobs$/);
+      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = job.name ? job.name : '';
       cy.contains('td', jobName)

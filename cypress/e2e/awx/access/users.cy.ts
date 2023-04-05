@@ -30,14 +30,14 @@ describe('users', () => {
   });
 
   it('renders the users list page', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.hasTitle(/^Users$/);
   });
 
   it('creates and then deletes a basic user', () => {
     const userName = 'E2E_User_' + randomString(4);
     const password = randomString(12);
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickLink(/^Create user$/);
     cy.typeByLabel(/^Username$/, userName);
     cy.typeByLabel(/^Password$/, password);
@@ -53,7 +53,7 @@ describe('users', () => {
   });
 
   it('renders the user details page', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
     cy.clickButton(/^Details$/);
@@ -61,7 +61,7 @@ describe('users', () => {
   });
 
   it('edits a user from the details page', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
@@ -72,7 +72,7 @@ describe('users', () => {
   });
 
   it('deletes a user from the details page', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
     cy.clickPageAction(/^Delete user/);
@@ -82,13 +82,13 @@ describe('users', () => {
   });
 
   it('navigates to the edit form from the users list row item', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickRowAction(user.username, /^Edit user$/);
     cy.hasTitle(/^Edit user$/);
   });
 
   it('deletes a user from the users list row item', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.clickRowAction(user.username, /^Delete user$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
@@ -98,7 +98,7 @@ describe('users', () => {
   });
 
   it('deletes a user from the users list toolbar', () => {
-    cy.navigateTo(/^Users$/, false);
+    cy.navigateTo(/^Users$/);
     cy.selectRow(user.username);
     cy.clickToolbarAction(/^Delete selected users$/);
     cy.get('#confirm').click();

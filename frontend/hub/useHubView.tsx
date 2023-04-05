@@ -100,7 +100,7 @@ export function useHubView<T extends object>(
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher);
+  const response = useSWR<HubItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
