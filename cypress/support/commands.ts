@@ -313,7 +313,6 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) =
       cy.get('#nav-toggle').click();
     }
   });
-  cy.contains('.pf-c-nav__link', /^Automation Servers$/).click();
   cy.contains('.pf-c-nav__link', label).click();
   cy.get('#page-sidebar').then((c) => {
     if (!c.hasClass('pf-m-collapsed')) {
