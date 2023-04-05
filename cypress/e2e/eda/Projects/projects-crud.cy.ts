@@ -16,7 +16,7 @@ describe('EDA Projects CRUD', () => {
     cy.typeByLabel(/^Name$/, name);
     cy.typeByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
     cy.clickButton(/^Create project$/);
-    cy.get('h1').should('contain', name);
+    cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
       cy.wrap(project).should('not.be.undefined');
       if (project) cy.deleteEdaProject(project);
@@ -33,7 +33,6 @@ describe('EDA Projects CRUD', () => {
       cy.typeByLabel(/^Name$/, 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
-      cy.get('h1').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
     });
   });
@@ -42,13 +41,13 @@ describe('EDA Projects CRUD', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo(/^Projects$/, false);
       cy.clickRow(edaProject.name);
-      cy.get('h1').should('contain', edaProject.name);
+      cy.hasTitle(edaProject.name);
       cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');
       cy.clickPageAction(/^Delete project$/);
       cy.confirmModalAction('Delete projects');
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
-        cy.get('h1').should('contain', 'Projects');
+        cy.hasTitle(/^Projects$/);
       });
     });
   });
