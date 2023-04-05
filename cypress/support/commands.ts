@@ -230,7 +230,7 @@ Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
 
 Cypress.Commands.add('switchToolbarFilter', (text: string) => {
   cy.get('#filter-form-group').within(() => {
-    cy.get('.pf-c-select').click();
+    cy.get('.pf-c-select').should('not.be.disabled').click();
     cy.get('.pf-c-select__menu').within(() => {
       cy.clickButton(text);
     });
