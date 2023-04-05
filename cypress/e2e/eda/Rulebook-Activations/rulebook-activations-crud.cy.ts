@@ -1,26 +1,60 @@
 //Tests a user's ability to create, edit, and delete Rulebook Activations in the EDA UI.
-// import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { randomString } from '../../../../framework/utils/random-string';
 
 describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
-  // let edarulebookactivation: EdaRulebookActivation;
-
   before(() => {
     cy.edaLogin();
-
-    // cy.createEdaRulebookActivation().then((rulebookactivation) => {
-    //   edarulebookactivation = rulebookactivation;
-    // });
   });
 
-  it.skip('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
-    cy.navigateTo(/^Rulebook activations$/);
+  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+    cy.createEdaProject().then((edaProject) => {
+      cy.waitEdaProjectSync(edaProject);
+      cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+        const edaRulebook = edaRuleBooks[0];
+        const name = 'E2E Rulebook Activation ' + randomString(4);
+        cy.visit('/eda/rulebook-activations/create');
+        cy.clickButton(/^Add rulebook activation$/);
+        cy.get('h1').should('contain', 'Create rulebook activation');
+        cy.typeByLabel(/^Name$/, name);
+        cy.typeByLabel(/^Description$/, 'This is a new rulebook activation.');
+        cy.selectByLabel(/^Rulebook$/, edaRulebook.name);
+        cy.selectFromDropdown(/^Restart policy$/, 'Always');
+        cy.selectFromDropdown(/^Project$/, edaProject.name);
+        cy.clickButton(/^Add rulebook activation$/);
+        cy.get('h1').should('contain', name);
+        cy.getEdaRulebookActivation(name).then((edaRulebookActivation) => {
+          if (edaRulebookActivation) {
+            cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          }
+        });
+      });
+      cy.deleteEdaProject(edaProject);
+    });
   });
 
   it.skip('can edit a Rulebook Activation and then disable it', () => {
-    //write test here
+    cy.createEdaProject().then((edaProject) => {
+      cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+        const edaRulebook = edaRuleBooks[0];
+        cy.createEdaRulebookActivation(edaRulebook).then((edaRulebookActivation) => {
+          // Verify
+          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+        });
+      });
+      cy.deleteEdaProject(edaProject);
+    });
   });
 
   it.skip('can delete a Rulebook Activation from the details view', () => {
-    //write test here
+    cy.createEdaProject().then((edaProject) => {
+      cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+        const edaRulebook = edaRuleBooks[0];
+        cy.createEdaRulebookActivation(edaRulebook).then((edaRulebookActivation) => {
+          // Verify
+          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+        });
+      });
+      cy.deleteEdaProject(edaProject);
+    });
   });
 });
