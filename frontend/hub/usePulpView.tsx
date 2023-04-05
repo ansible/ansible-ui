@@ -94,7 +94,7 @@ export function usePulpView<T extends object>(
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<PulpItemsResponse<T>>(url, fetcher);
+  const response = useSWR<PulpItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 

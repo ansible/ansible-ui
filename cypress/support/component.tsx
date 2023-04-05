@@ -44,7 +44,7 @@ declare global {
   }
 }
 
-Cypress.Commands.add('mount', (component, options) => {
+Cypress.Commands.add('mount', (component, options, rerenderKey) => {
   cy.fixture('activeUser').then((activeUser: User) => {
     cy.intercept(
       {
@@ -69,7 +69,8 @@ Cypress.Commands.add('mount', (component, options) => {
         </ActiveUserProvider>
       </PageFramework>
     </MemoryRouter>,
-    options
+    options,
+    rerenderKey
   );
 });
 
