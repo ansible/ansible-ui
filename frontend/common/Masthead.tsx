@@ -368,9 +368,7 @@ export function Refresh() {
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {
     setRefreshing(true);
-    void mutate((key) => typeof key === 'string' && !key.endsWith('/me/'), undefined, {
-      revalidate: true,
-    }).finally(() => {
+    void mutate((key) => typeof key === 'string').finally(() => {
       setRefreshing(false);
     });
   }, []);
