@@ -6,7 +6,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
-  it.only('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.optionsWait(2000);
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
