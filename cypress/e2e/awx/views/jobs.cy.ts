@@ -34,13 +34,13 @@ describe('jobs', () => {
   });
 
   it('renders jobs list', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     cy.hasTitle(/^Jobs$/);
     cy.contains(job.name as string);
   });
 
   it('renders the toolbar and row actions', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
@@ -75,7 +75,7 @@ describe('jobs', () => {
   });
 
   it('filters jobs by id', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     const jobId = job.id ? job.id.toString() : '';
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton('ID');
@@ -94,7 +94,7 @@ describe('jobs', () => {
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
-      cy.navigateTo(/^Jobs$/, false);
+      cy.navigateTo(/^Jobs$/);
       cy.get('.pf-c-select__toggle').click();
       cy.clickButton('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
@@ -120,7 +120,7 @@ describe('jobs', () => {
       `/api/v2/job_templates/${jobTemplateId}/launch/`,
       {} as UnifiedJobList
     ).then((testJob) => {
-      cy.navigateTo(/^Jobs$/, false);
+      cy.navigateTo(/^Jobs$/);
       cy.get('.pf-c-select__toggle').click();
       cy.clickButton('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';

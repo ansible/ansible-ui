@@ -39,7 +39,7 @@ describe('EDA Projects CRUD', () => {
 
   it('deletes a Project from kebab menu from the project details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/, false);
+      cy.navigateTo(/^Projects$/);
       cy.clickRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');

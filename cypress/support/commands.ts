@@ -35,7 +35,7 @@ declare global {
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
       clickTab(label: string | RegExp): Chainable<void>;
-      navigateTo(label: string | RegExp, refresh?: boolean): Chainable<void>;
+      navigateTo(label: string | RegExp): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
       hasAlert(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
@@ -307,22 +307,20 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 });
 
 //Visits one of the URL addresses contained in the links of the Resource Menu on the left side of the UI.
-Cypress.Commands.add('navigateTo', (label: string | RegExp, refresh?: boolean) => {
+Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();
     }
   });
-  cy.contains('.pf-c-nav__link', /^Automation Servers$/).click();
+  // cy.contains('.pf-c-nav__link', /^Dashboard$/).click();
   cy.contains('.pf-c-nav__link', label).click();
   cy.get('#page-sidebar').then((c) => {
     if (!c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();
     }
   });
-  if (refresh) {
-    cy.get('#refresh').click();
-  }
+  cy.get('#refresh').click();
 });
 
 //Uses a certain label string to identify the title of the page.

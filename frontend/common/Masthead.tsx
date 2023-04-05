@@ -20,6 +20,7 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
+  Tooltip,
   Truncate,
 } from '@patternfly/react-core';
 import {
@@ -27,19 +28,20 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
+  SyncAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
 import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR from 'swr';
-import { useBreakpoint } from '../../framework';
+import useSWR, { mutate } from 'swr';
+import { RunningIcon, useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
+import { RouteObj, RouteType } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { API_PREFIX } from '../eda/constants';
-import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
@@ -138,6 +140,9 @@ export function AnsibleMasthead(props: {
                 {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
                                 <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
                             )} */}
+                <ToolbarItem>
+                  <Refresh />
+                </ToolbarItem>
                 <ToolbarItem>
                   <Notifications />
                 </ToolbarItem>
@@ -357,5 +362,25 @@ function NotificationsInternal() {
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
+  );
+}
+
+export function Refresh() {
+  const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(() => {
+    setRefreshing(true);
+    void mutate((key) => typeof key === 'string' && !key.endsWith('/me/'), undefined, {
+      revalidate: true,
+    }).finally(() => {
+      setRefreshing(false);
+    });
+  }, []);
+  return (
+    <Tooltip content={t('Refresh')} position="bottom">
+      <Button id="refresh" onClick={refresh} variant="plain">
+        {refreshing ? <RunningIcon /> : <SyncAltIcon />}
+      </Button>
+    </Tooltip>
   );
 }
