@@ -13,6 +13,7 @@ describe('EDA Projects List', () => {
 
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
+      cy.pollEdaResults(`/api/eda/v1/projects/?name=${edaProject.name}`);
       cy.navigateTo(/^Projects$/);
       cy.clickRow(edaProject.name);
       cy.hasTitle(edaProject.name);
@@ -35,8 +36,8 @@ describe('EDA Projects List', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
         cy.navigateTo(/^Projects$/);
-        cy.selectRow(testProject.name);
         cy.selectRow(edaProject.name);
+        cy.selectRow(testProject.name);
         cy.clickToolbarAction(/^Delete selected projects$/);
         cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deletedA');
         cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('deletedB');
