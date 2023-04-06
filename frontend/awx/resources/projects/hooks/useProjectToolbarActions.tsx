@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon, BanIcon } from '@patternfly/react-icons';
-import { IAwxView } from '../../../useAwxView';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';
@@ -12,13 +11,13 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 
 import { IPageAction, PageActionType } from '../../../../../framework';
 
-export function useProjectToolbarActions(view: IAwxView<Project>) {
+export function useProjectToolbarActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
 
-  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
-  const cancelProjects = useCancelProjects(view.unselectItemsAndRefresh);
+  const deleteProjects = useDeleteProjects(onComplete);
+  const cancelProjects = useCancelProjects(onComplete);
 
   const ProjectToolbarActions = useMemo<IPageAction<Project>[]>(
     () => [

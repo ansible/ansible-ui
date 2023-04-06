@@ -25,8 +25,8 @@ export function Projects() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useProjectToolbarActions(view);
-  const rowActions = useProjectActions({ onProjectsDeleted: () => navigate(RouteObj.Projects) });
+  const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useProjectActions(view.unselectItemsAndRefresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;

@@ -10,12 +10,11 @@ import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';
 import { useCancelProjects } from './useCancelProjects';
 
-export function useProjectActions(options: { onProjectsDeleted: (projects: Project[]) => void }) {
-  const { onProjectsDeleted } = options;
+export function useProjectActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteProjects = useDeleteProjects(onProjectsDeleted);
-  const cancelProjects = useCancelProjects(onProjectsDeleted);
+  const deleteProjects = useDeleteProjects(onComplete);
+  const cancelProjects = useCancelProjects(onComplete);
   const alertToaster = usePageAlertToaster();
   const postRequest = usePostRequest();
 
