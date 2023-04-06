@@ -47,8 +47,10 @@ declare global {
       ): Chainable<void>;
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+      expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
+      hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
 
       /**Finds a select component by its label and clicks on the option specified by text.*/
       selectByLabel(label: string | RegExp, text: string): Chainable<void>;
@@ -432,6 +434,32 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
       cy.get('input[type=checkbox]').click();
     });
 });
+
+/**
+ * Expands a table row by locating the row using the provided name and then
+ * clicking the "expand-toggle" button on that row
+ */
+Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterByText(name);
+  }
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('button[id^="expand-toggle"]').click();
+    });
+});
+
+/**
+ * Asserts that a specific detail term (dt) is displayed and contains text from
+ * the provided detail description (dd)
+ */
+Cypress.Commands.add(
+  'hasDetail',
+  (detailTerm: string | RegExp, detailDescription: string | RegExp) => {
+    cy.contains('dt', detailTerm).next().should('contain', detailDescription);
+  }
+);
 
 //Selects a check box in a modal and then clicks a button with a certain label name.
 Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
