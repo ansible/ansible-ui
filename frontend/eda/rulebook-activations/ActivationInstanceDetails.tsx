@@ -31,7 +31,6 @@ export function ActivationInstanceDetails() {
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
   );
 
-  // TODO - remove when the endpoint return the activation name
   const { data: activation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${activationInstance?.activation ?? ''}/`
   );
