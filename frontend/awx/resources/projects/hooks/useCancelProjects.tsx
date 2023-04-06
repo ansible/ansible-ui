@@ -42,7 +42,7 @@ export function useCancelProjects(onComplete: (projects: Project[]) => void) {
 
     bulkAction({
       title: t('Cancel project sync', { count: projects.length }),
-      confirmText: t('Yes, I confirm that I want to cancel these project sync jobs.', {
+      confirmText: t('Yes, I confirm that I want to cancel these {{count}} project sync jobs.', {
         count:
           projects.length -
           uncancellableProjectsDueToPermissions.length -
