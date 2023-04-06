@@ -65,13 +65,14 @@ describe('jobs', () => {
   });
 
   it('renders additional details on expanding job row', () => {
-    // Expand top row
-    cy.get('button[id="expand-toggle0"]').click();
-    cy.contains('dt', 'Inventory').next().should('contain', 'E2E Inventory');
-    cy.contains('dt', 'Project').next().should('contain', 'E2E Project');
-    cy.contains('dt', 'Launched by').next().should('contain', 'admin');
-    cy.contains('dt', 'Execution Environment').next().should('contain', 'AWX EE (latest)');
-    cy.contains('dt', 'Job Slice').next().should('contain', '0/1');
+    cy.navigateTo(/^Jobs$/);
+    const jobName = job.name ? job.name : '';
+    cy.expandTableRow(jobName, false);
+    cy.hasDetail('Inventory', 'E2E Inventory');
+    cy.hasDetail('Project', 'E2E Project');
+    cy.hasDetail('Launched by', 'admin');
+    cy.hasDetail('Execution Environment', 'AWX EE (latest)');
+    cy.hasDetail('Job Slice', '0/1');
   });
 
   it('filters jobs by id', () => {
