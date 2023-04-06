@@ -139,7 +139,7 @@ describe('jobs', () => {
   });
 
   it('relaunches job and navigates to job output', () => {
-    cy.navigateTo(/^Jobs$/, false);
+    cy.navigateTo(/^Jobs$/);
     const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
       .parent()
@@ -151,7 +151,7 @@ describe('jobs', () => {
     // Clean up newly launched job
     cy.url().then((url) => {
       const jobId = url.substring(url.lastIndexOf('/') + 1);
-      cy.navigateTo(/^Jobs$/, false);
+      cy.navigateTo(/^Jobs$/);
       cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     });
   });
