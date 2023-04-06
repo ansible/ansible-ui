@@ -20,6 +20,7 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
+  Tooltip,
   Truncate,
 } from '@patternfly/react-core';
 import {
@@ -27,7 +28,7 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
-  SyncAltIcon,
+  RedoAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
 import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState } from 'react';
@@ -384,7 +385,7 @@ export function Refresh() {
       const elapsed = timestamp - start;
       start = timestamp;
       frame = requestAnimationFrame(rotate);
-      setRotation((rotate) => rotate + elapsed / 4);
+      setRotation((rotate) => rotate + elapsed / 3);
     }
     function stop(timestamp: number) {
       if (start === undefined) {
@@ -395,11 +396,11 @@ export function Refresh() {
 
       frame = requestAnimationFrame(stop);
       setRotation((rotate) => {
-        if (Math.floor(rotate / 180) !== Math.floor((rotate + elapsed / 4) / 180)) {
+        if (Math.floor(rotate / 360) !== Math.floor((rotate + elapsed / 3) / 360)) {
           cancelAnimationFrame(frame);
           return 0;
         }
-        return rotate + elapsed / 4;
+        return rotate + elapsed / 3;
       });
     }
 
@@ -413,8 +414,10 @@ export function Refresh() {
   }, [refreshing]);
 
   return (
-    <Button id="refresh" onClick={refresh} variant="plain">
-      <SyncAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
-    </Button>
+    <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
+      <Button id="refresh" onClick={refresh} variant="plain">
+        <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
+      </Button>
+    </Tooltip>
   );
 }
