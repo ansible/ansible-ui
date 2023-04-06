@@ -10,6 +10,7 @@ import {
   PageSection,
   Skeleton,
   Spinner,
+  Stack,
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
@@ -34,6 +35,7 @@ import {
   UIEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -42,13 +44,20 @@ import { PageActionType } from '../PageActions/PageActionType';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
+import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { useSettings } from '../Settings';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import { PageTableCards } from './PageTableCards';
-import { ITableColumn, TableColumnCell } from './PageTableColumn';
+import {
+  ITableColumn,
+  TableColumnCell,
+  useDescriptionColumns,
+  useExpandedColumns,
+  useVisibleTableColumns,
+} from './PageTableColumn';
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
@@ -172,7 +181,55 @@ export type PageTableProps<T extends object> = {
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
+
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
+  const tableColumns = useVisibleTableColumns(managedColumns);
+
+  const descriptionColumns = useDescriptionColumns(managedColumns);
+  const expandedRowColumns = useExpandedColumns(managedColumns);
+  const expandedRow = useMemo(() => {
+    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
+
+    if (descriptionColumns.length) {
+      expandedRowFunctions.push((item) => (
+        <PageDetailsFromColumns
+          item={item}
+          columns={descriptionColumns}
+          disablePadding
+          numberOfColumns="single"
+        />
+      ));
+    }
+
+    if (expandedRowColumns.length) {
+      expandedRowFunctions.push((item) => (
+        <PageDetailsFromColumns
+          item={item}
+          columns={expandedRowColumns}
+          disablePadding
+          numberOfColumns="multiple"
+        />
+      ));
+    }
+
+    if (props.expandedRow) {
+      expandedRowFunctions.push(props.expandedRow);
+    }
+
+    if (expandedRowFunctions.length === 0) return undefined;
+    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
+
+    const newExpandedRow = (item: T) => (
+      <Stack hasGutter style={{ gap: 12 }}>
+        {expandedRowFunctions.map((fn, index) => (
+          <div key={index}>{fn(item)}</div>
+        ))}
+      </Stack>
+    );
+
+    return newExpandedRow;
+  }, [descriptionColumns, expandedRowColumns, props.expandedRow]);
+
   const showSelect =
     props.showSelect ||
     toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
@@ -260,7 +317,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} tableColumns={managedColumns} />
+          <PageTableView {...props} tableColumns={tableColumns} expandedRow={expandedRow} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (

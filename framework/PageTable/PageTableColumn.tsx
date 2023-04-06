@@ -2,22 +2,26 @@ import { ReactNode, useMemo } from 'react';
 import { DateTimeCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
+import { PageTableViewTypeE } from './PageTableViewType';
 
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
   /** Key indicates the column is the key for the item and should not be allowed to be hidden by the user. */
+  // TODO - reevaluate this option as a column cant be 'id' and 'key' because it is the same option.
+  // Maybe make it it's own prop of the column `isKey: true`?
   Key = 'key',
 
   /** Description uses the column in an expendable row with full width. */
   Description = 'description',
 
-  /** Expanded uses the column in an expendable row. */
+  /** Expanded uses the column in the expendable row. */
   Expanded = 'expanded',
 
   /** Hidden hides the column in the table. */
   Hidden = 'hidden',
 
   /** Id shows the row as an ID with a collapsed width so the ID shows by the name. */
+  // TODO - reevaluate - is this needed as column type:'id' could auto set column minWidth:0
   Id = 'id',
 }
 
@@ -103,6 +107,7 @@ interface ITableColumnCommon<T extends object> {
   defaultSort?: boolean;
 
   /** Icon for the column. */
+  // TODO need to validate that this is working in all cases and document caveats
   icon?: (item: T) => ReactNode;
 
   /** Table column options for controlling how the column displays in a table. */
@@ -195,21 +200,16 @@ export function TableColumnCell<T extends object>(props: {
 }
 
 /** Hook to return only the columns that should be visible in the table. */
-export function useVisibleTableColumns<T extends object>(
-  columns: ITableColumn<T>[],
-
-  /** Indicates if the columns should be filtered for the expanded row. */
-  expandedRow?: boolean
-) {
+export function useVisibleTableColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
     () =>
       columns.filter((column) => {
         if (column.table === ColumnTableOption.Hidden) return false;
-        if (expandedRow && column.table === ColumnTableOption.Expanded) return true;
-        if (!expandedRow && column.table === ColumnTableOption.Expanded) return false;
+        if (column.table === ColumnTableOption.Description) return false;
+        if (column.table === ColumnTableOption.Expanded) return false;
         return true;
       }),
-    [columns, expandedRow]
+    [columns]
   );
 }
 
@@ -233,6 +233,50 @@ export function useVisibleCardColumns<T extends object>(columns: ITableColumn<T>
 export function useVisibleModalColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
     () => columns.filter((column) => column.modal !== ColumnModalOption.Hidden),
+    [columns]
+  );
+}
+
+/** Hook to return only the columns that should be visible in the table view type. */
+export function useVisibleColumns<T extends object>(
+  columns: ITableColumn<T>[],
+  viewType: PageTableViewTypeE
+) {
+  const visibleTableColumns = useVisibleTableColumns(columns);
+  const visibleListColumns = useVisibleListColumns(columns);
+  const visibleCardColumns = useVisibleCardColumns(columns);
+  switch (viewType) {
+    case PageTableViewTypeE.Table:
+      return visibleTableColumns;
+    case PageTableViewTypeE.List:
+      return visibleListColumns;
+    case PageTableViewTypeE.Cards:
+      return visibleCardColumns;
+  }
+}
+
+/** Hook to return only the columns that should be visible in a table expanded row as description. */
+export function useDescriptionColumns<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(
+    () =>
+      columns.filter((column) => {
+        if (column.table === ColumnTableOption.Hidden) return false;
+        if (column.table === ColumnTableOption.Description) return true;
+        return false;
+      }),
+    [columns]
+  );
+}
+
+/** Hook to return only the columns that should be visible in a table expanded row. */
+export function useExpandedColumns<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(
+    () =>
+      columns.filter((column) => {
+        if (column.table === ColumnTableOption.Hidden) return false;
+        if (column.table === ColumnTableOption.Expanded) return true;
+        return false;
+      }),
     [columns]
   );
 }

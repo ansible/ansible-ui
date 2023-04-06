@@ -2,11 +2,15 @@ import { DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useSettings } from '../Settings';
 
-export function PageDetails(props: { children?: ReactNode; disablePadding?: boolean }) {
+export function PageDetails(props: {
+  children?: ReactNode;
+  disablePadding?: boolean;
+  numberOfColumns?: 'multiple' | 'single';
+}) {
   const { disablePadding } = props;
   const settings = useSettings();
   const orientation = settings.formLayout;
-  const columns = settings.formColumns;
+  const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = false;
   return (
     <PageSection variant="light" padding={{ default: 'noPadding' }} className="dark-1">
@@ -19,7 +23,7 @@ export function PageDetails(props: { children?: ReactNode; disablePadding?: bool
           '2xl': orientation,
         }}
         columnModifier={
-          columns === 'multiple'
+          numberOfColumns === 'multiple'
             ? {
                 default: '1Col',
                 sm: '1Col',

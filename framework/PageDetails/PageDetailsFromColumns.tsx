@@ -7,11 +7,13 @@ import { PageDetails } from './PageDetails';
 export function PageDetailsFromColumns<T extends object>(props: {
   item: T | undefined;
   columns: ITableColumn<T>[];
+  disablePadding?: boolean;
+  numberOfColumns?: 'multiple' | 'single';
 }) {
-  const { item, columns } = props;
+  const { item, columns, disablePadding, numberOfColumns } = props;
   if (!item) return <></>;
   return (
-    <PageDetails>
+    <PageDetails disablePadding={disablePadding} numberOfColumns={numberOfColumns}>
       {columns.map((column) => (
         <PageDetail key={column.id ?? column.header} label={column.header}>
           <TableColumnCell column={column} item={item} />
