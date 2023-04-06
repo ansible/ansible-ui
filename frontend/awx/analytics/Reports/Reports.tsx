@@ -103,11 +103,7 @@ export default function Reports() {
           description={data?.report?.description || ''}
           footer={data ? reportTags : undefined}
         />
-        {!(activeUser?.is_superuser || activeUser?.is_system_auditor) ? (
-          <AnalyticsErrorState />
-        ) : (
-          <ReportsInternal />
-        )}
+        {!activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
       </PageLayout>
     </Page>
   );

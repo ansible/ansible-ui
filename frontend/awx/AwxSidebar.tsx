@@ -184,7 +184,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             </NavItem>
                         </NavGroup> */}
       {/* </NavExpandable> */}
-      {(activeUser?.is_system_auditor || activeUser?.is_superuser) && (
+      {activeUser?.is_superuser && (
         <NavExpandable
           key="analytics"
           title={t('Analytics')}
