@@ -35,6 +35,7 @@ declare global {
       navigateTo(label: string | RegExp): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
       hasAlert(label: string | RegExp): Chainable<void>;
+      hasTooltip(label: string | RegExp): Chainable<void>;
       clickToolbarAction(label: string | RegExp): Chainable<void>;
       confirmModalAction(label: string | RegExp): Chainable<void>;
       assertModalSuccess(): Chainable<void>;
@@ -360,6 +361,11 @@ Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
 //Uses a certain label string to identify the alert showing on the screen.
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
   cy.contains('.pf-c-alert__title', label);
+});
+
+//Uses a certain label string to identify the alert showing on the screen.
+Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
+  cy.contains('.pf-c-tooltip__content', label);
 });
 
 //Uses a certain label string to find a button within the kebab located within the toolbar on the page and clicks it.

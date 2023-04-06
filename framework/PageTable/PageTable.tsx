@@ -11,6 +11,7 @@ import {
   Skeleton,
   Spinner,
   Title,
+  Flex,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import {
@@ -99,6 +100,7 @@ export type PageTableProps<T extends object> = {
   emptyStateDescription?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyStateIcon?: React.ComponentType<any>;
+  emptyStateActions?: IPageAction<T>[];
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
@@ -188,6 +190,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           </Title>
           {props.emptyStateDescription && (
             <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+          )}
+          {props.emptyStateActions && (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <PageActions actions={props.emptyStateActions} />
+            </Flex>
           )}
           {props.emptyStateButtonClick && (
             <Button
