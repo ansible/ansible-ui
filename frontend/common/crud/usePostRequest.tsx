@@ -46,7 +46,8 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
     }
 
     switch (response.status) {
-      case 204: // No Content
+      case 202: // No Content
+      case 204: // Accepted
         return null as ResponseBody;
     }
     return (await response.json()) as ResponseBody;
