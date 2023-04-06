@@ -132,15 +132,16 @@ export function EditOrganization() {
           onCancel={onCancel}
           defaultValue={{ organization, instanceGroups }}
         >
-          <OrganizationInputs />
+          <OrganizationInputs orgId={organization.id} />
         </PageForm>
       ) : null}
     </PageLayout>
   );
 }
 
-function OrganizationInputs() {
+function OrganizationInputs(props: { orgId?: number }) {
   const { t } = useTranslation();
+  const { orgId } = props;
   return (
     <>
       <PageFormTextInput
@@ -156,7 +157,7 @@ function OrganizationInputs() {
       />
       <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
       <PageFormExecutionEnvironmentSelect<OrganizationFields>
-        organizationId="organization.id"
+        organizationId={orgId ? orgId.toString() : undefined}
         name="organization.summary_fields.default_environment.name"
         label={t('Default execution environment')}
         executionEnvironmentPath="organization.summary_fields.default_environment"

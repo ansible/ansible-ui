@@ -7,7 +7,7 @@ import {
   useExecutionEnvironmentsFilters,
 } from '../ExecutionEnvironments';
 
-export function useSelectExecutionEnvironments(organizationId: string) {
+export function useSelectExecutionEnvironments(organizationId?: string) {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
