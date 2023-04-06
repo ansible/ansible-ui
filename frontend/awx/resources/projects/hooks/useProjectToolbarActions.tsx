@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusIcon, TrashIcon, BanIcon } from '@patternfly/react-icons';
 import { IAwxView } from '../../../useAwxView';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 import { useDeleteProjects } from './useDeleteProjects';
+import { useCancelProjects } from './useCancelProjects';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 
@@ -17,6 +18,7 @@ export function useProjectToolbarActions(view: IAwxView<Project>) {
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
 
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
+  const cancelProjects = useCancelProjects(view.unselectItemsAndRefresh);
 
   const ProjectToolbarActions = useMemo<IPageAction<Project>[]>(
     () => [
@@ -39,8 +41,14 @@ export function useProjectToolbarActions(view: IAwxView<Project>) {
         onClick: deleteProjects,
         isDanger: true,
       },
+      {
+        type: PageActionType.bulk,
+        icon: BanIcon,
+        label: t('Cancel selected projects'),
+        onClick: cancelProjects,
+      },
     ],
-    [canCreateProject, deleteProjects, t]
+    [canCreateProject, cancelProjects, deleteProjects, t]
   );
 
   return ProjectToolbarActions;

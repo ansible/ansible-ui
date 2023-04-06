@@ -203,11 +203,7 @@ describe('projects.cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
     it('Sync project calls API /update endpoint', () => {
-      cy.mount(
-        //  <PageDialogProvider>
-        <Projects />
-        // </PageDialogProvider>
-      );
+      cy.mount(<Projects />);
       cy.intercept('api/v2/projects/6/update/').as('projectUpdateRequest');
       cy.contains('td', 'Demo Project')
         .parent()
@@ -220,6 +216,52 @@ describe('projects.cy.ts', () => {
     it('Create Project button is disabled if the user does not have permission to create projects', () => {
       cy.mount(<Projects />);
       cy.contains('a', /^Create project$/).should('have.attr', 'aria-disabled', 'true');
+    });
+    it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
+      cy.mount(<Projects />);
+      cy.selectRow(' Project 1 Org 0');
+      cy.get('.page-table-toolbar').within(() => {
+        cy.get('.toggle-kebab')
+          .click()
+          .get('.pf-c-dropdown__menu-item')
+          .contains('a', 'Cancel selected projects')
+          .click();
+      });
+      cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.hasAlert(
+          '{{count}} of the selected project sync jobs cannot be canceled because they are not running.'
+        ).should('exist');
+        cy.contains('td', ' Project 1 Org 0')
+          .parent()
+          .within(() => {
+            cy.get('span.pf-c-icon span.pf-m-warning').should('exist');
+          });
+        cy.clickButton(/^Cancel$/);
+      });
+      cy.clickButton(/^Clear all filters$/);
+    });
+    it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
+      cy.mount(<Projects />);
+      cy.selectRow(' Project 2 Org 0');
+      cy.get('.page-table-toolbar').within(() => {
+        cy.get('.toggle-kebab')
+          .click()
+          .get('.pf-c-dropdown__menu-item')
+          .contains('a', 'Cancel selected projects')
+          .click();
+      });
+      cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.hasAlert(
+          '{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
+        ).should('exist');
+        cy.contains('td', ' Project 2 Org 0')
+          .parent()
+          .within(() => {
+            cy.get('span.pf-c-icon span.pf-m-warning').should('exist');
+          });
+        cy.clickButton(/^Cancel$/);
+      });
+      cy.clickButton(/^Clear all filters$/);
     });
     it('Sync, Copy, Edit, Delete Project button is disabled if the user does not have permission(s)', () => {
       cy.mount(<Projects />);
@@ -237,6 +279,30 @@ describe('projects.cy.ts', () => {
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete project$/)
             .should('have.attr', 'aria-disabled', 'true');
+        });
+    });
+    it('Cancel project sync kebab button is visible for project with active sync status and is hidden for project with non active sync status', () => {
+      cy.mount(<Projects />);
+      // select project with active sync status
+      cy.contains('td', ' Project 10 Org 2')
+        .parent()
+        .within(() => {
+          cy.get('.cancel-project-sync').should('exist');
+        });
+      // select prorject with non-active sync status
+      cy.contains('td', ' Project 1 Org 0')
+        .parent()
+        .within(() => {
+          cy.get('.cancel-project-sync').should('not.exist');
+        });
+    });
+    it('Cancel project sync row button is disabled for user with insufficient permissions', () => {
+      cy.mount(<Projects />);
+      // select project with active sync status
+      cy.contains('td', ' Project 10 Org 2')
+        .parent()
+        .within(() => {
+          cy.get('.cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
         });
     });
     it('Create Project button is enabled if the user has permission to create projects', () => {
@@ -270,8 +336,6 @@ describe('projects.cy.ts', () => {
         }
       ).as('projectsError');
       cy.mount(<Projects />);
-      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
-      cy.get('button[id="refresh"]').click();
       cy.contains('Error loading projects');
     });
   });
@@ -305,8 +369,6 @@ describe('projects.cy.ts', () => {
         },
       }));
       cy.mount(<Projects />);
-      // Refresh needed so that useAwxView picks up the updated intercept for empty state in the next set of tests
-      cy.get('button[id="refresh"]').click();
       cy.contains(/^There are currently no projects added to your organization.$/);
       cy.contains(/^Please create a project by using the button below.$/);
       cy.contains('button', /^Create project$/).should('be.visible');
