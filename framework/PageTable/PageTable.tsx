@@ -101,8 +101,8 @@ export type PageTableProps<T extends object> = {
   // TODO rename to onSingleSelect
   onSelect?: (item: T) => void;
 
-  // TODO make error state a react component? <TableError /> What to do if not provided?
-  // TODO make empty state a react component? <TableEmpty /> What to do if not provided?
+  // TODO make error state a react component? <TableError /> What to do if not provided? - reuse CommonEmptyStates
+  // TODO make empty state a react component? <TableEmpty /> What to do if not provided? - reuse CommonEmptyStates
 
   errorStateTitle: string;
   error?: Error;
@@ -141,7 +141,10 @@ export type PageTableProps<T extends object> = {
   // TODO - There is a request to add a user setting to allow users to turn off padding.
   disableBodyPadding?: boolean;
 
-  /** Default subtitle is used in list and acrd views as the default subtitle if there is no subtitle column */
+  /**
+   * Default subtitle is used in list and card views as the default subtitle if there is no subtitle column.
+   * Example is team card that has the work 'team' under the team name. Makes the card feel polished.
+   */
   defaultSubtitle?: ReactNode;
 
   /**
