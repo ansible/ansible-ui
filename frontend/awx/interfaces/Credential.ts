@@ -33,8 +33,8 @@ export interface Credential
     credential_type?: string;
   };
   summary_fields: {
-    credential_type: { id: number; name: string; descripton?: string };
-    organization?: SummaryFieldsOrganization;
+    credential_type: { id: number; name: string; description?: string };
+    organization?: SummaryFieldsOrganization | null;
     created_by: Partial<SummaryFieldsByUser>;
     modified_by: SummaryFieldsByUser;
     object_roles: {

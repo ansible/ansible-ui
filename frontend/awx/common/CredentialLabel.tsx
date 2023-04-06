@@ -29,7 +29,7 @@ function CredentialLabel(props: { credential: Credential | SummaryFieldCredentia
 
   return (
     <Label color="blue" {...rest}>
-      <Link to={RouteObj.CredentialDetail.replace(':id', credential.id.toString())}>
+      <Link to={RouteObj.CredentialDetails.replace(':id', credential.id.toString())}>
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <strong>{type}: </strong>
         {credential.kind === 'vault' && vault_id

@@ -17,7 +17,6 @@ export function CredentialPage() {
   const actions = useCredentialActions({
     onDeleted: () => navigate(RouteObj.Credentials),
   });
-
   return (
     <PageLayout>
       <PageHeader

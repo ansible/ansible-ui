@@ -17,7 +17,7 @@ export function CredentialTypeDetail(props: {
   if (id && inputSources && inputSources[id]) {
     return (
       <React.Fragment key={id}>
-        <PageDetail helpText={help_text} label={label}>
+        <PageDetail helpText={help_text} label={label + ' *'}>
           <ChipGroup numChips={1} ouiaId={`credential-${id}-chips`}>
             <CredentialLabel credential={inputSources[id]?.summary_fields?.source_credential} />
           </ChipGroup>

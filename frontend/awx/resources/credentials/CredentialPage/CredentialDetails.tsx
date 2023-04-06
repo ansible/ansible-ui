@@ -1,41 +1,35 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import useSWRInfinite from 'swr/infinite';
-import useSWR from 'swr';
 import { PageDetail, PageDetails, DateTimeCell, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
-import { ItemsResponse, requestGet, swrOptions, useFetcher } from '../../../../common/crud/Data';
 import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
+import { useMemo } from 'react';
+import { useGetAllPagesAWX } from '../../../../common/crud/useGetAllPagesAWX';
+import styled from 'styled-components';
+import { useGetItem } from '../../../../common/crud/useGetItem';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { AwxError } from '../../../common/AwxError';
 
+const PluginFieldText = styled.p`
+  margin-top: 10px;
+`;
 export function CredentialDetails(props: { credential: Credential }) {
   const { t } = useTranslation();
   const { credential } = props;
   const history = useNavigate();
 
   const { summary_fields, inputs: credentialInputs } = credential;
-  const fetcher = useFetcher();
-  const getKey: (
-    pageIndex: number,
-    previousPageData: ItemsResponse<CredentialInputSource>
-  ) => string | null = (pageIndex, previousPageData) => {
-    if (previousPageData && !previousPageData.next) return null;
-    return `/api/v2/credentials/${credential.id}/input_sources/?page=${
-      pageIndex + 1
-    }&page_size=200`;
-  };
 
-  const { data } = useSWRInfinite<ItemsResponse<CredentialInputSource>>(getKey, fetcher, {
-    initialSize: 200,
-  });
-
-  const { data: credentialType } = useSWR<CredentialType>(
-    `/api/v2/credential_types/${summary_fields.credential_type.id.toString()}/`,
-    requestGet,
-    swrOptions
+  const {
+    data: credentialType,
+    error,
+    refresh,
+  } = useGetItem<CredentialType>(
+    `/api/v2/credential_types`,
+    summary_fields.credential_type.id.toString()
   );
   const inputLabelsAndValues: {
     id: string;
@@ -55,46 +49,50 @@ export function CredentialDetails(props: { credential: Credential }) {
       })
     );
   }
-  const inputSources = data?.reduce(
-    (items: CredentialInputSource[], page: ItemsResponse<CredentialInputSource>) => {
-      if (Array.isArray(page.results)) {
-        return [...items, ...page.results];
-      }
-      return items;
-    },
-    []
+
+  const {
+    items: inputSources,
+    error: inputSourcesError,
+    isLoading: isInputSourceLoading,
+    refresh: refreshInputSources,
+  } = useGetAllPagesAWX<CredentialInputSource>(
+    `/api/v2/credentials/${credential.id}/input_sources/`
   );
 
-  const inputSourcesMap = inputSources?.reduce(
-    (map: Record<string, CredentialInputSource>, inputSource) => {
+  const inputSourcesMap = useMemo(() => {
+    return inputSources?.reduce((map: Record<string, CredentialInputSource>, inputSource) => {
       map[inputSource.input_field_name] = inputSource;
       return map;
-    },
-    {}
-  );
+    }, {});
+  }, [inputSources]);
+
+  if (error)
+    return (
+      <AwxError
+        error={error || inputSourcesError}
+        handleRefresh={error ? refresh : refreshInputSources}
+      />
+    );
+  if (isInputSourceLoading) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{credential.name}</PageDetail>
       <PageDetail label={t('Description')}>{credential.description}</PageDetail>
       <PageDetail label={t('Organization')}>
-        <TextCell
-          text={credential.summary_fields?.organization?.name}
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            (credential.summary_fields?.organization?.id ?? '').toString()
-          )}
-        />
+        {credential.summary_fields.organization && (
+          <TextCell
+            text={credential.summary_fields?.organization?.name}
+            to={RouteObj.OrganizationDetails.replace(
+              ':id',
+              (credential.summary_fields?.organization?.id ?? '').toString()
+            )}
+          />
+        )}
       </PageDetail>
       <PageDetail label={t('Credential type')}>
-        <TextCell
-          text={credential.summary_fields?.credential_type?.name}
-          to={RouteObj.CredentialTypeDetails.replace(
-            ':id',
-            (credential.summary_fields?.credential_type?.id ?? '').toString()
-          )}
-        />
+        {credential.summary_fields?.credential_type?.name}
       </PageDetail>
-      {inputSources &&
+      {inputSourcesMap &&
         credentialInputs &&
         (credentialType?.inputs.fields || []).map((field, i) => (
           <CredentialTypeDetail
@@ -134,6 +132,11 @@ export function CredentialDetails(props: { credential: Credential }) {
           }
         />
       </PageDetail>
+      {credentialInputs && inputSources && Object.keys(inputSources).length > 0 && (
+        <PluginFieldText>
+          {t`* This field will be retrieved from an external secret management system using the specified credential.`}
+        </PluginFieldText>
+      )}
     </PageDetails>
   );
 }
