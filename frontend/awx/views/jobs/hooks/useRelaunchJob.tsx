@@ -13,10 +13,7 @@ import {
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobOutputUrl, getRelaunchEndpoint } from '../jobUtils';
 
-export function useRelaunchJob(
-  onComplete: (jobs: UnifiedJob[]) => void,
-  jobRelaunchParams?: JobRelaunch
-) {
+export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
   const navigate = useNavigate();
