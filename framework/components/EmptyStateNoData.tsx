@@ -16,6 +16,7 @@ export function EmptyStateNoData(props: {
       description={description}
       button={button}
       variant={variant}
+      style={{ paddingTop: '48px' }}
     />
   );
 }

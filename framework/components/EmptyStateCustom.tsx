@@ -13,20 +13,14 @@ export function EmptyStateCustom(props: {
   description: ReactNode;
   icon?: ComponentClass;
   button?: ReactElement;
-<<<<<<< HEAD
   footNote?: string;
   image?: ReactElement;
-}) {
-  const { title, description, icon, button, footNote, image } = props;
-  return (
-    <EmptyState variant={EmptyStateVariant.full}>
-=======
   variant?: ReactNode;
+  style?: ReactNode;
 }) {
-  const { title, description, icon, button, variant } = props;
+  const { title, description, icon, button, footNote, image, variant, style } = props;
   return (
-    <EmptyState variant={variant || EmptyStateVariant.small}>
->>>>>>> c58efa8c (add empty state variant back)
+    <EmptyState variant={variant || EmptyStateVariant.full} style={style}>
       {icon && <EmptyStateIcon icon={icon} />}
       <Title headingLevel="h4" size="lg">
         {title}
