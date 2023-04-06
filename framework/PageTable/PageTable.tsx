@@ -191,14 +191,18 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
 
     if (descriptionColumns.length) {
-      expandedRowFunctions.push((item) => (
-        <PageDetailsFromColumns
-          item={item}
-          columns={descriptionColumns}
-          disablePadding
-          numberOfColumns="single"
-        />
-      ));
+      for (const descriptionColumn of descriptionColumns) {
+        if ('value' in descriptionColumn) {
+          expandedRowFunctions.push((item) => {
+            const value = descriptionColumn.value?.(item);
+            if (value) {
+              return <div>{value}</div>;
+            }
+          });
+        } else {
+          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
+        }
+      }
     }
 
     if (expandedRowColumns.length) {
@@ -221,9 +225,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     const newExpandedRow = (item: T) => (
       <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn, index) => (
-          <div key={index}>{fn(item)}</div>
-        ))}
+        {expandedRowFunctions.map((fn) => fn(item))}
       </Stack>
     );
 
