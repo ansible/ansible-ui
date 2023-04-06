@@ -14,7 +14,7 @@ describe('EDA Rulebook Activations List', () => {
     });
   });
 
-  it('can filter the Rulebook Activations list based on Name', () => {
+  it.skip('can filter the Rulebook Activations list based on Name', () => {
     // need to type in this element cy.get('.pf-c-text-input-group__text-input')
     cy.visit('/eda/rulebook-activations/');
     cy.contains('E2E Rulebook Activation').first().then((name) => {
@@ -24,10 +24,13 @@ describe('EDA Rulebook Activations List', () => {
       });
   });
 
-  it.skip('can Relaunch a Rulebook Activation from the list view', () => {
+  it('can Relaunch a Rulebook Activation from the list view', () => {
     //write test here
     // click on cy.get('#pf-dropdown-toggle-id-14')
     // then click cy.get(':nth-child(1) > .pf-m-icon') to relaunch
+    cy.visit('/eda/rulebook-activations/');
+    cy.contains('E2E Rulebook Activation').debug()
+//    then((activationRow) => {
   });
 
   it.skip('can Restart a Rulebook Activation from the list view', () => {

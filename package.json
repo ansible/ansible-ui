@@ -171,7 +171,7 @@
     "husky": "8.0.3",
     "nodemon": "2.0.22",
     "pino-zen": "2.0.8",
-    "prettier": "2.8.7",
+    "prettier": "^2.8.7",
     "ts-node": "10.9.1",
     "wait-on": "7.0.1",
     "webpack-dev-server": "4.13.2"
