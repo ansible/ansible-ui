@@ -14,7 +14,7 @@ import currencyFormatter from '../../utilities/currencyFormatter';
 import percentageFormatter from '../../utilities/percentageFormatter';
 import timeFormatter from '../../utilities/timeFormatter';
 import { ChartLegendEntry } from 'react-json-chart-builder';
-import ExpandedRowContents from './ExplandedRowContents';
+import ExpandedRowContents from './ExpandedRowContents';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
