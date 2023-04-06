@@ -11,8 +11,7 @@ import { global_success_color_200 as globalSuccessColor200 } from '@patternfly/r
 import { global_disabled_color_200 as globalDisabledColor200 } from '@patternfly/react-tokens';
 
 import currencyFormatter from '../../utilities/currencyFormatter';
-import percentageFormatter from '../../utilities/percentageFormatter';
-import timeFormatter from '../../utilities/timeFormatter';
+import numberFormatter from '../../utilities/numberFormatter';
 import { ChartLegendEntry } from 'react-json-chart-builder';
 import ExpandedRowContents from './ExpandedRowContents';
 import { useTranslation } from 'react-i18next';
@@ -37,10 +36,10 @@ const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow 
     let label;
     switch (key) {
       case 'elapsed':
-        label = timeFormatter(value) + ' seconds';
+        label = numberFormatter(value) + ' seconds';
         break;
       case 'template_automation_percentage':
-        label = percentageFormatter(value) + '%';
+        label = numberFormatter(value) + '%';
         break;
       case 'successful_hosts_savings':
       case 'failed_hosts_costs':

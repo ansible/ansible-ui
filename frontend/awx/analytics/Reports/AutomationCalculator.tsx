@@ -30,11 +30,12 @@ import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
 import FilterableToolbarItem from '../components/Toolbar/Toolbar';
 import currencyFormatter from '../utilities/currencyFormatter';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ApiOptionsType, AttributeType } from '../components/Toolbar/types';
 import { useTranslation } from 'react-i18next';
 import { ChartSchemaElement, ChartLegendEntry } from 'react-json-chart-builder';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
+import { AnalyticsErrorState } from './ErrorStates';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -80,6 +81,8 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const schema = props.schema;
+
+  const [specificError, setSpecificError] = useState<string>('');
 
   const defaultParams: ParamsType = {
     status: ['successful'],
@@ -162,7 +165,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     return page === '0' ? 0 : (parseInt(page) - 1) * parseInt(perPage.toString());
   };
 
-  const { data, isLoading } = useSWR<ReportDataResponse, boolean, any>(
+  const { data, isLoading, error } = useSWR<ReportDataResponse, boolean, any>(
     `/api/v2/analytics/roi_templates/?limit=${searchParams.get('limit') || '6'}&offset=${getOffset(
       getParams().offset.toString(),
       getParams().limit
@@ -176,6 +179,25 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     isLoading: optionsIsLoading,
     error: optionsError,
   } = useSWR<ApiOptionsType, boolean, any>(`/api/v2/analytics/roi_templates_options/`, requestPost);
+
+  useEffect(() => {
+    if (!error && !optionsError) {
+      setSpecificError('');
+    } else {
+      const err = error || optionsError;
+      // @ts-expect-error: Cannot override type coming from useSWR
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      err?.response
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .clone()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .json()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        .then((r: { error?: { keyword?: string } }) =>
+          setSpecificError(r?.error?.keyword || 'unknown')
+        );
+    }
+  }, [error, optionsError]);
 
   // only interval <0,25> is supported by API
   const defaultPerPageOptions = [
@@ -295,7 +317,9 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       </StackItem>
     </Stack>
   );
-  return (
+  return !!error || !!optionsError || !!specificError ? (
+    <AnalyticsErrorState error={specificError} />
+  ) : (
     <>
       <Toolbar
         className="border-bottom dark-2 pf-m-toggle-group-container"

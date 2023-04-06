@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import PropTypes from 'prop-types';
 import { DatePicker } from '@patternfly/react-core';
 import { optionsForCategories } from '../../constants';
 
@@ -30,13 +29,6 @@ const DateInput: FunctionComponent<Props> = ({
       {...otherProps}
     />
   );
-};
-
-DateInput.propTypes = {
-  categoryKey: PropTypes.string.isRequired,
-  value: PropTypes.string,
-  setValue: PropTypes.func.isRequired,
-  otherProps: PropTypes.any,
 };
 
 export default DateInput;
