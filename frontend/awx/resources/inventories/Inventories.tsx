@@ -107,9 +107,21 @@ export function useInventoriesFilters() {
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
+
   const nameClick = useCallback(
-    (inventory: Inventory) =>
-      navigate(RouteObj.InventoryDetails.replace(':id', inventory.id.toString())),
+    (inventory: Inventory) => {
+      const kinds: { [key: string]: string } = {
+        '': 'inventory',
+        smart: 'smart_inventory',
+        constructed: 'constructed_inventory',
+      };
+      return navigate(
+        RouteObj.InventoryDetails.replace(':inventory_type', kinds[inventory.kind]).replace(
+          ':id',
+          inventory.id.toString()
+        )
+      );
+    },
     [navigate]
   );
   const nameColumn = useNameColumn({
