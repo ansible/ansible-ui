@@ -33,6 +33,11 @@ export function JobExpanded(job: UnifiedJob) {
     () => (job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''),
     [job]
   );
+  const inventoryUrlPaths: { [key: string]: string } = {
+    '': 'inventory',
+    smart: 'smart_inventory',
+    constructed: 'constructed_inventory',
+  };
 
   return (
     <PageDetails disablePadding>
@@ -89,13 +94,12 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.inventory && (
-        // TODO - update route to inventory details based on inventory kind (smart/constructed)
         <PageDetail label={t`Inventory`}>
           <Link
             to={RouteObj.InventoryDetails.replace(
-              ':id',
-              job.summary_fields?.inventory.id.toString()
-            )}
+              ':inventory_type',
+              inventoryUrlPaths[job.summary_fields?.inventory.kind]
+            ).replace(':id', job.summary_fields?.inventory.id.toString())}
           >
             {job.summary_fields?.inventory.name}
           </Link>

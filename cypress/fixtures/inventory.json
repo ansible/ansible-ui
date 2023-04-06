@@ -1,0 +1,104 @@
+{
+  "id": 9,
+  "type": "inventory",
+  "url": "/api/v2/inventories/9/",
+  "related": {
+    "created_by": "/api/v2/users/1/",
+    "modified_by": "/api/v2/users/1/",
+    "hosts": "/api/v2/inventories/9/hosts/",
+    "groups": "/api/v2/inventories/9/groups/",
+    "root_groups": "/api/v2/inventories/9/root_groups/",
+    "variable_data": "/api/v2/inventories/9/variable_data/",
+    "script": "/api/v2/inventories/9/script/",
+    "tree": "/api/v2/inventories/9/tree/",
+    "inventory_sources": "/api/v2/inventories/9/inventory_sources/",
+    "update_inventory_sources": "/api/v2/inventories/9/update_inventory_sources/",
+    "activity_stream": "/api/v2/inventories/9/activity_stream/",
+    "job_templates": "/api/v2/inventories/9/job_templates/",
+    "ad_hoc_commands": "/api/v2/inventories/9/ad_hoc_commands/",
+    "access_list": "/api/v2/inventories/9/access_list/",
+    "object_roles": "/api/v2/inventories/9/object_roles/",
+    "instance_groups": "/api/v2/inventories/9/instance_groups/",
+    "copy": "/api/v2/inventories/9/copy/",
+    "labels": "/api/v2/inventories/9/labels/",
+    "organization": "/api/v2/organizations/1/"
+  },
+  "summary_fields": {
+    "organization": {
+      "id": 1,
+      "name": "Default",
+      "description": ""
+    },
+    "created_by": {
+      "id": 1,
+      "username": "awx",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 1,
+      "username": "awx",
+      "first_name": "",
+      "last_name": ""
+    },
+    "object_roles": {
+      "admin_role": {
+        "description": "Can manage all aspects of the inventory",
+        "name": "Admin",
+        "id": 483
+      },
+      "update_role": {
+        "description": "May update the inventory",
+        "name": "Update",
+        "id": 484
+      },
+      "adhoc_role": {
+        "description": "May run ad hoc commands on the inventory",
+        "name": "Ad Hoc",
+        "id": 485
+      },
+      "use_role": {
+        "description": "Can use the inventory in a job template",
+        "name": "Use",
+        "id": 486
+      },
+      "read_role": {
+        "description": "May view settings for the inventory",
+        "name": "Read",
+        "id": 487
+      }
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true,
+      "copy": true,
+      "adhoc": true
+    },
+    "labels": {
+      "count": 0,
+      "results": [
+        {
+          "id": 1,
+          "name": "test label"
+        }
+      ]
+    }
+  },
+  "created": "2023-02-08T21:10:41.447053Z",
+  "modified": "2023-02-08T21:10:41.447067Z",
+  "name": "test inventory",
+  "description": "",
+  "organization": 1,
+  "kind": "",
+  "host_filter": null,
+  "variables": "---",
+  "has_active_failures": false,
+  "total_hosts": 1,
+  "hosts_with_active_failures": 0,
+  "total_groups": 0,
+  "has_inventory_sources": false,
+  "total_inventory_sources": 0,
+  "inventory_sources_with_failures": 0,
+  "pending_deletion": false,
+  "prevent_instance_group_fallback": false
+}

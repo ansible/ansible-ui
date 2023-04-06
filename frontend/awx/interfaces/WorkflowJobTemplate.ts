@@ -21,7 +21,20 @@ export interface WorkflowJobTemplate
       cloud: boolean;
       credential_type_id: number;
     };
-    inventory?: { name: string; id: number };
+    inventory?: {
+      name: string;
+      id: number;
+      description: string;
+      has_active_failures: boolean;
+      total_hosts: number;
+      hosts_with_active_failures: number;
+      total_groups: number;
+      has_inventory_sources: boolean;
+      total_inventory_sources: number;
+      inventory_sources_with_failures: number;
+      organization_id: number;
+      kind: '' | 'smart' | 'constructed';
+    };
     organization?: {
       id: string;
       name: string;

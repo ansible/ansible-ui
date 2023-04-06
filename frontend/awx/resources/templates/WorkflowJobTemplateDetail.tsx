@@ -124,6 +124,12 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
 
   const showOptionsField = template.allow_simultaneous || template.webhook_service;
 
+  const inventoryUrlPaths: { [key: string]: string } = {
+    '': 'inventory',
+    smart: 'smart_inventory',
+    constructed: 'constructed_inventory',
+  };
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{template.name}</PageDetail>
@@ -142,9 +148,9 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         <Link
           to={RouteObj.InventoryDetails.replace(
-            ':id',
-            summaryFields.inventory?.id.toString() ?? ''
-          )}
+            ':inventory_type',
+            inventoryUrlPaths[summaryFields.inventory?.kind || '']
+          ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
         >
           {summaryFields.inventory?.name}
         </Link>
