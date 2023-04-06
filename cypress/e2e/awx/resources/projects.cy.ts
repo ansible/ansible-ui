@@ -125,36 +125,26 @@ describe('projects', () => {
     });
   });
   it('can sync project from project details page', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-      scm_url: 'foo',
-    }).then((testProject) => {
+    cy.createAwxProject().then((project) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
-      cy.hasTitle(testProject.name);
+      cy.clickRow(project.name);
+      cy.hasTitle(project.name);
       cy.clickButton(/^Sync project$/);
-      cy.hasAlert(`Syncing ${testProject.name}`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
+      cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
     });
   });
   it('can sync project from projects list table row kebab menu', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-      scm_url: 'foo',
-    }).then((testProject) => {
+    cy.createAwxProject().then((project) => {
       cy.navigateTo(/^Projects$/);
-      cy.filterByText(testProject.name);
-      cy.contains('td', testProject.name)
+      cy.filterByText(project.name);
+      cy.contains('td', project.name)
         .parent()
         .within(() => {
           cy.get('.sync-project').click();
         });
-      cy.hasAlert(`Syncing ${testProject.name}`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
+      cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
     });
   });
   it('can cancel project sync from projects list table row kebab menu', () => {
@@ -173,6 +163,7 @@ describe('projects', () => {
         });
       cy.get('#confirm').click();
       cy.clickButton(/^Cancel project sync/);
+      cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.filterByText(testProject.name);
       cy.get('td[data-label="Status"]').should('contain', 'Canceled');
@@ -241,6 +232,7 @@ describe('projects', () => {
       cy.clickToolbarAction(/^Cancel selected projects$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Cancel project sync/);
+      cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.filterByText(testProject.name);
       cy.get('td[data-label="Status"]').should('contain', 'Canceled');

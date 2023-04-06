@@ -281,6 +281,14 @@ describe('projects.cy.ts', () => {
             .should('have.attr', 'aria-disabled', 'true');
         });
     });
+    it('Sync project kebab button is disabled for project with active sync status', () => {
+      cy.mount(<Projects />);
+      cy.contains('td', ' Project 10 Org 2')
+        .parent()
+        .within(() => {
+          cy.get('.sync-project').should('have.attr', 'aria-disabled', 'true');
+        });
+    });
     it('Cancel project sync kebab button is visible for project with active sync status and is hidden for project with non active sync status', () => {
       cy.mount(<Projects />);
       // select project with active sync status

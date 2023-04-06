@@ -38,8 +38,12 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
     const cannotSyncProject = (project: Project) => {
       if (project.scm_type === '') {
         return t(`Cannot sync project`);
-      } else if (project.scm_type !== '' && !project?.summary_fields?.user_capabilities?.start) {
+      }
+      if (project.scm_type !== '' && !project?.summary_fields?.user_capabilities?.start) {
         return t(`The project cannot be synced due to insufficient permission`);
+      }
+      if (['pending', 'waiting', 'running'].includes(project.status)) {
+        return t(`The project cannot be synced because a sync job is currently running`);
       }
       return '';
     };
