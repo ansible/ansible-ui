@@ -1,11 +1,10 @@
 //Tests a user's ability to perform certain actions on the Rulebook Activations list in the EDA UI.
-// import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Rulebook Activations List', () => {
   before(() => {
     cy.edaLogin();
     cy.createEdaProject().then((edaProject) => {
-      cy.optionsWait(2000);
+      cy.waitEdaProjectSync(edaProject);
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         if (edaRuleBooks) {
           cy.createEdaRulebookActivation(edaRuleBooks[0]);
@@ -17,11 +16,19 @@ describe('EDA Rulebook Activations List', () => {
   it.skip('can filter the Rulebook Activations list based on Name', () => {
     // need to type in this element cy.get('.pf-c-text-input-group__text-input')
     cy.visit('/eda/rulebook-activations/');
-    cy.contains('E2E Rulebook Activation').first().then((name) => {
-      const unique_activation_id = name.text().split(" ").slice(-1).pop()
-      cy.get('.pf-c-text-input-group__text-input').type(unique_activation_id + "{enter}");
-      cy.get('div > a').filter(':contains("E2E Rulebook Activation")').should('have.length', 1)
-      });
+    cy.contains('E2E Rulebook Activation')
+      .first()
+      .then((name) => {
+        if (name) {
+          const unique_activation_id = name
+            .text()
+            .split(" ")
+            .slice(-1)
+            .pop()
+          cy.get('.pf-c-text-input-group__text-input').type(unique_activation_id + "{enter}");
+          cy.get('div > a').filter(':contains("E2E Rulebook Activation")').should('have.length', 1)
+        }
+    });
   });
 
   it('can Relaunch a Rulebook Activation from the list view', () => {
@@ -29,7 +36,7 @@ describe('EDA Rulebook Activations List', () => {
     // click on cy.get('#pf-dropdown-toggle-id-14')
     // then click cy.get(':nth-child(1) > .pf-m-icon') to relaunch
     cy.visit('/eda/rulebook-activations/');
-    cy.contains('E2E Rulebook Activation').debug()
+    cy.contains('E2E Rulebook Activation').debug();
 //    then((activationRow) => {
   });
 
