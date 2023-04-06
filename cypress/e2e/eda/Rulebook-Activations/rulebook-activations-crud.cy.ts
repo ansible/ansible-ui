@@ -6,9 +6,9 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
-  it.only('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.optionsWait(2000);
+      cy.waitEdaProjectSync(edaProject);
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         const edaRulebook = edaRuleBooks[0];
         const name = 'E2E Rulebook Activation ' + randomString(4);
@@ -17,7 +17,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
         cy.get('h1').should('contain', 'Create rulebook activation');
         cy.typeByLabel(/^Name$/, name);
         cy.typeByLabel(/^Description$/, 'This is a new rulebook activation.');
-        cy.selectByLabel(/^Rulebook$/, edaRulebook.name, { disableSearch: true });
+        cy.selectByLabel(/^Rulebook$/, edaRulebook.name);
         cy.selectFromDropdown(/^Restart policy$/, 'Always');
         cy.selectFromDropdown(/^Project$/, edaProject.name);
         cy.clickButton(/^Add rulebook activation$/);
