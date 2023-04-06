@@ -15,8 +15,8 @@ export function EmptyStateCustom(props: {
   button?: ReactElement;
   footNote?: string;
   image?: ReactElement;
-  variant?: ReactNode;
-  style?: ReactNode;
+  variant?: 'xs' | 'xl' | 'small' | 'large' | 'full' | undefined;
+  style?: React.CSSProperties;
 }) {
   const { title, description, icon, button, footNote, image, variant, style } = props;
   return (

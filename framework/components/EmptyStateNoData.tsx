@@ -6,7 +6,7 @@ export function EmptyStateNoData(props: {
   button?: ReactElement;
   title: string;
   description: ReactNode;
-  variant: ReactNode;
+  variant: 'xs' | 'xl' | 'small' | 'large' | 'full' | undefined;
 }) {
   const { button, description, title, variant } = props;
   return (
