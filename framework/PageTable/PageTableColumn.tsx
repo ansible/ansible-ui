@@ -95,6 +95,7 @@ interface ITableColumnCommon<T extends object> {
   /** Indicates the default sort direction for the column.
    * Defaults to 'asc'.
    * Dates need to default to 'desc'. Should be handled if using the DateTime column type.
+   * TODO - add helper function to get default sort for a column type
    */
   defaultSortDirection?: 'asc' | 'desc';
 
@@ -131,8 +132,8 @@ export interface ITableColumnTypeText<T extends object> extends ITableColumnComm
   value: CellFn<T, string | null | undefined>;
 }
 
-// TODO - default ITableColumnTypeDateTime columns maxWidth.
-// TODO - default option table, card, list to 'description' and modal to 'hidden'.
+// TODO - default ITableColumnTypeDateTime columns maxWidth. - this will need a helper function called from the table getColumnWidth(column)
+// TODO - default option table, card, list to 'description' and modal to 'hidden'. - this will need a helper function
 export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
   type: 'description';
   value: CellFn<T, string | undefined | null>;
@@ -149,7 +150,7 @@ export interface ITableColumnTypeCount<T extends object> extends ITableColumnCom
 export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
   type: 'labels';
   value: CellFn<T, string[] | undefined>;
-  // TODO add use option indicating how many label to show by default
+  // TODO add use option indicating how many labels to show by default
 }
 
 // TODO - default ITableColumnTypeDateTime columns to sort 'desc'.
@@ -178,14 +179,16 @@ export function TableColumnCell<T extends object>(props: {
   switch (column.type) {
     case 'text':
       return <TextCell text={column.value(item)} />;
-    case 'labels':
-      return <LabelsCell labels={column.value(item) ?? []} />;
     case 'description':
       return <TextCell text={column.value(item)} />;
-    case 'count':
-      return <>{column.value(item) ?? '-'}</>;
     case 'datetime':
+      // TODO - handle format from column options
       return <DateTimeCell format="since" value={column.value(item)} />;
+    case 'count':
+      // TODO - handle format from column options
+      return <>{column.value(item) ?? '-'}</>;
+    case 'labels':
+      return <LabelsCell labels={column.value(item) ?? []} />;
     default:
       return <>{column.cell(item)}</>;
   }

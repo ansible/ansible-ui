@@ -54,15 +54,18 @@ import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
 
 export type PageTableProps<T extends object> = {
+  // TODO table id to save table settings
+  // id: string
+
   keyFn: (item: T) => string | number;
 
   itemCount?: number;
+
+  /** The current page of items to show. If undefined, then the table shows a loading state. */
   pageItems: T[] | undefined;
 
   toolbarActions?: IPageAction<T>[];
-
   tableColumns: ITableColumn<T>[];
-
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
@@ -80,6 +83,8 @@ export type PageTableProps<T extends object> = {
   perPage: number;
   setPage: (page: number) => void;
   setPerPage: (perPage: number) => void;
+
+  /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
@@ -89,8 +94,15 @@ export type PageTableProps<T extends object> = {
   unselectItem?: (item: T) => void;
   selectItems?: (items: T[]) => void;
   unselectAll?: () => void;
+
+  /**
+   * Callback where if defined, enables single selection of items in the table.
+   */
+  // TODO rename to onSingleSelect
   onSelect?: (item: T) => void;
-  selectNoneText?: string;
+
+  // TODO make error state a react component? <TableError /> What to do if not provided?
+  // TODO make empty state a react component? <TableEmpty /> What to do if not provided?
 
   errorStateTitle: string;
   error?: Error;
@@ -103,20 +115,40 @@ export type PageTableProps<T extends object> = {
   emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
   emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
+
+  /**
+   * Enables multi-selection of items even though there are no actions that are bulk actions.
+   * This is used in the bulk select dialog where the selected items are used outside the table.
+   */
+  // TODO rename to showMultiSelect
   showSelect?: boolean;
 
   disableTableView?: boolean;
   disableListView?: boolean;
   disableCardView?: boolean;
 
+  /** Disables column management for the table. Used for tables in modals. */
+  // TODO - only enable column management on tables with id
   disableColumnManagement?: boolean;
 
+  // TODO remember user setting so that when they return to this table it uses their last setting
   defaultTableView?: PageTableViewType;
 
+  /**
+   * Disables the padding that shows up on large screens around the table.
+   * Used in modals and other places.
+   */
+  // TODO - There is a request to add a user setting to allow users to turn off padding.
   disableBodyPadding?: boolean;
 
+  /** Default subtitle is used in list and acrd views as the default subtitle if there is no subtitle column */
   defaultSubtitle?: ReactNode;
 
+  /**
+   * A render function that if defined, enables expanded row content.
+   * Columns that are marked as expanded content will enable the expanded row
+   * and will add to the content returned from the expandedRow render function.
+   */
   expandedRow?: (item: T) => ReactNode;
 };
 
@@ -691,8 +723,7 @@ function TableCells<T extends object>(props: {
             right: 0,
             padding: 0,
             paddingRight: 0,
-            // ZIndex 400 is needed for PF table stick headers
-            zIndex: actionsExpanded ? 400 : undefined,
+            zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >
