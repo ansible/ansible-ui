@@ -1,4 +1,4 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { AlertProps } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,23 +20,27 @@ export function useInventoryActions(options: {
   const alertToaster = usePageAlertToaster();
 
   return useMemo<IPageAction<Inventory>[]>(() => {
-    const cannotDeleteInventory = (inventory: Inventory) =>
+    const cannotDeleteInventory = (inventory: Inventory): string =>
       inventory?.summary_fields?.user_capabilities?.delete
         ? ''
         : t(`The inventory cannot be deleted due to insufficient permission`);
-    const cannotEditInventory = (inventory: Inventory) =>
+    const cannotEditInventory = (inventory: Inventory): string =>
       inventory?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(`The inventory cannot be edited due to insufficient permission`);
-    const cannotCopyInventory = (inventory: Inventory) =>
-      inventory?.summary_fields?.user_capabilities?.copy
-        ? ''
-        : t(`The inventory cannot be copied due to insufficient permission`);
+    const cannotCopyInventory = (inventory: Inventory): string => {
+      if (!inventory?.summary_fields?.user_capabilities?.copy) {
+        return t(`The inventory cannot be copied due to insufficient permission`);
+      } else if (inventory?.has_inventory_sources) {
+        return t(`Inventories with sources cannot be copied`);
+      } else {
+        return '';
+      }
+    };
 
     return [
       {
         type: PageActionType.single,
-        variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
