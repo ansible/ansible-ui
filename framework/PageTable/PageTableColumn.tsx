@@ -3,8 +3,8 @@ import { DateTimeCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
 
-/** Table column options for controlling how the column displays in a table. */
-export enum TableColumnTableOption {
+/** Column options for controlling how the column displays in a table. */
+export enum ColumnTableOption {
   /** Key indicates the column is the key for the item and should not be allowed to be hidden by the user. */
   Key = 'key',
 
@@ -21,8 +21,8 @@ export enum TableColumnTableOption {
   Id = 'id',
 }
 
-/** Table column options for controlling how the column displays in a list. */
-export enum TableColumnListOption {
+/** Column options for controlling how the column displays in a list. */
+export enum ColumnListOption {
   /** Name indicates the column should show up as the name for the item in the list. */
   Name = 'name',
 
@@ -42,8 +42,8 @@ export enum TableColumnListOption {
   Secondary = 'secondary',
 }
 
-/** Table column options for controlling how the column displays in a card. */
-export enum TableColumnCardOption {
+/** Column options for controlling how the column displays in a card. */
+export enum ColumnCardOption {
   /** Name indicates the column should show up as the name for the item in the card. */
   Name = 'name',
 
@@ -57,8 +57,8 @@ export enum TableColumnCardOption {
   Hidden = 'hidden',
 }
 
-/** Table column options for controlling how the column displays in a card. */
-export enum TableColumnModalOption {
+/** Column options for controlling how the column displays in a card. */
+export enum ColumnModalOption {
   /** Hidden hides the column in modals. */
   Hidden = 'hidden',
 }
@@ -105,16 +105,18 @@ interface ITableColumnCommon<T extends object> {
   icon?: (item: T) => ReactNode;
 
   /** Table column options for controlling how the column displays in a table. */
-  table?: TableColumnTableOption;
-
-  /** Table column options for controlling how the column displays in a card. */
-  card?: 'name' | 'subtitle' | 'description' | 'hidden';
+  table?: ColumnTableOption;
 
   /** Table column options for controlling how the column displays in a list. */
   list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
+  // TODO update to ColumnListOption - will be a lot of changes - will need to be its own PR
+
+  /** Table column options for controlling how the column displays in a card. */
+  card?: 'name' | 'subtitle' | 'description' | 'hidden';
+  // TODO update to ColumnCardOption - will be a lot of changes - will need to be its own PR
 
   /** Table column options for controlling how the column displays in a modal. */
-  modal?: TableColumnModalOption;
+  modal?: ColumnModalOption;
 }
 
 //** Column that renders using a render function that returns a ReactNode. */
@@ -189,45 +191,45 @@ export function TableColumnCell<T extends object>(props: {
   }
 }
 
-/** Hook to return only the columns that should be visible in the table */
+/** Hook to return only the columns that should be visible in the table. */
 export function useVisibleTableColumns<T extends object>(
   columns: ITableColumn<T>[],
 
-  /** Indicates if the columns should be filtered for the expanded row */
+  /** Indicates if the columns should be filtered for the expanded row. */
   expandedRow?: boolean
 ) {
   return useMemo(
     () =>
       columns.filter((column) => {
-        if (column.table === TableColumnTableOption.Hidden) return false;
-        if (expandedRow && column.table === TableColumnTableOption.Expanded) return true;
-        if (!expandedRow && column.table === TableColumnTableOption.Expanded) return false;
+        if (column.table === ColumnTableOption.Hidden) return false;
+        if (expandedRow && column.table === ColumnTableOption.Expanded) return true;
+        if (!expandedRow && column.table === ColumnTableOption.Expanded) return false;
         return true;
       }),
     [columns, expandedRow]
   );
 }
 
-/** Hook to return only the columns that should be visible in the list */
+/** Hook to return only the columns that should be visible in the list. */
 export function useVisibleListColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.list !== TableColumnListOption.Hidden),
+    () => columns.filter((column) => column.list !== ColumnListOption.Hidden),
     [columns]
   );
 }
 
-/** Hook to return only the columns that should be visible in the cards */
+/** Hook to return only the columns that should be visible in the cards. */
 export function useVisibleCardColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.card !== TableColumnCardOption.Hidden),
+    () => columns.filter((column) => column.card !== ColumnCardOption.Hidden),
     [columns]
   );
 }
 
-/** Hook to return only the columns that should be visible in a modal */
+/** Hook to return only the columns that should be visible in a modal. */
 export function useVisibleModalColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.modal !== TableColumnModalOption.Hidden),
+    () => columns.filter((column) => column.modal !== ColumnModalOption.Hidden),
     [columns]
   );
 }
