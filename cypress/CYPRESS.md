@@ -41,9 +41,9 @@ graph LR;
    ##### EDA
 
    | Environment Variable      | Description                                                                                                                      |
-   | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+   | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
    | `CYPRESS_EDA_SERVER`      | URL of the EDA server to run E2E tests against. `Default: <https://localhost:8000>`                                              |
-   | `CYPRESS_baseUrl`       | | Same as `CYPRESS_EDA_SERVER` in most (all?) cases.                                                                                 |
+   | `CYPRESS_baseUrl`         |                                                                                                                                  | Same as `CYPRESS_EDA_SERVER` in most (all?) cases. |
    | `CYPRESS_EDA_USERNAME`    | username for logging into the EDA server. `Default: testuser`                                                                    |
    | `CYPRESS_EDA_PASSWORD`    | password for logging into the EDA server. `Default: testpass`                                                                    |
    | `CYPRESS_TEST_STANDALONE` | flag to indicate if UI should be tested standalone. (Login via route `/login` instead of `/automation-servers`) `Default: false` |

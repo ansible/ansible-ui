@@ -20,15 +20,11 @@ describe('EDA Rulebook Activations List', () => {
       .first()
       .then((name) => {
         if (name) {
-          const unique_activation_id = name
-            .text()
-            .split(" ")
-            .slice(-1)
-            .pop()
-          cy.get('.pf-c-text-input-group__text-input').type(unique_activation_id + "{enter}");
-          cy.get('div > a').filter(':contains("E2E Rulebook Activation")').should('have.length', 1)
+          const unique_activation_id = name.text().split(' ').slice(-1).pop();
+          cy.get('.pf-c-text-input-group__text-input').type(unique_activation_id + '{enter}');
+          cy.get('div > a').filter(':contains("E2E Rulebook Activation")').should('have.length', 1);
         }
-    });
+      });
   });
 
   it('can Relaunch a Rulebook Activation from the list view', () => {
@@ -37,7 +33,7 @@ describe('EDA Rulebook Activations List', () => {
     // then click cy.get(':nth-child(1) > .pf-m-icon') to relaunch
     cy.visit('/eda/rulebook-activations/');
     cy.contains('E2E Rulebook Activation').debug();
-//    then((activationRow) => {
+    //    then((activationRow) => {
   });
 
   it.skip('can Restart a Rulebook Activation from the list view', () => {
@@ -58,7 +54,7 @@ describe('EDA Rulebook Activations List', () => {
     //write test here
     // add a second rulebook activation
     // click on multiple checkmarks cy.get('.pf-c-table__check > label > input')
-    // click on 
+    // click on
     // click on cy.get('.pf-m-icon') to kick off deletion
     // verify that count of cy.get('[data-label="Name"]') is 0 (nothing in table)
     //
