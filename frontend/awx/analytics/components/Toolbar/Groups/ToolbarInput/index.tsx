@@ -9,6 +9,7 @@ import { SelectOptionProps } from '@patternfly/react-core';
 // Todo: unify the interfaces better so we don't have to use any
 // and avoid accidentall wronglt passed props
 interface ComponentMapper {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [x: string]: React.ComponentType<any>;
 }
 
@@ -24,6 +25,7 @@ interface Props {
   selectOptions?: SelectOptionProps[];
   isVisible?: boolean;
   setValue: SetValue;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [x: string]: any;
 }
 

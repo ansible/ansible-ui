@@ -164,7 +164,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
   const getOffset = (page: string, perPage: string | AttributeType): number => {
     return page === '0' ? 0 : (parseInt(page) - 1) * parseInt(perPage.toString());
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, isLoading, error } = useSWR<ReportDataResponse, boolean, any>(
     `/api/v2/analytics/roi_templates/?limit=${searchParams.get('limit') || '6'}&offset=${getOffset(
       getParams().offset.toString(),
@@ -178,6 +178,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     data: options,
     isLoading: optionsIsLoading,
     error: optionsError,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } = useSWR<ApiOptionsType, boolean, any>(`/api/v2/analytics/roi_templates_options/`, requestPost);
 
   useEffect(() => {
@@ -248,6 +249,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       'Label Y',
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const tooltip = `${chartParams.label.toString() || ''} for ${datum.name || ''}: ${

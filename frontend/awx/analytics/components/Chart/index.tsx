@@ -20,6 +20,7 @@ interface Props {
 interface Props {
   x?: number;
   y?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 // eslint-disable-next-line react/prop-types
@@ -75,14 +76,13 @@ const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
     series: [],
     legend: [],
   });
-
   const setChartDataHook = (newChartData: ChartData) => {
-    //TODO set hidden
     setChartData(newChartData);
   };
 
   useEffect(() => {
     setChartData(applyHiddenFilter(convertApiToData(data), chartSeriesHiddenProps));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   return (
     <ChartBuilder

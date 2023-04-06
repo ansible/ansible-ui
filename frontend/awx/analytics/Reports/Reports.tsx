@@ -31,6 +31,7 @@ export interface ReportItemsResponse {
 
 export default function Reports() {
   const activeUser = useActiveUser();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, isLoading, error } = useSWR<ReportItemsResponse, boolean, any>(
     `/api/v2/analytics/report/automation_calculator/`,
     requestGet
