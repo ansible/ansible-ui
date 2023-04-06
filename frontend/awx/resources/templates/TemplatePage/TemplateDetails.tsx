@@ -91,7 +91,7 @@ export function TemplateDetails(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
         <Link
-          to={RouteObj.CredentialDetails.replace(
+          to={RouteObj.CredentialPage.replace(
             ':id',
             summaryFields.webhook_credential?.id?.toString() as string
           )}

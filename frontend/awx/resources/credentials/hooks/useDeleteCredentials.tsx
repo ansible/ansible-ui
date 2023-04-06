@@ -4,9 +4,9 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { Credential } from '../../../interfaces/Credential';
-import { useCredentialsColumns } from '../Credentials';
+import { useCredentialsColumns } from './useCredentialsColumns';
 
-export function useDeleteCredentials(onComplete: (credentials: Credential[]) => void) {
+export function useDeleteCredentials(onComplete?: (credentials: Credential[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useCredentialsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });

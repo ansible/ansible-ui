@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
-import { useDeleteCredentials } from '../useDeleteCredentials';
+import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialActions(options?: { onDeleted: (cred: Credential[]) => void }) {
   const { t } = useTranslation();
