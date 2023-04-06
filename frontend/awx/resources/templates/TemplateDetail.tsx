@@ -29,6 +29,7 @@ import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
+import { useVerbosityString } from '../../common/useVerbosityString';
 import { handleLaunch } from '../../common/util/launchHandlers';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
@@ -136,26 +137,6 @@ export function TemplateDetail() {
   );
 }
 
-// TODO centralize this utility somewhere
-const VERBOSITY = (t: (arg0: string) => string, value: number): string => {
-  switch (value) {
-    case 0:
-      return t('0 (Normal)');
-    case 1:
-      return t('1 (Verbose)');
-    case 2:
-      return t('2 (More Verbose)');
-    case 3:
-      return t('3 (Debug)');
-    case 4:
-      return t('4 (Connection Debug)');
-    case 5:
-      return t('5 (WinRM Debug)');
-    default:
-      return '';
-  }
-};
-
 function TemplateDetailsTab(props: { template: JobTemplate }) {
   const { t } = useTranslation();
   const { template } = props;
@@ -168,6 +149,12 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
     template.use_fact_cache ||
     template.webhook_service ||
     template.prevent_instance_group_fallback;
+
+  const inventoryUrlPaths: { [key: string]: string } = {
+    '': 'inventory',
+    smart: 'smart_inventory',
+    constructed: 'constructed_inventory',
+  };
 
   return (
     <PageDetails>
@@ -187,9 +174,9 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         <Link
           to={RouteObj.InventoryDetails.replace(
-            ':id',
-            summaryFields.inventory?.id.toString() ?? ''
-          )}
+            ':inventory_type',
+            inventoryUrlPaths[summaryFields.inventory.kind]
+          ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
         >
           {summaryFields.inventory?.name}
         </Link>
@@ -216,7 +203,7 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>
       <PageDetail label={t('Forks')}>{template.forks || 0}</PageDetail>
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
-      <PageDetail label={t('Verbosity')}>{VERBOSITY(t, template.verbosity)}</PageDetail>
+      <PageDetail label={t('Verbosity')}>{useVerbosityString(template.verbosity)}</PageDetail>
       <PageDetail label={t('Timeout')}>{template.timeout || 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{template.diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{template.job_slice_count}</PageDetail>

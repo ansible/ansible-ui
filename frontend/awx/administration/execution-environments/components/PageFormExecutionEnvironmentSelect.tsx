@@ -13,7 +13,7 @@ export function PageFormExecutionEnvironmentSelect<
   name: TFieldName;
   executionEnvironmentPath?: string;
   executionEnvironmentIdPath?: string;
-  organizationId: string;
+  organizationId?: string;
   additionalControls?: ReactElement;
   isRequired?: boolean;
   label?: string;
@@ -21,7 +21,7 @@ export function PageFormExecutionEnvironmentSelect<
   const { name, organizationId, executionEnvironmentIdPath, executionEnvironmentPath, ...rest } =
     props;
   const { t } = useTranslation();
-  const selectExecutionEnvironment = useSelectExecutionEnvironments(organizationId);
+  const selectExecutionEnvironment = useSelectExecutionEnvironments(organizationId ?? undefined);
   const { setValue } = useFormContext();
   return (
     <PageFormTextInput<TFieldValues, TFieldName, ExecutionEnvironment>
@@ -35,8 +35,8 @@ export function PageFormExecutionEnvironmentSelect<
       selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
       selectOpen={selectExecutionEnvironment}
       validate={async (executionEnvironmentName: string) => {
-        if (!props.isRequired) {
-          return;
+        if (!executionEnvironmentName && !props.isRequired) {
+          return undefined;
         }
         try {
           const itemsResponse = await requestGet<ItemsResponse<ExecutionEnvironment>>(

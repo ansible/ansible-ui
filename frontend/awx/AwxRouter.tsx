@@ -25,6 +25,7 @@ import { CreateCredential, EditCredential } from './resources/credentials/Creden
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
+import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { Inventories } from './resources/inventories/Inventories';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
@@ -78,6 +79,7 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.ProjectEdit} element={<ProjectEdit />} /> */}
 
         <Route path={RouteObjWithoutPrefix.Inventories} element={<Inventories />} />
+        <Route path={RouteObjWithoutPrefix.InventoryDetails} element={<InventoryPage />} />
 
         <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
 

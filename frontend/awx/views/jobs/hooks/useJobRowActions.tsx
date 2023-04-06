@@ -13,9 +13,9 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
   const { t } = useTranslation();
   const deleteJobs = useDeleteJobs(onComplete);
   const cancelJobs = useCancelJobs(onComplete);
-  const relaunchJob = useRelaunchJob(onComplete);
-  const relaunchAllHosts = useRelaunchJob(onComplete, { hosts: 'all' });
-  const relaunchFailedHosts = useRelaunchJob(onComplete, { hosts: 'failed' });
+  const relaunchJob = useRelaunchJob();
+  const relaunchAllHosts = useRelaunchJob({ hosts: 'all' });
+  const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' });
 
   return useMemo<IPageAction<UnifiedJob>[]>(() => {
     const cannotDeleteJob = (job: UnifiedJob) => {
