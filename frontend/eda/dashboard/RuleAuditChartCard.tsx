@@ -31,8 +31,8 @@ const RuleAuditChart = () => {
     }
     const tickValues: string[] = [];
     data.forEach((item) => {
-      if (item.fired_date) {
-        const keyDate = new Date(item.fired_date);
+      if (item.fired_at) {
+        const keyDate = new Date(item.fired_at);
         const key = `${keyDate.getMonth()}/${keyDate.getDate()}`;
         const idx = tickValues.findIndex((tick) => tick === key);
         if (idx < 0) {

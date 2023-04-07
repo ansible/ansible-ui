@@ -39,7 +39,7 @@ export function useRuleAuditColumns() {
         header: t('Last fired date'),
         cell: (ruleAudit) => (
           <TextCell
-            text={ruleAudit?.fired_date ? formatDateString(new Date(ruleAudit.fired_date)) : ''}
+            text={ruleAudit?.fired_at ? formatDateString(new Date(ruleAudit.fired_at)) : ''}
           />
         ),
         sort: 'fired_at',

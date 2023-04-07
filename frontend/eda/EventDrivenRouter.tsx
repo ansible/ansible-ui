@@ -31,6 +31,7 @@ import { UserDetails } from './UserAccess/Users/UserDetails';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { EditCredential } from './Resources/credentials/EditCredential';
 import { Credentials } from './Resources/credentials/Credentials';
+import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
 
 export function EventDrivenRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Eda);
@@ -80,11 +81,19 @@ export function EventDrivenRouter() {
       />
       <Route
         path={RouteObjWithoutPrefix.EdaRulebookActivationDetails}
-        element={<RulebookActivationDetails />}
+        element={<RulebookActivationDetails initialTabIndex={0} />}
+      />
+      <Route
+        path={RouteObjWithoutPrefix.EdaRulebookActivationDetailsHistory}
+        element={<RulebookActivationDetails initialTabIndex={1} />}
       />
       <Route
         path={RouteObjWithoutPrefix.EdaRulebookActivations}
         element={<RulebookActivations />}
+      />
+      <Route
+        path={RouteObjWithoutPrefix.EdaActivationInstanceDetails}
+        element={<ActivationInstanceDetails />}
       />
 
       <Route path={RouteObjWithoutPrefix.CreateEdaActivity} element={<UnderDevelopment />} />

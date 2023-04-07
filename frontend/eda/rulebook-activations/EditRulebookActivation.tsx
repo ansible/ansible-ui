@@ -29,7 +29,7 @@ export function EditRulebookActivation() {
   const { data: rulebooks } = useGet<EdaResult<EdaRulebook>>(`${API_PREFIX}/rulebooks/`);
   const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    `${API_PREFIX}/decision_environments/`
+    `${API_PREFIX}/decision-environments/`
   );
   const { cache } = useSWRConfig();
 

@@ -12,10 +12,9 @@ export interface EdaRulebookActivation {
   decision_environment?: string;
   rulebook?: { id: string; name: string };
   restart_policy?: string;
-  project?: { id: string; name: string };
+  project?: { id: string; name: string; git_hash: string };
   status?: string;
   is_enabled?: boolean;
-  throttle?: boolean;
   variables_template?: string;
   instances_count?: number;
   rules_count?: number;
