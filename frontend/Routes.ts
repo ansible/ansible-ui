@@ -175,8 +175,10 @@ export const RouteObj: { [key: string]: RouteType } = {
 
   EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,
+  EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/rulebook-activations/details/:id/history`,
   CreateEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/create`,
   EditEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/edit/:id`,
+  EdaActivationInstanceDetails: `${edaRoutePrefix}/activations-instances/details/:id`,
 
   EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
   EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,

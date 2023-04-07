@@ -5,12 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface EdaActivationInstance {
+export interface EdaActivationInstanceLog {
   id: number;
-  name?: string;
-  status?: string;
-  activation: string;
-  activation_name: string;
-  started_at: string;
-  ended_at?: string;
+  line_number?: number;
+  log?: string;
+  activation_instance: string;
 }
