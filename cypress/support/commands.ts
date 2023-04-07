@@ -746,13 +746,10 @@ Cypress.Commands.add('getEdaProject', (projectName: string) => {
 });
 
 Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: string) => {
-  cy.requestGet<EdaResult<EdaRulebookActivation>>(
+  cy.pollEdaResults<EdaRulebookActivation>(
     `/api/eda/v1/activations/?name=${edaRulebookActivationName}`
-  ).then((result) => {
-    if (result?.results && result.results.length === 1) {
-      return result.results[0];
-    }
-    return undefined;
+  ).then((activations) => {
+    return activations[0];
   });
 });
 
