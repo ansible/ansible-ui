@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -56,8 +56,11 @@ export function CredentialDetails() {
     [deleteCredentials, navigate, t]
   );
 
-  const renderCredentialDetailsTab = (credential: EdaCredential | undefined): JSX.Element => {
-    const credentialOption = CredentialOptions().find(
+  const renderCredentialDetailsTab = (
+    credential: EdaCredential | undefined,
+    t: TFunction<'translation', undefined>
+  ): JSX.Element => {
+    const credentialOption = CredentialOptions(t).find(
       (option) => option.value === credential?.credential_type
     );
     return (
@@ -96,7 +99,7 @@ export function CredentialDetails() {
       />
       {credential ? (
         <PageTabs>
-          <PageTab label={t('Details')}>{renderCredentialDetailsTab(credential)}</PageTab>
+          <PageTab label={t('Details')}>{renderCredentialDetailsTab(credential, t)}</PageTab>
         </PageTabs>
       ) : (
         <PageTabs>
