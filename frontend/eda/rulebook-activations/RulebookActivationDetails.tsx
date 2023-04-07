@@ -50,6 +50,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
+
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
@@ -91,7 +92,18 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               {rulebookActivation?.description || ''}
             </PageDetail>
             <PageDetail label={t('Decision environment')}>
-              {rulebookActivation?.decision_environment || ''}
+              {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
+                <Link
+                  to={RouteObj.EdaRulebookDetails.replace(
+                    ':id',
+                    `${rulebookActivation?.decision_environment?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.decision_environment?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.decision_environment?.name || ''
+              )}
             </PageDetail>
             <PageDetail label={t('Rulebook')}>
               {rulebookActivation?.rulebook?.name || ''}
