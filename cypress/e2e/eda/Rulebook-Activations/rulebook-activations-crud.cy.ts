@@ -1,4 +1,5 @@
 //Tests a user's ability to create, edit, and delete Rulebook Activations in the EDA UI.
+//IMPORTANT: Rulebook Activations do not have Edit capability in the UI. They can only be enabled or disabled.
 import { randomString } from '../../../../framework/utils/random-string';
 
 describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
@@ -32,12 +33,12 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('can edit a Rulebook Activation and then disable it', () => {
+  it.skip('can enable and disable a Rulebook Activation', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         const edaRulebook = edaRuleBooks[0];
         cy.createEdaRulebookActivation(edaRulebook).then((edaRulebookActivation) => {
-          // Verify
+          //verify here once this functionality is working
           cy.deleteEdaRulebookActivation(edaRulebookActivation);
         });
       });
@@ -45,13 +46,21 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('can delete a Rulebook Activation from the details view', () => {
+  it('can delete a Rulebook Activation from the details view', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         const edaRulebook = edaRuleBooks[0];
         cy.createEdaRulebookActivation(edaRulebook).then((edaRulebookActivation) => {
-          // Verify
-          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          cy.visit(`/eda/rulebook-activations/details/${edaRulebookActivation.id}`);
+          cy.intercept('DELETE', `/api/eda/v1/activations/${edaRulebookActivation.id}/`).as(
+            'deleted'
+          );
+          cy.clickPageAction(/^Delete rulebookActivation$/);
+          cy.confirmModalAction('Delete rulebookActivations');
+          cy.wait('@deleted').then((deleted) => {
+            expect(deleted?.response?.statusCode).to.eql(204);
+            cy.hasTitle(/^Rulebook activations$/);
+          });
         });
       });
       cy.deleteEdaProject(edaProject);
