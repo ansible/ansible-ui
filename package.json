@@ -38,6 +38,8 @@
     "docker:build": "docker build --tag ansible-ui .",
     "docker:run": "docker run --name ansible-ui -d -e LOG_LEVEL=debug -p 3002:3002 -e PORT=3002 ansible-ui",
     "docker:rm": "docker rm ansible-ui",
+    "docker:build:eda": "docker build --target eda-standalone --tag eda .",
+    "docker:run:eda": "docker run --name eda --rm -e LOG_LEVEL=debug -p 8080:8080 -e PORT=3002 eda",
     "cypress:run": "concurrently npm:cypress:run:e2e npm:cypress:run:component --prefix-colors cyan,blue",
     "cypress:run:e2e": "cypress run --e2e",
     "cypress:run:component": "cypress run --component",
