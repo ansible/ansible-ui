@@ -7,7 +7,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Project } from '../../../interfaces/Project';
 import { useProjectsColumns } from './useProjectsColumns';
 
-export function useCancelProjects(onComplete: (projects: Project[]) => void) {
+export function useCancelProjects(onComplete?: (projects: Project[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useProjectsColumns({ disableLinks: true, disableSort: true });
   const cancelActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });

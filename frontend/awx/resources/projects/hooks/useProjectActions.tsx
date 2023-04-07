@@ -14,7 +14,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteProjects = useDeleteProjects(onComplete);
-  const cancelProjects = useCancelProjects(onComplete);
+  const cancelProjects = useCancelProjects();
   const alertToaster = usePageAlertToaster();
   const postRequest = usePostRequest();
 
@@ -26,7 +26,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
     const cannotCancelProjectDueToPermissions = (project: Project) =>
       project?.summary_fields?.user_capabilities?.start
         ? ''
-        : t(`The project sync cannot be canceled because it is not running`);
+        : t(`The project sync cannot be canceled due to insufficient permission`);
     const cannotDeleteProject = (project: Project) =>
       project?.summary_fields?.user_capabilities?.delete
         ? ''
