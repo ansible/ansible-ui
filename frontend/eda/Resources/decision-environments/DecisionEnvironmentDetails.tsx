@@ -19,6 +19,7 @@ import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironments } from './hooks/useDeleteDecisionEnvironments';
+import { EdaCredential } from '../../interfaces/EdaCredential';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -26,6 +27,10 @@ export function DecisionEnvironmentDetails() {
   const navigate = useNavigate();
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
     `${API_PREFIX}/decision-environments/${params.id ?? ''}/`
+  );
+
+  const { data: credential } = useGet<EdaCredential>(
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential ?? ''}/`
   );
 
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
@@ -62,22 +67,22 @@ export function DecisionEnvironmentDetails() {
   ): JSX.Element => {
     return (
       <PageDetails>
-        <PageDetail label={t('Image name')}>{decisionEnvironment?.name || ''}</PageDetail>
+        <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
-        <PageDetail label={t('Registry URL')}>{decisionEnvironment?.registry_url || ''}</PageDetail>
+        <PageDetail label={t('Registry URL')}>{decisionEnvironment?.image_url || ''}</PageDetail>
         <PageDetail label={t('Tag')}>{decisionEnvironment?.tag || ''}</PageDetail>
         <PageDetail label={t('Credential')}>
-          {decisionEnvironment && decisionEnvironment.credential?.id ? (
+          {decisionEnvironment && decisionEnvironment.credential ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment.credential?.id || ''}`
+                `${decisionEnvironment.credential || ''}`
               )}
             >
-              {decisionEnvironment?.credential?.name}
+              {credential?.name}
             </Link>
           ) : (
-            decisionEnvironment?.credential.name || ''
+            credential?.name || ''
           )}
         </PageDetail>
       </PageDetails>

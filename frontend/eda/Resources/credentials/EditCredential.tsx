@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -16,23 +16,22 @@ import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 
-export function CredentialOptions() {
-  const { t } = useTranslation();
+export function CredentialOptions(t: TFunction<'translation'>) {
   return [
     {
       label: t('GitHub Personal Access Token'),
-      description: t('Github Personal Access Token'),
-      value: 'github',
+      description: t('GitHub Personal Access Token'),
+      value: 'GitHub Personal Access Token',
     },
     {
       label: t('GitLab Personal Access Token'),
-      description: t('Gitlab Personal Access Token'),
-      value: 'gitlab',
+      description: t('GitLab Personal Access Token'),
+      value: 'GitLab Personal Access Token',
     },
     {
       label: t('Container Registry'),
       description: t('Container Registry Token'),
-      value: 'registry',
+      value: 'Container Registry',
     },
   ];
 }
@@ -51,7 +50,6 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="description"
         label={t('Description')}
-        isRequired
         placeholder={t('Insert description here ')}
         maxLength={150}
       />
@@ -60,7 +58,7 @@ function CredentialInputs() {
         label={t('Type')}
         isRequired
         placeholderText={t('Select a credential type')}
-        options={CredentialOptions()}
+        options={CredentialOptions(t)}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
@@ -69,7 +67,7 @@ function CredentialInputs() {
         placeholder={t('Insert user name here')}
       />
       <PageFormTextInput<EdaCredential>
-        name="token"
+        name="secret"
         label={t('Token')}
         type="password"
         placeholder={t('Insert credential token here')}

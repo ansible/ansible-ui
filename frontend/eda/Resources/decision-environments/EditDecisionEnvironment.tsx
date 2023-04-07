@@ -25,8 +25,8 @@ function DecisionEnvironmentInputs() {
     <>
       <PageFormTextInput<EdaDecisionEnvironment>
         name="name"
-        label={t('Image name')}
-        placeholder={t('Insert image name here')}
+        label={t('Name')}
+        placeholder={t('Insert name here')}
         isRequired
         maxLength={150}
         autoComplete="new-name"
@@ -38,7 +38,7 @@ function DecisionEnvironmentInputs() {
         maxLength={150}
       />
       <PageFormTextInput<EdaDecisionEnvironment>
-        name="registry_url"
+        name="image_url"
         label={t('Registry URL')}
         isRequired={true}
         placeholder={t('Insert registry URL here')}
@@ -50,10 +50,9 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Insert tag here')}
       />
       <PageFormSelectOption
-        name={'credential_id'}
+        name={'credential'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
-        isRequired={true}
         options={
           credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
