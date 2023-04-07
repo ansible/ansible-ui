@@ -679,19 +679,16 @@ Cypress.Commands.add('ruleBookActivationActions', (action: string, rbaName: stri
     });
 });
 
-Cypress.Commands.add(
-  'ruleBookActivationActionsModal',
-  (action: string, rbaName: string) => {
-    cy.get('div[role="dialog"]').within(() => {
-      cy.contains('h1', `${action} activation`).should('be.visible');
-      cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
-        matchCase: false,
-      }).should('be.visible');
-      cy.contains('p', rbaName).should('be.visible');
-      cy.contains('button#confirm', action).click();
-    });
-  }
-);
+Cypress.Commands.add('ruleBookActivationActionsModal', (action: string, rbaName: string) => {
+  cy.get('div[role="dialog"]').within(() => {
+    cy.contains('h1', `${action} activation`).should('be.visible');
+    cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
+      matchCase: false,
+    }).should('be.visible');
+    cy.contains('p', rbaName).should('be.visible');
+    cy.contains('button#confirm', action).click();
+  });
+});
 
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
