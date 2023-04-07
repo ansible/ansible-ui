@@ -96,7 +96,7 @@ declare global {
        * ruleBookActivationActions('Delete rulebookActivation')
        * @param action
        */
-      ruleBookActivationActions(action: string | RegExp, rbaName: string): Chainable<void>;
+      ruleBookActivationActions(action: string, rbaName: string): Chainable<void>;
 
       /**
        * `ruleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
@@ -107,7 +107,7 @@ declare global {
        * ruleBookActivationActions('Restart')
        * @param action
        */
-      ruleBookActivationActionsModal(action: string | RegExp, rbaName: string): Chainable<void>;
+      ruleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
 
       /**
        * `createEdaProject()` creates an EDA Project via API,
@@ -670,7 +670,7 @@ Cypress.Commands.add(
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('ruleBookActivationActions', (action: string | RegExp, rbaName: string) => {
+Cypress.Commands.add('ruleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
     .parent()
     .within(() => {
@@ -681,7 +681,7 @@ Cypress.Commands.add('ruleBookActivationActions', (action: string | RegExp, rbaN
 
 Cypress.Commands.add(
   'ruleBookActivationActionsModal',
-  (action: string | RegExp, rbaName: string) => {
+  (action: string, rbaName: string) => {
     cy.get('div[role="dialog"]').within(() => {
       cy.contains('h1', `${action} activation`).should('be.visible');
       cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
