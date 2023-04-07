@@ -1,6 +1,4 @@
 //Tests a user's ability to perform certain actions on the Rulebook Activations list in the EDA UI.
-import { randomString } from '../../../../framework/utils/random-string';
-
 describe('EDA Rulebook Activations List', () => {
   before(() => {
     cy.edaLogin();
