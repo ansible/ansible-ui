@@ -87,6 +87,29 @@ declare global {
       /*  EDA related custom commands  */
 
       /**
+       * `ruleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
+       * 
+       * accepts 2 parameters action name and edaRulebookActivation name
+       * 
+       * ruleBookActivationActions('Relaunch')
+       * ruleBookActivationActions('Restart')
+       * ruleBookActivationActions('Delete rulebookActivation')
+       * @param action 
+       */
+      ruleBookActivationActions(action:string| RegExp, rbaName:string): Chainable<void>;
+
+      /**
+       * `ruleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
+       * 
+       * accepts 2 parameters action name and edaRulebookActivation name
+       * 
+       * ruleBookActivationActions('Relaunch')
+       * ruleBookActivationActions('Restart')
+       * @param action 
+       */
+      ruleBookActivationActionsModal(action: string| RegExp, rbaName:string): Chainable<void>;
+
+      /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
        *
@@ -110,7 +133,7 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(edaRulebook: EdaRulebook): Chainable<EdaRulebookActivation>;
-
+      
       /**
        * `deleteEdaProject(projectName: Project)`
        * deletes an EDA project via API,
@@ -647,6 +670,22 @@ Cypress.Commands.add(
 
 /*  EDA related custom command implementation  */
 
+Cypress.Commands.add('ruleBookActivationActions', (action: string | RegExp, rbaName:string) => {
+  cy.contains('td[data-label="Name"]', rbaName).parent().within(()=>{
+    cy.get('button.toggle-kebab').click()
+    cy.contains('a', action).click()   
+  })
+});
+
+Cypress.Commands.add('ruleBookActivationActionsModal', (action: string | RegExp, rbaName:string) => {
+  cy.get('div[role="dialog"]').within(()=> {
+    cy.contains('h1', `${action} activation`).should('be.visible') 
+    cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {matchCase: false}).should('be.visible') 
+    cy.contains('p', rbaName).should('be.visible')
+    cy.contains('button#confirm', action).click()
+  })
+});
+
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
     name: 'E2E Project ' + randomString(4),
@@ -669,9 +708,10 @@ Cypress.Commands.add('deleteEdaProject', (edaProject) => {
   });
 });
 
-Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
-  cy.requestGet<EdaResult<EdaRulebook>>('/api/eda/v1/rulebooks/').then((edaresult) => {
-    return edaresult.results;
+Cypress.Commands.add('getEdaRulebooks', () => {
+  cy.requestGet<EdaResult<EdaRulebook>>('/api/eda/v1/rulebooks/').then((response) => {
+    const rulebooksArray = response.results;
+    return rulebooksArray;
   });
 });
 
@@ -687,7 +727,7 @@ Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook) => {
       message: [`Created 👉  ${edaRulebookActivation.name}`],
     });
     return edaRulebookActivation;
-  });
+ });
 });
 
 Cypress.Commands.add('getEdaProject', (projectName: string) => {
@@ -720,8 +760,6 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
     });
   });
 });
-
-/*  EDA related custom command implementation  */
 
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
