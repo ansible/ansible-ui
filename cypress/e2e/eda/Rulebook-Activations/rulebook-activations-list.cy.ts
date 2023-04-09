@@ -15,7 +15,11 @@ describe('EDA Rulebook Activations List', () => {
       cy.filterByText(edaRulebookActivation.name);
       */
           cy.contains('td[data-label="Name"]', edaRulebookActivation.name).should('be.visible');
-          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          cy.getEdaRulebookActivation(edaRulebookActivation.name).then((edaRulebookActivation) => {
+            if (edaRulebookActivation) {
+              cy.deleteEdaRulebookActivation(edaRulebookActivation);
+            }
+          });
         });
       });
       cy.deleteEdaProject(edaProject);
