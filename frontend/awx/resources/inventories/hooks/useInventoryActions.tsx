@@ -7,6 +7,7 @@ import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
+import { ButtonVariant } from '@patternfly/react-core';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
@@ -46,6 +47,7 @@ export function useInventoryActions({
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
         onClick: (inventory) =>

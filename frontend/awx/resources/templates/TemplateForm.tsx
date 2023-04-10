@@ -6,7 +6,7 @@ import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../.
 import { ItemsResponse, postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { getAddedAndRemoved } from '../../../controller/utils/getAddedAndRemoved';
+import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
