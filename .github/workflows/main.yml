@@ -84,16 +84,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  docker:
-    name: Docker Build and Push
+  image:
+    name: Container Image
     needs: tag
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    env:
-      REGISTRY: quay.io
-      IMAGE_NAME: ${{ github.repository }}
-
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v3
         with:
@@ -102,9 +97,15 @@ jobs:
       - name: Login to Quay
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - uses: actions/setup-node@v3
         with:
@@ -113,23 +114,25 @@ jobs:
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
 
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
+      - name: Build Dependencies
+        uses: docker/build-push-action@v4
         with:
-          path: dependencies.tar
-          key: dependencies-${{ hashFiles('package-lock.json') }}
+          target: dependencies
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          docker load --input dependencies.tar
-          rm -f dependencies.tar
+      - name: Build Ansible UI
+        uses: docker/build-push-action@v4
+        with:
+          target: ansible-ui
+          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
+          push: true
+          cache-from: type=gha
 
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --target dependencies --tag dependencies .
-          docker save --output dependencies.tar dependencies
-
-      - run: DOCKER_BUILDKIT=1 docker build --cache-from dependencies --tag quay.io/ansible/ansible-ui:latest --tag quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }} .
-
-      - run: docker push quay.io/ansible/ansible-ui --all-tags
+      - name: Build EDA UI
+        uses: docker/build-push-action@v4
+        with:
+          target: eda-ui
+          tags: quay.io/ansible/ansible-ui:eda,quay.io/ansible/ansible-ui:eda-${{ needs.tag.outputs.VERSION }}
+          push: true
+          cache-from: type=gha
