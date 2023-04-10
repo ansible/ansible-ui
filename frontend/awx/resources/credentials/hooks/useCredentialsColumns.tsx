@@ -2,13 +2,14 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../../common/columns';
-import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -21,12 +22,14 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   );
   const idColumn = useIdColumn();
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
       idColumn,
       nameColumn,
+      descriptionColumn,
       {
         header: t('Credential type'),
         cell: (credential) => {
@@ -42,7 +45,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

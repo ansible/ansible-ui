@@ -1,14 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
 import { useAwxView } from '../../useAwxView';
 import { useCredentialActions } from './hooks/useCredentialActions';
+import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
-import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -46,7 +45,6 @@ export function Credentials() {
         emptyStateDescription={t('To get started, create an credential.')}
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
-        expandedRow={ItemDescriptionExpandedRow<Credential>}
         {...view}
       />
     </PageLayout>
