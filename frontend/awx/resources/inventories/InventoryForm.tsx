@@ -24,8 +24,13 @@ interface InventoryFields extends FieldValues {
 export function CreateInventory() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const postRequest = usePostRequest<Inventory>();
-  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (inventory, setError) => {
+  const postRequest = usePostRequest<{ id: number }, Inventory>();
+  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values, setError) => {
+    const { inventory, instanceGroups } = values;
+    console.log(
+      '🚀 ~ file: InventoryForm.tsx:30 ~ constonSubmit:PageFormSubmitHandler<InventoryFields>= ~ inventory:',
+      inventory
+    );
     try {
       if (inventory.summary_fields.organization.name) {
         try {
@@ -40,9 +45,9 @@ export function CreateInventory() {
       }
       const newInventory = await postRequest('/api/v2/inventories/', inventory);
       const igRequests = [];
-      for (const ig of inventory.instanceGroups || []) {
+      for (const ig of instanceGroups || []) {
         igRequests.push(
-          postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+          postRequest(`/api/v2/inventories/${newInventory.id.toString()}/instance_groups/`, {
             id: ig.id,
           })
         );
@@ -140,19 +145,22 @@ function InventoryInputs() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput<Inventory>
-        name="name"
+      <PageFormTextInput
+        name="inventory.name"
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
       />
       <PageFormTextInput
         label={t('Description')}
-        name="description"
+        name="inventory.description"
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect<Inventory> name="summary_fields.organization.name" isRequired />
-      <PageFormInstanceGroupSelect<{ instanceGroups: string; id: number }> name="instanceGroups" />
+      <PageFormOrganizationSelect<InventoryFields>
+        name="inventory.summary_fields.organization.name"
+        isRequired
+      />
+      <PageFormInstanceGroupSelect<InventoryFields> name="instanceGroups" />
     </>
   );
 }
