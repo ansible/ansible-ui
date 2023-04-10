@@ -33,7 +33,8 @@ import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters
 import { useEdaView } from '../useEventDrivenView';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 
-export function RulebookActivationDetails() {
+// eslint-disable-next-line react/prop-types
+export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ export function RulebookActivationDetails() {
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
+
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
@@ -90,21 +92,21 @@ export function RulebookActivationDetails() {
               {rulebookActivation?.description || ''}
             </PageDetail>
             <PageDetail label={t('Decision environment')}>
-              {rulebookActivation?.decision_environment || ''}
-            </PageDetail>
-            <PageDetail label={t('Rulebook')}>
-              {rulebookActivation && rulebookActivation.rulebook?.id ? (
+              {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
                 <Link
                   to={RouteObj.EdaRulebookDetails.replace(
                     ':id',
-                    `${rulebookActivation.rulebook?.id || ''}`
+                    `${rulebookActivation?.decision_environment?.id || ''}`
                   )}
                 >
-                  {rulebookActivation?.rulebook?.name}
+                  {rulebookActivation?.decision_environment?.name}
                 </Link>
               ) : (
-                rulebookActivation?.rulebook?.name || ''
+                rulebookActivation?.decision_environment?.name || ''
               )}
+            </PageDetail>
+            <PageDetail label={t('Rulebook')}>
+              {rulebookActivation?.rulebook?.name || ''}
             </PageDetail>
             <PageDetail label={t('Restart policy')}>
               {rulebookActivation?.restart_policy
@@ -128,9 +130,8 @@ export function RulebookActivationDetails() {
             <PageDetail label={t('Activation status')}>
               {rulebookActivation?.status || ''}
             </PageDetail>
-            <PageDetail label={t('Throttle')}>{rulebookActivation?.throttle || ''}</PageDetail>
-            <PageDetail label={t('Variables template')}>
-              {rulebookActivation?.variables_template || ''}
+            <PageDetail label={t('Project git hash')}>
+              {rulebookActivation?.project?.git_hash || ''}
             </PageDetail>
             <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
@@ -200,7 +201,7 @@ export function RulebookActivationDetails() {
         }
       />
       {rulebookActivation ? (
-        <PageTabs>
+        <PageTabs initialTabIndex={initialTabIndex}>
           <PageTab label={t('Details')}>{renderActivationDetailsTab(rulebookActivation)}</PageTab>
           <PageTab label={t('History')}>
             <ActivationHistoryTab />

@@ -17,7 +17,7 @@ export function useActivationHistoryColumns() {
           <TextCell
             text={instance.name || `Instance ${instance.id}`}
             onClick={() =>
-              navigate(RouteObj.EdaRulebookActivationDetails.replace(':id', instance.id.toString()))
+              navigate(RouteObj.EdaActivationInstanceDetails.replace(':id', instance.id.toString()))
             }
           />
         ),
@@ -32,14 +32,9 @@ export function useActivationHistoryColumns() {
         sort: 'status',
       },
       {
-        header: t('Activation instance'),
-        cell: (instance) => instance?.activation,
-        sort: 'rule',
-      },
-      {
         header: t('Start date'),
         cell: (instance) => <DateCell value={instance.started_at} />,
-        sort: 'fired_at',
+        sort: 'started_at',
       },
     ],
     [navigate, t]

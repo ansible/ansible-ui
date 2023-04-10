@@ -10,6 +10,7 @@ export interface EdaActivationInstance {
   name?: string;
   status?: string;
   activation: string;
+  activation_name: string;
   started_at: string;
   ended_at?: string;
 }
