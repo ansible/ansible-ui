@@ -27,10 +27,13 @@ describe('EDA Rulebook Activations List', () => {
 
   it('can filter the Rulebook Activations list based on Name', () => {
     // need to type in this element cy.get('.pf-c-text-input-group__text-input')
-    cy.visit('/eda/rulebook-activations/');
-    cy.switchToolbarFilter('Name');
-    cy.filterByText(edaRulebookActivation.name.split(' ').pop());
-    cy.verifyTableLength(1); // only one item should match the name of the uploaded rulebook
+    let rba_id = edaRulebookActivation.name.split(' ').pop();
+    if (rba_id) {
+      cy.visit('/eda/rulebook-activations/');
+      cy.switchToolbarFilter('Name');
+      cy.filterByText(rba_id);
+      cy.verifyTableLength(1); // only one item should match the name of the uploaded rulebook
+    }
   });
 
   it.skip('can Relaunch a Rulebook Activation from the list view', () => {
