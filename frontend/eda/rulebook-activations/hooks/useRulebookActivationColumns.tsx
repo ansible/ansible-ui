@@ -53,17 +53,22 @@ export function useRulebookActivationColumns() {
         sort: 'fired_count',
       },
       {
-        header: t('Activation instances'),
+        header: t('Restart count'),
         cell: (activation) => (
-          <TextCell text={`${activation?.instances_count ? activation.instances_count : 0}`} />
+          <TextCell text={`${activation?.restarted_count ? activation.restarted_count : 0}`} />
         ),
-        sort: 'instance_count',
+        sort: 'restart_count',
       },
       {
         header: '',
         style: 'maxWidth: 0',
 
-        cell: (activation) => <SwitchCell state={activation.is_enabled || false} />,
+        cell: (activation) => (
+          <SwitchCell
+            state={activation.is_enabled || false}
+            ariaLabel={activation?.is_enabled ? t('Enabled') : t('Disabled)')}
+          />
+        ),
       },
     ],
     [navigate, t]

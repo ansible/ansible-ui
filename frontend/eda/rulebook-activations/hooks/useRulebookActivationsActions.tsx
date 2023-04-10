@@ -11,7 +11,7 @@ import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import {
   useDisableRulebookActivations,
   useEnableRulebookActivations,
-} from './useEnableDisableRulebookActivations';
+} from './useControlRulebookActivations';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
-        label: t('Add rulebook activation'),
+        label: t('Create rulebook activation'),
         onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),
       },
       {

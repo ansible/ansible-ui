@@ -83,7 +83,7 @@ export function EditRulebookActivation() {
         ]}
       />
       <PageForm
-        submitText={t('Add rulebook activation')}
+        submitText={t('Create rulebook activation')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}

@@ -34,7 +34,7 @@ export function useEnableRulebookActivations(
           postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/enable/`, undefined),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
   );
 }
 
@@ -67,6 +67,38 @@ export function useDisableRulebookActivations(
           postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
+  );
+}
+
+export function useRestartRulebookActivations(
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+) {
+  const { t } = useTranslation();
+  const confirmationColumns = useRulebookActivationColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useBulkConfirmation<EdaRulebookActivation>();
+  const postRequest = usePostRequest<undefined, undefined>();
+  return useCallback(
+    (rulebookActivations: EdaRulebookActivation[]) => {
+      bulkAction({
+        title: t('Restart rulebook activations', { count: rulebookActivations.length }),
+        confirmText: t(
+          'Yes, I confirm that I want to restart these {{count}} rulebook activations.',
+          {
+            count: rulebookActivations.length,
+          }
+        ),
+        actionButtonText: t('Restart rulebook activations', { count: rulebookActivations.length }),
+        items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
+        keyFn: (item) => item?.id,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: (rulebookActivation: EdaRulebookActivation) =>
+          postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/restart/`, undefined),
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
   );
 }
