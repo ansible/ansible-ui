@@ -8,6 +8,7 @@ import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 import { InventoryDetails } from './InventoryDetails';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function InventoryPage() {
   const { t } = useTranslation();
@@ -37,12 +38,28 @@ export function InventoryPage() {
         <PageTab label={t('Details')}>
           <InventoryDetails inventory={inventory!} />
         </PageTab>
-        <PageTab label={t('Access')}>TODO</PageTab>
-        {inventory?.kind !== 'smart' && <PageTab label={t('Groups')}>TODO</PageTab>}
-        <PageTab label={t('Hosts')}>TODO</PageTab>
-        {inventory?.kind !== 'constructed' && <PageTab label={t('Sources')}>TODO</PageTab>}
-        <PageTab label={t('Jobs')}>TODO</PageTab>
-        <PageTab label={t('Job Templates')}>TODO</PageTab>
+        <PageTab label={t('Access')}>
+          <PageNotImplemented />
+        </PageTab>
+        {inventory?.kind !== 'smart' && (
+          <PageTab label={t('Groups')}>
+            <PageNotImplemented />
+          </PageTab>
+        )}
+        <PageTab label={t('Hosts')}>
+          <PageNotImplemented />
+        </PageTab>
+        {inventory?.kind !== 'constructed' && (
+          <PageTab label={t('Sources')}>
+            <PageNotImplemented />
+          </PageTab>
+        )}
+        <PageTab label={t('Jobs')}>
+          <PageNotImplemented />
+        </PageTab>
+        <PageTab label={t('Job Templates')}>
+          <PageNotImplemented />
+        </PageTab>
       </PageTabs>
     </PageLayout>
   );
