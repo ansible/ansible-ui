@@ -11,7 +11,6 @@ import {
 import styled from 'styled-components';
 
 const RefreshMessageDiv = styled.div`
-  color: white;
   margin-top: 16px;
 `;
 
@@ -28,7 +27,9 @@ export function EmptyStateError(props: { titleProp?: string; message?: string })
         {titleProp || title}
       </Title>
       <EmptyStateBody>{message}</EmptyStateBody>
-      <RefreshMessageDiv>{description}</RefreshMessageDiv>
+      <RefreshMessageDiv>
+        <Title headingLevel="h6">{description}</Title>
+      </RefreshMessageDiv>
       <Button variant="primary" onClick={() => window.location.reload()}>
         {button}
       </Button>
