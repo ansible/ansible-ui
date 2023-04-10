@@ -18,13 +18,14 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -159,9 +160,6 @@ export function Organizations() {
         emptyStateButtonClick={() => navigate(RouteObj.CreateOrganization)}
         {...view}
         defaultSubtitle={t('Organization')}
-        expandedRow={(organization) =>
-          organization.description ? <>{organization.description}</> : undefined
-        }
       />
     </PageLayout>
   );
@@ -196,6 +194,7 @@ export function useOrganizationsColumns(options?: {
       navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString())),
     [navigate]
   );
+  const descriptionColumn = useDescriptionColumn();
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
@@ -206,6 +205,7 @@ export function useOrganizationsColumns(options?: {
     () => [
       idColumn,
       nameColumn,
+      descriptionColumn,
       {
         header: t('Members'),
         type: 'count',
@@ -219,7 +219,7 @@ export function useOrganizationsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

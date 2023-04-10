@@ -12,14 +12,14 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -106,7 +106,6 @@ export function ExecutionEnvironments() {
         emptyStateButtonText={t('Create execution environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateExecutionEnvironment)}
         {...view}
-        expandedRow={ItemDescriptionExpandedRow<ExecutionEnvironment>}
       />
     </PageLayout>
   );
@@ -154,12 +153,14 @@ export function useExecutionEnvironmentsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
+  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       nameColumn,
+      descriptionColumn,
       {
         header: t('Image'),
         cell: (executionEnvironment) => executionEnvironment.image,
@@ -168,7 +169,7 @@ export function useExecutionEnvironmentsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn]
+    [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

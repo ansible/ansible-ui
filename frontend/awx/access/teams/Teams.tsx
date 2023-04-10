@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
@@ -70,7 +69,6 @@ export function Teams() {
         emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
         {...view}
         defaultSubtitle={t('Team')}
-        expandedRow={ItemDescriptionExpandedRow<Team>}
       />
     </PageLayout>
   );

@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, DateTimeCell, TextCell } from '../../../../../framework';
+import { ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { useCreatedColumn } from '../../../../common/columns';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';
 
-export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort?: boolean }) {
+export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
+  const createdColumn = useCreatedColumn(options);
   const tableColumns = useMemo<ITableColumn<User>[]>(
     () => [
       {
@@ -46,14 +48,9 @@ export function useUsersColumns(_options?: { disableLinks?: boolean; disableSort
         value: (user) => user.email,
         sort: 'email',
       },
-      {
-        header: t('Created'),
-        cell: (item) => <DateTimeCell format="since" value={item.created} />,
-        card: 'hidden',
-        list: 'secondary',
-      },
+      createdColumn,
     ],
-    [t]
+    [createdColumn, t]
   );
   return tableColumns;
 }

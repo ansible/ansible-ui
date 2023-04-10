@@ -12,16 +12,16 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { ScmType } from '../../../common/scm';
-import { StatusCell } from '../../../common/StatusCell';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -114,7 +114,6 @@ export function Projects() {
         emptyStateDescription={t('To get started, create an project.')}
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
-        expandedRow={ItemDescriptionExpandedRow<Project>}
         {...view}
       />
     </PageLayout>
@@ -167,12 +166,14 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
     [navigate]
   );
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
+      descriptionColumn,
       {
         header: t('Status'),
         cell: (project) => <StatusCell status={project.status} />,
@@ -189,7 +190,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn]
+    [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
