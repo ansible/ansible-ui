@@ -3,20 +3,20 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Rulebook Activations List', () => {
-  let edaProject: EdaProject
-  let edaRulebookActivation: EdaRulebookActivation
+  let edaProject: EdaProject;
+  let edaRulebookActivation: EdaRulebookActivation;
   before(() => {
     cy.edaLogin();
     cy.createEdaProject().then((project) => {
-      edaProject = project
-//      cy.waitEdaProjectSync(edaProject);
+      edaProject = project;
+      //      cy.waitEdaProjectSync(edaProject);
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         if (edaRuleBooks) {
           cy.createEdaRulebookActivation(edaRuleBooks[0]).then((result) => {
             edaRulebookActivation = result;
           });
           cy.createEdaRulebookActivation(edaRuleBooks[0]); // create a second rulebook for filter test
-        };
+        }
       });
     });
   });
@@ -29,7 +29,7 @@ describe('EDA Rulebook Activations List', () => {
     // need to type in this element cy.get('.pf-c-text-input-group__text-input')
     cy.visit('/eda/rulebook-activations/');
     cy.switchToolbarFilter('Name');
-    cy.filterByText(edaRulebookActivation.name.split(' ').pop())
+    cy.filterByText(edaRulebookActivation.name.split(' ').pop());
     cy.verifyTableLength(1); // only one item should match the name of the uploaded rulebook
   });
 
