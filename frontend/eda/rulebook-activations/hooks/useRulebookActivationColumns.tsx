@@ -34,7 +34,7 @@ export function useRulebookActivationColumns() {
       },
       {
         header: t('Activation status'),
-        cell: (activation) => <StatusLabelCell status={activation.status} />,
+        cell: (activation) => <StatusLabelCell status={activation?.status} />,
         sort: 'status',
         defaultSort: true,
       },
