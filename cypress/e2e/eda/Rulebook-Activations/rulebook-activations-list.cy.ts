@@ -27,7 +27,7 @@ describe('EDA Rulebook Activations List', () => {
 
   it('can filter the Rulebook Activations list based on Name', () => {
     // need to type in this element cy.get('.pf-c-text-input-group__text-input')
-    let rba_id = edaRulebookActivation.name.split(' ').pop();
+    const rba_id = edaRulebookActivation.name.split(' ').pop();
     if (rba_id) {
       cy.visit('/eda/rulebook-activations/');
       cy.switchToolbarFilter('Name');
