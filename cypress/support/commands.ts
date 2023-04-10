@@ -47,6 +47,7 @@ declare global {
       ): Chainable<void>;
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+      verifyTableLength(count: number): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
       typeByLabel(label: string | RegExp, text: string): Chainable<void>;
 
@@ -432,6 +433,12 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
       cy.get('input[type=checkbox]').click();
     });
 });
+
+//Checks that the table of items has the given length
+Cypress.Commands.add('verifyTableLength', (count: number) => {
+  cy.get('tr').its('length').should('eq', count+1) // the table headings are found with 'tr', hence the +1
+}
+);
 
 //Selects a check box in a modal and then clicks a button with a certain label name.
 Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
