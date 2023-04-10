@@ -5,7 +5,6 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useActiveUser } from '../../../common/useActiveUser';
 import { RouteObj } from '../../../Routes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
@@ -13,12 +12,20 @@ import { getAwxError } from '../../useAwxView';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { Inventory } from '../../interfaces/Inventory';
 import { requestPatch } from '../../../common/crud/Data';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { FieldValues } from 'react-hook-form';
+
+interface InventoryFields extends FieldValues {
+  inventory: Inventory;
+  instanceGroups?: InstanceGroup[];
+  id: number;
+}
 
 export function CreateInventory() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<Inventory>();
-  const onSubmit: PageFormSubmitHandler<Inventory> = async (inventory, setError) => {
+  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (inventory, setError) => {
     try {
       if (inventory.summary_fields.organization.name) {
         try {
@@ -32,6 +39,15 @@ export function CreateInventory() {
         }
       }
       const newInventory = await postRequest('/api/v2/inventories/', inventory);
+      const igRequests = [];
+      for (const ig of inventory.instanceGroups || []) {
+        igRequests.push(
+          postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+            id: ig.id,
+          })
+        );
+      }
+      await Promise.all(igRequests);
       navigate(
         RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
           ':id',
@@ -135,7 +151,7 @@ function InventoryInputs() {
         name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect<Inventory> name="summary_fields.organization.name" />
+      <PageFormOrganizationSelect<Inventory> name="summary_fields.organization.name" isRequired />
       <PageFormInstanceGroupSelect<{ instanceGroups: string; id: number }> name="instanceGroups" />
     </>
   );
