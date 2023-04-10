@@ -5,15 +5,23 @@ describe('EDA Resource Toolbar Functionality', () => {
     cy.edaLogin();
   });
 
-  it.skip('can visit the pages in the Views section and assert the data there', () => {
+  it.skip('can visit the pages in the Projects section and assert the data there', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('can visit the pages in the Resources section and assert the data there', () => {
+  it.skip('can visit the pages in the Credentials section and assert the data there', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('can visit the pages in the Activities section and assert the data there', () => {
+  it.skip('can visit the pages in the Decision Environments section and assert the data there', () => {
+    //change test stub name to stipulate what the specific criteria is
+  });
+
+  it.skip('can visit the pages in the Rule Audits section and assert the data there', () => {
+    //change test stub name to stipulate what the specific criteria is
+  });
+
+  it.skip('can visit the pages in the Rulebook Activations section and assert the data there', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
@@ -25,7 +33,11 @@ describe('EDA Resource Toolbar Functionality', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('can visit the pages in the User Access section and assert the data there', () => {
+  it.skip('can visit the pages in the Users section and assert the data there', () => {
+    //change test stub name to stipulate what the specific criteria is
+  });
+
+  it.skip('can visit the pages in the Roles section and assert the data there', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 });
