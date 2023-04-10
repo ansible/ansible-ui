@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { TemplateDetail } from './TemplateDetail';
+import { TemplateDetail } from './TemplateDetails';
 
 describe('TemplateDetails', () => {
   beforeEach(() => {

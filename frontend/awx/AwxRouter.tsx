@@ -29,7 +29,7 @@ import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPa
 import { Inventories } from './resources/inventories/Inventories';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
-import { TemplateDetail } from './resources/templates/TemplateDetail';
+import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { Templates } from './resources/templates/Templates';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
@@ -62,7 +62,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.JobOutput} element={<JobPage />} />
 
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
-        <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplateDetail />} />
+        <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplatePage />} />
         <Route
           path={RouteObjWithoutPrefix.WorkflowJobTemplateDetails}
           element={<WorkflowJobTemplateDetail />}

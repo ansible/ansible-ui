@@ -7,37 +7,43 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
 import { AwxError } from '../../../common/AwxError';
-import { Project } from '../../../interfaces/Project';
-import { useProjectActions } from '../hooks/useProjectActions';
-import { ProjectDetails } from './ProjectDetails';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { useTemplateActions } from '../hooks/useTemplateActions';
+import { TemplateDetails } from './TemplateDetails';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
-export function ProjectPage() {
+export function TemplatePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGetItem<Project>('/api/v2/projects', params.id);
+  const {
+    error,
+    data: template,
+    refresh,
+  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
   const navigate = useNavigate();
-  const itemActions = useProjectActions({ onProjectsDeleted: () => navigate(RouteObj.Projects) });
+  const itemActions = useTemplateActions({
+    onTemplatesDeleted: () => navigate(RouteObj.Templates),
+  });
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!project) return <LoadingPage breadcrumbs tabs />;
+  if (!template) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteObj.Projects }, { label: project?.name }]}
+        title={template?.name}
+        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
-          <PageActions<Project>
+          <PageActions<JobTemplate>
             actions={itemActions}
             position={DropdownPosition.right}
-            selectedItem={project}
+            selectedItem={template}
           />
         }
       />
-      <PageTabs loading={!project}>
+      <PageTabs loading={!template}>
         <PageTab label={t('Details')}>
-          <ProjectDetails project={project} />
+          <TemplateDetails template={template} />
         </PageTab>
         <PageTab label={t('Access')}>
           <PageNotImplemented />
