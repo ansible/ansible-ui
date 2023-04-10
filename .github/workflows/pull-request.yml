@@ -40,23 +40,25 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
+
+      - name: Build Dependencies
+        uses: docker/build-push-action@v4
         with:
-          path: dependencies.tar
-          key: dependencies-${{ hashFiles('package-lock.json') }}
-      - if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          docker load --input dependencies.tar
-          rm -f dependencies.tar
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --target dependencies --tag dependencies .
-          docker save --output dependencies.tar dependencies
-      - run: DOCKER_BUILDKIT=1 docker build  --target ansible-ui --cache-from dependencies --tag ansible-ui .
+          target: dependencies
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Ansible UI
+        uses: docker/build-push-action@v4
+        with:
+          target: ansible-ui
+          tags: ansible-ui
+          load: true
+          cache-from: type=gha
+
       - run: docker save ansible-ui > ansible-ui.tar
       - uses: actions/upload-artifact@v3
         with:
