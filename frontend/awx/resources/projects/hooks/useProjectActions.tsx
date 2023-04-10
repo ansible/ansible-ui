@@ -62,6 +62,16 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
       },
       {
         type: PageActionType.single,
+        variant: ButtonVariant.secondary,
+        icon: MinusCircleIcon,
+        label: t(`Cancel project sync`),
+        isDisabled: (project: Project) =>
+          cannotCancelProjectDueToPermissions(project) || cannotCancelProjectDueToStatus(project),
+        isHidden: (project: Project) => Boolean(cannotCancelProjectDueToStatus(project)),
+        onClick: (project: Project) => cancelProjects([project]),
+      },
+      {
+        type: PageActionType.single,
         variant: ButtonVariant.primary,
         icon: SyncIcon,
         label: t('Sync project'),
@@ -86,16 +96,6 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
               });
             });
         },
-      },
-      {
-        type: PageActionType.single,
-        variant: ButtonVariant.secondary,
-        icon: MinusCircleIcon,
-        label: t(`Cancel project sync`),
-        isDisabled: (project: Project) =>
-          cannotCancelProjectDueToPermissions(project) || cannotCancelProjectDueToStatus(project),
-        isHidden: (project: Project) => Boolean(cannotCancelProjectDueToStatus(project)),
-        onClick: (project: Project) => cancelProjects([project]),
       },
       {
         type: PageActionType.single,

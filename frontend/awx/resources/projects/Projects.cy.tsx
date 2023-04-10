@@ -283,11 +283,15 @@ describe('projects.cy.ts', () => {
     });
     it('Sync project kebab button is disabled for project with active sync status', () => {
       cy.mount(<Projects />);
-      cy.contains('td', ' Project 10 Org 2')
+      cy.contains('td', ' Project 3 Org 0')
         .parent()
         .within(() => {
+          cy.get('.sync-project').trigger('mouseenter');
           cy.get('.sync-project').should('have.attr', 'aria-disabled', 'true');
         });
+      cy.get('.pf-c-tooltip')
+        .contains(/^The project cannot be synced because a sync job is currently running$/)
+        .should('be.visible');
     });
     it('Cancel project sync kebab button is visible for project with active sync status and is hidden for project with non active sync status', () => {
       cy.mount(<Projects />);
@@ -310,8 +314,12 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 10 Org 2')
         .parent()
         .within(() => {
+          cy.get('.cancel-project-sync').trigger('mouseenter');
           cy.get('.cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
         });
+      cy.get('.pf-c-tooltip')
+        .contains(/^The project sync cannot be canceled due to insufficient permission$/)
+        .should('be.visible');
     });
     it('Create Project button is enabled if the user has permission to create projects', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({

@@ -427,7 +427,7 @@
       "last_job_run": null,
       "last_job_failed": false,
       "next_job_run": null,
-      "status": "never updated",
+      "status": "pending",
       "organization": 2,
       "scm_update_on_launch": false,
       "scm_update_cache_timeout": 0,
