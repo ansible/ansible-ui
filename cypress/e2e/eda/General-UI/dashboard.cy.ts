@@ -1,20 +1,12 @@
 //Tests a user's ability to perform certain actions on the Dashboard of the EDA UI.
 //Implementation of Visual Tests makes sense here at some point
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Dashboard', () => {
-  let project: EdaProject;
-  let rulebookActivation: EdaRulebookActivation;
   before(() => {
     cy.edaLogin();
-    cy.createEdaProject().then((new_project) => {
-      project = new_project;
-      cy.getEdaRulebooks(project).then((edaRuleBooksArray) => {
-        const rulebook = edaRuleBooksArray[0];
-        cy.createEdaRulebookActivation(rulebook).then((activation) => {
-          rulebookActivation = activation;
-        });
+    cy.createEdaProject().then((project) => {
+      cy.getEdaRulebooks(project).then((edaRulebooksArray) => {
+        cy.createEdaRulebookActivation(edaRulebooksArray[0]);
       });
     });
   });
