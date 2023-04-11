@@ -273,7 +273,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       ) : (
         <Chart
           schema={hydrateSchema(schema)({
-            label: chartParams.label,
+            label: chartParams.label.toString(),
             tooltip: chartParams.tooltip,
             field: chartParams.field,
           })}

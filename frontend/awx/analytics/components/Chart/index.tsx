@@ -61,10 +61,8 @@ const applyHiddenFilter = (chartData: ChartData, chartSeriesHidden: string[] = [
     hidden:
       (!!series.serie[0].id || !!series.serie[0].host_id) &&
       !!chartSeriesHidden.includes(
-        // eslint-disable-next-line no-prototype-builtins
-        series.serie[0].hasOwnProperty('host_id').toString() ||
-          // eslint-disable-next-line no-prototype-builtins
-          series.serie[0].hasOwnProperty('id').toString()
+        Object.prototype.hasOwnProperty.call(series.serie[0], 'host_id').toString() ||
+          Object.prototype.hasOwnProperty.call(series.serie[0], 'id').toString()
       ),
   })),
 });

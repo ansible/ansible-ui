@@ -14,7 +14,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
   interface errorTextsType {
     title: string;
     description: string;
-    button?: ReactElement | undefined;
+    button?: ReactElement;
   }
 
   const errorTexts: Record<string, errorTextsType> = {
@@ -101,7 +101,14 @@ export function AnalyticsErrorState(props: { error?: string }) {
           footNote={t(
             'Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details.'
           )}
-          image={<img width="50%" height="50%" src={Picture} alt={''} />}
+          image={
+            <img
+              width="50%"
+              height="50%"
+              src={Picture}
+              alt={t('Automation Analytics is currently not enabled to send data.')}
+            />
+          }
         />
       </>
     );

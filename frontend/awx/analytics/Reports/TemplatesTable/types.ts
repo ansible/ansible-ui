@@ -19,8 +19,7 @@ export interface Template {
   //manualCost: number;
   //automatedCost: number;
   //enabled: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  monetary_gain?: number | any;
+  monetary_gain: number;
   // Anything else accidentally having it
   [key: string]: string | number | boolean;
 }
