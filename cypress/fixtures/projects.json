@@ -202,11 +202,11 @@
           }
         },
         "user_capabilities": {
-          "edit": true,
-          "delete": true,
-          "start": true,
-          "schedule": true,
-          "copy": true
+          "edit": false,
+          "delete": false,
+          "start": false,
+          "schedule": false,
+          "copy": false
         }
       },
       "created": "2023-01-10T14:43:33.687318Z",
@@ -304,7 +304,7 @@
         "user_capabilities": {
           "edit": true,
           "delete": true,
-          "start": true,
+          "start": false,
           "schedule": true,
           "copy": true
         }
@@ -327,7 +327,7 @@
       "last_job_run": null,
       "last_job_failed": false,
       "next_job_run": null,
-      "status": "never updated",
+      "status": "waiting",
       "organization": 2,
       "scm_update_on_launch": false,
       "scm_update_cache_timeout": 0,
@@ -427,7 +427,7 @@
       "last_job_run": null,
       "last_job_failed": false,
       "next_job_run": null,
-      "status": "never updated",
+      "status": "pending",
       "organization": 2,
       "scm_update_on_launch": false,
       "scm_update_cache_timeout": 0,
@@ -1121,7 +1121,7 @@
         "user_capabilities": {
           "edit": true,
           "delete": true,
-          "start": true,
+          "start": false,
           "schedule": true,
           "copy": true
         }
@@ -1144,7 +1144,7 @@
       "last_job_run": "2023-02-14T18:48:12.115360Z",
       "last_job_failed": false,
       "next_job_run": null,
-      "status": "successful",
+      "status": "running",
       "organization": 4,
       "scm_update_on_launch": false,
       "scm_update_cache_timeout": 0,

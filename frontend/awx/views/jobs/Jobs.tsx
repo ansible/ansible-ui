@@ -43,6 +43,9 @@ export default function Jobs() {
             case 'workflow_job':
               void refresh();
               break;
+            case 'project_update':
+              void refresh();
+              break;
           }
           break;
       }

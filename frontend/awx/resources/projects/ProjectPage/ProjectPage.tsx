@@ -16,7 +16,7 @@ export function ProjectPage() {
   const params = useParams<{ id: string }>();
   const { error, data: project, refresh } = useGetItem<Project>('/api/v2/projects', params.id);
   const navigate = useNavigate();
-  const itemActions = useProjectActions({ onProjectsDeleted: () => navigate(RouteObj.Projects) });
+  const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;

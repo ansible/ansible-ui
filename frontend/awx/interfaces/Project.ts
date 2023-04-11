@@ -92,6 +92,20 @@ export interface Project {
       status: string;
       failed: boolean;
     };
+    current_update?: {
+      id: number;
+      name: string;
+      description: string;
+      status: string;
+      failed: boolean;
+    };
+    current_job?: {
+      id: number;
+      name: string;
+      description: string;
+      status: string;
+      failed: boolean;
+    };
   };
   created: string;
   modified: string;
