@@ -98,11 +98,7 @@ describe('jobs', () => {
       cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = testJob.name ? testJob.name : '';
-      cy.contains('td', jobName)
-        .parent()
-        .within(() => {
-          cy.contains('.pf-c-alert__title', 'Successful');
-        });
+      cy.tableHasRowWithSuccess(jobName);
       cy.clickRowAction(jobId, /^Delete job$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
@@ -123,11 +119,7 @@ describe('jobs', () => {
       cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = job.name ? job.name : '';
-      cy.contains('td', jobName)
-        .parent()
-        .within(() => {
-          cy.contains('.pf-c-alert__title', 'Successful');
-        });
+      cy.tableHasRowWithSuccess(jobName);
       cy.selectRow(jobId);
       cy.clickToolbarAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();

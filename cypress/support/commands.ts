@@ -45,6 +45,7 @@ declare global {
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
+      tableHasRowWithSuccess(name: string | RegExp);
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -428,6 +429,14 @@ Cypress.Commands.add(
       });
   }
 );
+
+Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp) => {
+  cy.contains('td', name)
+    .parent()
+    .within(() => {
+      cy.get('.pf-c-alert__title').should('contain', 'Successful');
+    });
+});
 
 //Filters a list to show only particular results using a name, locates the row with that name,
 //and clicks the checkbox for that line item.
