@@ -122,6 +122,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           target: eda-ui
-          tags: quay.io/ansible/ansible-ui:eda,quay.io/ansible/ansible-ui:eda-${{ needs.tag.outputs.VERSION }}
+          tags: quay.io/ansible/eda-ui:latest,quay.io/ansible/eda-ui:${{ needs.tag.outputs.VERSION }}
           push: true
           cache-from: type=gha
