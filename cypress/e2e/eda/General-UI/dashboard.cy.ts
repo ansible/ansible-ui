@@ -10,19 +10,7 @@ describe('EDA Dashboard', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('shows the user an Execution Environment card with a list of EEs visible including working links', () => {
-    //change test stub name to stipulate what the specific criteria is
-  });
-
   it.skip('shows the user a Rulebook Activation card with a list of Rulebook Activations visible including working links', () => {
-    //change test stub name to stipulate what the specific criteria is
-  });
-
-  it.skip('shows the user an Inventories card with a list of Inventories visible including working links', () => {
-    //change test stub name to stipulate what the specific criteria is
-  });
-
-  it.skip('shows the user a Recent Actions card with a list of Recent Actions visible including working links', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 });

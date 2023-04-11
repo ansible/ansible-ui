@@ -5,16 +5,16 @@ describe('EDA Credentials List', () => {
     cy.edaLogin();
   });
 
-  it.skip('can filter the Credentials list based on specific criteria', () => {
+  it.skip('renders the Credentials list page', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('can perform a basic search on the Credentials list', () => {
-    //use mock data to test search
+  it.skip('renders the Credentials details page and shows expected information', () => {
+    //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('can perform an advanced search on the Credentials list', () => {
-    //use mock data to test search
+  it.skip('can filter the Credentials list based on specific criteria', () => {
+    //change test stub name to stipulate what the specific criteria is
   });
 
   it.skip('can bulk delete Credentials from the Credentials list', () => {
