@@ -6,7 +6,7 @@ describe('EDA Login / Logoff', () => {
     //change test stub name to stipulate what the specific criteria is
   });
 
-  it.skip('canlog out and login as a different user', () => {
+  it.skip('can log out and login as a different user', () => {
     //need to use mock data to test the search feature
   });
 });

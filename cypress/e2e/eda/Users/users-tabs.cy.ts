@@ -9,14 +9,6 @@ describe('EDA User Tokens Tab', () => {
     //disable ruleset
   });
 
-  it.skip('can perform a basic search on the Tokens Tab', () => {
-    //need to use mock data to test the search feature
-  });
-
-  it.skip('can perform an advanced search on the Tokens Tab', () => {
-    //need to use mock data to test the search feature
-  });
-
   it.skip('can verify the functionality of items in the kebab menu on the Tokens list view', () => {
     //disable ruleset
   });

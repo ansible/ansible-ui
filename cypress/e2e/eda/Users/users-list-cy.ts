@@ -5,11 +5,7 @@ describe('EDA Users List', () => {
     cy.edaLogin();
   });
 
-  it.skip('can perform a basic search on the Users list', () => {
-    //use mock data to test search
-  });
-
-  it.skip('can perform an advanced search on the Users list', () => {
+  it.skip('can filter the Users list based on specific criteria', () => {
     //use mock data to test search
   });
 

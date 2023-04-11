@@ -6,11 +6,19 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
-  it.skip('can create a machine credential, and assert the information showing on the details page, and then delete it', () => {
+  it.skip('can create a machine credential, and assert the information showing on the details page', () => {
     //write test here
   });
 
-  it.skip('can create a source control credential, verify edit functionality, and then delete', () => {
+  it.skip('can create a source control credential', () => {
+    //write test here
+  });
+
+  it.skip('can edit a credential but cannot edit the type of credential', () => {
+    //write test here
+  });
+
+  it.skip('can delete a credential', () => {
     //write test here
   });
 });
