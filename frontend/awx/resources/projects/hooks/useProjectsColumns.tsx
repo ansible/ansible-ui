@@ -2,13 +2,13 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ScmType } from '../../../../common/scm';
-import { StatusCell } from '../../../../common/StatusCell';
 import { CopyCell, ITableColumn } from '../../../../../framework';
 import {
   useCreatedColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
+  useStatusColumn,
 } from '../../../../common/columns';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
@@ -24,13 +24,14 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
+  const statusColumn = useStatusColumn({
+    ...options,
+    tooltip: t`Click to view latest project sync job`,
+  });
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
-      {
-        header: t('Status'),
-        cell: (project) => <StatusCell status={project.status} />,
-      },
+      statusColumn,
       {
         header: t('Type'),
         cell: (project) => <ScmType scmType={project.scm_type} />,
@@ -44,7 +45,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn]
+    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn, statusColumn]
   );
   return tableColumns;
 }
