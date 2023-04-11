@@ -8,11 +8,6 @@ import {
   EmptyStateVariant,
   Button,
 } from '@patternfly/react-core';
-import styled from 'styled-components';
-
-const RefreshMessageDiv = styled.div`
-  margin-top: 16px;
-`;
 
 export function EmptyStateError(props: { titleProp?: string; message?: string }) {
   const { t } = useTranslation();
