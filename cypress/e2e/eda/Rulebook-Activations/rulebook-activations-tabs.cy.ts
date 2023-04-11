@@ -37,12 +37,25 @@ describe('EDA Rulebook Activations History Tab', () => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
         cy.createEdaRulebookActivation(gitHookDeployRuleBook).then((edaRulebookActivation) => {
+          cy.intercept(
+            'GET',
+            `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
+          ).as('getRBAInstance');
           cy.visit('eda/rulebook-activations');
-          /*
-      filtering by text doesn't work for rulebook activations
-      cy.filterByText(edaRulebookActivation.name);
-        */
-          cy.contains('td[data-label="Name"]', edaRulebookActivation.name).should('be.visible');
+          cy.clickRow(edaRulebookActivation.name);
+          cy.contains('li', 'History').click();
+          // TODO: needs further work when RBA actions are done
+          cy.wait('@getRBAInstance')
+            .its('response.body.results[0].id')
+            .then((id) => {
+              cy.wrap(id).as('ID');
+              cy.get('@ID').then(($id) => {
+                const id = $id.toString();
+                cy.filterByText(`Instance ${id}`);
+                cy.contains('td[data-label="Name"]', `Instance ${id}`);
+                cy.clickButton(/^Clear all filters$/);
+              });
+            });
           cy.deleteEdaRulebookActivation(edaRulebookActivation);
         });
       });
