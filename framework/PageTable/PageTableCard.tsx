@@ -63,13 +63,13 @@ const CardTopDiv = styled.div`
 `;
 
 const CardDiv = styled.div`
-  max-width: '100%';
+  max-width: 100%;
 `;
 
 const CardFooterDiv = styled.div`
-  display: 'flex';
-  flex-direction: 'row';
-  align-items: 'end';
+  display: flex;
+  flex-direction: row;
+  align-items: end;
   gap: 16;
 `;
 
@@ -78,16 +78,16 @@ const CardFooterLabelsDiv = styled.div`
 `;
 
 const PageDetailDiv = styled.div`
-  display: 'flex';
+  display: flex;
   gap: 16;
   margin-top: 8;
-  flex-wrap: 'wrap';
+  flex-wrap: wrap;
 `;
 
 const ColumnsDiv = styled.div`
-  display: 'flex';
+  display: flex;
   gap: 6;
-  align-items: 'baseline';
+  align-items: baseline;
 `;
 
 export function PageTableCard<T extends object>(props: {
