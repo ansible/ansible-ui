@@ -102,7 +102,7 @@ describe('Inventories.cy.ts', () => {
           );
         });
     });
-    it('disavle copy row action if the inventory has inventory sources', () => {
+    it('disable copy row action if the inventory has inventory sources', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
         .its('results')

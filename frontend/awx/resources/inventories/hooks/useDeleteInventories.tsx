@@ -16,20 +16,17 @@ export function useDeleteInventories(onComplete: (inventories: Inventory[]) => v
   const cannotDeleteInventory = (inventory: Inventory) => {
     return inventory?.summary_fields?.user_capabilities?.delete
       ? undefined
-      : t('The inventory cannot be deleted due to insufficient permissions.');
+      : t('The inventory cannot be deleted due to insufficient permission.');
   };
 
   const deleteInventories = (inventories: Inventory[]) => {
     const undeletableInventories = inventories.filter(cannotDeleteInventory);
     bulkAction({
-      title:
-        inventories.length === 1
-          ? t('Permanently delete inventory')
-          : t('Permanently delete inventories'),
+      title: t('Permanently delete inventories', { count: inventories.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} inventories.', {
-        count: inventories.length,
+        count: inventories.length - undeletableInventories.length,
       }),
-      actionButtonText: t('Delete inventory', { count: inventories.length }),
+      actionButtonText: t('Delete inventories', { count: inventories.length }),
       items: inventories.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,
@@ -41,7 +38,7 @@ export function useDeleteInventories(onComplete: (inventories: Inventory[]) => v
         undeletableInventories.length > 0
           ? [
               t(
-                '{{count}} of the selected inventories cannot be deleted due to insufficient permissions.',
+                '{{count}} of the selected inventories cannot be deleted due to insufficient permission.',
                 {
                   count: undeletableInventories.length,
                 }

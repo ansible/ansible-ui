@@ -386,7 +386,7 @@ Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
   cy.contains('.pf-c-alert__title', label);
 });
 
-//Uses a certain label string to identify the alert showing on the screen.
+//Uses a certain label string to identify the tooltip showing on the screen.
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-c-tooltip__content', label);
 });
