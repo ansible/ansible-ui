@@ -53,6 +53,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   InventoryDetails: `${awxRoutePrefix}/inventories/:inventory_type/details/:id`,
   CreateInventory: `${awxRoutePrefix}/inventories/create`,
   EditInventory: `${awxRoutePrefix}/inventories/edit/:id`,
+  CreateSmartInventory: `${awxRoutePrefix}/smart_inventory/create`,
+  CreateConstructedInventory: `${awxRoutePrefix}/constructed_inventory/create`,
+  EditSmartInventory: `${awxRoutePrefix}/smart_inventory/edit/:id`,
+  EditConstructedInventory: `${awxRoutePrefix}/constructed_inventory/edit/:id`,
 
   Hosts: `${awxRoutePrefix}/hosts`,
   HostDetails: `${awxRoutePrefix}/hosts/details/:id`,

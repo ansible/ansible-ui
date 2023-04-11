@@ -767,10 +767,10 @@
           }
         },
         "user_capabilities": {
-          "edit": true,
-          "delete": true,
-          "copy": true,
-          "adhoc": true
+          "edit": false,
+          "delete": false,
+          "copy": false,
+          "adhoc": false
         },
         "labels": {
           "count": 0,

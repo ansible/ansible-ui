@@ -118,3 +118,22 @@ export function useEmailToolbarFilter() {
     [t]
   );
 }
+
+export function useInventoryTypeToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'kind',
+      label: t('Inventory Type'),
+      type: 'select',
+      query: 'or__kind',
+      options: [
+        { label: t('Inventory'), value: '' },
+        { label: t('Smart Inventory'), value: 'smart' },
+        { label: t('Constructed Inventory'), value: 'constructed' },
+      ],
+      placeholder: t('Select inventory types'),
+    }),
+    [t]
+  );
+}

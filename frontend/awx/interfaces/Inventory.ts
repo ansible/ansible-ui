@@ -37,6 +37,10 @@ export interface CommonInventory
     };
   };
   organization: number;
+  has_inventory_sources: boolean;
+  inventory_sources_with_failures: number;
+  pending_deletion: boolean;
+  total_inventory_sources: number;
 }
 
 export interface ConstructedInventory extends CommonInventory {
