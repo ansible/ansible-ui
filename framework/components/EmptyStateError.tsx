@@ -27,9 +27,7 @@ export function EmptyStateError(props: { titleProp?: string; message?: string })
         {titleProp || title}
       </Title>
       <EmptyStateBody>{message}</EmptyStateBody>
-      <RefreshMessageDiv>
-        <Title headingLevel="h6">{description}</Title>
-      </RefreshMessageDiv>
+      <EmptyStateBody>{description}</EmptyStateBody>
       <Button variant="primary" onClick={() => window.location.reload()}>
         {button}
       </Button>
