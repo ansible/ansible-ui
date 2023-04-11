@@ -9,7 +9,7 @@ describe('EDA Projects CRUD', () => {
   before(() => cy.edaLogin());
 
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
-    const name = 'E2E Team ' + randomString(4);
+    const name = 'E2E Project ' + randomString(4);
     cy.navigateTo(/^Projects$/);
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
