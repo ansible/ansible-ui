@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useOrganizationNameColumn,
   useModifiedColumn,
   useNameColumn,
@@ -35,6 +36,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
   );
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
   const createdColumn = useCreatedColumn(options);
+  const descriptionColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);
   const organizationColumn = useOrganizationNameColumn(options);
   const typeColumn = useMemo<ITableColumn<Inventory>>(
@@ -78,8 +80,24 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
     [t]
   );
   const tableColumns = useMemo<ITableColumn<Inventory>[]>(
-    () => [nameColumn, statusColumn, typeColumn, organizationColumn, createdColumn, modifiedColumn],
-    [nameColumn, statusColumn, typeColumn, organizationColumn, createdColumn, modifiedColumn]
+    () => [
+      nameColumn,
+      descriptionColumn,
+      statusColumn,
+      typeColumn,
+      organizationColumn,
+      createdColumn,
+      modifiedColumn,
+    ],
+    [
+      nameColumn,
+      descriptionColumn,
+      statusColumn,
+      typeColumn,
+      organizationColumn,
+      createdColumn,
+      modifiedColumn,
+    ]
   );
   return tableColumns;
 }

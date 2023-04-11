@@ -36,7 +36,10 @@ export function Inventories() {
   });
   const { refresh, pageItems } = view;
   const toolbarActions = useInventoriesToolbarActions(view);
-  const rowActions = useInventoryActions({ onInventoriesDeleted: view.unselectItemsAndRefresh });
+  const rowActions = useInventoryActions({
+    onInventoriesDeleted: view.unselectItemsAndRefresh,
+    onInventoryCopied: view.refresh,
+  });
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
