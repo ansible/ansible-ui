@@ -45,7 +45,7 @@ declare global {
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
-      tableHasRowWithSuccess(name: string | RegExp);
+      tableHasRowWithSuccess(name: string | RegExp): Chainable<void>;
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
