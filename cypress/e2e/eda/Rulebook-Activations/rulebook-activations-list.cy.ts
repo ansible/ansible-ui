@@ -123,7 +123,7 @@ describe('EDA Rulebook Activations List', () => {
                   });
                   cy.clickToolbarKebabAction(/^Delete selected rulebook activations$/);
                   cy.clickModalConfirmCheckbox();
-                  cy.clickModalButton('Delete rulebookActivations');
+                  cy.clickModalButton('Delete rulebook activations');
                   cy.wait(['@edaRulebookActivation1', '@edaRulebookActivation2']).then(
                     (activationArr) => {
                       expect(activationArr[0]?.response?.statusCode).to.eql(204);
