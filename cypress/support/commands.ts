@@ -3,12 +3,13 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
@@ -126,6 +127,7 @@ declare global {
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
 
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+      getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;
 
       /**
        * `createEdaRulebookActivation()` creates an EDA Rulebook Activation via API,
@@ -156,6 +158,8 @@ declare global {
        *    }
        */
       pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
+      createEdaCredential(): Chainable<EdaCredential>;
+      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
     }
   }
 }
@@ -311,7 +315,7 @@ Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError
 //Utilizes cy.getByLabel() to find an element with a certain label and then types a string in the input.
 //Common use case: Form field input
 Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
-  cy.getByLabel(label).type(text, { delay: 0 });
+  cy.getByLabel(label).clear().type(text, { delay: 0 });
 });
 
 Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => {
@@ -322,7 +326,7 @@ Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => 
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
       if (selectMenu.find('.pf-m-search').length > 0) {
-        cy.get('.pf-m-search').type(text, { delay: 0 });
+        cy.get('.pf-m-search').clear().type(text, { delay: 0 });
       }
     });
 
@@ -709,15 +713,6 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('deleteEdaProject', (edaProject) => {
-  cy.requestDelete(`/api/eda/v1/projects/${edaProject.id}/`, true).then(() => {
-    Cypress.log({
-      displayName: 'EDA PROJECT DELETION :',
-      message: [`Deleted 👉  ${edaProject.name}`],
-    });
-  });
-});
-
 Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
   // TODO: Once the API supports it, only get rulebooks for the project
   // Sometimes it takes a while for the rulebooks to be created.
@@ -775,19 +770,6 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
   });
 });
 
-Cypress.Commands.add('createEdaProject', () => {
-  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
-    name: 'E2E Project ' + randomString(4),
-    url: 'https://github.com/ansible/event-driven-ansible',
-  }).then((edaProject) => {
-    Cypress.log({
-      displayName: 'EDA PROJECT CREATION :',
-      message: [`Created 👉  ${edaProject.name}`],
-    });
-    return edaProject;
-  });
-});
-
 Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
     (result) => {
@@ -833,6 +815,42 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
       cy.wrap(result.results);
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
+    }
+  });
+});
+
+Cypress.Commands.add('createEdaCredential', () => {
+  cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
+    name: 'E2E Credential ' + randomString(4),
+    credential_type: 'Container Registry',
+    description: 'This is a container registry credential',
+    username: 'admin',
+  }).then((edaCredential) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredential.name}`],
+    });
+    return edaCredential;
+  });
+});
+
+Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
+  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL DELETION :',
+      message: [`Deleted 👉  ${credential.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
+  cy.requestGet<EdaResult<EdaCredential>>(
+    `/api/eda/v1/credentials/?name=${edaCredentialName}`
+  ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
     }
   });
 });

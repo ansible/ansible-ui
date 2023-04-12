@@ -52,7 +52,7 @@ describe('credentials', () => {
     cy.clickRow(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit credential$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.typeByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
@@ -69,7 +69,7 @@ describe('credentials', () => {
     cy.hasTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit credential$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.typeByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
