@@ -45,7 +45,7 @@ export function Hosts() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-                isPinned: true,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () => navigate(RouteObj.CreateHost),
