@@ -66,7 +66,7 @@ describe('users', () => {
     cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
     cy.hasTitle(/^Edit user$/);
-    cy.typeByLabel(/^Username$/, 'a');
+    cy.typeByLabel(/^Username$/, user.username + 'a');
     cy.clickButton(/^Save user$/);
     cy.hasTitle(`${user.username}a`);
   });
