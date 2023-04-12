@@ -9,7 +9,7 @@ export function useExecutionEnvironmentActions() {
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit'),
         onClick: () => {

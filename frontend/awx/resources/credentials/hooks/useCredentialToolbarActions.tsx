@@ -16,14 +16,14 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
   const toolbarActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create credential'),
         onClick: () => navigate(RouteObj.CreateCredential),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected credentials'),
         onClick: deleteCredentials,

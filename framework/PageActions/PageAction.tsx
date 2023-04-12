@@ -1,73 +1,105 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { ComponentClass } from 'react';
-import { PageActionType } from './PageActionType';
+
+export const enum PageActionType {
+  Seperator,
+  Button,
+  Single,
+  Link,
+  SingleLink,
+  Bulk,
+  Dropdown,
+  Switch,
+}
+
+export const enum PageActionSelection {
+  None,
+  Single,
+  Multiple,
+}
 
 export type IPageAction<T extends object> =
-  | IPageActionSeperator
   | IPageActionButton
-  | IPageBulkAction<T>
-  | IPageSingleAction<T>
-  | IPageDropdownAction<T>;
+  | IPageActionButtonSingle<T>
+  | IPageActionButtonMultiple<T>
+  | IPageActionLink
+  | IPageActionLinkSingle<T>
+  | IPageActionSwitch
+  | IPageActionSwitchSingle<T>
+  | IPageActionDropdown<T>
+  | IPageActionSeperator;
 
-export interface IPageActionCommon {
+interface IPageActionCommon {
   icon?: ComponentClass;
   label: string;
-  shortLabel?: string;
   tooltip?: string;
   isDanger?: boolean;
   ouiaId?: string;
+  isPinned?: boolean;
+}
+
+interface IPageActionNoneCommon extends IPageActionCommon {
+  selection?: PageActionSelection.None;
+  isHidden?: () => boolean;
+  isDisabled?: () => string | undefined;
+}
+
+interface IPageActionSingleCommon<T extends object> extends IPageActionCommon {
+  selection?: PageActionSelection.Single;
+  isHidden?: (item: T) => boolean;
+  isDisabled?: (item: T) => string | undefined;
+}
+
+interface IPageActionMultipleCommon<T extends object> extends IPageActionCommon {
+  selection?: PageActionSelection.Multiple;
+  isDisabled?: (items: T[]) => string | undefined;
+}
+
+export interface IPageActionButton extends IPageActionNoneCommon {
+  type: PageActionType.Button;
+  variant?: ButtonVariant;
+  onClick: () => unknown | Promise<unknown>;
+}
+
+export interface IPageActionButtonSingle<T extends object> extends IPageActionSingleCommon<T> {
+  type: PageActionType.Button;
+  variant?: ButtonVariant;
+  onClick: (item: T) => unknown | Promise<unknown>;
+}
+
+export interface IPageActionButtonMultiple<T extends object> extends IPageActionMultipleCommon<T> {
+  type: PageActionType.Button;
+  variant?: ButtonVariant;
+  onClick: (items: T[]) => unknown | Promise<unknown>;
+}
+
+export interface IPageActionLink extends IPageActionNoneCommon {
+  type: PageActionType.Link;
+  href: string;
+}
+
+export interface IPageActionLinkSingle<T extends object> extends IPageActionSingleCommon<T> {
+  type: PageActionType.Link;
+  href: (item: T) => string;
+}
+
+export interface IPageActionSwitch extends IPageActionNoneCommon {
+  type: PageActionType.Switch;
+  onToggle: () => unknown | Promise<unknown>;
+  isSwitchOn: () => boolean | Promise<boolean>;
+}
+
+export interface IPageActionSwitchSingle<T extends object> extends IPageActionSingleCommon<T> {
+  type: PageActionType.Switch;
+  onToggle: (item: T) => boolean | Promise<boolean>;
+  isSwitchOn: (item: T) => boolean;
+}
+
+export interface IPageActionDropdown<T extends object> extends IPageActionCommon {
+  type: PageActionType.Dropdown;
+  actions: IPageAction<T>[];
 }
 
 export interface IPageActionSeperator {
-  type: PageActionType.seperator;
+  type: PageActionType.Seperator;
 }
-
-type IPageActionWithLink = IPageActionCommon & {
-  type: PageActionType.button;
-  variant?: ButtonVariant;
-  isDisabled?: string | undefined;
-  href: string;
-  onClick?: never;
-};
-type IPageActionWithOnClick = IPageActionCommon & {
-  type: PageActionType.button;
-  variant?: ButtonVariant;
-  isDisabled?: string | undefined;
-  onClick: (() => void) | (() => Promise<unknown>);
-  href?: never;
-};
-export type IPageActionButton = IPageActionWithLink | IPageActionWithOnClick;
-
-export type IPageBulkAction<T extends object> = IPageActionCommon & {
-  type: PageActionType.bulk;
-  variant?: ButtonVariant;
-  onClick: (selectedItems: T[]) => void;
-};
-
-type IPageSingleActionWithLink<T extends object> = IPageActionCommon & {
-  type: PageActionType.singleLink;
-  variant?: ButtonVariant;
-  href: (item: T) => string;
-  onClick?: never;
-  isDisabled?: (item: T) => string | undefined;
-  isHidden?: (item: T) => boolean;
-};
-type IPageSingleActionWithOnClick<T extends object> = IPageActionCommon & {
-  type: PageActionType.single;
-  variant?: ButtonVariant;
-  onClick: (item: T) => void | Promise<unknown>;
-  href?: never;
-  isDisabled?: (item: T) => string | undefined;
-  isHidden?: (item: T) => boolean;
-};
-export type IPageSingleAction<T extends object> =
-  | IPageSingleActionWithLink<T>
-  | IPageSingleActionWithOnClick<T>;
-
-export type IPageDropdownAction<T extends object> = IPageActionCommon & {
-  type: PageActionType.dropdown;
-  variant?: ButtonVariant;
-  isHidden?: (item: T) => boolean;
-  isDisabled?: (item: T) => string;
-  options: IPageAction<T>[];
-};

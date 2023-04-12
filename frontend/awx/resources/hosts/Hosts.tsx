@@ -41,14 +41,14 @@ export function Hosts() {
   const toolbarActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () => navigate(RouteObj.CreateHost),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected hosts'),
         onClick: deleteHosts,
@@ -61,13 +61,13 @@ export function Hosts() {
   const rowActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),

@@ -6,16 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageHeader,
   PageLayout,
   PageTab,
   PageTabs,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
@@ -42,7 +42,7 @@ export function OrganizationPage() {
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit organization'),
@@ -50,7 +50,7 @@ export function OrganizationPage() {
           history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => {

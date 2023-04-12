@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
+  DateTimeCell,
   IPageAction,
   ITableColumn,
   IToolbarFilter,
@@ -13,15 +14,14 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  DateTimeCell,
   TextCell,
 } from '../../../../framework';
-import { Dotted } from '../../../../framework/components/Dotted';
 import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
+import { Dotted } from '../../../../framework/components/Dotted';
+import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { StatusCell } from '../../../common/StatusCell';
-import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
 
@@ -42,7 +42,7 @@ export function Instances() {
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         variant: ButtonVariant.primary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -64,7 +64,7 @@ export function Instances() {
   const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.secondary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -93,7 +93,7 @@ export function Instances() {
         },
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) =>

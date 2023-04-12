@@ -10,7 +10,7 @@ export function useExecutionEnvironmentsActions() {
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add execution environment'),

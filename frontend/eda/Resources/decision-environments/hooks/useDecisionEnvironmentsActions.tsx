@@ -16,14 +16,14 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
   return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create decision environment'),
         onClick: () => navigate(RouteObj.CreateEdaDecisionEnvironment),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected decision environments'),
         onClick: (decisionEnvironments: EdaDecisionEnvironment[]) =>

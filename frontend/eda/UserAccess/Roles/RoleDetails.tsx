@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { useDeleteRoles } from './hooks/useDeleteRole';
@@ -34,14 +34,14 @@ export function RoleDetails() {
   const itemActions = useMemo<IPageAction<EdaRole>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit Role'),
         onClick: (role: EdaRole) =>
           navigate(RouteObj.EditEdaRole.replace(':id', role.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete Role'),
         onClick: (role: EdaRole) => deleteRoles([role]),

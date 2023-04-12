@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CopyCell,
+  DateTimeCell,
   IPageAction,
   ITableColumn,
   IToolbarFilter,
@@ -11,7 +12,6 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { downloadTextFile } from '../../../../framework/utils/download-file';
@@ -32,7 +32,7 @@ export function SignatureKeys() {
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: DownloadIcon,
         label: t('Download key'),

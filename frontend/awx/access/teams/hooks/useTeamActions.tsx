@@ -3,13 +3,13 @@ import { EditIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfl
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { Team } from '../../../interfaces/Team';
-import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
-import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
-import { useDeleteTeams } from './useDeleteTeams';
 import { useActiveUser } from '../../../../common/useActiveUser';
+import { Team } from '../../../interfaces/Team';
+import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
+import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
+import { useDeleteTeams } from './useDeleteTeams';
 
 export function useTeamActions(options: {
   onTeamsDeleted: (teams: Team[]) => void;
@@ -23,7 +23,7 @@ export function useTeamActions(options: {
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
   const activeUser = useActiveUser();
 
-  return useMemo<IPageAction<Team>[]>(() => {
+  return useMemo(() => {
     const cannotDeleteTeam = (team: Team) =>
       team?.summary_fields?.user_capabilities?.delete
         ? ''
@@ -45,33 +45,37 @@ export function useTeamActions(options: {
             `You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.`
           );
 
-    return [
+    const actions: IPageAction<Team>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: isDetailsPageAction ? ButtonVariant.primary : undefined, // Edit Team shows up as a primary button on the details page, but as a kebab menu option on a row
         icon: EditIcon,
         label: t('Edit team'),
         isDisabled: (team: Team) => cannotEditTeam(team),
         onClick: (team) => navigate(RouteObj.EditTeam.replace(':id', team.id.toString())),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add users to team'),
         isDisabled: (team: Team) => cannotAddUsers(team),
         onClick: (team) => selectUsersAddTeams([team]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove users from team'),
         isDisabled: (team: Team) => cannotRemoveUsers(team),
         onClick: (team) => selectAndRemoveUsersFromTeam(team),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete team'),
         isDisabled: (team: Team) => cannotDeleteTeam(team),
@@ -79,6 +83,7 @@ export function useTeamActions(options: {
         isDanger: true,
       },
     ];
+    return actions;
   }, [
     activeUser?.is_superuser,
     deleteTeams,

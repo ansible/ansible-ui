@@ -16,14 +16,14 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add rulebook activation'),
         onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>

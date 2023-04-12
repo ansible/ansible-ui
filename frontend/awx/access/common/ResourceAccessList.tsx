@@ -3,9 +3,9 @@ import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
-import { useActiveUser } from '../../../common/useActiveUser';
+import { IPageAction, PageActionType, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { useActiveUser } from '../../../common/useActiveUser';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
@@ -79,7 +79,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
@@ -89,9 +89,9 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
               'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
             ),
         onClick: () => selectUsersAddTeams([resource]),
-      } as IPageActionButton,
+      },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove users'),
@@ -116,7 +116,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: (user) => removeUsersFromResource([user], resource, view.unselectItemsAndRefresh),

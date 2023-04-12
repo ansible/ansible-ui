@@ -15,7 +15,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
         label: t('Edit credential'),
@@ -23,7 +23,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential) => deleteCredentials([credential]),

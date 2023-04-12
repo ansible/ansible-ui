@@ -26,18 +26,16 @@ export function UserRoles(props: { user: User }) {
   const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add role to user'),
-        shortLabel: t('Add role'),
         onClick: () => navigate(RouteObj.AddRolesToUser.replace(':id', user.id.toString())),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Remove selected roles from user'),
-        shortLabel: t('Remove roles'),
         onClick: () => alert('TODO'),
       },
     ],
@@ -46,7 +44,7 @@ export function UserRoles(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: TrashIcon,
         label: t('Remove role from user'),

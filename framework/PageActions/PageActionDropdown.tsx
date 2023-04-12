@@ -9,48 +9,62 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
-import { ComponentClass, FunctionComponent, ReactNode, useEffect, useMemo, useState } from 'react';
+import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IPageAction } from './PageAction';
-import { isHiddenAction } from './PageActions';
-import { PageActionType } from './PageActionType';
+import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
+import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 
-export function PageDropdownAction<T extends object>(props: {
+interface PageActionDropdownProps<T extends object> {
   actions: IPageAction<T>[];
-  label?: string;
   icon?: ComponentClass | FunctionComponent;
-  isDisabled?: boolean;
-  tooltip?: string;
-  selectedItems?: T[];
-  selectedItem?: T;
-  position?: DropdownPosition;
   iconOnly?: boolean;
+  isDisabled?: string | undefined;
+  label?: string;
   onOpen?: (label: string, open: boolean) => void;
+  position?: DropdownPosition;
+  selectedItem?: T;
+  selectedItems?: T[];
+  tooltip?: string;
   variant?: ButtonVariant;
-}) {
-  const { label, icon, selectedItems, selectedItem, iconOnly, isDisabled, tooltip, variant } =
-    props;
+}
+
+export function PageActionDropdown<T extends object>(props: PageActionDropdownProps<T>) {
+  const {
+    icon,
+    iconOnly,
+    isDisabled,
+    label,
+    onOpen,
+    position,
+    selectedItem,
+    selectedItems,
+    tooltip,
+    variant,
+  } = props;
 
   let { actions } = props;
-  actions = actions.filter((action) => !isHiddenAction(action, selectedItem));
+  actions = actions.filter((action) => !isPageActionHidden(action, selectedItem));
   actions = filterActionSeperators(actions);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const hasBulkActions = useMemo(
-    () => !actions.every((action) => action.type !== PageActionType.bulk),
+    () =>
+      !actions.every(
+        (action) => !('selection' in action) || action.selection !== PageActionSelection.Multiple
+      ),
     [actions]
   );
   const hasIcons = useMemo(
     () =>
       actions.find(
-        (action) => action.type !== PageActionType.seperator && action.icon !== undefined
+        (action) => action.type !== PageActionType.Seperator && action.icon !== undefined
       ) !== undefined,
     [actions]
   );
 
   useEffect(() => {
-    props.onOpen?.(label ?? 'default', dropdownOpen);
-  }, [dropdownOpen, label, props]);
+    onOpen?.(label ?? 'default', dropdownOpen);
+  }, [dropdownOpen, label, onOpen, props]);
 
   if (actions.length === 0) return <></>;
   const Icon = icon;
@@ -64,7 +78,7 @@ export function PageDropdownAction<T extends object>(props: {
     label || Icon ? (
       <DropdownToggle
         id="toggle-dropdown"
-        isDisabled={isDisabled}
+        isDisabled={!!isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
         toggleIndicator={Icon && iconOnly ? null : undefined}
@@ -76,7 +90,7 @@ export function PageDropdownAction<T extends object>(props: {
     ) : (
       <KebabToggle
         className="toggle-kebab"
-        isDisabled={isDisabled}
+        isDisabled={!!isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
@@ -100,7 +114,7 @@ export function PageDropdownAction<T extends object>(props: {
           index={index}
         />
       ))}
-      position={props.position}
+      position={position}
       // ZIndex 400 is needed for PF table stick headers
       style={{ zIndex: dropdownOpen ? 400 : undefined }}
     />
@@ -122,29 +136,82 @@ function PageDropdownActionItem<T extends object>(props: {
   index: number;
 }): JSX.Element {
   const { action, selectedItems, selectedItem, hasIcons, index } = props;
+  const isPageActionDisabled = usePageActionDisabled<T>();
+  const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
 
   switch (action.type) {
-    case PageActionType.single:
-    case PageActionType.singleLink: {
+    case PageActionType.Button: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
       let tooltip = action.tooltip;
-      const isDisabled =
-        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : false;
-      tooltip = isDisabled ? isDisabled : tooltip;
+      let isButtonDisabled = !!isDisabled;
+      if (action.selection === PageActionSelection.Multiple && !selectedItems.length) {
+        tooltip = 'No selections';
+        isButtonDisabled = true;
+      }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            onClick={
-              action.onClick ? () => selectedItem && action.onClick(selectedItem) : undefined
+            icon={
+              Icon ? (
+                <span style={{ paddingRight: 4 }}>
+                  <Icon />
+                </span>
+              ) : undefined
             }
-            component={
-              (action.href
-                ? (props: object) => (
-                    <Link {...props} to={selectedItem ? action.href(selectedItem) : ''} />
-                  )
-                : undefined) as ReactNode
-            }
+            onClick={() => {
+              switch (action.selection) {
+                case PageActionSelection.None:
+                  action.onClick();
+                  break;
+                case PageActionSelection.Single:
+                  if (selectedItem) action.onClick(selectedItem);
+                  break;
+                case PageActionSelection.Multiple:
+                  if (selectedItems) action.onClick(selectedItems);
+                  break;
+              }
+            }}
+            isAriaDisabled={isButtonDisabled}
+            style={{
+              color:
+                action.isDanger && !isButtonDisabled
+                  ? 'var(--pf-global--danger-color--100)'
+                  : undefined,
+            }}
+          >
+            {action.label}
+          </DropdownItem>
+        </Tooltip>
+      );
+    }
+
+    case PageActionType.Link: {
+      let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
+      if (!Icon && hasIcons) Icon = TransparentIcon;
+      let tooltip = action.tooltip;
+      tooltip = isDisabled ? isDisabled : tooltip;
+
+      let to: string;
+
+      switch (action.selection) {
+        case PageActionSelection.None:
+          to = action.href;
+          break;
+        case PageActionSelection.Single:
+          if (selectedItem) {
+            to = action.href(selectedItem);
+          } else to = '';
+          break;
+        default:
+          to = '';
+          break;
+      }
+
+      return (
+        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+          <DropdownItem
+            component={<Link {...props} to={to} />}
             isAriaDisabled={Boolean(isDisabled)}
             icon={
               Icon ? (
@@ -164,61 +231,25 @@ function PageDropdownActionItem<T extends object>(props: {
       );
     }
 
-    case PageActionType.button:
-    case PageActionType.bulk: {
-      let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
-      if (!Icon && hasIcons) Icon = TransparentIcon;
-      let tooltip = action.tooltip;
-      let isDisabled = false;
-      if (action.type === PageActionType.bulk && !selectedItems.length) {
-        tooltip = 'No selections';
-        isDisabled = true;
-      }
+    case PageActionType.Switch:
+      return <div key={`separator-${index}`}>SWITCH</div>;
+
+    case PageActionType.Dropdown: {
+      const tooltip = action.label;
       return (
-        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <DropdownItem
-            onClick={action.onClick ? () => action.onClick(selectedItems) : undefined}
-            component={
-              (!action.onClick
-                ? (props: object) => <Link {...props} to={action.href} />
-                : undefined) as ReactNode
-            }
-            isAriaDisabled={isDisabled}
-            icon={
-              Icon ? (
-                <span style={{ paddingRight: 4 }}>
-                  <Icon />
-                </span>
-              ) : undefined
-            }
-            style={{
-              color:
-                action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined,
-            }}
-          >
-            {action.label}
-          </DropdownItem>
-        </Tooltip>
-      );
-    }
-    case PageActionType.dropdown: {
-      let tooltip = action.label;
-      const isDisabled =
-        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : '';
-      tooltip = isDisabled ? isDisabled : tooltip;
-      return (
-        <PageDropdownAction<T>
+        <PageActionDropdown<T>
           key={action.label}
           label={action.label}
-          actions={action.options}
+          actions={action.actions}
           selectedItem={selectedItem}
-          isDisabled={Boolean(isDisabled)}
+          isDisabled={isDisabled}
           tooltip={tooltip}
-          variant={action.variant}
+          // variant={action.variant}
         />
       );
     }
-    case PageActionType.seperator:
+
+    case PageActionType.Seperator:
       return <DropdownSeparator key={`separator-${index}`} />;
   }
 }
@@ -229,14 +260,14 @@ export function filterActionSeperators<T extends object>(actions: IPageAction<T>
   const filteredActions = [...actions];
 
   // Remove seperators at beginning of actions
-  while (filteredActions.length > 0 && filteredActions[0].type === PageActionType.seperator) {
+  while (filteredActions.length > 0 && filteredActions[0].type === PageActionType.Seperator) {
     filteredActions.shift();
   }
 
   // Remove seperators at end of actions
   while (
     filteredActions.length > 0 &&
-    filteredActions[filteredActions.length - 1].type === PageActionType.seperator
+    filteredActions[filteredActions.length - 1].type === PageActionType.Seperator
   ) {
     filteredActions.pop();
   }

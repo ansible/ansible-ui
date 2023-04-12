@@ -1,8 +1,8 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
@@ -17,30 +17,30 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   return useMemo<IPageAction<Inventory>[]>(
     () => [
       {
-        type: PageActionType.dropdown,
+        type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Create inventory'),
-        options: [
+        actions: [
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
             label: t('Create inventory'),
             onClick: () => navigate(RouteObj.CreateInventory),
           },
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
             label: t('Create smart inventory'),
             onClick: () => navigate(RouteObj.CreateSmartInventory),
           },
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
             label: t('Create constructed inventory'),
             onClick: () => navigate(RouteObj.CreateConstructedInventory),
           },
         ],
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: deleteInventories,

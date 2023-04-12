@@ -15,14 +15,14 @@ export function useCredentialActions(view: IEdaView<EdaCredential>) {
   return useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential: EdaCredential) => deleteCredentials([credential]),

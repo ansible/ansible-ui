@@ -15,14 +15,14 @@ export function useRoleActions(view: IEdaView<EdaRole>) {
   return useMemo<IPageAction<EdaRole>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit Role'),
         onClick: (role: EdaRole) =>
           navigate(RouteObj.EditEdaRole.replace(':id', role.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete Role'),
         onClick: (role: EdaRole) => deleteRoles([role]),

@@ -12,7 +12,7 @@ export function useViewActivityStream<T extends object>(type: string) {
   return useMemo<IPageAction<T>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: HistoryIcon,
         label: t('View activity stream'),
         onClick: () => navigate(RouteObj.ActivityStream.replace(':type', type)),

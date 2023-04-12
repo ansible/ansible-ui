@@ -15,7 +15,7 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
   return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
@@ -24,7 +24,7 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
           ),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete decision-environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>

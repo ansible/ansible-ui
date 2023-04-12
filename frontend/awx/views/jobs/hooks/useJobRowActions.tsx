@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { RocketIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionType } from '../../../../../framework';
@@ -36,7 +36,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
 
     return [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.secondary,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
@@ -44,7 +44,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
         label: t(`Relaunch job`),
@@ -54,7 +54,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         onClick: (job: UnifiedJob) => void relaunchJob(job),
       },
       {
-        type: PageActionType.dropdown,
+        type: PageActionType.Dropdown,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
         iconOnly: true,
@@ -62,28 +62,28 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         isHidden: (job: UnifiedJob) =>
           !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
           !(job.status === 'failed' && job.type === 'job'),
-        options: [
+        actions: [
           {
-            type: PageActionType.single,
+            type: PageActionType.Single,
             label: t(`Relaunch on all hosts`),
             onClick: (job: UnifiedJob) => void relaunchAllHosts(job),
           },
           {
-            type: PageActionType.single,
+            type: PageActionType.Single,
             label: t(`Relaunch on failed hosts`),
             onClick: (job: UnifiedJob) => void relaunchFailedHosts(job),
           },
         ],
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t(`Delete job`),
         isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
         onClick: (job: UnifiedJob) => deleteJobs([job]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),

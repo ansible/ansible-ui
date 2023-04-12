@@ -15,8 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -25,8 +25,8 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
@@ -52,7 +52,7 @@ export function WorkflowJobTemplateDetail() {
   const itemActions: IPageAction<WorkflowJobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<WorkflowJobTemplate>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit workflow template'),
@@ -60,7 +60,7 @@ export function WorkflowJobTemplateDetail() {
           history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete workflow template'),
         onClick: (template) => {

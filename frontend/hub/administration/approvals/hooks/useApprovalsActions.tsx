@@ -9,7 +9,7 @@ export function useApprovalsActions() {
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: ThumbsUpIcon,
         label: t('Approve collections'),
         onClick: () => {
@@ -17,7 +17,7 @@ export function useApprovalsActions() {
         },
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: ThumbsDownIcon,
         label: t('Deny collections'),
         onClick: () => {

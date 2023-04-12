@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useDeleteGroups } from './hooks/useDeleteGroup';
@@ -34,14 +34,14 @@ export function GroupDetails() {
   const itemActions = useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete Group'),
         onClick: (group: EdaGroup) => deleteGroups([group]),

@@ -10,7 +10,7 @@ export function useRemoteRegistriesActions() {
   return useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add remote registry'),

@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -18,20 +18,20 @@ import {
 } from '../../../framework';
 import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
+import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
+import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { useEdaView } from '../useEventDrivenView';
 import {
   useDisableActivation,
   useRelaunchActivation,
   useRestartActivation,
 } from './hooks/useActivationDialogs';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
-import { useEdaView } from '../useEventDrivenView';
-import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
+import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -54,22 +54,22 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         label: 'Relaunch',
         onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         label: 'Restart',
         onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         label: 'Disable',
         onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete rulebookActivation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>

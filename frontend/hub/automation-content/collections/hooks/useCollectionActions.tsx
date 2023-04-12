@@ -15,15 +15,15 @@ export function useCollectionActions(callback?: (collections: Collection[]) => v
   return useMemo<IPageAction<Collection>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: UploadIcon,
         variant: ButtonVariant.secondary,
         label: t('Upload new version'),
         onClick: () => navigate(RouteObj.UploadCollection),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete entire collection'),
         onClick: (collection) => deleteCollections([collection]),

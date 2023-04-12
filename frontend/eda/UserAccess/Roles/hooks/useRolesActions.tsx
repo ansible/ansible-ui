@@ -16,14 +16,14 @@ export function useRolesActions(view: IEdaView<EdaRole>) {
   return useMemo<IPageAction<EdaRole>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create Role'),
         onClick: () => navigate(RouteObj.CreateEdaRole),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected Roles'),
         onClick: (Roles: EdaRole[]) => deleteRoles(Roles),

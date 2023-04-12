@@ -1,14 +1,14 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { CopyIcon, EditIcon, SyncIcon, TrashIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { CopyIcon, EditIcon, MinusCircleIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../../Routes';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Project } from '../../../interfaces/Project';
-import { useDeleteProjects } from './useDeleteProjects';
 import { useCancelProjects } from './useCancelProjects';
+import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
@@ -54,14 +54,14 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
 
     return [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit project'),
         isDisabled: (project: Project) => cannotEditProject(project),
         onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.secondary,
         icon: MinusCircleIcon,
         label: t(`Cancel project sync`),
@@ -71,7 +71,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         onClick: (project: Project) => cancelProjects([project]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: SyncIcon,
         label: t('Sync project'),
@@ -98,7 +98,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         },
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: CopyIcon,
         label: t('Copy project'),
         isDisabled: (project: Project) => cannotCopyProject(project),
@@ -125,9 +125,9 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
             });
         },
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete project'),
         isDisabled: (project: Project) => cannotDeleteProject(project),

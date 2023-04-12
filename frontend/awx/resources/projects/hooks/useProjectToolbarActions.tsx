@@ -1,13 +1,13 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { BanIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon, BanIcon } from '@patternfly/react-icons';
 import { RouteObj } from '../../../../Routes';
-import { Project } from '../../../interfaces/Project';
-import { useDeleteProjects } from './useDeleteProjects';
-import { useCancelProjects } from './useCancelProjects';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { Project } from '../../../interfaces/Project';
+import { useCancelProjects } from './useCancelProjects';
+import { useDeleteProjects } from './useDeleteProjects';
 
 import { IPageAction, PageActionType } from '../../../../../framework';
 
@@ -22,7 +22,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
   const ProjectToolbarActions = useMemo<IPageAction<Project>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
@@ -34,14 +34,14 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         href: RouteObj.CreateProject,
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: deleteProjects,
         isDanger: true,
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: BanIcon,
         label: t('Cancel selected projects'),
         onClick: cancelProjects,

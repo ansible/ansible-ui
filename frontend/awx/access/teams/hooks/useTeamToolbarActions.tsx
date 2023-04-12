@@ -23,7 +23,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
   return useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create team'),
@@ -34,9 +34,9 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
             ),
         href: RouteObj.CreateTeam,
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: PlusCircleIcon,
         label: t('Add users to selected teams'),
         onClick: () => selectUsersAddTeams(view.selectedItems),
@@ -53,17 +53,17 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
       //   label: t('Remove users from selected teams'),
       //   onClick: () => selectUsersRemoveTeams(view.selectedItems), // This hook has been repurposed as useSelectAndRemoveUsersFromTeam to handle removing users from a single team
       // },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected teams'),
         onClick: deleteTeams,
         isDanger: true,
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         icon: SyncIcon,
         label: t('Refresh'),
         onClick: () => void view.refresh(),

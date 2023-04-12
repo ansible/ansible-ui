@@ -15,8 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -25,15 +25,15 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { useVerbosityString } from '../../common/useVerbosityString';
 import { handleLaunch } from '../../common/util/launchHandlers';
 import { JobTemplate } from '../../interfaces/JobTemplate';
-import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { getJobOutputUrl } from '../../views/jobs/jobUtils';
+import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function TemplateDetail() {
   const { t } = useTranslation();
@@ -54,7 +54,7 @@ export function TemplateDetail() {
   const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit template'),
@@ -63,7 +63,7 @@ export function TemplateDetail() {
           navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete template'),
         onClick: (template) => {
@@ -74,7 +74,7 @@ export function TemplateDetail() {
         isDanger: true,
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: RocketIcon,
         label: t('Launch template'),
         onClick: async (template) => {

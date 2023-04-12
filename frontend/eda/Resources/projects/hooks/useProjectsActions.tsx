@@ -16,14 +16,14 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
         onClick: () => navigate(RouteObj.CreateEdaProject),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: (projects: EdaProject[]) => deleteProjects(projects),

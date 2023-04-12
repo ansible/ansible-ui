@@ -9,7 +9,7 @@ export function useRemoteRegistryActions() {
   return useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit'),
         onClick: () => {

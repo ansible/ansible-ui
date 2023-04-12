@@ -5,8 +5,8 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -15,12 +15,12 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 import { CredentialOptions } from './EditCredential';
+import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -39,14 +39,14 @@ export function CredentialDetails() {
   const itemActions = useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential: EdaCredential) => deleteCredentials([credential]),

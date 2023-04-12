@@ -12,7 +12,7 @@ export function useInventoryRowActions(view: IEdaView<EdaInventory>) {
   const rowActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory: EdaInventory) => deleteInventories([inventory]),

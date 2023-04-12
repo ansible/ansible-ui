@@ -34,7 +34,7 @@ export function AutomationServers() {
   const toolbarActions = useMemo<IPageAction<AutomationServer>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Add automation server'),
@@ -61,7 +61,7 @@ export function AutomationServers() {
       // },
       // { type: TypedActionType.seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: MinusCircleIcon,
         label: t('Remove automation server'),
         onClick: (server) => removeAutomationServers([server]),

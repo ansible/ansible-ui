@@ -1,30 +1,26 @@
-import { ButtonVariant, DropdownPosition, Flex, FlexItem } from '@patternfly/react-core';
+import { DropdownPosition, Flex, FlexItem } from '@patternfly/react-core';
 import {
   ComponentClass,
   FunctionComponent,
-  useMemo,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
-import { useBreakpoint, WindowSize } from '../components/useBreakPoint';
+import { WindowSize, useBreakpoint } from '../components/useBreakPoint';
 import { IPageAction } from './PageAction';
-import { PageActionType } from './PageActionType';
-import { PageDropdownAction } from './PageDropdownAction';
-import { PagePinnedActions } from './PagePinnedActions';
+import { PageActionDropdown } from './PageActionDropdown';
+import { isPageActionHidden } from './PageActionUtils';
+import { PageActionsPinned } from './PageActionsPinned';
 
-/**
- * Page actions represent actions used in table rows, toolbars, and page headers.
- * The PageActions component controls the collapsing of the actions at given breakpoints.
- */
-export function PageActions<T extends object>(props: {
-  /** An array of PageActions */
+interface PageActionProps<T extends object> {
+  /** The array of PageActions */
   actions: IPageAction<T>[];
 
-  /** The currently selected item for single actions */
+  /** The currently selected item for single selection actions */
   selectedItem?: T;
 
-  /** The currently selected items for bulk actions */
+  /** The currently selected items for multiple selection actions */
   selectedItems?: T[];
 
   /** The wrapper for each item
@@ -43,7 +39,13 @@ export function PageActions<T extends object>(props: {
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (open: boolean) => void;
-}) {
+}
+
+/**
+ * Page actions represent actions used in table rows, toolbars, and page headers.
+ * The PageActions component controls the collapsing of the actions at given breakpoints.
+ */
+export function PageActions<T extends object>(props: PageActionProps<T>) {
   const { actions, selectedItem, iconOnly, onOpen } = props;
 
   const collapseBreakpoint = useBreakpoint(
@@ -54,20 +56,20 @@ export function PageActions<T extends object>(props: {
 
   /** Actions that are visible */
   const visibleActions = useMemo(
-    () => actions.filter((action) => !isHiddenAction(action, selectedItem)),
+    () => actions.filter((action) => !isPageActionHidden(action, selectedItem)),
     [actions, selectedItem]
   );
 
   /** Actions that show up outside the dropdown */
   const pinnedActions: IPageAction<T>[] = useMemo(() => {
     if (collapseButtons) return [];
-    return visibleActions?.filter(isPinnedAction);
+    return visibleActions?.filter(isPageActionPinned);
   }, [collapseButtons, visibleActions]);
 
   /** Actions that are not pinned and show up inside the dropdown */
   const dropdownActions: IPageAction<T>[] = useMemo(() => {
     if (collapseButtons) return visibleActions;
-    return visibleActions?.filter((action) => !isPinnedAction(action)) ?? [];
+    return visibleActions?.filter((action) => !isPageActionPinned(action)) ?? [];
   }, [collapseButtons, visibleActions]);
 
   // Here we track if any dropdowns are open and if any are, then call onOpen
@@ -95,39 +97,18 @@ export function PageActions<T extends object>(props: {
     >
       {pinnedActions !== undefined && pinnedActions.length > 0 && (
         <FlexItem>
-          <PagePinnedActions {...props} actions={pinnedActions} onOpen={handleOnOpen} />
+          <PageActionsPinned {...props} actions={pinnedActions} onOpen={handleOnOpen} />
         </FlexItem>
       )}
       {dropdownActions.length > 0 && (
         <FlexItem>
-          <PageDropdownAction {...props} actions={dropdownActions} onOpen={handleOnOpen} />
+          <PageActionDropdown {...props} actions={dropdownActions} onOpen={handleOnOpen} />
         </FlexItem>
       )}
     </Flex>
   );
 }
 
-function isPinnedAction<T extends object>(action: IPageAction<T>) {
-  const actionVariants: Array<ButtonVariant | undefined> = [
-    ButtonVariant.primary,
-    ButtonVariant.secondary,
-    ButtonVariant.danger,
-  ];
-  return action.type !== PageActionType.seperator && actionVariants.includes(action.variant);
-}
-
-export function isHiddenAction<T extends object>(
-  action: IPageAction<T>,
-  selectedItem: T | undefined
-): boolean {
-  switch (action.type) {
-    case PageActionType.single:
-    case PageActionType.singleLink:
-    case PageActionType.dropdown:
-      return action.isHidden !== undefined && selectedItem ? action.isHidden(selectedItem) : false;
-    case PageActionType.bulk:
-    case PageActionType.seperator:
-    case PageActionType.button:
-      return false;
-  }
+function isPageActionPinned<T extends object>(action: IPageAction<T>) {
+  return 'isPinned' in action && action.isPinned;
 }

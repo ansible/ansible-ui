@@ -13,7 +13,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: ThumbsUpIcon,
         label: t('Approve'),
@@ -28,7 +28,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         isHidden: (item) => item.repository_list.includes('published'),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: ThumbsDownIcon,
         label: t('Reject'),

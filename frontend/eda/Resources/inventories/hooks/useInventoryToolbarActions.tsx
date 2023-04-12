@@ -12,7 +12,7 @@ export function useInventoriesToolbarActions(view: IEdaView<EdaInventory>) {
   const toolbarActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: (inventories: EdaInventory[]) => deleteInventories(inventories),

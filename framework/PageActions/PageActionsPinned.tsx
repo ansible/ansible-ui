@@ -1,13 +1,11 @@
 import { DropdownPosition, Split } from '@patternfly/react-core';
 import { ComponentClass, FunctionComponent } from 'react';
-import { IPageAction } from './PageAction';
-import { PageActionType } from './PageActionType';
-import { PageBulkAction } from './PageBulkAction';
-import { PageButtonAction } from './PageButtonAction';
-import { PageDropdownAction } from './PageDropdownAction';
-import { PageSingleAction } from './PageSingleAction';
+import { IPageAction, PageActionType } from './PageAction';
+import { PageActionButton } from './PageActionButton';
+import { PageActionDropdown } from './PageActionDropdown';
+import { PageActionLink } from './PageActionLink';
 
-export function PagePinnedActions<T extends object>(props: {
+interface PageActionsPinnedProps<T extends object> {
   actions: IPageAction<T>[];
   selectedItem?: T;
   selectedItems?: T[];
@@ -21,13 +19,16 @@ export function PagePinnedActions<T extends object>(props: {
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (label: string, open: boolean) => void;
-}) {
+}
+
+/** Pinned actions are actions that show up outside the dropdown at specific breakpoints */
+export function PageActionsPinned<T extends object>(props: PageActionsPinnedProps<T>) {
   const { actions, selectedItems, selectedItem, wrapper, iconOnly, onOpen } = props;
   if (actions.length === 0) return <></>;
   return (
     <Split hasGutter={!iconOnly}>
       {actions.map((action, index) => (
-        <PagePinnedAction
+        <PageActionPinned<T>
           key={index}
           action={action}
           selectedItem={selectedItem}
@@ -41,7 +42,7 @@ export function PagePinnedActions<T extends object>(props: {
   );
 }
 
-export function PagePinnedAction<T extends object>(props: {
+interface PageActionPinnedProps<T extends object> {
   action: IPageAction<T>;
   selectedItem?: T;
   selectedItems?: T[];
@@ -50,61 +51,52 @@ export function PagePinnedAction<T extends object>(props: {
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (label: string, open: boolean) => void;
-}) {
+}
+
+export function PageActionPinned<T extends object>(props: PageActionPinnedProps<T>): JSX.Element {
   const { action, selectedItems, selectedItem, wrapper, onOpen } = props;
 
   switch (action.type) {
-    case PageActionType.seperator: {
+    case PageActionType.Seperator:
       return <></>;
-    }
-    case PageActionType.single:
-    case PageActionType.singleLink: {
+
+    case PageActionType.Button:
       return (
-        <PageSingleAction
+        <PageActionButton
           action={action}
           selectedItem={selectedItem}
-          iconOnly={props.iconOnly}
-          wrapper={wrapper}
-        />
-      );
-    }
-    case PageActionType.bulk: {
-      return (
-        <PageBulkAction
-          action={action}
           selectedItems={selectedItems}
-          // iconOnly={props.iconOnly}
-          wrapper={wrapper}
-        />
-      );
-    }
-    case PageActionType.button: {
-      return (
-        <PageButtonAction
-          action={action}
-          isSecondary={selectedItems !== undefined && selectedItems.length !== 0}
           iconOnly={props.iconOnly}
           wrapper={wrapper}
         />
       );
-    }
-    case PageActionType.dropdown: {
-      let tooltip = action.label;
-      const isDisabled =
-        action.isDisabled !== undefined && selectedItem ? action.isDisabled(selectedItem) : '';
-      tooltip = isDisabled ? isDisabled : tooltip;
+
+    case PageActionType.Link:
       return (
-        <PageDropdownAction<T>
+        <PageActionLink
+          action={action}
+          selectedItem={selectedItem}
+          selectedItems={selectedItems}
+          iconOnly={props.iconOnly}
+          wrapper={wrapper}
+        />
+      );
+
+    case PageActionType.Switch:
+      return <>SWITCH</>;
+
+    case PageActionType.Dropdown: {
+      return (
+        <PageActionDropdown<T>
           icon={action.icon}
           label={action.label}
-          actions={action.options}
+          actions={action.actions}
           selectedItem={selectedItem}
           selectedItems={selectedItems}
           iconOnly={props.iconOnly}
           position={DropdownPosition.right}
-          isDisabled={Boolean(isDisabled)}
-          tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
-          variant={action.variant}
+          // tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
+          // variant={action.variant}
           // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
           onOpen={onOpen}
         />

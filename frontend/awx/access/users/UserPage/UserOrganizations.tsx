@@ -8,12 +8,12 @@ import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
-import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
-import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 import {
   useOrganizationsColumns,
   useOrganizationsFilters,
 } from '../../organizations/Organizations';
+import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
+import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 
 export function UserOrganizations(props: { user: User }) {
   const { user } = props;
@@ -31,14 +31,14 @@ export function UserOrganizations(props: { user: User }) {
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
         onClick: () =>
@@ -57,7 +57,7 @@ export function UserOrganizations(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
         onClick: (organization) =>

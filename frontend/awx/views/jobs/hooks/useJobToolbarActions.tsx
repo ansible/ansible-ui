@@ -14,14 +14,14 @@ export function useJobToolbarActions(onComplete: (jobs: UnifiedJob[]) => void) {
   return useMemo<IPageAction<UnifiedJob>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
         isDanger: true,
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: BanIcon,
         label: t('Cancel selected jobs'),
         onClick: cancelJobs,

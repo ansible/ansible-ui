@@ -6,20 +6,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
+  DateTimeCell,
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
   PageLayout,
-  DateTimeCell,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import { useGetItem } from '../../../common/crud/useGetItem';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { StatusCell } from '../../../common/StatusCell';
-import { RouteObj } from '../../../Routes';
 import { AwxError } from '../../common/AwxError';
 import { Instance } from '../../interfaces/Instance';
 import { NodeTypeCell } from './Instances';
@@ -33,7 +33,7 @@ export function InstanceDetails() {
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit instance'),
@@ -41,7 +41,7 @@ export function InstanceDetails() {
           history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
         label: t('Run health check'),

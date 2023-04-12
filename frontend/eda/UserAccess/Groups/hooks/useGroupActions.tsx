@@ -15,14 +15,14 @@ export function useGroupActions(view: IEdaView<EdaGroup>) {
   return useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (Group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', Group.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Single,
         icon: TrashIcon,
         label: t('Delete Group'),
         onClick: (Group: EdaGroup) => deleteGroups([Group]),

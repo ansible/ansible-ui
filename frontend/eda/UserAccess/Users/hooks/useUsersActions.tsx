@@ -16,14 +16,14 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create User'),
         onClick: () => navigate(RouteObj.CreateEdaUser),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Bulk,
         icon: TrashIcon,
         label: t('Delete selected Users'),
         onClick: (Users: EdaUser[]) => deleteUsers(Users),
