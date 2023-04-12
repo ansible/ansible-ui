@@ -77,7 +77,7 @@ async function requestCommon<ResponseBody>(
 
             let body: unknown;
             try {
-              body = await response?.json();
+              body = await response?.clone().json();
             } catch (bodyParseError) {
               return error;
             }
