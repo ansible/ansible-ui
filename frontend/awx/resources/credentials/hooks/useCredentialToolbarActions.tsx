@@ -19,6 +19,7 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create credential'),
         onClick: () => navigate(RouteObj.CreateCredential),

@@ -116,7 +116,7 @@ export function Inventories() {
               )
         }
         emptyStateIcon={canCreateInventory ? undefined : CubesIcon}
-        emptyStateActions={!canCreateInventory ? toolbarActions.slice(0, 1) : undefined}
+        emptyStateActions={canCreateInventory ? toolbarActions.slice(0, 1) : undefined}
         {...view}
       />
     </PageLayout>

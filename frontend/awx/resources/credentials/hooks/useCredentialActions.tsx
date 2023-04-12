@@ -19,6 +19,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
         selection: PageActionSelection.Single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Edit credential'),
         onClick: (credential) =>
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),

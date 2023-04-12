@@ -19,6 +19,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
       {
         type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create inventory'),
         actions: [

@@ -51,6 +51,7 @@ export function ExecutionEnvironments() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create execution environment'),
         onClick: () => navigate(RouteObj.CreateExecutionEnvironment),

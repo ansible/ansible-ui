@@ -287,7 +287,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           )}
           {props.emptyStateActions && (
             <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-              <PageActions actions={props.emptyStateActions} collapse="always" />
+              <PageActions actions={props.emptyStateActions} />
             </Flex>
           )}
           {props.emptyStateButtonClick && (

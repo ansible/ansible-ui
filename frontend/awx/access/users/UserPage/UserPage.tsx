@@ -43,6 +43,7 @@ export function UserPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),

@@ -21,6 +21,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: ThumbsUpIcon,
         label: t('Approve'),
         onClick: (approval) =>
@@ -37,6 +38,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: ThumbsDownIcon,
         label: t('Reject'),
         onClick: () => {

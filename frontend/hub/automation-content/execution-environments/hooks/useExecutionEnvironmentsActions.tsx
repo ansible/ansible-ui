@@ -13,6 +13,7 @@ export function useExecutionEnvironmentsActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add execution environment'),
         onClick: () => {

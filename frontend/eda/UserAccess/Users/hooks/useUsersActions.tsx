@@ -19,6 +19,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create User'),
         onClick: () => navigate(RouteObj.CreateEdaUser),

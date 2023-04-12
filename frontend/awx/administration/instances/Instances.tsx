@@ -46,6 +46,7 @@ export function Instances() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instances) => {
@@ -69,6 +70,7 @@ export function Instances() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instance) => {

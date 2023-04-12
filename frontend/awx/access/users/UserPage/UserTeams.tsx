@@ -41,6 +41,7 @@ export function UserTeams(props: { user: User }) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add user to teams'),
         isDisabled: canAddUserToTeam

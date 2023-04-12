@@ -53,6 +53,7 @@ export function Templates() {
       {
         type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Create template'),
         icon: PlusCircleIcon,
         actions: [

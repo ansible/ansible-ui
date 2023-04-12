@@ -19,6 +19,7 @@ export function useGroupsActions(view: IEdaView<EdaGroup>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create Group'),
         onClick: () => navigate(RouteObj.CreateEdaGroup),

@@ -37,6 +37,7 @@ export function InstanceDetails() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) =>
@@ -47,6 +48,7 @@ export function InstanceDetails() {
         selection: PageActionSelection.Single,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         label: t('Run health check'),
         onClick: () => {
           void postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});

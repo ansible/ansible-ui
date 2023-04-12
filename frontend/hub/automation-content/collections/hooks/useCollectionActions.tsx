@@ -19,6 +19,7 @@ export function useCollectionActions(callback?: (collections: Collection[]) => v
         selection: PageActionSelection.Single,
         icon: UploadIcon,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         label: t('Upload new version'),
         onClick: () => navigate(RouteObj.UploadCollection),
       },

@@ -2,19 +2,21 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { ComponentClass } from 'react';
 
 export const enum PageActionType {
-  Seperator,
   Button,
-  Single,
   Link,
-  SingleLink,
-  Bulk,
-  Dropdown,
   Switch,
+  Dropdown,
+  Seperator,
 }
 
 export const enum PageActionSelection {
+  /** Action that works without any selection context. i.e. create button in the toolbar */
   None,
+
+  /** Action that works in the context of a single selection. i.e. row action or details page action */
   Single,
+
+  /** Action that works in the context of multiple selection. i.e. bulk action in table toolbar */
   Multiple,
 }
 

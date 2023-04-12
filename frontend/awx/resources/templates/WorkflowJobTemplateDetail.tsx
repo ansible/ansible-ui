@@ -56,6 +56,7 @@ export function WorkflowJobTemplateDetail() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit workflow template'),
         onClick: (template) =>

@@ -39,6 +39,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isHidden: (job: UnifiedJob) => Boolean(cannotCancelJob(job)),
@@ -48,6 +49,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         icon: RocketIcon,
         label: t(`Relaunch job`),
         isHidden: (job: UnifiedJob) =>
@@ -58,6 +60,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       {
         type: PageActionType.Dropdown,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         icon: RocketIcon,
         iconOnly: true,
         label: t(`Relaunch using host parameters`),

@@ -36,6 +36,7 @@ export function SignatureKeys() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: DownloadIcon,
         label: t('Download key'),
         onClick: (signatureKey) => downloadTextFile('key', signatureKey?.public_key ?? ''),

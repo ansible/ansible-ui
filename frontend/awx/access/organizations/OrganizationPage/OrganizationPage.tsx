@@ -46,6 +46,7 @@ export function OrganizationPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: (organization) =>

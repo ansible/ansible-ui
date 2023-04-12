@@ -19,6 +19,7 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create project'),
         onClick: () => navigate(RouteObj.CreateEdaProject),

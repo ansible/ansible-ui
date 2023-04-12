@@ -18,6 +18,7 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t(' activation'),
         onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),

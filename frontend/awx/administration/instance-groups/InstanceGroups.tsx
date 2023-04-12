@@ -40,6 +40,7 @@ export function InstanceGroups() {
         type: PageActionType.Dropdown,
         icon: PlusCircleIcon,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Create group'),
         actions: [
           {

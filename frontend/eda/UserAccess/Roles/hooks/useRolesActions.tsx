@@ -19,6 +19,7 @@ export function useRolesActions(view: IEdaView<EdaRole>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create Role'),
         onClick: () => navigate(RouteObj.CreateEdaRole),
