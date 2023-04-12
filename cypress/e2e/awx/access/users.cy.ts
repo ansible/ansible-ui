@@ -56,7 +56,7 @@ describe('users', () => {
     cy.navigateTo(/^Users$/);
     cy.clickRow(user.username);
     cy.hasTitle(user.username);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#username', user.username);
   });
 
