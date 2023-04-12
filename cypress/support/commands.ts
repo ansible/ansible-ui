@@ -325,7 +325,7 @@ Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => 
     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
     cy.get('button').should('be.enabled').click();
 
-    // If the select menu contains a serach, then search for the text
+    // If the select menu contains a search, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
       if (selectMenu.find('.pf-m-search').length > 0) {
         cy.get('.pf-m-search').type(text, { delay: 0 });
