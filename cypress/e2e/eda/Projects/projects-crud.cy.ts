@@ -30,7 +30,7 @@ describe('EDA Projects CRUD', () => {
       cy.clickRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
       cy.hasTitle(/^Edit project$/);
-      cy.typeByLabel(/^Name$/, 'a');
+      cy.typeByLabel(/^Name$/, edaProject.name + 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
       cy.deleteEdaProject(edaProject);

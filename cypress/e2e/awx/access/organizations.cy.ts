@@ -64,7 +64,7 @@ describe('organizations', () => {
     cy.hasTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
     cy.hasTitle(/^Edit organization$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.typeByLabel(/^Name$/, organization.name + 'a');
     cy.clickButton(/^Save organization$/);
     cy.hasTitle(`${organization.name}a`);
   });
