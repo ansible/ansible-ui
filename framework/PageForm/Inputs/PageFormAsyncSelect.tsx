@@ -180,7 +180,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
     return new AsyncSelectSelectOptionObject(props.value, valueToString);
   }, [props.value, valueToString]);
 
-  const [options, setOptions] = useState<SelectOptionObject[]>([]);
+  const [options, setOptions] = useState<SelectOptionObject[] | null>(null);
   const [useSelectDialog, setUseSelectDialog] = useState(false);
 
   const [frameworkTranslations] = useFrameworkTranslations();
@@ -196,6 +196,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           }
           if (result.total > props.limit) {
             setUseSelectDialog(true);
+            setOptions([]);
           } else {
             setUseSelectDialog(false);
             setOptions(
@@ -213,7 +214,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
 
   const onFilter = useCallback(
     (_: unknown, filterValue: string) =>
-      options
+      (options ?? [])
         .filter((option) => {
           if (!filterValue) return true;
           if (option instanceof AsyncSelectSelectOptionObject<SelectionType>) {
@@ -280,7 +281,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           ) : undefined
         }
         validated={validated}
-        isDisabled={loading || isReadOnly}
+        isDisabled={options === null || loading || isReadOnly}
         onFilter={onFilter}
         hasInlineFilter={true}
         menuAppendTo="parent"
@@ -299,7 +300,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           ) : undefined
         }
       >
-        {options.map((option) => (
+        {(options ?? []).map((option) => (
           <SelectOption key={option.toString()} value={option}>
             {option.toString()}
           </SelectOption>
