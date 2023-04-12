@@ -4,7 +4,7 @@ import { EmptyStateCustom } from './EmptyStateCustom';
 
 export function EmptyStateUnauthorized(props: {
   adminMessage?: string;
-  loginLink: React.ReactNode;
+  loginLink?: React.ReactNode;
   title?: string;
 }) {
   const defaultAdminMessage = 'Contact your organization administrator for more information.';

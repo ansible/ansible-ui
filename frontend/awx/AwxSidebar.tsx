@@ -6,6 +6,7 @@ import { useBreakpoint } from '../../framework';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { RouteObj, RouteType } from '../Routes';
+import { useActiveUser } from '../common/useActiveUser';
 
 export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
   const { isNavOpen, setNavOpen } = props;
@@ -20,6 +21,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
     },
     [navigate, isXl, setNavOpen]
   );
+  const activeUser = useActiveUser();
   return (
     <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
       <NavExpandable
@@ -182,6 +184,21 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
                             </NavItem>
                         </NavGroup> */}
       {/* </NavExpandable> */}
+      {activeUser?.is_superuser && (
+        <NavExpandable
+          key="analytics"
+          title={t('Analytics')}
+          isExpanded
+          isActive={isRouteActive([RouteObj.ControllerReports], location)}
+        >
+          <NavItem
+            isActive={isRouteActive(RouteObj.ControllerReports, location)}
+            onClick={() => onClick(RouteObj.ControllerReports)}
+          >
+            {t('Reports')}
+          </NavItem>
+        </NavExpandable>
+      )}
       {process.env.NODE_ENV === 'development' && (
         <NavItem
           isActive={isRouteActive(RouteObj.AwxDebug, location)}

@@ -110,10 +110,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Settings
   Settings: `${awxRoutePrefix}/settings`,
 
+  //Analytics
+  ControllerReports: `${awxRoutePrefix}/reports`,
+  ControllerReport: `${awxRoutePrefix}/report/:id`,
+
   Hub: `${hubRoutePrefix}`,
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
-
   Collections: `${hubRoutePrefix}/collections`,
   CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
