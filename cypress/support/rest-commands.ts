@@ -1,6 +1,5 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
-import 'awx-commands';
 
 Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
   cy.getCookie('csrftoken').then((cookie) =>

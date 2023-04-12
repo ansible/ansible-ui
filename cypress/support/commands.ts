@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
-import 'rest-commands';
 import { randomString } from '../../framework/utils/random-string';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -15,6 +14,7 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -332,19 +332,18 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
   cy.getFormGroupByLabel(label).within(() => {
     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-    cy.get('.pf-c-form__group-control')
-      .should('be.enabled')
-      .click()
-      .within(() => {
-        // If the select menu contains a search, then search for the text
-        cy.get('.pf-c-select__menu').then((selectMenu) => {
-          if (selectMenu.find('.pf-m-search').length > 0) {
-            cy.get('.pf-m-search').type(text, { delay: 0 });
-          }
-        });
+    cy.get('button').should('be.enabled').click();
 
-        cy.contains('button', text).click();
-      });
+    // If the select menu contains a serach, then search for the text
+    cy.get('.pf-c-select__menu').then((selectMenu) => {
+      if (selectMenu.find('.pf-m-search').length > 0) {
+        cy.get('.pf-m-search').type(text, { delay: 0 });
+      }
+    });
+
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.contains('button', text).click();
+    });
   });
 });
 
