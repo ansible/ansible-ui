@@ -55,6 +55,7 @@ interface PageActionPinnedProps<T extends object> {
 
 export function PageActionPinned<T extends object>(props: PageActionPinnedProps<T>): JSX.Element {
   const { action, selectedItems, selectedItem, wrapper, onOpen } = props;
+  // const isPageActionDisabled = usePageActionDisabled<T>();
 
   switch (action.type) {
     case PageActionType.Seperator:
@@ -96,6 +97,7 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
           iconOnly={props.iconOnly}
           position={DropdownPosition.right}
           // tooltip={props.iconOnly || isDisabled ? tooltip : undefined}
+          // tooltip={isPageActionDisabled(action, selectedItem, selectedItems)}
           // variant={action.variant}
           // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
           onOpen={onOpen}

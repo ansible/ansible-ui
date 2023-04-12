@@ -3,7 +3,12 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
@@ -32,13 +37,15 @@ export function UserOrganizations(props: { user: User }) {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
         onClick: () =>
@@ -57,7 +64,8 @@ export function UserOrganizations(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
         onClick: (organization) =>

@@ -3,7 +3,12 @@ import { CopyIcon, EditIcon, MinusCircleIcon, SyncIcon, TrashIcon } from '@patte
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Project } from '../../../interfaces/Project';
@@ -54,14 +59,9 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
 
     return [
       {
-        type: PageActionType.Single,
-        icon: EditIcon,
-        label: t('Edit project'),
-        isDisabled: (project: Project) => cannotEditProject(project),
-        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
-      },
-      {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
         variant: ButtonVariant.secondary,
         icon: MinusCircleIcon,
         label: t(`Cancel project sync`),
@@ -71,7 +71,9 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         onClick: (project: Project) => cancelProjects([project]),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
         variant: ButtonVariant.primary,
         icon: SyncIcon,
         label: t('Sync project'),
@@ -98,7 +100,17 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         },
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: EditIcon,
+        label: t('Edit project'),
+        isDisabled: (project: Project) => cannotEditProject(project),
+        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CopyIcon,
         label: t('Copy project'),
         isDisabled: (project: Project) => cannotCopyProject(project),
@@ -127,7 +139,8 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete project'),
         isDisabled: (project: Project) => cannotDeleteProject(project),

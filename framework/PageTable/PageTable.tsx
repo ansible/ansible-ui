@@ -40,7 +40,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IPageAction, PageActionType } from '../PageActions/PageAction';
+import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
@@ -235,8 +235,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.Bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
 
   const hasTableViewType = !props.disableTableView;
   const hasListViewType = !props.disableListView;
@@ -286,7 +287,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           )}
           {props.emptyStateActions && (
             <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-              <PageActions actions={props.emptyStateActions} />
+              <PageActions actions={props.emptyStateActions} collapse="always" />
             </Flex>
           )}
           {props.emptyStateButtonClick && (
@@ -380,8 +381,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.Bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState<{
     left: number;

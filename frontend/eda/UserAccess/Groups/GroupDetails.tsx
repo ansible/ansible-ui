@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetailsFromColumns,
@@ -34,14 +35,16 @@ export function GroupDetails() {
   const itemActions = useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete Group'),
         onClick: (group: EdaGroup) => deleteGroups([group]),

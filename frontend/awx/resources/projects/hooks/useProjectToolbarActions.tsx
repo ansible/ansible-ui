@@ -9,7 +9,7 @@ import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
 
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 
 export function useProjectToolbarActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
@@ -22,7 +22,8 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
   const ProjectToolbarActions = useMemo<IPageAction<Project>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create project'),
@@ -34,14 +35,16 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         href: RouteObj.CreateProject,
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: deleteProjects,
         isDanger: true,
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Cancel selected projects'),
         onClick: cancelProjects,

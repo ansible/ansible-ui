@@ -2,7 +2,7 @@ import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useCopyInventory } from './useCopyInventory';
@@ -43,7 +43,8 @@ export function useInventoryActions({
 
     return [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
@@ -51,7 +52,8 @@ export function useInventoryActions({
           navigate(RouteObj.EditInventory.replace(':id', inventory.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CopyIcon,
         label: t('Copy inventory'),
         isDisabled: (inventory: Inventory) => cannotCopyInventory(inventory),
@@ -59,7 +61,8 @@ export function useInventoryActions({
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         isDisabled: (inventory: Inventory) => cannotDeleteInventory(inventory),

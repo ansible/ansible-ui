@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { IAwxView } from '../../../useAwxView';
@@ -17,13 +17,15 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create credential'),
         onClick: () => navigate(RouteObj.CreateCredential),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected credentials'),
         onClick: deleteCredentials,

@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -54,7 +55,8 @@ export function TemplateDetail() {
   const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit template'),
@@ -63,7 +65,8 @@ export function TemplateDetail() {
           navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete template'),
         onClick: (template) => {
@@ -74,7 +77,8 @@ export function TemplateDetail() {
         isDanger: true,
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t('Launch template'),
         onClick: async (template) => {

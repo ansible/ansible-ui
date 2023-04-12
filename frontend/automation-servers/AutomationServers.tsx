@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   ITableColumn,
+  PageActionSelection,
   PageActionType,
   PageLayout,
   PageTable,
@@ -35,13 +36,15 @@ export function AutomationServers() {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Add automation server'),
         onClick: addAutomationServer,
       },
       // {
-      //   type: PageActionType.bulk,
+      //   type: PageActionType.Button,
+      // selection: PageActionSelection.Multiple,
       //   icon: MinusCircleIcon,
       //   label: t('Remove selected automation servers'),
       //   onClick: (servers) => removeAutomationServers(servers),
@@ -61,7 +64,8 @@ export function AutomationServers() {
       // },
       // { type: TypedActionType.seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove automation server'),
         onClick: (server) => removeAutomationServers([server]),

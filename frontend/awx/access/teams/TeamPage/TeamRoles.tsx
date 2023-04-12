@@ -32,6 +32,7 @@ export function TeamRoles(props: { team: Team }) {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add role to team'),

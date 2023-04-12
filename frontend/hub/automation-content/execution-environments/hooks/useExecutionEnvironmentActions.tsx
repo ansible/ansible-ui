@@ -1,7 +1,7 @@
 import { EditIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
 export function useExecutionEnvironmentActions() {
@@ -9,7 +9,8 @@ export function useExecutionEnvironmentActions() {
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit'),
         onClick: () => {

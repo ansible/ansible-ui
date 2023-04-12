@@ -5,6 +5,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -39,14 +40,16 @@ export function CredentialDetails() {
   const itemActions = useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential: EdaCredential) => deleteCredentials([credential]),

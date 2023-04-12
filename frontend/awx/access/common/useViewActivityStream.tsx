@@ -2,7 +2,7 @@ import { HistoryIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 
 export function useViewActivityStream<T extends object>(type: string) {
@@ -12,7 +12,8 @@ export function useViewActivityStream<T extends object>(type: string) {
   return useMemo<IPageAction<T>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: HistoryIcon,
         label: t('View activity stream'),
         onClick: () => navigate(RouteObj.ActivityStream.replace(':type', type)),

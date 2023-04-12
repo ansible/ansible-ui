@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -38,14 +39,16 @@ export function ProjectDetails() {
   const itemActions = useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project: EdaProject) => deleteProjects([project]),

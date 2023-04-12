@@ -36,12 +36,18 @@ export function usePageActionDisabled<T extends object>() {
       if ('selection' in action) {
         switch (action.selection) {
           case PageActionSelection.None:
+            if (typeof action.isDisabled === 'string') {
+              return action.isDisabled;
+            }
             if (action.isDisabled) {
               return action.isDisabled();
             }
             break;
 
           case PageActionSelection.Single:
+            if (typeof action.isDisabled === 'string') {
+              return action.isDisabled;
+            }
             if (action.isDisabled) {
               if (!selectedItem) return translations.noSelection;
               return action.isDisabled(selectedItem);
@@ -49,6 +55,9 @@ export function usePageActionDisabled<T extends object>() {
             break;
 
           case PageActionSelection.Multiple:
+            if (typeof action.isDisabled === 'string') {
+              return action.isDisabled;
+            }
             if (action.isDisabled) {
               if (!selectedItems) return translations.noSelections;
               return action.isDisabled(selectedItems);

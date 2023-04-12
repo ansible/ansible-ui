@@ -2,7 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { isJobRunning } from '../jobUtils';
 import { useCancelJobs } from './useCancelJobs';
@@ -36,7 +36,8 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
 
     return [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
@@ -44,7 +45,8 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         icon: RocketIcon,
         label: t(`Relaunch job`),
@@ -64,26 +66,30 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
           !(job.status === 'failed' && job.type === 'job'),
         actions: [
           {
-            type: PageActionType.Single,
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
             label: t(`Relaunch on all hosts`),
             onClick: (job: UnifiedJob) => void relaunchAllHosts(job),
           },
           {
-            type: PageActionType.Single,
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
             label: t(`Relaunch on failed hosts`),
             onClick: (job: UnifiedJob) => void relaunchFailedHosts(job),
           },
         ],
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t(`Delete job`),
         isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
         onClick: (job: UnifiedJob) => deleteJobs([job]),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),

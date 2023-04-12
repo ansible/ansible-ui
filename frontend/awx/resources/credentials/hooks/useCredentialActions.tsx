@@ -3,7 +3,7 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { useDeleteCredentials } from '../useDeleteCredentials';
@@ -15,7 +15,8 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
         label: t('Edit credential'),
@@ -23,7 +24,8 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential) => deleteCredentials([credential]),

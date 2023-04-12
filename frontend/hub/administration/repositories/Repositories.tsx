@@ -6,6 +6,7 @@ import {
   DateTimeCell,
   IPageAction,
   ITableColumn,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -103,21 +104,24 @@ export function RemoteRepositories() {
   const rowActions = useMemo<IPageAction<RemoteRepository>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CogIcon,
         label: t('Configure repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: SyncIcon,
         label: t('Sync repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit repository'),
         onClick: (repository) =>

@@ -8,6 +8,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -32,7 +33,8 @@ export function SignatureKeys() {
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: DownloadIcon,
         label: t('Download key'),

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageHeader,
@@ -42,7 +43,8 @@ export function OrganizationPage() {
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit organization'),
@@ -50,7 +52,8 @@ export function OrganizationPage() {
           history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => {

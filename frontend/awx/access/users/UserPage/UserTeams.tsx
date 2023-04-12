@@ -3,7 +3,12 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -34,6 +39,7 @@ export function UserTeams(props: { user: User }) {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add user to teams'),
@@ -45,7 +51,8 @@ export function UserTeams(props: { user: User }) {
         onClick: () => selectTeamsAddUsers([user]),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
@@ -56,7 +63,8 @@ export function UserTeams(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
         onClick: (team: Team) => removeTeamsFromUsers([user], [team]),

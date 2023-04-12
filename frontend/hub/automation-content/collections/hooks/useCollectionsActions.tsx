@@ -3,7 +3,7 @@ import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Collection } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
@@ -16,6 +16,7 @@ export function useCollectionsActions(callback: (collections: Collection[]) => v
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         icon: UploadIcon,
         variant: ButtonVariant.primary,
         label: t('Upload collection'),
@@ -23,14 +24,16 @@ export function useCollectionsActions(callback: (collections: Collection[]) => v
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected collections'),
         onClick: deleteCollections,
         isDanger: true,
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Deprecate selected collections'),
         onClick: () => {

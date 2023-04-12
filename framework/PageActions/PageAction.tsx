@@ -41,34 +41,37 @@ interface IPageActionCommon {
 interface IPageActionNoneCommon extends IPageActionCommon {
   selection?: PageActionSelection.None;
   isHidden?: () => boolean;
-  isDisabled?: () => string | undefined;
+  isDisabled?: string | (() => string | undefined);
 }
 
 interface IPageActionSingleCommon<T extends object> extends IPageActionCommon {
   selection?: PageActionSelection.Single;
   isHidden?: (item: T) => boolean;
-  isDisabled?: (item: T) => string | undefined;
+  isDisabled?: string | ((item: T) => string | undefined);
 }
 
 interface IPageActionMultipleCommon<T extends object> extends IPageActionCommon {
   selection?: PageActionSelection.Multiple;
-  isDisabled?: (items: T[]) => string | undefined;
+  isDisabled?: string | ((items: T[]) => string | undefined);
 }
 
 export interface IPageActionButton extends IPageActionNoneCommon {
   type: PageActionType.Button;
+  selection: PageActionSelection.None;
   variant?: ButtonVariant;
   onClick: () => unknown | Promise<unknown>;
 }
 
 export interface IPageActionButtonSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Button;
+  selection: PageActionSelection.Single;
   variant?: ButtonVariant;
   onClick: (item: T) => unknown | Promise<unknown>;
 }
 
 export interface IPageActionButtonMultiple<T extends object> extends IPageActionMultipleCommon<T> {
   type: PageActionType.Button;
+  selection: PageActionSelection.Multiple;
   variant?: ButtonVariant;
   onClick: (items: T[]) => unknown | Promise<unknown>;
 }

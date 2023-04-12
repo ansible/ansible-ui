@@ -8,6 +8,7 @@ import {
   CapacityCell,
   DateTimeCell,
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -33,7 +34,8 @@ export function InstanceDetails() {
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit instance'),
@@ -41,7 +43,8 @@ export function InstanceDetails() {
           history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
         label: t('Run health check'),

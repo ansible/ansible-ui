@@ -63,7 +63,7 @@ export function PageActionButton<T extends object>(props: {
               </IconSpan>
             ) : undefined
           }
-          isAriaDisabled={Boolean(isDisabled)}
+          isAriaDisabled={!!isDisabled}
           onClick={() => {
             switch (action.selection) {
               case PageActionSelection.None:

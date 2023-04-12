@@ -2,7 +2,12 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, usePageAlertToaster } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Approval } from '../Approval';
 
@@ -13,7 +18,8 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: ThumbsUpIcon,
         label: t('Approve'),
@@ -28,7 +34,8 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         isHidden: (item) => item.repository_list.includes('published'),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: ThumbsDownIcon,
         label: t('Reject'),

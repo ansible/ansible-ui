@@ -3,7 +3,7 @@ import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType, PageTable } from '../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { AccessRole, User } from '../../interfaces/User';
@@ -80,7 +80,9 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add users'),
         isDisabled: canAddAndRemoveUsers
@@ -91,8 +93,10 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         onClick: () => selectUsersAddTeams([resource]),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove users'),
         isDisabled: canAddAndRemoveUsers
@@ -116,7 +120,8 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: (user) => removeUsersFromResource([user], resource, view.unselectItemsAndRefresh),

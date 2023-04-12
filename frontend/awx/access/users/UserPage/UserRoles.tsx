@@ -4,7 +4,12 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
@@ -27,13 +32,15 @@ export function UserRoles(props: { user: User }) {
     () => [
       {
         type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add role to user'),
         onClick: () => navigate(RouteObj.AddRolesToUser.replace(':id', user.id.toString())),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected roles from user'),
         onClick: () => alert('TODO'),
@@ -44,7 +51,8 @@ export function UserRoles(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: TrashIcon,
         label: t('Remove role from user'),

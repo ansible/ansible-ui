@@ -36,7 +36,7 @@ import {
 } from '@patternfly/react-icons';
 import { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { IPageAction, PageActionType } from '../PageActions/PageAction';
+import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
 import { BulkSelector } from '../components/BulkSelector';
@@ -69,7 +69,7 @@ export type SetFilterValues<T extends object> = (filter: IItemFilter<T>, values:
 export function toolbarActionsHaveBulkActions<T extends object>(actions?: IPageAction<T>[]) {
   if (!actions) return false;
   for (const action of actions) {
-    if (action.type === 'bulk') return true;
+    if ('selection' in action && action.selection === PageActionSelection.Multiple) return true;
   }
   return false;
 }
@@ -171,7 +171,10 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     props.showSelect === true ||
     (selectedItems !== undefined &&
       toolbarActions &&
-      toolbarActions.find((toolbarAction) => PageActionType.Bulk === toolbarAction.type));
+      toolbarActions.find(
+        (toolbarAction) =>
+          'selection' in toolbarAction && toolbarAction.selection === PageActionSelection.Multiple
+      ));
 
   const showToolbar = showSelect || showSearchAndFilters || showToolbarActions;
 

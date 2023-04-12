@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -55,7 +56,8 @@ export function InventoryDetails() {
   const itemActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory: EdaInventory) => deleteInventories([inventory]),

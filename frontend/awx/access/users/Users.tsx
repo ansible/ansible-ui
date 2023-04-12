@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -55,8 +56,10 @@ export function Users() {
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create user'),
         isDisabled: canCreateUser
@@ -68,33 +71,38 @@ export function Users() {
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add selected users to teams'),
         onClick: () => selectTeamsAddUsers(view.selectedItems),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove selected users from teams'),
         onClick: () => selectTeamsRemoveUsers(view.selectedItems),
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add selected users to organizations'),
         onClick: () => selectOrganizationsAddUsers(view.selectedItems),
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove selected users from organizations'),
         onClick: () => selectOrganizationsRemoveUsers(view.selectedItems),
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected users'),
         onClick: deleteUsers,
@@ -125,8 +133,10 @@ export function Users() {
 
     return [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         // variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
         isDisabled: (user: User) => cannotEditUser(user),
@@ -134,33 +144,38 @@ export function Users() {
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add user to teams'),
         onClick: (user) => selectTeamsAddUsers([user]),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from teams'),
         onClick: (user) => selectTeamsRemoveUsers([user]),
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add user to organizations'),
         onClick: (user) => selectOrganizationsAddUsers([user]),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from organizations'),
         onClick: (user) => selectOrganizationsRemoveUsers([user]),
       },
       { type: PageActionType.Seperator },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
         isDisabled: (user: User) => cannotDeleteUser(user),
@@ -237,7 +252,8 @@ export function AccessTable(props: { url: string }) {
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Add users'),
@@ -245,7 +261,8 @@ export function AccessTable(props: { url: string }) {
         href: RouteObj.CreateUser,
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
@@ -260,7 +277,8 @@ export function AccessTable(props: { url: string }) {
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

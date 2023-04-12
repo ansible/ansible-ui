@@ -143,7 +143,7 @@ function PageDropdownActionItem<T extends object>(props: {
     case PageActionType.Button: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
-      let tooltip = action.tooltip;
+      let tooltip = isDisabled ?? action.tooltip;
       let isButtonDisabled = !!isDisabled;
       if (action.selection === PageActionSelection.Multiple && !selectedItems.length) {
         tooltip = 'No selections';
@@ -189,8 +189,7 @@ function PageDropdownActionItem<T extends object>(props: {
     case PageActionType.Link: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
-      let tooltip = action.tooltip;
-      tooltip = isDisabled ? isDisabled : tooltip;
+      const tooltip = isDisabled ?? action.tooltip;
 
       let to: string;
 

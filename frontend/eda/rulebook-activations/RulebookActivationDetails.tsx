@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -54,22 +55,26 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         label: 'Relaunch',
         onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         label: 'Restart',
         onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         label: 'Disable',
         onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete rulebookActivation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>

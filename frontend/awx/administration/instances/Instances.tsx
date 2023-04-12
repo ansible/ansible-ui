@@ -10,6 +10,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -42,7 +43,8 @@ export function Instances() {
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -64,7 +66,8 @@ export function Instances() {
   const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
         icon: HeartbeatIcon,
         label: t('Run health check'),
@@ -93,7 +96,8 @@ export function Instances() {
         },
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) =>

@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetail,
@@ -52,7 +53,8 @@ export function WorkflowJobTemplateDetail() {
   const itemActions: IPageAction<WorkflowJobTemplate>[] = useMemo(() => {
     const itemActions: IPageAction<WorkflowJobTemplate>[] = [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit workflow template'),
@@ -60,7 +62,8 @@ export function WorkflowJobTemplateDetail() {
           history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete workflow template'),
         onClick: (template) => {

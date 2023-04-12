@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageHeader,
@@ -39,14 +40,16 @@ export function UserPage() {
   const itemActions: IPageAction<User>[] = useMemo(() => {
     const itemActions: IPageAction<User>[] = [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: (user) => deleteUsers([user]),

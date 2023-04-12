@@ -3,7 +3,7 @@ import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { IAwxView } from '../../../useAwxView';
@@ -24,23 +24,27 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
         actions: [
           {
             type: PageActionType.Button,
+            selection: PageActionSelection.Single,
             label: t('Create inventory'),
             onClick: () => navigate(RouteObj.CreateInventory),
           },
           {
             type: PageActionType.Button,
+            selection: PageActionSelection.Single,
             label: t('Create smart inventory'),
             onClick: () => navigate(RouteObj.CreateSmartInventory),
           },
           {
             type: PageActionType.Button,
+            selection: PageActionSelection.Single,
             label: t('Create constructed inventory'),
             onClick: () => navigate(RouteObj.CreateConstructedInventory),
           },
         ],
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: deleteInventories,

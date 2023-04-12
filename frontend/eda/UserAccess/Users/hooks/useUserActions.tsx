@@ -2,7 +2,7 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
@@ -15,14 +15,16 @@ export function useUserActions(view: IEdaView<EdaUser>) {
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit User'),
         onClick: (User: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete User'),
         onClick: (User: EdaUser) => deleteUsers([User]),

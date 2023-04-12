@@ -2,7 +2,7 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../../useEventDrivenView';
@@ -15,7 +15,8 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
   return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
@@ -24,7 +25,8 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
           ),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision-environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>

@@ -49,6 +49,7 @@ export function useTeamActions(options: {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        isPinned: true,
         variant: isDetailsPageAction ? ButtonVariant.primary : undefined, // Edit Team shows up as a primary button on the details page, but as a kebab menu option on a row
         icon: EditIcon,
         label: t('Edit team'),
@@ -60,7 +61,7 @@ export function useTeamActions(options: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
-        label: t('Add users to team'),
+        label: t('Add users'),
         isDisabled: (team: Team) => cannotAddUsers(team),
         onClick: (team) => selectUsersAddTeams([team]),
       },
@@ -68,7 +69,7 @@ export function useTeamActions(options: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
-        label: t('Remove users from team'),
+        label: t('Remove users'),
         isDisabled: (team: Team) => cannotRemoveUsers(team),
         onClick: (team) => selectAndRemoveUsersFromTeam(team),
       },

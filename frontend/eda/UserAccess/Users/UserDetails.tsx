@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageActions,
   PageDetailsFromColumns,
@@ -34,14 +35,16 @@ export function UserDetails() {
   const itemActions = useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit User'),
         onClick: (User: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete User'),
         onClick: (User: EdaUser) => deleteUsers([User]),

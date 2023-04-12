@@ -8,6 +8,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -43,18 +44,21 @@ export function InstanceGroups() {
         actions: [
           {
             type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create container group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
           {
             type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create instance group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
         ],
       },
       {
-        type: PageActionType.Bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected instance groups'),
         onClick: deleteInstanceGroups,
@@ -67,14 +71,16 @@ export function InstanceGroups() {
   const rowActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
       {
-        type: PageActionType.Single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete instance group'),
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),
