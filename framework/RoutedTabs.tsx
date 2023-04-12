@@ -1,5 +1,13 @@
-import { Children, isValidElement, ReactNode, useCallback, useState, useMemo } from 'react';
-import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import {
+  Children,
+  isValidElement,
+  ReactNode,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Divider,
   Flex,
@@ -18,14 +26,6 @@ interface RoutedTabProps {
   children: ReactNode;
 }
 
-function replaceRouteParams(path: string, params: { [key: string]: string | undefined }) {
-  let newPath = path;
-  Object.keys(params).forEach((key) => {
-    newPath = newPath.replace(`:${key}`, params[key] ?? `:${key}`);
-  });
-  return newPath;
-}
-
 export function RoutedTabs(props: {
   baseUrl: string;
   children: ReactNode;
@@ -34,54 +34,41 @@ export function RoutedTabs(props: {
   initialTabIndex?: number;
   isLoading?: boolean;
 }) {
-  const params = useParams<{ [key: string]: string | undefined }>();
   const { isLoading } = props;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
+
   const baseUrl = replaceRouteParams(props.baseUrl, params);
-  const children = useMemo(
+  const children = useMemo<ReactElement<RoutedTabProps>[]>(
     () =>
       Children.toArray(props.children).filter(
         (child) => isValidElement(child) && child.type === RoutedTab
-      ),
+      ) as ReactElement<RoutedTabProps>[],
     [props.children]
   );
-  const [activeKey, setActiveKey] = useState<number>(props?.initialTabIndex ?? 0);
-  const navigate = useNavigate();
+  const activeKey = children.findIndex((child) => {
+    const { url } = child.props;
+    return location.pathname === replaceRouteParams(url, params);
+  });
+  useEffect(() => {
+    if (activeKey === -1) {
+      const url = children[0].props.url;
+      navigate(replaceRouteParams(url, params));
+    }
+  });
 
   const handleSelect = useCallback(
-    (event: React.MouseEvent<HTMLElement, MouseEvent>, key: number) => {
-      // const match = tabsArray.find((tab) => tab.id === eventKey);
-      const match = children[key];
+    (event: React.MouseEvent<HTMLElement, MouseEvent>, key: string | number) => {
+      const match = children[Number(key)];
       if (match) {
         event.preventDefault();
-        setActiveKey(key);
         const url = match.props.url;
         navigate(replaceRouteParams(url, params));
       }
     },
-    [setActiveKey, navigate, children, params]
+    [navigate, children, params]
   );
-  const tabs = children.map((child, index) => {
-    const { label, url } = child.props as RoutedTabProps;
-    return (
-      <Tab
-        key={label ?? index}
-        title={label ? label : <Skeleton width="60px" />}
-        eventKey={index}
-        href={replaceRouteParams(url, params)}
-      />
-    );
-  });
-  const routes = children.map((child, index) => {
-    const { label, url = '', children } = child.props as RoutedTabProps;
-    return (
-      <Route
-        key={label ?? index}
-        path={url.replace(props.baseUrl.replace('*', ''), '')}
-        element={children}
-      />
-    );
-  });
-  console.log(routes);
 
   if (isLoading) {
     return (
@@ -97,32 +84,6 @@ export function RoutedTabs(props: {
 
   return (
     <>
-      <Tabs
-        activeKey={activeKey}
-        onSelect={handleSelect}
-        inset={
-          props.preComponents
-            ? undefined
-            : {
-                default: 'insetNone',
-                sm: 'insetNone',
-                md: 'insetNone',
-                lg: 'insetNone',
-                xl: 'insetSm',
-                ['2xl']: 'insetSm',
-              }
-        }
-        hasBorderBottom={false}
-        component={TabsComponent.nav}
-      >
-        {tabs}
-      </Tabs>
-      <Routes>{routes}</Routes>
-    </>
-  );
-
-  return (
-    <>
       <PageSection type={PageSectionTypes.tabs} className="border-bottom">
         <Flex spaceItems={{ default: 'spaceItemsNone' }}>
           {props.preComponents && (
@@ -134,7 +95,7 @@ export function RoutedTabs(props: {
           <FlexItem grow={{ default: 'grow' }}>
             <Tabs
               activeKey={activeKey}
-              onSelect={onSelect}
+              onSelect={handleSelect}
               inset={
                 props.preComponents
                   ? undefined
@@ -148,8 +109,19 @@ export function RoutedTabs(props: {
                     }
               }
               hasBorderBottom={false}
+              component={TabsComponent.nav}
             >
-              {tabs}
+              {children.map((child, index) => {
+                const { label, url } = child.props;
+                return (
+                  <Tab
+                    key={label ?? index}
+                    title={label ? label : <Skeleton width="60px" />}
+                    eventKey={index}
+                    href={replaceRouteParams(url, params)}
+                  />
+                );
+              })}
             </Tabs>
           </FlexItem>
           {props.postComponents && (
@@ -160,11 +132,30 @@ export function RoutedTabs(props: {
           )}
         </Flex>
       </PageSection>
-      {content}
+      <Routes>
+        {children.map((child, index) => {
+          const { label, url = '', children } = child.props;
+          return (
+            <Route
+              key={label ?? index}
+              path={url.replace(props.baseUrl.replace('*', ''), '')}
+              element={children}
+            />
+          );
+        })}
+      </Routes>
     </>
   );
 }
 
 export function RoutedTab(props: RoutedTabProps) {
   return <>{props.children}</>;
+}
+
+function replaceRouteParams(path: string, params: { [key: string]: string | undefined }) {
+  let newPath = path;
+  Object.keys(params).forEach((key) => {
+    newPath = newPath.replace(`:${key}`, params[key] ?? `:${key}`);
+  });
+  return newPath;
 }
