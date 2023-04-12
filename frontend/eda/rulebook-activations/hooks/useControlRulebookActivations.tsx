@@ -56,7 +56,7 @@ export function useDisableRulebookActivations(
             count: rulebookActivations.length,
           }
         ),
-        actionButtonText: t('Disable rulebookActivations', { count: rulebookActivations.length }),
+        actionButtonText: t('Disable rulebook activations', { count: rulebookActivations.length }),
         items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
         keyFn: (item) => item?.id,
         isDanger: true,
