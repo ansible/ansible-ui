@@ -1,6 +1,6 @@
 import * as useOptions from '../../../common/crud/useOptions';
-import { Inventories } from './Inventories';
 import { Inventory } from '../../interfaces/Inventory';
+import { Inventories } from './Inventories';
 
 describe('Inventories.cy.ts', () => {
   describe('Non-empty list', () => {
@@ -36,7 +36,7 @@ describe('Inventories.cy.ts', () => {
         cy.contains(/^Modified by$/).should('be.visible');
         cy.contains('button', /^Organization$/).click();
       });
-      cy.filterByText('Organization 0');
+      cy.filterTableByText('Organization 0');
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });

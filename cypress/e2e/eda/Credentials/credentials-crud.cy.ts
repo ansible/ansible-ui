@@ -12,10 +12,10 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo(/^Credentials$/);
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^Description$/, 'This is a Container Registry Credential.');
-    cy.selectByLabel(/^Type$/, 'Container Registry');
-    cy.typeByLabel(/^User name$/, 'admin');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^Description$/, 'This is a Container Registry Credential.');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'Container Registry');
+    cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a Container Registry Credential.');
@@ -34,10 +34,10 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo(/^Credentials$/);
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^Description$/, 'This is a GitHub Credential.');
-    cy.selectByLabel(/^Type$/, 'GitHub Personal Access Token');
-    cy.typeByLabel(/^User name$/, 'admin');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^Description$/, 'This is a GitHub Credential.');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub Personal Access Token');
+    cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitHub Credential.');
@@ -56,10 +56,10 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo(/^Credentials$/);
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^Description$/, 'This is a GitLab Credential.');
-    cy.selectByLabel(/^Type$/, 'GitLab Personal Access Token');
-    cy.typeByLabel(/^User name$/, 'admin');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^Description$/, 'This is a GitLab Credential.');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'GitLab Personal Access Token');
+    cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitLab Credential.');
@@ -77,13 +77,13 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo(/^Credentials$/);
       cy.get('h1').should('contain', 'Credentials');
-      cy.clickRow(edaCredential.name);
+      cy.clickTableRow(edaCredential.name);
       cy.clickPageAction(/^Edit credential$/);
       cy.hasTitle(/^Edit credential$/);
-      cy.typeByLabel(/^Name$/, edaCredential.name + 'lalala');
-      cy.typeByLabel(/^Description$/, 'this credential type has been changed');
-      cy.selectByLabel(/^Type$/, 'GitHub Personal Access Token');
-      cy.typeByLabel(/^User name$/, 'velveeta');
+      cy.typeInputByLabel(/^Name$/, edaCredential.name + 'lalala');
+      cy.typeInputByLabel(/^Description$/, 'this credential type has been changed');
+      cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub Personal Access Token');
+      cy.typeInputByLabel(/^User name$/, 'velveeta');
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
       cy.hasDetail('Description', 'this credential type has been changed');
@@ -98,11 +98,12 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo(/^Credentials$/);
       cy.get('h1').should('contain', 'Credentials');
-      cy.clickRow(edaCredential.name);
+      cy.clickTableRow(edaCredential.name);
       cy.hasTitle(edaCredential.name);
       cy.intercept('DELETE', `/api/eda/v1/credentials/${edaCredential.id}/`).as('deleted');
       cy.clickPageAction(/^Delete credential$/);
-      cy.confirmModalAction('Delete credential');
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete credential');
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
         cy.hasTitle(/^Credentials$/);

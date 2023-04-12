@@ -55,11 +55,11 @@ describe('projects', () => {
   // });
   // it('can edit a project from the project details tab', () => {
   //     cy.navigateTo(/^Projects$/);
-  //     cy.clickRow(project.name);
+  //     cy.clickTableRow(project.name);
   //     cy.hasTitle(project.name);
   //     cy.clickButton(/^Edit project$/);
   //     cy.hasTitle(/^Edit project$/);
-  //     cy.typeByLabel(/^Name$/, 'a');
+  //     cy.typeInputByLabel(/^Name$/, 'a');
   //     cy.clickButton(/^Save project$/);
   //     cy.hasTitle(`${project.name}a`);
   // });
