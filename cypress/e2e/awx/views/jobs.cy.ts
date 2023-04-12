@@ -104,7 +104,7 @@ describe('jobs', () => {
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getTableRowByText(jobId).should('not.exist');
+      cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -126,7 +126,7 @@ describe('jobs', () => {
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getTableRowByText(jobId).should('not.exist');
+      cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });

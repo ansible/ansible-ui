@@ -165,7 +165,7 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/);
-    cy.filterTableByTypeAndText(/^Name$/, user1.username);
+    cy.filterTableByText(user1.username);
     cy.contains('tr', user1.username)
       .find(
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
