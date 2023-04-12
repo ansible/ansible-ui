@@ -41,10 +41,10 @@ describe('EDA Projects List', () => {
         cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('edaProject');
         cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('testProject');
         cy.confirmModalAction('Delete projects');
-        cy.wait('@deletedA').then((edaProject) => {
+        cy.wait('@edaProject').then((edaProject) => {
           expect(edaProject?.response?.statusCode).to.eql(204);
         });
-        cy.wait('@deletedB').then((testProject) => {
+        cy.wait('@testProject').then((testProject) => {
           expect(testProject?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
