@@ -1,143 +1,18 @@
 import {
-  ButtonVariant,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Stack,
   TextList,
   TextListItem,
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  IPageAction,
-  PageActions,
-  PageActionType,
-  PageDetail,
-  PageDetails,
-  PageHeader,
-  PageLayout,
-  PageTab,
-  PageTabs,
-} from '../../../../framework';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../common/crud/useGetItem';
-import { RouteObj } from '../../../Routes';
-import { AwxError } from '../../common/AwxError';
-import { UserDateDetail } from '../../common/UserDateDetail';
-import { useVerbosityString } from '../../common/useVerbosityString';
-import { handleLaunch } from '../../common/util/launchHandlers';
-import { JobTemplate } from '../../interfaces/JobTemplate';
-import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import { getJobOutputUrl } from '../../views/jobs/jobUtils';
+import { Link } from 'react-router-dom';
+import { PageDetail, PageDetails } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
+import { UserDateDetail } from '../../../common/UserDateDetail';
+import { useVerbosityString } from '../../../common/useVerbosityString';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 
-export function TemplateDetail() {
-  const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
-  const {
-    error,
-    data: template,
-    refresh,
-  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
-  const navigate = useNavigate();
-
-  const deleteTemplates = useDeleteTemplates((deleted) => {
-    if (deleted.length > 0) {
-      navigate(RouteObj.Templates);
-    }
-  });
-
-  const itemActions: IPageAction<JobTemplate>[] = useMemo(() => {
-    const itemActions: IPageAction<JobTemplate>[] = [
-      {
-        type: PageActionType.single,
-        variant: ButtonVariant.primary,
-        icon: EditIcon,
-        label: t('Edit template'),
-        ouiaId: 'job-template-detail-edit-button',
-        onClick: (template) =>
-          navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
-      },
-      {
-        type: PageActionType.single,
-        icon: TrashIcon,
-        label: t('Delete template'),
-        onClick: (template) => {
-          if (!template) return;
-          deleteTemplates([template]);
-        },
-        ouiaId: 'job-template-detail-delete-button',
-        isDanger: true,
-      },
-      {
-        type: PageActionType.single,
-        icon: RocketIcon,
-        label: t('Launch template'),
-        onClick: async (template) => {
-          try {
-            const job = await handleLaunch(template?.type as string, template?.id);
-            if (job) {
-              navigate(getJobOutputUrl(job));
-            }
-          } catch {
-            // handle error
-          }
-        },
-        ouiaId: 'job-template-detail-launch-button',
-        isDanger: false,
-      },
-    ];
-    return itemActions;
-  }, [deleteTemplates, navigate, t]);
-
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!template) return <LoadingPage breadcrumbs tabs />;
-
-  return (
-    <PageLayout>
-      <PageHeader
-        title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
-        headerActions={
-          <PageActions<JobTemplate>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={template}
-          />
-        }
-      />
-      {template ? (
-        <PageTabs>
-          <PageTab label={t('Details')}>
-            <TemplateDetailsTab template={template} />
-          </PageTab>
-          <PageTab label={t('Access')}>
-            <TemplateAccessTab template={template} />
-          </PageTab>
-        </PageTabs>
-      ) : (
-        <PageTabs>
-          <PageTab>
-            <PageSection variant="light">
-              <Stack hasGutter>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-              </Stack>
-            </PageSection>
-          </PageTab>
-        </PageTabs>
-      )}
-    </PageLayout>
-  );
-}
-
-function TemplateDetailsTab(props: { template: JobTemplate }) {
+export function TemplateDetails(props: { template: JobTemplate }) {
   const { t } = useTranslation();
   const { template } = props;
   const { summary_fields: summaryFields } = template;
@@ -267,8 +142,4 @@ function TemplateDetailsTab(props: { template: JobTemplate }) {
       </PageDetail>
     </PageDetails>
   );
-}
-
-function TemplateAccessTab(props: { template: JobTemplate }) {
-  return <div>{props.template.name}</div>;
 }

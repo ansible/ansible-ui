@@ -1,0 +1,64 @@
+import { useMemo } from 'react';
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { RouteObj } from '../../../../Routes';
+import { IPageAction, PageActionType } from '../../../../../framework';
+import { handleLaunch } from '../../../common/util/launchHandlers';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
+import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+
+export function useTemplateActions(options: {
+  onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;
+}) {
+  const { onTemplatesDeleted } = options;
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
+
+  return useMemo<IPageAction<JobTemplate>[]>(() => {
+    const itemActions: IPageAction<JobTemplate>[] = [
+      {
+        type: PageActionType.single,
+        variant: ButtonVariant.primary,
+        icon: EditIcon,
+        label: t('Edit template'),
+        ouiaId: 'job-template-detail-edit-button',
+        onClick: (template) =>
+          navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+      },
+      {
+        type: PageActionType.single,
+        icon: TrashIcon,
+        label: t('Delete template'),
+        onClick: (template) => {
+          if (!template) return;
+          deleteTemplates([template]);
+        },
+        ouiaId: 'job-template-detail-delete-button',
+        isDanger: true,
+      },
+      {
+        type: PageActionType.single,
+        icon: RocketIcon,
+        label: t('Launch template'),
+        onClick: async (template) => {
+          try {
+            const job = await handleLaunch(template?.type as string, template?.id);
+            if (job) {
+              navigate(getJobOutputUrl(job));
+            }
+          } catch {
+            // handle error
+          }
+        },
+        ouiaId: 'job-template-detail-launch-button',
+        isDanger: false,
+      },
+    ];
+    return itemActions;
+  }, [deleteTemplates, navigate, t]);
+}
