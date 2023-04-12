@@ -45,7 +45,13 @@ declare global {
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
+
+      /** Get the Table row containing the specified text. */
+      getTableRowByText(text: string | RegExp): Chainable<JQuery<HTMLElement>>;
+
+      /** Check if the Table row containing the specified text also has the text Successful. */
       tableHasRowWithSuccess(name: string | RegExp): Chainable<void>;
+
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
       selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -421,21 +427,21 @@ Cypress.Commands.add(
     if (filter !== false && typeof name === 'string') {
       cy.filterByText(name);
     }
-    cy.contains('td', name)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-dropdown__toggle').click();
-        cy.get('.pf-c-dropdown__menu-item').contains(label).click();
-      });
+    cy.getTableRowByText(name).within(() => {
+      cy.get('.pf-c-dropdown__toggle').click();
+      cy.get('.pf-c-dropdown__menu-item').contains(label).click();
+    });
   }
 );
 
+Cypress.Commands.add('getTableRowByText', (text: string | RegExp) => {
+  return cy.contains('td', text).parent();
+});
+
 Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp) => {
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('.pf-c-alert__title').should('contain', 'Successful');
-    });
+  cy.getTableRowByText(name).within(() => {
+    cy.get('.pf-c-alert__title').should('contain', 'Successful');
+  });
 });
 
 //Filters a list to show only particular results using a name, locates the row with that name,
@@ -444,11 +450,9 @@ Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
   }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('input[type=checkbox]').click();
-    });
+  cy.getTableRowByText(name).within(() => {
+    cy.get('input[type=checkbox]').click();
+  });
 });
 
 //Locates the modal box on the page and filters results in that modal by a certain name. Then
@@ -460,11 +464,9 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
       cy.get('[aria-label="apply filter"]').click();
     });
   }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('input[type=checkbox]').click();
-    });
+  cy.getTableRowByText(name).within(() => {
+    cy.get('input[type=checkbox]').click();
+  });
 });
 
 /**
@@ -475,11 +477,9 @@ Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean)
   if (filter !== false && typeof name === 'string') {
     cy.filterByText(name);
   }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('button[id^="expand-toggle"]').click();
-    });
+  cy.getTableRowByText(name).within(() => {
+    cy.get('button[id^="expand-toggle"]').click();
+  });
 });
 
 /**
