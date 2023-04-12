@@ -38,14 +38,14 @@ describe('EDA Projects List', () => {
         cy.selectRow(edaProject.name);
         cy.selectRow(testProject.name);
         cy.clickToolbarAction(/^Delete selected projects$/);
-        cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deletedA');
-        cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('deletedB');
+        cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('edaProject');
+        cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('testProject');
         cy.confirmModalAction('Delete projects');
-        cy.wait('@deletedA').then((deletedA) => {
-          expect(deletedA?.response?.statusCode).to.eql(204);
+        cy.wait('@edaProject').then((edaProject) => {
+          expect(edaProject?.response?.statusCode).to.eql(204);
         });
-        cy.wait('@deletedB').then((deletedB) => {
-          expect(deletedB?.response?.statusCode).to.eql(204);
+        cy.wait('@testProject').then((testProject) => {
+          expect(testProject?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
         cy.clickButton(/^Close$/);
