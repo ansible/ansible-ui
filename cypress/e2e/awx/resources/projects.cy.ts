@@ -141,7 +141,7 @@ describe('projects', () => {
       cy.contains('td', project.name)
         .parent()
         .within(() => {
-          cy.get('.sync-project').click();
+          cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
@@ -159,7 +159,7 @@ describe('projects', () => {
       cy.contains('td', testProject.name)
         .parent()
         .within(() => {
-          cy.get('.cancel-project-sync').click();
+          cy.get('#cancel-project-sync').click();
         });
       cy.get('#confirm').click();
       cy.clickButton(/^Cancel project sync/);

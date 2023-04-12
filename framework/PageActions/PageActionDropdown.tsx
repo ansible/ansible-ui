@@ -189,8 +189,7 @@ function PageDropdownActionItem<T extends object>(props: {
     case PageActionType.Link: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
-      const tooltip = isDisabled ?? action.tooltip;
-
+      const tooltip = isDisabled ? isDisabled : action.tooltip;
       let to: string;
 
       switch (action.selection) {

@@ -23,7 +23,13 @@ export function PageActionLink<T extends object>(props: {
 
   const Wrapper = wrapper ?? Fragment;
   const Icon = action.icon;
-  const tooltip = isDisabled ?? action.tooltip ?? iconOnly ? action.label : undefined;
+  const tooltip = isDisabled
+    ? isDisabled
+    : action.tooltip
+    ? action.tooltip
+    : iconOnly
+    ? action.label
+    : undefined;
 
   const id = action.label.toLowerCase().split(' ').join('-');
   const content = iconOnly && Icon ? <Icon /> : action.label;

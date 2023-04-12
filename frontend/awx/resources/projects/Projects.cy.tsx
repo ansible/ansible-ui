@@ -208,7 +208,7 @@ describe('projects.cy.ts', () => {
       cy.contains('td', 'Demo Project')
         .parent()
         .within(() => {
-          cy.get('.sync-project').click();
+          cy.get('#sync-project').click();
         });
       // A network request is made to /update based on project id selected on the UI
       cy.wait('@projectUpdateRequest');
@@ -268,7 +268,7 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 1 Org 0')
         .parent()
         .within(() => {
-          cy.get('.sync-project').should('have.attr', 'aria-disabled', 'true');
+          cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__toggle').click();
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Copy project$/)
@@ -286,8 +286,8 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 3 Org 0')
         .parent()
         .within(() => {
-          cy.get('.sync-project').trigger('mouseenter');
-          cy.get('.sync-project').should('have.attr', 'aria-disabled', 'true');
+          cy.get('#sync-project').trigger('mouseenter');
+          cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
         });
       cy.get('.pf-c-tooltip')
         .contains(/^The project cannot be synced because a sync job is currently running$/)
@@ -299,13 +299,13 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 10 Org 2')
         .parent()
         .within(() => {
-          cy.get('.cancel-project-sync').should('exist');
+          cy.get('#cancel-project-sync').should('exist');
         });
       // select prorject with non-active sync status
       cy.contains('td', ' Project 1 Org 0')
         .parent()
         .within(() => {
-          cy.get('.cancel-project-sync').should('not.exist');
+          cy.get('#cancel-project-sync').should('not.exist');
         });
     });
     it('Cancel project sync row button is disabled for user with insufficient permissions', () => {
@@ -314,8 +314,8 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 10 Org 2')
         .parent()
         .within(() => {
-          cy.get('.cancel-project-sync').trigger('mouseenter');
-          cy.get('.cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
+          cy.get('#cancel-project-sync').trigger('mouseenter');
+          cy.get('#cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
         });
       cy.get('.pf-c-tooltip')
         .contains(/^The project sync cannot be canceled due to insufficient permission$/)
