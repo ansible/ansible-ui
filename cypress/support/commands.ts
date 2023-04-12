@@ -46,10 +46,10 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
-      /** Get the Table row containing the specified text. */
+      /** Get the table row containing the specified text. */
       getTableRowByText(text: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Check if the Table row containing the specified text also has the text Successful. */
+      /** Check if the table row containing the specified text also has the text 'Successful'. */
       tableHasRowWithSuccess(name: string | RegExp): Chainable<void>;
 
       selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
