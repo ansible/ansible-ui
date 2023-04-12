@@ -71,7 +71,8 @@ describe('EDA Rulebook Activations List', () => {
       cy.filterByText(edaRulebookActivation.name);
       */
           cy.ruleBookActivationActions('Delete rulebookActivation', edaRulebookActivation.name);
-          cy.confirmModalAction('Delete rulebookActivations');
+          cy.clickModalConfirmCheckbox();
+          cy.clickModalButton('Delete rulebookActivations');
           cy.assertModalSuccess();
           cy.clickButton(/^Close$/);
         });
@@ -100,8 +101,8 @@ describe('EDA Rulebook Activations List', () => {
                   /*
             uncomment below when working, within() yields multiple elements as 
             currently select by name doesn't work as expected for Rulebook Activations
-            cy.selectRow(edaRulebookActivation1.name);
-            cy.selectRow(edaRulebookActivation2.name);
+            cy.selectTableRow(edaRulebookActivation1.name);
+            cy.selectTableRow(edaRulebookActivation2.name);
             */
                   const rulebookActivations = [
                     edaRulebookActivation1.name,
@@ -114,8 +115,9 @@ describe('EDA Rulebook Activations List', () => {
                         cy.get('input[type=checkbox]').check();
                       });
                   });
-                  cy.clickToolbarAction(/^Delete selected rulebook activations$/);
-                  cy.confirmModalAction('Delete rulebookActivations');
+                  cy.clickToolbarKebabAction(/^Delete selected rulebook activations$/);
+                  cy.clickModalConfirmCheckbox();
+                  cy.clickModalButton('Delete rulebookActivations');
                   cy.wait(['@edaRulebookActivation1', '@edaRulebookActivation2']).then(
                     (activationArr) => {
                       expect(activationArr[0]?.response?.statusCode).to.eql(204);

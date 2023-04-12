@@ -13,8 +13,8 @@ describe('EDA Projects CRUD', () => {
     cy.navigateTo(/^Projects$/);
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
-    cy.typeByLabel(/^Name$/, name);
-    cy.typeByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
@@ -27,10 +27,10 @@ describe('EDA Projects CRUD', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo(/^Projects$/);
       cy.get('h1').should('contain', 'Projects');
-      cy.clickRow(edaProject.name);
+      cy.clickTableRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
       cy.hasTitle(/^Edit project$/);
-      cy.typeByLabel(/^Name$/, 'a');
+      cy.typeInputByLabel(/^Name$/, 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
       cy.deleteEdaProject(edaProject);
@@ -40,11 +40,12 @@ describe('EDA Projects CRUD', () => {
   it('deletes a Project from kebab menu from the project details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(edaProject.name);
+      cy.clickTableRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');
       cy.clickPageAction(/^Delete project$/);
-      cy.confirmModalAction('Delete projects');
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete projects');
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
         cy.hasTitle(/^Projects$/);

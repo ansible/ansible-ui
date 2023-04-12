@@ -30,7 +30,7 @@ describe('inventories', () => {
 
   it('renders the inventory details page', () => {
     cy.navigateTo(/^Inventories$/);
-    cy.clickRow(inventory.name);
+    cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickButton(/^Details$/);
     cy.contains('#name', inventory.name);
@@ -39,7 +39,7 @@ describe('inventories', () => {
   it('deletes an inventory from the details page', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickRow(testInventory.name);
+      cy.clickTableRow(testInventory.name);
       cy.hasTitle(testInventory.name);
       cy.clickPageAction(/^Delete inventory/);
       cy.get('#confirm').click();
@@ -51,7 +51,7 @@ describe('inventories', () => {
 
   it('copies an inventory from the details page', () => {
     cy.navigateTo(/^Inventories$/);
-    cy.clickRow(inventory.name);
+    cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickPageAction(/^Copy inventory/);
     cy.hasAlert(`${inventory.name} copied`);

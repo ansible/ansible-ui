@@ -14,7 +14,7 @@ describe('EDA Projects List', () => {
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(edaProject.name);
+      cy.clickTableRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.clickButton(/^Details$/);
       cy.get('#name').should('contain', edaProject.name);
@@ -25,7 +25,7 @@ describe('EDA Projects List', () => {
   it('can filter the Projects list based on Name', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.filterByText(edaProject.name);
+      cy.filterTableByText(edaProject.name);
       cy.get('td[data-label="Name"]').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
     });
@@ -35,12 +35,13 @@ describe('EDA Projects List', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
         cy.navigateTo(/^Projects$/);
-        cy.selectRow(edaProject.name);
-        cy.selectRow(testProject.name);
-        cy.clickToolbarAction(/^Delete selected projects$/);
+        cy.selectTableRow(edaProject.name);
+        cy.selectTableRow(testProject.name);
+        cy.clickToolbarKebabAction(/^Delete selected projects$/);
         cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deletedA');
         cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('deletedB');
-        cy.confirmModalAction('Delete projects');
+        cy.clickModalConfirmCheckbox();
+        cy.clickModalButton('Delete projects');
         cy.wait('@deletedA').then((deletedA) => {
           expect(deletedA?.response?.statusCode).to.eql(204);
         });

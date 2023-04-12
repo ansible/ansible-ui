@@ -49,8 +49,8 @@ describe('projects', () => {
   //   const projectName = 'E2E Project ' + randomString(4);
   //   cy.navigateTo(/^Projects$/);
   //   cy.clickButton(/^Create project$/);
-  //   cy.typeByLabel(/^Name$/, projectName);
-  //   cy.typeByLabel(/^Organization$/, 'Default');
+  //   cy.typeInputByLabel(/^Name$/, projectName);
+  //   cy.typeInputByLabel(/^Organization$/, 'Default');
   //   cy.clickButton(/^Create project$/);
   //   cy.hasTitle(projectName);
   // });
@@ -60,14 +60,14 @@ describe('projects', () => {
   //       cy.clickRow(project.name);
   //       cy.clickButton(/^Edit project$/);
   //       cy.hasTitle(/^Edit project$/);
-  //       cy.typeByLabel(/^Name$/, 'a');
+  //       cy.typeInputByLabel(/^Name$/, 'a');
   //       cy.clickButton(/^Save project$/);
   //       cy.hasTitle(`${project.name}a`);
   //   });
 
   it('project details', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickButton(/^Details$/);
     cy.contains('#name', project.name);
@@ -75,28 +75,28 @@ describe('projects', () => {
 
   it('project access', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Access$/);
   });
 
   it('project job templates', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Job Templates$/);
   });
 
   it('project notifications', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Notifications$/);
   });
 
   it('project schedules', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Schedules$/);
   });
@@ -107,7 +107,7 @@ describe('projects', () => {
   //       cy.hasTitle(project.name);
   //       cy.clickButton(/^Edit project$/);
   //       cy.hasTitle(/^Edit project$/);
-  //       cy.typeByLabel(/^Name$/, 'a');
+  //       cy.typeInputByLabel(/^Name$/, 'a');
   //       cy.clickButton(/^Save project$/);
   //       cy.hasTitle(`${project.name}a`);
   //   });
@@ -120,7 +120,7 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
+      cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`);
@@ -136,7 +136,7 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
+      cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Sync project$/);
       cy.hasAlert(`Syncing ${testProject.name}`);
@@ -150,7 +150,7 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
+      cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
       cy.get('#confirm').click();
@@ -171,7 +171,7 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRowAction(testProject.name, /^Delete project$/);
+      cy.clickTableRowAction(testProject.name, /^Delete project$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
@@ -186,8 +186,8 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.selectRow(testProject.name);
-      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.selectTableRow(testProject.name);
+      cy.clickToolbarKebabAction(/^Delete selected projects$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);

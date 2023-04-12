@@ -78,7 +78,7 @@ describe('jobs', () => {
   it('filters jobs by id', () => {
     cy.navigateTo(/^Jobs$/);
     const jobId = job.id ? job.id.toString() : '';
-    cy.switchToolbarFilter('ID');
+    cy.selectToolbarFilterType('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -95,16 +95,16 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchToolbarFilter('ID');
+      cy.selectToolbarFilterType('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = testJob.name ? testJob.name : '';
       cy.tableHasRowWithSuccess(jobName);
-      cy.clickRowAction(jobId, /^Delete job$/);
+      cy.clickTableRowAction(jobId, /^Delete job$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getRowFromList(jobId).should('not.exist');
+      cy.getTableRowByText(jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -116,17 +116,17 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchToolbarFilter('ID');
+      cy.selectToolbarFilterType('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
       const jobName = job.name ? job.name : '';
       cy.tableHasRowWithSuccess(jobName);
-      cy.selectRow(jobId);
-      cy.clickToolbarAction(/^Delete selected jobs$/);
+      cy.selectTableRow(jobId);
+      cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getRowFromList(jobId).should('not.exist');
+      cy.getTableRowByText(jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });
