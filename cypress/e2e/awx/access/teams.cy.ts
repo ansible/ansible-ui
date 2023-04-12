@@ -82,7 +82,7 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.clickButton(/^Edit team$/);
     cy.hasTitle(/^Edit team$/);
-    cy.typeInputByLabel(/^Name$/, 'a');
+    cy.typeInputByLabel(/^Name$/, team.name + 'a');
     cy.clickButton(/^Save team$/);
     cy.hasTitle(`${team.name}a`);
   });

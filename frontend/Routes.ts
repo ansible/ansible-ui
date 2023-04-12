@@ -53,6 +53,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   InventoryDetails: `${awxRoutePrefix}/inventories/:inventory_type/details/:id`,
   CreateInventory: `${awxRoutePrefix}/inventories/create`,
   EditInventory: `${awxRoutePrefix}/inventories/edit/:id`,
+  CreateSmartInventory: `${awxRoutePrefix}/smart_inventory/create`,
+  CreateConstructedInventory: `${awxRoutePrefix}/constructed_inventory/create`,
+  EditSmartInventory: `${awxRoutePrefix}/smart_inventory/edit/:id`,
+  EditConstructedInventory: `${awxRoutePrefix}/constructed_inventory/edit/:id`,
 
   Hosts: `${awxRoutePrefix}/hosts`,
   HostDetails: `${awxRoutePrefix}/hosts/details/:id`,
@@ -106,10 +110,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Settings
   Settings: `${awxRoutePrefix}/settings`,
 
+  //Analytics
+  ControllerReports: `${awxRoutePrefix}/reports`,
+  ControllerReport: `${awxRoutePrefix}/report/:id`,
+
   Hub: `${hubRoutePrefix}`,
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
-
   Collections: `${hubRoutePrefix}/collections`,
   CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
