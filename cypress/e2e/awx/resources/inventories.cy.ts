@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
@@ -28,12 +29,28 @@ describe('inventories', () => {
     cy.hasTitle(/^Inventories$/);
   });
 
-  it('renders the inventory details page', () => {
+  it('can render the inventories list page', () => {
     cy.navigateTo(/^Inventories$/);
-    cy.clickTableRow(inventory.name);
-    cy.hasTitle(inventory.name);
-    cy.clickButton(/^Details$/);
-    cy.contains('#name', inventory.name);
+    cy.hasTitle(/^Inventories$/);
+  });
+
+  it('creates an inventory from the inventories list page', () => {
+    const inventoryName = 'E2E Inventory ' + randomString(4);
+    cy.navigateTo(/^Inventories$/);
+    cy.clickButton(/^Create inventory$/);
+    cy.clickLink(/^Create inventory$/);
+    cy.typeInputByLabel(/^Name$/, inventoryName);
+    cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
+    cy.getInputByLabel('Prevent Instance Group Fallback').click();
+    cy.clickButton(/^Create inventory$/);
+    cy.hasTitle(inventoryName);
+    cy.hasDetail(/^Organization$/, organization.name);
+    cy.hasDetail(/^Enabled options$/, /^Prevent instance group fallback$/);
+    // Clean up this inventory
+    cy.clickPageAction(/^Delete inventory/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete inventory/);
+    cy.hasTitle(/^Inventories$/);
   });
 
   it('deletes an inventory from the details page', () => {

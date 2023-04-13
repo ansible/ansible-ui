@@ -6,7 +6,7 @@ import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
-import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { getAwxError } from '../../useAwxView';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
@@ -204,8 +204,8 @@ function InventoryInputs() {
         name="inventory.description"
         placeholder={t('Enter description')}
       />
-      <PageFormOrganizationSelect<InventoryFields>
-        name="inventory.summary_fields.organization.name"
+      <PageFormSelectOrganization<InventoryFields>
+        name="inventory.summary_fields.organization"
         isRequired
       />
       <PageFormInstanceGroupSelect<InventoryFields> name="instanceGroups" />
