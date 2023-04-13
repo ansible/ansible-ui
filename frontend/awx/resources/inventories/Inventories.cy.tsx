@@ -67,12 +67,8 @@ describe('Inventories.cy.ts', () => {
         .should('be.an', 'array')
         .then((results: Inventory[]) => {
           const inventory = results.find((i) => i.id === 7);
-
           cy.contains('tr', (inventory as Inventory).name).within(() => {
-            cy.get('button.toggle-kebab').click();
-            cy.get('a[data-ouia-component-type="PF4/DropdownItem"]')
-              .contains(/^Edit inventory$/)
-              .as('editButton');
+            cy.get('button.edit-inventory').as('editButton');
           });
           cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@editButton').click();
