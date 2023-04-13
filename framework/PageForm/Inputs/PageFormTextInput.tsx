@@ -12,7 +12,7 @@ import {
   ValidationRule,
 } from 'react-hook-form';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
 export type PageFormTextInputProps<

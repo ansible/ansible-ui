@@ -18,7 +18,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 
 export interface PageFormAsyncSelectProps<

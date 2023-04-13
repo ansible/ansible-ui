@@ -21,14 +21,18 @@ import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { getAwxError } from '../../useAwxView';
 
+interface CredentialForm extends Credential {
+  user?: number;
+}
+
 export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const activeUser = useActiveUser();
   const postRequest = usePostRequest<Credential>();
-  const onSubmit: PageFormSubmitHandler<Credential> = async (credential, setError) => {
+  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential, setError) => {
     try {
-      if (credential.summary_fields.organization.name) {
+      if (credential.summary_fields.organization?.name) {
         try {
           const organization = await getOrganizationByName(
             credential.summary_fields.organization.name
@@ -74,9 +78,10 @@ export function EditCredential() {
   const id = Number(params.id);
   const { data: credential } = useGet<Credential>(`/api/v2/credentials/${id.toString()}/`);
   const activeUser = useActiveUser();
-  const onSubmit: PageFormSubmitHandler<Credential> = async (editedCredential, setError) => {
+
+  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential, setError) => {
     try {
-      if (editedCredential.summary_fields.organization.name) {
+      if (editedCredential.summary_fields.organization?.name) {
         try {
           const organization = await getOrganizationByName(
             editedCredential.summary_fields.organization.name

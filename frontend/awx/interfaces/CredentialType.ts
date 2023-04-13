@@ -3,4 +3,13 @@ import { CredentialType as SwaggerCredentialType } from './generated-from-swagge
 export interface CredentialType extends Omit<SwaggerCredentialType, 'id' | 'name'> {
   id: number;
   name: string;
+  inputs: {
+    fields: {
+      id: string;
+      label: string;
+      type: string;
+      help_text: string;
+      ask_at_runtime: boolean;
+    }[];
+  };
 }

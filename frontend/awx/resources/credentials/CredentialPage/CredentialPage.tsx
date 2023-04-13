@@ -14,8 +14,9 @@ export function CredentialPage() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
-  const actions = useCredentialActions({ onDeleted: () => navigate(RouteObj.Credentials) });
-
+  const actions = useCredentialActions({
+    onDeleted: () => navigate(RouteObj.Credentials),
+  });
   return (
     <PageLayout>
       <PageHeader

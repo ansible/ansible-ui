@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
-import { useDeleteCredentials } from '../useDeleteCredentials';
+import { useDeleteCredentials } from './useDeleteCredentials';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 
 export function useCredentialActions(options?: { onDeleted: (crednetials: Credential[]) => void }) {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
         icon: EditIcon,
         variant: ButtonVariant.primary,
         label: t('Edit credential'),
+        isDisabled: (credential) => cannotEditResource(credential, t),
         onClick: (credential) =>
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
@@ -26,6 +28,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
         type: PageActionType.single,
         icon: TrashIcon,
         label: t('Delete credential'),
+        isDisabled: (credential) => cannotDeleteResource(credential, t),
         onClick: (credential) => deleteCredentials([credential]),
         isDanger: true,
       },

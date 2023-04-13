@@ -7,7 +7,7 @@ import {
   useFormContext,
   Validate,
 } from 'react-hook-form';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
 
 export type PageFormCreatableSelectProps<
