@@ -6,7 +6,7 @@ describe('EDA Login / Logoff', () => {
     cy.edaLogin();
   });
 
-  it.only('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
+  it('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
     cy.uiLogout();
   });
 
