@@ -13,7 +13,7 @@ describe('EDA Rulebook Activations History Tab', () => {
             `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
           ).as('getRBAInstance');
           cy.visit('eda/rulebook-activations');
-          cy.clickRow(edaRulebookActivation.name);
+          cy.clickTableRow(edaRulebookActivation.name);
           cy.contains('h1', edaRulebookActivation.name).should('be.visible');
           cy.contains('li', 'History').click();
           cy.wait('@getRBAInstance')
@@ -42,7 +42,7 @@ describe('EDA Rulebook Activations History Tab', () => {
             `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
           ).as('getRBAInstance');
           cy.visit('eda/rulebook-activations');
-          cy.clickRow(edaRulebookActivation.name);
+          cy.clickTableRow(edaRulebookActivation.name);
           cy.contains('li', 'History').click();
           // TODO: needs further work when RBA actions are done
           cy.wait('@getRBAInstance')
@@ -51,7 +51,7 @@ describe('EDA Rulebook Activations History Tab', () => {
               cy.wrap(id).as('ID');
               cy.get('@ID').then(($id) => {
                 const id = $id.toString();
-                cy.filterByText(`Instance ${id}`);
+                cy.filterTableByText(`Instance ${id}`);
                 cy.contains('td[data-label="Name"]', `Instance ${id}`);
                 cy.clickButton(/^Clear all filters$/);
               });

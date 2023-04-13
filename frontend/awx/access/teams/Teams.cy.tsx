@@ -33,7 +33,7 @@ describe('Teams.cy.ts', () => {
         cy.contains(/^Modified by$/).should('be.visible');
         cy.contains('button', /^Organization$/).click();
       });
-      cy.filterByText('Organization 1');
+      cy.filterTableByText('Organization 1');
       // A network request is made based on the filter selected on the UI
       cy.wait('@orgFilterRequest');
       // Clear filter
@@ -45,7 +45,7 @@ describe('Teams.cy.ts', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.get('[type="checkbox"][id="select-all"]').check();
-      cy.clickToolbarAction(/^Delete selected teams$/);
+      cy.clickToolbarKebabAction(/^Delete selected teams$/);
       cy.contains(
         '{{count}} of the selected teams cannot be deleted due to insufficient permissions.'
       ).should('be.visible');

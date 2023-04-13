@@ -16,11 +16,11 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
         cy.visit('/eda/rulebook-activations/create');
         cy.clickButton(/^Add rulebook activation$/);
         cy.get('h1').should('contain', 'Create rulebook activation');
-        cy.typeByLabel(/^Name$/, name);
-        cy.typeByLabel(/^Description$/, 'This is a new rulebook activation.');
-        cy.selectByLabel(/^Rulebook$/, edaRulebook.name);
-        cy.selectFromDropdown(/^Restart policy$/, 'Always');
-        cy.selectFromDropdown(/^Project$/, edaProject.name);
+        cy.typeInputByLabel(/^Name$/, name);
+        cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
+        cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRulebook.name);
+        cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
+        cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
         cy.clickButton(/^Add rulebook activation$/);
         cy.get('h1').should('contain', name);
         cy.getEdaRulebookActivation(name).then((edaRulebookActivation) => {
@@ -56,7 +56,8 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
             'deleted'
           );
           cy.clickPageAction(/^Delete rulebookActivation$/);
-          cy.confirmModalAction('Delete rulebookActivations');
+          cy.clickModalConfirmCheckbox();
+          cy.clickModalButton('Delete rulebookActivations');
           cy.wait('@deleted').then((deleted) => {
             expect(deleted?.response?.statusCode).to.eql(204);
             cy.hasTitle(/^Rulebook activations$/);
