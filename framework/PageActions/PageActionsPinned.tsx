@@ -89,7 +89,6 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
         <PageActionSwitch
           action={action}
           selectedItem={selectedItem}
-          selectedItems={selectedItems}
           wrapper={wrapper}
           iconOnly={props.iconOnly}
         />

@@ -119,7 +119,7 @@ export function Instances() {
           navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
-    [alertToaster, navigate, postRequest, t, view]
+    [alertToaster, navigate, patchRequest, postRequest, t, view]
   );
 
   return (
