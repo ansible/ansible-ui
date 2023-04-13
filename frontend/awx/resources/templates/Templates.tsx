@@ -85,12 +85,11 @@ export function Templates() {
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t(`Edit Template`),
-        onClick: (template) =>
-          navigate(RouteObj.JobTemplateEdit.replace(':id', template.id.toString())),
+        href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),
       },
       {
         type: PageActionType.Button,
@@ -100,7 +99,7 @@ export function Templates() {
         onClick: (template) => deleteTemplates([template]),
       },
     ],
-    [navigate, deleteTemplates, t]
+    [deleteTemplates, t]
   );
   return (
     <PageLayout>

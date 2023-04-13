@@ -38,6 +38,7 @@ import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import Reports from './analytics/Reports/Reports';
 import { PageNotFound } from '../common/PageNotFound';
+import { PageNotImplemented } from '../common/PageNotImplemented';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -68,6 +69,7 @@ export function AwxRouter() {
           element={<WorkflowJobTemplateDetail />}
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
+        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
         <Route path={RouteObjWithoutPrefix.CredentialDetails} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />

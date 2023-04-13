@@ -33,11 +33,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   Templates: `${awxRoutePrefix}/templates`,
   JobTemplateDetails: `${awxRoutePrefix}/job_template/details/:id`,
   WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/details/:id`,
-  WorkflowJobTemplateEdit: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
-  JobTemplateEdit: `${awxRoutePrefix}/job_template/edit/:id`,
   CreateWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/create`,
   CreateJobTemplate: `${awxRoutePrefix}/job_template/create`,
-  EditTemplate: `${awxRoutePrefix}/templates/edit/:id`,
+  EditJobTemplate: `${awxRoutePrefix}/job_template/edit/:id`,
+  EditWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
 
   Credentials: `${awxRoutePrefix}/credentials`,
   CredentialDetails: `${awxRoutePrefix}/credentials/details/:id`,
