@@ -15,7 +15,7 @@ export function useTeamActions(options: {
   onTeamsDeleted: (teams: Team[]) => void;
   isDetailsPageAction?: boolean;
 }) {
-  const { onTeamsDeleted, isDetailsPageAction } = options;
+  const { onTeamsDeleted } = options;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
