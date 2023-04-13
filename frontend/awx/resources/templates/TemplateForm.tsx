@@ -92,9 +92,7 @@ export function CreateJobTemplate() {
         promises.push(submitCredentials(template, credentials));
       }
       if (labels?.results && labels?.results?.length > 0) {
-        promises.push(
-          submitLabels(template.id, template.summary_fields.organization.id, labels.results)
-        );
+        promises.push(submitLabels(template, labels.results));
       }
       if (instanceGroups.length > 0) {
         promises.push(submitInstanceGroups(template.id, instanceGroups));
@@ -151,22 +149,22 @@ async function submitCredentials(template: JobTemplate, newCredentials: Credenti
   return Promise.all([disassociatePromise, associatePromise]);
 }
 
-async function submitLabels(template: number, orgId: number, labels: Label[]) {
+async function submitLabels(template: JobTemplate, labels: Label[]) {
   const { added, removed } = getAddedAndRemoved(
-    labels || ([] as Label[]),
+    template.summary_fields?.labels?.results || ([] as Label[]),
     labels ?? ([] as Label[])
   );
 
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(`/api/v2/job_templates/${template.toString()}/labels/`, {
+    postRequest(`/api/v2/job_templates/${template.id.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    postRequest(`/api/v2/job_templates/${template.toString()}/labels/`, {
+    postRequest(`/api/v2/job_templates/${template.id.toString()}/labels/`, {
       name: label.name,
-      organization: orgId,
+      organization: template.summary_fields?.organization?.id,
     })
   );
 

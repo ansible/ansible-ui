@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +16,9 @@ export function PageFormLabelSelect<
   labelHelp: string;
   name: TFieldName;
   placeholderText?: string;
+  additionalControls?: ReactElement;
 }) {
-  const { labelHelpTitle, labelHelp, name, placeholderText } = props;
+  const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
   const { t } = useTranslation();
   const [labelOptions, setLabels] = useState<Label[]>();
 
@@ -51,6 +52,7 @@ export function PageFormLabelSelect<
       name={name}
       placeholderText={placeholderText ?? t('Select or create labels')}
       label={t('Labels')}
+      additionalControls={additionalControls ?? undefined}
       options={
         labelOptions?.map((label) => ({ value: label, label: label.name })) ?? [
           { label: '', value: '' },
