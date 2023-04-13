@@ -20,13 +20,6 @@ export function isPageActionHidden<T extends object>(
           return action.isHidden(selectedItem);
         }
         break;
-
-      case undefined:
-        if (action.isHidden) {
-          if (!selectedItem) return true;
-          return action.isHidden(selectedItem);
-        }
-        break;
     }
   }
   return false;
