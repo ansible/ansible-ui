@@ -50,7 +50,7 @@ describe('EDA Rulebook Activations History Tab', () => {
             .then((id) => {
               cy.wrap(id).as('ID');
               cy.get('@ID').then(() => {
-                cy.switchToolbarFilter(`Status`);
+                cy.selectToolbarFilterType(`Status`);
                 cy.contains('td[data-label="Status"]', `Failed`);
               });
             });

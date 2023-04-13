@@ -34,13 +34,16 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.edaRuleBookActivationActions('Restart rulebook activation', edaRulebookActivation.name);
-          cy.edaRuleBookActivationActionsModal(
-            'Restart rulebook activation',
-            edaRulebookActivation.name
-          );
-          cy.deleteEdaRulebookActivation(edaRulebookActivation);
-        });
+            cy.edaRuleBookActivationActions(
+              'Restart rulebook activation',
+              edaRulebookActivation.name
+            );
+            cy.clickModalConfirmCheckbox();
+            cy.clickModalButton('Restart rulebook activations');
+            cy.assertModalSuccess();
+            cy.clickButton(/^Close$/);
+          }
+        );
       });
       cy.deleteEdaProject(edaProject);
     });
@@ -56,12 +59,14 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.edaRuleBookActivationActions('Disable rulebook activation', edaRulebookActivation.name);
-          cy.edaRuleBookActivationActionsModal(
+          cy.edaRuleBookActivationActions(
             'Disable rulebook activation',
             edaRulebookActivation.name
           );
-          cy.deleteEdaRulebookActivation(edaRulebookActivation);
+          cy.clickModalConfirmCheckbox();
+          cy.clickModalButton('Disable rulebook activations');
+          cy.assertModalSuccess();
+          cy.clickButton(/^Close$/);
         });
       });
       cy.deleteEdaProject(edaProject);
