@@ -40,7 +40,20 @@ describe('Inventories.cy.ts', () => {
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
-
+    it('disable "create inventory" toolbar action if the user does not have permissions', () => {
+      cy.stub(useOptions, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {},
+        },
+      }));
+      cy.mount(<Inventories />);
+      cy.contains('button', /^Create inventory$/).as('createButton');
+      cy.get('@createButton').should('have.attr', 'disabled');
+      cy.get('@createButton').click({ force: true });
+      cy.hasTooltip(
+        /^You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.$/
+      );
+    });
     it('disable delete row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
