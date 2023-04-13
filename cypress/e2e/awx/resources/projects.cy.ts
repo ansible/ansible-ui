@@ -48,49 +48,49 @@ describe('projects', () => {
   //   const projectName = 'E2E Project ' + randomString(4);
   //   cy.navigateTo(/^Projects$/, true);
   //   cy.clickButton(/^Create project$/);
-  //   cy.typeByLabel(/^Name$/, projectName);
-  //   cy.typeByLabel(/^Organization$/, 'Default');
+  //   cy.typeInputByLabel(/^Name$/, projectName);
+  //   cy.typeInputByLabel(/^Organization$/, 'Default');
   //   cy.clickButton(/^Create project$/);
   //   cy.hasTitle(projectName);
   // });
   // it('can edit a project from the project details tab', () => {
   //     cy.navigateTo(/^Projects$/);
-  //     cy.clickRow(project.name);
+  //     cy.clickTableRow(project.name);
   //     cy.hasTitle(project.name);
   //     cy.clickButton(/^Edit project$/);
   //     cy.hasTitle(/^Edit project$/);
-  //     cy.typeByLabel(/^Name$/, 'a');
+  //     cy.typeInputByLabel(/^Name$/, 'a');
   //     cy.clickButton(/^Save project$/);
   //     cy.hasTitle(`${project.name}a`);
   // });
   it('can navigate to project details tab', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickButton(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
   it('can navigate to project access tab', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Access$/);
   });
   it('can navigate to project job templates tab', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Job Templates$/);
   });
   it('can navigate to project notifications tab', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Notifications$/);
   });
   it('can navigate to project schedules tab', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickRow(project.name);
+    cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Schedules$/);
   });
@@ -102,7 +102,7 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
+      cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
@@ -115,19 +115,19 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(testProject.name);
+      cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
-      cy.getRowFromList(testProject.name).should('not.exist');
+      cy.getTableRowByText(testProject.name).should('not.exist');
       cy.hasTitle(/^Projects$/);
     });
   });
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRow(project.name);
+      cy.clickTableRow(project.name);
       cy.hasTitle(project.name);
       cy.clickButton(/^Sync project$/);
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
@@ -137,7 +137,7 @@ describe('projects', () => {
   it('can sync project from projects list table row kebab menu', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo(/^Projects$/);
-      cy.filterByText(project.name);
+      cy.filterTableByText(project.name);
       cy.contains('td', project.name)
         .parent()
         .within(() => {
@@ -155,7 +155,7 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.filterByText(testProject.name);
+      cy.filterTableByText(testProject.name);
       cy.contains('td', testProject.name)
         .parent()
         .within(() => {
@@ -165,7 +165,7 @@ describe('projects', () => {
       cy.clickButton(/^Cancel project sync/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.filterByText(testProject.name);
+      cy.filterTableByText(testProject.name);
       cy.get('td[data-label="Status"]').should('contain', 'Canceled');
       cy.clickButton(/^Clear all filters$/);
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
@@ -179,8 +179,8 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRowAction(testProject.name, /^Copy project$/);
-      cy.getRowFromList(`${testProject.name} @`).should('be.visible');
+      cy.clickTableRowAction(testProject.name, /^Copy project$/);
+      cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
     });
   });
@@ -195,13 +195,13 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.clickRowAction(testProject.name, /^Delete project$/);
+      cy.clickTableRowAction(testProject.name, /^Delete project$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.getRowFromList(testProject.name).should('not.exist');
+      cy.getTableRowByText(testProject.name).should('not.exist');
     });
   });
   it('can delete project from projects list toolbar ', () => {
@@ -210,14 +210,14 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.selectRow(testProject.name);
-      cy.clickToolbarAction(/^Delete selected projects$/);
+      cy.selectTableRow(testProject.name);
+      cy.clickToolbarKebabAction(/^Delete selected projects$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.getRowFromList(testProject.name).should('not.exist');
+      cy.getTableRowByText(testProject.name).should('not.exist');
     });
   });
   it('can cancel project sync from projects list toolbar ', () => {
@@ -228,13 +228,13 @@ describe('projects', () => {
       scm_url: 'foo',
     }).then((testProject) => {
       cy.navigateTo(/^Projects$/);
-      cy.selectRow(testProject.name);
-      cy.clickToolbarAction(/^Cancel selected projects$/);
+      cy.selectTableRow(testProject.name);
+      cy.clickToolbarKebabAction(/^Cancel selected projects$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Cancel project sync/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.filterByText(testProject.name);
+      cy.filterTableByText(testProject.name);
       cy.get('td[data-label="Status"]').should('contain', 'Canceled');
       cy.clickButton(/^Clear all filters$/);
     });

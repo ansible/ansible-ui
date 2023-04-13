@@ -140,8 +140,8 @@ describe('TeamAccess', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(<TeamAccess team={team} />);
       // Remove users
-      cy.selectRow('admin'); //  User cannot be removed as they are a System Administrator
-      cy.selectRow('user-2');
+      cy.selectTableRow('admin'); //  User cannot be removed as they are a System Administrator
+      cy.selectTableRow('user-2');
       cy.clickButton(/^Remove users$/);
       // Confirmation modal is displayed with a warning
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
