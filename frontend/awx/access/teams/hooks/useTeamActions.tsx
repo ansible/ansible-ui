@@ -88,7 +88,6 @@ export function useTeamActions(options: {
   }, [
     activeUser?.is_superuser,
     deleteTeams,
-    isDetailsPageAction,
     navigate,
     selectAndRemoveUsersFromTeam,
     selectUsersAddTeams,
