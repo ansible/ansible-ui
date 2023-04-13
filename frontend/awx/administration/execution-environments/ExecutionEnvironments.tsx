@@ -7,6 +7,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -47,14 +48,17 @@ export function ExecutionEnvironments() {
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create execution environment'),
         onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
         onClick: deleteExecutionEnvironments,
@@ -67,7 +71,8 @@ export function ExecutionEnvironments() {
   const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
@@ -76,7 +81,8 @@ export function ExecutionEnvironments() {
           ),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),

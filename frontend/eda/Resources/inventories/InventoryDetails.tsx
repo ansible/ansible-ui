@@ -14,8 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -24,8 +25,8 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { API_PREFIX } from '../../constants';
 import { EdaInventory } from '../../interfaces/EdaInventory';
@@ -55,7 +56,8 @@ export function InventoryDetails() {
   const itemActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete inventory'),
         onClick: (inventory: EdaInventory) => deleteInventories([inventory]),

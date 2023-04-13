@@ -6,22 +6,24 @@ import { useNavigate } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
+  DateTimeCell,
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
-  DateTimeCell,
   TextCell,
 } from '../../../../framework';
-import { Dotted } from '../../../../framework/components/Dotted';
 import { usePageAlertToaster } from '../../../../framework/PageAlertToaster';
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { StatusCell } from '../../../common/StatusCell';
+import { Dotted } from '../../../../framework/components/Dotted';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
+import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
 
@@ -38,12 +40,15 @@ export function Instances() {
 
   const alertToaster = usePageAlertToaster();
   const postRequest = usePostRequest();
+  const patchRequest = usePatchRequest();
 
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instances) => {
@@ -64,8 +69,21 @@ export function Instances() {
   const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Switch,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        onToggle: (instance, enabled) =>
+          patchRequest(`/api/v2/instances/${instance.id}/`, { enabled }).then(view.refresh),
+        isSwitchOn: (instance) => instance.enabled,
+        label: t('Enabled'),
+        labelOff: t('Disabled'),
+        showPinnedLabel: false,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
         onClick: (instance) => {
@@ -93,14 +111,15 @@ export function Instances() {
         },
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) =>
           navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),
       },
     ],
-    [alertToaster, navigate, postRequest, t, view]
+    [alertToaster, navigate, patchRequest, postRequest, t, view]
   );
 
   return (

@@ -1,5 +1,4 @@
 export * from './PageActions/PageAction';
-export * from './PageActions/PageActionType';
 export * from './PageActions/PageActions';
 export * from './PageAlertToaster';
 export * from './PageBody';

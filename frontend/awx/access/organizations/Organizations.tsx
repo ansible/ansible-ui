@@ -13,6 +13,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -62,28 +63,33 @@ export function Organizations() {
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        isPinned: true,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
         href: RouteObj.CreateOrganization,
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add users to selected organizations'),
         onClick: () => selectUsersAddOrganizations(view.selectedItems),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove users from selected organizations'),
         onClick: () => selectUsersRemoveOrganizations(view.selectedItems),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected organizations'),
         onClick: deleteOrganizations,
@@ -102,29 +108,33 @@ export function Organizations() {
   const rowActions = useMemo<IPageAction<Organization>[]>(() => {
     const actions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.singleLink,
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit organization'),
         href: (organization) => {
           return RouteObj.EditOrganization.replace(':id', organization.id.toString());
         },
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add users to organization'),
         onClick: (organization) => selectUsersAddOrganizations([organization]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove users from organization'),
         onClick: (organization) => selectUsersRemoveOrganizations([organization]),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => deleteOrganizations([organization]),
