@@ -3,17 +3,18 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import './rest-commands';
 
 declare global {
@@ -25,6 +26,7 @@ declare global {
         password: string,
         serverType: string
       ): Chainable<void>;
+      uiLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
@@ -82,6 +84,7 @@ declare global {
 
       selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row*/
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- MODAL COMMANDS ---
@@ -105,6 +108,7 @@ declare global {
 
       clickTab(label: string | RegExp): Chainable<void>;
 
+      /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
 
       clickLink(label: string | RegExp): Chainable<void>;
@@ -265,7 +269,6 @@ Cypress.Commands.add(
   }
 );
 
-// Logs into the live server on AWX and triggers creation of baseline resources (Org, Project, Inventory, Template)
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
     'AWX',
@@ -366,22 +369,18 @@ Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, 
   cy.filterTableByText(text);
 });
 
-//Uses a certain label string to find a URL link and click it.
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
-//Uses a certain label string to find a tab and click it.
 Cypress.Commands.add('clickTab', (label: string | RegExp) => {
   cy.contains('button[role="tab"]', label).click();
 });
 
-//Uses a certain label string to find a button and click it.
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
   cy.contains('button:not(:disabled):not(:hidden)', label).click();
 });
 
-//Visits one of the URL addresses contained in the links of the Resource Menu on the left side of the UI.
 Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
@@ -397,30 +396,24 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
   cy.get('#refresh').click();
 });
 
-//Uses a certain label string to identify the title of the page.
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
   cy.contains('.pf-c-title', label);
 });
 
-//Uses a certain label string to identify the alert showing on the screen.
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
   cy.contains('.pf-c-alert__title', label);
 });
 
-//Uses a certain label string to identify the tooltip showing on the screen.
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-c-tooltip__content', label);
 });
 
-//Uses a certain label string to find a button within the kebab located within the toolbar on the page and clicks it.
 Cypress.Commands.add('clickToolbarKebabAction', (label: string | RegExp) => {
   cy.get('.page-table-toolbar').within(() => {
     cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
   });
 });
 
-//Uses a name string to filter results, locates the row on the page containing that name
-//string, and then clicks the link within that row.
 Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
     cy.filterTableByText(name);
@@ -437,9 +430,6 @@ Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boole
   cy.contains('tr', name);
 });
 
-//Uses a name string to filter results, locates the row on the page containing that name
-//string, clicks the toggle button for the row, then finds the toolbar action button using
-//a particular label and clicks that button.
 Cypress.Commands.add(
   'clickTableRowAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
@@ -459,8 +449,6 @@ Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: 
   });
 });
 
-//Filters a list to show only particular results using a name, locates the row with that name,
-//and clicks the checkbox for that line item.
 Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('input[type=checkbox]').click();
@@ -471,8 +459,6 @@ Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
 
-//Locates the modal box on the page and filters results in that modal by a certain name. Then
-//finds a particular line item from those filtered results and clicks the check box on that line item.
 Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
   cy.getDialog().within(() => {
     cy.getTableRowByText(name, filter).within(() => {
@@ -481,20 +467,12 @@ Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: 
   });
 });
 
-/**
- * Expands a table row by locating the row using the provided name and then
- * clicking the "expand-toggle" button on that row
- */
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('button[id^="expand-toggle"]').click();
   });
 });
 
-/**
- * Asserts that a specific detail term (dt) is displayed and contains text from
- * the provided detail description (dd)
- */
 Cypress.Commands.add(
   'hasDetail',
   (detailTerm: string | RegExp, detailDescription: string | RegExp) => {
@@ -514,9 +492,6 @@ Cypress.Commands.add('clickModalConfirmCheckbox', () => {
   });
 });
 
-//Asserts a successful result in a modal window.
-//This command is specific to a modal that lists one or more line items showing the deletion of
-//certain resources.
 Cypress.Commands.add('assertModalSuccess', () => {
   cy.getDialog().within(() => {
     cy.get('tbody>tr')
@@ -527,15 +502,11 @@ Cypress.Commands.add('assertModalSuccess', () => {
   });
 });
 
-//Locates the kebab menu on a Details page of a resource and uses a label string to click the
-//button that contains that label string.
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
 
-/**
- * Resources for testing AWX
- */
+/**Resources for testing AWX*/
 Cypress.Commands.add('createAwxOrganization', () => {
   cy.requestPost<Organization>('/api/v2/organizations/', {
     name: 'E2E Organization ' + randomString(4),
@@ -690,7 +661,7 @@ Cypress.Commands.add(
   }
 );
 
-/*  EDA related custom command implementation  */
+/**EDA related custom command implementation*/
 
 Cypress.Commands.add('ruleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
