@@ -14,6 +14,7 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import './rest-commands';
 
 declare global {
@@ -153,28 +154,27 @@ declare global {
       // --- EDA COMMANDS ---
 
       /**
-       * `ruleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
+       * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
        *
        * accepts 2 parameters action name and edaRulebookActivation name
        *
-       * ruleBookActivationActions('Relaunch')
-       * ruleBookActivationActions('Restart')
-       * ruleBookActivationActions('Delete rulebookActivation')
+       * edaRuleBookActivationActions('Relaunch')
+       * edaRuleBookActivationActions('Restart')
+       * edaRuleBookActivationActions('Delete rulebookActivation')
        * @param action
        */
-      ruleBookActivationActions(action: string, rbaName: string): Chainable<void>;
+      edaRuleBookActivationActions(action: string, rbaName: string): Chainable<void>;
 
       /**
-       * `ruleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
+       * `edaRuleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
        *
        * accepts 2 parameters action name and edaRulebookActivation name
        *
-       * ruleBookActivationActions('Relaunch')
-       * ruleBookActivationActions('Restart')
+       * edaRuleBookActivationActions('Relaunch')
+       * edaRuleBookActivationActions('Restart')
        * @param action
        */
-      ruleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
-
+      edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
       /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
@@ -224,6 +224,26 @@ declare global {
       pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
       createEdaCredential(): Chainable<EdaCredential>;
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
+      /**
+       * Creates an EDA user and returns the same
+       *
+       * @returns {Chainable<EdaUser>}
+       */
+      createEdaUser(): Chainable<EdaUser>;
+
+      /**
+       * Deletes an EDA user which is provided
+       *
+       * @returns {Chainable<EdaUser>}
+       */
+      deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
+
+      /**
+       * Retrieves an EDA user and returns the same
+       *
+       * @returns {Chainable<EdaUser>}
+       */
+      getEdaUserByName(edaUserName: string): Chainable<EdaUser | undefined>;
     }
   }
 }
@@ -692,7 +712,7 @@ Cypress.Commands.add(
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('ruleBookActivationActions', (action: string, rbaName: string) => {
+Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
     .parent()
     .within(() => {
@@ -701,7 +721,7 @@ Cypress.Commands.add('ruleBookActivationActions', (action: string, rbaName: stri
     });
 });
 
-Cypress.Commands.add('ruleBookActivationActionsModal', (action: string, rbaName: string) => {
+Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
     cy.contains('h1', `${action} activation`).should('be.visible');
     cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
@@ -859,6 +879,40 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   cy.requestGet<EdaResult<EdaCredential>>(
     `/api/eda/v1/credentials/?name=${edaCredentialName}`
   ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
+    }
+  });
+});
+
+Cypress.Commands.add('createEdaUser', () => {
+  cy.requestPost<EdaUser>(`/api/eda/v1/users/`, {
+    name: `E2E User ${randomString(4)}`,
+    email: `${randomString(4)}@redhat.com`,
+    password: `${randomString(4)}`,
+    type: 'super',
+  }).then((edaUser) => {
+    Cypress.log({
+      displayName: 'EDA USER CREATION :',
+      message: [`Created 👉  ${edaUser.name}`],
+    });
+    return edaUser;
+  });
+});
+
+Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
+  cy.requestDelete(`/api/eda/v1/credentials/${user.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL DELETION :',
+      message: [`Deleted 👉  ${user.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?name=${edaUserName}`).then((result) => {
     if (Array.isArray(result?.results) && result.results.length === 1) {
       return result.results[0];
     } else {
