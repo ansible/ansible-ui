@@ -51,6 +51,9 @@ declare global {
       // Searches for an element with a certain label, then asserts that the element is enabled.
       getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
+      /** Get a checkbox by its label */
+      getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
+
       /** Finds an input by label and types the text into the input .*/
       typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
 
@@ -91,6 +94,13 @@ declare global {
       clickTableRowPinnedAction(
         name: string | RegExp,
         label: string,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by the aria-label of the icon-only action button. */
+      clickTableRowActionIcon(
+        name: string | RegExp,
+        ariaLabel: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -396,6 +406,16 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
     });
 });
 
+Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
+  cy.contains('.pf-c-check__label', label)
+    .invoke('attr', 'for')
+    .then((id: string | undefined) => {
+      if (id) {
+        cy.get('#' + id);
+      }
+    });
+});
+
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
   cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
@@ -403,7 +423,7 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
   cy.getFormGroupByLabel(label).within(() => {
     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-    cy.get('button').should('be.enabled').click();
+    cy.get('button[aria-label="Options menu"]').should('be.enabled').click();
 
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
@@ -518,6 +538,18 @@ Cypress.Commands.add(
   (name: string | RegExp, label: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'clickTableRowActionIcon',
+  (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get(`button[aria-label="${ariaLabel}"]`)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();

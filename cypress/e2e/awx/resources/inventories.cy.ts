@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 describe('inventories', () => {
   let organization: Organization;
@@ -41,16 +43,53 @@ describe('inventories', () => {
     cy.clickLink(/^Create inventory$/);
     cy.typeInputByLabel(/^Name$/, inventoryName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
-    cy.getInputByLabel('Prevent Instance Group Fallback').click();
+    cy.getCheckboxByLabel('Prevent Instance Group Fallback').click();
     cy.clickButton(/^Create inventory$/);
     cy.hasTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
-    cy.hasDetail(/^Enabled options$/, /^Prevent instance group fallback$/);
+    cy.hasDetail(/^Enabled options$/, 'Prevent instance group fallback');
     // Clean up this inventory
     cy.clickPageAction(/^Delete inventory/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.hasTitle(/^Inventories$/);
+  });
+
+  it('edits an inventory from the inventory list row item', () => {
+    cy.createAwxInstanceGroup().then((ig) => {
+      const instanceGroup: InstanceGroup = ig;
+      cy.navigateTo(/^Inventories$/);
+      cy.clickTableRowActionIcon(inventory?.name, 'Edit inventory');
+      cy.get('input[aria-label="Add instance groups"]')
+        .parent()
+        .within(() => {
+          cy.get('button[aria-label="Options menu"]').click();
+        });
+      const igName = instanceGroup?.name;
+      if (igName) {
+        cy.selectTableRowInDialog(igName);
+        cy.contains('button', 'Confirm').click();
+        cy.contains('button', 'Save inventory').click();
+        cy.hasTitle(inventory.name);
+        cy.hasDetail(/^Instance groups$/, igName);
+        cy.deleteAwxInstanceGroup(instanceGroup);
+      }
+    });
+  });
+
+  it('edits an inventory from the inventory details page', () => {
+    cy.createAwxLabel(organization).then((lbl) => {
+      const label: Label = lbl;
+      cy.navigateTo(/^Inventories$/);
+      cy.clickTableRow(inventory.name);
+      cy.hasTitle(inventory.name);
+      cy.clickButton(/^Edit inventory/);
+      cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
+      cy.contains('button', 'Save inventory').click();
+      cy.hasTitle(inventory.name);
+      cy.hasDetail(/^Labels$/, label.name);
+      cy.deleteAwxLabel(label);
+    });
   });
 
   it('deletes an inventory from the details page', () => {
