@@ -199,7 +199,10 @@ declare global {
        *
        * @returns {Chainable<EdaRulebookActivation>}
        */
-      createEdaRulebookActivation(edaRulebook: EdaRulebook): Chainable<EdaRulebookActivation>;
+      createEdaRulebookActivation(
+        edaRulebook: EdaRulebook,
+        restartPolicy?: string
+      ): Chainable<EdaRulebookActivation>;
 
       /**
        * `deleteEdaProject(projectName: Project)`
@@ -754,13 +757,14 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
   });
 });
 
-Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook) => {
+Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook, restartPolicy = 'on-failure') => {
   // Create Rulebook Activation
   // TODO: this will need to be edited when the Decision Environments are working in the API
   cy.wrap(edaRulebook).should('not.be.undefined');
   cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
     name: 'E2E Rulebook Activation ' + randomString(5),
     rulebook_id: edaRulebook.id,
+    restart_policy: restartPolicy,
   }).then((edaRulebookActivation) => {
     cy.wrap(edaRulebookActivation)
       .should('not.be.undefined')
