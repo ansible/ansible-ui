@@ -95,11 +95,10 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.selectToolbarFilterType('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
-      cy.tableHasRowWithSuccess(jobName);
-      cy.clickTableRowAction(jobId, /^Delete job$/);
+      cy.clickTableRowAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
@@ -116,11 +115,11 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.selectToolbarFilterType('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.filterTableByTypeAndText('ID', jobId);
       const jobName = job.name ? job.name : '';
-      cy.tableHasRowWithSuccess(jobName);
-      cy.selectTableRow(jobId);
+      cy.tableHasRowWithSuccess(jobName, false);
+      cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);

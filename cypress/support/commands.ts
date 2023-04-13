@@ -445,7 +445,10 @@ Cypress.Commands.add(
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
-      cy.get('.pf-c-dropdown__menu-item').contains(label).click();
+      cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('have.attr', 'aria-disabled', 'false')
+        .click();
     });
   }
 );
