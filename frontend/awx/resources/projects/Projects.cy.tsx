@@ -46,7 +46,7 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?name__icontains=foo*').as('nameFilterRequest');
       cy.hasTitle(/^Projects$/);
       cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.filterByText('foo');
+      cy.filterTableByText('foo');
       // A network request is made based on the filter selected on the UI
       cy.wait('@nameFilterRequest');
       // Clear filter
@@ -61,7 +61,7 @@ describe('projects.cy.ts', () => {
       cy.get('ul.pf-c-select__menu').within(() => {
         cy.contains('button', /^Description$/).click();
       });
-      cy.filterByText('bar');
+      cy.filterTableByText('bar');
       // A network request is made based on the filter selected on the UI
       cy.wait('@descriptionFilterRequest');
       // Clear filter
@@ -78,7 +78,7 @@ describe('projects.cy.ts', () => {
       cy.get('ul.pf-c-select__menu').within(() => {
         cy.contains('button', /^Created by$/).click();
       });
-      cy.filterByText('baz');
+      cy.filterTableByText('baz');
       // A network request is made based on the filter selected on the UI
       cy.wait('@createdByFilterRequest');
       // Clear filter
@@ -95,7 +95,7 @@ describe('projects.cy.ts', () => {
       cy.get('ul.pf-c-select__menu').within(() => {
         cy.contains('button', /^Modified by$/).click();
       });
-      cy.filterByText('qux');
+      cy.filterTableByText('qux');
       // A network request is made based on the filter selected on the UI
       cy.wait('@modifiedByFilterRequest');
       // Clear filter
@@ -219,7 +219,7 @@ describe('projects.cy.ts', () => {
     });
     it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
       cy.mount(<Projects />);
-      cy.selectRow(' Project 1 Org 0');
+      cy.selectTableRow(' Project 1 Org 0');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
@@ -242,7 +242,7 @@ describe('projects.cy.ts', () => {
     });
     it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
       cy.mount(<Projects />);
-      cy.selectRow(' Project 2 Org 0');
+      cy.selectTableRow(' Project 2 Org 0');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()

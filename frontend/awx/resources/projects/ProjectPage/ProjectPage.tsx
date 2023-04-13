@@ -10,6 +10,7 @@ import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -38,10 +39,18 @@ export function ProjectPage() {
         <PageTab label={t('Details')}>
           <ProjectDetails project={project} />
         </PageTab>
-        <PageTab label={t('Access')}>TODO</PageTab>
-        <PageTab label={t('Job Templates')}>TODO</PageTab>
-        <PageTab label={t('Notifications')}>TODO</PageTab>
-        <PageTab label={t('Schedules')}>TODO</PageTab>
+        <PageTab label={t('Access')}>
+          <PageNotImplemented />
+        </PageTab>
+        <PageTab label={t('Job Templates')}>
+          <PageNotImplemented />
+        </PageTab>
+        <PageTab label={t('Notifications')}>
+          <PageNotImplemented />
+        </PageTab>
+        <PageTab label={t('Schedules')}>
+          <PageNotImplemented />
+        </PageTab>
       </PageTabs>
     </PageLayout>
   );

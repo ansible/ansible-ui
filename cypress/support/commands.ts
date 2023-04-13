@@ -9,10 +9,12 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -26,42 +28,112 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
-      getByLabel(label: string | RegExp): Chainable<void>;
-      selectFromDropdown(label: string | RegExp, text: string): Chainable<void>;
-      getFormGroupByLabel(label: string | RegExp): Chainable<void>;
-      clickLink(label: string | RegExp): Chainable<void>;
-      clickButton(label: string | RegExp): Chainable<void>;
-      clickTab(label: string | RegExp): Chainable<void>;
+      // NAVIGATION COMMANDS
       navigateTo(label: string | RegExp): Chainable<void>;
       hasTitle(label: string | RegExp): Chainable<void>;
-      hasAlert(label: string | RegExp): Chainable<void>;
-      hasTooltip(label: string | RegExp): Chainable<void>;
-      clickToolbarAction(label: string | RegExp): Chainable<void>;
-      confirmModalAction(label: string | RegExp): Chainable<void>;
-      assertModalSuccess(): Chainable<void>;
-      clickRow(name: string | RegExp, filter?: boolean): Chainable<void>;
-      getRowFromList(name: string | RegExp, filter?: boolean): Chainable<void>;
-      clickRowAction(
+
+      // --- INPUT COMMANDS ---
+
+      /** Get a FormGroup by it's label. A FormGroup is the PF component that wraps an input and provides a label. */
+      getFormGroupByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
+
+      /** Get an input by it's label. */
+      // Searches for an element with a certain label, then asserts that the element is enabled.
+      getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
+
+      /** Finds an input by label and types the text into the input .*/
+      typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
+
+      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel .*/
+      selectDropdownOptionByLabel(
+        dropdownLabel: string | RegExp,
+        dropdownOptionLabel: string
+      ): Chainable<void>;
+
+      // TABLE COMMANDS
+
+      /** Change the current filter type in the table toolbar */
+      selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
+
+      /** Filter the table using it's current filter by entering text */
+      filterTableByText(text: string): Chainable<void>;
+
+      /** Filter the table using specified filter and text. */
+      filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      /** Click an action in the table toolbar kebab dropdown actions menu. */
+      clickToolbarKebabAction(label: string | RegExp): Chainable<void>;
+
+      /** Get the table row containing the specified text. */
+      getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** Finds a table row containing text and clicks the link inside that row. */
+      clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by label. */
+      clickTableRowKebabAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
-      selectRow(name: string | RegExp, filter?: boolean): Chainable<void>;
-      selectRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by label. */
+      clickTableRowPinnedAction(
+        name: string | RegExp,
+        label: string,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /** Check if the table row containing the specified text also has the text 'Successful'. */
+      tableHasRowWithSuccess(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
-      clickPageAction(label: string | RegExp): Chainable<void>;
-      typeByLabel(label: string | RegExp, text: string): Chainable<void>;
+
+      // --- MODAL COMMANDS ---
+
+      /** Get the active modal dialog. */
+      getDialog(): Chainable<void>;
+
+      /** Clicks a button in the active modal dialog. */
+      clickModalButton(label: string | RegExp): Chainable<void>;
+
+      /** Clicks the confirm checkbox in the active modal dialog */
+      clickModalConfirmCheckbox(): Chainable<void>;
+
+      /** Assert that the active modal dialog contains "Success". */
+      assertModalSuccess(): Chainable<void>;
+
+      /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
+      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      // --- DETAILS COMMANDS ---
+
+      clickTab(label: string | RegExp): Chainable<void>;
+
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
 
-      /**Finds a select component by its label and clicks on the option specified by text.*/
-      selectByLabel(label: string | RegExp, text: string): Chainable<void>;
-      switchToolbarFilter(text: string): Chainable<void>;
-      filterByText(text: string): Chainable<void>;
+      clickLink(label: string | RegExp): Chainable<void>;
+      clickButton(label: string | RegExp): Chainable<void>;
+      clickPageAction(label: string | RegExp): Chainable<void>;
 
+      hasAlert(label: string | RegExp): Chainable<void>;
+
+      hasTooltip(label: string | RegExp): Chainable<void>;
+
+      // --- REST API COMMANDS ---
+
+      /** Sends a request to the API to create a particular resource. */
       requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
+
+      /** Sends a request to the API to get a particular resource. */
       requestGet<T>(url: string): Chainable<T>;
+
+      /** Sends a request to the API to delete a particular resource. */
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
+      // --- AWX COMMANDS ---
       createAwxOrganization(): Chainable<Organization>;
 
       /**
@@ -85,7 +157,7 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
-      /*  EDA related custom commands  */
+      // --- EDA COMMANDS ---
 
       /**
        * `ruleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
@@ -126,6 +198,7 @@ declare global {
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
 
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+      getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;
 
       /**
        * `createEdaRulebookActivation()` creates an EDA Rulebook Activation via API,
@@ -156,6 +229,8 @@ declare global {
        *    }
        */
       pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
+      createEdaCredential(): Chainable<EdaCredential>;
+      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
     }
   }
 }
@@ -172,8 +247,8 @@ Cypress.Commands.add(
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
-      cy.typeByLabel(/^Username$/, username);
-      cy.typeByLabel(/^Password$/, password);
+      cy.typeInputByLabel(/^Username$/, username);
+      cy.typeInputByLabel(/^Password$/, password);
       cy.get('button[type=submit]').click();
       return;
     }
@@ -184,15 +259,15 @@ Cypress.Commands.add(
     });
 
     cy.clickButton(/^Add automation server$/);
-    cy.typeByLabel(/^Name$/, 'E2E');
-    cy.typeByLabel(/^Url$/, server);
+    cy.typeInputByLabel(/^Name$/, 'E2E');
+    cy.typeInputByLabel(/^Url$/, server);
     cy.get('.pf-c-select__toggle').click();
     cy.clickButton(serverType);
     cy.get('button[type=submit]').click();
 
     cy.contains('a', /^E2E$/).click();
-    cy.typeByLabel(/^Username$/, username);
-    cy.typeByLabel(/^Password$/, password);
+    cy.typeInputByLabel(/^Username$/, username);
+    cy.typeInputByLabel(/^Password$/, password);
     cy.get('button[type=submit]').click();
   }
 );
@@ -242,8 +317,11 @@ Cypress.Commands.add('edaLogin', () => {
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
-//Searches for an element with a certain label, then asserts that the element is enabled.
-Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
+Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
+  cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
+});
+
+Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
     .parent()
     .invoke('attr', 'for')
@@ -254,67 +332,11 @@ Cypress.Commands.add('getByLabel', (label: string | RegExp) => {
     });
 });
 
-//Add description here
-Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
+Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
+  cy.getInputByLabel(label).type(text, { delay: 0 });
 });
 
-Cypress.Commands.add('switchToolbarFilter', (text: string) => {
-  cy.get('#filter-form-group').within(() => {
-    cy.get('.pf-c-select').should('not.be.disabled').click();
-    cy.get('.pf-c-select__menu').within(() => {
-      cy.clickButton(text);
-    });
-  });
-});
-
-//Filters a list of items by name.
-Cypress.Commands.add('filterByText', (text: string) => {
-  cy.get('#filter-input').type(text, { delay: 0 });
-  cy.get('[aria-label="apply filter"]').click();
-});
-
-//Sends a request to the API to create a particular resource.
-Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
-  cy.getCookie('csrftoken').then((cookie) =>
-    cy
-      .request<T>({
-        method: 'POST',
-        url,
-        body,
-        headers: {
-          'X-CSRFToken': cookie?.value,
-          Referer: Cypress.config().baseUrl,
-        },
-      })
-      .then((response) => response.body)
-  );
-});
-
-//Sends a request to the API to get a particular resource.
-Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
-  return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
-});
-
-//Sends a request to the API to delete a particular resource.
-Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
-  cy.getCookie('csrftoken').then((cookie) =>
-    cy.request({
-      method: 'Delete',
-      url,
-      failOnStatusCode: ignoreError ? false : true,
-      headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
-    })
-  );
-});
-
-//Utilizes cy.getByLabel() to find an element with a certain label and then types a string in the input.
-//Common use case: Form field input
-Cypress.Commands.add('typeByLabel', (label: string | RegExp, text: string) => {
-  cy.getByLabel(label).type(text, { delay: 0 });
-});
-
-Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => {
+Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
   cy.getFormGroupByLabel(label).within(() => {
     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
     cy.get('button').should('be.enabled').click();
@@ -332,17 +354,23 @@ Cypress.Commands.add('selectByLabel', (label: string | RegExp, text: string) => 
   });
 });
 
-//Finds a dropdown by its label and selects certain text from the dropdown menu.
-Cypress.Commands.add('selectFromDropdown', (label: string | RegExp, text: string) => {
-  cy.getFormGroupByLabel(label).within(() => {
-    cy.get('.pf-c-form__group-control')
-      .click()
-      .within(() => {
-        cy.get('ul').within(() => {
-          cy.contains('button', text).click();
-        });
-      });
+Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
+  cy.get('#filter-form-group').within(() => {
+    cy.get('.pf-c-select').should('not.be.disabled').click();
+    cy.get('.pf-c-select__menu').within(() => {
+      cy.clickButton(text);
+    });
   });
+});
+
+Cypress.Commands.add('filterTableByText', (text: string) => {
+  cy.get('#filter-input').type(text, { delay: 0 });
+  cy.get('[aria-label="apply filter"]').click();
+});
+
+Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
+  cy.selectToolbarFilterType(filterLabel);
+  cy.filterTableByText(text);
 });
 
 //Uses a certain label string to find a URL link and click it.
@@ -392,7 +420,7 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
 });
 
 //Uses a certain label string to find a button within the kebab located within the toolbar on the page and clicks it.
-Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
+Cypress.Commands.add('clickToolbarKebabAction', (label: string | RegExp) => {
   cy.get('.page-table-toolbar').within(() => {
     cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
   });
@@ -400,71 +428,73 @@ Cypress.Commands.add('clickToolbarAction', (label: string | RegExp) => {
 
 //Uses a name string to filter results, locates the row on the page containing that name
 //string, and then clicks the link within that row.
-Cypress.Commands.add('clickRow', (name: string | RegExp, filter?: boolean) => {
+Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
-    cy.filterByText(name);
+    cy.filterTableByText(name);
   }
   cy.contains('td', name).within(() => {
     cy.get('a').click();
   });
 });
 
-//Uses a name string to filter results and then locates the row on the page containing that name string.
-Cypress.Commands.add('getRowFromList', (name: string | RegExp, filter?: boolean) => {
+Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boolean) => {
   if (filter !== false && typeof name === 'string') {
-    cy.filterByText(name);
+    cy.filterTableByText(name);
   }
   cy.contains('tr', name);
 });
 
-//Uses a name string to filter results, locates the row on the page containing that name
-//string, clicks the toggle button for the row, then finds the toolbar action button using
-//a particular label and clicks that button.
 Cypress.Commands.add(
-  'clickRowAction',
+  'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
-    if (filter !== false && typeof name === 'string') {
-      cy.filterByText(name);
-    }
-    cy.contains('td', name)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-dropdown__toggle').click();
-        cy.contains('.pf-c-dropdown__menu-item', label)
-          .should('not.be.disabled')
-          .should('not.have.attr', 'aria-disabled', 'true')
-          .click();
-      });
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get('.pf-c-dropdown__toggle').click();
+      cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
   }
 );
 
+Cypress.Commands.add(
+  'clickTableRowPinnedAction',
+  (name: string | RegExp, label: string, filter?: boolean) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
+  cy.getTableRowByText(name, filter).within(() => {
+    cy.get('.pf-c-alert__title').should('contain', 'Successful');
+  });
+});
+
 //Filters a list to show only particular results using a name, locates the row with that name,
 //and clicks the checkbox for that line item.
-Cypress.Commands.add('selectRow', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterByText(name);
-  }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('input[type=checkbox]').click();
-    });
+Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
+  cy.getTableRowByText(name, filter).within(() => {
+    cy.get('input[type=checkbox]').click();
+  });
+});
+
+Cypress.Commands.add('getDialog', () => {
+  cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
 
 //Locates the modal box on the page and filters results in that modal by a certain name. Then
 //finds a particular line item from those filtered results and clicks the check box on that line item.
-Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
-      cy.get('#filter-input').type(name, { delay: 0 });
-      cy.get('[aria-label="apply filter"]').click();
-    });
-  }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
+Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  cy.getDialog().within(() => {
+    cy.getTableRowByText(name, filter).within(() => {
       cy.get('input[type=checkbox]').click();
     });
+  });
 });
 
 /**
@@ -472,14 +502,9 @@ Cypress.Commands.add('selectRowInDialog', (name: string | RegExp, filter?: boole
  * clicking the "expand-toggle" button on that row
  */
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterByText(name);
-  }
-  cy.contains('td', name)
-    .parent()
-    .within(() => {
-      cy.get('button[id^="expand-toggle"]').click();
-    });
+  cy.getTableRowByText(name, filter).within(() => {
+    cy.get('button[id^="expand-toggle"]').click();
+  });
 });
 
 /**
@@ -493,11 +518,15 @@ Cypress.Commands.add(
   }
 );
 
-//Selects a check box in a modal and then clicks a button with a certain label name.
-Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
-  cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
-    cy.get('input[id="confirm"]').click();
+Cypress.Commands.add('clickModalButton', (label: string | RegExp) => {
+  cy.getDialog().within(() => {
     cy.contains('button', label).click();
+  });
+});
+
+Cypress.Commands.add('clickModalConfirmCheckbox', () => {
+  cy.getDialog().within(() => {
+    cy.get('input[id="confirm"]').click();
   });
 });
 
@@ -505,7 +534,7 @@ Cypress.Commands.add('confirmModalAction', (label: string | RegExp) => {
 //This command is specific to a modal that lists one or more line items showing the deletion of
 //certain resources.
 Cypress.Commands.add('assertModalSuccess', () => {
-  cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+  cy.getDialog().within(() => {
     cy.get('tbody>tr')
       .find('[data-label="Status"]')
       .each(($li) => {
@@ -712,15 +741,6 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('deleteEdaProject', (edaProject) => {
-  cy.requestDelete(`/api/eda/v1/projects/${edaProject.id}/`, true).then(() => {
-    Cypress.log({
-      displayName: 'EDA PROJECT DELETION :',
-      message: [`Deleted 👉  ${edaProject.name}`],
-    });
-  });
-});
-
 Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
   // TODO: Once the API supports it, only get rulebooks for the project
   // Sometimes it takes a while for the rulebooks to be created.
@@ -778,19 +798,6 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
   });
 });
 
-Cypress.Commands.add('createEdaProject', () => {
-  cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
-    name: 'E2E Project ' + randomString(4),
-    url: 'https://github.com/ansible/event-driven-ansible',
-  }).then((edaProject) => {
-    Cypress.log({
-      displayName: 'EDA PROJECT CREATION :',
-      message: [`Created 👉  ${edaProject.name}`],
-    });
-    return edaProject;
-  });
-});
-
 Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
     (result) => {
@@ -836,6 +843,42 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
       cy.wrap(result.results);
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
+    }
+  });
+});
+
+Cypress.Commands.add('createEdaCredential', () => {
+  cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
+    name: 'E2E Credential ' + randomString(4),
+    credential_type: 'Container Registry',
+    description: 'This is a container registry credential',
+    username: 'admin',
+  }).then((edaCredential) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredential.name}`],
+    });
+    return edaCredential;
+  });
+});
+
+Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
+  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL DELETION :',
+      message: [`Deleted 👉  ${credential.name}`],
+    });
+  });
+});
+
+Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
+  cy.requestGet<EdaResult<EdaCredential>>(
+    `/api/eda/v1/credentials/?name=${edaCredentialName}`
+  ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
     }
   });
 });

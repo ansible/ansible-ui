@@ -41,41 +41,41 @@ describe('credentials', () => {
   it('create credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.clickButton(/^Create credential$/);
-    cy.typeByLabel(/^Name$/, credentialName);
-    cy.typeByLabel(/^Organization$/, organization.name);
-    cy.selectByLabel(/^Credential type$/, 'Amazon Web Services');
+    cy.typeInputByLabel(/^Name$/, credentialName);
+    cy.typeInputByLabel(/^Organization$/, organization.name);
+    cy.selectDropdownOptionByLabel(/^Credential type$/, 'Amazon Web Services');
     cy.clickButton(/^Create credential$/);
     cy.hasTitle(credentialName);
   });
 
   it('edit credential', () => {
-    cy.clickRow(credential.name);
+    cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit credential$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.typeInputByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
 
   it('credential details', () => {
-    cy.clickRow(credential.name);
+    cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
     cy.clickButton(/^Details$/);
     cy.contains('#name', credential.name);
   });
 
   it('credential details edit credential', () => {
-    cy.clickRow(credential.name);
+    cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit credential$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.typeInputByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
 
   it('credential details delete credential', () => {
-    cy.clickRow(credential.name);
+    cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
     cy.clickPageAction(/^Delete credential/);
     cy.get('#confirm').click();
@@ -89,7 +89,7 @@ describe('credentials', () => {
   });
 
   it('credentials table row delete credential', () => {
-    cy.clickRowAction(credential.name, /^Delete credential$/);
+    cy.clickTableRowKebabAction(credential.name, /^Delete credential$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.contains(/^Success$/);
@@ -98,8 +98,8 @@ describe('credentials', () => {
   });
 
   it('credentials toolbar delete credentials', () => {
-    cy.selectRow(credential.name);
-    cy.clickToolbarAction(/^Delete selected credentials$/);
+    cy.selectTableRow(credential.name);
+    cy.clickToolbarKebabAction(/^Delete selected credentials$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.contains(/^Success$/);

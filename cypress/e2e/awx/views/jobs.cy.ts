@@ -78,7 +78,7 @@ describe('jobs', () => {
   it('filters jobs by id', () => {
     cy.navigateTo(/^Jobs$/);
     const jobId = job.id ? job.id.toString() : '';
-    cy.switchToolbarFilter('ID');
+    cy.selectToolbarFilterType('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
     cy.get('[aria-label="apply filter"]').click();
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -95,20 +95,15 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
-      cy.contains('td', jobName)
-        .parent()
-        .within(() => {
-          cy.contains('.pf-c-alert__title', 'Successful');
-        });
-      cy.clickRowAction(jobId, /^Delete job$/);
+      cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getRowFromList(jobId).should('not.exist');
+      cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -120,21 +115,17 @@ describe('jobs', () => {
       {} as UnifiedJobList
     ).then((testJob) => {
       cy.navigateTo(/^Jobs$/);
-      cy.switchToolbarFilter('ID');
       const jobId = testJob.id ? testJob.id.toString() : '';
+      cy.filterTableByTypeAndText('ID', jobId);
       const jobName = job.name ? job.name : '';
-      cy.contains('td', jobName)
-        .parent()
-        .within(() => {
-          cy.contains('.pf-c-alert__title', 'Successful');
-        });
-      cy.selectRow(jobId);
-      cy.clickToolbarAction(/^Delete selected jobs$/);
+      cy.tableHasRowWithSuccess(jobName, false);
+      cy.selectTableRow(jobName, false);
+      cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.getRowFromList(jobId).should('not.exist');
+      cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });

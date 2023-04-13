@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { TemplateDetail } from './TemplateDetail';
+import { TemplatePage } from './TemplatePage';
 
-describe('TemplateDetails', () => {
+describe('TemplatePage', () => {
   beforeEach(() => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/job_templates/*', hostname: 'localhost' },
@@ -11,7 +11,7 @@ describe('TemplateDetails', () => {
   });
 
   it('Component renders and displays jobTemplate', () => {
-    cy.mount(<TemplateDetail />);
+    cy.mount(<TemplatePage />);
     cy.contains('dd#name>div', 'JT with Default Cred').should('exist');
   });
 
@@ -25,7 +25,7 @@ describe('TemplateDetails', () => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('launchJob');
 
-    cy.mount(<TemplateDetail />);
+    cy.mount(<TemplatePage />);
 
     cy.clickPageAction(/^Launch template$/);
 

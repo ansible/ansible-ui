@@ -30,7 +30,7 @@ describe('inventories', () => {
 
   it('renders the inventory details page', () => {
     cy.navigateTo(/^Inventories$/);
-    cy.clickRow(inventory.name);
+    cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickButton(/^Details$/);
     cy.contains('#name', inventory.name);
@@ -39,7 +39,7 @@ describe('inventories', () => {
   it('deletes an inventory from the details page', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickRow(testInventory.name);
+      cy.clickTableRow(testInventory.name);
       cy.hasTitle(testInventory.name);
       cy.clickPageAction(/^Delete inventory/);
       cy.get('#confirm').click();
@@ -51,7 +51,7 @@ describe('inventories', () => {
 
   it('copies an inventory from the details page', () => {
     cy.navigateTo(/^Inventories$/);
-    cy.clickRow(inventory.name);
+    cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickPageAction(/^Copy inventory/);
     cy.hasAlert(`${inventory.name} copied`);
@@ -68,7 +68,7 @@ describe('inventories', () => {
   it('can copy an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickRowAction(testInventory.name, /^Copy inventory$/, true);
+      cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
       cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, true);
     });
@@ -77,7 +77,7 @@ describe('inventories', () => {
   it('can delete an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickRowAction(testInventory.name, /^Delete inventory$/, true);
+      cy.clickTableRowKebabAction(testInventory.name, /^Delete inventory$/, true);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.contains(/^Success$/);
@@ -89,8 +89,8 @@ describe('inventories', () => {
   it('can delete an inventory from the inventory list toolbar', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.selectRow(testInventory.name, true);
-      cy.clickToolbarAction(/^Delete selected inventories$/);
+      cy.selectTableRow(testInventory.name, true);
+      cy.clickToolbarKebabAction(/^Delete selected inventories$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.contains(/^Success$/);

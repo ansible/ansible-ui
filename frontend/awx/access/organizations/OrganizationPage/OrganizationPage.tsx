@@ -23,6 +23,7 @@ import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { OrganizationAccess } from './OrganizationAccess';
 import { OrganizationDetails } from './OrganizationDetails';
 import { OrganizationTeams } from './OrganizationTeams';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -105,8 +106,12 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
       <PageTab label={t('Teams')}>
         <OrganizationTeams organization={organization} />
       </PageTab>
-      <PageTab label={t('Execution environments')}>TODO</PageTab>
-      <PageTab label={t('Notifications')}>TODO</PageTab>
+      <PageTab label={t('Execution environments')}>
+        <PageNotImplemented />
+      </PageTab>
+      <PageTab label={t('Notifications')}>
+        <PageNotImplemented />
+      </PageTab>
     </PageTabs>
   );
 }
