@@ -99,9 +99,11 @@ export function WorkflowJobTemplateDetail() {
           <PageTab label={t('Visualizer')}>
             <WorkflowVisualizer template={template} />
           </PageTab>
-          <PageTab label={t('Visualizer (Tech Preview)')}>
-            <AwxWorkflow template={template} />
-          </PageTab>
+          {process.env.NODE_ENV === 'development' && (
+            <PageTab label={t('Visualizer (Tech Preview)')}>
+              <AwxWorkflow template={template} />
+            </PageTab>
+          )}
         </PageTabs>
       ) : (
         <PageTabs>
