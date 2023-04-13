@@ -30,13 +30,13 @@ describe('projects', () => {
        * This also cleans up projects that were syncing and could not be deleted by other runs,
        * making a self cleaning E2E system for the live server.
        */
-      cy.requestGet<ItemsResponse<Project>>(`/api/v2/projects/?limit=100&organization=null`).then(
-        (itemsResponse) => {
-          for (const project of itemsResponse.results) {
-            cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
-          }
+      cy.requestGet<ItemsResponse<Project>>(
+        `/api/v2/projects/?page_size=100&organization=null`
+      ).then((itemsResponse) => {
+        for (const project of itemsResponse.results) {
+          cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
         }
-      );
+      });
     });
   });
 

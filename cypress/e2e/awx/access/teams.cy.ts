@@ -59,7 +59,7 @@ describe('teams', () => {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo(/^Teams$/);
-    cy.clickRowAction(team.name, /^Remove users from team$/);
+    cy.clickRowAction(team.name, /^Remove users$/);
     cy.selectRowInDialog(user1.username);
     cy.selectRowInDialog(user2.username);
     cy.get('#confirm').click();

@@ -21,7 +21,7 @@ describe('organizations', () => {
     // Sometimes if tests are stopped in the middle, we get left over organizations
     // Cleanup E2E organizations older than 2 hours
     cy.requestGet<ItemsResponse<Organization>>(
-      `/api/v2/organizations/?limit=100&created__lt=${new Date(
+      `/api/v2/organizations/?page_size=100&created__lt=${new Date(
         Date.now() - 2 * 60 * 60 * 1000
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {

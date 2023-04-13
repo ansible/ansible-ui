@@ -49,8 +49,8 @@ export function useTeamActions(options: {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
         isPinned: true,
-        variant: isDetailsPageAction ? ButtonVariant.primary : undefined, // Edit Team shows up as a primary button on the details page, but as a kebab menu option on a row
         icon: EditIcon,
         label: t('Edit team'),
         isDisabled: (team: Team) => cannotEditTeam(team),

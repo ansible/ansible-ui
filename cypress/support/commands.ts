@@ -430,7 +430,10 @@ Cypress.Commands.add(
       .parent()
       .within(() => {
         cy.get('.pf-c-dropdown__toggle').click();
-        cy.get('.pf-c-dropdown__menu-item').contains(label).click();
+        cy.contains('.pf-c-dropdown__menu-item', label)
+          .should('not.be.disabled')
+          .should('not.have.attr', 'aria-disabled', 'true')
+          .click();
       });
   }
 );
