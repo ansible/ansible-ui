@@ -353,7 +353,7 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).type(text, { delay: 0 });
+  cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
@@ -364,7 +364,7 @@ Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, tex
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
       if (selectMenu.find('.pf-m-search').length > 0) {
-        cy.get('.pf-m-search').type(text, { delay: 0 });
+        cy.get('.pf-m-search').clear().type(text, { delay: 0 });
       }
     });
 
@@ -384,7 +384,9 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').type(text, { delay: 0 });
+  cy.get('#filter-input').within(() => {
+    cy.get('input').clear().type(text, { delay: 0 });
+  });
   cy.get('[aria-label="apply filter"]').click();
 });
 

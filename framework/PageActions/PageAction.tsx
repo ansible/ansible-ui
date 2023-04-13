@@ -29,6 +29,8 @@ export type IPageAction<T extends object> =
   | IPageActionSwitch
   | IPageActionSwitchSingle<T>
   | IPageActionDropdown<T>
+  | IPageActionDropdownSingle<T>
+  | IPageActionDropdownMultiple<T>
   | IPageActionSeperator;
 
 interface IPageActionCommon {
@@ -104,7 +106,18 @@ export interface IPageActionSwitchSingle<T extends object> extends IPageActionSi
   labelOff?: string;
 }
 
-export interface IPageActionDropdown<T extends object> extends IPageActionCommon {
+export interface IPageActionDropdown<T extends object> extends IPageActionNoneCommon {
+  type: PageActionType.Dropdown;
+  actions: IPageAction<T>[];
+}
+
+export interface IPageActionDropdownSingle<T extends object> extends IPageActionSingleCommon<T> {
+  type: PageActionType.Dropdown;
+  actions: IPageAction<T>[];
+}
+
+export interface IPageActionDropdownMultiple<T extends object>
+  extends IPageActionMultipleCommon<T> {
   type: PageActionType.Dropdown;
   actions: IPageAction<T>[];
 }

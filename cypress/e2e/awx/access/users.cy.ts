@@ -83,7 +83,7 @@ describe('users', () => {
 
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo(/^Users$/);
-    cy.clickTableRowKebabAction(user.username, /^Edit user$/);
+    cy.clickTableRowPinnedAction(user.username, 'Edit user');
     cy.hasTitle(/^Edit user$/);
   });
 

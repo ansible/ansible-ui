@@ -34,7 +34,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       else return '';
     };
 
-    return [
+    const actions: IPageAction<UnifiedJob>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -59,10 +59,11 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       },
       {
         type: PageActionType.Dropdown,
-        variant: ButtonVariant.secondary,
+        // variant: ButtonVariant.secondary,
+        selection: PageActionSelection.Single,
         isPinned: true,
         icon: RocketIcon,
-        iconOnly: true,
+        // iconOnly: true,
         label: t(`Relaunch using host parameters`),
         isHidden: (job: UnifiedJob) =>
           !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
@@ -100,5 +101,6 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
         onClick: (job: UnifiedJob) => cancelJobs([job]),
       },
     ];
+    return actions;
   }, [deleteJobs, cancelJobs, relaunchJob, relaunchAllHosts, relaunchFailedHosts, t]);
 }
