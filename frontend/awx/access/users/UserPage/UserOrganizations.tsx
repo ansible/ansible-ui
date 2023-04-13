@@ -3,17 +3,22 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
-import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
-import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 import {
   useOrganizationsColumns,
   useOrganizationsFilters,
 } from '../../organizations/Organizations';
+import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
+import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 
 export function UserOrganizations(props: { user: User }) {
   const { user } = props;
@@ -31,14 +36,17 @@ export function UserOrganizations(props: { user: User }) {
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected organizations'),
         onClick: () =>
@@ -57,7 +65,8 @@ export function UserOrganizations(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from organization'),
         onClick: (organization) =>

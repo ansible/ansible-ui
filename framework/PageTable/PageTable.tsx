@@ -7,12 +7,12 @@ import {
   EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
+  Flex,
   PageSection,
   Skeleton,
   Spinner,
   Stack,
   Title,
-  Flex,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import {
@@ -40,8 +40,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IPageAction } from '../PageActions/PageAction';
-import { PageActionType } from '../PageActions/PageActionType';
+import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
@@ -236,8 +235,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
 
   const hasTableViewType = !props.disableTableView;
   const hasListViewType = !props.disableListView;
@@ -381,8 +381,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState<{
     left: number;

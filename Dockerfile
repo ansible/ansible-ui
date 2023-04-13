@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build:eda
 
 # eda-ui
-FROM nginx:alpine as eda-ui
+FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine as eda-ui
 ARG NGINX_CONF=./nginx.conf
 ARG NGINX_CONFIGURATION_PATH=/etc/nginx/nginx.conf
 ENV DIST_UI="/opt/app-root/ui/eda"
