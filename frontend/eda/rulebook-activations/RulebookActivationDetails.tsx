@@ -17,7 +17,7 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
-import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
+import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';

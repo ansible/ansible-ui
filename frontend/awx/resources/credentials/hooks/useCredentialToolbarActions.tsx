@@ -7,7 +7,7 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../..
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { IAwxView } from '../../../useAwxView';
-import { useDeleteCredentials } from '../useDeleteCredentials';
+import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialToolbarActions(view: IAwxView<Credential>) {
   const { t } = useTranslation();

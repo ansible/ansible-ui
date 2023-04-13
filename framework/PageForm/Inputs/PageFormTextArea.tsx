@@ -6,7 +6,7 @@ import {
   Validate,
   ValidationRule,
 } from 'react-hook-form';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea';
 
 export type PageFormTextAreaProps<
