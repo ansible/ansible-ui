@@ -7,6 +7,8 @@ import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 're
 import { FormGroupTextInputProps, useSettings } from '../..';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from './codeEditorUtils';
 
 export type PageFormCodeEditorInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -24,6 +26,7 @@ export function PageFormCodeEditor<
 >(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
   const { isReadOnly, validate, isExpandable, defaultExpanded, ...formGroupInputProps } = props;
   const { label, name, isRequired } = props;
+  const [isSelected, setIsSelected] = useState('yaml');
   const {
     control,
     formState: { isSubmitting, isValidating },
@@ -92,8 +95,9 @@ export function MonacoEditor(props: {
   onChange?: (value: string) => void;
   isReadOnly?: boolean;
   invalid?: boolean;
+  language: string;
 }) {
-  const { onChange } = props;
+  const { onChange, language } = props;
 
   const divEl = useRef<HTMLDivElement>(null);
 
@@ -105,6 +109,25 @@ export function MonacoEditor(props: {
 
   useEffect(() => {
     let editor: monaco.editor.IStandaloneCodeEditor;
+    window.MonacoEnvironment = {
+      getWorker(moduleId, label) {
+        switch (label) {
+          case 'editorWorkerService':
+            return new Worker(
+              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url)
+            );
+          case 'json':
+            return new Worker(
+              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url)
+            );
+
+          case 'yaml':
+            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url));
+          default:
+            throw new Error(`Unknown label ${label}`);
+        }
+      },
+    };
 
     monaco.editor.defineTheme('my-dark', {
       base: 'vs-dark',
@@ -129,9 +152,9 @@ export function MonacoEditor(props: {
     });
 
     if (divEl.current) {
-      editor = monaco.editor.create(divEl.current, {
-        language: 'yaml',
-        lineNumbers: 'off',
+      editor = monaco?.editor?.create(divEl.current, {
+        language: language,
+        lineNumbers: 'on',
         theme: 'my-dark',
         lineDecorationsWidth: 8,
         // lineNumbersMinChars: 0,
@@ -144,6 +167,31 @@ export function MonacoEditor(props: {
         minimap: { enabled: false },
         renderLineHighlightOnlyWhenFocus: true,
       });
+
+      monaco.editor.setModelLanguage(monaco.editor.getModels()[0], language);
+
+      monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        validate: true,
+      });
+
+      const yamlModelUri = monaco.Uri.parse('a://b/foo.yaml');
+      setYamlDiagnosticOptions({
+        validate: true,
+        format: true,
+        enableSchemaRequest: true,
+        schemas: [
+          {
+            uri: 'http://myserver/foo-schema.json',
+            fileMatch: [String(yamlModelUri)],
+            schema: {
+              type: 'object',
+              properties: {},
+              additionalProperties: true,
+            },
+          },
+        ],
+      });
+
       editorRef.current.editor = editor;
 
       editor.getModel()?.onDidChangeContent(() => {
@@ -153,20 +201,60 @@ export function MonacoEditor(props: {
     return () => {
       editor.dispose();
     };
-  }, [onChange]);
+  }, [onChange, language]);
 
   useEffect(() => {
     if (editorRef.current?.editor) {
       const currentValue = editorRef.current.editor.getValue();
       if (currentValue !== props.value) editorRef.current.editor.setValue(props.value ?? '');
     }
-  }, [props.value]);
+  }, [props.value, language]);
 
   useEffect(() => {
     if (editorRef.current?.editor) {
       editorRef.current.editor.updateOptions({ readOnly: props.isReadOnly });
     }
   }, [props.isReadOnly]);
+  monaco.editor.onDidChangeMarkers((e) => {
+    ///////////////////////
+    const markers = monaco.editor.getModelMarkers({
+      owner: monaco.editor?.getModels()[0]?.getLanguageId(),
+    });
+    console.log(markers, e, 'ondidchange  markers');
+    ///////////////////////
+  });
+  const markers = monaco.editor.getModelMarkers({
+    owner: monaco.editor?.getModels()[0]?.getLanguageId(),
+  });
+  console.log(markers, 'ondidchange  markers');
+
+  useEffect(() => {
+    const currentValue: string | object | undefined = editorRef?.current?.editor?.getValue();
+
+    if (currentValue) {
+      // if (isJsonObject(currentValue) && language === 'json') {
+      //   return;
+      // }
+      if (isJsonString(currentValue) && language === 'json') {
+        editorRef.current?.editor?.setValue(currentValue);
+      }
+      if (!(isJsonObject(currentValue) && isJsonString(currentValue)) && language === 'json') {
+        console.log('here', currentValue);
+        try {
+          // const jsonValue: Record<string, unknown> = JSON.parse(jsonString);
+          editorRef.current?.editor?.setValue(yamlToJson(currentValue));
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      if (language === 'yaml' && isJsonObject(currentValue)) {
+        editorRef.current?.editor?.setValue(jsonToYaml(currentValue));
+      }
+      if (language === 'yaml' && isJsonString(currentValue)) {
+        editorRef.current?.editor?.setValue(jsonToYaml(currentValue));
+      }
+    }
+  }, [language]);
 
   useResizeObserver(divEl, () => {
     if (editorRef.current?.editor) {
@@ -181,14 +269,16 @@ export function MonacoEditor(props: {
       });
     }
   }, [settings.activeTheme]);
-
+  const handleFormatting = async () => {
+    await editorRef?.current?.editor?.getAction('editor.action.formatDocument')?.run();
+  };
   return (
     <div
       className={`pf-c-form-control`}
       style={{ padding: 0, height: 400 }}
       aria-invalid={props.invalid ? 'true' : undefined}
     >
-      <div id={props.id} ref={divEl} style={{ height: '100%' }}></div>
+      <div id={props.id} ref={divEl} onBlur={handleFormatting} style={{ height: '100%' }}></div>
     </div>
   );
 }

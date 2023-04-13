@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageFormSelectOption } from '../../../../framework';
+import { PageFormCodeEditor, PageFormSelectOption } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
@@ -156,6 +156,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
       />
+      <PageFormCodeEditor<JobTemplateForm> name="extra_vars" />
       <PageFormTextInput<JobTemplateForm>
         placeholder={t('Add number of forks')}
         additionalControls={
