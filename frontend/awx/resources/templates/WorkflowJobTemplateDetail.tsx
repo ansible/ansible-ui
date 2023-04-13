@@ -15,8 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -25,11 +25,12 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../common/crud/useGetItem';
 import { RouteObj } from '../../../Routes';
+import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
+import { AwxWorkflow } from './WorkflowPrototype/AwxWorkflowPrototype';
 import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
@@ -97,6 +98,9 @@ export function WorkflowJobTemplateDetail() {
           </PageTab>
           <PageTab label={t('Visualizer')}>
             <WorkflowVisualizer template={template} />
+          </PageTab>
+          <PageTab label={t('Visualizer (Tech Preview)')}>
+            <AwxWorkflow template={template} />
           </PageTab>
         </PageTabs>
       ) : (

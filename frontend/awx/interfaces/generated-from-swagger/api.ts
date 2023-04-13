@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+
 export interface ActivityStream {
   /** ID */
   id?: number
@@ -7600,7 +7601,12 @@ export interface WorkflowJobNodeList {
   /** Related */
   related?: string
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: {
+    unified_job_template: {
+      name:string
+      unified_job_type: string
+    }
+  }
   /** Created */
   created?: string
   /** Modified */
