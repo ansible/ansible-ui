@@ -32,8 +32,8 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.ruleBookActivationActions('Relaunch', edaRulebookActivation.name);
-          cy.ruleBookActivationActionsModal('Relaunch', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActions('Relaunch', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActionsModal('Relaunch', edaRulebookActivation.name);
           cy.deleteEdaRulebookActivation(edaRulebookActivation);
         });
       });
@@ -51,8 +51,8 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.ruleBookActivationActions('Restart', edaRulebookActivation.name);
-          cy.ruleBookActivationActionsModal('Restart', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActions('Restart', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActionsModal('Restart', edaRulebookActivation.name);
           cy.deleteEdaRulebookActivation(edaRulebookActivation);
         });
       });
@@ -70,7 +70,7 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.ruleBookActivationActions('Delete rulebookActivation', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActions('Delete rulebookActivation', edaRulebookActivation.name);
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Delete rulebookActivations');
           cy.assertModalSuccess();
