@@ -22,6 +22,7 @@ import { Dotted } from '../../../../framework/components/Dotted';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
@@ -39,6 +40,7 @@ export function Instances() {
 
   const alertToaster = usePageAlertToaster();
   const postRequest = usePostRequest();
+  const patchRequest = usePatchRequest();
 
   const toolbarActions = useMemo<IPageAction<Instance>[]>(
     () => [
@@ -66,6 +68,17 @@ export function Instances() {
 
   const rowActions = useMemo<IPageAction<Instance>[]>(
     () => [
+      {
+        type: PageActionType.Switch,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        onToggle: (instance, enabled) =>
+          patchRequest(`/api/v2/instances/${instance.id}/`, { enabled }).then(view.refresh),
+        isSwitchOn: (instance) => instance.enabled,
+        label: t('Enabled'),
+        labelOff: t('Disabled'),
+        showPinnedLabel: false,
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

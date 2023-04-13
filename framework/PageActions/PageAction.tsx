@@ -90,14 +90,18 @@ export interface IPageActionLinkSingle<T extends object> extends IPageActionSing
 
 export interface IPageActionSwitch extends IPageActionNoneCommon {
   type: PageActionType.Switch;
-  onToggle: () => unknown | Promise<unknown>;
-  isSwitchOn: () => boolean | Promise<boolean>;
+  onToggle: (enable: boolean) => unknown | Promise<unknown>;
+  isSwitchOn: () => boolean;
+  showPinnedLabel?: boolean;
+  labelOff?: string;
 }
 
 export interface IPageActionSwitchSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Switch;
-  onToggle: (item: T) => boolean | Promise<boolean>;
+  onToggle: (item: T, enable: boolean) => unknown | Promise<unknown>;
   isSwitchOn: (item: T) => boolean;
+  showPinnedLabel?: boolean;
+  labelOff?: string;
 }
 
 export interface IPageActionDropdown<T extends object> extends IPageActionCommon {

@@ -12,6 +12,7 @@ import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
+import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 
 interface PageActionDropdownProps<T extends object> {
@@ -229,8 +230,13 @@ function PageDropdownActionItem<T extends object>(props: {
       );
     }
 
-    case PageActionType.Switch:
-      return <div key={`separator-${index}`}>SWITCH</div>;
+    case PageActionType.Switch: {
+      return (
+        <div style={{ marginLeft: 16, marginRight: 16, marginBottom: 16 }}>
+          <PageActionSwitch action={action} selectedItem={selectedItem} />
+        </div>
+      );
+    }
 
     case PageActionType.Dropdown: {
       const tooltip = action.label;
@@ -240,6 +246,7 @@ function PageDropdownActionItem<T extends object>(props: {
           label={action.label}
           actions={action.actions}
           selectedItem={selectedItem}
+          selectedItems={selectedItems}
           isDisabled={isDisabled}
           tooltip={tooltip}
           // variant={action.variant}

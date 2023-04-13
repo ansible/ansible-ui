@@ -4,6 +4,7 @@ import { IPageAction, PageActionType } from './PageAction';
 import { PageActionButton } from './PageActionButton';
 import { PageActionDropdown } from './PageActionDropdown';
 import { PageActionLink } from './PageActionLink';
+import { PageActionSwitch } from './PageActionSwitch';
 
 interface PageActionsPinnedProps<T extends object> {
   actions: IPageAction<T>[];
@@ -26,7 +27,7 @@ export function PageActionsPinned<T extends object>(props: PageActionsPinnedProp
   const { actions, selectedItems, selectedItem, wrapper, iconOnly, onOpen } = props;
   if (actions.length === 0) return <></>;
   return (
-    <Split hasGutter={!iconOnly}>
+    <Split hasGutter={!iconOnly} style={{ alignItems: 'baseline' }}>
       {actions.map((action, index) => (
         <PageActionPinned<T>
           key={index}
@@ -84,7 +85,15 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
       );
 
     case PageActionType.Switch:
-      return <>SWITCH</>;
+      return (
+        <PageActionSwitch
+          action={action}
+          selectedItem={selectedItem}
+          selectedItems={selectedItems}
+          wrapper={wrapper}
+          iconOnly={props.iconOnly}
+        />
+      );
 
     case PageActionType.Dropdown: {
       return (
