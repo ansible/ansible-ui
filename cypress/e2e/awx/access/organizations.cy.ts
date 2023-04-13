@@ -19,10 +19,10 @@ describe('organizations', () => {
   after(() => {
     cy.deleteAwxOrganization(organization);
     // Sometimes if tests are stopped in the middle, we get left over organizations
-    // Cleanup E2E organizations older than 2 hours
+    // Cleanup E2E organizations older than 20 minutes
     cy.requestGet<ItemsResponse<Organization>>(
       `/api/v2/organizations/?page_size=100&created__lt=${new Date(
-        Date.now() - 2 * 60 * 60 * 1000
+        Date.now() - 20 * 60 * 1000
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {

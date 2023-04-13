@@ -209,23 +209,26 @@ function PageDropdownActionItem<T extends object>(props: {
 
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <DropdownItem
-            component={<Link {...props} to={to} />}
-            isAriaDisabled={Boolean(isDisabled)}
-            icon={
-              Icon ? (
-                <span style={{ paddingRight: 4 }}>
-                  <Icon />
-                </span>
-              ) : undefined
-            }
-            style={{
-              color:
-                action.isDanger && !isDisabled ? 'var(--pf-global--danger-color--100)' : undefined,
-            }}
-          >
-            {action.label}
-          </DropdownItem>
+          <Link {...props} to={to}>
+            <DropdownItem
+              isAriaDisabled={Boolean(isDisabled)}
+              icon={
+                Icon ? (
+                  <span style={{ paddingRight: 4 }}>
+                    <Icon />
+                  </span>
+                ) : undefined
+              }
+              style={{
+                color:
+                  action.isDanger && !isDisabled
+                    ? 'var(--pf-global--danger-color--100)'
+                    : undefined,
+              }}
+            >
+              {action.label}
+            </DropdownItem>
+          </Link>
         </Tooltip>
       );
     }
