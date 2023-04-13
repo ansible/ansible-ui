@@ -4,7 +4,12 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
@@ -26,18 +31,19 @@ export function TeamRoles(props: { team: Team }) {
   const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add role to team'),
-        shortLabel: t('Add role'),
         onClick: () => navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString())),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected roles from team'),
-        shortLabel: t('Remove roles'),
         onClick: () => alert('TODO'),
       },
     ],
@@ -46,8 +52,10 @@ export function TeamRoles(props: { team: Team }) {
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: TrashIcon,
         label: t('Remove role from team'),
         onClick: () => alert('TODO'),

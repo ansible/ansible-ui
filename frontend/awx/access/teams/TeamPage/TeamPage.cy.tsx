@@ -12,7 +12,7 @@ describe('TeamPage', () => {
     cy.contains('nav[aria-label="Breadcrumb"]', 'Team 2 Org 0').should('exist');
   });
   it('Edit button is visible and enabled', () => {
-    cy.contains('button.edit-team', 'Edit team').should('have.attr', 'aria-disabled', 'false');
+    cy.contains('button', 'Edit team').should('have.attr', 'aria-disabled', 'false');
   });
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
     cy.get('button[aria-label="Actions"]').click();

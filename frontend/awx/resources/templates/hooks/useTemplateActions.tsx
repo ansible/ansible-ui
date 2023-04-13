@@ -1,15 +1,15 @@
-import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { IPageAction, PageActionType } from '../../../../../framework';
 import { handleLaunch } from '../../../common/util/launchHandlers';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;
@@ -22,8 +22,10 @@ export function useTemplateActions(options: {
   return useMemo<IPageAction<JobTemplate>[]>(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
@@ -31,7 +33,8 @@ export function useTemplateActions(options: {
           navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete template'),
         onClick: (template) => {
@@ -42,7 +45,8 @@ export function useTemplateActions(options: {
         isDanger: true,
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t('Launch template'),
         onClick: async (template) => {

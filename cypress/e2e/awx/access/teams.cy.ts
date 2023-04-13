@@ -59,7 +59,7 @@ describe('teams', () => {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo(/^Teams$/);
-    cy.clickTableRowAction(team.name, /^Remove users from team$/);
+    cy.clickTableRowKebabAction(team.name, /^Remove users$/);
     cy.selectTableRowInDialog(user1.username);
     cy.selectTableRowInDialog(user2.username);
     cy.get('#confirm').click();
@@ -144,7 +144,7 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/);
-    cy.clickTableRowAction(user1.username, /^Remove user$/);
+    cy.clickTableRowKebabAction(user1.username, /^Remove user$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);
@@ -212,14 +212,14 @@ describe('teams', () => {
 
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/);
-    cy.clickTableRowAction(team.name, /^Edit team$/);
+    cy.clickTableRowPinnedAction(team.name, 'Edit team');
     cy.hasTitle(/^Edit team$/);
   });
 
   it('can delete a team from the teams list row item', () => {
     cy.createAwxTeam(organization).then((testTeam) => {
       cy.navigateTo(/^Teams$/);
-      cy.clickTableRowAction(testTeam.name, /^Delete team$/);
+      cy.clickTableRowKebabAction(testTeam.name, /^Delete team$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
       cy.contains(/^Success$/);

@@ -52,7 +52,7 @@ export function PageFormSelectOrganization<
   const openSelectDialog = useSelectOrganization2();
   const query = useCallback(async () => {
     const response = await requestGet<ItemsResponse<Organization>>(
-      `/api/v2/organizations/?limit=200`
+      `/api/v2/organizations/?page_size=200`
     );
     return Promise.resolve({
       total: response.count,

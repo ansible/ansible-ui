@@ -68,7 +68,7 @@ describe('inventories', () => {
   it('can copy an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickTableRowAction(testInventory.name, /^Copy inventory$/, true);
+      cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
       cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, true);
     });
@@ -77,7 +77,7 @@ describe('inventories', () => {
   it('can delete an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo(/^Inventories$/);
-      cy.clickTableRowAction(testInventory.name, /^Delete inventory$/, true);
+      cy.clickTableRowKebabAction(testInventory.name, /^Delete inventory$/, true);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.contains(/^Success$/);

@@ -130,8 +130,8 @@ describe('Jobs.cy.ts', () => {
           job = jobs[3]; // job with status "running"
           cy.mount(<Jobs />);
           cy.contains('tr', job.name).within(() => {
-            cy.get('button.cancel-job').should('be.visible');
-            cy.get('button.cancel-job').click();
+            cy.get('#cancel-job').should('be.visible');
+            cy.get('#cancel-job').click();
             expect(spy).to.be.called;
           });
         } else {

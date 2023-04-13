@@ -83,13 +83,13 @@ describe('users', () => {
 
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo(/^Users$/);
-    cy.clickTableRowAction(user.username, /^Edit user$/);
+    cy.clickTableRowPinnedAction(user.username, 'Edit user');
     cy.hasTitle(/^Edit user$/);
   });
 
   it('deletes a user from the users list row item', () => {
     cy.navigateTo(/^Users$/);
-    cy.clickTableRowAction(user.username, /^Delete user$/);
+    cy.clickTableRowKebabAction(user.username, /^Delete user$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.contains(/^Success$/);

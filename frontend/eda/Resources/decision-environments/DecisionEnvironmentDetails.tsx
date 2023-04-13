@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -14,12 +15,12 @@ import {
   PageTab,
   PageTabs,
 } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
+import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironments } from './hooks/useDeleteDecisionEnvironments';
-import { EdaCredential } from '../../interfaces/EdaCredential';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -42,7 +43,8 @@ export function DecisionEnvironmentDetails() {
   const itemActions = useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
@@ -51,7 +53,8 @@ export function DecisionEnvironmentDetails() {
           ),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>

@@ -84,12 +84,12 @@ describe('credentials', () => {
   });
 
   it('credentials table row edit credential', () => {
-    cy.getTableRowByText(credential.name).get('button.edit-credential').click();
+    cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
     cy.hasTitle(/^Edit credential$/);
   });
 
   it('credentials table row delete credential', () => {
-    cy.clickTableRowAction(credential.name, /^Delete credential$/);
+    cy.clickTableRowKebabAction(credential.name, /^Delete credential$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.contains(/^Success$/);

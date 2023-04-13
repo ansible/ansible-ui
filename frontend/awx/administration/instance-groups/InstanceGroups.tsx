@@ -8,16 +8,17 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
   TextCell,
 } from '../../../../framework';
-import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { RouteObj } from '../../../Routes';
-import { useAwxView } from '../../useAwxView';
+import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { useAwxView } from '../../useAwxView';
 import { useDeleteInstanceGroups } from './hooks/useDeleteInstanceGroups';
 
 export function InstanceGroups() {
@@ -36,25 +37,29 @@ export function InstanceGroups() {
   const toolbarActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
-        type: PageActionType.dropdown,
+        type: PageActionType.Dropdown,
         icon: PlusCircleIcon,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Create group'),
-        options: [
+        actions: [
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create container group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create instance group'),
             onClick: () => navigate(RouteObj.CreateInstanceGroup),
           },
         ],
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected instance groups'),
         onClick: deleteInstanceGroups,
@@ -67,14 +72,16 @@ export function InstanceGroups() {
   const rowActions = useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete instance group'),
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),

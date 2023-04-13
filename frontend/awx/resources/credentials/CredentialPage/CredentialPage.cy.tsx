@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import { CredentialType } from '../../../interfaces/CredentialType';
 import { Credential } from '../../../interfaces/Credential';
+import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPage } from './CredentialPage';
 
 describe('CredentialPage', () => {
@@ -35,6 +35,6 @@ describe('CredentialPage', () => {
       cy.intercept('GET', '/api/v2/credentials/*', credential);
     });
     cy.mount(<CredentialPage />);
-    cy.get('button.edit-credential').should('have.attr', 'aria-disabled', 'true');
+    cy.get('#edit-credential').should('have.attr', 'aria-disabled', 'true');
   });
 });

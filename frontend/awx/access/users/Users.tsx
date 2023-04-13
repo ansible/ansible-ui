@@ -12,17 +12,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
-import { useOptions } from '../../../common/crud/useOptions';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
@@ -55,8 +56,10 @@ export function Users() {
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create user'),
         isDisabled: canCreateUser
@@ -66,35 +69,40 @@ export function Users() {
             ),
         href: RouteObj.CreateUser,
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add selected users to teams'),
         onClick: () => selectTeamsAddUsers(view.selectedItems),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove selected users from teams'),
         onClick: () => selectTeamsRemoveUsers(view.selectedItems),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add selected users to organizations'),
         onClick: () => selectOrganizationsAddUsers(view.selectedItems),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove selected users from organizations'),
         onClick: () => selectOrganizationsRemoveUsers(view.selectedItems),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected users'),
         onClick: deleteUsers,
@@ -125,42 +133,49 @@ export function Users() {
 
     return [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         // variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
         isDisabled: (user: User) => cannotEditUser(user),
         onClick: (user) => navigate(RouteObj.EditUser.replace(':id', user.id.toString())),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add user to teams'),
         onClick: (user) => selectTeamsAddUsers([user]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from teams'),
         onClick: (user) => selectTeamsRemoveUsers([user]),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add user to organizations'),
         onClick: (user) => selectOrganizationsAddUsers([user]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from organizations'),
         onClick: (user) => selectOrganizationsRemoveUsers([user]),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
         isDisabled: (user: User) => cannotDeleteUser(user),
@@ -237,16 +252,20 @@ export function AccessTable(props: { url: string }) {
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add users'),
         shortLabel: t('Add Access'),
         href: RouteObj.CreateUser,
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
         shortLabel: t('Remove Access'),
@@ -260,7 +279,8 @@ export function AccessTable(props: { url: string }) {
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: () => alert('TODO'),

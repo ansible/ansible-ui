@@ -72,9 +72,16 @@ declare global {
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
-      clickTableRowAction(
+      clickTableRowKebabAction(
         name: string | RegExp,
         label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by label. */
+      clickTableRowPinnedAction(
+        name: string | RegExp,
+        label: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -346,7 +353,7 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).type(text, { delay: 0 });
+  cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
@@ -357,7 +364,7 @@ Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, tex
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
       if (selectMenu.find('.pf-m-search').length > 0) {
-        cy.get('.pf-m-search').type(text, { delay: 0 });
+        cy.get('.pf-m-search').clear().type(text, { delay: 0 });
       }
     });
 
@@ -377,7 +384,9 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').type(text, { delay: 0 });
+  cy.get('#filter-input').within(() => {
+    cy.get('input').clear().type(text, { delay: 0 });
+  });
   cy.get('[aria-label="apply filter"]').click();
 });
 
@@ -457,15 +466,24 @@ Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boole
   cy.contains('tr', name);
 });
 
-//Uses a name string to filter results, locates the row on the page containing that name
-//string, clicks the toggle button for the row, then finds the toolbar action button using
-//a particular label and clicks that button.
 Cypress.Commands.add(
-  'clickTableRowAction',
+  'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'clickTableRowPinnedAction',
+  (name: string | RegExp, label: string, filter?: boolean) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();

@@ -7,6 +7,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -41,14 +42,17 @@ export function Hosts() {
   const toolbarActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () => navigate(RouteObj.CreateHost),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected hosts'),
         onClick: deleteHosts,
@@ -61,13 +65,15 @@ export function Hosts() {
   const rowActions = useMemo<IPageAction<Host>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),

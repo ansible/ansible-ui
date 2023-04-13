@@ -5,14 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
@@ -34,14 +35,16 @@ export function UserDetails() {
   const itemActions = useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit User'),
         onClick: (User: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete User'),
         onClick: (User: EdaUser) => deleteUsers([User]),
