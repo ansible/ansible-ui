@@ -447,7 +447,7 @@ Cypress.Commands.add(
       cy.get('.pf-c-dropdown__toggle').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
         .should('not.be.disabled')
-        .should('have.attr', 'aria-disabled', 'false')
+        .should('not.have.attr', 'aria-disabled', 'true')
         .click();
     });
   }
