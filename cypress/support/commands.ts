@@ -295,7 +295,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uiLogout', () => {
+Cypress.Commands.add('edaLogout', () => {
   cy.get('.pf-c-dropdown__toggle')
     .eq(1)
     .click()
