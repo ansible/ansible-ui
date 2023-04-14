@@ -457,7 +457,7 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
-  cy.get('.pf-c-title').should('contain', label);
+  cy.contains('.pf-c-title', label);
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
