@@ -61,7 +61,7 @@ export function ActivationInstanceDetails() {
                 }}
                 id="code-content"
               >
-                {activationInstanceLog?.log || ''}
+                {activationInstanceLog?.results?.map(item => item.log).join("\r\n")}
               </CodeBlockCode>
             </CodeBlock>
           </PageDetail>
