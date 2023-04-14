@@ -1,4 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,15 +21,13 @@ export function useTemplateActions(options: {
   return useMemo<IPageAction<JobTemplate>[]>(() => {
     const itemActions: IPageAction<JobTemplate>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.primary,
         isPinned: true,
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
-        onClick: (template) =>
-          navigate(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+        href: (template) => RouteObj.EditJobTemplate.replace(':id', template?.id.toString() ?? ''),
       },
       {
         type: PageActionType.Button,

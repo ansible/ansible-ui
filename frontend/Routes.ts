@@ -33,11 +33,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   Templates: `${awxRoutePrefix}/templates`,
   JobTemplateDetails: `${awxRoutePrefix}/job_template/details/:id`,
   WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/details/:id`,
-  WorkflowJobTemplateEdit: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
-  JobTemplateEdit: `${awxRoutePrefix}/job_template/edit/:id`,
   CreateWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/create`,
   CreateJobTemplate: `${awxRoutePrefix}/job_template/create`,
-  EditTemplate: `${awxRoutePrefix}/templates/edit/:id`,
+  EditJobTemplate: `${awxRoutePrefix}/job_template/edit/:id`,
+  EditWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
 
   Credentials: `${awxRoutePrefix}/credentials`,
   CredentialDetails: `${awxRoutePrefix}/credentials/details/:id`,
@@ -76,7 +75,11 @@ export const RouteObj: { [key: string]: RouteType } = {
   AddRolesToTeam: `${awxRoutePrefix}/teams/:id/roles/add`,
 
   Users: `${awxRoutePrefix}/users`,
+  UserPage: `${awxRoutePrefix}/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/users/:id/details`,
+  UserOrganizations: `${awxRoutePrefix}/users/:id/organizations`,
+  UserTeams: `${awxRoutePrefix}/users/:id/teams`,
+  UserRoles: `${awxRoutePrefix}/users/:id/roles`,
   CreateUser: `${awxRoutePrefix}/users/create`,
   EditUser: `${awxRoutePrefix}/users/:id/edit`,
   AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,
@@ -89,7 +92,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   ManagementJobs: `${awxRoutePrefix}/management-jobs`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
-  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/details/:id`,
+  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/:id/details`,
   CreateInstanceGroup: `${awxRoutePrefix}/instance-groups/create`,
   EditInstanceGroup: `${awxRoutePrefix}/instance-groups/edit/:id`,
 

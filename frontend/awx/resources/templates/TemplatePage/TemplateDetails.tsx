@@ -3,19 +3,34 @@ import {
   TextListItem,
   TextListItemVariants,
   TextListVariants,
+  LabelGroup,
+  Label,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../../framework';
+import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
 import { UserDateDetail } from '../../../common/UserDateDetail';
+import { CredentialLabel } from '../../../common/CredentialLabel';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+
+function useInstanceGroups(templateId: string) {
+  const { data } = useGet<{ results: InstanceGroup[] }>(
+    `/api/v2/job_templates/${templateId}/instance_groups/`
+  );
+  return data?.results ?? [];
+}
 
 export function TemplateDetails(props: { template: JobTemplate }) {
   const { t } = useTranslation();
   const { template } = props;
+  const params = useParams<{ id: string }>();
   const { summary_fields: summaryFields } = template;
+
+  const instanceGroups = useInstanceGroups(params.id || '0');
 
   const showOptionsField =
     template.become_enabled ||
@@ -76,6 +91,28 @@ export function TemplateDetails(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Source control branch')}>{template.scm_branch}</PageDetail>
       <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>
+      <PageDetail label={t('Credentials')} isEmpty={!summaryFields.credentials.length}>
+        <LabelGroup>
+          {summaryFields.credentials.map((credential) => (
+            <CredentialLabel credential={credential} key={credential.id} />
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail
+        label={t`Instance Groups`}
+        helpText={t`The Instance Groups for this Job Template to run on.`}
+        isEmpty={instanceGroups.length === 0}
+      >
+        <LabelGroup>
+          {instanceGroups.map((ig) => (
+            <Label color="blue" key={ig.id}>
+              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
+                {ig.name}
+              </Link>
+            </Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
       <PageDetail label={t('Forks')}>{template.forks || 0}</PageDetail>
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
       <PageDetail label={t('Verbosity')}>{useVerbosityString(template.verbosity)}</PageDetail>
@@ -139,6 +176,27 @@ export function TemplateDetails(props: { template: JobTemplate }) {
             </TextListItem>
           )}
         </TextList>
+      </PageDetail>
+      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
+        <LabelGroup>
+          {summaryFields.labels.results.map((label) => (
+            <Label key={label.id}>{label.name}</Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags}>
+        <LabelGroup>
+          {template.job_tags.split(',').map((tag) => (
+            <Label key={tag}>{tag}</Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags}>
+        <LabelGroup>
+          {template.skip_tags.split(',').map((tag) => (
+            <Label key={tag}>{tag}</Label>
+          ))}
+        </LabelGroup>
       </PageDetail>
     </PageDetails>
   );

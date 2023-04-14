@@ -38,6 +38,7 @@ import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import Reports from './analytics/Reports/Reports';
 import { PageNotFound } from '../common/PageNotFound';
+import { PageNotImplemented } from '../common/PageNotImplemented';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -68,6 +69,7 @@ export function AwxRouter() {
           element={<WorkflowJobTemplateDetail />}
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
+        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
         <Route path={RouteObjWithoutPrefix.CredentialDetails} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
@@ -84,7 +86,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
         <Route path={RouteObjWithoutPrefix.EditOrganization} element={<EditOrganization />} />
         <Route path={RouteObjWithoutPrefix.Users} element={<Users />} />
-        <Route path={RouteObjWithoutPrefix.UserDetails} element={<UserPage />} />
+        <Route path={RouteObjWithoutPrefix.UserPage} element={<UserPage />} />
         <Route path={RouteObjWithoutPrefix.CreateUser} element={<CreateUser />} />
         <Route path={RouteObjWithoutPrefix.EditUser} element={<EditUser />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToUser} element={<AddRolesToUser />} />
@@ -97,6 +99,7 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
         <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
+        <Route path={RouteObjWithoutPrefix.InstanceGroupDetails} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />
         <Route path={RouteObjWithoutPrefix.InstanceDetails} element={<InstanceDetails />} />
         <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
