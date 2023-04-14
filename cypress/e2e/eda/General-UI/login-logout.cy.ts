@@ -22,17 +22,14 @@ describe('EDA Login / Logoff', () => {
           expect(result?.response?.statusCode).to.eql(204);
         });
       }
-      if (edaUser && Cypress.env('TEST_STANDALONE') === true) {
+      if (edaUser) {
+        if (!Cypress.env('TEST_STANDALONE')) {
+          cy.get('#E2E-title').then(() => {
+            cy.contains('E2E').click();
+          });
+        }
         cy.typeInputByLabel(/^Username$/, edaUser.username);
-        cy.typeInputByLabel(/^Password$/, 'Admin!Password');
-        cy.clickModalButton('Log in');
-        cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
-      } else if (edaUser && !Cypress.env('TEST_STANDALONE')) {
-        cy.get('#E2E-title').then(() => {
-          cy.contains('E2E').click();
-        });
-        cy.typeInputByLabel(/^Username$/, edaUser.username);
-        cy.typeInputByLabel(/^Password$/, 'testpass');
+        cy.typeInputByLabel(/^Password$/, Cypress.env('EDA_PASSWORD') as string);
         cy.clickModalButton('Log in');
         cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
       }
