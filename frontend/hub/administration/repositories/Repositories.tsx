@@ -3,15 +3,16 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
+  DateTimeCell,
   IPageAction,
   ITableColumn,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTab,
   PageTable,
   PageTabs,
-  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
@@ -103,21 +104,24 @@ export function RemoteRepositories() {
   const rowActions = useMemo<IPageAction<RemoteRepository>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CogIcon,
         label: t('Configure repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: SyncIcon,
         label: t('Sync repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit repository'),
         onClick: (repository) =>

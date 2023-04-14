@@ -4,13 +4,22 @@
 describe('EDA Dashboard', () => {
   before(() => {
     cy.edaLogin();
+    cy.createEdaProject().then((project) => {
+      cy.getEdaRulebooks(project).then((edaRulebooksArray) => {
+        cy.createEdaRulebookActivation(edaRulebooksArray[0]);
+      });
+    });
   });
 
-  it.skip('shows the user a Project card with a list of Projects visible including working links', () => {
-    //change test stub name to stipulate what the specific criteria is
+  it('shows the user a Project card with a list of Projects visible including working links', () => {
+    cy.visit('eda/dashboard');
+    cy.get('[data-label="Name"] div > a').contains('E2E Project').click();
+    cy.url().should('match', new RegExp('eda/projects/details/[0-9]*'));
   });
 
-  it.skip('shows the user a Rulebook Activation card with a list of Rulebook Activations visible including working links', () => {
-    //change test stub name to stipulate what the specific criteria is
+  it('shows the user a Rulebook Activation card with a list of Rulebook Activations visible including working links', () => {
+    cy.visit('eda/dashboard');
+    cy.get('[data-label="Name"] div > a').contains('E2E Rulebook Activation').click();
+    cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
   });
 });

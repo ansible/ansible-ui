@@ -1,7 +1,7 @@
 import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { Approval } from '../Approval';
 
 export function useApprovalsActions() {
@@ -9,7 +9,8 @@ export function useApprovalsActions() {
   return useMemo<IPageAction<Approval>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: ThumbsUpIcon,
         label: t('Approve collections'),
         onClick: () => {
@@ -17,7 +18,8 @@ export function useApprovalsActions() {
         },
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: ThumbsDownIcon,
         label: t('Deny collections'),
         onClick: () => {

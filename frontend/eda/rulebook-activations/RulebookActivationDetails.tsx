@@ -11,8 +11,9 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -22,23 +23,23 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
-import { capitalizeFirstLetter } from '../../../framework/utils/capitalize';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
+import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
+import { useGet } from '../../common/crud/useGet';
+import { StatusLabelCell } from '../common/StatusLabelCell';
 import { API_PREFIX } from '../constants';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
-import { useEdaView } from '../useEventDrivenView';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { useEdaView } from '../useEventDrivenView';
+import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
+import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 import {
   useDisableRulebookActivations,
   useEnableRulebookActivations,
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
-import { StatusLabelCell } from '../common/StatusLabelCell';
+import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -73,10 +74,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       navigate(RouteObj.EdaRulebookActivations);
     }
   });
-  const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
-    () => [
+  const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
+    const actions: IPageAction<EdaRulebookActivation>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: 'Enable rulebook activation',
         isDanger: false,
@@ -84,7 +86,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         onClick: (activation: EdaRulebookActivation) => enableRulebookActivation([activation]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: 'Disable rulebook activation',
         isDanger: false,
@@ -92,7 +95,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         onClick: (activation: EdaRulebookActivation) => disableRulebookActivation([activation]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: RedoIcon,
         label: 'Restart rulebook activation',
         isDanger: false,
@@ -101,22 +105,23 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete rulebook activation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
       },
-    ],
-    [
-      enableRulebookActivation,
-      disableRulebookActivation,
-      restartRulebookActivation,
-      deleteRulebookActivations,
-      t,
-    ]
-  );
+    ];
+    return actions;
+  }, [
+    enableRulebookActivation,
+    disableRulebookActivation,
+    restartRulebookActivation,
+    deleteRulebookActivations,
+    t,
+  ]);
 
   const renderActivationDetailsTab = (
     rulebookActivation: EdaRulebookActivation | undefined
