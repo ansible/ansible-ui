@@ -84,7 +84,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
         <Route path={RouteObjWithoutPrefix.EditOrganization} element={<EditOrganization />} />
         <Route path={RouteObjWithoutPrefix.Users} element={<Users />} />
-        <Route path={RouteObjWithoutPrefix.UserDetails} element={<UserPage />} />
+        <Route path={RouteObjWithoutPrefix.UserPage} element={<UserPage />} />
         <Route path={RouteObjWithoutPrefix.CreateUser} element={<CreateUser />} />
         <Route path={RouteObjWithoutPrefix.EditUser} element={<EditUser />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToUser} element={<AddRolesToUser />} />
