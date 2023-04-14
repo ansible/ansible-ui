@@ -27,7 +27,7 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected rulebook activations'),
+        label: t('Delete selected activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
       },

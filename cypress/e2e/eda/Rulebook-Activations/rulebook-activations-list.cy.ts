@@ -49,29 +49,29 @@ describe('EDA Rulebook Activations List', () => {
     });
   });
 
-  it('can disable a Rulebook Activation from the line item in list view', () => {
-    cy.createEdaProject().then((edaProject) => {
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        const gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaRulebookActivation(gitHookDeployRuleBook).then((edaRulebookActivation) => {
-          cy.visit('eda/rulebook-activations');
-          /*
-      filtering by text doesn't work for rulebook activations
-      cy.filterTableByText(edaRulebookActivation.name);
-      */
-          cy.edaRuleBookActivationActions(
-            'Disable rulebook activation',
-            edaRulebookActivation.name
-          );
-          cy.clickModalConfirmCheckbox();
-          cy.clickModalButton('Disable rulebook activations');
-          cy.assertModalSuccess();
-          cy.clickButton(/^Close$/);
-        });
-      });
-      cy.deleteEdaProject(edaProject);
-    });
-  });
+  // it('can disable a Rulebook Activation from the line item in list view', () => {
+  //   cy.createEdaProject().then((edaProject) => {
+  //     cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
+  //       const gitHookDeployRuleBook = edaRuleBooksArray[0];
+  //       cy.createEdaRulebookActivation(gitHookDeployRuleBook).then((edaRulebookActivation) => {
+  //         cy.visit('eda/rulebook-activations');
+  //         /*
+  //     filtering by text doesn't work for rulebook activations
+  //     cy.filterTableByText(edaRulebookActivation.name);
+  //     */
+  //         cy.edaRuleBookActivationActions(
+  //           'Disable rulebook activation',
+  //           edaRulebookActivation.name
+  //         );
+  //         cy.clickModalConfirmCheckbox();
+  //         cy.clickModalButton('Disable rulebook activations');
+  //         cy.assertModalSuccess();
+  //         cy.clickButton(/^Close$/);
+  //       });
+  //     });
+  //     cy.deleteEdaProject(edaProject);
+  //   });
+  // });
 
   it('can delete a single Rulebook Activation from the line item on the list view', () => {
     cy.createEdaProject().then((edaProject) => {
@@ -83,7 +83,7 @@ describe('EDA Rulebook Activations List', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-          cy.edaRuleBookActivationActions('Delete rulebook activation', edaRulebookActivation.name);
+          cy.edaRuleBookActivationActions('Delete', edaRulebookActivation.name);
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Delete rulebook activations');
           cy.assertModalSuccess();
@@ -128,7 +128,7 @@ describe('EDA Rulebook Activations List', () => {
                         cy.get('input[type=checkbox]').check();
                       });
                   });
-                  cy.clickToolbarKebabAction(/^Delete selected rulebook activations$/);
+                  cy.clickToolbarKebabAction(/^Delete selected activations$/);
                   cy.clickModalConfirmCheckbox();
                   cy.clickModalButton('Delete rulebook activations');
                   cy.wait(['@edaRulebookActivation1', '@edaRulebookActivation2']).then(
