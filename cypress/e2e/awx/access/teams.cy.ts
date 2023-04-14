@@ -59,7 +59,7 @@ describe('teams', () => {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo(/^Teams$/);
-    cy.clickTableRowAction(team.name, /^Remove users from team$/);
+    cy.clickTableRowAction(team.name, 'Remove users');
     cy.selectTableRowInDialog(user1.username);
     cy.selectTableRowInDialog(user2.username);
     cy.get('#confirm').click();
@@ -212,7 +212,7 @@ describe('teams', () => {
 
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/);
-    cy.clickTableRowAction(team.name, /^Edit team$/);
+    cy.get('#edit-team').click();
     cy.hasTitle(/^Edit team$/);
   });
 

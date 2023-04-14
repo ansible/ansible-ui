@@ -246,7 +246,7 @@ declare global {
        *
        * @returns {Chainable<EdaUser>}
        */
-      getEdaUserByName(edaUserName: string): Chainable<EdaUser | undefined>;
+      getEdaUser(): Chainable<EdaUser | undefined>;
     }
   }
 }
@@ -287,6 +287,15 @@ Cypress.Commands.add(
     cy.get('button[type=submit]').click();
   }
 );
+
+Cypress.Commands.add('uiLogout', () => {
+  cy.get('.pf-c-dropdown__toggle')
+    .eq(1)
+    .click()
+    .then(() => {
+      cy.get('ul>li>a').contains('Logout').click();
+    });
+});
 
 Cypress.Commands.add('awxLogin', () => {
   cy.session(
@@ -348,7 +357,7 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).type(text, { delay: 0 });
+  cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
@@ -359,7 +368,7 @@ Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, tex
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
       if (selectMenu.find('.pf-m-search').length > 0) {
-        cy.get('.pf-m-search').type(text, { delay: 0 });
+        cy.get('.pf-m-search').clear().type(text, { delay: 0 });
       }
     });
 
@@ -379,7 +388,7 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').type(text, { delay: 0 });
+  cy.get('#filter-input').clear().type(text, { delay: 0 });
   cy.get('[aria-label="apply filter"]').click();
 });
 
@@ -881,8 +890,9 @@ Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
   });
 });
 
-Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
-  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?name=${edaUserName}`).then((result) => {
+Cypress.Commands.add('getEdaUser', () => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/me/`).then((result) => {
+    // This will take care of deleting the project and the associated org, inventory
     if (Array.isArray(result?.results) && result.results.length === 1) {
       return result.results[0];
     } else {
