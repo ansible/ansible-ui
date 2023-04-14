@@ -76,7 +76,11 @@ export const RouteObj: { [key: string]: RouteType } = {
   AddRolesToTeam: `${awxRoutePrefix}/teams/:id/roles/add`,
 
   Users: `${awxRoutePrefix}/users`,
+  UserPage: `${awxRoutePrefix}/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/users/:id/details`,
+  UserOrganizations: `${awxRoutePrefix}/users/:id/organizations`,
+  UserTeams: `${awxRoutePrefix}/users/:id/teams`,
+  UserRoles: `${awxRoutePrefix}/users/:id/roles`,
   CreateUser: `${awxRoutePrefix}/users/create`,
   EditUser: `${awxRoutePrefix}/users/:id/edit`,
   AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,

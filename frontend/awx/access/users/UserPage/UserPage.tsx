@@ -11,8 +11,8 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
-  PageTab,
-  PageTabs,
+  RoutedTabs,
+  RoutedTab,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
@@ -76,20 +76,20 @@ export function UserPage() {
           />
         }
       />
-      <PageTabs>
-        <PageTab label={t('Details')}>
+      <RoutedTabs baseUrl={RouteObj.UserPage}>
+        <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
-        </PageTab>
-        <PageTab label={t('Organizations')}>
+        </RoutedTab>
+        <RoutedTab label={t('Organizations')} url={RouteObj.UserOrganizations}>
           <UserOrganizations user={user} />
-        </PageTab>
-        <PageTab label={t('Teams')}>
+        </RoutedTab>
+        <RoutedTab label={t('Teams')} url={RouteObj.UserTeams}>
           <UserTeams user={user} />
-        </PageTab>
-        <PageTab label={t('Roles')}>
+        </RoutedTab>
+        <RoutedTab label={t('Roles')} url={RouteObj.UserRoles}>
           <UserRoles user={user} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }
