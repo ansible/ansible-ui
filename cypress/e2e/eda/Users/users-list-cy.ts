@@ -12,18 +12,18 @@ describe('EDA Users List', () => {
   it.skip('renders the Credentials details page and shows expected information', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
-      cy.clickTableRow(edaUser.name);
-      cy.hasTitle(edaUser.name);
+      cy.clickTableRow(edaUser.username);
+      cy.hasTitle(edaUser.username);
       cy.clickButton(/^Details$/);
-      cy.get('#name').should('contain', edaUser.name);
+      cy.get('#name').should('contain', edaUser.username);
       cy.deleteEdaUser(edaUser);
     });
   });
   it.skip('can filter the Users list based on Name', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
-      cy.filterTableByText(edaUser.name);
-      cy.get('td[data-label="Name"]').should('contain', edaUser.name);
+      cy.filterTableByText(edaUser.username);
+      cy.get('td[data-label="Name"]').should('contain', edaUser.username);
       cy.deleteEdaUser(edaUser);
     });
   });
@@ -32,8 +32,8 @@ describe('EDA Users List', () => {
     cy.createEdaUser().then((edaUser1) => {
       cy.createEdaUser().then((edaUser2) => {
         cy.navigateTo(/^Users$/);
-        cy.selectTableRow(edaUser1.name);
-        cy.selectTableRow(edaUser2.name);
+        cy.selectTableRow(edaUser1.username);
+        cy.selectTableRow(edaUser2.username);
         cy.clickToolbarKebabAction(/^Delete selected users$/);
         cy.intercept('DELETE', `/api/eda/v1/users/${edaUser1.id}/`).as('edaUser1');
         cy.intercept('DELETE', `/api/eda/v1/users/${edaUser2.id}/`).as('edaUser2');
@@ -53,7 +53,7 @@ describe('EDA Users List', () => {
   it.skip('deletes a User from kebab menu from the project details page', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
-      cy.selectTableRow(edaUser.name);
+      cy.selectTableRow(edaUser.username);
       cy.clickToolbarKebabAction(/^Delete selected users$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
