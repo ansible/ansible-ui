@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import { EdaCredentialCell } from '../../credentials/components/EdaCredentialCell';
 
 export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ export function useDecisionEnvironmentColumns() {
   return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
     () => [
       {
-        header: t('Image name'),
+        header: t('Name'),
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
@@ -37,6 +38,20 @@ export function useDecisionEnvironmentColumns() {
         table: ColumnTableOption.Description,
         card: 'description',
         list: 'description',
+      },
+      {
+        header: t('Image Url'),
+        cell: (decisionEnvironment) => (
+          <TextCell text={decisionEnvironment.image_url} to={decisionEnvironment.image_url} />
+        ),
+        value: (decisionEnvironment) => decisionEnvironment.image_url,
+      },
+      {
+        header: t('Credential'),
+        cell: (activation) => <EdaCredentialCell id={activation.credential} />,
+        value: (activation) => activation.credential,
+        // table: ColumnTableOption.Expanded,
+        list: 'secondary',
       },
       {
         header: t('Created'),
