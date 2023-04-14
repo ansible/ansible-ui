@@ -1,5 +1,11 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { CubesIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  CubesIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  RedoIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -17,21 +23,22 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
-import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { formatDateString } from '../../../framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
+import { StatusLabelCell } from '../common/StatusLabelCell';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
-import {
-  useDisableActivation,
-  useRelaunchActivation,
-  useRestartActivation,
-} from './hooks/useActivationDialogs';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
+import {
+  useDisableRulebookActivations,
+  useEnableRulebookActivations,
+  useRestartRulebookActivations,
+} from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 
 // eslint-disable-next-line react/prop-types
@@ -39,51 +46,82 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const relaunchActivation = useRelaunchActivation();
-  const restartActivation = useRestartActivation();
-  const disableActivation = useDisableActivation();
+
+  const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
+    `${API_PREFIX}/activations/${params.id ?? ''}/`
+  );
+
+  const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
+    if (restarted.length > 0) {
+      refresh();
+    }
+  });
+
+  const enableRulebookActivation = useEnableRulebookActivations((enabled) => {
+    if (enabled.length > 0) {
+      refresh();
+    }
+  });
+
+  const disableRulebookActivation = useDisableRulebookActivations((disabled) => {
+    if (disabled.length > 0) {
+      refresh();
+    }
+  });
+
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
       navigate(RouteObj.EdaRulebookActivations);
     }
   });
-
-  const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${params.id ?? ''}/`
-  );
-
-  const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(
-    () => [
+  const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
+    const actions: IPageAction<EdaRulebookActivation>[] = [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: 'Relaunch',
-        onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
+        icon: PlusCircleIcon,
+        label: 'Enable rulebook activation',
+        isDanger: false,
+        isHidden: (activation: EdaRulebookActivation) => !!activation.is_enabled,
+        onClick: (activation: EdaRulebookActivation) => enableRulebookActivation([activation]),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: 'Restart',
-        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
+        icon: MinusCircleIcon,
+        label: 'Disable rulebook activation',
+        isDanger: false,
+        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
+        onClick: (activation: EdaRulebookActivation) => disableRulebookActivation([activation]),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: 'Disable',
-        onClick: (activation: EdaRulebookActivation) => disableActivation(activation),
+        icon: RedoIcon,
+        label: 'Restart rulebook activation',
+        isDanger: false,
+        isHidden: (activation: EdaRulebookActivation) =>
+          !activation.is_enabled || activation.restart_policy !== 'always',
+        onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete rulebookActivation'),
+        label: t('Delete rulebook activation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
       },
-    ],
-    [relaunchActivation, restartActivation, deleteRulebookActivations, disableActivation, t]
-  );
+    ];
+    return actions;
+  }, [
+    enableRulebookActivation,
+    disableRulebookActivation,
+    restartRulebookActivation,
+    deleteRulebookActivations,
+    t,
+  ]);
 
   const renderActivationDetailsTab = (
     rulebookActivation: EdaRulebookActivation | undefined
@@ -132,8 +170,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 rulebookActivation?.project?.name || ''
               )}
             </PageDetail>
-            <PageDetail label={t('Activation status')}>
-              {rulebookActivation?.status || ''}
+            <PageDetail label={t('Status')}>
+              <StatusLabelCell status={rulebookActivation?.status || ''} />
             </PageDetail>
             <PageDetail label={t('Project git hash')}>
               {rulebookActivation?.project?.git_hash || ''}
@@ -151,7 +189,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 ? formatDateString(rulebookActivation?.created_at)
                 : ''}
             </PageDetail>
-            <PageDetail label={t('Modified')}>
+            <PageDetail label={t('Last modified')}>
               {rulebookActivation?.modified_at
                 ? formatDateString(rulebookActivation?.modified_at)
                 : ''}
