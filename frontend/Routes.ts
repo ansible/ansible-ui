@@ -88,7 +88,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   ManagementJobs: `${awxRoutePrefix}/management-jobs`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
-  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/details/:id`,
+  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/:id/details`,
   CreateInstanceGroup: `${awxRoutePrefix}/instance-groups/create`,
   EditInstanceGroup: `${awxRoutePrefix}/instance-groups/edit/:id`,
 
