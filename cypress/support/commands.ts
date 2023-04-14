@@ -893,8 +893,8 @@ Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
 Cypress.Commands.add('getEdaUser', () => {
   cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/me/`).then((result) => {
     // This will take care of deleting the project and the associated org, inventory
-    if (Array.isArray(result?.results) && result.results.length === 1) {
-      return result.results[0];
+    if (Array.isArray(result?.results) && result?.results.length === 1) {
+      return result?.results[0];
     } else {
       return undefined;
     }

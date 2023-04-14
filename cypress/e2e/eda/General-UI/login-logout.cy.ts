@@ -13,13 +13,13 @@ describe('EDA Login / Logoff', () => {
         cy.intercept('GET', '/api/logout/').as('loggedOut');
         cy.uiLogout();
         cy.wait('@loggedOut').then((result) => {
-          expect(result.response.statusCode).to.eql(200);
+          expect(result?.response?.statusCode).to.eql(200);
         });
       } else {
         cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('loggedOut');
         cy.uiLogout();
         cy.wait('@loggedOut').then((result) => {
-          expect(result.response.statusCode).to.eql(204);
+          expect(result?.response?.statusCode).to.eql(204);
         });
       }
       if (Cypress.env('TEST_STANDALONE') === true) {
