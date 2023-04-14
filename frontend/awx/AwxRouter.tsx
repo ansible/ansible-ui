@@ -99,6 +99,7 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
         <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
+        <Route path={RouteObjWithoutPrefix.InstanceGroupDetails} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />
         <Route path={RouteObjWithoutPrefix.InstanceDetails} element={<InstanceDetails />} />
         <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
