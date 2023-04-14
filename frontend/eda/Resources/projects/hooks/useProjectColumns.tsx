@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnTableOption, CopyCell, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { StatusLabelCell } from '../../../common/StatusLabelCell';
 import { EdaProject } from '../../../interfaces/EdaProject';
@@ -27,6 +27,11 @@ export function useProjectColumns() {
         defaultSort: true,
       },
       {
+        header: t('Url'),
+        cell: (item) => <TextCell text={item.url} to={item.url} />,
+        value: (instance) => instance.url,
+      },
+      {
         header: t('Description'),
         type: 'description',
         value: (instance) => instance.description,
@@ -40,7 +45,8 @@ export function useProjectColumns() {
       },
       {
         header: t('Revision'),
-        cell: (project) => <TextCell text={project?.git_hash ? project.git_hash : ''} />,
+        cell: (project) => <CopyCell text={project?.git_hash ? project.git_hash : ''} />,
+        list: 'secondary',
       },
       {
         header: t('Created'),

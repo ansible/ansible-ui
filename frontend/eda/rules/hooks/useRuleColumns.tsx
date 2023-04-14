@@ -31,11 +31,13 @@ export function useRuleColumns() {
         header: t('Project'),
         cell: (rule) => <EdaProjectCell id={rule.project} />,
         value: (rule) => rule.project,
+        list: 'secondary',
       },
       {
         header: t('Rulebook'),
         cell: (rule) => <EdaRulebookCell id={rule.rulebook} />,
         value: (rule) => rule.rulebook,
+        list: 'secondary',
       },
       // {
       //   header: t('Ruleset'),

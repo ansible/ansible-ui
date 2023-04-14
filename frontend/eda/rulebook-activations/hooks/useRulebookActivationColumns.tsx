@@ -49,10 +49,17 @@ export function useRulebookActivationColumns() {
         defaultSort: true,
       },
       {
+        header: t('Rulebook'),
+        cell: (activation) => <EdaRulebookCell id={activation.rulebook_id} />,
+        value: (activation) => activation.rulebook_id,
+        // table: ColumnTableOption.Expanded,
+      },
+      {
         header: t('Project'),
         cell: (activation) => <EdaProjectCell id={activation.project_id} />,
         value: (activation) => activation.project_id,
         // table: ColumnTableOption.Expanded,
+        list: 'secondary',
       },
       {
         header: t('Decision Environment'),
@@ -61,12 +68,7 @@ export function useRulebookActivationColumns() {
         ),
         value: (activation) => activation.decision_environment_id,
         // table: ColumnTableOption.Expanded,
-      },
-      {
-        header: t('Rulebook'),
-        cell: (activation) => <EdaRulebookCell id={activation.rulebook_id} />,
-        value: (activation) => activation.rulebook_id,
-        // table: ColumnTableOption.Expanded,
+        list: 'secondary',
       },
       {
         header: t('Rules'),
