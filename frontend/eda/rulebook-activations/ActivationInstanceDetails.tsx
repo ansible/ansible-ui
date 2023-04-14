@@ -17,8 +17,8 @@ import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { PageDetailsSection } from '../common/PageDetailsSection';
-import React from 'react';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { ItemsResponse } from '../../common/crud/Data';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export function ActivationInstanceDetails() {
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/`
   );
 
-  const { data: activationInstanceLog } = useGet<EdaActivationInstanceLog>(
+  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
   );
 
@@ -53,18 +53,20 @@ export function ActivationInstanceDetails() {
           </PageDetail>
         </PageDetails>
         <PageDetailsSection>
-          <PageDetail label={t('Output')}>
-            <CodeBlock>
-              <CodeBlockCode
-                style={{
-                  minHeight: '150px',
-                }}
-                id="code-content"
-              >
-                {activationInstanceLog?.log || ''}
-              </CodeBlockCode>
-            </CodeBlock>
-          </PageDetail>
+          {activationInstanceLog?.results?.length && (
+            <PageDetail label={t('Output')}>
+              <CodeBlock>
+                <CodeBlockCode
+                  style={{
+                    minHeight: '150px',
+                  }}
+                  id="code-content"
+                >
+                  {activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
+                </CodeBlockCode>
+              </CodeBlock>
+            </PageDetail>
+          )}
         </PageDetailsSection>
       </Scrollable>
     );
