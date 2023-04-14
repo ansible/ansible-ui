@@ -156,7 +156,11 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
       />
-      <PageFormCodeEditor<JobTemplateForm> name="extra_vars" />
+      <PageFormCodeEditor<JobTemplateForm>
+        toggleLanguages={['yaml', 'json']}
+        label={t('Extra Variables')}
+        name="extra_vars"
+      />
       <PageFormTextInput<JobTemplateForm>
         placeholder={t('Add number of forks')}
         additionalControls={

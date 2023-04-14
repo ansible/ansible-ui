@@ -1,14 +1,23 @@
-import { Split } from '@patternfly/react-core';
-import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as monaco from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
-import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 'react-hook-form';
+import { setDiagnosticsOptions as setYamlDiagnosticOptions } from 'monaco-yaml';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  useForm,
+  UseFormClearErrors,
+  UseFormSetError,
+  Validate,
+} from 'react-hook-form';
 import { FormGroupTextInputProps, useSettings } from '../..';
+import { YAMLException } from 'js-yaml';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from './codeEditorUtils';
+import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
+import { useTranslation } from 'react-i18next';
 
 export type PageFormCodeEditorInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -16,24 +25,30 @@ export type PageFormCodeEditorInputProps<
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
-  isExpandable?: boolean;
-  defaultExpanded?: boolean;
+  toggleLanguages?: string[];
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 export function PageFormCodeEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
-  const { isReadOnly, validate, isExpandable, defaultExpanded, ...formGroupInputProps } = props;
+  const { isReadOnly, validate, toggleLanguages, ...formGroupInputProps } = props;
   const { label, name, isRequired } = props;
   const [isSelected, setIsSelected] = useState('yaml');
   const {
     control,
-    formState: { isSubmitting, isValidating },
-  } = useFormContext<TFieldValues>();
+    formState: { isSubmitting, isValidating, errors },
+    setError: setFormError,
+    clearErrors,
+  } = useForm<TFieldValues>();
+
+  useEffect(() => {
+    if (!errors[name]) {
+      clearErrors(name);
+    }
+  }, [errors, name, clearErrors]);
 
   const id = props.id ?? name.split('.').join('-');
-  const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -44,34 +59,34 @@ export function PageFormCodeEditor<
         return (
           <PageFormGroup
             {...formGroupInputProps}
-            label={
-              isExpandable ? (
-                <Split hasGutter style={{ alignItems: 'center' }}>
-                  <AngleRightIcon
-                    style={{
-                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                      transition: 'transform',
-                    }}
-                    onClick={() => setCollapsed((c) => !c)}
-                  />
-                  {props.label}
-                </Split>
-              ) : (
-                props.label
-              )
-            }
+            label={props.label}
             id={id}
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
-            {(!isExpandable || !isCollapsed) && (
-              <MonacoEditor
-                id={id}
-                value={value as unknown as string}
-                onChange={onChange}
-                isReadOnly={isReadOnly || isSubmitting}
-                invalid={!(validate && isValidating) && error?.message !== undefined}
-              />
+            {toggleLanguages?.length && (
+              <ToggleGroup isCompact>
+                {toggleLanguages.map((language) => (
+                  <ToggleGroupItem
+                    key={language}
+                    isSelected={isSelected === language}
+                    onChange={() => setIsSelected(language)}
+                    text="JSON"
+                    isDisabled={Boolean(errors[name])}
+                  />
+                ))}
+              </ToggleGroup>
             )}
+            <MonacoEditor<TFieldValues, TFieldName>
+              setError={setFormError}
+              clearErrors={clearErrors}
+              id={id}
+              name={name}
+              language={isSelected}
+              value={value as unknown as string}
+              onChange={onChange}
+              isReadOnly={isReadOnly || isSubmitting}
+              invalid={!(validate && isValidating) && error?.message !== undefined}
+            />
           </PageFormGroup>
         );
       }}
@@ -89,16 +104,21 @@ export function PageFormCodeEditor<
   );
 }
 
-export function MonacoEditor(props: {
-  id?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  isReadOnly?: boolean;
-  invalid?: boolean;
-  language: string;
-}) {
-  const { onChange, language } = props;
-
+export function MonacoEditor<
+  TFieldValues extends FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(
+  props: PageFormCodeEditorInputProps<TFieldValues, TFieldName> & {
+    language: string;
+    setError: UseFormSetError<TFieldValues>;
+    clearErrors: UseFormClearErrors<TFieldValues>;
+    invalid?: boolean;
+    value?: string;
+    onChange?: (value: string) => void;
+  }
+) {
+  const { onChange, language, setError, name, clearErrors } = props;
+  const { t } = useTranslation();
   const divEl = useRef<HTMLDivElement>(null);
 
   const editorRef = useRef<{
@@ -108,26 +128,25 @@ export function MonacoEditor(props: {
   const settings = useSettings();
 
   useEffect(() => {
-    let editor: monaco.editor.IStandaloneCodeEditor;
-    window.MonacoEnvironment = {
-      getWorker(moduleId, label) {
-        switch (label) {
-          case 'editorWorkerService':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url)
-            );
-          case 'json':
-            return new Worker(
-              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url)
-            );
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+    });
 
-          case 'yaml':
-            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url));
-          default:
-            throw new Error(`Unknown label ${label}`);
-        }
-      },
-    };
+    setYamlDiagnosticOptions({
+      validate: true,
+      format: true,
+      schemas: [
+        {
+          uri: '',
+          fileMatch: [],
+          schema: {
+            type: 'object',
+            properties: {},
+            additionalProperties: true,
+          },
+        },
+      ],
+    });
 
     monaco.editor.defineTheme('my-dark', {
       base: 'vs-dark',
@@ -150,6 +169,31 @@ export function MonacoEditor(props: {
       },
       rules: [],
     });
+  }, []);
+
+  useEffect(() => {
+    window.MonacoEnvironment = {
+      getWorker(moduleId, label) {
+        switch (label) {
+          case 'editorWorkerService':
+            return new Worker(
+              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url)
+            );
+          case 'json':
+            return new Worker(
+              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url)
+            );
+          case 'yaml':
+            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url));
+          default:
+            throw new Error(`Unknown label ${label}`);
+        }
+      },
+    };
+  }, [language]);
+
+  useEffect(() => {
+    let editor: monaco.editor.IStandaloneCodeEditor;
 
     if (divEl.current) {
       editor = monaco?.editor?.create(divEl.current, {
@@ -157,39 +201,12 @@ export function MonacoEditor(props: {
         lineNumbers: 'on',
         theme: 'my-dark',
         lineDecorationsWidth: 8,
-        // lineNumbersMinChars: 0,
-        // glyphMargin: false,
-        // folding: false,
         padding: { top: 6, bottom: 8 },
         fontSize: 14,
         fontFamily: 'RedHatMono',
         scrollBeyondLastLine: false,
         minimap: { enabled: false },
         renderLineHighlightOnlyWhenFocus: true,
-      });
-
-      monaco.editor.setModelLanguage(monaco.editor.getModels()[0], language);
-
-      monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-        validate: true,
-      });
-
-      const yamlModelUri = monaco.Uri.parse('a://b/foo.yaml');
-      setYamlDiagnosticOptions({
-        validate: true,
-        format: true,
-        enableSchemaRequest: true,
-        schemas: [
-          {
-            uri: 'http://myserver/foo-schema.json',
-            fileMatch: [String(yamlModelUri)],
-            schema: {
-              type: 'object',
-              properties: {},
-              additionalProperties: true,
-            },
-          },
-        ],
       });
 
       editorRef.current.editor = editor;
@@ -211,47 +228,21 @@ export function MonacoEditor(props: {
   }, [props.value, language]);
 
   useEffect(() => {
-    if (editorRef.current?.editor) {
-      editorRef.current.editor.updateOptions({ readOnly: props.isReadOnly });
-    }
-  }, [props.isReadOnly]);
-  monaco.editor.onDidChangeMarkers((e) => {
-    ///////////////////////
-    const markers = monaco.editor.getModelMarkers({
-      owner: monaco.editor?.getModels()[0]?.getLanguageId(),
-    });
-    console.log(markers, e, 'ondidchange  markers');
-    ///////////////////////
-  });
-  const markers = monaco.editor.getModelMarkers({
-    owner: monaco.editor?.getModels()[0]?.getLanguageId(),
-  });
-  console.log(markers, 'ondidchange  markers');
-
-  useEffect(() => {
     const currentValue: string | object | undefined = editorRef?.current?.editor?.getValue();
-
     if (currentValue) {
-      // if (isJsonObject(currentValue) && language === 'json') {
-      //   return;
-      // }
       if (isJsonString(currentValue) && language === 'json') {
         editorRef.current?.editor?.setValue(currentValue);
       }
       if (!(isJsonObject(currentValue) && isJsonString(currentValue)) && language === 'json') {
-        console.log('here', currentValue);
-        try {
-          // const jsonValue: Record<string, unknown> = JSON.parse(jsonString);
-          editorRef.current?.editor?.setValue(yamlToJson(currentValue));
-        } catch (error) {
-          console.log(error);
+        editorRef.current?.editor?.setValue(yamlToJson(currentValue));
+      }
+
+      if (language === 'yaml') {
+        if (isJsonObject(currentValue)) {
+          editorRef.current?.editor?.setValue(jsonToYaml(JSON.parse(currentValue) as string));
+        } else {
+          editorRef.current?.editor?.setValue(jsonToYaml(currentValue));
         }
-      }
-      if (language === 'yaml' && isJsonObject(currentValue)) {
-        editorRef.current?.editor?.setValue(jsonToYaml(currentValue));
-      }
-      if (language === 'yaml' && isJsonString(currentValue)) {
-        editorRef.current?.editor?.setValue(jsonToYaml(currentValue));
       }
     }
   }, [language]);
@@ -269,16 +260,43 @@ export function MonacoEditor(props: {
       });
     }
   }, [settings.activeTheme]);
-  const handleFormatting = async () => {
-    await editorRef?.current?.editor?.getAction('editor.action.formatDocument')?.run();
-  };
+
+  monaco.editor.onDidChangeMarkers(() => {
+    const markers = monaco.editor.getModelMarkers({
+      owner: monaco.editor?.getModels()[0]?.getLanguageId(),
+    });
+
+    if (markers?.length > 0) {
+      setError(name, { message: markers.map((marker) => marker.message).join('\n') });
+    } else {
+      clearErrors(name);
+    }
+  });
+
+  const handleValidation = useCallback(async () => {
+    try {
+      await editorRef?.current?.editor?.getAction('editor.action.formatDocument')?.run();
+    } catch (err) {
+      if (err instanceof YAMLException || Object.prototype.hasOwnProperty.call(err, 'message'))
+        setError(name, { message: (err as { message: string }).message });
+      else {
+        setError(name, { message: t('Unknown error occurred') });
+      }
+    }
+  }, [name, setError, t]);
+
   return (
     <div
       className={`pf-c-form-control`}
       style={{ padding: 0, height: 400 }}
       aria-invalid={props.invalid ? 'true' : undefined}
     >
-      <div id={props.id} ref={divEl} onBlur={handleFormatting} style={{ height: '100%' }}></div>
+      <div
+        id={props.id}
+        ref={divEl}
+        onBlur={() => void handleValidation()}
+        style={{ height: '100%' }}
+      ></div>
     </div>
   );
 }
