@@ -10,12 +10,12 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import './rest-commands';
 
 declare global {
@@ -450,7 +450,7 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
 
 //Uses a certain label string to identify the title of the page.
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
-  cy.contains('.pf-c-title', label);
+  cy.contains('.pf-c-title').should('contain', label);
 });
 
 //Uses a certain label string to identify the alert showing on the screen.
