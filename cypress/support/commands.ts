@@ -3,12 +3,12 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
@@ -457,7 +457,7 @@ Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
-  cy.contains('.pf-c-title').should('contain', label);
+  cy.get('.pf-c-title').should('contain', label);
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
