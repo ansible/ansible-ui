@@ -5,6 +5,11 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
+  it('can render the decision environments list page', () => {
+    cy.navigateTo(/^Decision environments$/);
+    cy.hasTitle(/^DecisionEnvironments$/);
+  });
+
   it('can create an decision environment and assert the information showing on the details page', () => {
     const de_name = 'E2E Decision Environment ' + randomString(4);
     cy.navigateTo(/^Decision environments$/);
