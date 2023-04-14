@@ -15,6 +15,7 @@ import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import './rest-commands';
 
 declare global {
@@ -251,6 +252,24 @@ declare global {
        * @returns {Chainable<EdaUser>}
        */
       getEdaUserByName(edaUserName: string): Chainable<EdaUser | undefined>;
+
+      /**
+       * Creates a DE and returns the same
+       */
+      createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
+
+      /**
+       * Retrieves a DE by name
+       */
+      getEdaDecisionEnvironmentByName(
+        edaDEName: string
+      ): Chainable<EdaDecisionEnvironment | undefined>;
+
+      /**
+       * Deletes a DE which is provided
+       */
+      deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
+      waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
     }
   }
 }
@@ -938,3 +957,61 @@ Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
     }
   });
 });
+Cypress.Commands.add('createEdaDecisionEnvironment', () => {
+  cy.requestPost<EdaDecisionEnvironment>('/api/eda/v1/decision-environments/', {
+    name: 'E2E Decision Environment ' + randomString(4),
+    image_url: 'quay.io/ansible/ansible-rulebook:main',
+  }).then((edaDE) => {
+    Cypress.log({
+      displayName: 'EDA DECISION CREATION :',
+      message: [`Created 👉  ${edaDE.name}`],
+    });
+    return edaDE;
+  });
+});
+
+Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
+  cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+    `/api/eda/v1/decision-environments/?name=${edaDEName}`
+  ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
+    }
+  });
+});
+
+Cypress.Commands.add(
+  'deleteEdaDecisionEnvironment',
+  (decisionEnvironment: EdaDecisionEnvironment) => {
+    //cy.waitEdaDESync(decisionEnvironment);
+    cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, true).then(
+      () => {
+        Cypress.log({
+          displayName: 'EDA DECISION ENVIRONMENT DELETION :',
+          message: [`Deleted 👉  ${decisionEnvironment.name}`],
+        });
+      }
+    );
+  }
+);
+
+/*
+Cypress.Commands.add('waitEdaDESync', (decisionEnvironment) => {
+  cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+    `/api/eda/v1/decision-environments/?name=${decisionEnvironment.name}`
+  ).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      const project = result.results[0];
+      if (project.import_state !== 'completed') {
+        cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+      } else {
+        cy.wrap(project);
+      }
+    } else {
+      cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+    }
+  });
+});
+*/
