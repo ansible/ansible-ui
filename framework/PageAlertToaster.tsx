@@ -1,5 +1,5 @@
 import { Alert, AlertActionCloseButton, AlertGroup, AlertProps } from '@patternfly/react-core';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { ReactNode, createContext, useContext, useState } from 'react';
 
 export interface IPageAlertToaster {
   addAlert: (alert: AlertProps) => void;
@@ -76,4 +76,20 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       {props.children}
     </PageAlertToasterContext.Provider>
   );
+}
+
+export function errorToAlertProps(err: unknown): AlertProps {
+  if (err instanceof Error) {
+    return {
+      title: err.message,
+      variant: 'danger',
+      timeout: 2000,
+    };
+  } else {
+    return {
+      title: 'Unknown',
+      variant: 'danger',
+      timeout: 2000,
+    };
+  }
 }
