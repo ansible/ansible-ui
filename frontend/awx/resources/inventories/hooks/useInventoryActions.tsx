@@ -48,6 +48,7 @@ export function useInventoryActions({
         selection: PageActionSelection.Single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
         onClick: (inventory) =>
