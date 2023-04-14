@@ -33,7 +33,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   );
   const restartActivation = useCallback(
     (rulebookActivation: EdaRulebookActivation) =>
-      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined)
+      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/restart/`, undefined)
         .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
         .finally(void view.refresh()),
     [alertToaster, view]
