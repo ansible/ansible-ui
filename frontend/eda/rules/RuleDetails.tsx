@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
@@ -19,11 +19,13 @@ import {
   PageTabs,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
+import { useGet } from '../../common/crud/useGet';
+import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
+import { EdaRulebookCell } from '../rulebooks/components/EdaRulebookCell';
 
 export function RuleDetails() {
   const { t } = useTranslation();
@@ -64,24 +66,14 @@ export function RuleDetails() {
         <PageDetails>
           <PageDetail label={t('Name')}>{rule?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{rule?.description || ''}</PageDetail>
-          <PageDetail label={t('Rule set')}>{rule?.ruleset?.name || ''}</PageDetail>
+          {/* <PageDetail label={t('Rule set')}>
+            <EdaRuleSetCell />
+          </PageDetail> */}
           <PageDetail label={t('Project')}>
-            {rule?.project && rule.project?.id ? (
-              <Link to={RouteObj.EdaProjectDetails.replace(':id', `${rule.project?.id || ''}`)}>
-                {rule?.project?.name}
-              </Link>
-            ) : (
-              rule?.project?.name || ''
-            )}
+            <EdaProjectCell id={rule?.project} />
           </PageDetail>
           <PageDetail label={t('Rulebook')}>
-            {rule?.rulebook && rule.rulebook?.id ? (
-              <Link to={RouteObj.EdaRulebookDetails.replace(':id', `${rule.rulebook?.id || ''}`)}>
-                {rule?.rulebook?.name}
-              </Link>
-            ) : (
-              rule?.rulebook?.name || ''
-            )}
+            <EdaRulebookCell id={rule?.project} />
           </PageDetail>
 
           <PageDetail label={t('Rule type')}>{rule?.type || ''}</PageDetail>

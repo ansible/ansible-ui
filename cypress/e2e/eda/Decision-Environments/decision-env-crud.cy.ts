@@ -7,13 +7,13 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can render the decision environments list page', () => {
     cy.navigateTo(/^Decision environments$/);
-    cy.hasTitle(/^DecisionEnvironments$/);
+    cy.hasTitle(/^Decision environments$/);
   });
 
   it('can create an decision environment and assert the information showing on the details page', () => {
     const de_name = 'E2E Decision Environment ' + randomString(4);
     cy.navigateTo(/^Decision environments$/);
-    cy.get('h1').should('contain', 'DecisionEnvironments');
+    cy.hasTitle(/^Decision environments$/);
     cy.clickButton(/^Create decision environment$/);
     cy.typeInputByLabel(/^Name$/, de_name);
     cy.typeInputByLabel(/^Registry URL$/, 'quay.io/ansible/ansible-rulebook:main');
@@ -32,7 +32,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
   it('can verify edit functionality of a decision environment', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo(/^Decision environments$/);
-      cy.get('h1').should('contain', 'DecisionEnvironments');
+      cy.hasTitle(/^Decision environments$/);
       /*
       DE's are displayed by default in card view hence clickTableRow() doesn't work 
       cy.clickTableRow(edaDE.name);
@@ -57,7 +57,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
   it('can delete a decision environment from the details page', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo(/^Decision environments$/);
-      cy.get('h1').should('contain', 'DecisionEnvironments');
+      cy.hasTitle(/^Decision environments$/);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).within(() => {
         cy.get('a').click();
@@ -69,8 +69,8 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.clickModalButton('Delete decision environments');
       cy.wait('@deleteDE').then((deleteDE) => {
         expect(deleteDE?.response?.statusCode).to.eql(204);
-        cy.hasTitle(/^DecisionEnvironments$/);
       });
+      cy.hasTitle(/^Decision environments$/);
     });
   });
 });

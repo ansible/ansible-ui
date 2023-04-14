@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { EdaRule } from '../interfaces/EdaRule';
-import { useRuleColumns } from './hooks/useRuleColumns';
-import { useRuleFilters } from './hooks/useRuleFilters';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
+import { EdaRule } from '../interfaces/EdaRule';
 import { useEdaView } from '../useEventDrivenView';
+import { useRuleColumns } from './hooks/useRuleColumns';
+import { useRuleFilters } from './hooks/useRuleFilters';
 
 export function Rules() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function Rules() {
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
-        defaultSubtitle={t('Rules')}
+        defaultSubtitle={t('Rule')}
       />
     </PageLayout>
   );
