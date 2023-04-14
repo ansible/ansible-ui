@@ -128,7 +128,7 @@ interface ITableColumnCommon<T extends object> {
 //** Column that renders using a render function that returns a ReactNode. */
 export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
   type?: undefined;
-  value?: CellFn<T, string | string[] | number | boolean>;
+  value?: CellFn<T, string | string[] | number | boolean | undefined | null>;
   cell: CellFn<T, ReactNode | undefined>;
 }
 

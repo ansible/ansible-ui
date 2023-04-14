@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 
@@ -32,14 +32,29 @@ export function useDecisionEnvironmentColumns() {
       },
       {
         header: t('Description'),
-        cell: (decisionEnvironment) => (
-          <TextCell
-            text={decisionEnvironment?.description ? decisionEnvironment.description : ''}
-          />
-        ),
+        type: 'description',
+        value: (decisionEnvironment) => decisionEnvironment.description,
+        table: ColumnTableOption.Description,
+        card: 'description',
+        list: 'description',
+      },
+      {
+        header: t('Created'),
+        type: 'datetime',
+        value: (instance) => instance.created_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+      },
+      {
+        header: t('Last modified'),
+        type: 'datetime',
+        value: (instance) => instance.modified_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
       },
     ],
-
     [navigate, t]
   );
 }

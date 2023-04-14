@@ -148,7 +148,7 @@ export function EditDecisionEnvironment() {
         <PageHeader
           title={t('Create decision environment')}
           breadcrumbs={[
-            { label: t('DecisionEnvironments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
             { label: t('Create decision environment') },
           ]}
         />

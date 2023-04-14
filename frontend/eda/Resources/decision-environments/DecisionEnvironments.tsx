@@ -38,7 +38,7 @@ export function DecisionEnvironments() {
         emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
-        defaultSubtitle={t('Decision Environment')}
+        defaultSubtitle={t('Decision environment')}
       />
     </PageLayout>
   );
