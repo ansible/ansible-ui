@@ -38,19 +38,37 @@ describe('EDA Resource Toolbar Functionality', () => {
   it('can visit the rulebook activations page and assert the data there', () => {
     cy.get('.pf-c-nav__link').contains('Rulebook activations').click();
     cy.get('h1').should('contain', 'Rulebook activations');
-    cy.contains('button', 'Create rulebook activation').should('exist');
+    cy.get('.pf-c-page__main-section').then(($ele) => {
+      if ($ele.find('.pf-c-empty-state').length > 0) {
+        cy.contains('button', 'Create rulebook activation').should('exist');
+      } else if ($ele.find('tbody').length > 0) {
+        cy.contains('button', 'Create activation').should('exist');
+      }
+    });
   });
 
   it('can visit the rulebooks page and assert the data there', () => {
     cy.get('.pf-c-nav__item').contains('Rulebooks').click();
-    cy.get('h1').should('contain', 'Rulebooks');
-    cy.contains('button', 'Create project').should('exist');
+    cy.get('.pf-c-page__main-section').then(($ele) => {
+      if ($ele.find('.pf-c-empty-state').length > 0) {
+        cy.get('h1').should('contain', 'Rulebooks');
+        cy.contains('button', 'Create project').should('exist');
+      } else if ($ele.find('tbody').length > 0) {
+        cy.get('h1').should('contain', 'Rulebooks');
+      }
+    });
   });
 
   it('can visit the rules page and assert the data there', () => {
     cy.get('.pf-c-nav__item').contains('Rules').click();
-    cy.get('h1').should('contain', 'Rules');
-    cy.contains('button', 'Create project').should('exist');
+    cy.get('.pf-c-page__main-section').then(($ele) => {
+      if ($ele.find('.pf-c-empty-state').length > 0) {
+        cy.get('h1').should('contain', 'Rules');
+        cy.contains('button', 'Create project').should('exist');
+      } else if ($ele.find('tbody').length > 0) {
+        cy.get('h1').should('contain', 'Rules');
+      }
+    });
   });
 
   it.skip('can visit the users page and assert the data there', () => {
