@@ -26,7 +26,7 @@ declare global {
         password: string,
         serverType: string
       ): Chainable<void>;
-      uiLogout(): Chainable<EdaUser | undefined>;
+      edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
