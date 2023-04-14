@@ -18,8 +18,8 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
 
-  return useMemo<IPageAction<Inventory>[]>(
-    () => [
+  return useMemo<IPageAction<Inventory>[]>(() => {
+    const actions: IPageAction<Inventory>[] = [
       {
         type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
@@ -32,22 +32,23 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
             : t(
                 'You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.'
               ),
+        selection: PageActionSelection.None,
         actions: [
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create inventory'),
             onClick: () => navigate(RouteObj.CreateInventory),
           },
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create smart inventory'),
             onClick: () => navigate(RouteObj.CreateSmartInventory),
           },
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create constructed inventory'),
             onClick: () => navigate(RouteObj.CreateConstructedInventory),
           },
@@ -61,7 +62,8 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
         onClick: deleteInventories,
         isDanger: true,
       },
-    ],
-    [canCreateInventory, deleteInventories, navigate, t]
-  );
+    ];
+
+    return actions;
+  }, [canCreateInventory, deleteInventories, navigate, t]);
 }

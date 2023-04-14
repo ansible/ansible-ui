@@ -5,6 +5,7 @@ import { PageActionButton } from './PageActionButton';
 import { PageActionDropdown } from './PageActionDropdown';
 import { PageActionLink } from './PageActionLink';
 import { PageActionSwitch } from './PageActionSwitch';
+import { usePageActionDisabled } from './PageActionUtils';
 
 interface PageActionsPinnedProps<T extends object> {
   actions: IPageAction<T>[];
@@ -56,7 +57,7 @@ interface PageActionPinnedProps<T extends object> {
 
 export function PageActionPinned<T extends object>(props: PageActionPinnedProps<T>): JSX.Element {
   const { action, selectedItems, selectedItem, wrapper, onOpen } = props;
-  // const isPageActionDisabled = usePageActionDisabled<T>();
+  const isPageActionDisabled = usePageActionDisabled<T>();
 
   switch (action.type) {
     case PageActionType.Seperator:
@@ -95,6 +96,8 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
       );
 
     case PageActionType.Dropdown: {
+      const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
+      const tooltip = isDisabled ? isDisabled : action.tooltip ? action.tooltip : action.label;
       return (
         <PageActionDropdown<T>
           icon={action.icon}
@@ -104,10 +107,9 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
           selectedItems={selectedItems}
           iconOnly={props.iconOnly}
           position={DropdownPosition.right}
-          tooltip={action.label}
-          // tooltip={isPageActionDisabled(action, selectedItem, selectedItems)}
-          // variant={action.variant}
-          // isPrimary={action.variant === ButtonVariant.primary && !selectedItems?.length}
+          tooltip={tooltip}
+          isDisabled={isDisabled}
+          variant={action.variant}
           onOpen={onOpen}
         />
       );
