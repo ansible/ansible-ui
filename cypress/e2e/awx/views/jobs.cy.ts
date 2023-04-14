@@ -51,7 +51,7 @@ describe('jobs', () => {
       .parent()
       .within(() => {
         // Relaunch job
-        cy.get('button[aria-label="Relaunch job"]').should('exist');
+        cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
         // Delete job
         cy.get('.pf-c-dropdown__menu-item')
@@ -98,7 +98,7 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
-      cy.clickTableRowAction(jobName, /^Delete job$/, false);
+      cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
@@ -132,12 +132,10 @@ describe('jobs', () => {
 
   it('relaunches job and navigates to job output', () => {
     cy.navigateTo(/^Jobs$/);
+    const jobId = job.id ? job.id.toString() : '';
     const jobName = job.name ? job.name : '';
-    cy.contains('td', jobName)
-      .parent()
-      .within(() => {
-        cy.get('button.relaunch-job').click();
-      });
+    cy.filterTableByTypeAndText('ID', jobId);
+    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
     cy.hasTitle(jobName).should('be.visible');
     cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
     // Clean up newly launched job

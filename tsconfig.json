@@ -21,7 +21,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
     // "isolatedModules": true
     // "strictNullChecks": true
   },

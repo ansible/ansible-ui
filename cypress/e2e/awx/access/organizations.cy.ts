@@ -19,10 +19,10 @@ describe('organizations', () => {
   after(() => {
     cy.deleteAwxOrganization(organization);
     // Sometimes if tests are stopped in the middle, we get left over organizations
-    // Cleanup E2E organizations older than 2 hours
+    // Cleanup E2E organizations older than 20 minutes
     cy.requestGet<ItemsResponse<Organization>>(
-      `/api/v2/organizations/?limit=100&created__lt=${new Date(
-        Date.now() - 2 * 60 * 60 * 1000
+      `/api/v2/organizations/?page_size=100&created__lt=${new Date(
+        Date.now() - 20 * 60 * 1000
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {
@@ -83,14 +83,14 @@ describe('organizations', () => {
 
   it('navigates to the edit form from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/);
-    cy.clickTableRowAction(organization.name, /^Edit organization$/);
+    cy.clickTableRowKebabAction(organization.name, /^Edit organization$/);
     cy.hasTitle(/^Edit organization$/);
   });
 
   it('deletes an organization from the organizations list row item', () => {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo(/^Organizations$/);
-      cy.clickTableRowAction(testOrganization.name, /^Delete organization$/);
+      cy.clickTableRowKebabAction(testOrganization.name, /^Delete organization$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);

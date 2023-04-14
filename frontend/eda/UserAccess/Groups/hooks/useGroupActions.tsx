@@ -2,7 +2,7 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { IEdaView } from '../../../useEventDrivenView';
@@ -15,14 +15,16 @@ export function useGroupActions(view: IEdaView<EdaGroup>) {
   return useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit Group'),
         onClick: (Group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', Group.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete Group'),
         onClick: (Group: EdaGroup) => deleteGroups([Group]),

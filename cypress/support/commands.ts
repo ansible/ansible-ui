@@ -26,7 +26,7 @@ declare global {
         password: string,
         serverType: string
       ): Chainable<void>;
-      uiLogout(): Chainable<EdaUser | undefined>;
+      edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
@@ -73,9 +73,16 @@ declare global {
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
-      clickTableRowAction(
+      clickTableRowKebabAction(
         name: string | RegExp,
         label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by label. */
+      clickTableRowPinnedAction(
+        name: string | RegExp,
+        label: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -288,7 +295,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uiLogout', () => {
+Cypress.Commands.add('edaLogout', () => {
   cy.get('.pf-c-dropdown__toggle')
     .eq(1)
     .click()
@@ -388,7 +395,9 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').clear().type(text, { delay: 0 });
+  cy.get('#filter-input').within(() => {
+    cy.get('input').clear().type(text, { delay: 0 });
+  });
   cy.get('[aria-label="apply filter"]').click();
 });
 
@@ -459,11 +468,23 @@ Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boole
 });
 
 Cypress.Commands.add(
-  'clickTableRowAction',
+  'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'clickTableRowPinnedAction',
+  (name: string | RegExp, label: string, filter?: boolean) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();

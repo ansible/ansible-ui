@@ -18,7 +18,7 @@ import {
 } from 'react-hook-form';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 const ChipHolder = styled.div`

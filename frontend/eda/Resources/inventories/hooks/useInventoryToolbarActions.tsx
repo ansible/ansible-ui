@@ -1,7 +1,7 @@
 import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteInventories } from './useDeleteInventories';
@@ -12,7 +12,8 @@ export function useInventoriesToolbarActions(view: IEdaView<EdaInventory>) {
   const toolbarActions = useMemo<IPageAction<EdaInventory>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected inventories'),
         onClick: (inventories: EdaInventory[]) => deleteInventories(inventories),
