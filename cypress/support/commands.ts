@@ -393,9 +393,7 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').within(() => {
-    cy.get('input').clear().type(text, { delay: 0 });
-  });
+  cy.get('#filter-input').clear().type(text, { delay: 0 });
   cy.get('[aria-label="apply filter"]').click();
 });
 
