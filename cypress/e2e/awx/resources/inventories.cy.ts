@@ -8,27 +8,33 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/generated-fro
 describe('inventories', () => {
   let organization: Organization;
   let inventory: Inventory;
+  let instanceGroup: InstanceGroup;
+  let label: Label;
 
   before(() => {
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxLabel(organization).then((lbl) => {
+        label = lbl;
+      });
     });
 
     cy.createAwxInventory().then((inv) => {
       inventory = inv;
     });
+
+    cy.createAwxInstanceGroup().then((ig) => {
+      instanceGroup = ig;
+    });
   });
 
   after(() => {
+    cy.deleteAwxInstanceGroup(instanceGroup);
+    cy.deleteAwxLabel(label);
     cy.deleteAwxOrganization(organization);
     cy.deleteAwxInventory(inventory);
-  });
-
-  it('can render the inventories list page', () => {
-    cy.navigateTo(/^Inventories$/);
-    cy.hasTitle(/^Inventories$/);
   });
 
   it('can render the inventories list page', () => {
@@ -56,40 +62,32 @@ describe('inventories', () => {
   });
 
   it('edits an inventory from the inventory list row item', () => {
-    cy.createAwxInstanceGroup().then((ig) => {
-      const instanceGroup: InstanceGroup = ig;
-      cy.navigateTo(/^Inventories$/);
-      cy.clickTableRowActionIcon(inventory?.name, 'Edit inventory');
-      cy.get('input[aria-label="Add instance groups"]')
-        .parent()
-        .within(() => {
-          cy.get('button[aria-label="Options menu"]').click();
-        });
-      const igName = instanceGroup?.name;
-      if (igName) {
-        cy.selectTableRowInDialog(igName);
-        cy.contains('button', 'Confirm').click();
-        cy.contains('button', 'Save inventory').click();
-        cy.hasTitle(inventory.name);
-        cy.hasDetail(/^Instance groups$/, igName);
-        cy.deleteAwxInstanceGroup(instanceGroup);
-      }
-    });
+    cy.navigateTo(/^Inventories$/);
+    cy.clickTableRowActionIcon(inventory?.name, 'Edit inventory');
+    cy.get('input[aria-label="Add instance groups"]')
+      .parent()
+      .within(() => {
+        cy.get('button[aria-label="Options menu"]').click();
+      });
+    const igName = instanceGroup?.name;
+    if (igName) {
+      cy.selectTableRowInDialog(igName);
+      cy.contains('button', 'Confirm').click();
+      cy.contains('button', 'Save inventory').click();
+      cy.hasTitle(inventory.name);
+      cy.hasDetail(/^Instance groups$/, igName);
+    }
   });
 
   it('edits an inventory from the inventory details page', () => {
-    cy.createAwxLabel(organization).then((lbl) => {
-      const label: Label = lbl;
-      cy.navigateTo(/^Inventories$/);
-      cy.clickTableRow(inventory.name);
-      cy.hasTitle(inventory.name);
-      cy.clickButton(/^Edit inventory/);
-      cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
-      cy.contains('button', 'Save inventory').click();
-      cy.hasTitle(inventory.name);
-      cy.hasDetail(/^Labels$/, label.name);
-      cy.deleteAwxLabel(label);
-    });
+    cy.navigateTo(/^Inventories$/);
+    cy.clickTableRow(inventory.name);
+    cy.hasTitle(inventory.name);
+    cy.clickButton(/^Edit inventory/);
+    cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
+    cy.contains('button', 'Save inventory').click();
+    cy.hasTitle(inventory.name);
+    cy.hasDetail(/^Labels$/, label.name);
   });
 
   it('deletes an inventory from the details page', () => {

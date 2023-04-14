@@ -48,15 +48,7 @@ export function CreateInventory() {
       const newInventory = await postRequest('/api/v2/inventories/', inventory);
 
       // Update new inventory with selected instance groups
-      const igRequests = [];
-      for (const ig of instanceGroups || []) {
-        igRequests.push(
-          postRequest(`/api/v2/inventories/${newInventory.id.toString()}/instance_groups/`, {
-            id: ig.id,
-          })
-        );
-      }
-      await Promise.all(igRequests);
+      await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
 
       // Update new inventory with selected labels
       await submitLabels(newInventory, inventory.summary_fields.labels.results);
@@ -102,7 +94,6 @@ export function EditInventory() {
   );
   // Fetch instance groups associated with the inventory
   const instanceGroups = igResponse?.results;
-  const postRequest = usePostRequest<{ id: number; disassociate?: boolean }, Inventory>();
   const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values, setError) => {
     const { inventory: editedInventory } = values;
     try {
@@ -124,25 +115,11 @@ export function EditInventory() {
       );
 
       // Update inventory with selected instance groups
-      const disassociateRequests = [];
-      for (const ig of instanceGroups || []) {
-        disassociateRequests.push(
-          postRequest(`/api/v2/inventories/${updatedInventory.id.toString()}/instance_groups/`, {
-            id: ig.id,
-            disassociate: true,
-          })
-        );
-      }
-      await Promise.all(disassociateRequests);
-      const igRequests = [];
-      for (const ig of values.instanceGroups || []) {
-        igRequests.push(
-          postRequest(`/api/v2/inventories/${updatedInventory.id.toString()}/instance_groups/`, {
-            id: ig.id,
-          })
-        );
-      }
-      await Promise.all(igRequests);
+      await submitInstanceGroups(
+        updatedInventory,
+        values.instanceGroups ?? [],
+        instanceGroups ?? []
+      );
 
       // Update inventory with selected labels
       await submitLabels(updatedInventory, editedInventory.summary_fields.labels.results);
@@ -208,7 +185,10 @@ function InventoryInputs() {
         name="inventory.summary_fields.organization"
         isRequired
       />
-      <PageFormInstanceGroupSelect<InventoryFields> name="instanceGroups" />
+      <PageFormInstanceGroupSelect<InventoryFields>
+        name="instanceGroups"
+        labelHelp={t(`Select the instance groups for this inventory to run on.`)}
+      />
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
         labelHelp={t(
@@ -247,6 +227,36 @@ async function submitLabels(inventory: Inventory, labels: Label[]) {
     postRequest(`/api/v2/inventories/${inventory.id.toString()}/labels/`, {
       name: label.name,
       organization: inventory.organization,
+    })
+  );
+
+  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
+  return results;
+}
+
+async function submitInstanceGroups(
+  inventory: Inventory,
+  currentInstanceGroups: InstanceGroup[],
+  originalInstanceGroups: InstanceGroup[]
+) {
+  const { added, removed } = getAddedAndRemoved(
+    originalInstanceGroups ?? ([] as InstanceGroup[]),
+    currentInstanceGroups ?? ([] as InstanceGroup[])
+  );
+
+  if (added.length === 0 && removed.length === 0) {
+    return;
+  }
+
+  const disassociationPromises = removed.map((instanceGroup: { id: number }) =>
+    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+      id: instanceGroup.id,
+      disassociate: true,
+    })
+  );
+  const associationPromises = added.map((instanceGroup: { id: number }) =>
+    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+      id: instanceGroup.id,
     })
   );
 

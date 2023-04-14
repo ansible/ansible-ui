@@ -1,7 +1,11 @@
 import { Credential as ControllerCredential } from '../../interfaces/Credential';
 import { Label as ControllerLabel } from '../../interfaces/Label';
+import { InstanceGroup as ControllerInstanceGroup } from '../../interfaces/InstanceGroup';
 
-type Items = Pick<ControllerCredential, 'id' | 'name'> | Pick<ControllerLabel, 'id' | 'name'>;
+type Items =
+  | Pick<ControllerCredential, 'id' | 'name'>
+  | Pick<ControllerLabel, 'id' | 'name'>
+  | Pick<ControllerInstanceGroup, 'id' | 'name'>;
 
 /**
  * Utility function to get arrays containing ids of items to be removed and added

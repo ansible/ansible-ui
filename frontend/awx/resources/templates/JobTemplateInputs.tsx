@@ -237,6 +237,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_instance_groups_on_launch" />
         }
         name="instanceGroups"
+        labelHelp={t(`Select the instance groups for this job template to run on.`)}
       />
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Job tags')}
