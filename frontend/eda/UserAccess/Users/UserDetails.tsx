@@ -56,8 +56,8 @@ export function UserDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={User?.name}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: User?.name }]}
+        title={User?.username}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: User?.username }]}
         headerActions={
           <PageActions<EdaUser>
             actions={itemActions}

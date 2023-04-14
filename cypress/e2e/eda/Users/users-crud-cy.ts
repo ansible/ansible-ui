@@ -8,7 +8,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
 
   it.skip('can create a User, select role(s) to add the user to, and assert the information showing on the details page', () => {
     const userDetails = {
-      Username: `E2E User ${randomString(4)}`,
+      username: `E2E User ${randomString(4)}`,
       FirstName: 'Firstname',
       LastName: 'Lastname',
       Email: 'first.last@redhat.com',
@@ -17,7 +17,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.navigateTo(/^Users$/);
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
-    cy.typeInputByLabel(/^Username$/, userDetails.Username);
+    cy.typeInputByLabel(/^Username$/, userDetails.username);
     cy.typeInputByLabel(/^First name$/, userDetails.FirstName);
     cy.typeInputByLabel(/^Last name$/, userDetails.LastName);
     cy.typeInputByLabel(/^Email$/, userDetails.Email);
@@ -33,8 +33,8 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.hasDetail('First name', userDetails.FirstName);
     cy.hasDetail('Last name', userDetails.LastName);
     cy.hasDetail('Email', userDetails.Email);
-    cy.hasDetail('Username', userDetails.Username);
-    cy.getEdaUserByName(userDetails.Username).then((user) => {
+    cy.hasDetail('Username', userDetails.username);
+    cy.getEdaUser().then((user) => {
       cy.wrap(user).should('not.be.undefined');
       if (user) {
         cy.deleteEdaUser(user);
@@ -46,23 +46,23 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
       cy.get('h1').should('contain', 'Users');
-      cy.clickTableRow(edaUser.name);
+      cy.clickTableRow(edaUser.username);
       cy.clickPageAction(/^Edit user$/);
       cy.hasTitle(`/^Edit user$/`);
-      cy.typeInputByLabel(/^Username$/, edaUser.name);
-      cy.typeInputByLabel(/^First name$/, edaUser.name + 'edited firstname');
-      cy.typeInputByLabel(/^Last name$/, edaUser.name + 'edited lastname');
+      cy.typeInputByLabel(/^Username$/, edaUser.username);
+      cy.typeInputByLabel(/^First name$/, edaUser.username + 'edited firstname');
+      cy.typeInputByLabel(/^Last name$/, edaUser.username + 'edited lastname');
       cy.typeInputByLabel(/^Email$/, 'edited@redhat.com');
       cy.typeInputByLabel(/^Password$/, edaUser.password);
       cy.typeInputByLabel(/^Password confirmation$/, edaUser.password);
       cy.selectDropdownOptionByLabel(/^User type$/, 'Regular user');
       cy.selectDropdownOptionByLabel(/^Roles(s)$/, 'Engineering');
       cy.clickButton(/^Save user$/);
-      cy.hasDetail('Firstname', edaUser.name + 'edited firstname');
-      cy.hasDetail('Lastname', edaUser.name + 'edited lastname');
-      cy.hasDetail('Email', edaUser.name + 'edited lastname');
-      cy.hasDetail('First name', `${edaUser.name} edited firstname`);
-      cy.hasDetail('Last name', `${edaUser.name} edited lastname`);
+      cy.hasDetail('Firstname', edaUser.username + 'edited firstname');
+      cy.hasDetail('Lastname', edaUser.username + 'edited lastname');
+      cy.hasDetail('Email', edaUser.username + 'edited lastname');
+      cy.hasDetail('First name', `${edaUser.username} edited firstname`);
+      cy.hasDetail('Last name', `${edaUser.username} edited lastname`);
       cy.hasDetail('User type', 'Regular user');
       cy.hasDetail('Roles(s)', 'Engineering');
       cy.navigateTo(/^Users$/);
@@ -74,8 +74,8 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
       cy.get('h1').should('contain', 'Users');
-      cy.clickTableRow(edaUser.name);
-      cy.hasTitle(edaUser.name);
+      cy.clickTableRow(edaUser.username);
+      cy.hasTitle(edaUser.username);
       cy.intercept('DELETE', `/api/eda/v1/users/${edaUser.id}/`).as('deleteUser');
       cy.clickPageAction(/^Delete user$/);
       cy.clickModalConfirmCheckbox();
