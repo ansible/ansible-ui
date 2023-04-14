@@ -868,14 +868,14 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
 
 Cypress.Commands.add('createEdaUser', () => {
   cy.requestPost<EdaUser>(`/api/eda/v1/users/`, {
-    name: `E2E User ${randomString(4)}`,
+    username: `E2E User ${randomString(4)}`,
     email: `${randomString(4)}@redhat.com`,
     password: `${randomString(4)}`,
     type: 'super',
   }).then((edaUser) => {
     Cypress.log({
       displayName: 'EDA USER CREATION :',
-      message: [`Created 👉  ${edaUser.name}`],
+      message: [`Created 👉  ${edaUser.username}`],
     });
     return edaUser;
   });
@@ -885,7 +885,7 @@ Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
   cy.requestDelete(`/api/eda/v1/credentials/${user.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA CREDENTIAL DELETION :',
-      message: [`Deleted 👉  ${user.name}`],
+      message: [`Deleted 👉  ${user.username}`],
     });
   });
 });
