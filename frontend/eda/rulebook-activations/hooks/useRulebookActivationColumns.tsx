@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { SwitchCell } from '../../common/SwitchCell';
 import { StatusLabelCell } from '../../common/StatusLabelCell';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
@@ -33,42 +32,28 @@ export function useRulebookActivationColumns() {
         defaultSort: true,
       },
       {
-        header: t('Activation status'),
+        header: t('Status'),
         cell: (activation) => <StatusLabelCell status={activation?.status} />,
         sort: 'status',
         defaultSort: true,
       },
       {
-        header: t('Number of rules'),
-        cell: (activation) => (
-          <TextCell text={`${activation?.rules_count ? activation.rules_count : 0}`} />
-        ),
+        header: t('Rules'),
+        type: 'count',
+        value: (activation) => activation?.rules_count ?? 0,
         sort: 'rules_count',
       },
       {
-        header: t('Fire count'),
-        cell: (activation) => (
-          <TextCell text={`${activation?.fired_count ? activation.fired_count : 0}`} />
-        ),
+        header: t('Fires'),
+        type: 'count',
+        value: (activation) => activation?.fired_count ?? 0,
         sort: 'fired_count',
       },
       {
-        header: t('Restart count'),
-        cell: (activation) => (
-          <TextCell text={`${activation?.restarted_count ? activation.restarted_count : 0}`} />
-        ),
+        header: t('Restarts'),
+        type: 'count',
+        value: (activation) => activation?.restarted_count ?? 0,
         sort: 'restart_count',
-      },
-      {
-        header: '',
-        style: 'maxWidth: 0',
-
-        cell: (activation) => (
-          <SwitchCell
-            state={activation.is_enabled || false}
-            ariaLabel={activation?.is_enabled ? t('Enabled') : t('Disabled)')}
-          />
-        ),
       },
     ],
     [navigate, t]

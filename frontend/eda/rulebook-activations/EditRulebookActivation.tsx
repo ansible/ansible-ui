@@ -12,9 +12,9 @@ import {
   PageLayout,
 } from '../../../framework';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
@@ -93,13 +93,13 @@ export function EditRulebookActivation() {
           label={t('Name')}
           id={'name'}
           isRequired={true}
-          placeholder={t('Insert name here')}
+          placeholder={t('Enter name')}
         />
         <PageFormTextInput
           name={'description'}
           label={t('Description')}
           id={'description'}
-          placeholder={t('Insert description here')}
+          placeholder={t('Enter description')}
         />
         <PageFormSelectOption
           name={'decision_environment_id'}
@@ -126,11 +126,12 @@ export function EditRulebookActivation() {
                 }))
               : []
           }
+          isRequired
         />
         <PageFormSelectOption
           name={'restart_policy'}
           label={t('Restart policy')}
-          placeholderText={t('Select  a restart policy')}
+          placeholderText={t('Select restart policy')}
           options={RESTART_OPTIONS}
         />
         <PageFormSelectOption
