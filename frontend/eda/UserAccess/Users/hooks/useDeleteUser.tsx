@@ -20,7 +20,7 @@ export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
           count: Users.length,
         }),
         actionButtonText: t('Delete Users', { count: Users.length }),
-        items: Users.sort((l, r) => compareStrings(l.name, r.name)),
+        items: Users.sort((l, r) => compareStrings(l.username, r.username)),
         keyFn: idKeyFn,
         isDanger: true,
         confirmationColumns,

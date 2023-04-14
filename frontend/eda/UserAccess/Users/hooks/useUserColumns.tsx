@@ -14,7 +14,7 @@ export function useUserColumns() {
         header: t('Username'),
         cell: (user) => (
           <TextCell
-            text={user.name}
+            text={user.username}
             onClick={() => navigate(RouteObj.EdaUserDetails.replace(':id', user.id.toString()))}
           />
         ),
