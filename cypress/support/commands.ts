@@ -10,12 +10,12 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import './rest-commands';
 
 declare global {
@@ -257,8 +257,8 @@ declare global {
        *
        * @returns {Chainable<EdaUser>}
        */
-   
-      getEdaUserByName(edaUserName: string): Chainable<EdaUser | undefined>;
+
+      getEdaUser(): Chainable<EdaUser | undefined>;
 
       /**
        * Creates a DE and returns the same
