@@ -16,14 +16,14 @@ export function useDeleteRulebookActivations(
   return useCallback(
     (rulebookActivations: EdaRulebookActivation[]) => {
       bulkAction({
-        title: t('Permanently delete rulebookActivations', { count: rulebookActivations.length }),
+        title: t('Permanently delete rulebook activations', { count: rulebookActivations.length }),
         confirmText: t(
-          'Yes, I confirm that I want to delete these {{count}} rulebookActivations.',
+          'Yes, I confirm that I want to delete these {{count}} rulebook activations.',
           {
             count: rulebookActivations.length,
           }
         ),
-        actionButtonText: t('Delete rulebookActivations', { count: rulebookActivations.length }),
+        actionButtonText: t('Delete rulebook activations', { count: rulebookActivations.length }),
         items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
         keyFn: (item) => item?.id,
         isDanger: true,

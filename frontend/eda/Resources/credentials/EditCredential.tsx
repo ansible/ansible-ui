@@ -42,7 +42,7 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="name"
         label={t('Name')}
-        placeholder={t('Insert name here')}
+        placeholder={t('Enter name')}
         isRequired
         maxLength={150}
         autoComplete="new-name"
@@ -50,27 +50,27 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="description"
         label={t('Description')}
-        placeholder={t('Insert description here ')}
+        placeholder={t('Enter description ')}
         maxLength={150}
       />
       <PageFormSelectOption<EdaCredential>
         name="credential_type"
         label={t('Type')}
         isRequired
-        placeholderText={t('Select a credential type')}
+        placeholderText={t('Select credential type')}
         options={CredentialOptions(t)}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
         label={t('User name')}
         isRequired
-        placeholder={t('Insert user name here')}
+        placeholder={t('Enter username')}
       />
       <PageFormTextInput<EdaCredential>
         name="secret"
         label={t('Token')}
         type="password"
-        placeholder={t('Insert credential token here')}
+        placeholder={t('Enter credential token')}
       />
     </>
   );

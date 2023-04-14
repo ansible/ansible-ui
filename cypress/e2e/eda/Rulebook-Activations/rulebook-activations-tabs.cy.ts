@@ -32,7 +32,7 @@ describe('EDA Rulebook Activations History Tab', () => {
     });
   });
 
-  it('can filter results on the history tab based on Name', () => {
+  it('can filter results on the history tab based on Status', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -49,11 +49,9 @@ describe('EDA Rulebook Activations History Tab', () => {
             .its('response.body.results[0].id')
             .then((id) => {
               cy.wrap(id).as('ID');
-              cy.get('@ID').then(($id) => {
-                const id = $id.toString();
-                cy.filterTableByText(`Instance ${id}`);
-                cy.contains('td[data-label="Name"]', `Instance ${id}`);
-                cy.clickButton(/^Clear all filters$/);
+              cy.get('@ID').then(() => {
+                cy.selectToolbarFilterType(`Status`);
+                cy.contains('td[data-label="Status"]', `Failed`);
               });
             });
           cy.deleteEdaRulebookActivation(edaRulebookActivation);

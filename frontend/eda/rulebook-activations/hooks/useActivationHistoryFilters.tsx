@@ -7,11 +7,21 @@ export function useActivationHistoryFilters() {
   return useMemo<IToolbarFilter[]>(
     () => [
       {
-        key: 'name',
-        label: t('Name'),
-        type: 'string',
-        query: 'name',
-        placeholder: t('Filter by name'),
+        key: 'status',
+        label: t('Status'),
+        type: 'select',
+        query: 'status',
+        options: [
+          { label: t('New'), value: 'new' },
+          { label: t('Pending'), value: 'pending' },
+          { label: t('Waiting'), value: 'waiting' },
+          { label: t('Running'), value: 'running' },
+          { label: t('Success'), value: 'success' },
+          { label: t('Failed'), value: 'failed' },
+          { label: t('Error'), value: 'error' },
+          { label: t('Canceled'), value: 'canceled' },
+        ],
+        placeholder: t('Filter By Status'),
       },
     ],
     [t]

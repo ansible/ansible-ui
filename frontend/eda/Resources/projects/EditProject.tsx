@@ -22,7 +22,7 @@ function ProjectInputs() {
       <PageFormTextInput<EdaProject>
         name="name"
         label={t('Name')}
-        placeholder={t('Insert name here')}
+        placeholder={t('Enter name')}
         isRequired
         maxLength={150}
         autoComplete="new-name"
@@ -30,7 +30,7 @@ function ProjectInputs() {
       <PageFormTextInput<EdaProject>
         name="description"
         label={t('Description')}
-        placeholder={t('Insert description here ')}
+        placeholder={t('Enter description')}
         maxLength={150}
       />
       <PageFormTextInput<EdaProject>
@@ -44,12 +44,12 @@ function ProjectInputs() {
         name="url"
         isRequired={true}
         label={t('SCM URL')}
-        placeholder={t('Insert SCM URL here')}
+        placeholder={t('Enter SCM URL')}
       />
       <PageFormTextInput<EdaProject>
         name="token"
         label={t('SCM token')}
-        placeholder={t('Insert SCM token here')}
+        placeholder={t('Enter SCM token')}
       />
     </>
   );
