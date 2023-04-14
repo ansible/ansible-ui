@@ -7,6 +7,7 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
@@ -50,25 +51,29 @@ export function Templates() {
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.dropdown,
+        type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Create template'),
         icon: PlusCircleIcon,
-        options: [
+        actions: [
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create Job Template'),
             onClick: () => navigate(RouteObj.CreateJobTemplate),
           },
           {
-            type: PageActionType.button,
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
             label: t('Create Workflow Job Template'),
             onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
           },
         ],
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: 'Delete selected templates',
         onClick: deleteTemplates,
@@ -80,14 +85,16 @@ export function Templates() {
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t(`Edit Template`),
         onClick: (template) =>
           navigate(RouteObj.JobTemplateEdit.replace(':id', template.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t(`Delete Template`),
         onClick: (template) => deleteTemplates([template]),

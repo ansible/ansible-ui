@@ -1,33 +1,35 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
 
 export interface IFrameworkTranslations {
+  by: string;
   cancelText: string;
   canceledText: string;
+  clearAllFilters: string;
+  clickToRefresh: string;
   closeText: string;
   confirmText: string;
+  countMore: string;
+  documentation: string;
   errorText: string;
+  manageColumns: string;
+  moreInformation: string;
   noItemsFound: string;
+  noResultsFound: string;
+  noResultsMatchCriteria: string;
+  noSelection: string;
+  noSelections: string;
   ofText: string;
   pendingText: string;
+  pleaseFixValidationErrors: string;
   processingText: string;
+  selectNone: string;
   selectedText: string;
+  showLess: string;
   submitText: string;
   submittingText: string;
   successText: string;
-  manageColumns: string;
-  moreInformation: string;
-  showLess: string;
-  countMore: string;
-  documentation: string;
-  noResultsFound: string;
-  noResultsMatchCriteria: string;
-  clearAllFilters: string;
-  by: string;
-  selectNone: string;
-  pleaseFixValidationErrors: string;
-  validating: string;
-  clickToRefresh: string;
   unknownError: string;
+  validating: string;
 }
 
 const defaultTranslations: IFrameworkTranslations = {
@@ -46,6 +48,8 @@ const defaultTranslations: IFrameworkTranslations = {
   noItemsFound: 'No items found',
   noResultsFound: 'No results found',
   noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
+  noSelection: 'No selection',
+  noSelections: 'No selections',
   ofText: 'of',
   pendingText: 'Pending',
   pleaseFixValidationErrors: 'Please fix validation errors.',

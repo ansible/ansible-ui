@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { CubesIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
@@ -7,10 +7,10 @@ import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../useAwxView';
-import { useInventoryActions } from './hooks/useInventoryActions';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
+import { useInventoryActions } from './hooks/useInventoryActions';
 
 export type WebSocketInventory = {
   status: string;

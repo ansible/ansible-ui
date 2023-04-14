@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
 import { FormGroupTextInputProps, useSettings } from '../..';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormCodeEditorInputProps<
