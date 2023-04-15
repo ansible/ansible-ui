@@ -11,7 +11,7 @@ describe('EDA Decision Environment List', () => {
       cy.hasTitle(/^Decision environments$/);
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
-      cy.get('td[data-label="Image name"]').should('contain', edaDE.name);
+      cy.contains('td', edaDE.name).should('be.visible').click();
       cy.deleteEdaDecisionEnvironment(edaDE);
     });
   });
