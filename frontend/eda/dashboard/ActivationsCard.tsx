@@ -16,8 +16,8 @@ export function ActivationsCard() {
   const tableColumns = useActivationColumns();
   const view = useEdaView<EdaRulebookActivation>({
     url: `${API_PREFIX}/activations/`,
-    viewPage: 1,
-    viewPerPage: 4,
+    // viewPage: 1,
+    // viewPerPage: 4,
     tableColumns,
   });
   return (
