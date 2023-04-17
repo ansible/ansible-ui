@@ -212,6 +212,7 @@ declare global {
        */
       createEdaRulebookActivation(
         edaRulebook: EdaRulebook,
+
         restartPolicy?: string
       ): Chainable<EdaRulebookActivation>;
 
@@ -359,7 +360,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_PASSWORD') as string,
         'EDA server'
       );
-      cy.hasTitle(/^Projects$/);
+      cy.hasTitle(/^Welcome to EDA Server$/);
     },
     {
       cacheAcrossSpecs: true,
