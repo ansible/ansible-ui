@@ -1,22 +1,14 @@
+import { Button, CardFooter, Divider } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
+import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../Routes';
-import { EdaProject } from '../interfaces/EdaProject';
-import { useProjectColumns } from './hooks/useProjectColumns';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Level,
-  LevelItem,
-  Title,
-} from '@patternfly/react-core';
-import { PlusCircleIcon, CubesIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaProject } from '../interfaces/EdaProject';
 import { useEdaView } from '../useEventDrivenView';
+import { useProjectColumns } from './hooks/useProjectColumns';
 
 export function ProjectsCard() {
   const { t } = useTranslation();
@@ -30,20 +22,9 @@ export function ProjectsCard() {
     disableQueryString: true,
   });
   return (
-    <Card style={{ transition: 'box-shadow 0.25s', minHeight: 503 }}>
-      <CardTitle>
-        <Level>
-          <LevelItem>
-            <Title headingLevel="h2">{t('Projects')}</Title>
-          </LevelItem>
-          <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteObj.EdaProjects)}>
-              {t('Go to Projects')}
-            </Button>
-          </LevelItem>
-        </Level>
-      </CardTitle>
-      <CardBody>
+    <PageDashboardCard title={t('Projects')} height="lg" to={RouteObj.EdaProjects}>
+      <Divider />
+      <div style={{ flexGrow: 1 }}>
         <PageTable
           disableBodyPadding={true}
           tableColumns={tableColumns}
@@ -57,9 +38,11 @@ export function ProjectsCard() {
           emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
           {...view}
           defaultSubtitle={t('Project')}
+          compact
         />
-      </CardBody>
-      {view?.itemCount && view.itemCount > 0 ? (
+      </div>
+      <Divider />
+      {view?.itemCount && view.itemCount === 0 && (
         <CardFooter>
           <Button
             variant="link"
@@ -69,9 +52,7 @@ export function ProjectsCard() {
             {t('Create project')}
           </Button>
         </CardFooter>
-      ) : (
-        <div />
       )}
-    </Card>
+    </PageDashboardCard>
   );
 }

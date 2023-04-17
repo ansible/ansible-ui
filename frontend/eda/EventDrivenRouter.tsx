@@ -1,13 +1,26 @@
 import { Route, Routes } from 'react-router-dom';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import Dashboard from './dashboard/Dashboard';
-import { EditDecisionEnvironment } from './Resources/decision-environments/EditDecisionEnvironment';
+import { AutomationServers } from '../automation-servers/AutomationServers';
+import { CredentialDetails } from './Resources/credentials/CredentialDetails';
+import { Credentials } from './Resources/credentials/Credentials';
+import { EditCredential } from './Resources/credentials/EditCredential';
 import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
 import { DecisionEnvironments } from './Resources/decision-environments/DecisionEnvironments';
+import { EditDecisionEnvironment } from './Resources/decision-environments/EditDecisionEnvironment';
 import { EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
+import { EditGroup } from './UserAccess/Groups/EditGroup';
+import { GroupDetails } from './UserAccess/Groups/GroupDetails';
+import { Groups } from './UserAccess/Groups/Groups';
+import { EditRole } from './UserAccess/Roles/EditRole';
+import { RoleDetails } from './UserAccess/Roles/RoleDetails';
+import { Roles } from './UserAccess/Roles/Roles';
+import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
+import { UserDetails } from './UserAccess/Users/UserDetails';
+import { Users } from './UserAccess/Users/Users';
+import EdaDashboard from './dashboard/EdaDashboard';
+import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
 import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
@@ -17,21 +30,8 @@ import { EditRule } from './rules/EditRule';
 import { RuleDetails } from './rules/RuleDetails';
 import { Rules } from './rules/Rules';
 import { UnderDevelopment } from './under-development/UnderDevelopment';
-import { Users } from './UserAccess/Users/Users';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
-import { EditGroup } from './UserAccess/Groups/EditGroup';
-import { GroupDetails } from './UserAccess/Groups/GroupDetails';
-import { Groups } from './UserAccess/Groups/Groups';
-import { EditRole } from './UserAccess/Roles/EditRole';
-import { RoleDetails } from './UserAccess/Roles/RoleDetails';
-import { Roles } from './UserAccess/Roles/Roles';
-import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
-import { UserDetails } from './UserAccess/Users/UserDetails';
-import { CredentialDetails } from './Resources/credentials/CredentialDetails';
-import { EditCredential } from './Resources/credentials/EditCredential';
-import { Credentials } from './Resources/credentials/Credentials';
-import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
 
 export function EventDrivenRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Eda);
@@ -40,7 +40,7 @@ export function EventDrivenRouter() {
     <Routes>
       <Route path={RouteObjWithoutPrefix.EdaAutomationServers} element={<AutomationServers />} />
 
-      <Route path={RouteObjWithoutPrefix.EdaDashboard} element={<Dashboard />} />
+      <Route path={RouteObjWithoutPrefix.EdaDashboard} element={<EdaDashboard />} />
 
       <Route path={RouteObjWithoutPrefix.CreateEdaProject} element={<EditProject />} />
       <Route path={RouteObjWithoutPrefix.EditEdaProject} element={<EditProject />} />

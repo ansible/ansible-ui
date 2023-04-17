@@ -15,7 +15,7 @@ export function OnboardInventories(props: { count: number | undefined }) {
   const { count } = props;
   if (count === undefined || count >= 1) return <></>;
   return (
-    <PageDashboardCard>
+    <PageDashboardCard width="xxl">
       <CardTitle>
         {t('Create an inventory')}
         {/* <Help

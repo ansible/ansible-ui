@@ -1,22 +1,14 @@
+import { Button, CardFooter, Divider } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
+import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../Routes';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useActivationColumns } from './hooks/useActivationColumns';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Level,
-  LevelItem,
-  Title,
-} from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { API_PREFIX } from '../constants';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
+import { useActivationColumns } from './hooks/useActivationColumns';
 
 export function ActivationsCard() {
   const { t } = useTranslation();
@@ -29,20 +21,13 @@ export function ActivationsCard() {
     tableColumns,
   });
   return (
-    <Card style={{ transition: 'box-shadow 0.25s', minHeight: 503 }}>
-      <CardTitle>
-        <Level>
-          <LevelItem>
-            <Title headingLevel="h2">{t('Rulebook Activations')}</Title>
-          </LevelItem>
-          <LevelItem>
-            <Button variant="link" onClick={() => navigate(RouteObj.EdaRulebookActivations)}>
-              {t('Go to Rulebook Activations')}
-            </Button>
-          </LevelItem>
-        </Level>
-      </CardTitle>
-      <CardBody>
+    <PageDashboardCard
+      title={t('Rulebook Activations')}
+      height="lg"
+      to={RouteObj.EdaRulebookActivations}
+    >
+      <Divider />
+      <div style={{ flexGrow: 1 }}>
         <PageTable
           disableBodyPadding={true}
           tableColumns={tableColumns}
@@ -56,9 +41,11 @@ export function ActivationsCard() {
           emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
           {...view}
           defaultSubtitle={t('Activation')}
+          compact
         />
-      </CardBody>
-      {view?.itemCount && view.itemCount > 0 ? (
+      </div>
+      <Divider />
+      {view?.itemCount && view.itemCount === 0 && (
         <CardFooter>
           <Button
             variant="link"
@@ -68,9 +55,7 @@ export function ActivationsCard() {
             {t('Create rulebook activation')}
           </Button>
         </CardFooter>
-      ) : (
-        <div />
       )}
-    </Card>
+    </PageDashboardCard>
   );
 }
