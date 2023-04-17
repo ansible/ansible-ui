@@ -779,7 +779,7 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: Omit<EdaRulebookActivation, 'id'>) => {
+  (edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>) => {
     cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
       restart_policy: 'on-failure',
