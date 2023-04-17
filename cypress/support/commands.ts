@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -211,8 +212,7 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(
-        edaRulebook: EdaRulebook,
-        restartPolicy?: string
+        edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>
       ): Chainable<EdaRulebookActivation>;
 
       /**
@@ -777,26 +777,26 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
   });
 });
 
-Cypress.Commands.add('createEdaRulebookActivation', (edaRulebook, restartPolicy = 'on-failure') => {
-  // Create Rulebook Activation
-  // TODO: this will need to be edited when the Decision Environments are working in the API
-  cy.wrap(edaRulebook).should('not.be.undefined');
-  cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
-    name: 'E2E Rulebook Activation ' + randomString(5),
-    rulebook_id: edaRulebook.id,
-    restart_policy: restartPolicy,
-  }).then((edaRulebookActivation) => {
-    cy.wrap(edaRulebookActivation)
-      .should('not.be.undefined')
-      .then(() => {
-        Cypress.log({
-          displayName: 'EDA RULEBOOK ACTIVATIONS CREATION :',
-          message: [`Created 👉  ${edaRulebookActivation.name}`],
+Cypress.Commands.add(
+  'createEdaRulebookActivation',
+  (edaRulebookActivation: Omit<EdaRulebookActivation, 'id'>) => {
+    cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
+      name: 'E2E Rulebook Activation ' + randomString(5),
+      restart_policy: 'on-failure',
+      ...edaRulebookActivation,
+    }).then((edaRulebookActivation) => {
+      cy.wrap(edaRulebookActivation)
+        .should('not.be.undefined')
+        .then(() => {
+          Cypress.log({
+            displayName: 'EDA RULEBOOK ACTIVATIONS CREATION :',
+            message: [`Created 👉  ${edaRulebookActivation.name}`],
+          });
+          return edaRulebookActivation;
         });
-        return edaRulebookActivation;
-      });
-  });
-});
+    });
+  }
+);
 
 Cypress.Commands.add('getEdaProject', (projectName: string) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${projectName}`).then(
