@@ -7,7 +7,6 @@ import {
   EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
-  Flex,
   PageSection,
   Skeleton,
   Spinner,
