@@ -42,7 +42,7 @@ describe('EDA Resource Toolbar Functionality', () => {
       if ($ele.find('.pf-c-empty-state').length > 0) {
         cy.contains('button', 'Create rulebook activation').should('exist');
       } else if ($ele.find('tbody').length > 0) {
-        cy.contains('button', 'Create activation').should('exist');
+        cy.contains('button', 'Create rulebook activation').should('exist');
       }
     });
   });

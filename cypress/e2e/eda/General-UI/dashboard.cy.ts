@@ -6,7 +6,12 @@ describe('EDA Dashboard', () => {
     cy.edaLogin();
     cy.createEdaProject().then((project) => {
       cy.getEdaRulebooks(project).then((edaRulebooksArray) => {
-        cy.createEdaRulebookActivation(edaRulebooksArray[0]);
+        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
+          cy.createEdaRulebookActivation({
+            rulebook_id: edaRulebooksArray[0].id,
+            decision_environment_id: edaDecisionEnvironment.id,
+          });
+        });
       });
     });
   });
