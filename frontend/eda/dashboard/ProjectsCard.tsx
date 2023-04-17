@@ -1,5 +1,4 @@
-import { Button, CardFooter, Divider } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTable } from '../../../framework';
@@ -22,8 +21,11 @@ export function ProjectsCard() {
     disableQueryString: true,
   });
   return (
-    <PageDashboardCard title={t('Projects')} height="lg" to={RouteObj.EdaProjects}>
-      <Divider />
+    <PageDashboardCard
+      title={view.itemCount === 0 ? undefined : t('Projects')}
+      height="lg"
+      to={RouteObj.EdaProjects}
+    >
       <div style={{ flexGrow: 1 }}>
         <PageTable
           disableBodyPadding={true}
@@ -41,18 +43,6 @@ export function ProjectsCard() {
           compact
         />
       </div>
-      <Divider />
-      {view?.itemCount && view.itemCount === 0 && (
-        <CardFooter>
-          <Button
-            variant="link"
-            icon={<PlusCircleIcon />}
-            onClick={() => navigate(RouteObj.CreateEdaProject)}
-          >
-            {t('Create project')}
-          </Button>
-        </CardFooter>
-      )}
     </PageDashboardCard>
   );
 }

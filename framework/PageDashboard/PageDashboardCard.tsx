@@ -15,6 +15,7 @@ export function PageDashboardCard(props: {
   children?: ReactNode;
   width?: PageDashboardCardWidth;
   height?: PageDashboardCardHeight;
+  maxHeight?: PageDashboardCardHeight;
   style?: CSSProperties;
 }) {
   const navigate = usePageNavigate();
