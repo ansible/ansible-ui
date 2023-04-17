@@ -1,3 +1,4 @@
+import { Divider } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,34 +16,34 @@ export function ProjectsCard() {
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,
-    viewPage: 1,
-    viewPerPage: 4,
+    // viewPage: 1,
+    // viewPerPage: 4,
     tableColumns,
     disableQueryString: true,
   });
   return (
     <PageDashboardCard
       title={view.itemCount === 0 ? undefined : t('Projects')}
-      height="lg"
+      height="xl"
       to={RouteObj.EdaProjects}
+      style={{ overflow: 'hidden' }}
     >
-      <div style={{ flexGrow: 1 }}>
-        <PageTable
-          disableBodyPadding={true}
-          tableColumns={tableColumns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading projects')}
-          emptyStateIcon={CubesIcon}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no projects')}
-          emptyStateDescription={t('Create a project by clicking the button below.')}
-          emptyStateButtonText={t('Create project')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
-          {...view}
-          defaultSubtitle={t('Project')}
-          compact
-        />
-      </div>
+      {view.itemCount !== 0 && <Divider />}
+      <PageTable
+        disableBodyPadding={true}
+        tableColumns={tableColumns}
+        // autoHidePagination={true}
+        errorStateTitle={t('Error loading projects')}
+        emptyStateIcon={CubesIcon}
+        emptyStateVariant={'light'}
+        emptyStateTitle={t('There are currently no projects')}
+        emptyStateDescription={t('Create a project by clicking the button below.')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
+        {...view}
+        defaultSubtitle={t('Project')}
+        compact
+      />
     </PageDashboardCard>
   );
 }

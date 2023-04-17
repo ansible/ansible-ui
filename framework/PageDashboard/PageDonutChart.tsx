@@ -34,7 +34,7 @@ export function PageDashboardDonutCard(props: {
   const { title, items, loading } = props;
   const total = items.reduce((total, item) => total + item.count, 0);
   return (
-    <PageDashboardCard title={title} width="sm" height="xs" to={props.to}>
+    <PageDashboardCard title={title} width="xs" height="md" to={props.to}>
       <CardBody>
         {loading === true ? (
           <Split hasGutter>

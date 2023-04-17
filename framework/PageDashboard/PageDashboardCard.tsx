@@ -7,7 +7,7 @@ import { PageDashboardContext } from './PageDashboard';
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
-const heightUnit = 32;
+const heightUnit = 36;
 
 export function PageDashboardCard(props: {
   title?: string;
@@ -15,7 +15,6 @@ export function PageDashboardCard(props: {
   children?: ReactNode;
   width?: PageDashboardCardWidth;
   height?: PageDashboardCardHeight;
-  maxHeight?: PageDashboardCardHeight;
   style?: CSSProperties;
 }) {
   const navigate = usePageNavigate();
@@ -57,12 +56,15 @@ export function PageDashboardCard(props: {
       rowSpan = 3;
       break;
     case 'md':
-      rowSpan = 6;
+      rowSpan = 4;
       break;
     case 'lg':
-      rowSpan = 8;
+      rowSpan = 6;
       break;
     case 'xl':
+      rowSpan = 8;
+      break;
+    case 'xxl':
       rowSpan = 12;
       break;
   }
@@ -70,32 +72,33 @@ export function PageDashboardCard(props: {
   const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
 
   return (
-    <div
+    <Card
+      isFlat
+      isRounded
       style={{
         transition: 'box-shadow 0.25s',
         gridColumn: `span ${colSpan}`,
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
         minHeight,
+        maxHeight: minHeight,
         ...props.style,
       }}
     >
-      <Card isFlat isRounded style={{ gridColumn: `span ${colSpan}`, minHeight, ...props.style }}>
-        {props.title && (
-          <>
-            {props.to ? (
-              <CardTitle
-                style={{ color: pfLink, cursor: 'pointer' }}
-                onClick={() => navigate(props.to)}
-              >
-                {props.title}
-              </CardTitle>
-            ) : (
-              <CardTitle>{props.title}</CardTitle>
-            )}
-          </>
-        )}
-        {props.children}
-      </Card>
-    </div>
+      {props.title && (
+        <>
+          {props.to ? (
+            <CardTitle
+              style={{ color: pfLink, cursor: 'pointer' }}
+              onClick={() => navigate(props.to)}
+            >
+              {props.title}
+            </CardTitle>
+          ) : (
+            <CardTitle>{props.title}</CardTitle>
+          )}
+        </>
+      )}
+      {props.children}
+    </Card>
   );
 }

@@ -1,3 +1,4 @@
+import { Divider } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -22,26 +23,25 @@ export function ActivationsCard() {
   return (
     <PageDashboardCard
       title={view.itemCount === 0 ? undefined : t('Rulebook Activations')}
-      height="lg"
+      height="xl"
       to={RouteObj.EdaRulebookActivations}
     >
-      <div style={{ flexGrow: 1 }}>
-        <PageTable
-          disableBodyPadding={true}
-          tableColumns={tableColumns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading activations')}
-          emptyStateIcon={CubesIcon}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no rulebook activations')}
-          emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
-          emptyStateButtonText={t('Create rulebook activation')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
-          {...view}
-          defaultSubtitle={t('Activation')}
-          compact
-        />
-      </div>
+      {view.itemCount !== 0 && <Divider />}
+      <PageTable
+        disableBodyPadding={true}
+        tableColumns={tableColumns}
+        autoHidePagination={true}
+        errorStateTitle={t('Error loading activations')}
+        emptyStateIcon={CubesIcon}
+        emptyStateVariant={'light'}
+        emptyStateTitle={t('There are currently no rulebook activations')}
+        emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
+        emptyStateButtonText={t('Create rulebook activation')}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
+        {...view}
+        defaultSubtitle={t('Activation')}
+        compact
+      />
     </PageDashboardCard>
   );
 }
