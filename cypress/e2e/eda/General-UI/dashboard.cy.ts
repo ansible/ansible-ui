@@ -22,13 +22,13 @@ describe('EDA Dashboard', () => {
   });
 
   it('shows the user a Rulebook Activation card with a list of Rulebook Activations visible including working links', () => {
-    cy.navigateTo(/^Dashboard$/);
     cy.getEdaRulebooks(edaProject).then((edaRulebooksArray) => {
       cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
         cy.createEdaRulebookActivation({
           rulebook_id: edaRulebooksArray[0].id,
           decision_environment_id: edaDecisionEnvironment.id,
         }).then((activation) => {
+          cy.navigateTo(/^Dashboard$/);
           cy.get('[data-label="Name"] div > a').contains(activation.name).click();
           cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
           cy.deleteEdaRulebookActivation(activation);
