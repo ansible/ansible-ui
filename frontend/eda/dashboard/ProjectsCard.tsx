@@ -24,7 +24,7 @@ export function ProjectsCard() {
   return (
     <PageDashboardCard
       title={view.itemCount === 0 ? undefined : t('Projects')}
-      height="xl"
+      height="xxl"
       to={RouteObj.EdaProjects}
       style={{ overflow: 'hidden' }}
     >
@@ -32,7 +32,7 @@ export function ProjectsCard() {
       <PageTable
         disableBodyPadding={true}
         tableColumns={tableColumns}
-        // autoHidePagination={true}
+        autoHidePagination={true}
         errorStateTitle={t('Error loading projects')}
         emptyStateIcon={CubesIcon}
         emptyStateVariant={'light'}

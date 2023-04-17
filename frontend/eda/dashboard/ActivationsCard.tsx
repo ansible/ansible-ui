@@ -23,7 +23,7 @@ export function ActivationsCard() {
   return (
     <PageDashboardCard
       title={view.itemCount === 0 ? undefined : t('Rulebook Activations')}
-      height="xl"
+      height="xxl"
       to={RouteObj.EdaRulebookActivations}
     >
       {view.itemCount !== 0 && <Divider />}
