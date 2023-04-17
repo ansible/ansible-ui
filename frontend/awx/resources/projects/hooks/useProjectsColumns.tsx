@@ -27,6 +27,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
   const statusColumn = useStatusColumn({
     ...options,
     tooltip: t`Click to view latest project sync job`,
+    tooltipAlt: t`Unable to load latest project sync job`,
   });
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
