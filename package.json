@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "0.0.729",
+  "version": "0.0.731",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -40,8 +40,10 @@
     "docker:rm": "docker rm ansible-ui",
     "docker:build:eda": "docker build --target eda-ui --tag eda-ui .",
     "docker:run:eda": "docker run --name eda-ui --rm -e LOG_LEVEL=debug -p 3002:3002 -e PORT=3002 eda-ui",
-    "cypress:run": "concurrently npm:cypress:run:e2e npm:cypress:run:component --prefix-colors cyan,blue",
+    "cypress:run": "concurrently npm:cypress:run:awx npm:cypress:run:eda npm:cypress:run:component --prefix-colors cyan,blue,green",
     "cypress:run:e2e": "cypress run --e2e",
+    "cypress:run:awx": "cypress run --e2e --spec=cypress/e2e/awx/**/*.cy.ts",
+    "cypress:run:eda": "cypress run --e2e --spec=cypress/e2e/eda/**/*.cy.ts",
     "cypress:run:component": "cypress run --component",
     "cypress:open": "cypress open --browser chrome",
     "coverage": "open coverage/lcov-report/index.html",

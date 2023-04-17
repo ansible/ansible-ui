@@ -113,6 +113,7 @@ export function EditRulebookActivation() {
                 }))
               : []
           }
+          isRequired
         />
         <PageFormSelectOption
           name={'rulebook_id'}
