@@ -1,9 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageTable } from '../../../framework';
-import { RouteObj } from '../../Routes';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useActivationColumns } from './hooks/useActivationColumns';
 import {
   Button,
   Card,
@@ -15,8 +9,14 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageTable } from '../../../framework';
+import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
+import { useActivationColumns } from './hooks/useActivationColumns';
 
 export function ActivationsCard() {
   const { t } = useTranslation();
