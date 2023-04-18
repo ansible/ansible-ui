@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, DateTimeCell, TextCell } from '../../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
-import { getJobOutputUrl } from '../jobUtils';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { getJobOutputUrl } from '../jobUtils';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -17,6 +17,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         card: 'hidden',
         list: 'hidden',
         isIdColumn: true,
+        minWidth: 0,
       },
       {
         header: t('Name'),
