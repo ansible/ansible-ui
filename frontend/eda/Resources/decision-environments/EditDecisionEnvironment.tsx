@@ -9,13 +9,13 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaCredential } from '../../interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
@@ -77,33 +77,23 @@ export function EditDecisionEnvironment() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
-  const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (
-    decisionEnvironment,
-    setError
-  ) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaDecisionEnvironment>(
-          `${API_PREFIX}/decision-environments/${id}/`,
-          decisionEnvironment
-        );
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newDecisionEnvironment = await postRequest(
-          `${API_PREFIX}/decision-environments/`,
-          decisionEnvironment
-        );
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(
-          RouteObj.EdaDecisionEnvironmentDetails.replace(
-            ':id',
-            newDecisionEnvironment.id.toString()
-          )
-        );
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaDecisionEnvironment>(
+        `${API_PREFIX}/decision-environments/${id}/`,
+        decisionEnvironment
+      );
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newDecisionEnvironment = await postRequest(
+        `${API_PREFIX}/decision-environments/`,
+        decisionEnvironment
+      );
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(
+        RouteObj.EdaDecisionEnvironmentDetails.replace(':id', newDecisionEnvironment.id.toString())
+      );
     }
   };
   const onCancel = () => navigate(-1);

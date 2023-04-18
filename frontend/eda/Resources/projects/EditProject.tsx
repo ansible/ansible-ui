@@ -65,7 +65,7 @@ export function EditProject() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project, setError) => {
+  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
     if (Number.isInteger(id)) {
       await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
       (cache as unknown as { clear: () => void }).clear?.();
