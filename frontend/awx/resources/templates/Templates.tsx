@@ -55,6 +55,7 @@ export function Templates() {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
+        selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
           {
