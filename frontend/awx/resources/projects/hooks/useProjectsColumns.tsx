@@ -8,8 +8,8 @@ import {
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-  useStatusColumn,
 } from '../../../../common/columns';
+import { useProjectStatusColumn } from './useProjectStatusColumn';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 
@@ -24,7 +24,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const statusColumn = useStatusColumn({
+  const statusColumn = useProjectStatusColumn({
     ...options,
     tooltip: t`Click to view latest project sync job`,
     tooltipAlt: t`Unable to load latest project sync job`,
