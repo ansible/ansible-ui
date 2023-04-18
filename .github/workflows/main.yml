@@ -27,7 +27,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
-          VERSION=`npm version patch --no-git-tag-version``
+          VERSION=`npm version patch --no-git-tag-version`
           git add --all
           git commit -m $VERSION [skip ci]
 
