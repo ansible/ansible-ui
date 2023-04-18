@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ColumnTableOption, CopyCell, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { ScmType } from '../../../../common/scm';
 import { StatusLabelCell } from '../../../common/StatusLabelCell';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
@@ -27,11 +28,6 @@ export function useProjectColumns() {
         defaultSort: true,
       },
       {
-        header: t('Url'),
-        cell: (item) => <TextCell text={item.url} to={item.url} />,
-        value: (instance) => instance.url,
-      },
-      {
         header: t('Description'),
         type: 'description',
         value: (instance) => instance.description,
@@ -42,6 +38,15 @@ export function useProjectColumns() {
       {
         header: t('Status'),
         cell: (project) => <StatusLabelCell status={project.import_state} />,
+      },
+      {
+        header: t('Type'),
+        cell: () => <ScmType scmType="git" />,
+      },
+      {
+        header: t('Url'),
+        cell: (item) => <TextCell text={item.url} to={item.url} />,
+        value: (instance) => instance.url,
       },
       {
         header: t('Revision'),
