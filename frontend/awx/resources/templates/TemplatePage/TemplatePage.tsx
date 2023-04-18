@@ -2,7 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  RoutedTabs,
+  RoutedTab,
+} from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
@@ -41,23 +47,26 @@ export function TemplatePage() {
           />
         }
       />
-      <PageTabs loading={!template}>
-        <PageTab label={t('Details')}>
+      <RoutedTabs isLoading={!template} baseUrl={RouteObj.JobTemplatePage}>
+        <RoutedTab label={t('Details')} url={RouteObj.JobTemplateDetails}>
           <TemplateDetails template={template} />
-        </PageTab>
-        <PageTab label={t('Access')}>
+        </RoutedTab>
+        <RoutedTab label={t('Access')} url={RouteObj.JobTemplateAccess}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Job templates')}>
+        </RoutedTab>
+        <RoutedTab label={t('Notifications')} url={RouteObj.JobTemplateNotifications}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Notifications')}>
+        </RoutedTab>
+        <RoutedTab label={t('Schedules')} url={RouteObj.JobTemplateSchedules}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Schedules')}>
+        </RoutedTab>
+        <RoutedTab label={t('Jobs')} url={RouteObj.JobTemplateJobs}>
           <PageNotImplemented />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+        <RoutedTab label={t('Survey')} url={RouteObj.JobTemplateSurveys}>
+          <PageNotImplemented />
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }
