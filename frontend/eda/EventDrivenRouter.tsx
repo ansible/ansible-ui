@@ -6,7 +6,7 @@ import { Credentials } from './Resources/credentials/Credentials';
 import { EditCredential } from './Resources/credentials/EditCredential';
 import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
 import { DecisionEnvironments } from './Resources/decision-environments/DecisionEnvironments';
-import { EditDecisionEnvironment } from './Resources/decision-environments/EditDecisionEnvironment';
+import { EditDecisionEnvironment } from './Resources/decision-environments/DecisionEnvironmentForm';
 import { EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
