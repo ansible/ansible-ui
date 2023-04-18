@@ -15,7 +15,6 @@ export interface TextCellProps {
   maxWidth?: number;
   disableLinks?: boolean;
 }
-
 export function TextCell(props: TextCellProps) {
   const navigate = usePageNavigate();
   return (
@@ -44,6 +43,9 @@ export function TextCell(props: TextCellProps) {
           >
             {!props.disableLinks && (props.to || props.onClick) ? (
               <a
+                style={{
+                  color: props.color ? getPatternflyColor(props.color) : undefined,
+                }}
                 href={props.to}
                 onClick={(e) => {
                   e.preventDefault();
