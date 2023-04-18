@@ -1,54 +1,159 @@
-import { BanIcon, ClockIcon } from '@patternfly/react-icons';
+import {
+  BanIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  InfoCircleIcon,
+} from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@patternfly/react-core';
-import { PFColorE, RunningIcon } from '../../framework';
+import { RunningIcon, TextCell } from '../../framework';
 
-export function StatusCell(props: { status?: string }) {
+export function StatusCell(props: { status?: string; disableLinks?: boolean; to?: string }) {
   const { t } = useTranslation();
   switch (props.status) {
     case 'disabled':
       return (
-        <Alert
-          customIcon={<BanIcon color={PFColorE.Grey} />}
-          title={<div style={{ color: PFColorE.Grey }}>{t('Disabled')}</div>}
-          isInline
-          isPlain
+        <TextCell
+          text={t`Disabled`}
+          color={'grey'}
+          iconColor={'disabled'}
+          icon={<BanIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
         />
       );
     case 'healthy':
-      return <Alert variant="success" title={t('Healthy')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Healthy`}
+          color={'green'}
+          iconColor={'success'}
+          icon={<CheckCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'completed':
-      return <Alert variant="success" title={t('Completed')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Completed`}
+          color={'green'}
+          iconColor={'success'}
+          icon={<CheckCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'successful':
-      return <Alert variant="success" title={t('Successful')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Successful`}
+          color={'green'}
+          iconColor={'success'}
+          icon={<CheckCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'failed':
-      return <Alert variant="danger" title={t('Failed')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Failed`}
+          color={'red'}
+          iconColor={'danger'}
+          icon={<ExclamationCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'error':
-      return <Alert variant="danger" title={t('Error')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Error`}
+          color={'red'}
+          iconColor={'danger'}
+          icon={<ExclamationCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'waiting':
       return (
-        <Alert
-          customIcon={<ClockIcon color={PFColorE.Grey} />}
-          title={<div style={{ color: PFColorE.Grey }}>{t('Waiting')}</div>}
-          isInline
-          isPlain
+        <TextCell
+          text={t`Waiting`}
+          color={'grey'}
+          iconColor={'disabled'}
+          icon={<ClockIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
         />
       );
     case 'pending':
       return (
-        <Alert customIcon={<ClockIcon />} title={t('Pending')} variant="info" isPlain isInline />
+        <TextCell
+          text={t`Pending`}
+          color={'blue'}
+          iconColor={'info'}
+          icon={<ClockIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
       );
     case 'new':
-      return <Alert variant="info" title={t('Pending')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Pending`}
+          color={'blue'}
+          iconColor={'info'}
+          icon={<InfoCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'running':
       return (
-        <Alert customIcon={<RunningIcon />} title={t('Running')} variant="info" isPlain isInline />
+        <TextCell
+          text={t`Running`}
+          color={'blue'}
+          iconColor={'info'}
+          icon={<RunningIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
       );
     case 'canceled':
-      return <Alert variant="warning" title={t('Canceled')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Canceled`}
+          color={'yellow'}
+          iconColor={'warning'}
+          icon={<ExclamationTriangleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'never-updated':
-      return <Alert variant="info" title={t('Never updated')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Never updated`}
+          color={'blue'}
+          iconColor={'info'}
+          icon={<InfoCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     default:
-      return <Alert variant="warning" title={t('Unknown')} isPlain isInline />;
+      return (
+        <TextCell
+          text={t`Unknown`}
+          color={'yellow'}
+          iconColor={'warning'}
+          icon={<ExclamationTriangleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
   }
 }

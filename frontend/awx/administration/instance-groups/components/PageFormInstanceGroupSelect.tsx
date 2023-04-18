@@ -8,7 +8,12 @@ import { useSelectInstanceGroups } from '../hooks/useSelectInstanceGroups';
 export function PageFormInstanceGroupSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: { name: TFieldName; additionalControls?: ReactNode; isRequired?: boolean }) {
+>(props: {
+  name: TFieldName;
+  labelHelp: string;
+  additionalControls?: ReactNode;
+  isRequired?: boolean;
+}) {
   const { t } = useTranslation();
   const selectInstanceGroup = useSelectInstanceGroups(true);
 
@@ -18,7 +23,7 @@ export function PageFormInstanceGroupSelect<
       name={props.name}
       placeholder={t('Add instance groups')}
       labelHelpTitle={t('Instance groups')}
-      labelHelp={t('Select the Instance Groups for this Job Template to run on.')}
+      labelHelp={props.labelHelp}
       label={t('Instance group')}
       selectTitle={t('Select an instance group')}
       selectOpen={selectInstanceGroup}

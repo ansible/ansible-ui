@@ -39,6 +39,7 @@ import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemp
 import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
+import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -79,6 +80,8 @@ export function AwxRouter() {
         {/* <Route path={RouteObjWithoutPrefix.ProjectEdit} element={<ProjectEdit />} /> */}
         <Route path={RouteObjWithoutPrefix.Inventories} element={<Inventories />} />
         <Route path={RouteObjWithoutPrefix.InventoryDetails} element={<InventoryPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateInventory} element={<CreateInventory />} />
+        <Route path={RouteObjWithoutPrefix.EditInventory} element={<EditInventory />} />
 
         <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
         <Route path={RouteObjWithoutPrefix.Organizations} element={<Organizations />} />

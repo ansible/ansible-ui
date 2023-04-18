@@ -13,7 +13,6 @@ import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
@@ -21,7 +20,6 @@ import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
-  const isValidUrl = useIsValidUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   return (
     <>
@@ -41,11 +39,10 @@ function DecisionEnvironmentInputs() {
       />
       <PageFormTextInput<EdaDecisionEnvironment>
         name="image_url"
-        label={t('Registry URL')}
-        isRequired={true}
-        placeholder={t('Enter registry URL')}
+        label={t('Image')}
+        placeholder={t('Enter image name')}
         maxLength={150}
-        validate={isValidUrl}
+        isRequired
       />
       <PageFormTextInput<EdaDecisionEnvironment>
         name="tag"

@@ -41,6 +41,7 @@ export function InstanceGroups() {
         icon: PlusCircleIcon,
         variant: ButtonVariant.primary,
         isPinned: true,
+        selection: PageActionSelection.None,
         label: t('Create group'),
         actions: [
           {

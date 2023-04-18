@@ -43,19 +43,19 @@ interface IPageActionCommon {
 }
 
 interface IPageActionNoneCommon extends IPageActionCommon {
-  selection?: PageActionSelection.None;
+  selection: PageActionSelection.None;
   isHidden?: () => boolean;
   isDisabled?: string | (() => string | undefined);
 }
 
 interface IPageActionSingleCommon<T extends object> extends IPageActionCommon {
-  selection?: PageActionSelection.Single;
+  selection: PageActionSelection.Single;
   isHidden?: (item: T) => boolean;
   isDisabled?: string | ((item: T) => string | undefined);
 }
 
 interface IPageActionMultipleCommon<T extends object> extends IPageActionCommon {
-  selection?: PageActionSelection.Multiple;
+  selection: PageActionSelection.Multiple;
   isDisabled?: string | ((items: T[]) => string | undefined);
 }
 
@@ -109,17 +109,20 @@ export interface IPageActionSwitchSingle<T extends object> extends IPageActionSi
 export interface IPageActionDropdown<T extends object> extends IPageActionNoneCommon {
   type: PageActionType.Dropdown;
   actions: IPageAction<T>[];
+  variant?: ButtonVariant;
 }
 
 export interface IPageActionDropdownSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Dropdown;
   actions: IPageAction<T>[];
+  variant?: ButtonVariant;
 }
 
 export interface IPageActionDropdownMultiple<T extends object>
   extends IPageActionMultipleCommon<T> {
   type: PageActionType.Dropdown;
   actions: IPageAction<T>[];
+  variant?: ButtonVariant;
 }
 
 export interface IPageActionSeperator {
