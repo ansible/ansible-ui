@@ -1,7 +1,6 @@
 import { Card, CardHeader, Flex, FlexItem, Stack, Title } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { usePageNavigate } from '../components/usePageNavigate';
 import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -19,8 +18,6 @@ export function PageDashboardCard(props: {
   height?: PageDashboardCardHeight;
   style?: CSSProperties;
 }) {
-  const navigate = usePageNavigate();
-
   const dashboardContext = useContext(PageDashboardContext);
 
   let colSpan = 4;
