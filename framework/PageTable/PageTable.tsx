@@ -61,6 +61,26 @@ import {
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
+import styled from 'styled-components';
+
+const ScrollDiv = styled.div`
+  height: 100%;
+  margin-bottom: -1px;
+`;
+
+const EmptyStateDiv = styled.div`
+  height: 100%;
+`;
+
+const TableCellDiv = styled.div`
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
+
+const ColumnCellDiv = styled.div`
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
 
 export type PageTableProps<T extends object> = {
   // TODO table id to save table settings
@@ -257,7 +277,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
-      <div className="dark-2" style={{ height: '100%' }}>
+      <EmptyStateDiv className="dark-2">
         <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
             icon={ExclamationCircleIcon}
@@ -270,7 +290,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
           <EmptyStateBody>{error.message}</EmptyStateBody>
         </EmptyState>
-      </div>
+      </EmptyStateDiv>
     );
   }
 
@@ -415,12 +435,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const settings = useSettings();
 
   return (
-    <div
-      className="pf-c-scroll-inner-wrapper"
-      style={{ height: '100%', marginBottom: -1 }}
-      ref={containerRef}
-      onScroll={onScroll}
-    >
+    <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
       <TableComposable
         aria-label="Simple table"
         variant={
@@ -452,9 +467,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             ? new Array(perPage).fill(0).map((_, index) => (
                 <Tr key={index}>
                   <Td>
-                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <TableCellDiv>
                       <Skeleton height="27px" />
-                    </div>
+                    </TableCellDiv>
                   </Td>
                 </Tr>
               ))
@@ -463,9 +478,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 <Tr key={index}>
                   {showSelect && <Td></Td>}
                   <Td colSpan={tableColumns.length}>
-                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <ColumnCellDiv>
                       <Skeleton height="27px" />
-                    </div>
+                    </ColumnCellDiv>
                   </Td>
                 </Tr>
               ))
@@ -506,7 +521,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           )}
         </EmptyState>
       )}
-    </div>
+    </ScrollDiv>
   );
 }
 
@@ -579,6 +594,7 @@ function TableHead<T extends object>(props: {
               <Th
                 key={column.header}
                 sort={getColumnSort(index, column)}
+                modifier="nowrap"
                 style={{
                   minWidth:
                     column.minWidth === 0

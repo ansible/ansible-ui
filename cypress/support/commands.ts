@@ -359,7 +359,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_PASSWORD') as string,
         'EDA server'
       );
-      cy.hasTitle(/^Projects$/);
+      cy.hasTitle(/^Welcome to EDA Server$/);
     },
     {
       cacheAcrossSpecs: true,
@@ -948,7 +948,7 @@ Cypress.Commands.add('getEdaUser', () => {
 Cypress.Commands.add('createEdaDecisionEnvironment', () => {
   cy.requestPost<EdaDecisionEnvironment>('/api/eda/v1/decision-environments/', {
     name: 'E2E Decision Environment ' + randomString(4),
-    image_url: 'quay.io/ansible/ansible-rulebook:main',
+    image_url: 'https://quay.io/ansible/ansible-rulebook:main',
   }).then((edaDE) => {
     Cypress.log({
       displayName: 'EDA DECISION CREATION :',

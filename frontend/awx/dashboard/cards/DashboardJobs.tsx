@@ -1,4 +1,4 @@
-import { CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
+import { CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,7 @@ export function DashboardJobsCard() {
   const [period, setPeriod] = useState<DashboardJobPeriod | undefined>('month');
   const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
   return (
-    <PageDashboardCard style={{ minHeight: 300 }}>
+    <PageDashboardCard width="xxl" height="lg">
       <CardHeader>
         <Flex style={{ width: '100%' }} spaceItems={{ default: 'spaceItemsSm' }}>
           <FlexItem grow={{ default: 'grow' }}>
@@ -54,9 +54,7 @@ export function DashboardJobsCard() {
           </FlexItem>
         </Flex>
       </CardHeader>
-      <CardBody>
-        <JobsChart period={period} jobType={jobType} />
-      </CardBody>
+      <JobsChart period={period} jobType={jobType} />
     </PageDashboardCard>
   );
 }
