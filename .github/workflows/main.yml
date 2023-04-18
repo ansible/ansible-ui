@@ -84,11 +84,31 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  image:
-    name: Container Image
+  dependency-image:
+    name: Dependency Image
     needs: tag
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 10
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Dependencies
+        uses: docker/build-push-action@v4
+        with:
+          target: dependencies
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  ansible-ui-image:
+    name: Ansible UI Image
+    needs: dependency-image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -103,13 +123,6 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
-      - name: Build Dependencies
-        uses: docker/build-push-action@v4
-        with:
-          target: dependencies
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Build Ansible UI
         uses: docker/build-push-action@v4
         with:
@@ -117,6 +130,25 @@ jobs:
           tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
           push: true
           cache-from: type=gha
+
+  eda-ui-image:
+    name: EDA UI Image
+    needs: dependency-image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Build EDA UI
         uses: docker/build-push-action@v4
