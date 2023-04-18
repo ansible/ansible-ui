@@ -12,13 +12,12 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { EdaUser } from '../../interfaces/EdaUser';
-import { getEdaError } from '../../useEventDrivenView';
 import { PageFormGroupSelect } from '../Groups/components/PageFormGroupSelect';
 
 interface UserFields extends FieldValues {
@@ -77,23 +76,19 @@ export function EditUser() {
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput: IUserInput,
-    setError,
+    _setError,
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      if (user.password) {
-        if (confirmPassword !== user.password) {
-          setFieldError('confirmPassword', { message: t('Password does not match.') });
-          return false;
-        }
+    user.is_superuser = userType === t('System administrator');
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
       }
-      const newUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, user);
-      navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(await getEdaError(err));
     }
+    const newUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, user);
+    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);

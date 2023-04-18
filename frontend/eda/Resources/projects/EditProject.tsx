@@ -67,19 +67,15 @@ export function EditProject() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);
