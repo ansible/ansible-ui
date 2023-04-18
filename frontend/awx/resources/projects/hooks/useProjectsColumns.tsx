@@ -10,8 +10,10 @@ import {
   useOrganizationNameColumn,
 } from '../../../../common/columns';
 import { ScmType } from '../../../../common/scm';
-import { Project } from '../../../interfaces/Project';
 import { useProjectStatusColumn } from './useProjectStatusColumn';
+import { useLastUsedColumn } from './useLastUsedColumn';
+import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { Project } from '../../../interfaces/Project';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -29,6 +31,8 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
     tooltip: t`Click to view latest project sync job`,
     tooltipAlt: t`Unable to load latest project sync job`,
   });
+  const lastUsedColumn = useLastUsedColumn();
+  const defaultEnvironmentColumn = useExecutionEnvironmentColumn();
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
@@ -47,8 +51,19 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       organizationColumn,
       createdColumn,
       modifiedColumn,
+      lastUsedColumn,
+      defaultEnvironmentColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn, statusColumn]
+    [
+      nameColumn,
+      t,
+      organizationColumn,
+      createdColumn,
+      modifiedColumn,
+      lastUsedColumn,
+      defaultEnvironmentColumn,
+      statusColumn,
+    ]
   );
   return tableColumns;
 }
