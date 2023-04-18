@@ -1,20 +1,20 @@
 /* eslint-disable i18next/no-literal-string */
-import { Banner, Bullseye, PageSection, Spinner, Stack } from '@patternfly/react-core';
+import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout, pfDanger, pfSuccess, Scrollable } from '../../../framework';
-import { PageGrid } from '../../../framework/components/PageGrid';
+import { PageHeader, PageLayout, pfDanger, pfSuccess } from '../../../framework';
+import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
+import { RouteObj } from '../../Routes';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
-import { RouteObj } from '../../Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { DashboardJobsCard } from './cards/DashboardJobs';
 import { OnboardExecutionEnvironments } from './cards/OnboardExecutionEnvironments';
 import { OnboardInventories } from './cards/OnboardInventories';
 
-export default function Dashboard() {
+export default function AwxDashboard() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   return (
@@ -55,68 +55,61 @@ function DashboardInternal() {
   }
 
   return (
-    <>
-      <Scrollable>
-        <PageSection isWidthLimited>
-          <Stack hasGutter>
-            <OnboardExecutionEnvironments count={executionEnvironments.count} />
-            <OnboardInventories count={data.inventories.total} />
-            {/* <OnboardJobs count={data.???.count} /> */}
-            <PageGrid size={300}>
-              <PageDashboardDonutCard
-                title={t('Inventories')}
-                to={RouteObj.Inventories}
-                items={[
-                  {
-                    label: t('Ready'),
-                    count: data.inventories.total - data.inventories.inventory_failed,
-                    color: pfSuccess,
-                  },
-                  {
-                    label: t('Sync failures'),
-                    count: data.inventories.inventory_failed,
-                    color: pfSuccess,
-                  },
-                ]}
-              />
-              <PageDashboardDonutCard
-                title={t('Hosts')}
-                to={RouteObj.Hosts}
-                items={[
-                  {
-                    label: t('Ready'),
-                    count: data.hosts.total - data.hosts.failed,
-                    color: pfSuccess,
-                  },
-                  {
-                    label: t('Failed'),
-                    count: data.hosts.failed,
-                    color: pfDanger,
-                  },
-                ]}
-              />
-              <PageDashboardDonutCard
-                title={t('Projects')}
-                to={RouteObj.Projects}
-                items={[
-                  {
-                    label: t('Ready'),
-                    count: data.projects.total - data.projects.failed,
-                    color: pfSuccess,
-                  },
-                  {
-                    label: t('Sync failures'),
-                    count: data.projects.failed,
-                    color: pfDanger,
-                  },
-                ]}
-              />
-            </PageGrid>
-            <DashboardJobsCard />
-          </Stack>
-        </PageSection>
-      </Scrollable>
-    </>
+    <PageDashboard>
+      <OnboardExecutionEnvironments count={executionEnvironments.count} />
+      <OnboardInventories count={data.inventories.total} />
+      {/* <OnboardJobs count={data.???.count} /> */}
+
+      <PageDashboardDonutCard
+        title={t('Inventories')}
+        to={RouteObj.Inventories}
+        items={[
+          {
+            label: t('Ready'),
+            count: data.inventories.total - data.inventories.inventory_failed,
+            color: pfSuccess,
+          },
+          {
+            label: t('Sync failures'),
+            count: data.inventories.inventory_failed,
+            color: pfSuccess,
+          },
+        ]}
+      />
+      <PageDashboardDonutCard
+        title={t('Hosts')}
+        to={RouteObj.Hosts}
+        items={[
+          {
+            label: t('Ready'),
+            count: data.hosts.total - data.hosts.failed,
+            color: pfSuccess,
+          },
+          {
+            label: t('Failed'),
+            count: data.hosts.failed,
+            color: pfDanger,
+          },
+        ]}
+      />
+      <PageDashboardDonutCard
+        title={t('Projects')}
+        to={RouteObj.Projects}
+        items={[
+          {
+            label: t('Ready'),
+            count: data.projects.total - data.projects.failed,
+            color: pfSuccess,
+          },
+          {
+            label: t('Sync failures'),
+            count: data.projects.failed,
+            color: pfDanger,
+          },
+        ]}
+      />
+      <DashboardJobsCard />
+    </PageDashboard>
   );
 }
 

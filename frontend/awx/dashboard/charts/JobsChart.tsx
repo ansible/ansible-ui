@@ -48,13 +48,11 @@ export function JobsChart(props: {
   const failed = data?.jobs.failed.map(reducer) ?? [];
   const successful = data?.jobs.successful.map(reducer) ?? [];
   return (
-    <div style={{ height: props.height ?? '100%' }}>
-      <PageDashboardChart
-        groups={[
-          { color: pfDanger, values: failed },
-          { color: pfSuccess, values: successful },
-        ]}
-      />
-    </div>
+    <PageDashboardChart
+      groups={[
+        { color: pfDanger, values: failed },
+        { color: pfSuccess, values: successful },
+      ]}
+    />
   );
 }

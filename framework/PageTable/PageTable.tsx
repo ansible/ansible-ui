@@ -579,6 +579,7 @@ function TableHead<T extends object>(props: {
               <Th
                 key={column.header}
                 sort={getColumnSort(index, column)}
+                modifier="nowrap"
                 style={{
                   minWidth:
                     column.minWidth === 0

@@ -1,168 +1,122 @@
-import { Chart, ChartAxis, ChartLine, ChartTooltip } from '@patternfly/react-charts';
-import { useState } from 'react';
-
-import { Card, CardBody, CardHeader } from '@patternfly/react-core';
-import { c_content_small_FontSize } from '@patternfly/react-tokens';
-import chart_color_green_400 from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import chart_color_red_300 from '@patternfly/react-tokens/dist/js/chart_color_red_300';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { compareStrings, pfDanger, pfSuccess } from '../../../framework';
+import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
+import { PageDashboardChart } from '../../../framework/PageDashboard/PageDashboardChart';
+import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
-import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 import { EdaResult } from '../interfaces/EdaResult';
-
-interface TickType {
-  x: string;
-  y: number;
-}
-const auditRulesEndpoint = `${API_PREFIX}/audit/rules_fired/`;
+import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
-  const [width, _setWidth] = useState(window.innerWidth);
-  const [successfulRuns, _setSuccessfulRuns] = useState<TickType[]>([]);
-  const [failedRuns, _setFailedRuns] = useState<TickType[]>([]);
   const { t } = useTranslation();
-  const useListRuleAuditRules = () => useGet<EdaResult<EdaRuleAudit>>(auditRulesEndpoint);
-  const { data: data } = useListRuleAuditRules();
 
-  const calculateChartPoints = (data: EdaRuleAudit[] | undefined) => {
-    if (!data) {
-      return;
-    }
-    const tickValues: string[] = [];
-    data.forEach((item) => {
-      if (item.fired_at) {
-        const keyDate = new Date(item.fired_at);
-        const key = `${keyDate.getMonth()}/${keyDate.getDate()}`;
-        const idx = tickValues.findIndex((tick) => tick === key);
-        if (idx < 0) {
-          tickValues.push(key);
-          if (item.status === 'successful') {
-            successfulRuns.push({ x: key, y: 1 });
-            failedRuns.push({ x: key, y: 0 });
-          }
-          if (item.status === 'failed') {
-            failedRuns.push({ x: key, y: 1 });
-            successfulRuns.push({ x: key, y: 0 });
-          }
-        } else {
-          if (item.status === 'successful') {
-            successfulRuns[idx].y = successfulRuns[idx].y + 1;
-          }
-          if (item.status === 'failed') {
-            failedRuns[idx].y = failedRuns[idx].y + 1;
+  const { data } = useGet<EdaResult<EdaRuleAudit>>(`${API_PREFIX}/audit/rules_fired/`);
+
+  // Chart Test Code
+  // const generateRandomEdaRuleAudits = useCallback(
+  //   () =>
+  //     new Array(2000).fill(0).map((_, id) => ({
+  //       id,
+  //       status: Math.random() > 0.5 ? 'successful' : 'failed',
+  //       fired_at: new Date(
+  //         Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000)
+  //       ).toISOString(),
+  //     })),
+  //   []
+  // );
+  // const results = useMemo(() => generateRandomEdaRuleAudits(), [generateRandomEdaRuleAudits]);
+  // data = { count: results.length, results };
+
+  const { successfulRuns, failedRuns } = useMemo(() => {
+    const successfulRunMap: { [label: string]: { label: string; value: number } } = {};
+    const failedRunMap: { [label: string]: { label: string; value: number } } = {};
+    if (data) {
+      let firstDate: Date | undefined = undefined;
+      let lastDate: Date = new Date(Date.now());
+      for (const item of data.results ?? []) {
+        if (item.fired_at) {
+          const firedAtDate = new Date(item.fired_at);
+          if (!firstDate || firedAtDate < firstDate) firstDate = firedAtDate;
+          const label = `${firedAtDate.getMonth() + 1}/${firedAtDate.getDate()}`;
+          switch (item.status) {
+            case 'successful':
+              {
+                let run = successfulRunMap[label];
+                if (!run) {
+                  run = { label, value: 0 };
+                  successfulRunMap[label] = run;
+                }
+                run.value++;
+              }
+              break;
+            case 'failed':
+              {
+                let run = failedRunMap[label];
+                if (!run) {
+                  run = { label, value: 0 };
+                  failedRunMap[label] = run;
+                }
+                run.value++;
+              }
+              break;
           }
         }
       }
-    });
-  };
 
-  calculateChartPoints(data?.results);
+      if (firstDate) {
+        firstDate = new Date(
+          firstDate.getUTCFullYear(),
+          firstDate.getUTCMonth(),
+          firstDate.getUTCDate()
+        );
+      }
+      if (lastDate) {
+        lastDate = new Date(
+          lastDate.getUTCFullYear(),
+          lastDate.getUTCMonth(),
+          lastDate.getUTCDate()
+        );
+      }
 
-  const renderSuccessfulRulesFired = () => {
-    const successPoints = successfulRuns.map((tick) => {
-      return {
-        x: tick.x,
-        y: tick.y,
-        name: 'Successful',
-        label: `${tick.x} Successful: ${tick.y}`,
-      };
-    });
-    return (
-      <ChartLine
-        data={successPoints}
-        style={{
-          data: { stroke: chart_color_green_400.value },
-        }}
-        labelComponent={<ChartTooltip constrainToVisibleArea />}
-      />
+      if (firstDate) {
+        for (
+          let date = firstDate;
+          date <= lastDate;
+          date = new Date(date.valueOf() + 24 * 60 * 60 * 1000)
+        ) {
+          const label = `${date.getMonth() + 1}/${date.getDate()}`;
+          const successfulRun = successfulRunMap[label];
+          if (!successfulRun) successfulRunMap[label] = { label, value: 0 };
+          const failedRun = failedRunMap[label];
+          if (!failedRun) failedRunMap[label] = { label, value: 0 };
+        }
+      }
+    }
+
+    const successfulRuns = Object.values(successfulRunMap).sort((l, r) =>
+      compareStrings(l.label, r.label)
     );
-  };
 
-  const renderFailedRulesFired = () => {
-    const failedPoints = failedRuns.map((tick) => {
-      return {
-        x: tick.x,
-        y: tick.y,
-        name: 'Failed',
-        label: `${tick.x} Failed: ${tick.y}`,
-      };
-    });
-    return (
-      <ChartLine
-        data={failedPoints}
-        style={{
-          data: { stroke: chart_color_red_300.value },
-        }}
-        labelComponent={<ChartTooltip constrainToVisibleArea />}
-      />
-    );
-  };
+    const failedRuns = Object.values(failedRunMap).sort((l, r) => compareStrings(l.label, r.label));
 
-  const getTickValues = () => {
-    const tickValues: string[] = [];
-    successfulRuns.forEach((item) => tickValues.push(item.x));
-    return tickValues;
-  };
+    return { successfulRuns, failedRuns };
+  }, [data]);
 
-  const yAxisStyles = {
-    tickLabels: {
-      fontSize: 10,
-    },
-    axisLabel: {
-      padding: 45,
-      fontSize: c_content_small_FontSize.value,
-    },
-  };
-
-  const xAxisStyles = {
-    tickLabels: {
-      fontSize: 10,
-    },
-    axisLabel: {
-      padding: 30,
-      fontSize: c_content_small_FontSize.value,
-    },
-  };
+  if (successfulRuns.length <= 1) {
+    return <></>;
+  }
 
   return (
-    <Card>
-      <CardHeader>{t('Rules over time')}</CardHeader>
-      <CardBody>
-        <Chart
-          ariaDesc="Rules over time"
-          ariaTitle="Rules over time"
-          domainPadding={{ x: [30, 25] }}
-          height={225}
-          padding={{
-            bottom: 60,
-            left: 60,
-            right: 20,
-            top: 20,
-          }}
-          width={width}
-        >
-          <ChartAxis
-            tickValues={getTickValues()}
-            fixLabelOverlap
-            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-            label={t('Time')}
-            style={xAxisStyles}
-          />
-          <ChartAxis
-            dependentAxis
-            showGrid
-            domain={[0, 3]}
-            tickFormat={(tick) => Math.round(tick as number)}
-            style={yAxisStyles}
-            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-            label={t('Rules fired')}
-          />
-          {successfulRuns && renderSuccessfulRulesFired()}
-          {failedRuns && renderFailedRulesFired()}
-        </Chart>
-      </CardBody>
-    </Card>
+    <PageDashboardCard title={t('Rule runs')} width="xxl" height="lg" to={RouteObj.EdaRules}>
+      <PageDashboardChart
+        groups={[
+          { color: pfSuccess, values: successfulRuns },
+          { color: pfDanger, values: failedRuns },
+        ]}
+      />
+    </PageDashboardCard>
   );
 };
 

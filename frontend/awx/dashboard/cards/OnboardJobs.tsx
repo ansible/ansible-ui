@@ -16,7 +16,7 @@ export function OnboardJobs(props: { count: number | undefined }) {
   const { count } = props;
   if (count === undefined || count >= 1) return <></>;
   return (
-    <PageDashboardCard>
+    <PageDashboardCard width="xxl">
       <CardHeader>
         <CardTitle>{t('Create your first job template')}</CardTitle>
       </CardHeader>
