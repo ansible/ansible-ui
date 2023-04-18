@@ -11,26 +11,25 @@ jobs:
   tag:
     name: Tag Release
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
 
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          fetch-depth: 0
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
-      - id: version
+      - name: Version
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
-          npm version patch
+          VERSION=`npm version patch --no-git-tag-version``
+          git add --all
+          git commit -m $VERSION [skip ci]
 
       - name: Git Push
         run: |
