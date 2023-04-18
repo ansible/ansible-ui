@@ -517,7 +517,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
-    cy.get('.pf-c-alert__title').should('contain', 'Successful');
+    cy.get('[data-label="Status"]').should('contain', 'Successful');
   });
 });
 

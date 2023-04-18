@@ -1,13 +1,11 @@
-import { GitAltIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
-import { pfWarning, TextCell } from '../../framework';
+import { TextCell } from '../../framework';
 
 export function getScmType(scm_type: string): { text: string; icon?: ReactNode } {
   switch (scm_type) {
     case 'git':
       return {
         text: 'Git',
-        icon: <GitAltIcon color="#F1502F" />,
       };
     case 'svn':
       return {
@@ -28,7 +26,6 @@ export function getScmType(scm_type: string): { text: string; icon?: ReactNode }
     default:
       return {
         text: 'Unknown',
-        icon: <QuestionCircleIcon color={pfWarning} />,
       };
   }
 }
