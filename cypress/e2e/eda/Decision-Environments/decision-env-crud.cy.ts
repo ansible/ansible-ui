@@ -16,7 +16,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     cy.hasTitle(/^Decision environments$/);
     cy.clickButton(/^Create decision environment$/);
     cy.typeInputByLabel(/^Name$/, de_name);
-    cy.typeInputByLabel(/^Registry URL$/, 'https://quay.io/ansible/ansible-rulebook:main');
+    cy.typeInputByLabel(/^Image$/, 'quay.io/ansible/ansible-rulebook:main');
     cy.clickButton(/^Create decision environment$/);
     cy.hasTitle(de_name);
     cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {
