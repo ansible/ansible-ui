@@ -8,36 +8,47 @@ import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { IAwxView } from '../../../useAwxView';
 import { useDeleteInventories } from './useDeleteInventories';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { useOptions } from '../../../../common/crud/useOptions';
 
 export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
+  const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
 
-  return useMemo<IPageAction<Inventory>[]>(
-    () => [
+  return useMemo<IPageAction<Inventory>[]>(() => {
+    const actions: IPageAction<Inventory>[] = [
       {
         type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create inventory'),
+        isDisabled: () =>
+          canCreateInventory
+            ? undefined
+            : t(
+                'You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.'
+              ),
+        selection: PageActionSelection.None,
         actions: [
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create inventory'),
             onClick: () => navigate(RouteObj.CreateInventory),
           },
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create smart inventory'),
             onClick: () => navigate(RouteObj.CreateSmartInventory),
           },
           {
             type: PageActionType.Button,
-            selection: PageActionSelection.Single,
+            selection: PageActionSelection.None,
             label: t('Create constructed inventory'),
             onClick: () => navigate(RouteObj.CreateConstructedInventory),
           },
@@ -51,7 +62,8 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
         onClick: deleteInventories,
         isDanger: true,
       },
-    ],
-    [deleteInventories, navigate, t]
-  );
+    ];
+
+    return actions;
+  }, [canCreateInventory, deleteInventories, navigate, t]);
 }
