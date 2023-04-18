@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { RouteObj } from '../../Routes';
+import { AnsibleError } from './ansible-error';
 import { Delay } from './delay';
-import { HTTPError } from './http-error';
 
 export function useOptions<T>(url: string) {
   const optionsRequest = useOptionsRequest<T>();
@@ -64,7 +64,7 @@ function useOptionsRequest<ResponseBody = unknown>() {
         // Do nothing - response body was not valid json
       }
 
-      throw new HTTPError(response.statusText, response.status, responseBody);
+      throw new AnsibleError(response.statusText, response.status, responseBody);
     }
 
     return (await response.json()) as ResponseBody;

@@ -149,7 +149,8 @@
     "webpack": "5.79.0",
     "webpack-cli": "5.0.1",
     "workbox-webpack-plugin": "6.5.4",
-    "ws": "8.13.0"
+    "ws": "8.13.0",
+    "yaml": "^2.2.1"
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.10.4",
