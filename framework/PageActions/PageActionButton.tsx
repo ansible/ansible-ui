@@ -83,6 +83,7 @@ export function PageActionButton<T extends object>(props: {
                 break;
             }
           }}
+          aria-label={iconOnly ? action.label : ''}
         >
           {content}
         </Button>
