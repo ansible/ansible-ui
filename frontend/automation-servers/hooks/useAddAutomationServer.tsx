@@ -7,6 +7,7 @@ import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTe
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
 import { AutomationServer } from '../interfaces/AutomationServer';
 import { AutomationServerType } from '../interfaces/AutomationServerType';
+import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 
 const ModalFormDiv = styled.div`
   padding: 24px;
@@ -23,6 +24,7 @@ export function useAddAutomationServer() {
 
 export function AddAutomationServerDialog() {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
 
   const { setAutomationServers } = useAutomationServers();
 
@@ -63,22 +65,7 @@ export function AddAutomationServerDialog() {
             label={t('Url')}
             name="url"
             placeholder={t('Enter the url of the automation server')}
-            validate={(url: string) => {
-              let valid = true;
-              try {
-                const parsed = new URL(url);
-                if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-                  valid = false;
-                }
-                if (!parsed.host) {
-                  valid = false;
-                }
-                if (!valid) return parsed.protocol;
-              } catch {
-                valid = false;
-              }
-              if (!valid) return t('Url must be a valid URL.');
-            }}
+            validate={isValidUrl}
             isRequired
           />
           <PageFormSelectOption<AutomationServer>

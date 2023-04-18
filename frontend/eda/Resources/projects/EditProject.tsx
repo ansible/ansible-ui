@@ -8,15 +8,17 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
+import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 
 function ProjectInputs() {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<EdaProject>
@@ -38,13 +40,13 @@ function ProjectInputs() {
         isReadOnly={true}
         label={t('SCM Type')}
         placeholder={t('Git')}
-        maxLength={150}
       />
       <PageFormTextInput<EdaProject>
         name="url"
         isRequired={true}
         label={t('SCM URL')}
         placeholder={t('Enter SCM URL')}
+        validate={isValidUrl}
       />
       <PageFormTextInput<EdaProject>
         name="token"
