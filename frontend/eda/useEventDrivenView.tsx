@@ -157,22 +157,3 @@ export function useEdaView<T extends { id: number }>(options: {
     view,
   ]);
 }
-
-export async function getEdaError(err: unknown) {
-  if (err instanceof HTTPError) {
-    try {
-      const response = (await err.response.json()) as { __all__?: string[] };
-      if ('__all__' in response && Array.isArray(response.__all__)) {
-        return JSON.stringify(response.__all__[0]);
-      } else {
-        return JSON.stringify(response);
-      }
-    } catch {
-      return err.message;
-    }
-  } else if (err instanceof Error) {
-    return err.message;
-  } else {
-    return 'unknown error';
-  }
-}

@@ -9,12 +9,12 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { RouteObj } from '../../../Routes';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
@@ -86,19 +86,15 @@ export function EditCredential() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
 
-  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaCredential>(`${API_PREFIX}/credentials/${id}/`, credential);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaCredential>(`${API_PREFIX}/credentials/${id}/`, credential);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);

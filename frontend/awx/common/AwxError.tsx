@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, SyncIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { HTTPError } from '../../common/crud/http-error';
+import { AnsibleError } from '../../common/crud/ansible-error';
 
 export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
   const { error, handleRefresh } = props;
@@ -20,7 +20,7 @@ export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
         <Title headingLevel="h4" size="lg">
           {error.message}
         </Title>
-        {error instanceof HTTPError && error.description && (
+        {error instanceof AnsibleError && error.description && (
           <EmptyStateBody>{JSON.stringify(error.description)}</EmptyStateBody>
         )}
         {handleRefresh && (
