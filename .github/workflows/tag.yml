@@ -56,6 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -65,6 +67,7 @@ jobs:
       - name: Build Dependencies
         uses: docker/build-push-action@v4
         with:
+          context: .
           target: dependencies
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
@@ -76,6 +79,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -103,6 +108,7 @@ jobs:
       - name: Build Ansible UI
         uses: docker/build-push-action@v4
         with:
+          context: .
           target: ansible-ui
           # platforms: linux/amd64,linux/arm64
           push: true
@@ -116,6 +122,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -133,7 +141,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: quay.io/ansible/ansible-ui
+          images: quay.io/ansible/eda-ui
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -143,6 +151,7 @@ jobs:
       - name: Build EDA UI
         uses: docker/build-push-action@v4
         with:
+          context: .
           target: eda-ui
           platforms: linux/amd64,linux/arm64
           push: true
