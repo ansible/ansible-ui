@@ -6,35 +6,58 @@ on:
       - '*'
 
 jobs:
-  dependency-image:
-    name: Dependency Image
+  packages:
+    name: Packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Dependencies
-        uses: docker/build-push-action@v4
+      - uses: actions/setup-node@v3
         with:
-          context: .
-          target: dependencies
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          node-version: '18'
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
 
   ansible-ui-image:
     name: Ansible UI Image
-    needs: dependency-image
+    needs: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
+
+      - name: PreCache
+        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock-copy.json') }}
+
+      - name: PostCache
+        run: rm package-lock-copy.json
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: NPM Build
+        run: npm run build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -64,7 +87,7 @@ jobs:
         with:
           context: .
           target: ansible-ui
-          # platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: true
           cache-from: type=gha
           tags: ${{ steps.meta.outputs.tags }}
@@ -72,7 +95,7 @@ jobs:
 
   eda-ui-image:
     name: EDA UI Image
-    needs: dependency-image
+    needs: packages
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
