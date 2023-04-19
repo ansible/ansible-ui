@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -64,20 +64,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build Dependencies
-        uses: docker/build-push-action@v4
-        with:
-          target: dependencies
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Build Ansible UI
         uses: docker/build-push-action@v4
         with:
           target: ansible-ui
           tags: ansible-ui
           load: true
-          cache-from: type=gha
 
       - run: docker save ansible-ui > ansible-ui.tar
       - uses: actions/upload-artifact@v3
@@ -94,7 +86,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -123,7 +115,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -167,7 +159,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -229,7 +221,7 @@ jobs:
       - run: docker load --input ansible-ui.tar
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
