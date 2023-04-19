@@ -4,6 +4,18 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        required: true
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - prerelease
 
 concurrency: main
 
@@ -11,49 +23,46 @@ jobs:
   tag:
     name: Tag Release
     runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.version.outputs.VERSION }}
-    timeout-minutes: 5
+    timeout-minutes: 2
+
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
-      - id: version
+      - name: Git Config
         run: |
-          VERSION=`npm version patch --no-git-tag-version`
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: NPM Version - ${{ inputs.version || 'patch' }}
+        run: |
+          VERSION=`npm version ${{ inputs.version || 'patch' }} --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: ${{ env.VERSION }} [skip ci]
-          tagging_message: ${{ env.VERSION }}
+      - name: Git Commit Version and Push
+        run: |
+          git add --all
+          git commit -m "${{ env.VERSION }} [skip ci]"
+          git push origin --all
 
-  publish-framework:
-    name: Publish Framework
-    needs: tag
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.tag.outputs.VERSION }}
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
+      - name: Git Tag Version and Push
+        run: |
+          git commit --allow-empty -m ${{ env.VERSION }}
+          git tag -m ${{ env.VERSION }} ${{ env.VERSION }}
 
       - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+        run: npm version 0.0.0 --no-git-tag-version
 
       - name: Cache dependencies
         id: cache
@@ -62,66 +71,12 @@ jobs:
           path: |
             ./node_modules
             /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-
-      - name: PostCache
-        run: rm package-lock-copy.json
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Publish Framework
+      - name: Git Tag Push
         run: |
-          ./node_modules/.bin/vite build
-          ./node_modules/.bin/tsc --emitDeclarationOnly
-          cp -f LICENSE.md publish
-          cp -fR build/framework/ publish/
-          cp -f framework/README.md publish/README.md
-          cd publish
-          VERSION=`cat ../package.json | jq -r '.version'` && cat ../framework/package.json | jq --arg version $VERSION '. +{version: $version}' > package.json
-          npm publish --verbose
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  image:
-    name: Container Image
-    needs: tag
-    runs-on: ubuntu-latest
-    timeout-minutes: 12
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Quay
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_TOKEN }}
-
-      - name: Build Dependencies
-        uses: docker/build-push-action@v4
-        with:
-          target: dependencies
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build Ansible UI
-        uses: docker/build-push-action@v4
-        with:
-          target: ansible-ui
-          tags: quay.io/ansible/ansible-ui:latest,quay.io/ansible/ansible-ui:${{ needs.tag.outputs.VERSION }}
-          push: true
-          cache-from: type=gha
-
-      - name: Build EDA UI
-        uses: docker/build-push-action@v4
-        with:
-          target: eda-ui
-          tags: quay.io/ansible/eda-ui:latest,quay.io/ansible/eda-ui:${{ needs.tag.outputs.VERSION }}
-          push: true
-          cache-from: type=gha
+          git push origin --tags

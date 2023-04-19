@@ -155,7 +155,10 @@ function OrganizationInputs(props: { orgId?: number }) {
         name="organization.description"
         placeholder={t('Enter description')}
       />
-      <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
+      <PageFormInstanceGroupSelect<OrganizationFields>
+        name="instanceGroups"
+        labelHelp={t(`Select the instance groups for this organization to run on.`)}
+      />
       <PageFormExecutionEnvironmentSelect<OrganizationFields>
         organizationId={orgId ? orgId.toString() : undefined}
         name="organization.summary_fields.default_environment.name"
