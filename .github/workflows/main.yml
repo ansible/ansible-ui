@@ -60,18 +60,6 @@ jobs:
         run: |
           git commit --allow-empty -m ${{ env.VERSION }}
           git tag -m ${{ env.VERSION }} ${{ env.VERSION }}
-          git push origin --tags
-
-  packages:
-    name: NPM Packages
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
@@ -88,3 +76,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Git Tag Push
+        run: |
+          git push origin --tags
