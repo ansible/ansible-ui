@@ -1,20 +1,19 @@
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
+import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import {
-  Host,
   InstanceGroup,
   JobTemplate,
 } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import './rest-commands';
-import { Label } from '../../frontend/awx/interfaces/Label';
+import './auth';
 import './commands';
 import './rest-commands';
-import './auth';
 
 /*  AWX related custom command implementation  */
 
@@ -385,11 +384,11 @@ Cypress.Commands.add(
       name: 'E2E Inventory ' + randomString(4),
       organization: organization.id,
     }).then((inventory) => {
-      cy.requestPost<Host>('/api/v2/hosts/', {
+      cy.requestPost<AwxHost>('/api/v2/hosts/', {
         name: 'E2E Host ' + randomString(4),
         inventory: inventory.id,
       }).then((host) => {
-        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id!}/groups/`, {
+        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id}/groups/`, {
           name: 'E2E Group ' + randomString(4),
           inventory: inventory.id,
         }).then((group) => ({
