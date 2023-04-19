@@ -19,6 +19,7 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
+import styled from 'styled-components';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetail } from '../PageDetails/PageDetail';
@@ -30,7 +31,6 @@ import {
   ITableColumnTypeLabels,
   TableColumnCell,
 } from './PageTableColumn';
-import styled from 'styled-components';
 
 export interface IPageTableCard {
   id: string | number;
@@ -70,7 +70,7 @@ const CardFooterDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: end;
-  gap: 16;
+  gap: 16px;
 `;
 
 const CardFooterLabelsDiv = styled.div`
@@ -79,14 +79,14 @@ const CardFooterLabelsDiv = styled.div`
 
 const PageDetailDiv = styled.div`
   display: flex;
-  gap: 16;
-  margin-top: 8;
+  gap: 16px;
+  margin-top: 8px;
   flex-wrap: wrap;
 `;
 
 const ColumnsDiv = styled.div`
   display: flex;
-  gap: 6;
+  gap: 6px;
   align-items: baseline;
 `;
 
