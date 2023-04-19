@@ -28,25 +28,30 @@ jobs:
         with:
           node-version: 18
 
-      - name: Git Config
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@users.noreply.github.com"
+      # - name: Git Config
+      #   run: |
+      #     git config --global user.name "GitHub Actions"
+      #     git config --global user.email "actions@users.noreply.github.com"
 
       - name: NPM Version Patch
         run: |
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Git Commit Version and Push
-        run: |
-          git add --all
-          git commit -m "${{ env.VERSION }} [skip ci]"
-          git push origin --all
+      # - name: Git Commit Version and Push
+      #   run: |
+      #     git add --all
+      #     git commit -m "${{ env.VERSION }} [skip ci]"
+      #     git push origin --all
 
-      - name: Git Tag Version and Push
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@users.noreply.github.com"
-          git tag -a ${{ env.VERSION }} -m ${{ env.VERSION }}
-          git push origin --tags
+      # - name: Git Tag Version and Push
+      #   run: |
+      #     git config --global user.name "GitHub Actions"
+      #     git config --global user.email "actions@users.noreply.github.com"
+      #     git tag -a ${{ env.VERSION }} -m ${{ env.VERSION }}
+      #     git push origin --tags
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: ${{ env.VERSION }} [skip ci]
+          tagging_message: ${{ env.VERSION }}
