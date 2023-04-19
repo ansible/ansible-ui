@@ -1,7 +1,7 @@
-import { Split, SplitItem } from '@patternfly/react-core';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { IconWrapper } from '../components/IconWrapper';
-import { getPatternflyColor, PFColor } from '../components/pfcolors';
+import { PFColor, getPatternflyColor } from '../components/pfcolors';
 import { usePageNavigate } from '../components/usePageNavigate';
 
 export interface TextCellProps {
@@ -18,9 +18,13 @@ export interface TextCellProps {
 export function TextCell(props: TextCellProps) {
   const navigate = usePageNavigate();
   return (
-    <Split style={{ maxWidth: '100%' }}>
+    <Flex
+      spaceItems={{ default: 'spaceItemsNone' }}
+      flexWrap={{ default: 'nowrap' }}
+      alignItems={{ default: 'alignItemsBaseline' }}
+    >
       {props.icon && (
-        <SplitItem>
+        <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>
           <IconWrapper
             size={props.iconSize ?? 'sm'}
             color={props.iconColor ?? props.color}
@@ -28,10 +32,10 @@ export function TextCell(props: TextCellProps) {
           >
             {props.icon}
           </IconWrapper>
-        </SplitItem>
+        </FlexItem>
       )}
       {props.text && (
-        <SplitItem style={{ maxWidth: '100%' }}>
+        <FlexItem style={{ maxWidth: '100%' }}>
           <div
             style={{
               maxWidth: props.maxWidth ?? '100%',
@@ -62,8 +66,8 @@ export function TextCell(props: TextCellProps) {
               <>{props.text}</>
             )}
           </div>
-        </SplitItem>
+        </FlexItem>
       )}
-    </Split>
+    </Flex>
   );
 }

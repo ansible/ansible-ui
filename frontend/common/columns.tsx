@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, DateTimeCell, ITableColumn, TextCell } from '../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+} from '../../framework';
 import { RouteObj } from '../Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -59,6 +65,7 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       value: (item) => item.description,
       list: 'secondary',
       table: ColumnTableOption.Description,
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
@@ -102,6 +109,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
   );
@@ -148,6 +156,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [history, options?.disableLinks, options?.disableSort, t]
   );

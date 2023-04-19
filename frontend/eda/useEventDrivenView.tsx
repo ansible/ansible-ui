@@ -33,12 +33,14 @@ export function useEdaView<T extends { id: number }>(options: {
   tableColumns?: ITableColumn<T>[];
   queryParams?: QueryParams;
   disableQueryString?: boolean;
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
 }): IEdaView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
 
-  let defaultSort: string | undefined = undefined;
-  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined;
+  let defaultSort: string | undefined = options.defaultSort;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
   if (tableColumns && tableColumns.length) {
@@ -91,7 +93,10 @@ export function useEdaView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<ItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<ItemsResponse<T>>(url, fetcher, {
+    ...swrOptions,
+    refreshInterval: 10 * 1000,
+  });
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {

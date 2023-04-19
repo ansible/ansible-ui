@@ -1,44 +1,65 @@
-import { Divider } from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageTable, useVisibleModalColumns } from '../../../../framework';
+import {
+  DateTimeCell,
+  PageTable,
+  useColumnsWithoutExpandedRow,
+  useColumnsWithoutSort,
+  useVisibleModalColumns,
+} from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
 import { IEdaView } from '../../useEventDrivenView';
 
-export function RulebookActivationsCard(props: { view: IEdaView<EdaRulebookActivation> }) {
+export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookActivation> }) {
   const { view } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const tableColumns = useRulebookActivationColumns();
-  const columns = useVisibleModalColumns(tableColumns);
+  let columns = useVisibleModalColumns(tableColumns);
+  columns = useMemo(
+    () => [
+      ...columns,
+      {
+        header: t('Modified'),
+        cell: (project) =>
+          project.modified_at && <DateTimeCell format="date-time" value={project.modified_at} />,
+      },
+    ],
+    [columns, t]
+  );
+  columns = useColumnsWithoutSort(columns);
+  columns = useColumnsWithoutExpandedRow(columns);
   return (
     <PageDashboardCard
       title={t('Rulebook Activations')}
-      height="xxl"
+      subtitle={t('Recently updated activations')}
+      height="md"
       linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
       helpTitle={t('Rulebook Activations')}
       help={t('Rulebook activations are rulebooks that have been activated to run.')}
     >
-      {view.itemCount !== 0 && <Divider />}
       <PageTable
         disableBodyPadding={true}
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading activations')}
-        emptyStateIcon={CubesIcon}
+        emptyStateIcon={PlusCircleIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateVariant={'light'}
         emptyStateTitle={t('There are currently no rulebook activations')}
         emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
         emptyStateButtonText={t('Create rulebook activation')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         {...view}
-        defaultSubtitle={t('Activation')}
         compact
+        itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+        pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
       />
     </PageDashboardCard>
   );

@@ -19,7 +19,7 @@ import { Roles } from './UserAccess/Roles/Roles';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { UserDetails } from './UserAccess/Users/UserDetails';
 import { Users } from './UserAccess/Users/Users';
-import EdaDashboard from './dashboard/EdaDashboard';
+import EdaDashboard from './dashboard/EdaEdaDashboard';
 import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
 import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';

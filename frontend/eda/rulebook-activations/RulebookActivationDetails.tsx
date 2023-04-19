@@ -26,8 +26,8 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
+import { StatusCell } from '../../common/StatusCell';
 import { useGet } from '../../common/crud/useGet';
-import { StatusLabelCell } from '../common/StatusLabelCell';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -171,7 +171,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               )}
             </PageDetail>
             <PageDetail label={t('Status')}>
-              <StatusLabelCell status={rulebookActivation?.status || ''} />
+              <StatusCell status={rulebookActivation?.status || ''} />
             </PageDetail>
             <PageDetail label={t('Project git hash')}>
               {rulebookActivation?.project?.git_hash || ''}

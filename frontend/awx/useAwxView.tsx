@@ -43,12 +43,15 @@ export function useAwxView<T extends { id: number }>(options: {
 
   /** The default items that should be initially selected. */
   defaultSelection?: T[];
+
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
 }): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
 
-  let defaultSort: string | undefined = undefined;
-  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined;
+  let defaultSort: string | undefined = options.defaultSort;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
   if (tableColumns && tableColumns.length) {

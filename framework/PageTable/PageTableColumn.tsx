@@ -282,3 +282,20 @@ export function useExpandedColumns<T extends object>(columns: ITableColumn<T>[])
 }
 
 type CellFn<T extends object, R> = (item: T) => R;
+
+/** Hook to disable sorting on all columns. */
+export function useColumnsWithoutSort<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(() => columns.map((column) => ({ ...column, sort: undefined })), [columns]);
+}
+
+/** Hook to disable sorting on all columns. */
+export function useColumnsWithoutExpandedRow<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(
+    () =>
+      columns.map((column) => ({
+        ...column,
+        table: column.table === ColumnTableOption.Expanded ? undefined : column.table,
+      })),
+    [columns]
+  );
+}

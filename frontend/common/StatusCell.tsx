@@ -1,7 +1,7 @@
 import {
   BanIcon,
-  ClockIcon,
   CheckCircleIcon,
+  ClockIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
   InfoCircleIcon,

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/StatusCell';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
@@ -60,6 +60,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Started'),
@@ -68,6 +69,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Finished'),
@@ -78,6 +80,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         list: 'secondary',
         defaultSortDirection: 'desc',
         defaultSort: true,
+        modal: ColumnModalOption.Hidden,
       },
     ],
     [options?.disableLinks, t]

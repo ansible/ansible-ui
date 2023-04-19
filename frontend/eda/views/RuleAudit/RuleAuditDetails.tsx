@@ -1,4 +1,5 @@
 import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -12,19 +13,18 @@ import {
   Scrollable,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
+import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
+import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
+import { useEdaView } from '../../useEventDrivenView';
+import { useRuleAuditActionsColumns } from './hooks/useRuleAuditActionsColumns';
+import { useRuleAuditActionsFilters } from './hooks/useRuleAuditActionsFilters';
 import { useRuleAuditEventsColumns } from './hooks/useRuleAuditEventsColumns';
 import { useRuleAuditEventsFilters } from './hooks/useRuleAuditEventsFilters';
-import { useRuleAuditActionsFilters } from './hooks/useRuleAuditActionsFilters';
-import { useRuleAuditActionsColumns } from './hooks/useRuleAuditActionsColumns';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
-import { useEdaView } from '../../useEventDrivenView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
-import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
 
 export function RuleAuditDetails() {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function RuleAuditDetails() {
           <PageDetail label={t('Rule name')}>{ruleAudit?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{ruleAudit?.description || ''}</PageDetail>
           <PageDetail label={t('Status')}>
-            <StatusLabelCell status={ruleAudit?.status || ''} />
+            <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
           <PageDetail label={t('Rulebook activation')}>
             {ruleAudit && ruleAudit.activation?.id ? (

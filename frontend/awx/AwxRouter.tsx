@@ -23,12 +23,13 @@ import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
 import { Instances } from './administration/instances/Instances';
 import Reports from './analytics/Reports/Reports';
-import AwxDashboard from './dashboard/AwxDashboard';
+import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
+import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
@@ -39,7 +40,6 @@ import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemp
 import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
-import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);

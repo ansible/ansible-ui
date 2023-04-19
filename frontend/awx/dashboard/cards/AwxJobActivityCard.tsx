@@ -1,25 +1,24 @@
-import { CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
+import { CardHeader, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { FormGroupSelectOption } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 
-export function DashboardJobsCard() {
+export function AwxJobActivityCard() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<DashboardJobPeriod | undefined>('month');
   const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
   return (
-    <PageDashboardCard width="xxl" height="lg">
-      <CardHeader>
-        <Flex style={{ width: '100%' }} spaceItems={{ default: 'spaceItemsSm' }}>
-          <FlexItem grow={{ default: 'grow' }}>
-            <Link to={RouteObj.Jobs}>
-              <CardTitle>{t('Jobs')}</CardTitle>
-            </Link>
-          </FlexItem>
+    <PageDashboardCard
+      title={t('Recent Job Activity')}
+      linkText={t('Go to Jobs')}
+      to={RouteObj.Jobs}
+      width="xxl"
+      height="sm"
+      headerControls={
+        <Flex spaceItems={{ default: 'spaceItemsNone' }} style={{ gap: 8 }}>
           <FlexItem>
             <FormGroupSelectOption<DashboardJobPeriod>
               placeholderText={t('Select period')}
@@ -53,7 +52,9 @@ export function DashboardJobsCard() {
             />
           </FlexItem>
         </Flex>
-      </CardHeader>
+      }
+    >
+      <CardHeader></CardHeader>
       <JobsChart period={period} jobType={jobType} />
     </PageDashboardCard>
   );

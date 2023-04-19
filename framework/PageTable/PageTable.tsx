@@ -40,6 +40,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
@@ -50,6 +51,7 @@ import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
+import './PageTable.css';
 import { PageTableCards } from './PageTableCards';
 import {
   ITableColumn,
@@ -61,7 +63,6 @@ import {
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
-import styled from 'styled-components';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -296,31 +297,29 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection variant={props.emptyStateVariant || 'default'}>
-        <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
-          <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
-          <Title headingLevel="h4" size="lg">
-            {props.emptyStateTitle}
-          </Title>
-          {props.emptyStateDescription && (
-            <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
-          )}
-          {props.emptyStateActions && (
-            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-              <PageActions actions={props.emptyStateActions} />
-            </Flex>
-          )}
-          {props.emptyStateButtonClick && (
-            <Button
-              variant="primary"
-              onClick={props.emptyStateButtonClick}
-              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-            >
-              {props.emptyStateButtonText}
-            </Button>
-          )}
-        </EmptyState>
-      </PageSection>
+      <EmptyState variant={EmptyStateVariant.large}>
+        <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
+        <Title headingLevel="h4" size="lg">
+          {props.emptyStateTitle}
+        </Title>
+        {props.emptyStateDescription && (
+          <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+        )}
+        {props.emptyStateActions && (
+          <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+            <PageActions actions={props.emptyStateActions} />
+          </Flex>
+        )}
+        {props.emptyStateButtonClick && (
+          <Button
+            variant="primary"
+            onClick={props.emptyStateButtonClick}
+            icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+          >
+            {props.emptyStateButtonText}
+          </Button>
+        )}
+      </EmptyState>
     );
   }
 
@@ -443,6 +442,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         }
         gridBreakPoint=""
         isStickyHeader
+        className="page-table"
       >
         {itemCount === undefined ? (
           <Thead>
@@ -501,6 +501,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   unselectAll={unselectAll}
                   onSelect={onSelect}
                   expandedRow={expandedRow}
+                  isLastRow={rowIndex === pageItems.length - 1}
                 />
               ))}
         </Tbody>
@@ -647,6 +648,7 @@ function TableRow<T extends object>(props: {
   onSelect?: (item: T) => void;
   unselectAll?: () => void;
   expandedRow?: (item: T) => ReactNode;
+  isLastRow?: boolean;
 }) {
   const {
     columns,
@@ -668,11 +670,10 @@ function TableRow<T extends object>(props: {
   return (
     <>
       <Tr
-        className={isItemSelected ? 'selected' : undefined}
         isRowSelected={expanded}
         style={{
           boxShadow: 'unset',
-          borderBottom: expanded ? 'unset' : undefined,
+          borderBottom: expanded || props.isLastRow ? 'unset' : undefined,
         }}
       >
         {expandedRow && (
@@ -738,11 +739,7 @@ function TableRow<T extends object>(props: {
         />
       </Tr>
       {expandedRow && expanded && expandedContent && (
-        <Tr
-          className={isItemSelected ? 'selected' : undefined}
-          isExpanded={expanded}
-          style={{ boxShadow: 'unset' }}
-        >
+        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
             <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
