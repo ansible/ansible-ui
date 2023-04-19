@@ -46,5 +46,6 @@ jobs:
 
       - name: Git Tag Version and Push
         run: |
-          git commit --allow-empty -m "${{ env.VERSION }}"
+          git commit --allow-empty -m ${{ env.VERSION }}
+          git tag ${{ env.VERSION }}
           git push origin --tags
