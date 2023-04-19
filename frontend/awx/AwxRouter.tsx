@@ -1,6 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
@@ -115,6 +115,7 @@ export function AwxRouter() {
         {/* Analytics */}
         <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
+        <Route path="/" element={<Navigate to={RouteObj.Dashboard} />} />
         <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
       </Routes>
     </Suspense>
