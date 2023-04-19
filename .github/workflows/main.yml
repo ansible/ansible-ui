@@ -46,7 +46,6 @@ jobs:
 
       - name: Git Tag Version and Push
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@users.noreply.github.com"
-          git tag -a -m ${{ env.VERSION }} ${{ env.VERSION }}
+          git commit --allow-empty -m "${{ env.VERSION }}"
+          git tag -m ${{ env.VERSION }} ${{ env.VERSION }}
           git push origin --tags
