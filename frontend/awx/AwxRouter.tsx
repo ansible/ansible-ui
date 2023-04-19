@@ -116,7 +116,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
         <Route path="/" element={<Navigate to={RouteObj.Dashboard} />} />
-        <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
+        <Route path="/*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
       </Routes>
     </Suspense>
   );
