@@ -16,7 +16,7 @@ import './commands';
 import './rest-commands';
 import './auth';
 
-/*  EDA related custom command implementation  */
+/*  AWX related custom command implementation  */
 
 Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
