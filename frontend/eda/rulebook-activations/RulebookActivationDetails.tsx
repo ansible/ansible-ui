@@ -1,12 +1,6 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import {
-  CubesIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  RedoIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -22,6 +16,8 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
+  errorToAlertProps,
+  usePageAlertToaster,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
@@ -34,18 +30,16 @@ import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
-import {
-  useDisableRulebookActivations,
-  useEnableRulebookActivations,
-  useRestartRulebookActivations,
-} from './hooks/useControlRulebookActivations';
+import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { postRequest } from '../../common/crud/Data';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const alertToaster = usePageAlertToaster();
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
@@ -57,17 +51,20 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     }
   });
 
-  const enableRulebookActivation = useEnableRulebookActivations((enabled) => {
-    if (enabled.length > 0) {
-      refresh();
-    }
-  });
-
-  const disableRulebookActivation = useDisableRulebookActivations((disabled) => {
-    if (disabled.length > 0) {
-      refresh();
-    }
-  });
+  const enableRulebookActivation = useCallback(
+    (rulebookActivation: EdaRulebookActivation) =>
+      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/enable/`, undefined)
+        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
+        .finally(() => refresh()),
+    [alertToaster]
+  );
+  const disableRulebookActivation = useCallback(
+    (rulebookActivation: EdaRulebookActivation) =>
+      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined)
+        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
+        .finally(() => refresh()),
+    [alertToaster]
+  );
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
@@ -77,28 +74,22 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        icon: PlusCircleIcon,
-        label: 'Enable rulebook activation',
-        isDanger: false,
-        isHidden: (activation: EdaRulebookActivation) => !!activation.is_enabled,
-        onClick: (activation: EdaRulebookActivation) => enableRulebookActivation([activation]),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: MinusCircleIcon,
-        label: 'Disable rulebook activation',
-        isDanger: false,
-        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
-        onClick: (activation: EdaRulebookActivation) => disableRulebookActivation([activation]),
+        isPinned: true,
+        label: t('Enabled'),
+        labelOff: t('Disabled'),
+        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
+          if (activate) void enableRulebookActivation(activation);
+          else void disableRulebookActivation(activation);
+        },
+        isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: RedoIcon,
-        label: 'Restart rulebook activation',
+        label: t('Restart rulebook activation'),
         isDanger: false,
         isHidden: (activation: EdaRulebookActivation) =>
           !activation.is_enabled || activation.restart_policy !== 'always',
