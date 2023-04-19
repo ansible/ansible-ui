@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../../interfaces/EdaRuleAuditEvent';
-import { EventPayloadDialog } from './useEventPayload';
+import { useEventPayloadDialog } from '../EventPayloadDialog';
 
 export function useRuleAuditEventsColumns() {
   const { t } = useTranslation();
-  const showEventPayload = (event: EdaRuleAuditEvent) => EventPayloadDialog(event);
+  const showEventPayload = useEventPayloadDialog();
   return useMemo<ITableColumn<EdaRuleAuditEvent>[]>(
     () => [
       {
@@ -15,7 +15,7 @@ export function useRuleAuditEventsColumns() {
         cell: (ruleAuditEvent) => (
           <TextCell
             text={ruleAuditEvent?.source_name}
-            onClick={() => showEventPayload(ruleAuditEvent)}
+            onClick={() => showEventPayload({ event: ruleAuditEvent })}
           />
         ),
         sort: 'source_name',
@@ -41,6 +41,6 @@ export function useRuleAuditEventsColumns() {
         sort: 'received_at',
       },
     ],
-    [t]
+    [showEventPayload, t]
   );
 }

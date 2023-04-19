@@ -4,6 +4,7 @@ import { ITableColumn, TextCell } from '../../../../../framework';
 import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
 import { StatusCell } from '../../../../common/StatusCell';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 export function useRuleAuditActionsColumns() {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export function useRuleAuditActionsColumns() {
           ruleAuditAction?.url ? (
             <TextCell
               text={ruleAuditAction?.name}
+              icon={<ExternalLinkAltIcon />}
               onClick={() => {
                 open(ruleAuditAction?.url, '_blank');
               }}
