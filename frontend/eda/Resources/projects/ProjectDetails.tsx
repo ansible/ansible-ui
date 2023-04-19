@@ -18,8 +18,8 @@ import {
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/crud/useGet';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
@@ -70,7 +70,7 @@ export function ProjectDetails() {
         <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
-          <StatusLabelCell status={project?.import_state || ''} />
+          <StatusCell status={project?.import_state || ''} />
         </PageDetail>
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}

@@ -1,4 +1,4 @@
-import { Card, CardHeader, Flex, FlexItem, Stack, Title } from '@patternfly/react-core';
+import { Card, CardHeader, Flex, FlexItem, Stack, Text, Title } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
@@ -7,10 +7,12 @@ import { PageDashboardContext } from './PageDashboard';
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
-const heightUnit = 36;
+const heightUnit = 90;
 
 export function PageDashboardCard(props: {
+  supertitle?: string;
   title?: string;
+  subtitle?: string;
   description?: string;
   linkText?: string;
   to?: string;
@@ -21,6 +23,7 @@ export function PageDashboardCard(props: {
   help?: string[];
   helpTitle?: string;
   helpDocLink?: string;
+  headerControls?: ReactNode;
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
@@ -90,21 +93,48 @@ export function PageDashboardCard(props: {
       {props.title && (
         <CardHeader>
           <Stack style={{ width: '100%' }}>
-            <Flex fullWidth={{ default: 'fullWidth' }}>
+            <Flex
+              fullWidth={{ default: 'fullWidth' }}
+              spaceItems={{ default: 'spaceItemsNone' }}
+              alignItems={{ default: 'alignItemsFlexStart' }}
+              justifyContent={{ default: 'justifyContentFlexEnd' }}
+              style={{ columnGap: 24, rowGap: 8 }}
+            >
               <FlexItem grow={{ default: 'grow' }}>
                 <Flex spaceItems={{ default: 'spaceItemsNone' }}>
                   <FlexItem>
-                    <Title headingLevel="h3" size="xl">
-                      {props.title}
-                    </Title>
-                  </FlexItem>
-                  <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
-                    <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
+                    <Stack>
+                      {props.supertitle && (
+                        <Text component="small" style={{ opacity: 0.8 }}>
+                          {props.supertitle}
+                        </Text>
+                      )}
+                      <Flex spaceItems={{ default: 'spaceItemsNone' }}>
+                        <Title headingLevel="h3" size="xl">
+                          {props.title}
+                        </Title>
+                        <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
+                          <Help
+                            help={props.help}
+                            title={props.helpTitle}
+                            docLink={props.helpDocLink}
+                          />
+                        </FlexItem>
+                      </Flex>
+                      {props.subtitle && (
+                        <Text component="small" style={{ opacity: 0.8 }}>
+                          {props.subtitle}
+                        </Text>
+                      )}
+                    </Stack>
                   </FlexItem>
                 </Flex>
               </FlexItem>
+              {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
               <FlexItem>
-                {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+                <Text component="small">
+                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+                </Text>
               </FlexItem>
             </Flex>
             {props.description && (
