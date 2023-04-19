@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { EdaCredentialCell } from '../../credentials/components/EdaCredentialCell';
@@ -38,13 +43,15 @@ export function useDecisionEnvironmentColumns() {
         table: ColumnTableOption.Description,
         card: 'description',
         list: 'description',
+        modal: ColumnModalOption.Hidden,
       },
       {
-        header: t('Image Url'),
+        header: t('Image'),
         cell: (decisionEnvironment) => (
           <TextCell text={decisionEnvironment.image_url} to={decisionEnvironment.image_url} />
         ),
         value: (decisionEnvironment) => decisionEnvironment.image_url,
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Credential'),
@@ -52,6 +59,7 @@ export function useDecisionEnvironmentColumns() {
         value: (activation) => activation.credential,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),
@@ -60,6 +68,7 @@ export function useDecisionEnvironmentColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Last modified'),
@@ -68,6 +77,7 @@ export function useDecisionEnvironmentColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
     ],
     [navigate, t]

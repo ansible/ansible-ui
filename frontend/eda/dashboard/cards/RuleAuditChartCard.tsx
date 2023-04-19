@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, pfDanger, pfSuccess } from '../../../framework';
-import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
-import { PageDashboardChart } from '../../../framework/PageDashboard/PageDashboardChart';
-import { RouteObj } from '../../Routes';
-import { useGet } from '../../common/crud/useGet';
-import { API_PREFIX } from '../constants';
-import { EdaResult } from '../interfaces/EdaResult';
-import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
+import { compareStrings, pfDanger, pfSuccess } from '../../../../framework';
+import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
+import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
+import { API_PREFIX } from '../../constants';
+import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
   const { t } = useTranslation();

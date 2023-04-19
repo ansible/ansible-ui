@@ -6,6 +6,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { PageChartContainer } from './PageChartContainer';
+import './PageDashboardChart.css';
 
 export function PageDashboardChart(props: {
   groups: {
@@ -26,7 +27,7 @@ export function PageDashboardChart(props: {
   });
 
   return (
-    <PageChartContainer>
+    <PageChartContainer className="page-chart">
       {(size) => (
         <Chart
           padding={{ bottom: 60, left: 60, right: 40, top: 16 }}

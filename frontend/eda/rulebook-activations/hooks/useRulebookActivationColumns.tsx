@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+} from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { EdaDecisionEnvironmentCell } from '../../Resources/decision-environments/components/EdaDecisionEnvironmentCell';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
@@ -41,6 +46,7 @@ export function useRulebookActivationColumns() {
         table: ColumnTableOption.Description,
         card: 'description',
         list: 'description',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Status'),
@@ -53,6 +59,7 @@ export function useRulebookActivationColumns() {
         cell: (activation) => <EdaRulebookCell id={activation.rulebook_id} />,
         value: (activation) => activation.rulebook_id,
         // table: ColumnTableOption.Expanded,
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Project'),
@@ -60,6 +67,7 @@ export function useRulebookActivationColumns() {
         value: (activation) => activation.project_id,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Decision Environment'),
@@ -69,24 +77,28 @@ export function useRulebookActivationColumns() {
         value: (activation) => activation.decision_environment_id,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Rules'),
         type: 'count',
         value: (activation) => activation?.rules_count ?? 0,
         sort: 'rules_count',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Fire count'),
         type: 'count',
         value: (activation) => activation?.fired_count ?? 0,
         sort: 'fired_count',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Restarts'),
         type: 'count',
         value: (activation) => activation?.restarted_count ?? 0,
         sort: 'restart_count',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),
@@ -95,6 +107,7 @@ export function useRulebookActivationColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Last modified'),
@@ -103,6 +116,7 @@ export function useRulebookActivationColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
     ],
     [navigate, t]
