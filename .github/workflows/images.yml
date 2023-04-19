@@ -7,7 +7,7 @@ on:
 
 jobs:
   packages:
-    name: Packages
+    name: NPM Packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
   ansible-ui-image:
-    name: Ansible UI Image
+    name: quay.io/ansible/ansible-ui
     needs: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -82,7 +82,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
 
-      - name: Build Ansible UI
+      - name: Docker Build Ansible UI
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -94,10 +94,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   eda-ui-image:
-    name: EDA UI Image
+    name: quay.io/ansible/eda-ui
     needs: packages
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
 
@@ -146,7 +146,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
 
-      - name: Build EDA UI
+      - name: Docker Build EDA UI
         uses: docker/build-push-action@v4
         with:
           context: .
