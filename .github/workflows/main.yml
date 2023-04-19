@@ -17,20 +17,42 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        # with:
+        #   token: ${{ secrets.GH_TOKEN }}
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Version
+      - name: Git Config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: NPM Version Patch
         run: |
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: ${{ env.VERSION }} [skip ci]
-          tagging_message: ${{ env.VERSION }}
+          VERSION=`npm version patch --no-git-tag-version`
+          git add --all
+          git commit -m `$VERSION [skip ci]`
+
+      - name: Git Push
+        run: |
+          git push origin --all
+          git push origin --tags
+
+      - name: Git Commit and Push Main
+        run: |
+          git add --all
+          git commit -m "${{ env.VERSION }} [skip ci]"
+          git push origin --all
+
+      - name: Git Commit and Push Tag
+        run: |
+          git tag -a ${{ env.VERSION }} -m ${{ env.VERSION }}
+          git push origin --tags
