@@ -9,7 +9,7 @@ on:
       version:
         description: Version
         required: true
-        default: prerelease
+        default: patch
         type: choice
         options:
           - major
@@ -45,9 +45,9 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
 
-      - name: NPM Version - ${{ inputs.version || 'prerelease' }}
+      - name: NPM Version - ${{ inputs.version || 'patch' }}
         run: |
-          VERSION=`npm version ${{ inputs.version || 'prerelease' }} --no-git-tag-version`
+          VERSION=`npm version ${{ inputs.version || 'patch' }} --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Git Commit Version and Push
