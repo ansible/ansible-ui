@@ -67,6 +67,7 @@ jobs:
       - name: Build Ansible UI
         uses: docker/build-push-action@v4
         with:
+          context: .
           target: ansible-ui
           tags: ansible-ui
           load: true
