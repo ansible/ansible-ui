@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node
@@ -38,13 +38,13 @@ jobs:
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Git Commit and Push
+      - name: Git Commit Version and Push
         run: |
           git add --all
           git commit -m "${{ env.VERSION }} [skip ci]"
           git push origin --all
 
-      - name: Git Tag and Push
+      - name: Git Tag Version and Push
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
