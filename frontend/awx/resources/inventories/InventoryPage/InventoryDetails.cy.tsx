@@ -12,12 +12,14 @@ describe('InventoryDetails', () => {
       cy.contains('a', 'Default').should('have.attr', 'href', '/ui_next/organizations/details/1');
       cy.get('#total-hosts').should('have.text', '1');
       cy.get('#labels').should('have.text', 'test label');
-      cy.get(
-        '#created > .pf-c-description-list__text > [style="white-space: nowrap;"] > .pf-c-button'
-      ).should('have.text', 'awx');
-      cy.get(
-        '#last-modified > .pf-c-description-list__text > [style="white-space: nowrap;"] > .pf-c-button'
-      ).should('have.text', 'awx');
+      cy.get('#created > .pf-c-description-list__text > .date-time > .pf-c-button').should(
+        'have.text',
+        'awx'
+      );
+      cy.get('#last-modified > .pf-c-description-list__text > .date-time > .pf-c-button').should(
+        'have.text',
+        'awx'
+      );
     });
   });
 });
