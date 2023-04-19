@@ -6,16 +6,12 @@ import { ITableColumn } from '../../../../../framework';
 import { IconWrapper } from '../../../../../framework/components/IconWrapper';
 import { usePageNavigate } from '../../../../../framework/components/usePageNavigate';
 import { RouteObj } from '../../../../Routes';
+import { Project } from '../../../interfaces/Project';
 
 export function useProjectNameColumn() {
   const { t } = useTranslation();
   const navigate = usePageNavigate();
-  const column: ITableColumn<{
-    name: string;
-    default_environment?: string | null;
-    custom_virtualenv?: string | null;
-    id: number;
-  }> = useMemo(
+  const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Name'),
       cell: (project) =>

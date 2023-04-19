@@ -3,17 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ColumnTableOption, DateTimeCell, ITableColumn } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { Project } from '../../../interfaces/Project';
 
 export function useLastUsedColumn() {
   const { t } = useTranslation();
   const history = useNavigate();
-  const column: ITableColumn<
-    | { last_job_run?: string | null }
-    | {
-        last_job_run?: string | null;
-        summary_fields?: { modified_by?: { id?: number; username?: string } };
-      }
-  > = useMemo(
+  const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Last used'),
       cell: (item) => {
