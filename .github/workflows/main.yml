@@ -41,7 +41,7 @@ jobs:
       - name: Git Commit and Push
         run: |
           git add --all
-          git commit -m ${{ env.VERSION }}
+          git commit -m "${{ env.VERSION }} [skip ci]"
           git push origin --all
 
       - name: Git Tag and Push
