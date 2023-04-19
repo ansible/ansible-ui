@@ -6,32 +6,9 @@ on:
       - '*'
 
 jobs:
-  packages:
-    name: NPM Packages
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-
   ansible-ui-image:
     name: quay.io/ansible/ansible-ui
-    needs: packages
+    concurrency: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -90,13 +67,12 @@ jobs:
           target: ansible-ui
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          cache-from: type=gha
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   eda-ui-image:
     name: quay.io/ansible/eda-ui
-    needs: packages
+    concurrency: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -155,6 +131,5 @@ jobs:
           target: eda-ui
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          cache-from: type=gha
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
