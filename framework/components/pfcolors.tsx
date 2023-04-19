@@ -30,23 +30,18 @@ export function getPatternflyColor(color: PFColor) {
     case 'default':
       return undefined;
     case 'green':
-      return pfSuccess200;
     case 'success':
       return pfSuccess;
     case 'red':
-      return pfDanger200;
     case 'danger':
       return pfDanger;
     case 'yellow':
-      return pfWarning200;
     case 'warning':
       return pfWarning;
     case 'blue':
-      return pfInfo200;
     case 'info':
       return pfInfo;
     case 'grey':
-      return pfDisabled200;
     case 'disabled':
       return pfDisabled;
   }

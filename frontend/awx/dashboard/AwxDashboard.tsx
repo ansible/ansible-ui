@@ -3,18 +3,22 @@ import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout, pfDanger, pfSuccess } from '../../../framework';
+import { PageHeader, PageLayout } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
-import { RouteObj } from '../../Routes';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
-import { DashboardJobsCard } from './cards/DashboardJobs';
-import { OnboardExecutionEnvironments } from './cards/OnboardExecutionEnvironments';
-import { OnboardInventories } from './cards/OnboardInventories';
+import { Job } from '../interfaces/Job';
+import { useAwxView } from '../useAwxView';
+import { AwxGettingStartedCard } from './cards/AwxGettingStartedCard';
+import { AwxHostsCard } from './cards/AwxHostsCard';
+import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
+import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
+import { AwxProjectsCard } from './cards/AwxProjectsCard';
+import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
+import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 
-export default function AwxDashboard() {
+export function AwxDashboard() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   return (
@@ -37,8 +41,14 @@ export default function AwxDashboard() {
 }
 
 function DashboardInternal() {
-  const { t } = useTranslation();
   const executionEnvironments = useExecutionEnvironments();
+
+  const recentJobsView = useAwxView<Job>({
+    url: '/api/v2/jobs/',
+    disableQueryString: true,
+    defaultSort: 'finished',
+    defaultSortDirection: 'desc',
+  });
 
   const { data, isLoading } = useSWR<IDashboardData>(`/api/v2/dashboard/`, (url: string) =>
     fetch(url).then((r) => r.json())
@@ -54,61 +64,26 @@ function DashboardInternal() {
     );
   }
 
+  const hasInventory = data.inventories.total !== 0;
+  const hasExecutonEnvironment = executionEnvironments.count !== 0;
+  const hasJobTemplate = data.job_templates.total !== 0;
+
   return (
     <PageDashboard>
-      <OnboardExecutionEnvironments count={executionEnvironments.count} />
-      <OnboardInventories count={data.inventories.total} />
-      {/* <OnboardJobs count={data.???.count} /> */}
-
-      <PageDashboardDonutCard
-        title={t('Inventories')}
-        to={RouteObj.Inventories}
-        items={[
-          {
-            label: t('Ready'),
-            count: data.inventories.total - data.inventories.inventory_failed,
-            color: pfSuccess,
-          },
-          {
-            label: t('Sync failures'),
-            count: data.inventories.inventory_failed,
-            color: pfSuccess,
-          },
-        ]}
+      <AwxInventoriesCard
+        total={data.inventories.total}
+        failed={data.inventories.inventory_failed}
       />
-      <PageDashboardDonutCard
-        title={t('Hosts')}
-        to={RouteObj.Hosts}
-        items={[
-          {
-            label: t('Ready'),
-            count: data.hosts.total - data.hosts.failed,
-            color: pfSuccess,
-          },
-          {
-            label: t('Failed'),
-            count: data.hosts.failed,
-            color: pfDanger,
-          },
-        ]}
+      <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />
+      <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />
+      <AwxGettingStartedCard
+        hasInventory={hasInventory}
+        hasExecutonEnvironment={hasExecutonEnvironment}
+        hasJobTemplate={hasJobTemplate}
       />
-      <PageDashboardDonutCard
-        title={t('Projects')}
-        to={RouteObj.Projects}
-        items={[
-          {
-            label: t('Ready'),
-            count: data.projects.total - data.projects.failed,
-            color: pfSuccess,
-          },
-          {
-            label: t('Sync failures'),
-            count: data.projects.failed,
-            color: pfDanger,
-          },
-        ]}
-      />
-      <DashboardJobsCard />
+      {recentJobsView.itemCount !== 0 && <AwxJobActivityCard />}
+      <AwxRecentJobsCard view={recentJobsView} />
+      <AwxRecentProjectsCard />
     </PageDashboard>
   );
 }
@@ -188,7 +163,7 @@ interface IDashboardData {
   };
   job_templates: {
     url: string;
-    total: 3;
+    total: number;
   };
 }
 

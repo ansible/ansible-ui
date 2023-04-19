@@ -11,16 +11,18 @@ import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
-import { DecisionEnvironmentsCard } from './cards/DecisionEnvironmentsCard';
-import { ProjectsCard } from './cards/ProjectsCard';
-import RuleAuditChart from './cards/RuleAuditChartCard';
-import { RulebookActivationsCard } from './cards/RulebookActivationsCard';
+import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
+import { EdaRecentProjectsCard } from './cards/EdaRecentProjectsCard';
+import RuleAuditChart from './cards/EdaRuleAuditChartCard';
+import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
 export default function EdaDashboard() {
   const { t } = useTranslation();
   const edaProjectView = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,
     disableQueryString: true,
+    defaultSort: 'modified_at',
+    defaultSortDirection: 'desc',
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
     url: `${API_PREFIX}/decision-environments/`,
@@ -80,9 +82,9 @@ export default function EdaDashboard() {
           </PageDashboardCard>
         )}
         <RuleAuditChart />
-        <ProjectsCard view={edaProjectView} />
-        <DecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
-        <RulebookActivationsCard view={edaRulebookActivationView} />
+        <EdaRecentProjectsCard view={edaProjectView} />
+        <EdaDecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
+        <EdaRulebookActivationsCard view={edaRulebookActivationView} />
       </PageDashboard>
     </>
   );

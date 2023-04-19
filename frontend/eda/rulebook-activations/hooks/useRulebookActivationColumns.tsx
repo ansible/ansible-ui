@@ -8,9 +8,9 @@ import {
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import { EdaDecisionEnvironmentCell } from '../../Resources/decision-environments/components/EdaDecisionEnvironmentCell';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { EdaRulebookCell } from '../../rulebooks/components/EdaRulebookCell';
 
@@ -50,7 +50,7 @@ export function useRulebookActivationColumns() {
       },
       {
         header: t('Status'),
-        cell: (activation) => <StatusLabelCell status={activation?.status} />,
+        cell: (activation) => <StatusCell status={activation?.status} />,
         sort: 'status',
         defaultSort: true,
       },
