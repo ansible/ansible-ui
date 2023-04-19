@@ -5,17 +5,18 @@ on:
     tags:
       - '*'
 
+concurrency: main
+
 jobs:
   ansible-ui-image:
     name: quay.io/ansible/ansible-ui
-    concurrency: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
 
       - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+        run: npm version 0.0.0 --no-git-tag-version
 
       - name: Cache dependencies
         id: cache
@@ -24,10 +25,7 @@ jobs:
           path: |
             ./node_modules
             /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-
-      - name: PostCache
-        run: rm package-lock-copy.json
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -72,14 +70,13 @@ jobs:
 
   eda-ui-image:
     name: quay.io/ansible/eda-ui
-    concurrency: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
 
       - name: PreCache
-        run: cat package-lock.json | jq '.version = "0.0.0"' | jq '.packages."".version = "0.0.0"' > package-lock-copy.json
+        run: npm version 0.0.0 --no-git-tag-version
 
       - name: Cache dependencies
         id: cache
@@ -88,10 +85,7 @@ jobs:
           path: |
             ./node_modules
             /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock-copy.json') }}
-
-      - name: PostCache
-        run: rm package-lock-copy.json
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
