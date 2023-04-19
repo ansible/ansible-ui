@@ -46,7 +46,5 @@ jobs:
 
       - name: Git Tag Version and Push
         run: |
-          git commit --allow-empty -m "${{ env.VERSION }} [skip ci]"
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@users.noreply.github.com"
+          git commit --allow-empty -m "${{ env.VERSION }}"
           git push origin --tags
