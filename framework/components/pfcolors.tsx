@@ -30,38 +30,28 @@ export function getPatternflyColor(color: PFColor) {
     case 'default':
       return undefined;
     case 'green':
-      return pfSuccess200;
     case 'success':
       return pfSuccess;
     case 'red':
-      return pfDanger200;
     case 'danger':
       return pfDanger;
     case 'yellow':
-      return pfWarning200;
     case 'warning':
       return pfWarning;
     case 'blue':
-      return pfInfo200;
     case 'info':
       return pfInfo;
     case 'grey':
-      return pfDisabled200;
     case 'disabled':
       return pfDisabled;
   }
 }
 
 export const pfSuccess = 'var(--pf-global--success-color--100)';
-export const pfSuccess200 = 'var(--pf-global--success-color--200)';
 export const pfDanger = 'var(--pf-global--danger-color--100)';
-export const pfDanger200 = 'var(--pf-global--danger-color--200)';
 export const pfWarning = 'var(--pf-global--warning-color--100)';
-export const pfWarning200 = 'var(--pf-global--warning-color--200)';
 export const pfInfo = 'var(--pf-global--info-color--100)';
-export const pfInfo200 = 'var(--pf-global--info-color-200)';
 export const pfDisabled = 'var(--pf-global--disabled-color--100)';
-export const pfDisabled200 = 'var(--pf-global--disabled-color--200)';
 export const pfLink = 'var(--pf-global--link--Color)';
 
 export enum LabelColorE {
