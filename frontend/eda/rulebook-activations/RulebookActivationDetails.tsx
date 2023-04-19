@@ -56,14 +56,14 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/enable/`, undefined)
         .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
         .finally(() => refresh()),
-    [alertToaster]
+    [alertToaster, refresh]
   );
   const disableRulebookActivation = useCallback(
     (rulebookActivation: EdaRulebookActivation) =>
       postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined)
         .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
         .finally(() => refresh()),
-    [alertToaster]
+    [alertToaster, refresh]
   );
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
