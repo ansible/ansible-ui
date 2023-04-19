@@ -5,6 +5,8 @@ on:
     tags:
       - '*'
 
+concurrency: main
+
 jobs:
   publish-framework:
     name: Publish Framework

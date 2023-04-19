@@ -64,7 +64,6 @@ jobs:
 
   packages:
     name: NPM Packages
-    concurrency: packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
