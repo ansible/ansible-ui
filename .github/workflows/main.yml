@@ -48,5 +48,5 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
-          git tag -a ${{ env.VERSION }} -m ${{ env.VERSION }}
+          git tag -a -m ${{ env.VERSION }} ${{ env.VERSION }}
           git push origin --tags
