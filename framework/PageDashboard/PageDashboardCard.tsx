@@ -1,7 +1,6 @@
-import { Card, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, Flex, FlexItem, Stack, Title } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
-import { pfLink } from '../components/pfcolors';
-import { usePageNavigate } from '../components/usePageNavigate';
+import { Link } from 'react-router-dom';
 import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -11,14 +10,14 @@ const heightUnit = 36;
 
 export function PageDashboardCard(props: {
   title?: string;
+  description?: string;
+  linkText?: string;
   to?: string;
   children?: ReactNode;
   width?: PageDashboardCardWidth;
   height?: PageDashboardCardHeight;
   style?: CSSProperties;
 }) {
-  const navigate = usePageNavigate();
-
   const dashboardContext = useContext(PageDashboardContext);
 
   let colSpan = 4;
@@ -85,18 +84,23 @@ export function PageDashboardCard(props: {
       }}
     >
       {props.title && (
-        <>
-          {props.to ? (
-            <CardTitle
-              style={{ color: pfLink, cursor: 'pointer' }}
-              onClick={() => navigate(props.to)}
-            >
-              {props.title}
-            </CardTitle>
-          ) : (
-            <CardTitle>{props.title}</CardTitle>
-          )}
-        </>
+        <CardHeader>
+          <Stack style={{ width: '100%' }}>
+            <Flex fullWidth={{ default: 'fullWidth' }}>
+              <FlexItem grow={{ default: 'grow' }}>
+                <Title headingLevel="h3" size="xl">
+                  {props.title}
+                </Title>
+              </FlexItem>
+              <FlexItem>
+                {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+              </FlexItem>
+            </Flex>
+            {props.description && (
+              <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
+            )}
+          </Stack>
+        </CardHeader>
       )}
       {props.children}
     </Card>

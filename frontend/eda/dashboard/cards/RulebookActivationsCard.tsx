@@ -2,34 +2,30 @@ import { Divider } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageTable } from '../../../framework';
-import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../Routes';
-import { API_PREFIX } from '../constants';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useEdaView } from '../useEventDrivenView';
-import { useActivationColumns } from './hooks/useActivationColumns';
+import { PageTable, useVisibleModalColumns } from '../../../../framework';
+import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { RouteObj } from '../../../Routes';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
+import { IEdaView } from '../../useEventDrivenView';
 
-export function ActivationsCard() {
+export function RulebookActivationsCard(props: { view: IEdaView<EdaRulebookActivation> }) {
+  const { view } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const tableColumns = useActivationColumns();
-  const view = useEdaView<EdaRulebookActivation>({
-    url: `${API_PREFIX}/activations/`,
-    // viewPage: 1,
-    // viewPerPage: 4,
-    tableColumns,
-  });
+  const tableColumns = useRulebookActivationColumns();
+  const columns = useVisibleModalColumns(tableColumns);
   return (
     <PageDashboardCard
-      title={view.itemCount === 0 ? undefined : t('Rulebook Activations')}
+      title={t('Rulebook Activations')}
       height="xxl"
+      linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
     >
       {view.itemCount !== 0 && <Divider />}
       <PageTable
         disableBodyPadding={true}
-        tableColumns={tableColumns}
+        tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading activations')}
         emptyStateIcon={CubesIcon}

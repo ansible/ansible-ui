@@ -196,7 +196,8 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         .then((r: { error?: { keyword?: string } }) =>
           setSpecificError(r?.error?.keyword || 'unknown')
-        );
+        )
+        .catch(() => setSpecificError('unknown'));
     }
   }, [error, optionsError]);
 

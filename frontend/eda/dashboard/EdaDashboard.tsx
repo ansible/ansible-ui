@@ -1,16 +1,41 @@
 /* eslint-disable i18next/no-literal-string */
-import { Fragment } from 'react';
+import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { PageHeader } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { ActivationsCard } from './ActivationsCard';
-import { ProjectsCard } from './ProjectsCard';
-import RuleAuditChart from './RuleAuditChartCard';
+import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
+import { RouteObj } from '../../Routes';
+import { API_PREFIX } from '../constants';
+import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '../interfaces/EdaProject';
+import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { useEdaView } from '../useEventDrivenView';
+import { DecisionEnvironmentsCard } from './cards/DecisionEnvironmentsCard';
+import { ProjectsCard } from './cards/ProjectsCard';
+import RuleAuditChart from './cards/RuleAuditChartCard';
+import { RulebookActivationsCard } from './cards/RulebookActivationsCard';
 
 export default function EdaDashboard() {
   const { t } = useTranslation();
+  const edaProjectView = useEdaView<EdaProject>({
+    url: `${API_PREFIX}/projects/`,
+    disableQueryString: true,
+  });
+  const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
+    url: `${API_PREFIX}/decision-environments/`,
+    disableQueryString: true,
+  });
+  const edaRulebookActivationView = useEdaView<EdaRulebookActivation>({
+    url: `${API_PREFIX}/activations/`,
+    disableQueryString: true,
+  });
+  const hasProjectOrDecisionEnvironment =
+    edaProjectView.itemCount !== 0 || edaDecisionEnvironmentView.itemCount !== 0;
+  const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
+
   return (
-    <Fragment>
+    <>
       <PageHeader
         title={t('Welcome to EDA Server')}
         description={t(
@@ -18,10 +43,47 @@ export default function EdaDashboard() {
         )}
       />
       <PageDashboard>
+        {(!hasProjectOrDecisionEnvironment || !hasRulebookActivation) && (
+          <PageDashboardCard
+            title={t('Getting started')}
+            description={t(
+              'Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage.'
+            )}
+            width="xxl"
+          >
+            <CardBody>
+              <Stack hasGutter>
+                <Text>
+                  To learn how to get started, view the documentation,{' '}
+                  <Link to="https://www.redhat.com/en/engage/event-driven-ansible-20220907">
+                    check out our instruct guides
+                  </Link>
+                  , or follow the steps below.
+                </Text>
+                <ProgressStepper>
+                  <ProgressStep
+                    variant={hasProjectOrDecisionEnvironment ? 'success' : 'info'}
+                    description="Create a project or sync a decision environment."
+                  >
+                    <Link to={RouteObj.CreateEdaProject}>Create a project</Link> or{' '}
+                    <Link to={RouteObj.EdaDecisionEnvironments}>sync a decision environment.</Link>
+                  </ProgressStep>
+                  <ProgressStep
+                    variant={hasRulebookActivation ? 'success' : 'info'}
+                    description="Create a rulebook activation."
+                  >
+                    <Link to={RouteObj.CreateEdaRulebookActivation}>Rulebook activation</Link>
+                  </ProgressStep>
+                </ProgressStepper>
+              </Stack>
+            </CardBody>
+          </PageDashboardCard>
+        )}
         <RuleAuditChart />
-        <ProjectsCard />
-        <ActivationsCard />
+        <ProjectsCard view={edaProjectView} />
+        <DecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
+        <RulebookActivationsCard view={edaRulebookActivationView} />
       </PageDashboard>
-    </Fragment>
+    </>
   );
 }

@@ -43,8 +43,7 @@ export function EditRulebookActivation() {
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
 
   const onSubmit: PageFormSubmitHandler<EdaRulebookActivation & { variables: string }> = async (
-    rulebookActivation,
-    setError
+    rulebookActivation
   ) => {
     let extra_var_id;
     if (rulebookActivation?.variables) {
@@ -55,21 +54,17 @@ export function EditRulebookActivation() {
         (cache as unknown as { clear: () => void }).clear?.();
       } catch (err) {
         extra_var_id = undefined;
-        setError(err instanceof Error ? err.message : t('Unknown error'));
+        throw err;
       }
     }
-    try {
-      const newRulebookActivation = await postEdaRulebookActivation(
-        `${API_PREFIX}/activations/`,
-        extra_var_id ? { ...rulebookActivation, extra_var_id: extra_var_id } : rulebookActivation
-      );
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(
-        RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
-    }
+    const newRulebookActivation = await postEdaRulebookActivation(
+      `${API_PREFIX}/activations/`,
+      extra_var_id ? { ...rulebookActivation, extra_var_id: extra_var_id } : rulebookActivation
+    );
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(
+      RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
+    );
   };
   const onCancel = () => navigate(-1);
 

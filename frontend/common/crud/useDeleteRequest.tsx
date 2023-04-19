@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
+import { AnsibleError } from './ansible-error';
 import { getCookie } from './cookie';
 import { Delay } from './delay';
-import { HTTPError } from './http-error';
 
 export function useDeleteRequest() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export function useDeleteRequest() {
         // Do nothing - response body was not valid json
       }
 
-      throw new HTTPError(response.statusText, response.status, responseBody);
+      throw new AnsibleError(response.statusText, response.status, responseBody);
     }
 
     return response.json();

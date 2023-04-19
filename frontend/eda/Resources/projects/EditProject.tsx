@@ -8,15 +8,17 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
+import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 
 function ProjectInputs() {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<EdaProject>
@@ -38,13 +40,13 @@ function ProjectInputs() {
         isReadOnly={true}
         label={t('SCM Type')}
         placeholder={t('Git')}
-        maxLength={150}
       />
       <PageFormTextInput<EdaProject>
         name="url"
         isRequired={true}
         label={t('SCM URL')}
         placeholder={t('Enter SCM URL')}
+        validate={isValidUrl}
       />
       <PageFormTextInput<EdaProject>
         name="token"
@@ -65,19 +67,15 @@ export function EditProject() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);

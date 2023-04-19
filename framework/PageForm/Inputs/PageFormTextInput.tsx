@@ -67,6 +67,9 @@ export function PageFormTextInput<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+        function onChangeHandler(value: string) {
+          onChange(value.trimStart());
+        }
         return (
           <FormGroupTextInput
             {...rest}
@@ -74,7 +77,7 @@ export function PageFormTextInput<
             isRequired={isRequired}
             id={id ?? name.split('.').join('-')}
             value={value}
-            onChange={onChange}
+            onChange={onChangeHandler}
             helperTextInvalid={
               error?.message
                 ? validate && isValidating

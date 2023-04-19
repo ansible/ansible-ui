@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, CopyCell, ITableColumn, TextCell } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { ScmType } from '../../../../common/scm';
 import { StatusLabelCell } from '../../../common/StatusLabelCell';
@@ -34,6 +40,7 @@ export function useProjectColumns() {
         table: ColumnTableOption.Description,
         card: 'description',
         list: 'description',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Status'),
@@ -42,16 +49,19 @@ export function useProjectColumns() {
       {
         header: t('Type'),
         cell: () => <ScmType scmType="git" />,
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Url'),
         cell: (item) => <TextCell text={item.url} to={item.url} />,
         value: (instance) => instance.url,
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Revision'),
         cell: (project) => <CopyCell text={project?.git_hash ? project.git_hash : ''} />,
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),
@@ -60,6 +70,7 @@ export function useProjectColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Last modified'),
@@ -68,6 +79,7 @@ export function useProjectColumns() {
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
     ],
 

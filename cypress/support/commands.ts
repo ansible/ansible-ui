@@ -9,7 +9,12 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import {
+  Group,
+  Host,
+  InstanceGroup,
+  JobTemplate,
+} from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
@@ -18,6 +23,7 @@ import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import './rest-commands';
+import { Label } from '../../frontend/awx/interfaces/Label';
 
 declare global {
   namespace Cypress {
@@ -44,6 +50,9 @@ declare global {
       /** Get an input by it's label. */
       // Searches for an element with a certain label, then asserts that the element is enabled.
       getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
+
+      /** Get a checkbox by its label */
+      getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /** Finds an input by label and types the text into the input .*/
       typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
@@ -85,6 +94,13 @@ declare global {
       clickTableRowPinnedAction(
         name: string | RegExp,
         label: string,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /** Finds a table row containing text and clicks action specified by the aria-label of the icon-only action button. */
+      clickTableRowActionIcon(
+        name: string | RegExp,
+        ariaLabel: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -152,12 +168,16 @@ declare global {
       createAwxJobTemplate(): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
+      createAwxInstanceGroup(): Chainable<InstanceGroup>;
+      createAwxLabel(organization: Organization): Chainable<Label>;
       deleteAwxOrganization(organization: Organization): Chainable<void>;
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
       deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
       deleteAwxTeam(team: Team): Chainable<void>;
       deleteAwxUser(user: User): Chainable<void>;
+      deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
+      deleteAwxLabel(label: Label): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization
@@ -386,6 +406,16 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
     });
 });
 
+Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
+  cy.contains('.pf-c-check__label', label)
+    .invoke('attr', 'for')
+    .then((id: string | undefined) => {
+      if (id) {
+        cy.get('#' + id);
+      }
+    });
+});
+
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
   cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
@@ -393,7 +423,7 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
 Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
   cy.getFormGroupByLabel(label).within(() => {
     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-    cy.get('button').should('be.enabled').click();
+    cy.get('button[aria-label="Options menu"]').should('be.enabled').click();
 
     // If the select menu contains a serach, then search for the text
     cy.get('.pf-c-select__menu').then((selectMenu) => {
@@ -515,9 +545,21 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'clickTableRowActionIcon',
+  (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get(`button[aria-label="${ariaLabel}"]`)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
 Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
-    cy.get('.pf-c-alert__title').should('contain', 'Successful');
+    cy.get('[data-label="Status"]').should('contain', 'Successful');
   });
 });
 
@@ -733,7 +775,34 @@ Cypress.Commands.add(
   }
 );
 
-/**EDA related custom command implementation*/
+Cypress.Commands.add('createAwxLabel', (organization: Organization) => {
+  cy.requestPost<Label>('/api/v2/labels/', {
+    name: 'E2E Label ' + randomString(4),
+    organization: organization.id,
+  }).then((label) => label);
+});
+
+Cypress.Commands.add('deleteAwxLabel', (label: Label) => {
+  const labelId = label.id;
+  if (labelId) {
+    cy.requestDelete(`/api/v2/labels/${labelId.toString()}/`, true);
+  }
+});
+
+Cypress.Commands.add('createAwxInstanceGroup', () => {
+  cy.requestPost<InstanceGroup>('/api/v2/instance_groups/', {
+    name: 'E2E Instance Group ' + randomString(4),
+  }).then((instanceGroup) => instanceGroup);
+});
+
+Cypress.Commands.add('deleteAwxInstanceGroup', (instanceGroup: InstanceGroup) => {
+  const instanceGroupId = instanceGroup.id;
+  if (instanceGroupId) {
+    cy.requestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, true);
+  }
+});
+
+/*  EDA related custom command implementation  */
 
 Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
