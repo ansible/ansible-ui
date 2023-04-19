@@ -4,6 +4,17 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        required: true
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 concurrency: main
 
@@ -33,9 +44,9 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
 
-      - name: NPM Version Patch
+      - name: NPM Version - ${{ inputs.version || 'patch' }}
         run: |
-          VERSION=`npm version patch --no-git-tag-version`
+          VERSION=`npm version ${{ inputs.version || 'patch' }} --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Git Commit Version and Push
@@ -47,5 +58,5 @@ jobs:
       - name: Git Tag Version and Push
         run: |
           git commit --allow-empty -m ${{ env.VERSION }}
-          git tag ${{ env.VERSION }}
+          git tag -m ${{ env.VERSION }} ${{ env.VERSION }}
           git push origin --tags
