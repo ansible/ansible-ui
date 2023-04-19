@@ -21,6 +21,10 @@ export function DecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionEnvi
       height="xxl"
       linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
+      helpTitle={t('Decision Environments')}
+      help={t(
+        'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
+      )}
     >
       {view.itemCount !== 0 && <Divider />}
       <PageTable

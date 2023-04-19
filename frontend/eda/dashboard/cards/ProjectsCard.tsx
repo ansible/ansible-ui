@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable, useVisibleModalColumns } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
+import { useProjectColumns } from '../../Resources/projects/hooks/useProjectColumns';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { IEdaView } from '../../useEventDrivenView';
-import { useProjectColumns } from '../../Resources/projects/hooks/useProjectColumns';
 
 export function ProjectsCard(props: { view: IEdaView<EdaProject> }) {
   const { view } = props;
@@ -22,6 +22,8 @@ export function ProjectsCard(props: { view: IEdaView<EdaProject> }) {
       linkText={t('Go to Projects')}
       to={RouteObj.EdaProjects}
       style={{ overflow: 'hidden' }}
+      helpTitle={t('Projects')}
+      help={t('Projects are a logical collection of playbooks.')}
     >
       {view.itemCount !== 0 && <Divider />}
       <PageTable

@@ -21,6 +21,8 @@ export function RulebookActivationsCard(props: { view: IEdaView<EdaRulebookActiv
       height="xxl"
       linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
+      helpTitle={t('Rulebook Activations')}
+      help={t('Rulebook activations are rulebooks that have been activated to run.')}
     >
       {view.itemCount !== 0 && <Divider />}
       <PageTable
