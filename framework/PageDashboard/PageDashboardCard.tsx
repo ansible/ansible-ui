@@ -1,6 +1,7 @@
 import { Card, CardHeader, Flex, FlexItem, Stack, Title } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Help } from '../components/Help';
 import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -17,6 +18,9 @@ export function PageDashboardCard(props: {
   width?: PageDashboardCardWidth;
   height?: PageDashboardCardHeight;
   style?: CSSProperties;
+  help?: string[];
+  helpTitle?: string;
+  helpDocLink?: string;
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
@@ -88,9 +92,16 @@ export function PageDashboardCard(props: {
           <Stack style={{ width: '100%' }}>
             <Flex fullWidth={{ default: 'fullWidth' }}>
               <FlexItem grow={{ default: 'grow' }}>
-                <Title headingLevel="h3" size="xl">
-                  {props.title}
-                </Title>
+                <Flex spaceItems={{ default: 'spaceItemsNone' }}>
+                  <FlexItem>
+                    <Title headingLevel="h3" size="xl">
+                      {props.title}
+                    </Title>
+                  </FlexItem>
+                  <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
+                    <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
+                  </FlexItem>
+                </Flex>
               </FlexItem>
               <FlexItem>
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}

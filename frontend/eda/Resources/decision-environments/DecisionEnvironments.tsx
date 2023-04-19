@@ -25,7 +25,12 @@ export function DecisionEnvironments() {
   const rowActions = useDecisionEnvironmentActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Decision environments')} />
+      <PageHeader
+        title={t('Decision environments')}
+        description={t(
+          'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
