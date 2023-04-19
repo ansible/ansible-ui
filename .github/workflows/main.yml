@@ -37,10 +37,6 @@ jobs:
           VERSION=`npm version patch --no-git-tag-version`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          VERSION=`npm version patch --no-git-tag-version`
-          git add --all
-          git commit -m `$VERSION [skip ci]`
-
       - name: Git Push
         run: |
           git push origin --all
