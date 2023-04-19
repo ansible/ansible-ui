@@ -25,7 +25,7 @@ ARG NGINX_CONFIGURATION_PATH=/etc/nginx/nginx.conf
 ENV DIST_UI="/opt/app-root/ui/eda"
 COPY ${NGINX_CONF} ${NGINX_CONFIGURATION_PATH}
 RUN mkdir -p ${DIST_UI}/
-COPY --from=eda-ui-builder /ansible-ui/build/eda/ ${DIST_UI}
+COPY /build/eda/ ${DIST_UI}
 
 # Set up permissions
 ARG USER_ID=${USER_ID:-1001}
