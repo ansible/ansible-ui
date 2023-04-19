@@ -14,6 +14,11 @@ import { Link } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
+import styled from 'styled-components';
+
+const IconSpan = styled.span`
+  padding-right: 4px;
+`;
 
 interface PageActionDropdownProps<T extends object> {
   actions: IPageAction<T>[];
@@ -161,9 +166,9 @@ function PageDropdownActionItem<T extends object>(props: {
           <DropdownItem
             icon={
               Icon ? (
-                <span style={{ paddingRight: 4 }}>
+                <IconSpan>
                   <Icon />
-                </span>
+                </IconSpan>
               ) : undefined
             }
             onClick={() => {
