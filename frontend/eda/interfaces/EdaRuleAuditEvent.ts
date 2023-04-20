@@ -10,4 +10,5 @@ export interface EdaRuleAuditEvent {
   source_name?: string;
   source_type?: string;
   received_at?: string;
+  payload?: string;
 }

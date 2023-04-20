@@ -8,4 +8,7 @@
 export interface EdaRuleAuditAction {
   id: number;
   name: string;
+  url: string;
+  status: string;
+  fired_at: string;
 }
