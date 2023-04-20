@@ -43,7 +43,6 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
       width="md"
       linkText={t('Go to Projects')}
       to={RouteObj.EdaProjects}
-      style={{ overflow: 'hidden' }}
       helpTitle={t('Projects')}
       help={t('Projects are a logical collection of playbooks.')}
     >
@@ -60,10 +59,10 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
-        defaultSubtitle={t('Project')}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

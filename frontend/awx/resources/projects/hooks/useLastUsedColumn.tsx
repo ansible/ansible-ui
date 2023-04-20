@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, DateTimeCell, ITableColumn } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  DateTimeCell,
+  ITableColumn,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 
@@ -38,6 +43,7 @@ export function useLastUsedColumn() {
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [history, t]
   );

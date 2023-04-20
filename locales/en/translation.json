@@ -1,68 +1,40 @@
 {
   " activation": " activation",
-  "(e": {
-    "g": {
-      " average salary of mid-level Software Engineer)": "(e.g. average salary of mid-level Software Engineer)"
-    }
-  },
+  ", or follow the steps below.": ", or follow the steps below.",
+  "(e.g. average salary of mid-level Software Engineer)": "(e.g. average salary of mid-level Software Engineer)",
   "{{count}} more_one": "{{count}} more",
   "{{count}} more_other": "{{count}} more",
-  "{{count}} of the selected inventories cannot be deleted due to insufficient permission": {
-    "_one": "The selected inventory cannot be deleted due to insufficient permission.",
-    "_other": "{{count}} of the selected inventories cannot be deleted due to insufficient permission."
-  },
-  "{{count}} of the selected jobs cannot be canceled because they are not running": {
-    "_one": "{{count}} of the selected jobs cannot be canceled because they are not running.",
-    "_other": "{{count}} of the selected jobs cannot be canceled because they are not running."
-  },
-  "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions": {
-    "_one": "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions.",
-    "_other": "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions."
-  },
-  "{{count}} of the selected jobs cannot be deleted because they are running": {
-    "_one": "{{count}} of the selected jobs cannot be deleted because they are running.",
-    "_other": "{{count}} of the selected jobs cannot be deleted because they are running."
-  },
-  "{{count}} of the selected jobs cannot be deleted due to insufficient permissions": {
-    "_one": "{{count}} of the selected jobs cannot be deleted due to insufficient permissions.",
-    "_other": "{{count}} of the selected jobs cannot be deleted due to insufficient permissions."
-  },
-  "{{count}} of the selected project sync jobs cannot be canceled because they are not running": {
-    "_one": "{{count}} of the selected project sync jobs cannot be canceled because they are not running.",
-    "_other": "{{count}} of the selected project sync jobs cannot be canceled because they are not running."
-  },
-  "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions": {
-    "_one": "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.",
-    "_other": "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions."
-  },
-  "{{count}} of the selected teams cannot be deleted due to insufficient permissions": {
-    "_one": "{{count}} of the selected teams cannot be deleted due to insufficient permissions.",
-    "_other": "{{count}} of the selected teams cannot be deleted due to insufficient permissions."
-  },
-  "{{count}} of the selected users cannot be deleted due to insufficient permissions": {
-    "_one": "{{count}} of the selected users cannot be deleted due to insufficient permissions.",
-    "_other": "{{count}} of the selected users cannot be deleted due to insufficient permissions."
-  },
+  "{{count}} of the selected inventories cannot be deleted due to insufficient permission._one": "{{count}} of the selected inventories cannot be deleted due to insufficient permission.",
+  "{{count}} of the selected inventories cannot be deleted due to insufficient permission._other": "{{count}} of the selected inventories cannot be deleted due to insufficient permission.",
+  "{{count}} of the selected jobs cannot be canceled because they are not running._one": "{{count}} of the selected jobs cannot be canceled because they are not running.",
+  "{{count}} of the selected jobs cannot be canceled because they are not running._other": "{{count}} of the selected jobs cannot be canceled because they are not running.",
+  "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions._one": "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions.",
+  "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions._other": "{{count}} of the selected jobs cannot be cancelled due to insufficient permissions.",
+  "{{count}} of the selected jobs cannot be deleted because they are running._one": "{{count}} of the selected jobs cannot be deleted because they are running.",
+  "{{count}} of the selected jobs cannot be deleted because they are running._other": "{{count}} of the selected jobs cannot be deleted because they are running.",
+  "{{count}} of the selected jobs cannot be deleted due to insufficient permissions._one": "{{count}} of the selected jobs cannot be deleted due to insufficient permissions.",
+  "{{count}} of the selected jobs cannot be deleted due to insufficient permissions._other": "{{count}} of the selected jobs cannot be deleted due to insufficient permissions.",
+  "{{count}} of the selected project sync jobs cannot be canceled because they are not running._one": "{{count}} of the selected project sync jobs cannot be canceled because they are not running.",
+  "{{count}} of the selected project sync jobs cannot be canceled because they are not running._other": "{{count}} of the selected project sync jobs cannot be canceled because they are not running.",
+  "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions._one": "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.",
+  "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions._other": "{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.",
+  "{{count}} of the selected teams cannot be deleted due to insufficient permissions._one": "{{count}} of the selected teams cannot be deleted due to insufficient permissions.",
+  "{{count}} of the selected teams cannot be deleted due to insufficient permissions._other": "{{count}} of the selected teams cannot be deleted due to insufficient permissions.",
+  "{{count}} of the selected users cannot be deleted due to insufficient permissions._one": "{{count}} of the selected users cannot be deleted due to insufficient permissions.",
+  "{{count}} of the selected users cannot be deleted due to insufficient permissions._other": "{{count}} of the selected users cannot be deleted due to insufficient permissions.",
   "{dateStr} by <3>{username}</3>": "{dateStr} by <3>{username}</3>",
-  "* This field will be retrieved from an external secret management system using the specified credential": "* This field will be retrieved from an external secret management system using the specified credential.",
-  "<0><0></0> You are currently viewing a tech preview of the new {product} user interface": {
-    " To return to the original interface, click <4>here</4>": {
-      "</0>": "<0><0></0> You are currently viewing a tech preview of the new {product} user interface. To return to the original interface, click <4>here</4>.</0>"
-    }
-  },
-  "<0>This job is currently running": {
-    " Live event streaming has not been added yet to the tech preview": {
-      "</0>": "<0>This job is currently running. Live event streaming has not been added yet to the tech preview.</0>"
-    }
-  },
+  "* This field will be retrieved from an external secret management system using the specified credential.": "* This field will be retrieved from an external secret management system using the specified credential.",
+  "<0><0></0> You are currently viewing a tech preview of the new {product} user interface. To return to the original interface, click <4>here</4>.</0>": "<0><0></0> You are currently viewing a tech preview of the new {product} user interface. To return to the original interface, click <4>here</4>.</0>",
+  "<0>This job is currently running. Live event streaming has not been added yet to the tech preview.</0>": "<0>This job is currently running. Live event streaming has not been added yet to the tech preview.</0>",
   "0 (Normal)": "0 (Normal)",
   "1 (Verbose)": "1 (Verbose)",
   "2 (More Verbose)": "2 (More Verbose)",
   "3 (Debug)": "3 (Debug)",
   "4 (Connection Debug)": "4 (Connection Debug)",
   "5 (WinRM Debug)": "5 (WinRM Debug)",
-  "A job template is a definition and set of parameters for running an Ansible job": "A job template is a definition and set of parameters for running an Ansible job.",
-  "A Team is a subdivision of an organization with associated users, projects, credentials, and permissions": "A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.",
+  "A job template is a definition and set of parameters for running an Ansible job.": "A job template is a definition and set of parameters for running an Ansible job.",
+  "A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.": "A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.",
+  "A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.": "A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.",
   "About": "About",
   "Access": "Access",
   "Action": "Action",
@@ -73,7 +45,7 @@
   "Add a description for this job template": "Add a description for this job template",
   "Add a host config key": "Add a host config key",
   "Add a job slicing value": "Add a job slicing value",
-  "Add a limit to reduce number of hosts": "Add a limit to reduce number of hosts.",
+  "Add a limit to reduce number of hosts.": "Add a limit to reduce number of hosts.",
   "Add a name for this job template": "Add a name for this job template",
   "Add a project, then select a playbook": "Add a project, then select a playbook",
   "Add a source control branch": "Add a source control branch",
@@ -106,47 +78,37 @@
   "Add users to selected teams": "Add users to selected teams",
   "Add users to teams_one": "Add users to teams",
   "Add users to teams_other": "Add users to teams",
-  "Adding a user to an organization adds them as a member only": {
-    " Permissions can be granted using teams and user roles": "Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles."
-  },
+  "Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.": "Adding a user to an organization adds them as a member only. Permissions can be granted using teams and user roles.",
   "Adding roles": "Adding roles",
-  "Adding user to organizations": {
-    "_one": "Adding user to organizations...",
-    "_other": "Adding user to organizations..."
-  },
-  "Adding user to teams": {
-    "_one": "Adding user to teams...",
-    "_other": "Adding user to teams..."
-  },
+  "Adding user to organizations..._one": "Adding user to organizations...",
+  "Adding user to organizations..._other": "Adding user to organizations...",
   "Adding user to teams_one": "Adding user to teams",
   "Adding user to teams_other": "Adding user to teams",
-  "Adding users": {
-    "_one": "Adding users...",
-    "_other": "Adding users..."
-  },
+  "Adding user to teams..._one": "Adding user to teams...",
+  "Adding user to teams..._other": "Adding user to teams...",
   "Adding users_one": "Adding users",
   "Adding users_other": "Adding users",
   "Adding users to organizations_one": "Adding users to organizations",
   "Adding users to organizations_other": "Adding users to organizations",
+  "Adding users..._one": "Adding users...",
+  "Adding users..._other": "Adding users...",
   "Admin": "Admin",
   "Administration": "Administration",
   "All": "All",
   "All job types": "All job types",
   "Always": "Always",
   "Amazing Collection": "Amazing Collection",
-  "An API token can be used to authenticate the ansible-galaxy client": "An API token can be used to authenticate the ansible-galaxy client.",
+  "An API token can be used to authenticate the ansible-galaxy client.": "An API token can be used to authenticate the ansible-galaxy client.",
   "An error occured": "An error occured",
   "An instance group defines grouped instances or grouped containers": "An instance group defines grouped instances or grouped containers",
-  "An Instance Group provides the ability to group instances in a clustered environment": "An Instance Group provides the ability to group instances in a clustered environment.",
-  "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate": "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.",
-  "An unknown error occured": "An unknown error occured.",
+  "An Instance Group provides the ability to group instances in a clustered environment.": "An Instance Group provides the ability to group instances in a clustered environment.",
+  "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.": "An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.",
+  "An unknown error occured.": "An unknown error occured.",
   "Analytics": "Analytics",
   "Ansible": "Ansible",
   "Ansible Galaxy/Automation Hub API Token": "Ansible Galaxy/Automation Hub API Token",
-  "Ansible node instances dedicated for a particular purpose indicated by node type": "Ansible node instances dedicated for a particular purpose indicated by node type.",
-  "Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory": {
-    " Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against": "Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against."
-  },
+  "Ansible node instances dedicated for a particular purpose indicated by node type.": "Ansible node instances dedicated for a particular purpose indicated by node type.",
+  "Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.": "Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.",
   "API token": "API token",
   "Approvals": "Approvals",
   "Approve": "Approve",
@@ -156,7 +118,7 @@
   "Authentication type": "Authentication type",
   "Auto": "Auto",
   "Automated process cost": "Automated process cost",
-  "Automation Analytics is currently not enabled to send data": "Automation Analytics is currently not enabled to send data.",
+  "Automation Analytics is currently not enabled to send data.": "Automation Analytics is currently not enabled to send data.",
   "Automation Content": "Automation Content",
   "Automation formula": "Automation formula",
   "Automation savings": "Automation savings",
@@ -166,12 +128,8 @@
   "Automation type": "Automation type",
   "AWX": "AWX",
   "AWX Ansible server": "AWX Ansible server",
-  "Being a team member grants the user all the permissions of the team": "Being a team member grants the user all the permissions of the team.",
-  "Branch to use in job run": {
-    " Project default used if blank": {
-      " Only allowed if project allow_override field is set to true": "Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true."
-    }
-  },
+  "Being a team member grants the user all the permissions of the team.": "Being a team member grants the user all the permissions of the team.",
+  "Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.": "Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.",
   "brand logo": "brand logo",
   "Brand Logo": "Brand Logo",
   "Browse all certified collections": "Browse all certified collections",
@@ -210,6 +168,7 @@
   "Capacity": "Capacity",
   "Certified": "Certified",
   "Check": "Check",
+  "check out our instruct guides": "check out our instruct guides",
   "Choices": "Choices",
   "Click to view latest project sync job": "Click to view latest project sync job",
   "Close": "Close",
@@ -220,7 +179,7 @@
   "Collection file": "Collection file",
   "Collection repository": "Collection repository",
   "Collections": "Collections",
-  "Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins": "Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.",
+  "Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.": "Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.",
   "Command": "Command",
   "Comments": "Comments",
   "Community": "Community",
@@ -232,7 +191,7 @@
   "Confirm": "Confirm",
   "Confirm delete": "Confirm delete",
   "Confirm password": "Confirm password",
-  "Connect intelligence, analytics and service requests to enable more responsive and resilient automation": "Connect intelligence, analytics and service requests to enable more responsive and resilient automation.",
+  "Connect intelligence, analytics and service requests to enable more responsive and resilient automation.": "Connect intelligence, analytics and service requests to enable more responsive and resilient automation.",
   "Constructed inventory": "Constructed inventory",
   "Constructed Inventory": "Constructed Inventory",
   "Container group": "Container group",
@@ -242,21 +201,20 @@
   "Contents": "Contents",
   "Control": "Control",
   "Control node": "Control node",
-  "control nodes run project and inventory updates and system jobs, but not regular jobs": {
-    " Execution capabilities are disabled on these nodes": "control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes."
-  },
-  "Control the level of output ansible will produce as the playbook executes": "Control the level of output ansible will produce as the playbook executes.",
+  "control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes.": "control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes.",
+  "Control the level of output ansible will produce as the playbook executes.": "Control the level of output ansible will produce as the playbook executes.",
   "Copy inventory": "Copy inventory",
   "Copy project": "Copy project",
-  "Copy this token now": {
-    " This is the only time you will ever see it": "Copy this token now. This is the only time you will ever see it."
-  },
+  "Copy this token now. This is the only time you will ever see it.": "Copy this token now. This is the only time you will ever see it.",
   "Copy to clipboard": "Copy to clipboard",
   "Costs from failed hosts": "Costs from failed hosts",
-  "Create a decision environment by clicking the button below": "Create a decision environment by clicking the button below.",
-  "Create a job by clicking the button below": "Create a job by clicking the button below.",
-  "Create a project by clicking the button below": "Create a project by clicking the button below.",
-  "Create a rulebook activation by clicking the button below": "Create a rulebook activation by clicking the button below.",
+  "Create a decision environment by clicking the button below.": "Create a decision environment by clicking the button below.",
+  "Create a decision environment.": "Create a decision environment.",
+  "Create a job by clicking the button below.": "Create a job by clicking the button below.",
+  "Create a project by clicking the button below.": "Create a project by clicking the button below.",
+  "Create a project.": "Create a project.",
+  "Create a rulebook activation by clicking the button below.": "Create a rulebook activation by clicking the button below.",
+  "Create a rulebook activation.": "Create a rulebook activation.",
   "Create constructed inventory": "Create constructed inventory",
   "Create container group": "Create container group",
   "Create credential": "Create credential",
@@ -287,25 +245,21 @@
   "Created by": "Created by",
   "Credential": "Credential",
   "Credential Admin": "Credential Admin",
-  "Credential not found": "Credential not found.",
+  "Credential not found.": "Credential not found.",
   "Credential type": "Credential type",
   "Credentials": "Credentials",
   "Current page savings": "Current page savings",
-  "Custom virtual environment {virtualEnvironment} must be replaced by an execution environment": {
-    " For more information about migrating to execution environments see <4>the documentation": {
-      "</4>": "Custom virtual environment {virtualEnvironment} must be replaced by an execution environment. For more information about migrating to execution environments see <4>the documentation.</4>"
-    }
-  },
+  "Custom virtual environment {virtualEnvironment} must be replaced by an execution environment. For more information about migrating to execution environments see <4>the documentation.</4>": "Custom virtual environment {virtualEnvironment} must be replaced by an execution environment. For more information about migrating to execution environments see <4>the documentation.</4>",
   "Dashboard": "Dashboard",
   "Debug": "Debug",
   "Decision environment": "Decision environment",
   "Decision Environment": "Decision Environment",
   "Decision environments": "Decision environments",
   "Decision Environments": "Decision Environments",
-  "Decision environments contain a rulebook image that dictates where the rulebooks will run": "Decision environments contain a rulebook image that dictates where the rulebooks will run.",
+  "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "Decision environments contain a rulebook image that dictates where the rulebooks will run.",
   "Default execution environment": "Default execution environment",
   "Default Execution Environment": "Default Execution Environment",
-  "Define, operate, scale, and delegate automation across your enterprise": "Define, operate, scale, and delegate automation across your enterprise.",
+  "Define, operate, scale, and delegate automation across your enterprise.": "Define, operate, scale, and delegate automation across your enterprise.",
   "Delete": "Delete",
   "Delete collections_one": "Delete collections",
   "Delete collections_other": "Delete collections",
@@ -391,8 +345,8 @@
   "Disable rulebook activations_other": "Disable rulebook activations",
   "Disable selected activations": "Disable selected activations",
   "Disabled": "Disabled",
-  "Discover, publish, and manage your Ansible collections": "Discover, publish, and manage your Ansible collections.",
-  "Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory": "Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.",
+  "Discover, publish, and manage your Ansible collections.": "Discover, publish, and manage your Ansible collections.",
+  "Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.": "Divide the work done by this job template into the specified number of job slices, each running the same tasks against a portion of the inventory.",
   "Documentation": "Documentation",
   "Download key": "Download key",
   "Duration": "Duration",
@@ -454,7 +408,7 @@
   "Enter tags": "Enter tags",
   "Enter the Description": "Enter the Description",
   "Enter the name": "Enter the name",
-  "Enter the time it takes to run the following templates manually": "Enter the time it takes to run the following templates manually.",
+  "Enter the time it takes to run the following templates manually.": "Enter the time it takes to run the following templates manually.",
   "Enter the URL": "Enter the URL",
   "Enter the url of the automation server": "Enter the url of the automation server",
   "Enter username": "Enter username",
@@ -494,14 +448,11 @@
   "Error loading teams": "Error loading teams",
   "Error loading templates": "Error loading templates",
   "Error loading users": "Error loading users",
-  "Error validating organization": {
-    " Please reload the page": "Error validating organization. Please reload the page."
-  },
+  "Error validating organization: {{errMessage}}. Please reload the page.": "Error validating organization: {{errMessage}}. Please reload the page.",
+  "Error validating organization. Please reload the page.": "Error validating organization. Please reload the page.",
   "Event details": "Event details",
   "Event log": "Event log",
-  "Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools": {
-    " In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage": "Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage."
-  },
+  "Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage.": "Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage.",
   "Events": "Events",
   "Examples": "Examples",
   "Execute": "Execute",
@@ -509,28 +460,20 @@
   "Execution environment": "Execution environment",
   "Execution Environment": "Execution Environment",
   "Execution Environment Admin": "Execution Environment Admin",
-  "Execution environment is missing or deleted": "Execution environment is missing or deleted.",
+  "Execution environment is missing or deleted.": "Execution environment is missing or deleted.",
   "Execution Environment Missing": "Execution Environment Missing",
-  "Execution environment not found": "Execution environment not found.",
+  "Execution environment not found.": "Execution environment not found.",
   "Execution environments": "Execution environments",
   "Execution node": "Execution node",
-  "Execution nodes run jobs under ansible-runner with podman isolation": {
-    " This node type is similar to isolated nodes": {
-      " This is the default node type for execution plane nodes": "Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes."
-    }
-  },
-  "executionEnvironments": {
-    "title": {
-      "description": "The ability to build and deploy Python virtual environments for automation has been replaced by Ansible execution environments. Unlike legacy virtual environments, execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more.",
-      "help": "The ability to build and deploy Python virtual environments for automation has been replaced by Ansible execution environments. Unlike legacy virtual environments, execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more."
-    }
-  },
+  "Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes.": "Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes.",
+  "executionEnvironments.title.description": "executionEnvironments.title.description",
+  "executionEnvironments.title.help": "executionEnvironments.title.help",
   "Explanation": "Explanation",
   "Fact Storage": "Fact Storage",
   "Failed": "Failed",
   "failed cost per template = (failed elapsed total / 3600) * configurable automated process cost": "failed cost per template = (failed elapsed total / 3600) * configurable automated process cost",
   "Failed hosts cost per template": "Failed hosts cost per template",
-  "Failed hosts cost per template is the total amount of time spent on failed automated job runs multiplied by the configured automated process cost": "Failed hosts cost per template is the total amount of time spent on failed automated job runs multiplied by the configured automated process cost.",
+  "Failed hosts cost per template is the total amount of time spent on failed automated job runs multiplied by the configured automated process cost.": "Failed hosts cost per template is the total amount of time spent on failed automated job runs multiplied by the configured automated process cost.",
   "Failed to copy inventory": "Failed to copy inventory",
   "Failed to copy project": "Failed to copy project",
   "Failed to relaunch job": "Failed to relaunch job",
@@ -544,13 +487,13 @@
   "Fire count": "Fire count",
   "Fired date": "Fired date",
   "First name": "First name",
-  "For instance, permissions may be granted to a whole Team rather than each user on the Team": "For instance, permissions may be granted to a whole Team rather than each user on the Team.",
+  "For instance, permissions may be granted to a whole Team rather than each user on the Team.": "For instance, permissions may be granted to a whole Team rather than each user on the Team.",
   "Forks": "Forks",
-  "Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details": "Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details.",
+  "Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details.": "Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details.",
   "Galaxy Ansible server": "Galaxy Ansible server",
   "Galaxy Credentials": "Galaxy Credentials",
   "Generate token": "Generate token",
-  "Generating a new token will delete your old token": "Generating a new token will delete your old token.",
+  "Generating a new token will delete your old token.": "Generating a new token will delete your old token.",
   "Getting started": "Getting started",
   "Git": "Git",
   "Git hash": "Git hash",
@@ -567,7 +510,7 @@
   "Go to Settings": "Go to Settings",
   "GPG Public Key": "GPG Public Key",
   "Group": "Group",
-  "Group is required": "Group is required.",
+  "Group is required.": "Group is required.",
   "Groups": "Groups",
   "Has all the permissons of the team": "Has all the permissons of the team",
   "has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges": "has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges",
@@ -584,39 +527,34 @@
   "Hosts": "Hosts",
   "Hosts with active failures": "Hosts with active failures",
   "Hybrid": "Hybrid",
-  "Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations": {
-    " Hybrid nodes are also used for automation execution": "Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution."
-  },
+  "Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.": "Hybrid is the default node type for control plane nodes, responsible for runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.",
   "Hybrid node": "Hybrid node",
   "Id": "Id",
   "ID": "ID",
-  "If enabled, show the changes made by Ansible tasks, where supported": {
-    " This is equivalent to Ansible's --diff mode": "If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode."
-  },
-  "If you only want to remove access for this particular user, please remove them from the team": "If you only want to remove access for this particular user, please remove them from the team.",
+  "If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.": "If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.",
+  "If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.": "If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.",
+  "If you only want to remove access for this particular user, please remove them from the team.": "If you only want to remove access for this particular user, please remove them from the team.",
   "Image": "Image",
   "Import log": "Import log",
   "Input inventories": "Input inventories",
   "Install": "Install",
   "Installation": "Installation",
   "Instance group": "Instance group",
-  "Instance group is required": "Instance group is required.",
+  "Instance group is required.": "Instance group is required.",
   "Instance groups": "Instance groups",
   "Instance Groups": "Instance Groups",
   "Instances": "Instances",
-  "Invalid username or password": {
-    " Please try again": "Invalid username or password. Please try again."
-  },
+  "Invalid username or password. Please try again.": "Invalid username or password. Please try again.",
   "Inventories": "Inventories",
   "Inventories with sources cannot be copied": "Inventories with sources cannot be copied",
   "Inventory": "Inventory",
   "Inventory Admin": "Inventory Admin",
-  "Inventory not found": "Inventory not found.",
+  "Inventory not found.": "Inventory not found.",
   "Inventory sources with active failures": "Inventory sources with active failures",
   "Inventory sync": "Inventory sync",
   "Inventory Sync": "Inventory Sync",
   "Inventory Type": "Inventory Type",
-  "Job project not found": "Job project not found.",
+  "Job project not found.": "Job project not found.",
   "Job runs in the last 30 days": "Job runs in the last 30 days",
   "Job Slice": "Job Slice",
   "Job Slice Parent": "Job Slice Parent",
@@ -626,7 +564,7 @@
   "Job template": "Job template",
   "Job Template": "Job Template",
   "Job Template Admin": "Job Template Admin",
-  "Job template not found": "Job template not found.",
+  "Job template not found.": "Job template not found.",
   "Job Templates": "Job Templates",
   "Job type": "Job type",
   "Job Type": "Job Type",
@@ -649,9 +587,7 @@
   "LDAP": "LDAP",
   "License": "License",
   "Limit": "Limit",
-  "Loading organizations": {
-    "": "Loading organizations..."
-  },
+  "Loading organizations...": "Loading organizations...",
   "Local": "Local",
   "Log in": "Log in",
   "Logout": "Logout",
@@ -660,11 +596,7 @@
   "Manual": "Manual",
   "Manual cost of automation": "Manual cost of automation",
   "Manual time": "Manual time",
-  "manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs manual cost = manual time * configurable manual cost of automation (e": {
-    "g": {
-      " average salary of mid-level Software Engineer)": "manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs manual cost = manual time * configurable manual cost of automation (e.g. average salary of mid-level Software Engineer)"
-    }
-  },
+  "manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs manual cost = manual time * configurable manual cost of automation (e.g. average salary of mid-level Software Engineer)": "manual time  = configurable time (in minutes) to manually complete the task on one host * number of host runs manual cost = manual time * configurable manual cost of automation (e.g. average salary of mid-level Software Engineer)",
   "May run ad hoc commands on the inventory": "May run ad hoc commands on the inventory",
   "May run any executable resources in the organization": "May run any executable resources in the organization",
   "May run the job template": "May run the job template",
@@ -681,20 +613,20 @@
   "Memory": "Memory",
   "Metadata": "Metadata",
   "min": "min",
-  "Missing Authentication for Automation Analytics": "Missing Authentication for Automation Analytics.",
-  "Missing Gather data for Automation Analytics": "Missing Gather data for Automation Analytics.",
-  "Missing Password for Automation Analytics": "Missing Password for Automation Analytics.",
+  "Missing Authentication for Automation Analytics.": "Missing Authentication for Automation Analytics.",
+  "Missing Gather data for Automation Analytics.": "Missing Gather data for Automation Analytics.",
+  "Missing Password for Automation Analytics.": "Missing Password for Automation Analytics.",
   "Missing resource": "Missing resource",
-  "Missing URL for Automation Analytics": "Missing URL for Automation Analytics.",
-  "Missing User for Automation Analytics": "Missing User for Automation Analytics.",
+  "Missing URL for Automation Analytics.": "Missing URL for Automation Analytics.",
+  "Missing User for Automation Analytics.": "Missing User for Automation Analytics.",
   "Modified": "Modified",
   "Modified by": "Modified by",
   "Modules": "Modules",
   "Monetary gain": "Monetary gain",
   "Monetary gain per template": "Monetary gain per template",
   "monetary gain per template = savings per template - failed host cost per template": "monetary gain per template = savings per template - failed host cost per template",
-  "Monetary gain per template is the difference between total savings per template and failed hosts cost per template": "Monetary gain per template is the difference between total savings per template and failed hosts cost per template.",
-  "Must be a valid URL": "Must be a valid URL.",
+  "Monetary gain per template is the difference between total savings per template and failed hosts cost per template.": "Monetary gain per template is the difference between total savings per template and failed hosts cost per template.",
+  "Must be a valid URL.": "Must be a valid URL.",
   "Must not be after end date": "Must not be after end date",
   "Must not be after today": "Must not be after today",
   "Must not be before start date": "Must not be before start date",
@@ -741,7 +673,7 @@
   "No Templates yet": "No Templates yet",
   "No users yet": "No users yet",
   "Node type": "Node type",
-  "None - Please make a selection below": "None - Please make a selection below.",
+  "None - Please make a selection below.": "None - Please make a selection below.",
   "Normal user": "Normal user",
   "Not Found": "Not Found",
   "Notes": "Notes",
@@ -752,21 +684,17 @@
   "Off": "Off",
   "On": "On",
   "On failure": "On failure",
-  "Optional labels that describe this inventory, such as 'dev' or 'test'": {
-    " Labels can be used to group and filter inventories and completed jobs": "Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs."
-  },
-  "Optional labels that describe this job template, such as 'dev' or 'test'": {
-    " Labels can be used to group and filter job templates and completed jobs": "Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs."
-  },
+  "Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.": "Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.",
+  "Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.": "Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.",
   "Options": "Options",
   "Organization": "Organization",
-  "Organization not found": "Organization not found",
+  "Organization not found.": "Organization not found.",
   "Organizations": "Organizations",
   "Output": "Output",
   "Parameter": "Parameter",
   "Parameters": "Parameters",
   "Password": "Password",
-  "Password does not match": "Password does not match.",
+  "Password does not match.": "Password does not match.",
   "Past month": "Past month",
   "Past two weeks": "Past two weeks",
   "Past week": "Past week",
@@ -818,21 +746,21 @@
   "Playbook Run": "Playbook Run",
   "Plays": "Plays",
   "Please add a project by using the button below": "Please add a project by using the button below",
-  "Please add a team by using the button below": "Please add a team by using the button below.",
-  "Please click the button below to visit the settings page to set your credentials": "Please click the button below to visit the settings page to set your credentials.",
-  "Please contact your Organization Administrator if there is an issue with your access": "Please contact your Organization Administrator if there is an issue with your access.",
-  "Please contact your organization's administrator": "Please contact your organization's administrator.",
-  "Please contact your organization's administrator to add credentials": "Please contact your organization's administrator to add credentials.",
-  "Please contact your organization's administrator to add entitlements": "Please contact your organization's administrator to add entitlements.",
-  "Please contact your organization's administrator to add Password for Automation Analytics": "Please contact your organization's administrator to add Password for Automation Analytics.",
-  "Please contact your organization's administrator to add URL for Automation Analytics": "Please contact your organization's administrator to add URL for Automation Analytics.",
-  "Please contact your organization's administrator to add User for Automation Analytics": "Please contact your organization's administrator to add User for Automation Analytics.",
-  "Please contact your organization's administrator to enable Gather data for Automation Analytics": "Please contact your organization's administrator to enable Gather data for Automation Analytics.",
-  "Please create a project by using the button below": "Please create a project by using the button below.",
-  "Please create a team by using the button below": "Please create a team by using the button below.",
-  "Please create a user by using the button below": "Please create a user by using the button below.",
-  "Please create an inventory by using the button below": "Please create an inventory by using the button below.",
-  "Please run a job to populate this list": "Please run a job to populate this list.",
+  "Please add a team by using the button below.": "Please add a team by using the button below.",
+  "Please click the button below to visit the settings page to set your credentials.": "Please click the button below to visit the settings page to set your credentials.",
+  "Please contact your Organization Administrator if there is an issue with your access.": "Please contact your Organization Administrator if there is an issue with your access.",
+  "Please contact your organization's administrator to add credentials.": "Please contact your organization's administrator to add credentials.",
+  "Please contact your organization's administrator to add entitlements.": "Please contact your organization's administrator to add entitlements.",
+  "Please contact your organization's administrator to add Password for Automation Analytics.": "Please contact your organization's administrator to add Password for Automation Analytics.",
+  "Please contact your organization's administrator to add URL for Automation Analytics.": "Please contact your organization's administrator to add URL for Automation Analytics.",
+  "Please contact your organization's administrator to add User for Automation Analytics.": "Please contact your organization's administrator to add User for Automation Analytics.",
+  "Please contact your organization's administrator to enable Gather data for Automation Analytics.": "Please contact your organization's administrator to enable Gather data for Automation Analytics.",
+  "Please contact your organization's administrator.": "Please contact your organization's administrator.",
+  "Please create a project by using the button below.": "Please create a project by using the button below.",
+  "Please create a team by using the button below.": "Please create a team by using the button below.",
+  "Please create a user by using the button below.": "Please create a user by using the button below.",
+  "Please create an inventory by using the button below.": "Please create an inventory by using the button below.",
+  "Please run a job to populate this list.": "Please run a job to populate this list.",
   "Plugins": "Plugins",
   "Policy type": "Policy type",
   "Prevent instance group fallback": "Prevent instance group fallback",
@@ -843,13 +771,9 @@
   "Project Admin": "Project Admin",
   "Project git hash": "Project git hash",
   "Projects": "Projects",
-  "Projects are a logical collection of playbooks": "Projects are a logical collection of playbooks.",
+  "Projects are a logical collection of playbooks.": "Projects are a logical collection of playbooks.",
   "Prompt on launch": "Prompt on launch",
-  "Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook": {
-    " Multiple patterns are allowed": {
-      " Refer to Ansible documentation for more information and examples on patterns": "Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns."
-    }
-  },
+  "Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.": "Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.",
   "Provisioning callback": "Provisioning callback",
   "Provisioning callback details": "Provisioning callback details",
   "Provisioning callback URL": "Provisioning callback URL",
@@ -905,30 +829,22 @@
   "Remove users from team": "Remove users from team",
   "Remove users from teams_one": "Remove users from teams",
   "Remove users from teams_other": "Remove users from teams",
-  "Removing user from organizations": {
-    "_one": "Removing user from organizations...",
-    "_other": "Removing user from organizations..."
-  },
   "Removing user from organizations_one": "Removing user from organizations",
   "Removing user from organizations_other": "Removing user from organizations",
-  "Removing user from teams": {
-    "_one": "Removing user from teams...",
-    "_other": "Removing user from teams..."
-  },
+  "Removing user from organizations..._one": "Removing user from organizations...",
+  "Removing user from organizations..._other": "Removing user from organizations...",
   "Removing user from teams_one": "Removing user from teams",
   "Removing user from teams_other": "Removing user from teams",
-  "Removing users from organizations": {
-    "_one": "Removing users from organizations...",
-    "_other": "Removing users from organizations..."
-  },
+  "Removing user from teams..._one": "Removing user from teams...",
+  "Removing user from teams..._other": "Removing user from teams...",
   "Removing users from organizations_one": "Removing users from organizations",
   "Removing users from organizations_other": "Removing users from organizations",
-  "Removing users from teams": {
-    "_one": "Removing users from teams...",
-    "_other": "Removing users from teams..."
-  },
+  "Removing users from organizations..._one": "Removing users from organizations...",
+  "Removing users from organizations..._other": "Removing users from organizations...",
   "Removing users from teams_one": "Removing users from teams",
   "Removing users from teams_other": "Removing users from teams",
+  "Removing users from teams..._one": "Removing users from teams...",
+  "Removing users from teams..._other": "Removing users from teams...",
   "Reports": "Reports",
   "Repositories": "Repositories",
   "Repository": "Repository",
@@ -964,7 +880,7 @@
   "Rulebook activation history": "Rulebook activation history",
   "Rulebook activations": "Rulebook activations",
   "Rulebook Activations": "Rulebook Activations",
-  "Rulebook activations are rulebooks that have been activated to run": "Rulebook activations are rulebooks that have been activated to run.",
+  "Rulebook activations are rulebooks that have been activated to run.": "Rulebook activations are rulebooks that have been activated to run.",
   "RulebookActivations": "RulebookActivations",
   "Rulebooks": "Rulebooks",
   "Rules": "Rules",
@@ -989,11 +905,7 @@
   "Savings from successful hosts": "Savings from successful hosts",
   "Savings per template": "Savings per template",
   "savings per template = manual cost - automation cost": "savings per template = manual cost - automation cost",
-  "Savings per template is the difference between the manual cost and automation cost of successfully running templates across hosts": {
-    " Manual cost is calculated by multiplying the number of hours spent manually running templates across hosts by the average hourly wages per engineer": {
-      " Automation cost is the total amount of time, in seconds, spent running templates automatically multiplied by the average monthly cost for automated processes": "Savings per template is the difference between the manual cost and automation cost of successfully running templates across hosts. Manual cost is calculated by multiplying the number of hours spent manually running templates across hosts by the average hourly wages per engineer. Automation cost is the total amount of time, in seconds, spent running templates automatically multiplied by the average monthly cost for automated processes."
-    }
-  },
+  "Savings per template is the difference between the manual cost and automation cost of successfully running templates across hosts. Manual cost is calculated by multiplying the number of hours spent manually running templates across hosts by the average hourly wages per engineer. Automation cost is the total amount of time, in seconds, spent running templates automatically multiplied by the average monthly cost for automated processes.": "Savings per template is the difference between the manual cost and automation cost of successfully running templates across hosts. Manual cost is calculated by multiplying the number of hours spent manually running templates across hosts by the average hourly wages per engineer. Automation cost is the total amount of time, in seconds, spent running templates automatically multiplied by the average monthly cost for automated processes.",
   "Schedule": "Schedule",
   "Schedules": "Schedules",
   "SCM token": "SCM token",
@@ -1003,7 +915,7 @@
   "SCM URL": "SCM URL",
   "Select a credential": "Select a credential",
   "Select a job template": "Select a job template",
-  "Select a job type for this job template": "Select a job type for this job template.",
+  "Select a job type for this job template.": "Select a job type for this job template.",
   "Select a organization": "Select a organization",
   "Select a verbosity value": "Select a verbosity value",
   "Select a webhook service": "Select a webhook service",
@@ -1016,17 +928,9 @@
   "Select automation type": "Select automation type",
   "Select credential": "Select credential",
   "Select credential type": "Select credential type",
-  "Select credentials for accessing the nodes this job will be ran against": {
-    " You can only select one credential of each type": {
-      " For machine credentials (SSH), checking \"Prompt on launch\" without selecting credentials will require you to select a machine credential at run time": {
-        " If you select credentials and check \"Prompt on launch\", the selected credential(s) become the defaults that can be updated at run time": "Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking \"Prompt on launch\" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check \"Prompt on launch\", the selected credential(s) become the defaults that can be updated at run time."
-      }
-    }
-  },
+  "Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking \"Prompt on launch\" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check \"Prompt on launch\", the selected credential(s) become the defaults that can be updated at run time.": "Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking \"Prompt on launch\" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check \"Prompt on launch\", the selected credential(s) become the defaults that can be updated at run time.",
   "Select decision environment": "Select decision environment",
-  "Select from the list of directories found in the Project Base Path": {
-    " Together the base path and the playbook directory provide the full path used to locate playbooks": "Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks"
-  },
+  "Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks": "Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks",
   "Select groups": "Select groups",
   "Select Job Type": "Select Job Type",
   "Select job types": "Select job types",
@@ -1036,16 +940,18 @@
   "Select organization": "Select organization",
   "Select period": "Select period",
   "Select project": "Select project",
+  "Select repositories": "Select repositories",
   "Select restart policy": "Select restart policy",
   "Select role": "Select role",
   "Select rulebook": "Select rulebook",
+  "Select signatures": "Select signatures",
   "Select statuses": "Select statuses",
-  "Select the instance groups for this inventory to run on": "Select the instance groups for this inventory to run on.",
-  "Select the instance groups for this job template to run on": "Select the instance groups for this job template to run on.",
-  "Select the instance groups for this organization to run on": "Select the instance groups for this organization to run on.",
-  "Select the inventory containing the hosts you want this job to manage": "Select the inventory containing the hosts you want this job to manage.",
-  "Select the playbook to be executed by this job": "Select the playbook to be executed by this job.",
-  "Select the project containing the playbook you want this job to execute": "Select the project containing the playbook you want this job to execute.",
+  "Select the instance groups for this inventory to run on.": "Select the instance groups for this inventory to run on.",
+  "Select the instance groups for this job template to run on.": "Select the instance groups for this job template to run on.",
+  "Select the instance groups for this organization to run on.": "Select the instance groups for this organization to run on.",
+  "Select the inventory containing the hosts you want this job to manage.": "Select the inventory containing the hosts you want this job to manage.",
+  "Select the playbook to be executed by this job.": "Select the playbook to be executed by this job.",
+  "Select the project containing the playbook you want this job to execute.": "Select the project containing the playbook you want this job to execute.",
   "Select types": "Select types",
   "Select user type": "Select user type",
   "Selected": "Selected",
@@ -1058,16 +964,10 @@
   "Signature Keys": "Signature Keys",
   "Signed": "Signed",
   "Signed state": "Signed state",
-  "similar to a jump host, hop nodes will route traffic to other execution nodes": {
-    " Hop nodes cannot execute automation": "similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation."
-  },
+  "similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation.": "similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation.",
   "Skip tags": "Skip tags",
   "Skip Tags": "Skip Tags",
-  "Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task": {
-    " Use commas to separate multiple tags": {
-      " Refer to the documentation for details on the usage of tags": "Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags."
-    }
-  },
+  "Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.": "Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.",
   "Smart host filter": "Smart host filter",
   "Smart inventory": "Smart inventory",
   "Smart Inventory": "Smart Inventory",
@@ -1101,57 +1001,44 @@
   "Synced": "Synced",
   "Synopsis": "Synopsis",
   "System administrator": "System administrator",
-  "System administrators have unrestricted access to all resources": "System administrators have unrestricted access to all resources.",
+  "System administrators have unrestricted access to all resources.": "System administrators have unrestricted access to all resources.",
   "System auditor": "System auditor",
-  "System auditor have unrestricted access to all resources": "System auditor have unrestricted access to all resources.",
-  "System auditors have read access to all resources": "System auditors have read access to all resources.",
+  "System auditor have unrestricted access to all resources.": "System auditor have unrestricted access to all resources.",
+  "System auditors have read access to all resources.": "System auditors have read access to all resources.",
   "Tag": "Tag",
   "Tags": "Tags",
-  "Tags are useful when you have a large playbook, and you want to run a specific part of a play or task": {
-    " Use commas to separate multiple tags": {
-      " Refer to the documentation for details on the usage of tags": "Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags."
-    }
-  },
+  "Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.": "Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.",
   "Task": "Task",
   "Task management": "Task management",
   "Task name": "Task name",
   "Tasks": "Tasks",
   "Team": "Team",
-  "Team does not have any roles": "Team does not have any roles.",
+  "Team does not have any roles.": "Team does not have any roles.",
   "Team roles": "Team roles",
   "Teams": "Teams",
-  "Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations": "Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations.",
+  "Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations.": "Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations.",
   "Template success rate": "Template success rate",
   "Templates": "Templates",
-  "The amount of time (in seconds) to run before the job is canceled": {
-    " Defaults to 0 for no job timeout": "The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout."
-  },
-  "The collection cannot be imported": {
-    " Please create namespace before importing": "The collection cannot be imported. Please create namespace before importing."
-  },
-  "The container image to be used for execution": "The container image to be used for execution.",
-  "The execution environment that will be used for jobs\n          inside of this organization": {
-    " This will be used a fallback when\n          an execution environment has not been explicitly assigned at the\n          project, job template or workflow level": "The execution environment that will be used for jobs\n          inside of this organization. This will be used a fallback when\n          an execution environment has not been explicitly assigned at the\n          project, job template or workflow level."
-  },
-  "The Instance Groups for this Job Template to run on": "The Instance Groups for this Job Template to run on.",
-  "The Instance Groups for this Organization to run on": "The Instance Groups for this Organization to run on.",
+  "The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.": "The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.",
+  "The collection cannot be imported. Please create namespace before importing.": "The collection cannot be imported. Please create namespace before importing.",
+  "The container image to be used for execution.": "The container image to be used for execution.",
+  "The execution environment that will be used for jobs\n          inside of this organization. This will be used a fallback when\n          an execution environment has not been explicitly assigned at the\n          project, job template or workflow level.": "The execution environment that will be used for jobs\n          inside of this organization. This will be used a fallback when\n          an execution environment has not been explicitly assigned at the\n          project, job template or workflow level.",
+  "The formula for monetary gain per template:": "The formula for monetary gain per template:",
+  "The formula used to calculate automation cost:": "The formula used to calculate automation cost:",
+  "The formula used to calculate failed host cost per template:": "The formula used to calculate failed host cost per template:",
+  "The formula used to calculate manual cost:": "The formula used to calculate manual cost:",
+  "The Instance Groups for this Job Template to run on.": "The Instance Groups for this Job Template to run on.",
+  "The Instance Groups for this Organization to run on.": "The Instance Groups for this Organization to run on.",
   "The inventory cannot be copied due to insufficient permission": "The inventory cannot be copied due to insufficient permission",
   "The inventory cannot be deleted due to insufficient permission": "The inventory cannot be deleted due to insufficient permission",
+  "The inventory cannot be deleted due to insufficient permission.": "The inventory cannot be deleted due to insufficient permission.",
   "The inventory cannot be edited due to insufficient permission": "The inventory cannot be edited due to insufficient permission",
   "The job cannot be canceled because it is not running": "The job cannot be canceled because it is not running",
   "The job cannot be canceled due to insufficient permission": "The job cannot be canceled due to insufficient permission",
   "The job cannot be deleted because it is running": "The job cannot be deleted because it is running",
   "The job cannot be deleted due to a running job status": "The job cannot be deleted due to a running job status",
   "The job cannot be deleted due to insufficient permission": "The job cannot be deleted due to insufficient permission",
-  "The number of parallel or simultaneous processes to use while executing the playbook": {
-    " An empty value, or a value less than 1 will use the Ansible default which is usually 5": {
-      " The default number of forks can be overwritten with a change to ansible": {
-        "cfg": {
-          " Refer to the Ansible documentation for details about the configuration file": "The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file."
-        }
-      }
-    }
-  },
+  "The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file.": "The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file.",
   "The project cannot be copied due to insufficient permission": "The project cannot be copied due to insufficient permission",
   "The project cannot be deleted due to insufficient permission": "The project cannot be deleted due to insufficient permission",
   "The project cannot be edited due to insufficient permission": "The project cannot be edited due to insufficient permission",
@@ -1159,48 +1046,49 @@
   "The project cannot be synced due to insufficient permission": "The project cannot be synced due to insufficient permission",
   "The project sync cannot be canceled because it is not running": "The project sync cannot be canceled because it is not running",
   "The project sync cannot be canceled due to insufficient permission": "The project sync cannot be canceled due to insufficient permission",
-  "The team cannot be deleted due to insufficient permissions": "The team cannot be deleted due to insufficient permissions.",
-  "The team cannot be edited due to insufficient permissions": "The team cannot be edited due to insufficient permissions.",
-  "The user cannot be deleted due to insufficient permissions": "The user cannot be deleted due to insufficient permissions.",
-  "The user cannot be edited due to insufficient permissions": "The user cannot be edited due to insufficient permissions.",
+  "The team cannot be deleted due to insufficient permissions.": "The team cannot be deleted due to insufficient permissions.",
+  "The team cannot be edited due to insufficient permissions.": "The team cannot be edited due to insufficient permissions.",
+  "The user cannot be deleted due to insufficient permissions.": "The user cannot be deleted due to insufficient permissions.",
+  "The user cannot be edited due to insufficient permissions.": "The user cannot be edited due to insufficient permissions.",
   "There are currently no decision environments": "There are currently no decision environments",
-  "There are currently no inventories added": "There are currently no inventories added.",
+  "There are currently no inventories added.": "There are currently no inventories added.",
   "There are currently no projects": "There are currently no projects",
-  "There are currently no projects added to your organization": "There are currently no projects added to your organization.",
+  "There are currently no projects added to your organization.": "There are currently no projects added to your organization.",
   "There are currently no rulebook activations": "There are currently no rulebook activations",
-  "There are currently no teams added to your organization": "There are currently no teams added to your organization.",
-  "There are currently no users added": "There are currently no users added.",
+  "There are currently no teams added to your organization.": "There are currently no teams added to your organization.",
+  "There are currently no users added.": "There are currently no users added.",
   "There was an error fetching the input inventories": "There was an error fetching the input inventories",
   "There was an error fetching webhook key": "There was an error fetching webhook key",
-  "There was an error on the server": "There was an error on the server.",
-  "This is the description of the collection": "This is the description of the collection.",
-  "This page is not yet available in the tech preview": "This page is not yet available in the tech preview.",
-  "This user currently does not belong to any teams": "This user currently does not belong to any teams.",
+  "There was an error on the server.": "There was an error on the server.",
+  "This is the description of the collection.": "This is the description of the collection.",
+  "This page is not yet available in the tech preview.": "This page is not yet available in the tech preview.",
+  "This user currently does not belong to any teams.": "This user currently does not belong to any teams.",
   "Timeout": "Timeout",
   "Timestamp": "Timestamp",
   "to": "to",
-  "To get started, add roles to the team": "To get started, add roles to the team.",
-  "To get started, add roles to the user": "To get started, add roles to the user.",
-  "To get started, add the user to an organization": "To get started, add the user to an organization.",
-  "To get started, add your Ansible automation servers": "To get started, add your Ansible automation servers.",
-  "To get started, create a credential": "To get started, create a credential.",
-  "To get started, create a decision environment": "To get started, create a decision environment.",
-  "To get started, create a group": "To get started, create a group.",
-  "To get started, create a inventory": "To get started, create a inventory.",
-  "To get started, create a project": "To get started, create a project.",
-  "To get started, create a role": "To get started, create a role.",
-  "To get started, create a rulebook activation": "To get started, create a rulebook activation.",
-  "To get started, create a team": "To get started, create a team.",
-  "To get started, create a template": "To get started, create a template.",
-  "To get started, create a user": "To get started, create a user.",
-  "To get started, create an credential": "To get started, create an credential.",
-  "To get started, create an execution environment": "To get started, create an execution environment.",
-  "To get started, create an host": "To get started, create an host.",
-  "To get started, create an instance": "To get started, create an instance.",
-  "To get started, create an instance group": "To get started, create an instance group.",
-  "To get started, create an namespace": "To get started, create an namespace.",
-  "To get started, create an organization": "To get started, create an organization.",
-  "To get started, upload a collection": "To get started, upload a collection.",
+  "To get started, add roles to the team.": "To get started, add roles to the team.",
+  "To get started, add roles to the user.": "To get started, add roles to the user.",
+  "To get started, add the user to an organization.": "To get started, add the user to an organization.",
+  "To get started, add your Ansible automation servers.": "To get started, add your Ansible automation servers.",
+  "To get started, create a credential.": "To get started, create a credential.",
+  "To get started, create a decision environment.": "To get started, create a decision environment.",
+  "To get started, create a group.": "To get started, create a group.",
+  "To get started, create a inventory.": "To get started, create a inventory.",
+  "To get started, create a project.": "To get started, create a project.",
+  "To get started, create a role.": "To get started, create a role.",
+  "To get started, create a rulebook activation.": "To get started, create a rulebook activation.",
+  "To get started, create a team.": "To get started, create a team.",
+  "To get started, create a template.": "To get started, create a template.",
+  "To get started, create a user.": "To get started, create a user.",
+  "To get started, create an credential.": "To get started, create an credential.",
+  "To get started, create an execution environment.": "To get started, create an execution environment.",
+  "To get started, create an host.": "To get started, create an host.",
+  "To get started, create an instance group.": "To get started, create an instance group.",
+  "To get started, create an instance.": "To get started, create an instance.",
+  "To get started, create an namespace.": "To get started, create an namespace.",
+  "To get started, create an organization.": "To get started, create an organization.",
+  "To get started, upload a collection.": "To get started, upload a collection.",
+  "To learn how to get started, view the documentation, ": "To learn how to get started, view the documentation, ",
   "Token": "Token",
   "Total cluster count": "Total cluster count",
   "Total count": "Total count",
@@ -1227,24 +1115,21 @@
   "Url": "Url",
   "URL": "URL",
   "Use": "Use",
-  "Use namespaces to organize the collections created by automation developers in your organization": {
-    " Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks": "Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks."
-  },
+  "Use namespaces to organize the collections created by automation developers in your organization.": "Use namespaces to organize the collections created by automation developers in your organization.",
+  "Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks.": "Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks.",
   "Used capacity": "Used capacity",
   "User": "User",
   "User Access": "User Access",
   "User details": "User details",
-  "User does not have any roles": "User does not have any roles.",
+  "User does not have any roles.": "User does not have any roles.",
   "User is a member of the organization": "User is a member of the organization",
-  "User is not a member of any organizations": "User is not a member of any organizations.",
+  "User is not a member of any organizations.": "User is not a member of any organizations.",
   "User name": "User name",
   "User roles": "User roles",
   "User type": "User type",
   "User/Team": "User/Team",
   "Username": "Username",
-  "Username may contain only letters, numbers, and @": {
-    "+-_ characters": "Username may contain only letters, numbers, and @.+-_ characters."
-  },
+  "Username may contain only letters, numbers, and @.+-_ characters.": "Username may contain only letters, numbers, and @.+-_ characters.",
   "Users": "Users",
   "Validated": "Validated",
   "Variables": "Variables",
@@ -1255,11 +1140,7 @@
   "Visualizer": "Visualizer",
   "Waiting": "Waiting",
   "We could not find that page": "We could not find that page",
-  "We use manual effort versus time spent on automation as factors to create formulas for cost and savings related to automation": {
-    " While we aim to provide as accurate an account of the cost and savings as possible, actual values may differ in practice": {
-      " The following information breaks down where we get the data, the factors we use, the assumptions we make, and the formula used to compute the values as displayed in the chart": "We use manual effort versus time spent on automation as factors to create formulas for cost and savings related to automation. While we aim to provide as accurate an account of the cost and savings as possible, actual values may differ in practice. The following information breaks down where we get the data, the factors we use, the assumptions we make, and the formula used to compute the values as displayed in the chart."
-    }
-  },
+  "We use manual effort versus time spent on automation as factors to create formulas for cost and savings related to automation. While we aim to provide as accurate an account of the cost and savings as possible, actual values may differ in practice. The following information breaks down where we get the data, the factors we use, the assumptions we make, and the formula used to compute the values as displayed in the chart.": "We use manual effort versus time spent on automation as factors to create formulas for cost and savings related to automation. While we aim to provide as accurate an account of the cost and savings as possible, actual values may differ in practice. The following information breaks down where we get the data, the factors we use, the assumptions we make, and the formula used to compute the values as displayed in the chart.",
   "Webhook credential": "Webhook credential",
   "Webhook Details": "Webhook Details",
   "Webhook key": "Webhook key",
@@ -1274,115 +1155,66 @@
   "Workflow Job": "Workflow Job",
   "Workflow job template": "Workflow job template",
   "Workflow Job Template": "Workflow Job Template",
-  "Workflow job template not found": "Workflow job template not found.",
-  "Yes, I confirm that I want to cancel these {{count}} jobs": {
-    "_one": "Yes, I confirm that I want to cancel this job.",
-    "_other": "Yes, I confirm that I want to cancel these {{count}} jobs."
-  },
-  "Yes, I confirm that I want to cancel these {{count}} project sync jobs": {
-    "_one": "Yes, I confirm that I want to cancel these {{count}} project sync jobs.",
-    "_other": "Yes, I confirm that I want to cancel these {{count}} project sync jobs."
-  },
-  "Yes, I confirm that I want to delete these {{count}} collections": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} collections.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} collections."
-  },
-  "Yes, I confirm that I want to delete these {{count}} credentials": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} credentials.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} credentials."
-  },
-  "Yes, I confirm that I want to delete these {{count}} decisionEnvironments": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} decisionEnvironments.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} decisionEnvironments."
-  },
-  "Yes, I confirm that I want to delete these {{count}} executionEnvironments": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} executionEnvironments.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} executionEnvironments."
-  },
-  "Yes, I confirm that I want to delete these {{count}} Groups": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} Groups.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} Groups."
-  },
-  "Yes, I confirm that I want to delete these {{count}} hosts": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} hosts.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} hosts."
-  },
-  "Yes, I confirm that I want to delete these {{count}} instance groups": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} instance groups.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} instance groups."
-  },
-  "Yes, I confirm that I want to delete these {{count}} inventories": {
-    "_one": "Yes, I confirm that I want to delete this inventory.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} inventories."
-  },
-  "Yes, I confirm that I want to delete these {{count}} jobs": {
-    "_one": "Yes, I confirm that I want to delete this job.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} jobs."
-  },
-  "Yes, I confirm that I want to delete these {{count}} organizations": {
-    "_one": "Yes, I confirm that I want to delete this organization.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} organizations."
-  },
-  "Yes, I confirm that I want to delete these {{count}} projects": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} projects.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} projects."
-  },
-  "Yes, I confirm that I want to delete these {{count}} Roles": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} Roles.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} Roles."
-  },
-  "Yes, I confirm that I want to delete these {{count}} rulebook activations": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} rulebook activations.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} rulebook activations."
-  },
-  "Yes, I confirm that I want to delete these {{count}} servers": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} servers.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} servers."
-  },
-  "Yes, I confirm that I want to delete these {{count}} teams": {
-    "_one": "Yes, I confirm that I want to delete this team.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} teams."
-  },
-  "Yes, I confirm that I want to delete these {{count}} templates": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} templates.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} templates."
-  },
-  "Yes, I confirm that I want to delete these {{count}} users": {
-    "_one": "Yes, I confirm that I want to delete this user.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} users."
-  },
-  "Yes, I confirm that I want to delete these {{count}} Users": {
-    "_one": "Yes, I confirm that I want to delete these {{count}} Users.",
-    "_other": "Yes, I confirm that I want to delete these {{count}} Users."
-  },
-  "Yes, I confirm that I want to disable these {{count}} rulebook activations": {
-    "_one": "Yes, I confirm that I want to disable these {{count}} rulebook activations.",
-    "_other": "Yes, I confirm that I want to disable these {{count}} rulebook activations."
-  },
-  "Yes, I confirm that I want to enable these {{count}} rulebook activations": {
-    "_one": "Yes, I confirm that I want to enable these {{count}} rulebook activations.",
-    "_other": "Yes, I confirm that I want to enable these {{count}} rulebook activations."
-  },
-  "Yes, I confirm that I want to remove these {{count}} users": {
-    "_one": "Yes, I confirm that I want to remove this user.",
-    "_other": "Yes, I confirm that I want to remove these {{count}} users."
-  },
-  "Yes, I confirm that I want to restart these {{count}} rulebook activations": {
-    "_one": "Yes, I confirm that I want to restart these {{count}} rulebook activations.",
-    "_other": "Yes, I confirm that I want to restart these {{count}} rulebook activations."
-  },
-  "You do not have permission to add users": {
-    " Please contact your Organization Administrator if there is an issue with your access": "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access."
-  },
+  "Workflow job template not found.": "Workflow job template not found.",
+  "Yes, I confirm that I want to cancel these {{count}} jobs._one": "Yes, I confirm that I want to cancel these {{count}} jobs.",
+  "Yes, I confirm that I want to cancel these {{count}} jobs._other": "Yes, I confirm that I want to cancel these {{count}} jobs.",
+  "Yes, I confirm that I want to cancel these {{count}} project sync jobs._one": "Yes, I confirm that I want to cancel these {{count}} project sync jobs.",
+  "Yes, I confirm that I want to cancel these {{count}} project sync jobs._other": "Yes, I confirm that I want to cancel these {{count}} project sync jobs.",
+  "Yes, I confirm that I want to delete these {{count}} collections._one": "Yes, I confirm that I want to delete these {{count}} collections.",
+  "Yes, I confirm that I want to delete these {{count}} collections._other": "Yes, I confirm that I want to delete these {{count}} collections.",
+  "Yes, I confirm that I want to delete these {{count}} credentials._one": "Yes, I confirm that I want to delete these {{count}} credentials.",
+  "Yes, I confirm that I want to delete these {{count}} credentials._other": "Yes, I confirm that I want to delete these {{count}} credentials.",
+  "Yes, I confirm that I want to delete these {{count}} decisionEnvironments._one": "Yes, I confirm that I want to delete these {{count}} decisionEnvironments.",
+  "Yes, I confirm that I want to delete these {{count}} decisionEnvironments._other": "Yes, I confirm that I want to delete these {{count}} decisionEnvironments.",
+  "Yes, I confirm that I want to delete these {{count}} executionEnvironments._one": "Yes, I confirm that I want to delete these {{count}} executionEnvironments.",
+  "Yes, I confirm that I want to delete these {{count}} executionEnvironments._other": "Yes, I confirm that I want to delete these {{count}} executionEnvironments.",
+  "Yes, I confirm that I want to delete these {{count}} Groups._one": "Yes, I confirm that I want to delete these {{count}} Groups.",
+  "Yes, I confirm that I want to delete these {{count}} Groups._other": "Yes, I confirm that I want to delete these {{count}} Groups.",
+  "Yes, I confirm that I want to delete these {{count}} hosts._one": "Yes, I confirm that I want to delete these {{count}} hosts.",
+  "Yes, I confirm that I want to delete these {{count}} hosts._other": "Yes, I confirm that I want to delete these {{count}} hosts.",
+  "Yes, I confirm that I want to delete these {{count}} instance groups._one": "Yes, I confirm that I want to delete these {{count}} instance groups.",
+  "Yes, I confirm that I want to delete these {{count}} instance groups._other": "Yes, I confirm that I want to delete these {{count}} instance groups.",
+  "Yes, I confirm that I want to delete these {{count}} inventories._one": "Yes, I confirm that I want to delete these {{count}} inventories.",
+  "Yes, I confirm that I want to delete these {{count}} inventories._other": "Yes, I confirm that I want to delete these {{count}} inventories.",
+  "Yes, I confirm that I want to delete these {{count}} jobs._one": "Yes, I confirm that I want to delete these {{count}} jobs.",
+  "Yes, I confirm that I want to delete these {{count}} jobs._other": "Yes, I confirm that I want to delete these {{count}} jobs.",
+  "Yes, I confirm that I want to delete these {{count}} organizations._one": "Yes, I confirm that I want to delete these {{count}} organizations.",
+  "Yes, I confirm that I want to delete these {{count}} organizations._other": "Yes, I confirm that I want to delete these {{count}} organizations.",
+  "Yes, I confirm that I want to delete these {{count}} projects._one": "Yes, I confirm that I want to delete these {{count}} projects.",
+  "Yes, I confirm that I want to delete these {{count}} projects._other": "Yes, I confirm that I want to delete these {{count}} projects.",
+  "Yes, I confirm that I want to delete these {{count}} Roles._one": "Yes, I confirm that I want to delete these {{count}} Roles.",
+  "Yes, I confirm that I want to delete these {{count}} Roles._other": "Yes, I confirm that I want to delete these {{count}} Roles.",
+  "Yes, I confirm that I want to delete these {{count}} rulebook activations._one": "Yes, I confirm that I want to delete these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to delete these {{count}} rulebook activations._other": "Yes, I confirm that I want to delete these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to delete these {{count}} servers._one": "Yes, I confirm that I want to delete these {{count}} servers.",
+  "Yes, I confirm that I want to delete these {{count}} servers._other": "Yes, I confirm that I want to delete these {{count}} servers.",
+  "Yes, I confirm that I want to delete these {{count}} teams._one": "Yes, I confirm that I want to delete these {{count}} teams.",
+  "Yes, I confirm that I want to delete these {{count}} teams._other": "Yes, I confirm that I want to delete these {{count}} teams.",
+  "Yes, I confirm that I want to delete these {{count}} templates._one": "Yes, I confirm that I want to delete these {{count}} templates.",
+  "Yes, I confirm that I want to delete these {{count}} templates._other": "Yes, I confirm that I want to delete these {{count}} templates.",
+  "Yes, I confirm that I want to delete these {{count}} users._one": "Yes, I confirm that I want to delete these {{count}} users.",
+  "Yes, I confirm that I want to delete these {{count}} users._other": "Yes, I confirm that I want to delete these {{count}} users.",
+  "Yes, I confirm that I want to delete these {{count}} Users._one": "Yes, I confirm that I want to delete these {{count}} Users.",
+  "Yes, I confirm that I want to delete these {{count}} Users._other": "Yes, I confirm that I want to delete these {{count}} Users.",
+  "Yes, I confirm that I want to disable these {{count}} rulebook activations._one": "Yes, I confirm that I want to disable these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to disable these {{count}} rulebook activations._other": "Yes, I confirm that I want to disable these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to enable these {{count}} rulebook activations._one": "Yes, I confirm that I want to enable these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to enable these {{count}} rulebook activations._other": "Yes, I confirm that I want to enable these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to remove these {{count}} users._one": "Yes, I confirm that I want to remove these {{count}} users.",
+  "Yes, I confirm that I want to remove these {{count}} users._other": "Yes, I confirm that I want to remove these {{count}} users.",
+  "Yes, I confirm that I want to restart these {{count}} rulebook activations._one": "Yes, I confirm that I want to restart these {{count}} rulebook activations.",
+  "Yes, I confirm that I want to restart these {{count}} rulebook activations._other": "Yes, I confirm that I want to restart these {{count}} rulebook activations.",
+  "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.",
   "You do not have permission to create a project": "You do not have permission to create a project",
+  "You do not have permission to create a project. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a project. Please contact your Organization Administrator if there is an issue with your access.",
   "You do not have permission to create a team": "You do not have permission to create a team",
+  "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.",
   "You do not have permission to create a user": "You do not have permission to create a user",
-  "You do not have permission to create an inventory": "You do not have permission to create an inventory.",
-  "You do not have permission to remove users": {
-    " Please contact your Organization Administrator if there is an issue with your access": "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access."
-  },
-  "You do not have permissions to add this user to a team": "You do not have permissions to add this user to a team.",
-  "You have no entitlement available": {
-    " Or there's no data": "You have no entitlement available. Or there's no data."
-  }
+  "You do not have permission to create a user. Please contact your System Administrator if there is an issue with your access.": "You do not have permission to create a user. Please contact your System Administrator if there is an issue with your access.",
+  "You do not have permission to create an inventory.": "You do not have permission to create an inventory.",
+  "You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.",
+  "You do not have permissions to add this user to a team.": "You do not have permissions to add this user to a team.",
+  "You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.": "You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.",
+  "You have no entitlement available. Or there's no data.": "You have no entitlement available. Or there's no data."
 }

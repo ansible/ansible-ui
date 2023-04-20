@@ -66,11 +66,11 @@ import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
 
 const ScrollDiv = styled.div`
   height: 100%;
-  margin-bottom: -1px;
 `;
 
 const EmptyStateDiv = styled.div`
   height: 100%;
+  background-color: var(--pf-global--BackgroundColor--100);
 `;
 
 const TableCellDiv = styled.div`
@@ -280,7 +280,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
-      <EmptyStateDiv className="dark-2">
+      <EmptyStateDiv>
         <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
             icon={ExclamationCircleIcon}
@@ -299,29 +299,31 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <EmptyState variant={EmptyStateVariant.large}>
-        <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
-        <Title headingLevel="h4" size="lg">
-          {props.emptyStateTitle}
-        </Title>
-        {props.emptyStateDescription && (
-          <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
-        )}
-        {props.emptyStateActions && (
-          <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-            <PageActions actions={props.emptyStateActions} />
-          </Flex>
-        )}
-        {props.emptyStateButtonClick && (
-          <Button
-            variant="primary"
-            onClick={props.emptyStateButtonClick}
-            icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-          >
-            {props.emptyStateButtonText}
-          </Button>
-        )}
-      </EmptyState>
+      <EmptyStateDiv>
+        <EmptyState variant={EmptyStateVariant.large}>
+          <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
+          <Title headingLevel="h4" size="lg">
+            {props.emptyStateTitle}
+          </Title>
+          {props.emptyStateDescription && (
+            <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+          )}
+          {props.emptyStateActions && (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <PageActions actions={props.emptyStateActions} />
+            </Flex>
+          )}
+          {props.emptyStateButtonClick && (
+            <Button
+              variant="primary"
+              onClick={props.emptyStateButtonClick}
+              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+            >
+              {props.emptyStateButtonText}
+            </Button>
+          )}
+        </EmptyState>
+      </EmptyStateDiv>
     );
   }
 

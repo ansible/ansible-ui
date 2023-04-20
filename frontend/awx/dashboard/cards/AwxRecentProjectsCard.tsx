@@ -40,7 +40,6 @@ export function AwxRecentProjectsCard() {
       height="md"
       linkText={t('Go to Projects')}
       to={RouteObj.Projects}
-      style={{ overflow: 'hidden' }}
     >
       <PageTable
         disableBodyPadding={true}
@@ -58,6 +57,7 @@ export function AwxRecentProjectsCard() {
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

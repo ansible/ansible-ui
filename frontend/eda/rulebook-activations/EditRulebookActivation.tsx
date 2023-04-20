@@ -73,7 +73,7 @@ export function EditRulebookActivation() {
       <PageHeader
         title={t('Create rulebook activation')}
         breadcrumbs={[
-          { label: t('RulebookActivations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           { label: t('Create rulebook activation') },
         ]}
       />

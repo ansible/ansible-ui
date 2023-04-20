@@ -60,6 +60,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );
