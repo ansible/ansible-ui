@@ -4,6 +4,7 @@ import { ColumnModalOption, CopyCell, ITableColumn } from '../../../../../framew
 import { ScmType } from '../../../../common/scm';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
@@ -16,6 +17,7 @@ import { useProjectNameColumn } from './useProjectNameColumn';
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const nameColumn = useProjectNameColumn();
+  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
@@ -29,6 +31,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
+      descriptionColumn,
       statusColumn,
       {
         header: t('Type'),
@@ -50,6 +53,7 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
     [
       createdColumn,
       defaultEnvironmentColumn,
+      descriptionColumn,
       lastUsedColumn,
       modifiedColumn,
       nameColumn,
