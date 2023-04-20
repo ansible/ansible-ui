@@ -1,8 +1,7 @@
 import {
   Button,
-  Flex,
-  FlexItem,
   InputGroup,
+  InputGroupText,
   OnPerPageSelect,
   OnSetPage,
   Pagination,
@@ -79,7 +78,7 @@ export interface IToolbarStringFilter {
   label: string;
   type: 'string';
   query: string;
-  placeholder?: string;
+  placeholder: string;
 }
 
 export interface IToolbarSelectFilter {
@@ -91,7 +90,7 @@ export interface IToolbarSelectFilter {
     value: string;
   }[];
   query: string;
-  placeholder?: string;
+  placeholder: string;
 }
 
 export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter;
@@ -228,27 +227,52 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarGroup variant="filter-group">
               <ToolbarItem>
-                <FormGroupSelect
-                  id="filter"
-                  onSelect={(_, v) => setSeletedFilter(v.toString())}
-                  value={selectedFilter}
-                  placeholderText=""
-                >
-                  {toolbarFilters.map((filter) => (
-                    <SelectOption key={filter.key} value={filter.key}>
-                      <Flex
-                        spaceItems={{ default: 'spaceItemsNone' }}
-                        alignItems={{ default: 'alignItemsCenter' }}
-                        flexWrap={{ default: 'nowrap' }}
+                <InputGroup style={{ zIndex: 400 }}>
+                  {toolbarFilters.length === 1 ? (
+                    <>
+                      <InputGroupText
+                        style={{
+                          border: 0,
+                          paddingLeft: 12,
+                          paddingRight: 2,
+                          color: 'inherit',
+                          borderRadius: '4px 0px 0px 4px',
+                        }}
                       >
-                        <FlexItem style={{ paddingLeft: 4, paddingRight: 8 }}>
-                          <FilterIcon />
-                        </FlexItem>
-                        <FlexItem>{filter.label}</FlexItem>
-                      </Flex>
-                    </SelectOption>
-                  ))}
-                </FormGroupSelect>
+                        <FilterIcon />
+                      </InputGroupText>
+                      <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
+                        {toolbarFilters[0].label}
+                      </InputGroupText>
+                    </>
+                  ) : (
+                    <>
+                      <InputGroupText
+                        style={{
+                          border: 0,
+                          paddingLeft: 12,
+                          paddingRight: 12,
+                          color: 'inherit',
+                          borderRadius: '4px 0px 0px 4px',
+                        }}
+                      >
+                        <FilterIcon />
+                      </InputGroupText>
+                      <FormGroupSelect
+                        id="filter"
+                        onSelect={(_, v) => setSeletedFilter(v.toString())}
+                        value={selectedFilter}
+                        placeholderText=""
+                      >
+                        {toolbarFilters.map((filter) => (
+                          <SelectOption key={filter.key} value={filter.key}>
+                            {filter.label}
+                          </SelectOption>
+                        ))}
+                      </FormGroupSelect>
+                    </>
+                  )}
+                </InputGroup>
               </ToolbarItem>
               <ToolbarItem>
                 <ToolbarFilterInput

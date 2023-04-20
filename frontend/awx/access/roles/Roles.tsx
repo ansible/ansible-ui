@@ -14,6 +14,7 @@ export function useRolesFilters() {
         label: t('Role'),
         type: 'string',
         query: 'role_field__icontains',
+        placeholder: t('contains'),
       },
     ],
     [t]
