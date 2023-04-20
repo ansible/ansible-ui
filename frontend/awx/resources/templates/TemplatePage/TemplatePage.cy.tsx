@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
 import { TemplatePage } from './TemplatePage';
+import { RouteObj } from '../../../../Routes';
 
 describe('TemplatePage', () => {
   beforeEach(() => {
@@ -11,7 +12,10 @@ describe('TemplatePage', () => {
   });
 
   it('Component renders and displays jobTemplate', () => {
-    cy.mount(<TemplatePage />);
+    cy.mount(<TemplatePage />, {
+      path: RouteObj.JobTemplatePage,
+      initialEntries: [RouteObj.JobTemplateDetails.replace(':id', '1')],
+    });
     cy.contains('dd#name>div', 'JT with Default Cred').should('exist');
   });
 
@@ -25,7 +29,10 @@ describe('TemplatePage', () => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('launchJob');
 
-    cy.mount(<TemplatePage />);
+    cy.mount(<TemplatePage />, {
+      path: RouteObj.JobTemplatePage,
+      initialEntries: [RouteObj.JobTemplateDetails.replace(':id', '1')],
+    });
 
     cy.clickPageAction(/^Launch template$/);
 
