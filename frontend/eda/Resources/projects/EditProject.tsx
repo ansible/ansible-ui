@@ -16,7 +16,7 @@ import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 
-function ProjectInputs() {
+function ProjectCreateInputs() {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
   return (
@@ -48,10 +48,33 @@ function ProjectInputs() {
         placeholder={t('Enter SCM URL')}
         validate={isValidUrl}
       />
+    </>
+  );
+}
+
+function ProjectEditInputs() {
+  const { t } = useTranslation();
+  return (
+    <>
       <PageFormTextInput<EdaProject>
-        name="token"
-        label={t('SCM token')}
-        placeholder={t('Enter SCM token')}
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter name')}
+        isRequired
+        maxLength={150}
+        autoComplete="new-name"
+      />
+      <PageFormTextInput<EdaProject>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+        maxLength={150}
+      />
+      <PageFormTextInput<EdaProject>
+        name="type"
+        isReadOnly={true}
+        label={t('SCM Type')}
+        placeholder={t('Git')}
       />
     </>
   );
@@ -109,7 +132,7 @@ export function EditProject() {
             onCancel={onCancel}
             defaultValue={project}
           >
-            <ProjectInputs />
+            <ProjectEditInputs />
           </PageForm>
         </PageLayout>
       );
@@ -130,7 +153,7 @@ export function EditProject() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <ProjectInputs />
+          <ProjectCreateInputs />
         </PageForm>
       </PageLayout>
     );
