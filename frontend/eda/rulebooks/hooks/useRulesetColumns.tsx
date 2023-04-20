@@ -20,8 +20,6 @@ export function useRulesetColumns() {
             }
           />
         ),
-        sort: 'name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -30,8 +28,6 @@ export function useRulesetColumns() {
         cell: (ruleset) => (
           <TextCell text={ruleset?.rule_count ? ruleset?.rule_count.toString() : ''} />
         ),
-        sort: 'rule_count',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -42,8 +38,6 @@ export function useRulesetColumns() {
             text={ruleset?.fired_stats?.fired_count ? `${ruleset.fired_stats.fired_count}` : ''}
           />
         ),
-        sort: 'fired_count',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
