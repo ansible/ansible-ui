@@ -39,7 +39,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
     <PageDashboardCard
       title={t('Decision Environments')}
       subtitle={t('Recently updated environments')}
-      height="md"
+      rows="md"
       linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
       helpTitle={t('Decision Environments')}
@@ -63,6 +63,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

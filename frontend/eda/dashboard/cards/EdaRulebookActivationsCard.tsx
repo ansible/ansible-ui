@@ -38,7 +38,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
     <PageDashboardCard
       title={t('Rulebook Activations')}
       subtitle={t('Recently updated activations')}
-      height="md"
+      rows="md"
       linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
       helpTitle={t('Rulebook Activations')}
@@ -60,6 +60,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

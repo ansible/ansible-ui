@@ -41,10 +41,9 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
       title={t('Jobs')}
       subtitle={t('Recently finished jobs')}
       width="lg"
-      height="md"
+      rows="md"
       linkText={t('Go to Jobs')}
       to={RouteObj.Jobs}
-      style={{ overflow: 'hidden' }}
     >
       <PageTable
         disableBodyPadding={true}
@@ -62,6 +61,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

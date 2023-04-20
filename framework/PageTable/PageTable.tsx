@@ -66,7 +66,6 @@ import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
 
 const ScrollDiv = styled.div`
   height: 100%;
-  margin-bottom: -1px;
 `;
 
 const EmptyStateDiv = styled.div`

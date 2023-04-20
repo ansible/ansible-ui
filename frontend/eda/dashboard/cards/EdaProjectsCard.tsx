@@ -39,11 +39,10 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
     <PageDashboardCard
       title={t('Projects')}
       subtitle={t('Recently updated projects')}
-      height="md"
+      rows="md"
       width="md"
       linkText={t('Go to Projects')}
       to={RouteObj.EdaProjects}
-      style={{ overflow: 'hidden' }}
       helpTitle={t('Projects')}
       help={t('Projects are a logical collection of playbooks.')}
     >
@@ -63,6 +62,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

@@ -1,13 +1,4 @@
-import {
-  Card,
-  CardHeader,
-  Flex,
-  FlexItem,
-  Stack,
-  Text,
-  Title,
-  Truncate,
-} from '@patternfly/react-core';
+import { Card, CardHeader, Flex, FlexItem, Stack, Text, Title } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
@@ -15,6 +6,7 @@ import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export type PageDashboardCardRows = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const heightUnit = 90;
 
@@ -26,8 +18,24 @@ export function PageDashboardCard(props: {
   linkText?: string;
   to?: string;
   children?: ReactNode;
+
+  /** Cards are in a grid layout with 12 columns. The width picks columns such that cards line up. */
   width?: PageDashboardCardWidth;
+
+  /**
+   * Cards are in a grid layout with rows.
+   * The hight sets the height of the card.
+   * Height also implies a default rows value.
+   */
   height?: PageDashboardCardHeight;
+
+  /*
+   * Cards are in a grid layout with rows.
+   * Rows indicates how many rows the card should span.
+   * This is needed for wrapping of cards in the grid layout.
+   */
+
+  rows?: PageDashboardCardRows;
   style?: CSSProperties;
   help?: string[];
   helpTitle?: string;
@@ -62,8 +70,33 @@ export function PageDashboardCard(props: {
     colSpan = dashboardContext.columns;
   }
 
-  let rowSpan = undefined;
+  let heightSpan = undefined;
   switch (props.height) {
+    case 'xs':
+      heightSpan = 2;
+      break;
+    case 'sm':
+      heightSpan = 3;
+      break;
+    case 'md':
+      heightSpan = 4;
+      break;
+    case 'lg':
+      heightSpan = 6;
+      break;
+    case 'xl':
+      heightSpan = 8;
+      break;
+    case 'xxl':
+      heightSpan = 12;
+      break;
+  }
+
+  const height = heightSpan ? heightUnit * heightSpan + 16 * (heightSpan - 1) : undefined;
+
+  let rowSpan = heightSpan;
+
+  switch (props.rows) {
     case 'xs':
       rowSpan = 2;
       break;
@@ -84,8 +117,6 @@ export function PageDashboardCard(props: {
       break;
   }
 
-  const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
-
   return (
     <Card
       isFlat
@@ -94,8 +125,8 @@ export function PageDashboardCard(props: {
         transition: 'box-shadow 0.25s',
         gridColumn: `span ${colSpan}`,
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
-        minHeight,
-        maxHeight: minHeight,
+        minHeight: height,
+        maxHeight: height,
         ...props.style,
       }}
     >
@@ -107,7 +138,7 @@ export function PageDashboardCard(props: {
               spaceItems={{ default: 'spaceItemsNone' }}
               alignItems={{ default: 'alignItemsFlexStart' }}
               justifyContent={{ default: 'justifyContentFlexEnd' }}
-              style={{ columnGap: 24, rowGap: 8, flexWrap: 'nowrap' }}
+              style={{ columnGap: 24, rowGap: 8 }}
             >
               <FlexItem grow={{ default: 'grow' }}>
                 <Flex spaceItems={{ default: 'spaceItemsNone' }}>
@@ -140,15 +171,11 @@ export function PageDashboardCard(props: {
                 </Flex>
               </FlexItem>
               {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
-              {props.linkText && (
-                <FlexItem>
-                  <Text component="small">
-                    <Link to={props.to as string}>
-                      <Truncate content={props.linkText} />
-                    </Link>
-                  </Text>
-                </FlexItem>
-              )}
+              <FlexItem>
+                <Text component="small">
+                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+                </Text>
+              </FlexItem>
             </Flex>
             {props.description && (
               <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
