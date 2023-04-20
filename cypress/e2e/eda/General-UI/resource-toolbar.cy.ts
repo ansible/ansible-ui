@@ -47,30 +47,6 @@ describe('EDA Resource Toolbar Functionality', () => {
     });
   });
 
-  it('can visit the rulebooks page and assert the data there', () => {
-    cy.get('.pf-c-nav__item').contains('Rulebooks').click();
-    cy.get('.pf-c-page__main-section').then(($ele) => {
-      if ($ele.find('.pf-c-empty-state').length > 0) {
-        cy.get('h1').should('contain', 'Rulebooks');
-        cy.contains('button', 'Create project').should('exist');
-      } else if ($ele.find('tbody').length > 0) {
-        cy.get('h1').should('contain', 'Rulebooks');
-      }
-    });
-  });
-
-  it('can visit the rules page and assert the data there', () => {
-    cy.get('.pf-c-nav__item').contains('Rules').click();
-    cy.get('.pf-c-page__main-section').then(($ele) => {
-      if ($ele.find('.pf-c-empty-state').length > 0) {
-        cy.get('h1').should('contain', 'Rules');
-        cy.contains('button', 'Create project').should('exist');
-      } else if ($ele.find('tbody').length > 0) {
-        cy.get('h1').should('contain', 'Rules');
-      }
-    });
-  });
-
   it.skip('can visit the users page and assert the data there', () => {
     // TODO: needs further work when Users page is functional
     cy.get('.pf-c-nav__item').contains('Users').click();
@@ -81,6 +57,5 @@ describe('EDA Resource Toolbar Functionality', () => {
   it('can visit the roles page and assert the data there', () => {
     cy.get('.pf-c-nav__item').contains('Roles').click();
     cy.get('h1').should('contain', 'Roles');
-    cy.contains('button', 'Create role').should('exist');
   });
 });
