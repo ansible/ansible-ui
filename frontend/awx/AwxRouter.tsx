@@ -1,6 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
