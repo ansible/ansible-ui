@@ -18,7 +18,7 @@ export function PageDetailsFromColumns<T extends object>(props: {
       {columns.map((column) => {
         if ('value' in column && column.value) {
           const itemValue = column.value(item);
-          if (itemValue === undefined) {
+          if (!itemValue) {
             return <Fragment key={column.id ?? column.header} />;
           }
         }

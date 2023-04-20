@@ -44,11 +44,6 @@ function DecisionEnvironmentInputs() {
         maxLength={150}
         isRequired
       />
-      <PageFormTextInput<EdaDecisionEnvironment>
-        name="tag"
-        label={t('Tag')}
-        placeholder={t('Enter tag')}
-      />
       <PageFormSelectOption
         name={'credential'}
         label={t('Credential')}

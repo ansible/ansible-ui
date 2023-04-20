@@ -73,7 +73,6 @@ export function DecisionEnvironmentDetails() {
         <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
         <PageDetail label={t('Image')}>{decisionEnvironment?.image_url || ''}</PageDetail>
-        <PageDetail label={t('Tag')}>{decisionEnvironment?.tag || ''}</PageDetail>
         <PageDetail label={t('Credential')}>
           {decisionEnvironment && decisionEnvironment.credential ? (
             <Link
