@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "2.4.14",
+  "version": "2.4.16",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -30,7 +30,7 @@
     "eslint:fix": "eslint --fix frontend proxy framework cypress",
     "eslint:changed": "eslint --max-warnings=0 $(git diff --name-only --diff-filter=M origin/main -- '*.ts' '*.tsx' '*.jsx' '*.js'| xargs)",
     "prettier": "prettier --check !**/*.scss frontend proxy framework cypress",
-    "prettier:fix": "prettier --write frontend proxy framework cypress",
+    "prettier:fix": "prettier --write frontend proxy framework cypress locales",
     "prettier:changed": "prettier --check $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "prettier:changed:fix": "prettier --write $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "checks": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",

@@ -127,7 +127,7 @@ export function useInstanceGroupsFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name__icontains',
-        placeholder: t('Enter name'),
+        placeholder: t('contains'),
       },
     ],
     [t]
