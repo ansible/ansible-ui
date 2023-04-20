@@ -155,7 +155,7 @@ export function useInstancesFilters() {
         label: t('Name'),
         type: 'string',
         query: 'hostname__icontains',
-        placeholder: t('Enter name'),
+        placeholder: t('contains'),
       },
       {
         key: 'type',

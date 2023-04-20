@@ -6,7 +6,6 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-  // useOrganizationToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useProjectsFilters() {

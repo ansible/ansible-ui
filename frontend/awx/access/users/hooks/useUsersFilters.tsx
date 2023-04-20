@@ -22,6 +22,7 @@ export function useUsersFilters() {
         label: t('Email'),
         type: 'string',
         query: 'email__icontains',
+        placeholder: t('contains'),
       },
     ],
     [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, t]
