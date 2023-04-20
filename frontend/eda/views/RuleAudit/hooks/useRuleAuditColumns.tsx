@@ -22,16 +22,12 @@ export function useRuleAuditColumns() {
             }
           />
         ),
-        sort: 'name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
       {
         header: t('Status'),
         cell: (ruleAudit) => <StatusCell status={ruleAudit?.status} />,
-        sort: 'status',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -42,7 +38,6 @@ export function useRuleAuditColumns() {
             text={ruleAudit?.fired_at ? formatDateString(new Date(ruleAudit.fired_at)) : ''}
           />
         ),
-        sort: 'fired_at',
       },
     ],
     [navigate, t]

@@ -21,8 +21,6 @@ export function useRulebookColumns() {
             }
           />
         ),
-        sort: 'name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -44,13 +42,11 @@ export function useRulebookColumns() {
         header: t('Rules'),
         type: 'count',
         value: (rulebook) => rulebook?.rule_count ?? 0,
-        sort: 'rule_count',
       },
       {
         header: t('Fire count'),
         type: 'count',
         value: (rulebook) => rulebook?.fire_count ?? 0,
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },

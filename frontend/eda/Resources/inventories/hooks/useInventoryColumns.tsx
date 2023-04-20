@@ -13,7 +13,6 @@ export function useInventoriesColumns() {
       {
         header: t('ID'),
         cell: (inventory) => inventory.id,
-        sort: 'id',
         card: 'hidden',
         list: 'hidden',
       },
@@ -27,10 +26,8 @@ export function useInventoriesColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),

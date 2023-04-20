@@ -18,10 +18,8 @@ export function useGroupColumns() {
             onClick={() => navigate(RouteObj.EdaGroupDetails.replace(':id', group.id.toString()))}
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),

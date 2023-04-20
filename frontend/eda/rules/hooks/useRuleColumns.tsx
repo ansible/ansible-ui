@@ -22,10 +22,8 @@ export function useRuleColumns() {
             onClick={() => navigate(RouteObj.EdaRuleDetails.replace(':id', rule.id.toString()))}
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Project'),
@@ -47,8 +45,6 @@ export function useRuleColumns() {
       {
         header: t('Action'),
         cell: (rule) => <TextCell text={rule.action ? Object.keys(rule.action)[0] : ''} />,
-        sort: 'action',
-        defaultSort: true,
       },
       {
         header: t('Last fired date'),
@@ -61,7 +57,6 @@ export function useRuleColumns() {
             }
           />
         ),
-        sort: 'fired_at',
       },
     ],
     [navigate, t]

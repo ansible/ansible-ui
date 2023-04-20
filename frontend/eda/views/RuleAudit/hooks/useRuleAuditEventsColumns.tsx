@@ -18,8 +18,6 @@ export function useRuleAuditEventsColumns() {
             onClick={() => showEventPayload({ event: ruleAuditEvent })}
           />
         ),
-        sort: 'source_name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -38,7 +36,6 @@ export function useRuleAuditEventsColumns() {
             }
           />
         ),
-        sort: 'received_at',
       },
     ],
     [showEventPayload, t]

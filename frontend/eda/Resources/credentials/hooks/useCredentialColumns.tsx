@@ -20,10 +20,8 @@ export function useCredentialColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),

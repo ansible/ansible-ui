@@ -31,10 +31,8 @@ export function useDecisionEnvironmentColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),

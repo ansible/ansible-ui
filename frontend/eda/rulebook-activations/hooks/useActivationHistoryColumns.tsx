@@ -21,20 +21,16 @@ export function useActivationHistoryColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Status'),
         cell: (instance: EdaActivationInstance) => <StatusCell status={instance.status} />,
-        sort: 'status',
       },
       {
         header: t('Start date'),
         cell: (instance) => <DateCell value={instance.started_at} />,
-        sort: 'started_at',
       },
     ],
     [navigate, t]

@@ -18,10 +18,8 @@ export function useUserColumns() {
             onClick={() => navigate(RouteObj.EdaUserDetails.replace(':id', user.id.toString()))}
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('First name'),

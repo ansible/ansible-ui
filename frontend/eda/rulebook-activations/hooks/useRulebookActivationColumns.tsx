@@ -34,10 +34,8 @@ export function useRulebookActivationColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),
@@ -51,8 +49,6 @@ export function useRulebookActivationColumns() {
       {
         header: t('Status'),
         cell: (activation) => <StatusCell status={activation?.status} />,
-        sort: 'status',
-        defaultSort: true,
       },
       {
         header: t('Rulebook'),
@@ -83,21 +79,18 @@ export function useRulebookActivationColumns() {
         header: t('Rules'),
         type: 'count',
         value: (activation) => activation?.rules_count ?? 0,
-        sort: 'rules_count',
         modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Fire count'),
         type: 'count',
         value: (activation) => activation?.fired_count ?? 0,
-        sort: 'fired_count',
         modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Restarts'),
         type: 'count',
         value: (activation) => activation?.restarted_count ?? 0,
-        sort: 'restart_count',
         modal: ColumnModalOption.Hidden,
       },
       {
