@@ -26,7 +26,7 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
-import { Host } from '../../interfaces/Host';
+import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
 
@@ -36,10 +36,10 @@ export function Hosts() {
   const navigate = useNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
-  const view = useAwxView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
+  const view = useAwxView<AwxHost>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<Host>[]>(
+  const toolbarActions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -62,7 +62,7 @@ export function Hosts() {
     [navigate, deleteHosts, t]
   );
 
-  const rowActions = useMemo<IPageAction<Host>[]>(
+  const rowActions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -101,7 +101,7 @@ export function Hosts() {
         ]}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
       />
-      <PageTable<Host>
+      <PageTable<AwxHost>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -137,7 +137,7 @@ export function useHostsFilters() {
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
   const nameClick = useCallback(
-    (host: Host) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
+    (host: AwxHost) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({
@@ -147,7 +147,7 @@ export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<Host>[]>(
+  const tableColumns = useMemo<ITableColumn<AwxHost>[]>(
     () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
     [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
   );

@@ -12,7 +12,7 @@ import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 const RuleAuditChart = () => {
   const { t } = useTranslation();
 
-  const { data } = useGet<EdaResult<EdaRuleAudit>>(`${API_PREFIX}/audit/rules_fired/`);
+  const { data } = useGet<EdaResult<EdaRuleAudit>>(`${API_PREFIX}/audit-rules/`);
 
   // Chart Test Code
   // const generateRandomEdaRuleAudits = useCallback(

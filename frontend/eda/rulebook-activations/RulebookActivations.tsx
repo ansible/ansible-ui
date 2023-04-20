@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
+import { API_PREFIX } from '../constants';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { useEdaView } from '../useEventDrivenView';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
-import { API_PREFIX } from '../constants';
-import { useEdaView } from '../useEventDrivenView';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
@@ -24,7 +24,10 @@ export function RulebookActivations() {
   const rowActions = useRulebookActivationActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Rulebook activations')} />
+      <PageHeader
+        title={t('Rulebook activations')}
+        description={t('Rulebook activations are rulebooks that have been activated to run.')}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

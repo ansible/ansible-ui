@@ -9,8 +9,8 @@ import {
   TextCell,
 } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { StatusCell } from '../../../../common/StatusCell';
 import { ScmType } from '../../../../common/scm';
-import { StatusLabelCell } from '../../../common/StatusLabelCell';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function useProjectColumns() {
@@ -44,7 +44,7 @@ export function useProjectColumns() {
       },
       {
         header: t('Status'),
-        cell: (project) => <StatusLabelCell status={project.import_state} />,
+        cell: (project) => <StatusCell status={project.import_state} />,
       },
       {
         header: t('Type'),
