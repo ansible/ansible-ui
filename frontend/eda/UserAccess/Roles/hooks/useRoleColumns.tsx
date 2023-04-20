@@ -18,10 +18,8 @@ export function useRoleColumns() {
             onClick={() => navigate(RouteObj.EdaRoleDetails.replace(':id', role.id.toString()))}
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Description'),
