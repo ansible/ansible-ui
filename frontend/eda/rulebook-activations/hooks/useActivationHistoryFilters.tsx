@@ -21,7 +21,7 @@ export function useActivationHistoryFilters() {
           { label: t('Error'), value: 'error' },
           { label: t('Canceled'), value: 'canceled' },
         ],
-        placeholder: t('contains'),
+        placeholder: t('Select statuses'),
       },
     ],
     [t]

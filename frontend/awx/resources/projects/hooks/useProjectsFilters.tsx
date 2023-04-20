@@ -6,7 +6,6 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-  // useOrganizationToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useProjectsFilters() {
@@ -31,7 +30,7 @@ export function useProjectsFilters() {
           { label: t('Remote archive'), value: 'archive' },
           { label: t('Red Hat insights'), value: 'insights' },
         ],
-        placeholder: t('contains'),
+        placeholder: t('Select types'),
       },
       createdByToolbarFilter,
       modifiedByToolbarFilter,

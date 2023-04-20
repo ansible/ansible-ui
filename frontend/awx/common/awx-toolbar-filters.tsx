@@ -141,7 +141,7 @@ export function useInventoryTypeToolbarFilter() {
         { label: t('Smart Inventory'), value: 'smart' },
         { label: t('Constructed Inventory'), value: 'constructed' },
       ],
-      placeholder: t('contains'),
+      placeholder: t('Select types'),
     }),
     [t]
   );

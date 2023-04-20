@@ -168,7 +168,7 @@ export function useInstancesFilters() {
           { label: t('Control'), value: 'control' },
           { label: t('Hop'), value: 'hop' },
         ],
-        placeholder: t('contains'),
+        placeholder: t('Select types'),
       },
     ],
     [t]
