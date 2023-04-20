@@ -16,7 +16,7 @@ import { EdaRecentProjectsCard } from './cards/EdaRecentProjectsCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
-export default function EdaDashboard() {
+export function EdaDashboard() {
   const { t } = useTranslation();
   const edaProjectView = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,

@@ -184,6 +184,8 @@ export type PageTableProps<T extends object> = {
    * and will add to the content returned from the expandedRow render function.
    */
   expandedRow?: (item: T) => ReactNode;
+
+  disableLastRowBorder?: boolean;
 };
 
 /**
@@ -502,6 +504,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   onSelect={onSelect}
                   expandedRow={expandedRow}
                   isLastRow={rowIndex === pageItems.length - 1}
+                  disableLastRowBorder={props.disableLastRowBorder}
                 />
               ))}
         </Tbody>
@@ -649,6 +652,7 @@ function TableRow<T extends object>(props: {
   unselectAll?: () => void;
   expandedRow?: (item: T) => ReactNode;
   isLastRow?: boolean;
+  disableLastRowBorder?: boolean;
 }) {
   const {
     columns,
@@ -663,6 +667,7 @@ function TableRow<T extends object>(props: {
     showSelect,
     onSelect,
     expandedRow,
+    disableLastRowBorder,
   } = props;
   const [expanded, setExpanded] = useState(false);
   const settings = useSettings();
@@ -673,7 +678,7 @@ function TableRow<T extends object>(props: {
         isRowSelected={expanded}
         style={{
           boxShadow: 'unset',
-          borderBottom: expanded || props.isLastRow ? 'unset' : undefined,
+          borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
         }}
       >
         {expandedRow && (
