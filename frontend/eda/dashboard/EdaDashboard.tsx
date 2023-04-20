@@ -65,10 +65,15 @@ export function EdaDashboard() {
                 <ProgressStepper>
                   <ProgressStep
                     variant={hasProjectOrDecisionEnvironment ? 'success' : 'info'}
-                    description="Create a project or sync a decision environment."
+                    description="Create a decision environment."
                   >
-                    <Link to={RouteObj.CreateEdaProject}>Create a project</Link> or{' '}
-                    <Link to={RouteObj.EdaDecisionEnvironments}>sync a decision environment.</Link>
+                    <Link to={RouteObj.CreateEdaProject}>Project</Link>
+                  </ProgressStep>
+                  <ProgressStep
+                    variant={hasProjectOrDecisionEnvironment ? 'success' : 'info'}
+                    description="Create a project."
+                  >
+                    <Link to={RouteObj.EdaDecisionEnvironments}>Decision environment</Link>
                   </ProgressStep>
                   <ProgressStep
                     variant={hasRulebookActivation ? 'success' : 'info'}
