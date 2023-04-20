@@ -39,7 +39,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
     <PageDashboardCard
       title={t('Decision Environments')}
       subtitle={t('Recently updated environments')}
-      rows="md"
+      height="md"
       linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
       helpTitle={t('Decision Environments')}
