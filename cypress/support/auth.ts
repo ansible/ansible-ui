@@ -24,6 +24,7 @@ Cypress.Commands.add(
         cy.typeInputByLabel(/^Username$/, username);
         cy.typeInputByLabel(/^Password$/, password);
         cy.get('button[type=submit]').click();
+        cy.contains('a', 'Return to dashboard').click();
         return;
       }
     }
