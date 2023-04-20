@@ -60,7 +60,6 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
-        defaultSubtitle={t('Project')}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}

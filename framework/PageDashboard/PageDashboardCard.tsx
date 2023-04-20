@@ -1,4 +1,13 @@
-import { Card, CardHeader, Flex, FlexItem, Stack, Text, Title } from '@patternfly/react-core';
+import {
+  Card,
+  CardHeader,
+  Flex,
+  FlexItem,
+  Stack,
+  Text,
+  Title,
+  Truncate,
+} from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
@@ -98,7 +107,7 @@ export function PageDashboardCard(props: {
               spaceItems={{ default: 'spaceItemsNone' }}
               alignItems={{ default: 'alignItemsFlexStart' }}
               justifyContent={{ default: 'justifyContentFlexEnd' }}
-              style={{ columnGap: 24, rowGap: 8 }}
+              style={{ columnGap: 24, rowGap: 8, flexWrap: 'nowrap' }}
             >
               <FlexItem grow={{ default: 'grow' }}>
                 <Flex spaceItems={{ default: 'spaceItemsNone' }}>
@@ -131,11 +140,15 @@ export function PageDashboardCard(props: {
                 </Flex>
               </FlexItem>
               {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
-              <FlexItem>
-                <Text component="small">
-                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
-                </Text>
-              </FlexItem>
+              {props.linkText && (
+                <FlexItem>
+                  <Text component="small">
+                    <Link to={props.to as string}>
+                      <Truncate content={props.linkText} />
+                    </Link>
+                  </Text>
+                </FlexItem>
+              )}
             </Flex>
             {props.description && (
               <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>

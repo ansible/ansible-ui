@@ -12,7 +12,7 @@ import { EdaProject } from '../interfaces/EdaProject';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
-import { EdaRecentProjectsCard } from './cards/EdaRecentProjectsCard';
+import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
