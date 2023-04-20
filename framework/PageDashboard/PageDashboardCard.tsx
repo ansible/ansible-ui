@@ -17,8 +17,26 @@ export function PageDashboardCard(props: {
   linkText?: string;
   to?: string;
   children?: ReactNode;
+
+  /**
+   * Cards are in a grid layout with 12 columns.
+   * The width picks columns such that cards line up.
+   */
   width?: PageDashboardCardWidth;
+
+  /**
+   * Cards are in a grid layout with rows.
+   * The height not only sets the minimum height, but also the rows that the card spans.
+   * This is needed for wrapping of different size cards in the grid layout.
+   */
   height?: PageDashboardCardHeight;
+
+  /**
+   * Max height limits the cards height.
+   * Cards should have a scrollable area when this is enabled.
+   */
+  maxHeight?: PageDashboardCardHeight;
+
   style?: CSSProperties;
   help?: string[];
   helpTitle?: string;
@@ -53,7 +71,32 @@ export function PageDashboardCard(props: {
     colSpan = dashboardContext.columns;
   }
 
-  let rowSpan = undefined;
+  let heightSpan = undefined;
+  switch (props.maxHeight) {
+    case 'xs':
+      heightSpan = 2;
+      break;
+    case 'sm':
+      heightSpan = 3;
+      break;
+    case 'md':
+      heightSpan = 4;
+      break;
+    case 'lg':
+      heightSpan = 6;
+      break;
+    case 'xl':
+      heightSpan = 8;
+      break;
+    case 'xxl':
+      heightSpan = 12;
+      break;
+  }
+
+  const height = heightSpan ? heightUnit * heightSpan + 16 * (heightSpan - 1) : undefined;
+
+  let rowSpan = heightSpan;
+
   switch (props.height) {
     case 'xs':
       rowSpan = 2;
@@ -86,7 +129,7 @@ export function PageDashboardCard(props: {
         gridColumn: `span ${colSpan}`,
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
         minHeight,
-        maxHeight: minHeight,
+        maxHeight: height,
         ...props.style,
       }}
     >

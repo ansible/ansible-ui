@@ -108,7 +108,7 @@ const RuleAuditChart = () => {
     return <></>;
   }
   return (
-    <PageDashboardCard title={t('Rule runs')} width="xxl" height="lg" to={RouteObj.EdaRuleAudit}>
+    <PageDashboardCard title={t('Rule runs')} width="xxl" height="sm" to={RouteObj.EdaRuleAudit}>
       <PageDashboardChart
         groups={[
           { color: pfSuccess, values: successfulRuns },
