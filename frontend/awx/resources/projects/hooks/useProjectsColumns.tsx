@@ -1,26 +1,23 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ColumnModalOption, CopyCell, ITableColumn } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { ScmType } from '../../../../common/scm';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
-  useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { ScmType } from '../../../../common/scm';
-import { Project } from '../../../interfaces/Project';
 import { useProjectStatusColumn } from './useProjectStatusColumn';
+import { useLastUsedColumn } from './useLastUsedColumn';
+import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { Project } from '../../../interfaces/Project';
+import { useProjectNameColumn } from './useProjectNameColumn';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const nameClick = useCallback(
-    (project: Project) => navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString())),
-    [navigate]
-  );
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const nameColumn = useProjectNameColumn();
+  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
@@ -29,9 +26,12 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
     tooltip: t`Click to view latest project sync job`,
     tooltipAlt: t`Unable to load latest project sync job`,
   });
+  const lastUsedColumn = useLastUsedColumn();
+  const defaultEnvironmentColumn = useExecutionEnvironmentColumn();
   const tableColumns = useMemo<ITableColumn<Project>[]>(
     () => [
       nameColumn,
+      descriptionColumn,
       statusColumn,
       {
         header: t('Type'),
@@ -47,8 +47,20 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       organizationColumn,
       createdColumn,
       modifiedColumn,
+      lastUsedColumn,
+      defaultEnvironmentColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn, statusColumn]
+    [
+      createdColumn,
+      defaultEnvironmentColumn,
+      descriptionColumn,
+      lastUsedColumn,
+      modifiedColumn,
+      nameColumn,
+      organizationColumn,
+      statusColumn,
+      t,
+    ]
   );
   return tableColumns;
 }
