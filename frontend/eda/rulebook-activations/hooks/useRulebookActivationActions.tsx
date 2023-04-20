@@ -42,16 +42,6 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        icon: RedoIcon,
-        label: t('Restart'),
-        isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation.restart_policy === 'always',
-        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
-      },
-      {
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
         isPinned: true,
@@ -62,6 +52,15 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
           else void disableActivation(activation);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: RedoIcon,
+        label: t('Restart'),
+        isHidden: (activation: EdaRulebookActivation) =>
+          !activation.is_enabled || activation.restart_policy !== 'always',
+        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
       },
       {
         type: PageActionType.Button,

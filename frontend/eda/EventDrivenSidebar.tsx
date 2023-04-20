@@ -32,6 +32,25 @@ export function EventDrivenSidebar(props: {
         {t('Dashboard')}
       </NavItem>
       <NavExpandable
+        key="views"
+        title={t('Views')}
+        isExpanded
+        isActive={isRouteActive([RouteObj.EdaRuleAudit, RouteObj.EdaRulebookActivations], location)}
+      >
+        <NavItem
+          isActive={isRouteActive(RouteObj.EdaRuleAudit, location)}
+          onClick={() => onClick(RouteObj.EdaRuleAudit)}
+        >
+          {t('Rule audit')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.EdaRulebookActivations, location)}
+          onClick={() => onClick(RouteObj.EdaRulebookActivations)}
+        >
+          {t('Rulebook activations')}
+        </NavItem>
+      </NavExpandable>
+      <NavExpandable
         key="resources"
         title={t('Resources')}
         isExpanded
@@ -60,56 +79,16 @@ export function EventDrivenSidebar(props: {
         </NavItem>
       </NavExpandable>
       <NavExpandable
-        key="views"
-        title={t('Views')}
-        isExpanded
-        isActive={isRouteActive([RouteObj.EdaRuleAudit, RouteObj.EdaRulebookActivations], location)}
-      >
-        <NavItem
-          isActive={isRouteActive(RouteObj.EdaRuleAudit, location)}
-          onClick={() => onClick(RouteObj.EdaRuleAudit)}
-        >
-          {t('Rule audit')}
-        </NavItem>
-        <NavItem
-          isActive={isRouteActive(RouteObj.EdaRulebookActivations, location)}
-          onClick={() => onClick(RouteObj.EdaRulebookActivations)}
-        >
-          {t('Rulebook activations')}
-        </NavItem>
-      </NavExpandable>
-      <NavItem
-        isActive={isRouteActive(RouteObj.EdaRulebooks, location)}
-        onClick={() => onClick(RouteObj.EdaRulebooks)}
-      >
-        {t('Rulebooks')}
-      </NavItem>
-      <NavItem
-        isActive={isRouteActive(RouteObj.EdaRules, location)}
-        onClick={() => onClick(RouteObj.EdaRules)}
-      >
-        {t('Rules')}
-      </NavItem>
-      <NavExpandable
         key="user"
         title={t('User Access')}
         isExpanded
-        isActive={isRouteActive(
-          [RouteObj.EdaUsers, RouteObj.EdaGroups, RouteObj.EdaRoles],
-          location
-        )}
+        isActive={isRouteActive([RouteObj.EdaUsers, RouteObj.EdaRoles], location)}
       >
         <NavItem
           isActive={isRouteActive(RouteObj.EdaUsers, location)}
           onClick={() => onClick(RouteObj.EdaUsers)}
         >
           {t('Users')}
-        </NavItem>
-        <NavItem
-          isActive={isRouteActive(RouteObj.EdaGroups, location)}
-          onClick={() => onClick(RouteObj.EdaGroups)}
-        >
-          {t('Groups')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.EdaRoles, location)}
