@@ -155,7 +155,7 @@ export function useInstancesFilters() {
         label: t('Name'),
         type: 'string',
         query: 'hostname__icontains',
-        placeholder: t('Enter name'),
+        placeholder: t('contains'),
       },
       {
         key: 'type',
@@ -168,7 +168,7 @@ export function useInstancesFilters() {
           { label: t('Control'), value: 'control' },
           { label: t('Hop'), value: 'hop' },
         ],
-        placeholder: t('Select types'),
+        placeholder: t('contains'),
       },
     ],
     [t]

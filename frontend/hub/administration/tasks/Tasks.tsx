@@ -2,19 +2,19 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
+  DateTimeCell,
   ElapsedTimeCell,
   ITableColumn,
   IToolbarFilter,
   PageHeader,
   PageLayout,
   PageTable,
-  DateTimeCell,
   TextCell,
 } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
-import { useGet } from '../../../common/crud/useGet';
-import { StatusCell } from '../../../common/StatusCell';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
 import { pulpHRefKeyFn } from '../../useHubView';
 import { getIdFromPulpHref } from '../../usePulpView';
 import { Task } from './Task';
@@ -109,8 +109,20 @@ export function useTaskFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
-      { key: 'name', label: t('Task name'), type: 'string', query: 'name__contains' },
-      { key: 'status', label: t('Status'), type: 'string', query: 'state' },
+      {
+        key: 'name',
+        label: t('Task name'),
+        type: 'string',
+        query: 'name__contains',
+        placeholder: t('contains'),
+      },
+      {
+        key: 'status',
+        label: t('Status'),
+        type: 'string',
+        query: 'state',
+        placeholder: t('equals'),
+      },
     ],
     [t]
   );

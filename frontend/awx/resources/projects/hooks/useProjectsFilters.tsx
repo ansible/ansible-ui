@@ -31,7 +31,7 @@ export function useProjectsFilters() {
           { label: t('Remote archive'), value: 'archive' },
           { label: t('Red Hat insights'), value: 'insights' },
         ],
-        placeholder: t('Select types'),
+        placeholder: t('contains'),
       },
       createdByToolbarFilter,
       modifiedByToolbarFilter,

@@ -31,7 +31,7 @@ export function useCollectionFilters() {
           { label: t('Community'), value: 'community' },
           { label: t('Validated'), value: 'validated' },
         ],
-        placeholder: t('Select repository'),
+        placeholder: t('contains'),
       },
       {
         key: 'tags',
@@ -49,7 +49,7 @@ export function useCollectionFilters() {
           { label: t('Synced'), value: 'synced' },
           { label: t('Unsynced'), value: 'unsynced' },
         ],
-        placeholder: t('Select type'),
+        placeholder: t('contains'),
       },
       {
         key: 'signature',
@@ -60,7 +60,7 @@ export function useCollectionFilters() {
           { label: t('Signed'), value: 'signed' },
           { label: t('Unsigned'), value: 'unsigned' },
         ],
-        placeholder: t('Select signature'),
+        placeholder: t('contains'),
       },
     ],
     [t]

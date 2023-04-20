@@ -30,7 +30,7 @@ export function useApprovalFilters() {
           { label: t('Approved'), value: 'published' },
           { label: t('Rejected'), value: 'rejected' },
         ],
-        placeholder: t('Select statuses'),
+        placeholder: t('contains'),
       },
     ],
     [t]
