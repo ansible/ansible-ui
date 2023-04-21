@@ -155,44 +155,37 @@ export function RulebookActivationInputs() {
           isRequired
         />
       </PageFormHidden>
-      <PageFormHidden watch="rulebook" hidden={(rulebook) => rulebook === undefined}>
-        <PageFormSelectOption<IEdaRulebookActivationInputs>
-          name="decision_environment_id"
-          label={t('Decision environment')}
-          placeholderText={t('Select decision environment')}
-          options={
-            environments?.results
-              ? environments.results.map((item: { name: string; id: number }) => ({
-                  label: item.name,
-                  value: item.id,
-                }))
-              : []
-          }
-          isRequired
-          footer={<Link to={RouteObj.CreateEdaProject}>Create decision environment</Link>}
-        />
-      </PageFormHidden>
-      <PageFormHidden watch="decision_environment_id" hidden={(value) => value === undefined}>
-        <PageFormSelectOption<IEdaRulebookActivationInputs>
-          name="restart_policy"
-          label={t('Restart policy')}
-          placeholderText={t('Select restart policy')}
-          options={RESTART_OPTIONS}
-        />
-        <PageFormSection singleColumn>
-          <PageFormCodeEditor<IEdaRulebookActivationInputs>
-            name="variables"
-            label={t('Variables')}
-          />
-        </PageFormSection>
-        <PageFormSwitch<IEdaRulebookActivationInputs>
-          id="rulebook-activation"
-          name="is_enabled"
-          formLabel={t('Rulebook activation enabled?')}
-          label={t('Enabled')}
-          labelOff={t('Disabled')}
-        />
-      </PageFormHidden>
+      <PageFormSelectOption<IEdaRulebookActivationInputs>
+        name="decision_environment_id"
+        label={t('Decision environment')}
+        placeholderText={t('Select decision environment')}
+        options={
+          environments?.results
+            ? environments.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+        isRequired
+        footer={<Link to={RouteObj.CreateEdaProject}>Create decision environment</Link>}
+      />
+      <PageFormSelectOption<IEdaRulebookActivationInputs>
+        name="restart_policy"
+        label={t('Restart policy')}
+        placeholderText={t('Select restart policy')}
+        options={RESTART_OPTIONS}
+      />
+      <PageFormSection singleColumn>
+        <PageFormCodeEditor<IEdaRulebookActivationInputs> name="variables" label={t('Variables')} />
+      </PageFormSection>
+      <PageFormSwitch<IEdaRulebookActivationInputs>
+        id="rulebook-activation"
+        name="is_enabled"
+        formLabel={t('Rulebook activation enabled?')}
+        label={t('Enabled')}
+        labelOff={t('Disabled')}
+      />
     </>
   );
 }
