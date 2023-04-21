@@ -90,9 +90,9 @@ describe('TeamAccess', () => {
         .get(`button[data-ouia-component-id="${role.name}-${role.id}"]`)
         .first()
         .click();
-      cy.contains(`Are you sure you want to remove ${role.name} access from user-2?`).should(
-        'exist'
-      );
+      cy.contains(
+        `Are you sure you want to remove ${role.name.toLowerCase()} access from user-2?`
+      ).should('exist');
     });
   });
   it('Attempting to delete a team role brings up confirmation modal with a warning', () => {
