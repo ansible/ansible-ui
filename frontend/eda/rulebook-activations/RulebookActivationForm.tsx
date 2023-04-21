@@ -14,12 +14,12 @@ import {
   compareStrings,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../Routes';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
@@ -104,7 +104,9 @@ export function RulebookActivationInputs() {
 
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
-      `${API_PREFIX}/rulebooks/?project_id=${projectId}`
+      projectId !== undefined
+        ? `${API_PREFIX}/rulebooks/'?project_id='${projectId}`
+        : `${API_PREFIX}/rulebooks/`
     );
     return Promise.resolve({
       total: response.count,
@@ -139,22 +141,22 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        isRequired
         footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
       />
-      <PageFormHidden watch="project_id" hidden={(projectId) => projectId === undefined}>
-        <PageFormAsyncSelect<IEdaRulebookActivationInputs>
-          name="rulebook"
-          label={t('Rulebook')}
-          placeholder={t('Select project rulebook')}
-          loadingPlaceholder={t('Loading project rulebooks')}
-          loadingErrorText={t('Error loading project rulebooks')}
-          query={query}
-          valueToString={(rulebook: EdaRulebook) => rulebook.name}
-          limit={200}
-          isRequired
-        />
-      </PageFormHidden>
+      <PageFormAsyncSelect<IEdaRulebookActivationInputs>
+        name="rulebook"
+        label={t('Rulebook')}
+        placeholder={t('Select project rulebook')}
+        loadingPlaceholder={t('Loading project rulebooks')}
+        loadingErrorText={t('Error loading project rulebooks')}
+        query={query}
+        valueToString={(rulebook: EdaRulebook) => rulebook.name}
+        valueToDescription={(rulebook: EdaRulebook) => (
+          <EdaProjectCell id={rulebook.project_id} disableLink />
+        )}
+        limit={200}
+        isRequired
+      />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
