@@ -54,8 +54,7 @@ export function PageForm<T extends object>(props: {
 
   const [frameworkTranslations] = useFrameworkTranslations();
 
-  const { handleSubmit, setError: setFieldError, formState } = form;
-  const { isDirty } = formState;
+  const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<Error | null>(null);
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
