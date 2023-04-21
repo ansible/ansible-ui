@@ -34,8 +34,8 @@ export function useRulebookColumns() {
       },
       {
         header: t('Project'),
-        cell: (rulebook) => <EdaProjectCell id={rulebook.project} />,
-        value: (rulebook) => rulebook.project,
+        cell: (rulebook) => <EdaProjectCell id={rulebook.project_id} />,
+        value: (rulebook) => rulebook.project_id,
         // table: ColumnTableOption.Expanded,
       },
       {

@@ -21,8 +21,8 @@ import { UserDetails } from './UserAccess/Users/UserDetails';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
 import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
-import { EditRulebookActivation } from './rulebook-activations/EditRulebookActivation';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
+import { CreateRulebookActivation } from './rulebook-activations/RulebookActivationForm';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
 import { RulebookDetails } from './rulebooks/RulebookDetails';
 import { Rulebooks } from './rulebooks/Rulebooks';
@@ -73,11 +73,11 @@ export function EventDrivenRouter() {
 
       <Route
         path={RouteObjWithoutPrefix.CreateEdaRulebookActivation}
-        element={<EditRulebookActivation />}
+        element={<CreateRulebookActivation />}
       />
       <Route
         path={RouteObjWithoutPrefix.EditEdaRulebookActivation}
-        element={<EditRulebookActivation />}
+        element={<CreateRulebookActivation />}
       />
       <Route
         path={RouteObjWithoutPrefix.EdaRulebookActivationDetails}
