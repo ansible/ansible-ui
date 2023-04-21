@@ -4,7 +4,7 @@ import { RouteObj } from '../../../../Routes';
 import { useFetcher } from '../../../../common/crud/Data';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
-export function EdaProjectCell(props: { id?: number }) {
+export function EdaProjectCell(props: { id?: number; disableLink?: boolean }) {
   const fetcher = useFetcher();
   const { data } = useSWR<EdaProject>(
     props.id ? `/api/eda/v1/projects/${props.id}/` : undefined,
@@ -24,7 +24,11 @@ export function EdaProjectCell(props: { id?: number }) {
   return (
     <TextCell
       text={data.name}
-      to={props.id ? RouteObj.EdaProjectDetails.replace(':id', props.id.toString()) : undefined}
+      to={
+        props.id && !props.disableLink
+          ? RouteObj.EdaProjectDetails.replace(':id', props.id.toString())
+          : undefined
+      }
     />
   );
 }

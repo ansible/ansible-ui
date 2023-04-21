@@ -25,6 +25,7 @@ import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -148,24 +149,16 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 : ''}
             </PageDetail>
             <PageDetail label={t('Project')}>
-              {rulebookActivation && rulebookActivation.project?.id ? (
-                <Link
-                  to={RouteObj.EdaRulebookDetails.replace(
-                    ':id',
-                    `${rulebookActivation.project?.id || ''}`
-                  )}
-                >
-                  {rulebookActivation?.project?.name}
-                </Link>
-              ) : (
-                rulebookActivation?.project?.name || ''
+              {rulebookActivation && rulebookActivation.project_id && (
+                <EdaProjectCell id={rulebookActivation.project_id} />
               )}
             </PageDetail>
             <PageDetail label={t('Status')}>
               <StatusCell status={rulebookActivation?.status || ''} />
             </PageDetail>
             <PageDetail label={t('Project git hash')}>
-              {rulebookActivation?.project?.git_hash || ''}
+              TODO
+              {/* {rulebookActivation?.project?.git_hash || ''} */}
             </PageDetail>
             <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
