@@ -17,5 +17,5 @@ export interface EdaRulebook {
   modified_at: string;
   is_enabled: boolean;
   throttle: boolean;
-  project: number;
+  project_id: number;
 }

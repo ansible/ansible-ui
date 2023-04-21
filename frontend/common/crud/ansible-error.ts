@@ -1,14 +1,16 @@
 import { stringify } from 'yaml';
 
 export class AnsibleError extends Error {
+  public readonly json: object | undefined;
   constructor(msg: string, public code: number, public description?: string) {
     super(msg);
     Object.setPrototypeOf(this, AnsibleError.prototype);
-    this.name = 'HTTPError';
+    this.name = 'AnsibleError';
 
     if (typeof description === 'string') {
       try {
         const json = JSON.parse(description) as object;
+        this.json = json;
         switch (typeof json) {
           case 'object':
             {
