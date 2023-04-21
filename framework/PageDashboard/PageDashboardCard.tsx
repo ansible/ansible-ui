@@ -6,7 +6,6 @@ import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
-export type PageDashboardCardRows = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const heightUnit = 90;
 
@@ -19,23 +18,25 @@ export function PageDashboardCard(props: {
   to?: string;
   children?: ReactNode;
 
-  /** Cards are in a grid layout with 12 columns. The width picks columns such that cards line up. */
+  /**
+   * Cards are in a grid layout with 12 columns.
+   * The width picks columns such that cards line up.
+   */
   width?: PageDashboardCardWidth;
 
   /**
    * Cards are in a grid layout with rows.
-   * The hight sets the height of the card.
-   * Height also implies a default rows value.
+   * The height not only sets the minimum height, but also the rows that the card spans.
+   * This is needed for wrapping of different size cards in the grid layout.
    */
   height?: PageDashboardCardHeight;
 
-  /*
-   * Cards are in a grid layout with rows.
-   * Rows indicates how many rows the card should span.
-   * This is needed for wrapping of cards in the grid layout.
+  /**
+   * Max height limits the cards height.
+   * Cards should have a scrollable area when this is enabled.
    */
+  maxHeight?: PageDashboardCardHeight;
 
-  rows?: PageDashboardCardRows;
   style?: CSSProperties;
   help?: string[];
   helpTitle?: string;
@@ -71,7 +72,7 @@ export function PageDashboardCard(props: {
   }
 
   let heightSpan = undefined;
-  switch (props.height) {
+  switch (props.maxHeight) {
     case 'xs':
       heightSpan = 2;
       break;
@@ -96,7 +97,7 @@ export function PageDashboardCard(props: {
 
   let rowSpan = heightSpan;
 
-  switch (props.rows) {
+  switch (props.height) {
     case 'xs':
       rowSpan = 2;
       break;
@@ -117,6 +118,8 @@ export function PageDashboardCard(props: {
       break;
   }
 
+  const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
+
   return (
     <Card
       isFlat
@@ -125,7 +128,7 @@ export function PageDashboardCard(props: {
         transition: 'box-shadow 0.25s',
         gridColumn: `span ${colSpan}`,
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
-        minHeight: height,
+        minHeight,
         maxHeight: height,
         ...props.style,
       }}

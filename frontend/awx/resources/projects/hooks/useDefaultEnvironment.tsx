@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, TextCell, ITableColumn } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 
@@ -22,6 +27,7 @@ export function useExecutionEnvironmentColumn() {
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
