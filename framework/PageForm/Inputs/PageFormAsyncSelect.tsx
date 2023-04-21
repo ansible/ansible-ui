@@ -298,7 +298,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         validated={validated}
         isDisabled={options === null || loading || isReadOnly}
         onFilter={onFilter}
-        hasInlineFilter={true}
+        hasInlineFilter={options !== null && options.length > 10}
         menuAppendTo="parent"
         maxHeight={500}
         footer={
