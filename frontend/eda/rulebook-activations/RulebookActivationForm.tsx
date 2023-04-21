@@ -179,7 +179,12 @@ export function RulebookActivationInputs() {
         options={RESTART_OPTIONS}
       />
       <PageFormSection singleColumn>
-        <PageFormCodeEditor<IEdaRulebookActivationInputs> name="variables" label={t('Variables')} />
+        <PageFormCodeEditor<IEdaRulebookActivationInputs>
+          name="variables"
+          label={t('Variables')}
+          isExpandable
+          defaultExpanded={false}
+        />
       </PageFormSection>
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
