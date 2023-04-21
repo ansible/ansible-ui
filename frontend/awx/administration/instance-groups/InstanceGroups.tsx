@@ -99,7 +99,7 @@ export function InstanceGroups() {
         titleHelpTitle={t('Instance groups')}
         titleHelp={t('An instance group defines grouped instances or grouped containers')}
         description={t(
-          'An Instance Group provides the ability to group instances in a clustered environment.'
+          'An instance group provides the ability to group instances in a clustered environment.'
         )}
       />
       <PageTable<InstanceGroup>

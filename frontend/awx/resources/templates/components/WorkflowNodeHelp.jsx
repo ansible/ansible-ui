@@ -57,11 +57,11 @@ function WorkflowNodeHelp({ node }) {
     switch (type) {
       case 'job_template':
       case 'job':
-        nodeType = `Job Template`;
+        nodeType = `Job template`;
         break;
       case 'workflow_job_template':
       case 'workflow_job':
-        nodeType = `Workflow Job Template`;
+        nodeType = `Workflow job template`;
         break;
       case 'project':
       case 'project_update':
@@ -77,7 +77,7 @@ function WorkflowNodeHelp({ node }) {
         break;
       case 'system_job_template':
       case 'system_job':
-        nodeType = `Management Job`;
+        nodeType = `Management job`;
         break;
       default:
         nodeType = '';

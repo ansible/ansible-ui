@@ -18,7 +18,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
-        label: t('Edit User'),
+        label: t('Edit user'),
         onClick: (User: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
@@ -26,7 +26,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete User'),
+        label: t('Delete user'),
         onClick: (User: EdaUser) => deleteUsers([User]),
         isDanger: true,
       },

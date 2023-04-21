@@ -1,18 +1,18 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { CubesIcon } from '@patternfly/react-icons';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { RouteObj } from '../../../Routes';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
-import { useProjectsFilters } from './hooks/useProjectsFilters';
-import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
+import { useProjectsColumns } from './hooks/useProjectsColumns';
+import { useProjectsFilters } from './hooks/useProjectsFilters';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -83,7 +83,7 @@ export function Projects() {
           canCreateProject
             ? t('Please create a project by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateProject ? undefined : CubesIcon}

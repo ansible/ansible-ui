@@ -24,7 +24,7 @@ export function useRulesetColumns() {
         list: 'name',
       },
       {
-        header: t('Number of Rules'),
+        header: t('Number of rules'),
         cell: (ruleset) => (
           <TextCell text={ruleset?.rule_count ? ruleset?.rule_count.toString() : ''} />
         ),

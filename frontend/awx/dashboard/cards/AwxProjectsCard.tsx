@@ -9,7 +9,7 @@ export function AwxProjectsCard(props: { total: number; failed: number }) {
   return (
     <PageDashboardDonutCard
       title={t('Projects')}
-      linkText={t('Go to Projects')}
+      linkText={t('Go to projects')}
       to={RouteObj.Projects}
       items={[
         {

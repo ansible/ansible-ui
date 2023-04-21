@@ -65,7 +65,7 @@ export function Users() {
         isDisabled: canCreateUser
           ? undefined
           : t(
-              'You do not have permission to create a user. Please contact your System Administrator if there is an issue with your access.'
+              'You do not have permission to create a user. Please contact your system administrator if there is an issue with your access.'
             ),
         href: RouteObj.CreateUser,
       },
@@ -222,7 +222,7 @@ export function Users() {
           canCreateUser
             ? t('Please create a user by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateUser ? undefined : CubesIcon}
@@ -258,7 +258,7 @@ export function AccessTable(props: { url: string }) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Add users'),
-        shortLabel: t('Add Access'),
+        shortLabel: t('Add access'),
         href: RouteObj.CreateUser,
       },
       {
@@ -268,7 +268,7 @@ export function AccessTable(props: { url: string }) {
         isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove selected users'),
-        shortLabel: t('Remove Access'),
+        shortLabel: t('Remove access'),
         onClick: () => null,
         isDanger: true,
       },

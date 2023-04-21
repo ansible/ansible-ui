@@ -111,7 +111,7 @@ describe('Teams.cy.ts', () => {
       cy.mount(<Teams />);
       cy.contains(/^You do not have permission to create a team$/);
       cy.contains(
-        /^Please contact your Organization Administrator if there is an issue with your access.$/
+        /^Please contact your organization administrator if there is an issue with your access.$/
       );
       cy.contains('button', /^Create team$/).should('not.exist');
     });

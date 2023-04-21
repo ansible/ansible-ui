@@ -23,6 +23,7 @@ import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
+import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
@@ -32,7 +33,6 @@ import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns
 import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { postRequest } from '../../common/crud/Data';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -223,7 +223,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

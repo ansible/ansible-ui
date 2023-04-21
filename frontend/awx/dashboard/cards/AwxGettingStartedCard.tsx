@@ -48,7 +48,7 @@ export function AwxGettingStartedCard(props: {
                   }
                   description="Create a job template."
                 >
-                  <Link to={RouteObj.Jobs}>Job Template</Link>
+                  <Link to={RouteObj.Jobs}>Job template</Link>
                 </ProgressStep>
               </ProgressStepper>
             </Stack>

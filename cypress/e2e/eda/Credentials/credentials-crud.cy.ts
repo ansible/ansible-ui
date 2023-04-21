@@ -13,13 +13,13 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^Description$/, 'This is a Container Registry Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'Container Registry');
+    cy.typeInputByLabel(/^Description$/, 'This is a container registry credential.');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'Container registry');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
-    cy.hasDetail('Description', 'This is a Container Registry Credential.');
-    cy.hasDetail('Credential type', 'Container Registry');
+    cy.hasDetail('Description', 'This is a container registry credential.');
+    cy.hasDetail('Credential type', 'Container registry');
     cy.hasDetail('Username', 'admin');
     cy.getEdaCredentialByName(name).then((credential) => {
       cy.wrap(credential).should('not.be.undefined');

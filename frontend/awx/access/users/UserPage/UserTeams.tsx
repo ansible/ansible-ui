@@ -47,7 +47,7 @@ export function UserTeams(props: { user: User }) {
         isDisabled: canAddUserToTeam
           ? undefined
           : t(
-              'You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permissions to add this user to a team. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectTeamsAddUsers([user]),
       },
@@ -93,7 +93,7 @@ export function UserTeams(props: { user: User }) {
           canAddUserToTeam
             ? t('Please add a team by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}
