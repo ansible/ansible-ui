@@ -136,7 +136,7 @@ function WorkflowNodeHelp({ node }) {
       {!unifiedJobTemplate && (!job || job.type !== 'workflow_approval') && (
         <ResourceDeleted job={job}>
           <StyledExclamationTriangleIcon />
-          {'The resource associated with this node has been deleted.'}
+          {t('The resource associated with this node has been deleted.')}
         </ResourceDeleted>
       )}
       {job && (
@@ -144,7 +144,7 @@ function WorkflowNodeHelp({ node }) {
           {identifier && (
             <>
               <dt>
-                <b>{'Node Alias'}</b>
+                <b>{t('Node Alias')}</b>
               </dt>
               <dd id="workflow-node-help-alias">{identifier}</dd>
             </>
