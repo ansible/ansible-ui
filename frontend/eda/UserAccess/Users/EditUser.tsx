@@ -79,15 +79,18 @@ export function EditUser() {
     _setError,
     setFieldError
   ) => {
-    const { user, confirmPassword } = userInput;
+    const { user, roles, confirmPassword } = userInput;
     if (user.password) {
       if (confirmPassword !== user.password) {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
         return false;
       }
     }
-    const newUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, user);
-    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
+    const updatedUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, {
+      ...user,
+      roles: roles && roles.length > 0 ? roles.map((role) => role?.id) : [],
+    });
+    navigate(RouteObj.EdaUserDetails.replace(':id', updatedUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
@@ -104,6 +107,7 @@ export function EditUser() {
 
   const defaultValue: Partial<IUserInput> = {
     user: user,
+    roles: user.roles,
   };
   return (
     <PageLayout>
