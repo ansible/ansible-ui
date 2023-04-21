@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -136,7 +137,7 @@ function WorkflowNodeHelp({ node }) {
       {!unifiedJobTemplate && (!job || job.type !== 'workflow_approval') && (
         <ResourceDeleted job={job}>
           <StyledExclamationTriangleIcon />
-          {t('The resource associated with this node has been deleted.')}
+          {'The resource associated with this node has been deleted.'}
         </ResourceDeleted>
       )}
       {job && (
@@ -144,7 +145,7 @@ function WorkflowNodeHelp({ node }) {
           {identifier && (
             <>
               <dt>
-                <b>{t('Node Alias')}</b>
+                <b>{'Node Alias'}</b>
               </dt>
               <dd id="workflow-node-help-alias">{identifier}</dd>
             </>
