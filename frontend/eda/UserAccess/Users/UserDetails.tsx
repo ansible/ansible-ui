@@ -8,7 +8,6 @@ import {
   PageActionSelection,
   PageActionType,
   PageActions,
-  PageDetailsFromColumns,
   PageHeader,
   PageLayout,
   PageDetails,
