@@ -25,6 +25,7 @@ export interface EdaRulebookActivation {
   created_at?: string;
   modified_at?: string;
   extra_var_id?: number;
+  extra_var?: { id: string };
   project_id?: number;
 
   rulebook_id: number;
