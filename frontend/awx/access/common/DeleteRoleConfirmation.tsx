@@ -22,7 +22,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
   const { title, role, user, onConfirm, onClose } = props;
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`Team`) : t(`User`));
+  const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`team`) : t(`user`));
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onClose?.();
