@@ -62,7 +62,9 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
       {sourceOfRole() === 'Team' ? (
         <>
           {t(
-            `Are you sure you want to remove ${role.name} access from ${role.team_name}?  Doing so affects all members of the team.`
+            `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
+              role.team_name
+            }?  Doing so affects all members of the team.`
           )}
           <br />
           <br />
@@ -71,7 +73,13 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
           )}
         </>
       ) : (
-        <>{t(`Are you sure you want to remove ${role.name} access from ${user.username}?`)}</>
+        <>
+          {t(
+            `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
+              user.username
+            }?`
+          )}
+        </>
       )}
     </Modal>
   );
