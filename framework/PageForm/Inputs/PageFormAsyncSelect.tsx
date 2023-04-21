@@ -73,6 +73,7 @@ export function PageFormAsyncSelect<
 
   const queryHandler = useCallback(
     (page: number) => {
+      setValue(name, undefined as FieldPathValue<TFieldValues, TFieldName>);
       setLoadingError(undefined);
       return query(page)
         .then((result) => {
@@ -189,6 +190,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   const reload = useCallback(() => {
     setLoading((loading) => {
       if (loading) return loading;
+      setOptions([]);
       query(props.limit)
         .then((result) => {
           if (result.total === 1 && result.values.length === 1) {
