@@ -38,7 +38,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
     <PageDashboardCard
       title={t('Rulebook Activations')}
       subtitle={t('Recently updated activations')}
-      rows="md"
+      height="md"
       linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
       helpTitle={t('Rulebook Activations')}

@@ -37,7 +37,7 @@ export function AwxRecentProjectsCard() {
       title={t('Projects')}
       subtitle={t('Recently updated projects')}
       width="lg"
-      rows="md"
+      height="md"
       linkText={t('Go to Projects')}
       to={RouteObj.Projects}
     >

@@ -39,7 +39,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
     <PageDashboardCard
       title={t('Projects')}
       subtitle={t('Recently updated projects')}
-      rows="md"
+      height="md"
       width="md"
       linkText={t('Go to Projects')}
       to={RouteObj.EdaProjects}
