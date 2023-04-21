@@ -36,12 +36,12 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitHub Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub Personal Access Token');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitHub Credential.');
-    cy.hasDetail('Credential type', 'GitHub Personal Access Token');
+    cy.hasDetail('Credential type', 'personal access token');
     cy.hasDetail('Username', 'admin');
     cy.getEdaCredentialByName(name).then((credential) => {
       cy.wrap(credential).should('not.be.undefined');
@@ -58,12 +58,12 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitLab Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'GitLab Personal Access Token');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'GitLab personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitLab Credential.');
-    cy.hasDetail('Credential type', 'GitLab Personal Access Token');
+    cy.hasDetail('Credential type', 'GitLab personal access token');
     cy.hasDetail('Username', 'admin');
     cy.getEdaCredentialByName(name).then((credential) => {
       cy.wrap(credential).should('not.be.undefined');
@@ -82,12 +82,12 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.hasTitle(/^Edit credential$/);
       cy.typeInputByLabel(/^Name$/, edaCredential.name + 'lalala');
       cy.typeInputByLabel(/^Description$/, 'this credential type has been changed');
-      cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub Personal Access Token');
+      cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub personal access token');
       cy.typeInputByLabel(/^User name$/, 'velveeta');
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
       cy.hasDetail('Description', 'this credential type has been changed');
-      cy.hasDetail('Credential type', 'GitHub Personal Access Token');
+      cy.hasDetail('Credential type', 'personal access token');
       cy.hasDetail('Username', 'velveeta');
       cy.navigateTo(/^Credentials$/);
       cy.deleteEdaCredential(edaCredential);

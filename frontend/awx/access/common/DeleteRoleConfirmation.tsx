@@ -31,7 +31,8 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
   return (
     <Modal
       titleIconVariant="danger"
-      title={title ? title : t(`Remove ${sourceOfRole()} Access`)}
+      // TODO `${sourceOfRole()}` breaks translations
+      title={title ? title : t(`Remove ${sourceOfRole()} access`)}
       variant={ModalVariant.small}
       isOpen
       onClose={onCloseClicked}
