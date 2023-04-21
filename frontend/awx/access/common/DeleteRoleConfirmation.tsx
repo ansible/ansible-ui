@@ -59,7 +59,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
         </Button>,
       ]}
     >
-      {sourceOfRole() === 'Team' ? (
+      {sourceOfRole() === 'team' ? (
         <>
           {t(
             `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
