@@ -118,7 +118,7 @@ describe('TeamAccess', () => {
         .first()
         .click();
       cy.contains(
-        `Are you sure you want to remove ${role.name} access from Team 2 Org 0? Doing so affects all members of the team.`
+        `Are you sure you want to remove ${role.name.toLowerCase()} access from Team 2 Org 0? Doing so affects all members of the team.`
       ).should('exist');
     });
   });
