@@ -69,7 +69,7 @@ describe('jobs', () => {
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
     cy.hasDetail('Launched by', 'admin');
-    cy.hasDetail('Job Slice', '0/1');
+    cy.hasDetail('Job slice', '0/1');
   });
 
   it('filters jobs by id', () => {
