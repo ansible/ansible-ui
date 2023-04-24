@@ -27,7 +27,7 @@ describe('EDA Resource Toolbar Functionality', () => {
   it('can visit the decision environments page and assert the data there', () => {
     cy.get('.pf-c-nav__item').contains('Decision environments').click();
     cy.get('h1').should('contain', 'Decision environments');
-    cy.contains('button', 'Create decision environment').should('exist');
+    cy.contains('button', 'Create Decision Environment').should('exist');
   });
 
   it('can visit the rule audits page and assert the data there', () => {

@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  DateTimeCell,
-  PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
-  useVisibleModalColumns,
+    DateTimeCell,
+    PageTable,
+    useColumnsWithoutExpandedRow,
+    useColumnsWithoutSort,
+    useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
@@ -57,7 +57,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
         emptyStateVariant={'light'}
         emptyStateTitle={t('There are currently no decision environments')}
         emptyStateDescription={t('Create a decision environment by clicking the button below.')}
-        emptyStateButtonText={t('Create decision environment')}
+        emptyStateButtonText={t('Create Decision Environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
         compact

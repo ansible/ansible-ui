@@ -3,15 +3,15 @@ import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  PageForm,
-  PageFormCodeEditor,
-  PageFormSelectOption,
-  PageFormSubmitHandler,
-  PageFormSwitch,
-  PageFormTextInput,
-  PageHeader,
-  PageLayout,
-  compareStrings,
+    PageForm,
+    PageFormCodeEditor,
+    PageFormSelectOption,
+    PageFormSubmitHandler,
+    PageFormSwitch,
+    PageFormTextInput,
+    PageHeader,
+    PageLayout,
+    compareStrings,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
@@ -170,7 +170,7 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={<Link to={RouteObj.CreateEdaProject}>Create decision environment</Link>}
+        footer={<Link to={RouteObj.CreateEdaProject}>Create Decision Environment</Link>}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="restart_policy"

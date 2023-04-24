@@ -111,7 +111,7 @@ export function EditDecisionEnvironment() {
           <PageHeader
             title={t('Edit Decision Environment')}
             breadcrumbs={[
-              { label: t('Decision Eenvironments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
               { label: t('Edit Decision Environment') },
             ]}
           />
@@ -136,12 +136,12 @@ export function EditDecisionEnvironment() {
         <PageHeader
           title={t('Create Decision Environment')}
           breadcrumbs={[
-            { label: t('Decision Eenvironments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
             { label: t('Create Decision Environment') },
           ]}
         />
         <PageForm
-          submitText={t('Create decision environment')}
+          submitText={t('Create Decision Environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

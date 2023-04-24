@@ -14,10 +14,10 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     const de_name = 'E2E Decision Environment ' + randomString(4);
     cy.navigateTo(/^Decision Environments$/);
     cy.hasTitle(/^Decision Environments$/);
-    cy.clickButton(/^Create decision environment$/);
+    cy.clickButton(/^Create Decision Environment$/);
     cy.typeInputByLabel(/^Name$/, de_name);
     cy.typeInputByLabel(/^Image$/, 'quay.io/ansible/ansible-rulebook:main');
-    cy.clickButton(/^Create decision environment$/);
+    cy.clickButton(/^Create Decision Environment$/);
     cy.hasTitle(de_name);
     cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {
       cy.wrap(de).should('not.be.undefined');

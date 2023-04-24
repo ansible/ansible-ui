@@ -40,7 +40,7 @@ export function DecisionEnvironments() {
         errorStateTitle={t('Error loading decision environments')}
         emptyStateTitle={t('No decision environments yet')}
         emptyStateDescription={t('To get started, create a decision environment.')}
-        emptyStateButtonText={t('Create decision environment')}
+        emptyStateButtonText={t('Create Decision Environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
         defaultSubtitle={t('Decision environment')}
