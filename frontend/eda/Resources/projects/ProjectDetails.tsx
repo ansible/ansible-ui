@@ -67,7 +67,6 @@ export function ProjectDetails() {
           <TextCell icon={<GitAltIcon color="#F1502F" />} iconSize="md" text={'Git'} />
         </PageDetail>
         <PageDetail label={t('SCM URL')}>{project?.url || ''}</PageDetail>
-        <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />

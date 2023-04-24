@@ -25,7 +25,6 @@ import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
-import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -149,9 +148,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 : ''}
             </PageDetail>
             <PageDetail label={t('Project')}>
-              {rulebookActivation && rulebookActivation.project_id && (
-                <EdaProjectCell id={rulebookActivation.project_id} />
-              )}
+              {rulebookActivation && rulebookActivation.project && rulebookActivation.project.name}
             </PageDetail>
             <PageDetail label={t('Status')}>
               <StatusCell status={rulebookActivation?.status || ''} />

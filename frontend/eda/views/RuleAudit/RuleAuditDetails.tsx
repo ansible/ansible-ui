@@ -1,7 +1,7 @@
 import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
@@ -20,6 +20,7 @@ import { API_PREFIX } from '../../constants';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
+import { EdaRulebookActivationCell } from '../../rulebook-activations/components/EdaRulebookActivationCell';
 import { useEdaView } from '../../useEventDrivenView';
 import { useRuleAuditActionsColumns } from './hooks/useRuleAuditActionsColumns';
 import { useRuleAuditActionsFilters } from './hooks/useRuleAuditActionsFilters';
@@ -42,17 +43,8 @@ export function RuleAuditDetails() {
             <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
           <PageDetail label={t('Rulebook activation')}>
-            {ruleAudit && ruleAudit.activation?.id ? (
-              <Link
-                to={RouteObj.EdaRulebookActivationDetails.replace(
-                  ':id',
-                  `${ruleAudit.activation?.id || ''}`
-                )}
-              >
-                {ruleAudit?.activation?.name}
-              </Link>
-            ) : (
-              ruleAudit?.activation?.name || ''
+            {ruleAudit && ruleAudit.activation_instance && (
+              <EdaRulebookActivationCell id={ruleAudit.activation_instance} />
             )}
           </PageDetail>
           <PageDetail label={t('Created')}>

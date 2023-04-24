@@ -9,6 +9,15 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * * `create` - create
+ * * `read` - read
+ * * `update` - update
+ * * `delete` - delete
+ * * `enable` - enable
+ * * `disable` - disable
+ * * `restart` - restart
+ */
 export enum ActionEnum {
   Create = 'create',
   Read = 'read',
@@ -29,6 +38,11 @@ export interface Activation {
   project_id: number | null;
   rulebook_id: number | null;
   extra_var_id: number | null;
+  /**
+   * * `always` - always
+   * * `on-failure` - on-failure
+   * * `never` - never
+   */
   restart_policy?: RestartPolicyEnum;
   /**
    * @min -2147483648
@@ -52,6 +66,11 @@ export interface ActivationCreate {
   project_id?: number | null;
   rulebook_id: number;
   extra_var_id?: number | null;
+  /**
+   * * `always` - always
+   * * `on-failure` - on-failure
+   * * `never` - never
+   */
   restart_policy?: RestartPolicyEnum;
 }
 
@@ -59,12 +78,19 @@ export interface ActivationCreate {
 export interface ActivationInstance {
   id: number;
   name?: string;
+  /**
+   * * `running` - running
+   * * `pending` - pending
+   * * `failed` - failed
+   * * `stopped` - stopped
+   * * `completed` - completed
+   */
   status?: Status15CEnum;
+  activation_id: number | null;
   /** @format date-time */
   started_at: string;
   /** @format date-time */
   ended_at: string | null;
-  activation?: number | null;
 }
 
 /** Serializer for the Activation Instance Log model. */
@@ -86,12 +112,24 @@ export interface ActivationRead {
   description?: string;
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
+  /**
+   * * `running` - running
+   * * `pending` - pending
+   * * `failed` - failed
+   * * `stopped` - stopped
+   * * `completed` - completed
+   */
   status: Status15CEnum;
   project?: ProjectRef | null;
   /** Serializer for Rulebook reference. */
   rulebook: RulebookRef;
   extra_var?: ExtraVarRef | null;
   instances: ActivationInstance[];
+  /**
+   * * `always` - always
+   * * `on-failure` - on-failure
+   * * `never` - never
+   */
   restart_policy?: RestartPolicyEnum;
   /**
    * @min -2147483648
@@ -210,7 +248,7 @@ export interface AwxToken {
   name: string;
   description?: string;
   token: string;
-  user: number;
+  user_id: number;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -221,6 +259,11 @@ export interface Credential {
   name: string;
   description?: string;
   username?: string | null;
+  /**
+   * * `Container Registry` - Container Registry
+   * * `GitHub Personal Access Token` - GitHub Personal Access Token
+   * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   */
   credential_type?: CredentialTypeEnum;
   id: number;
   /** @format date-time */
@@ -232,6 +275,11 @@ export interface Credential {
 export interface CredentialCreate {
   name: string;
   description?: string;
+  /**
+   * * `Container Registry` - Container Registry
+   * * `GitHub Personal Access Token` - GitHub Personal Access Token
+   * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   */
   credential_type?: CredentialTypeEnum;
   username?: string | null;
   secret?: string | null;
@@ -242,10 +290,20 @@ export interface CredentialRef {
   id: number;
   name: string;
   description?: string;
+  /**
+   * * `Container Registry` - Container Registry
+   * * `GitHub Personal Access Token` - GitHub Personal Access Token
+   * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   */
   credential_type?: CredentialTypeEnum;
   username?: string | null;
 }
 
+/**
+ * * `Container Registry` - Container Registry
+ * * `GitHub Personal Access Token` - GitHub Personal Access Token
+ * * `GitLab Personal Access Token` - GitLab Personal Access Token
+ */
 export enum CredentialTypeEnum {
   ContainerRegistry = 'Container Registry',
   GitHubPersonalAccessToken = 'GitHub Personal Access Token',
@@ -304,6 +362,12 @@ export interface ExtraVarRef {
   id: number;
 }
 
+/**
+ * * `pending` - Pending
+ * * `running` - Running
+ * * `failed` - Failed
+ * * `completed` - Completed
+ */
 export enum ImportStateEnum {
   Pending = 'pending',
   Running = 'running',
@@ -659,6 +723,11 @@ export interface PaginatedUserListList {
 export interface PatchedCredentialCreate {
   name?: string;
   description?: string;
+  /**
+   * * `Container Registry` - Container Registry
+   * * `GitHub Personal Access Token` - GitHub Personal Access Token
+   * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   */
   credential_type?: CredentialTypeEnum;
   username?: string | null;
   secret?: string | null;
@@ -720,7 +789,7 @@ export interface Playbook {
   name: string;
   /** Content of the playbook */
   playbook: string;
-  project?: number | null;
+  project_id: number | null;
 }
 
 export interface Project {
@@ -753,6 +822,22 @@ export interface ProjectRef {
   description?: string;
 }
 
+/**
+ * * `activation` - activation
+ * * `activation_instance` - activation_instance
+ * * `audit_rule` - audit_rule
+ * * `audit_event` - audit_event
+ * * `task` - task
+ * * `user` - user
+ * * `project` - project
+ * * `inventory` - inventory
+ * * `extra_var` - extra_var
+ * * `playbook` - playbook
+ * * `rulebook` - rulebook
+ * * `role` - role
+ * * `decision_environment` - decision_environment
+ * * `credential` - credential
+ */
 export enum ResourceTypeEnum {
   Activation = 'activation',
   ActivationInstance = 'activation_instance',
@@ -770,6 +855,11 @@ export enum ResourceTypeEnum {
   Credential = 'credential',
 }
 
+/**
+ * * `always` - always
+ * * `on-failure` - on-failure
+ * * `never` - never
+ */
 export enum RestartPolicyEnum {
   Always = 'always',
   OnFailure = 'on-failure',
@@ -829,7 +919,7 @@ export interface Rule {
   name: string;
   /** The action in the rule */
   action: Record<string, any>;
-  ruleset: number | null;
+  ruleset_id: number | null;
 }
 
 export interface RuleOut {
@@ -842,11 +932,11 @@ export interface RuleOut {
   /** List of stats */
   fired_stats: Record<string, any>[];
   /** ID of the rulebook */
-  rulebook?: number | null;
+  rulebook_id?: number | null;
   /** ID of the ruleset */
-  ruleset?: number | null;
+  ruleset_id?: number | null;
   /** ID of the project */
-  project?: number | null;
+  project_id?: number | null;
 }
 
 export interface Rulebook {
@@ -894,6 +984,13 @@ export interface RulesetOut {
   modified_at: string;
 }
 
+/**
+ * * `running` - running
+ * * `pending` - pending
+ * * `failed` - failed
+ * * `stopped` - stopped
+ * * `completed` - completed
+ */
 export enum Status15CEnum {
   Running = 'running',
   Pending = 'pending',
@@ -924,6 +1021,16 @@ export interface TaskRef {
   href: string;
 }
 
+/**
+ * * `queued` - queued
+ * * `finished` - finished
+ * * `failed` - failed
+ * * `started` - started
+ * * `deferred` - deferred
+ * * `scheduled` - scheduled
+ * * `stopped` - stopped
+ * * `canceled` - canceled
+ */
 export enum TaskStatusEnum {
   Queued = 'queued',
   Finished = 'finished',
@@ -2166,7 +2273,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
-      
 
     /**
      * @description Get the JSON format of a rulebook by its id
