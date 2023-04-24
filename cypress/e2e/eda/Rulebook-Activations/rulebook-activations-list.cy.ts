@@ -167,7 +167,7 @@ describe('EDA rulebook activations List', () => {
                     );
                     cy.assertModalSuccess();
                     cy.clickButton(/^Close$/);
-                    cy.contains('h1', 'Rulebook activations').should('be.visible');
+                    cy.contains('h1', 'Rulebook Activations').should('be.visible');
                   });
                   cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
                 });

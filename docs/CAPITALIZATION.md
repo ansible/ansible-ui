@@ -9,8 +9,10 @@ From PatternFly Guidelines
 
 Examples:
 
-- Left navigation: Execution Environments
-- Page header: Execution Environments
+
+- Sidebar Navigation - Title Case
+  - `Execution Environments`
+- Page header - Execution Environments
 - Page breadcrumb: Execution Environments
 - Page action: Create execution environment
 - Detail page tab: Execution Environments
@@ -18,3 +20,18 @@ Examples:
 - Detail label: Execution environment
 - Empty state: You do not have any execution environments
 - Card title: Execution Environments
+
+
+Side Nav: Title Case
+Header: Title Case
+Breadcrumb: Title Case
+Exception: Edit [resource name] - where resource name is left exactly as the user created
+Create: Title Case
+Edit: Title Case
+Exception: Edit [resource name] - where resource name is left exactly as the user created
+Card Header: Title Case
+Tab: Title Case
+Button: Sentence case
+Label: Sentence case
+Empty State: Sentence case
+Table Header: Sentence case

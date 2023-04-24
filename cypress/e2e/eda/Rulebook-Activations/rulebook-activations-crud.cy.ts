@@ -16,7 +16,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
           const name = 'E2E Rulebook Activation ' + randomString(4);
           cy.navigateTo(/^Rulebook Activations$/);
           cy.clickButton(/^Create rulebook activation$/);
-          cy.get('h1').should('contain', 'Create rulebook activation');
+          cy.get('h1').should('contain', 'Create Rulebook Activation');
           cy.typeInputByLabel(/^Name$/, name);
           cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
           cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
