@@ -9,29 +9,24 @@ From PatternFly Guidelines
 
 Examples:
 
-
 - Sidebar Navigation - Title Case
   - `Execution Environments`
-- Page header - Execution Environments
-- Page breadcrumb: Execution Environments
-- Page action: Create execution environment
-- Detail page tab: Execution Environments
-- Form input: Execution environment
-- Detail label: Execution environment
-- Empty state: You do not have any execution environments
-- Card title: Execution Environments
+- Page header - Title Case
+  - `Create Execution Environments`
+- Page breadcrumb - Title Case
+  - `Execution Environments`
+- Detail page tab - Title Case
+  - `Execution Environments`
+- Card title - Title Case
+  - `Execution Environments`
 
-
-Side Nav: Title Case
-Header: Title Case
-Breadcrumb: Title Case
-Exception: Edit [resource name] - where resource name is left exactly as the user created
-Create: Title Case
-Edit: Title Case
-Exception: Edit [resource name] - where resource name is left exactly as the user created
-Card Header: Title Case
-Tab: Title Case
-Button: Sentence case
-Label: Sentence case
-Empty State: Sentence case
-Table Header: Sentence case
+- Page action - Sentence case
+  - `Create execution environment`
+- Form input label - Sentence case
+  - `Execution environment`
+- Detail label - Sentence case
+  - `Execution environment`
+- Empty state
+  - `You do not have any execution environments`
+- Table Header: Sentence case
+  - `Execution environment`
