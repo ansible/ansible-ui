@@ -1,3 +1,3 @@
-import { Rulebook } from './generated/eda-api'
+import { Rulebook } from './generated/eda-api';
 
 export type EdaRulebook = Rulebook;

@@ -1,5 +1,3 @@
-import { AuditRule } from './generated/eda-api'
+import { AuditRule } from './generated/eda-api';
 
 export type EdaRuleAudit = AuditRule;
-
-

@@ -1128,7 +1128,7 @@ export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
   securityWorker?: (
-    securityData: SecurityDataType | null,
+    securityData: SecurityDataType | null
   ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
@@ -1190,7 +1190,7 @@ export class HttpClient<SecurityDataType = unknown> {
       .map((key) =>
         Array.isArray(query[key])
           ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key),
+          : this.addQueryParam(query, key)
       )
       .join('&');
   }
@@ -1216,7 +1216,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === 'object' && property !== null
             ? JSON.stringify(property)
-            : `${property}`,
+            : `${property}`
         );
         return formData;
       }, new FormData()),
@@ -1290,7 +1290,7 @@ export class HttpClient<SecurityDataType = unknown> {
         },
         signal: cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal,
         body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-      },
+      }
     ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
@@ -1348,7 +1348,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Filter by activation instance status. */
         status?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedActivationInstanceList, any>({
         path: `/activation-instances/`,
@@ -1425,7 +1425,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedActivationList, any>({
         path: `/activations/`,
@@ -1569,7 +1569,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedAuditEventList, any>({
         path: `/audit-events/`,
@@ -1613,7 +1613,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedAuditRuleList, any>({
         path: `/audit-rules/`,
@@ -1657,7 +1657,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedAuditActionList, any>({
         path: `/audit-rules/${id}/actions/`,
@@ -1684,7 +1684,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedAuditEventList, any>({
         path: `/audit-rules/${id}/events/`,
@@ -1764,7 +1764,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedCredentialList, any>({
         path: `/credentials/`,
@@ -1822,7 +1822,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     credentialsPartialUpdate: (
       id: number,
       data: PatchedCredentialCreate,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<Credential, any>({
         path: `/credentials/${id}/`,
@@ -1868,7 +1868,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedDecisionEnvironmentList, any>({
         path: `/decision-environments/`,
@@ -1926,7 +1926,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     decisionEnvironmentsPartialUpdate: (
       id: number,
       data: PatchedDecisionEnvironmentCreate,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<DecisionEnvironment, any>({
         path: `/decision-environments/${id}/`,
@@ -1970,7 +1970,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedExtraVarList, any>({
         path: `/extra-vars/`,
@@ -2033,7 +2033,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedPlaybookList, any>({
         path: `/playbooks/`,
@@ -2081,7 +2081,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Filter by project url. */
         url?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedProjectList, any>({
         path: `/projects/`,
@@ -2198,7 +2198,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRoleListList, any>({
         path: `/roles/`,
@@ -2246,7 +2246,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Filter by rulebook's project id. */
         project_id?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRulebookList, any>({
         path: `/rulebooks/`,
@@ -2309,7 +2309,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRulesetOutList, any>({
         path: `/rulebooks/${id}/rulesets/`,
@@ -2336,7 +2336,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRuleOutList, any>({
         path: `/rules/`,
@@ -2382,7 +2382,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRulesetOutList, any>({
         path: `/rulesets/`,
@@ -2428,7 +2428,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedRuleList, any>({
         path: `/rulesets/${id}/rules/`,
@@ -2490,7 +2490,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedUserListList, any>({
         path: `/users/`,
@@ -2604,7 +2604,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Number of results to return per page. */
         page_size?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<PaginatedAwxTokenList, any>({
         path: `/users/me/awx-tokens/`,

@@ -1,3 +1,3 @@
-import { AuditEvent } from './generated/eda-api'
+import { AuditEvent } from './generated/eda-api';
 
 export type EdaRuleAuditEvent = AuditEvent;
