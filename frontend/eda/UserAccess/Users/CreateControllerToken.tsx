@@ -56,7 +56,7 @@ export function CreateControllerToken() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create New Controller Token')}
+        title={t('Create Controller Token')}
         breadcrumbs={[
           { label: t('Users'), to: RouteObj.EdaUsers },
           {

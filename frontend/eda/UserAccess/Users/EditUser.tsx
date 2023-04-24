@@ -48,7 +48,7 @@ export function CreateUser() {
   return (
     <>
       <PageHeader
-        title={t('Create New User')}
+        title={t('Create User')}
         breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create user') }]}
       />
       <PageForm
@@ -112,7 +112,7 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit user')}
+        title={t('Edit User')}
         breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit user') }]}
       />
       <PageForm<IUserInput>
