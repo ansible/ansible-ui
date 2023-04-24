@@ -25,6 +25,7 @@ import './rest-commands';
 import './auth';
 import './eda-commands';
 import './awx-commands';
+import { LinkHTMLAttributes } from 'react';
 
 declare global {
   namespace Cypress {
@@ -186,7 +187,7 @@ declare global {
 
       // --- EDA COMMANDS ---
 
-      checkAnchorLinks(anchorName: string): Chainable<void>;
+      checkAnchorLinks(anchorName: string): Chainable<HTMLAnchorElement>;
 
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
