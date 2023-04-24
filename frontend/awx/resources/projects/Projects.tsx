@@ -61,11 +61,13 @@ export function Projects() {
         title={t('Projects')}
         titleHelpTitle={t('Projects')}
         titleHelp={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your ${product} server, or by placing your playbooks into a source code management (SCM) system supported by ${product}, including Git, Subversion, Mercurial, and Red Hat Insights.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
         description={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
+          { product }
         )}
       />
       <PageTable<Project>

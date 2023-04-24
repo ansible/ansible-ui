@@ -150,11 +150,13 @@ export function Organizations() {
         title={t('Organizations')}
         titleHelpTitle={t('Organizations')}
         titleHelp={t(
-          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
         description={t(
-          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
+          { product }
         )}
         navigation={<AccessNav active="organizations" />}
       />

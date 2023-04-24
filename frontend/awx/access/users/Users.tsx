@@ -199,11 +199,13 @@ export function Users() {
         title={t('Users')}
         titleHelpTitle={t('User')}
         titleHelp={t(
-          `A user is someone who has access to ${product} with associated permissions and credentials.`
+          `A user is someone who has access to {{product}} with associated permissions and credentials.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
         description={t(
-          `A user is someone who has access to ${product} with associated permissions and credentials.`
+          `A user is someone who has access to {{product}} with associated permissions and credentials.`,
+          { product }
         )}
         navigation={<AccessNav active="users" />}
       />
