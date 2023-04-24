@@ -44,7 +44,7 @@ export function RuleDetails() {
           id="basic-copy-button"
           textId="code-content"
           aria-label="Copy to clipboard"
-          onClick={(e) => {
+          onClick={() => {
             // onClick(e, rule?.conditions || '')
           }}
           exitDelay={copied ? 1500 : 600}
