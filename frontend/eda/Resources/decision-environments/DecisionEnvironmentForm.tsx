@@ -45,7 +45,7 @@ function DecisionEnvironmentInputs() {
         isRequired
       />
       <PageFormSelectOption
-        name={'credential'}
+        name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
         options={
@@ -120,7 +120,10 @@ export function EditDecisionEnvironment() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={decisionEnvironment}
+            defaultValue={{
+              ...decisionEnvironment,
+              credential_id: decisionEnvironment?.credential?.id || undefined,
+            }}
           >
             <DecisionEnvironmentInputs />
           </PageForm>
