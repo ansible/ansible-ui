@@ -21,11 +21,11 @@ export function PageFormRolesSelect<
     <PageFormMultiInput<EdaRole, TFieldValues, TFieldName>
       {...props}
       name={props.name}
-      placeholder={t('Add roles')}
-      labelHelpTitle={t('Roles')}
+      placeholder={t('Select role(s)')}
+      labelHelpTitle={t('Role(s)')}
       labelHelp={props.labelHelp}
-      label={t('Roles')}
-      selectTitle={t('Select roles')}
+      label={t('Role(s)')}
+      selectTitle={t('Select role(s)')}
       selectOpen={selectRoles}
       validate={async (roles: EdaRole[]) => {
         if (props.isRequired && roles.length === 0) {
