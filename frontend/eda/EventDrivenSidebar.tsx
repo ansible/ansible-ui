@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { RouteObj, RouteType } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteObj, RouteType } from '../Routes';
 
 export function EventDrivenSidebar(props: {
   isNavOpen: boolean;
@@ -80,7 +80,7 @@ export function EventDrivenSidebar(props: {
       </NavExpandable>
       <NavExpandable
         key="user"
-        title={t('User Access')}
+        title={t('User access')}
         isExpanded
         isActive={isRouteActive([RouteObj.EdaUsers, RouteObj.EdaRoles], location)}
       >

@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -31,7 +31,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential_id ?? ''}/`
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
   );
 
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
@@ -45,11 +45,11 @@ export function DecisionEnvironmentDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
           navigate(
-            RouteObj.EditEdaDecisionEnvironment.replace(':id', decisionEnvironment.id.toString())
+            RouteObj.EditEdaDecisionEnvironment.replace(':id', `${decisionEnvironment?.id || ''}`)
           ),
       },
       {
@@ -78,7 +78,7 @@ export function DecisionEnvironmentDetails() {
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment.credential_id || ''}`
+                `${decisionEnvironment?.credential?.id || ''}`
               )}
             >
               {credential?.name}
@@ -96,7 +96,7 @@ export function DecisionEnvironmentDetails() {
       <PageHeader
         title={decisionEnvironment?.name}
         breadcrumbs={[
-          { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+          { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
           { label: decisionEnvironment?.name },
         ]}
         headerActions={

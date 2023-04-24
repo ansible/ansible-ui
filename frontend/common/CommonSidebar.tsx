@@ -3,10 +3,10 @@ import { ReactNode, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { RouteObj, RouteType } from '../Routes';
 import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { RouteObj, RouteType } from '../Routes';
 import { isRouteActive } from './Masthead';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 
@@ -66,7 +66,7 @@ export function CommonSidebar(props: {
                     )
                   }
                 >
-                  {t('Automation Servers')}
+                  {t('Automation servers')}
                 </NavItem>
                 <AutomationServerSwitcher />
               </>

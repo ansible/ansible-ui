@@ -36,29 +36,26 @@ export function CreateRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, number>();
-  const postEdaRulebookActivation = usePostRequest<
-    EdaRulebookActivationCreate,
-    EdaRulebookActivation
-  >();
+  const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, { id: number }>();
+  const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
 
   const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async ({
     rulebook,
     variables,
     ...rulebookActivation
   }) => {
-    let extra_var_id: number | undefined;
+    let extra_var: { id: number } | undefined;
     if (variables) {
       try {
-        extra_var_id = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
+        extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
           extra_var: variables,
         });
       } catch (err) {
-        extra_var_id = undefined;
+        extra_var = undefined;
         throw err;
       }
     }
-    rulebookActivation.extra_var_id = extra_var_id;
+    rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
     const newRulebookActivation = await postEdaRulebookActivation(
       `${API_PREFIX}/activations/`,
@@ -73,7 +70,7 @@ export function CreateRulebookActivation() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create rulebook activation')}
+        title={t('Create Rulebook Activation')}
         breadcrumbs={[
           { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           { label: t('Create rulebook activation') },

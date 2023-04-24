@@ -262,9 +262,13 @@ function AccountDropdown() {
   );
 }
 
-function EdaUserInfo() {
+export function EdaUserInfo() {
   const fetcher = useFetcher();
-  const meResponse = useSWR<{ username: string }>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
+  const meResponse = useSWR<{ id: number; username: string }>(
+    `${API_PREFIX}/users/me/`,
+    fetcher,
+    swrOptions
+  );
   return meResponse?.data;
 }
 

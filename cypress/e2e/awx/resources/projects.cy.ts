@@ -80,7 +80,7 @@ describe('projects', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Job Templates$/);
+    cy.clickTab(/^Job templates$/);
   });
   it('can navigate to project notifications tab', () => {
     cy.navigateTo(/^Projects$/);

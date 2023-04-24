@@ -38,7 +38,7 @@ function ProjectCreateInputs() {
       {/* <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
-        label={t('SCM Type')}
+        label={t('SCM type')}
         placeholder={t('Git')}
       /> */}
       <PageFormTextInput<EdaProject>
@@ -73,7 +73,7 @@ function ProjectEditInputs() {
       {/* <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
-        label={t('SCM Type')}
+        label={t('SCM type')}
         placeholder={t('Git')}
       /> */}
     </>
@@ -119,7 +119,7 @@ export function EditProject() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit project')}
+            title={t('Edit Project')}
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
               { label: t('Edit project') },
@@ -141,7 +141,7 @@ export function EditProject() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create project')}
+          title={t('Create Project')}
           breadcrumbs={[
             { label: t('Projects'), to: RouteObj.EdaProjects },
             { label: t('Create project') },

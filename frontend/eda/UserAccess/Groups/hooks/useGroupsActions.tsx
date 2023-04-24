@@ -28,7 +28,7 @@ export function useGroupsActions(view: IEdaView<EdaGroup>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected Groups'),
+        label: t('Delete selected groups'),
         onClick: (Groups: EdaGroup[]) => deleteGroups(Groups),
         isDanger: true,
       },

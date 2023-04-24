@@ -194,7 +194,6 @@ Cypress.Commands.add('createEdaUser', () => {
     username: `E2E User ${randomString(4)}`,
     email: `${randomString(4)}@redhat.com`,
     password: `${randomString(4)}`,
-    type: 'super',
   }).then((edaUser) => {
     Cypress.log({
       displayName: 'EDA USER CREATION :',

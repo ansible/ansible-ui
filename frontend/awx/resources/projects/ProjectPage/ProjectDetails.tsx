@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   CopyCell,
+  DateTimeCell,
   PageDetail,
   PageDetails,
-  DateTimeCell,
   TextCell,
 } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { Project } from '../../../interfaces/Project';
-import { ScmType } from '../../../../common/scm';
 import { StatusCell } from '../../../../common/StatusCell';
+import { ScmType } from '../../../../common/scm';
+import { Project } from '../../../interfaces/Project';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();
@@ -58,13 +58,13 @@ export function ProjectDetails(props: { project: Project }) {
           )}
         />
       </PageDetail>
-      <PageDetail label={t('Last Job Status')}>
+      <PageDetail label={t('Last job status')}>
         <StatusCell status={project.status} />
       </PageDetail>
-      <PageDetail label={t('Source Control Type')}>
+      <PageDetail label={t('Source control type')}>
         <ScmType scmType={project.scm_type} />
       </PageDetail>
-      <PageDetail label={t('Source Control Revision')}>
+      <PageDetail label={t('Source control revision')}>
         <CopyCell text={project.scm_revision} />
       </PageDetail>
       <PageDetail label={t('Source Control URL')} helpText={sourceControlURLHelpBlock}>
@@ -73,7 +73,7 @@ export function ProjectDetails(props: { project: Project }) {
       <PageDetail label={t('Cache Timeout')}>{project.scm_update_cache_timeout}</PageDetail>
       {/* TODO config provider */}
       {/* <PageDetail label={t('Project Base Path')} helpText={basePathHelpBlock} >{config.project_base_dir}</PageDetail> */}
-      <PageDetail label={t('Playbook Directory')} helpText={playbookDirectorHelpText}>
+      <PageDetail label={t('Playbook directory')} helpText={playbookDirectorHelpText}>
         {project.local_path}
       </PageDetail>
       <PageDetail label={t('Created')}>

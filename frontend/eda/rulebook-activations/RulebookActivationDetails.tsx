@@ -1,4 +1,11 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import {
+  CodeBlock,
+  CodeBlockCode,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Stack,
+} from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +40,8 @@ import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns
 import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { PageDetailsSection } from '../common/PageDetailSection';
+import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -43,6 +52,10 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
+  );
+
+  const { data: extraVar } = useGet<EdaExtraVars>(
+    `${API_PREFIX}/extra-vars/${rulebookActivation?.extra_var?.id ?? ''}/`
   );
 
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
@@ -128,7 +141,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Decision environment')}>
               {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
                 <Link
-                  to={RouteObj.EdaRulebookDetails.replace(
+                  to={RouteObj.EdaDecisionEnvironmentDetails.replace(
                     ':id',
                     `${rulebookActivation?.decision_environment?.id || ''}`
                   )}
@@ -154,7 +167,6 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               <StatusCell status={rulebookActivation?.status || ''} />
             </PageDetail>
             <PageDetail label={t('Project git hash')}>
-              TODO
               {/* {rulebookActivation?.project?.git_hash || ''} */}
             </PageDetail>
             <PageDetail label={t('Last restarted')}>
@@ -176,6 +188,22 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 : ''}
             </PageDetail>
           </PageDetails>
+          <PageDetailsSection>
+            {extraVar?.extra_var && (
+              <PageDetail label={t('Variables')}>
+                <CodeBlock>
+                  <CodeBlockCode
+                    style={{
+                      minHeight: '150px',
+                    }}
+                    id="code-content"
+                  >
+                    {JSON.stringify(extraVar?.extra_var)}
+                  </CodeBlockCode>
+                </CodeBlock>
+              </PageDetail>
+            )}
+          </PageDetailsSection>
         </PageSection>
       </Scrollable>
     );
@@ -213,7 +241,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

@@ -201,6 +201,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   EdaGroups: `${edaRoutePrefix}/groups`,
   EdaRoles: `${edaRoutePrefix}/roles`,
   CreateEdaUser: `${edaRoutePrefix}/users/create`,
+  EdaUserDetailsTokens: `${edaRoutePrefix}/user/details/:id/tokens`,
   EdaUserDetails: `${edaRoutePrefix}/user/details/:id`,
   EditEdaUser: `${edaRoutePrefix}/user/edit/:id`,
   CreateEdaGroup: `${edaRoutePrefix}/groups/create`,
@@ -209,6 +210,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaRole: `${edaRoutePrefix}/roles/create`,
   EdaRoleDetails: `${edaRoutePrefix}/role/details/:id`,
   EditEdaRole: `${edaRoutePrefix}/role/edit/:id`,
+  CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
 };
 
 export function useRoutesWithoutPrefix(prefix: RouteType) {

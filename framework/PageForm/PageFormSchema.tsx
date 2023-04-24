@@ -214,7 +214,7 @@ export function PageFormSchema(props: { schema: JSONSchema6; base?: string }) {
   return <>{p}</>;
 }
 
-export type TypeTextInputOptions = StringOptions<string> & {
+export type TypeTextInputOptions = StringOptions & {
   placeholder?: string;
   /** https://www.chromium.org/developers/design-documents/create-amazing-password-forms/ */
   autoComplete?: string;
@@ -224,7 +224,7 @@ export function TypeTextInput(options: TypeTextInputOptions) {
   return Type.String({ ...options });
 }
 
-export type TypeSecretInputOptions = StringOptions<string> & {
+export type TypeSecretInputOptions = StringOptions & {
   placeholder?: string;
   /** https://www.chromium.org/developers/design-documents/create-amazing-password-forms/ */
   autoComplete: string;
@@ -234,7 +234,7 @@ export function TypeSecretInput(options: TypeSecretInputOptions) {
   return Type.String({ ...options, variant: 'secret' });
 }
 
-export type TypeSelectOptions<T> = StringOptions<string> & {
+export type TypeSelectOptions<T> = StringOptions & {
   placeholder?: string;
   options: IFormGroupSelectOption<T>[];
 };

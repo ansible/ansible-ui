@@ -66,7 +66,7 @@ export function useRulebookActivationColumns() {
         modal: ColumnModalOption.Hidden,
       },
       {
-        header: t('Decision Environment'),
+        header: t('Decision environment'),
         cell: (activation) => (
           <EdaDecisionEnvironmentCell id={activation.decision_environment_id} />
         ),
