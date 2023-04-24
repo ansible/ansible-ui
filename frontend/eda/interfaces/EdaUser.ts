@@ -14,6 +14,8 @@ export interface EdaUser {
   first_name?: string;
   last_name?: string;
   password: string;
+  created_at: string;
+  modified_at: string;
   roles: EdaRole[];
 }
 

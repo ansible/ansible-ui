@@ -21,6 +21,7 @@ import {
   PageDetail,
   PageTabs,
   PageTab,
+  DateTimeCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
@@ -51,8 +52,14 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
         <PageDetail label={t('First name')}>{user?.first_name}</PageDetail>
         <PageDetail label={t('Last name')}>{user?.last_name}</PageDetail>
         <PageDetail label={t('Email')}>{user?.email}</PageDetail>
+        <PageDetail label={t('Created')}>
+          <DateTimeCell format="date-time" value={user?.created_at} />
+        </PageDetail>
+        <PageDetail label={t('Modified')}>
+          <DateTimeCell format="date-time" value={user?.modified_at} />
+        </PageDetail>
         {user?.roles && user.roles.length ? (
-          <PageDetail label={t('Roles')}>
+          <PageDetail label={t('Role(s)')}>
             <LabelGroup>
               {user.roles.map((role) => (
                 <Label key={role?.id}>{role?.name}</Label>
