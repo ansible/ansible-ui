@@ -46,7 +46,7 @@ export function EdaDashboard() {
       <PageDashboard>
         {(!hasProject || !hasRulebookActivation) && (
           <PageDashboardCard
-            title={t('Getting started')}
+            title={t('Getting Started')}
             description={t(
               'Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage.'
             )}

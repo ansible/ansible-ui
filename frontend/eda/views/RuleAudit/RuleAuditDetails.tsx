@@ -123,7 +123,7 @@ export function RuleAuditDetails() {
       <PageHeader
         title={ruleAudit?.name}
         breadcrumbs={[
-          { label: t('Rule audit'), to: RouteObj.EdaRuleAudit },
+          { label: t('Rule Audit'), to: RouteObj.EdaRuleAudit },
           { label: ruleAudit?.name },
         ]}
       />

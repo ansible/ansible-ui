@@ -60,8 +60,8 @@ export function CreateUser() {
   return (
     <>
       <PageHeader
-        title={t('Create user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create user') }]}
+        title={t('Create User')}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create User') }]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -111,7 +111,7 @@ export function EditUser() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
+          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
         />
       </PageLayout>
     );
@@ -128,8 +128,8 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
+        title={t('Edit User')}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}

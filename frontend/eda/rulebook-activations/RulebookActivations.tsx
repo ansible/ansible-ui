@@ -25,7 +25,7 @@ export function RulebookActivations() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Rulebook activations')}
+        title={t('Rulebook Activations')}
         description={t('Rulebook activations are rulebooks that have been activated to run.')}
       />
       <PageTable

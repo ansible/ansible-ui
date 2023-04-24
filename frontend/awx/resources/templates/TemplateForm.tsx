@@ -50,10 +50,10 @@ export function EditJobTemplate() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit job template')}
+        title={t('Edit Job Template')}
         breadcrumbs={[
           { label: t('Templates'), to: RouteObj.Templates },
-          { label: t('Edit job template') },
+          { label: t('Edit Job Template') },
         ]}
       />
       <PageForm<JobTemplateForm>
@@ -108,10 +108,10 @@ export function CreateJobTemplate() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create job template')}
+        title={t('Create Job Template')}
         breadcrumbs={[
           { label: t('Templates'), to: RouteObj.Templates },
-          { label: t('Create job template') },
+          { label: t('Create Job Template') },
         ]}
       />
       <PageForm<JobTemplateForm>

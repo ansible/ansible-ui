@@ -216,7 +216,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

@@ -21,7 +21,7 @@ export function ExecutionEnvironments() {
   const rowActions = useExecutionEnvironmentActions();
   return (
     <PageLayout>
-      <PageHeader title={t('Execution environments')} />
+      <PageHeader title={t('Execution Environments')} />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

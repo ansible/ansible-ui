@@ -99,8 +99,8 @@ export function EditDecisionEnvironment() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit decision environment') },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Edit Decision Environment') },
             ]}
           />
         </PageLayout>
@@ -109,10 +109,10 @@ export function EditDecisionEnvironment() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit decision environment')}
+            title={t('Edit Decision Environment')}
             breadcrumbs={[
-              { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit decision environment') },
+              { label: t('Decision Eenvironments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Edit Decision Environment') },
             ]}
           />
           <PageForm
@@ -131,10 +131,10 @@ export function EditDecisionEnvironment() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create decision environment')}
+          title={t('Create Decision Environment')}
           breadcrumbs={[
-            { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-            { label: t('Create decision environment') },
+            { label: t('Decision Eenvironments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Create Decision Environment') },
           ]}
         />
         <PageForm

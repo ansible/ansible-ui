@@ -21,7 +21,7 @@ export function Approvals() {
   const rowActions = useApprovalActions(() => void view.refresh());
   return (
     <PageLayout>
-      <PageHeader title={t('Collection approvals')} />
+      <PageHeader title={t('Collection Approvals')} />
       <PageTable<Approval>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

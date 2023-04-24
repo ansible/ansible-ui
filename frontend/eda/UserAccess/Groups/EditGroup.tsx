@@ -60,7 +60,7 @@ export function EditGroup() {
           <PageHeader
             breadcrumbs={[
               { label: t('Groups'), to: RouteObj.EdaGroups },
-              { label: t('Edit group') },
+              { label: t('Edit Group') },
             ]}
           />
         </PageLayout>
@@ -69,10 +69,10 @@ export function EditGroup() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit group')}
+            title={t('Edit Group')}
             breadcrumbs={[
               { label: t('Groups'), to: RouteObj.EdaGroups },
-              { label: t('Edit group') },
+              { label: t('Edit Group') },
             ]}
           />
           <PageForm
@@ -100,7 +100,7 @@ export function EditGroup() {
         />
         <PageForm
           schema={GroupSchemaType}
-          submitText={t('Create Group')}
+          submitText={t('Create group')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

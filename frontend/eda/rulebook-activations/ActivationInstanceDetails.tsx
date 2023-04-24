@@ -77,7 +77,7 @@ export function ActivationInstanceDetails() {
       <PageHeader
         title={activationInstance?.name ?? `Instance ${activationInstance?.id || ''}`}
         breadcrumbs={[
-          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           {
             label: activationInstance?.activation_name ?? (activation?.name || ''),
             to: RouteObj.EdaRulebookActivationDetails.replace(

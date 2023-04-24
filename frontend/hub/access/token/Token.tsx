@@ -31,7 +31,7 @@ export function Token() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('API token')}
+        title={t('API Token')}
         description={t('An API token can be used to authenticate the ansible-galaxy client.')}
       />
       {token ? (

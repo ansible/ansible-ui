@@ -24,8 +24,8 @@ export function CreateTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create team') }]}
+        title={t('Create Team')}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create Team') }]}
       />
       <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />

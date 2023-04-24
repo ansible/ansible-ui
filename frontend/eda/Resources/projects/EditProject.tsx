@@ -110,7 +110,7 @@ export function EditProject() {
           <PageHeader
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit project') },
+              { label: t('Edit Project') },
             ]}
           />
         </PageLayout>
@@ -119,10 +119,10 @@ export function EditProject() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit project')}
+            title={t('Edit Project')}
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit project') },
+              { label: t('Edit Project') },
             ]}
           />
           <PageForm
@@ -141,10 +141,10 @@ export function EditProject() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create project')}
+          title={t('Create Project')}
           breadcrumbs={[
             { label: t('Projects'), to: RouteObj.EdaProjects },
-            { label: t('Create project') },
+            { label: t('Create Project') },
           ]}
         />
         <PageForm

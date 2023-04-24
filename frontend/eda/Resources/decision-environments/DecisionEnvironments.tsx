@@ -26,7 +26,7 @@ export function DecisionEnvironments() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Decision environments')}
+        title={t('Decision Environments')}
         description={t(
           'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
         )}

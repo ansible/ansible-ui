@@ -61,7 +61,7 @@ export default function Jobs() {
     <PageLayout>
       <PageHeader
         title={t('Jobs')}
-        titleHelpTitle={t('Jobs')}
+        titleHelpTitle={t('Job')}
         titleHelp={t(
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
