@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
 import { Popover, Tooltip } from '@patternfly/react-core';
-import styled from 'styled-components';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
-import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { PageDetail } from '../../../framework';
 import { RouteObj } from '../../Routes';
+import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
@@ -41,8 +41,8 @@ function ExecutionEnvironmentDetail(props: {
   const docsBaseUrl = 'https://docs.ansible.com/automation-controller/latest';
   const docsLink = `${docsBaseUrl}/html/upgrade-migration-guide/upgrade_to_ees.html`;
   const label = isDefaultEnvironment
-    ? t('Default Execution Environment')
-    : t('Execution Environment');
+    ? t('Default execution environment')
+    : t('Execution environment');
 
   if (executionEnvironment) {
     return (
@@ -65,7 +65,7 @@ function ExecutionEnvironmentDetail(props: {
         <span>
           <Popover
             className="missing-execution-environment"
-            headerContent={<div>{t`Execution Environment Missing`}</div>}
+            headerContent={<div>{t`Execution environment missing`}</div>}
             bodyContent={
               <div>
                 <Trans>
@@ -87,7 +87,7 @@ function ExecutionEnvironmentDetail(props: {
   }
   if (!verifyMissingVirtualEnv && !virtualEnvironment && !executionEnvironment) {
     return (
-      <PageDetail label={t`Execution Environment`} helpText={helpText}>
+      <PageDetail label={t`Execution environment`} helpText={helpText}>
         {t`Missing resource`}
         <span>
           <Tooltip content={t`Execution environment is missing or deleted.`}>

@@ -15,11 +15,11 @@ export function useDeleteGroups(onComplete: (Groups: EdaGroup[]) => void) {
   return useCallback(
     (Groups: EdaGroup[]) => {
       bulkAction({
-        title: t('Permanently delete Groups', { count: Groups.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} Groups.', {
+        title: t('Permanently delete groups', { count: Groups.length }),
+        confirmText: t('Yes, I confirm that I want to delete these {{count}} groups.', {
           count: Groups.length,
         }),
-        actionButtonText: t('Delete Groups', { count: Groups.length }),
+        actionButtonText: t('Delete groups', { count: Groups.length }),
         items: Groups.sort((l, r) => compareStrings(l.name, r.name)),
         keyFn: idKeyFn,
         isDanger: true,

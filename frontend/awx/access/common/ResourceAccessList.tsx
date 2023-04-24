@@ -88,7 +88,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to add users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectUsersAddTeams([resource]),
       },
@@ -102,7 +102,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: (users) => removeUsersFromResource(users, resource, view.unselectItemsAndRefresh),
       },
@@ -137,7 +137,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
             user.user_roles?.some((role) => !role.user_capabilities.unattach)
           ) {
             return t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             );
           }
           return undefined;

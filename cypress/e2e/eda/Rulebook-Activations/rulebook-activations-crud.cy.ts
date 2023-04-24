@@ -1,8 +1,8 @@
-//Tests a user's ability to create, edit, and delete Rulebook Activations in the EDA UI.
-//IMPORTANT: Rulebook Activations do not have Edit capability in the UI. They can only be enabled or disabled.
+//Tests a user's ability to create, edit, and delete rulebook activations in the EDA UI.
+//IMPORTANT: rulebook activations do not have Edit capability in the UI. They can only be enabled or disabled.
 import { randomString } from '../../../../framework/utils/random-string';
 
-describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
+describe('EDA rulebook activations- Create, Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
   });

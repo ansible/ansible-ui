@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
 import { RouteObj } from '../../../Routes';
+import { useOptions } from '../../../common/crud/useOptions';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -58,7 +58,7 @@ export function JobExpanded(job: UnifiedJob) {
           <PageDetail label={t(`Schedule`)}>{t(`Deleted`)}</PageDetail>
         ))}
       {job.summary_fields?.job_template && (
-        <PageDetail label={t`Job Template`}>
+        <PageDetail label={t`Job template`}>
           <Link
             to={RouteObj.JobTemplateDetails.replace(
               ':id',
@@ -70,7 +70,7 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.workflow_job_template && (
-        <PageDetail label={t`Workflow Job Template`}>
+        <PageDetail label={t`Workflow job template`}>
           <Link
             to={RouteObj.WorkflowJobTemplateDetails.replace(
               ':id',
@@ -82,7 +82,7 @@ export function JobExpanded(job: UnifiedJob) {
         </PageDetail>
       )}
       {job.summary_fields?.source_workflow_job && (
-        <PageDetail label={t`Source Workflow Job`}>
+        <PageDetail label={t`Source workflow job`}>
           <Link
             to={RouteObj.JobDetails.replace(':job_type', 'workflow').replace(
               ':id',
@@ -157,12 +157,12 @@ export function JobExpanded(job: UnifiedJob) {
       )}
       {job.job_explanation && <PageDetail label={t`Explanation`}>{job.job_explanation}</PageDetail>}
       {typeof job.job_slice_number === 'number' && typeof job.job_slice_count === 'number' && (
-        <PageDetail label={t`Job Slice`}>{`${
+        <PageDetail label={t`Job slice`}>{`${
           job.job_slice_number
         }/${job.job_slice_count.toString()}`}</PageDetail>
       )}
       {job.type === 'workflow_job' && job.is_sliced_job && (
-        <PageDetail label={t`Job Slice Parent`}>{t`True`}</PageDetail>
+        <PageDetail label={t`Job slice parent`}>{t`True`}</PageDetail>
       )}
     </PageDetails>
   );

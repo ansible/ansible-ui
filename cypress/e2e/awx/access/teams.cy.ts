@@ -171,7 +171,7 @@ describe('teams', () => {
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
       )
       .click();
-    cy.contains('Remove User Access');
+    cy.contains('Remove user access');
     cy.clickButton('Delete');
     cy.filterTableByText(user1.username);
     cy.contains('tr', user1.username)
