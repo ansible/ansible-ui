@@ -12,7 +12,7 @@ import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
 
 export function useDecisionEnvironmentActions(
-  view: IEdaView<EdaDecisionEnvironment> | IEdaView<EdaDecisionEnvironmentRead>
+  view: IEdaView<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>
 ) {
   const { t } = useTranslation();
   const navigate = useNavigate();

@@ -4,7 +4,10 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { PageTableViewTypeE } from '../../../../framework/PageTable/PageTableViewType';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../interfaces/EdaDecisionEnvironment';
 import { useEdaView } from '../../useEventDrivenView';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
 import { useDecisionEnvironmentColumns } from './hooks/useDecisionEnvironmentColumns';
@@ -16,7 +19,7 @@ export function DecisionEnvironments() {
   const navigate = useNavigate();
   const toolbarFilters = useDecisionEnvironmentFilters();
   const tableColumns = useDecisionEnvironmentColumns();
-  const view = useEdaView<EdaDecisionEnvironment>({
+  const view = useEdaView<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>({
     url: `${API_PREFIX}/decision-environments/`,
     toolbarFilters,
     tableColumns,
