@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
-import { EdaRuleset } from '../../interfaces/EdaRuleset';
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { ITableColumn, TextCell } from '../../../../framework'
+import { RouteObj } from '../../../Routes'
+import { EdaRuleset } from '../../interfaces/EdaRuleset'
 
 export function useRulesetColumns() {
   const { t } = useTranslation();

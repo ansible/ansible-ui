@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Fragment } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
+import { Fragment } from 'react'
+import { FieldValues } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
+import useSWR from 'swr'
 import {
   PageForm,
   PageFormSelectOption,
@@ -11,17 +11,17 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
-} from '../../../../framework';
-import { RouteObj } from '../../../Routes';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { API_PREFIX } from '../../constants';
-import { EdaGroup } from '../../interfaces/EdaGroup';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { PageFormGroupSelect } from '../Groups/components/PageFormGroupSelect';
+} from '../../../../framework'
+import { RouteObj } from '../../../Routes'
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data'
+import { usePostRequest } from '../../../common/crud/usePostRequest'
+import { API_PREFIX } from '../../constants'
+import { EdaGroup } from '../../interfaces/EdaGroup'
+import { EdaUserCreateUpdate } from '../../interfaces/EdaUser'
+import { PageFormGroupSelect } from '../Groups/components/PageFormGroupSelect'
 
 interface UserFields extends FieldValues {
-  user: EdaUser;
+  user: EdaUserCreateUpdate;
   groups?: EdaGroup[];
 }
 
@@ -29,11 +29,10 @@ export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const postRequest = usePostRequest<Partial<EdaUser>, EdaUser>();
+  const postRequest = usePostRequest<Partial<EdaUserCreateUpdate>, EdaUserCreateUpdate>();
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (userInput, _, setFieldError) => {
     const { user, userType, confirmPassword } = userInput;
-    user.is_superuser = userType === t('System administrator');
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
@@ -68,7 +67,7 @@ export function EditUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useSWR<EdaUser>(
+  const { data: user } = useSWR<EdaUserCreateUpdate>(
     `${API_PREFIX}/users/${id.toString()}/`,
     requestGet,
     swrOptions
@@ -87,7 +86,7 @@ export function EditUser() {
         return false;
       }
     }
-    const newUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, user);
+    const newUser = await requestPatch<EdaUserCreateUpdate>(`${API_PREFIX}/users/${id}/`, user);
     navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
@@ -127,7 +126,7 @@ export function EditUser() {
 }
 
 interface IUserInput {
-  user: EdaUser;
+  user: EdaUserCreateUpdate;
   userType: string;
   confirmPassword: string;
 }
