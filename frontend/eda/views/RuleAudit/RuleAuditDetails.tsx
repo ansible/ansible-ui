@@ -86,7 +86,7 @@ export function RuleAuditDetails() {
           emptyStateTitle={t('No actions yet')}
           emptyStateDescription={t('No actions yet for this rule audit')}
           {...view}
-          defaultSubtitle={t('Actions')}
+          defaultSubtitle={t('Action')}
         />
       </PageLayout>
     );
@@ -112,7 +112,7 @@ export function RuleAuditDetails() {
           emptyStateIcon={CubesIcon}
           emptyStateDescription={t('No events for this rule audit')}
           {...view}
-          defaultSubtitle={t('Rule audit events')}
+          defaultSubtitle={t('Rule Audit Event')}
         />
       </PageLayout>
     );
@@ -123,7 +123,7 @@ export function RuleAuditDetails() {
       <PageHeader
         title={ruleAudit?.name}
         breadcrumbs={[
-          { label: t('Rule audit'), to: RouteObj.EdaRuleAudit },
+          { label: t('Rule Audit'), to: RouteObj.EdaRuleAudit },
           { label: ruleAudit?.name },
         ]}
       />

@@ -9,7 +9,7 @@ export function AwxInventoriesCard(props: { total: number; failed: number }) {
   return (
     <PageDashboardDonutCard
       title={t('Inventories')}
-      linkText={t('Go to inventories')}
+      linkText={t('Go to Inventories')}
       to={RouteObj.Hosts}
       items={[
         {

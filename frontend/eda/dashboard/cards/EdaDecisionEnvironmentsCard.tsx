@@ -37,10 +37,10 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
 
   return (
     <PageDashboardCard
-      title={t('Decision environments')}
+      title={t('Decision Environments')}
       subtitle={t('Recently updated environments')}
       height="md"
-      linkText={t('Go to decision environments')}
+      linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
       helpTitle={t('Decision environments')}
       help={t(
@@ -57,7 +57,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
         emptyStateVariant={'light'}
         emptyStateTitle={t('There are currently no decision environments')}
         emptyStateDescription={t('Create a decision environment by clicking the button below.')}
-        emptyStateButtonText={t('Create decision environment')}
+        emptyStateButtonText={t('Create Decision Environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
         compact

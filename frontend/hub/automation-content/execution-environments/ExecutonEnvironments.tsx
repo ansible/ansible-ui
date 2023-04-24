@@ -21,7 +21,7 @@ export function ExecutionEnvironments() {
   const rowActions = useExecutionEnvironmentActions();
   return (
     <PageLayout>
-      <PageHeader title={t('Execution environments')} />
+      <PageHeader title={t('Execution Environments')} />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
@@ -30,7 +30,7 @@ export function ExecutionEnvironments() {
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
         {...view}
-        defaultSubtitle={t('Execution environment')}
+        defaultSubtitle={t('Execution Environment')}
       />
     </PageLayout>
   );

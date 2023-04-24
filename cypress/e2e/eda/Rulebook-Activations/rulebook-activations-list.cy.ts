@@ -13,7 +13,7 @@ describe('EDA rulebook activations List', () => {
             rulebook_id: gitHookDeployRuleBook.id,
             decision_environment_id: edaDecisionEnvironment.id,
           }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook activations$/);
+            cy.navigateTo(/^Rulebook Activations$/);
             /*
             filtering by text doesn't work for rulebook activations
             cy.filterTableByText(edaRulebookActivation.name);
@@ -39,7 +39,7 @@ describe('EDA rulebook activations List', () => {
             decision_environment_id: edaDecisionEnvironment.id,
             restart_policy: 'always',
           }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook activations$/);
+            cy.navigateTo(/^Rulebook Activations$/);
             /*
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
@@ -94,7 +94,7 @@ describe('EDA rulebook activations List', () => {
             rulebook_id: gitHookDeployRuleBook.id,
             decision_environment_id: edaDecisionEnvironment.id,
           }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook activations$/);
+            cy.navigateTo(/^Rulebook Activations$/);
             /*
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
@@ -138,7 +138,7 @@ describe('EDA rulebook activations List', () => {
                       'DELETE',
                       `api/eda/v1/activations/${edaRulebookActivation2.id}/`
                     ).as('edaRulebookActivation2');
-                    cy.navigateTo(/^Rulebook activations$/);
+                    cy.navigateTo(/^Rulebook Activations$/);
                     /*
             uncomment below when working, within() yields multiple elements as 
             currently select by name doesn't work as expected for rulebook activations
@@ -167,7 +167,7 @@ describe('EDA rulebook activations List', () => {
                     );
                     cy.assertModalSuccess();
                     cy.clickButton(/^Close$/);
-                    cy.contains('h1', 'Rulebook activations').should('be.visible');
+                    cy.contains('h1', 'Rulebook Activations').should('be.visible');
                   });
                   cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
                 });
