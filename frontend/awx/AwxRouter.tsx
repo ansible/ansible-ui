@@ -57,14 +57,13 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
 
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
-        <Route path={RouteObjWithoutPrefix.JobDetails} element={<JobPage />} />
+        <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
 
         {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
-        <Route path={RouteObjWithoutPrefix.JobOutput} element={<JobPage />} />
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
-        <Route path={RouteObjWithoutPrefix.JobTemplateDetails} element={<TemplatePage />} />
+        <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
         <Route
           path={RouteObjWithoutPrefix.WorkflowJobTemplateDetails}
           element={<WorkflowJobTemplateDetail />}
@@ -72,7 +71,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
         <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
-        <Route path={RouteObjWithoutPrefix.CredentialDetails} element={<CredentialPage />} />
+        <Route path={RouteObjWithoutPrefix.CredentialPage} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
         <Route path={RouteObjWithoutPrefix.EditCredential} element={<EditCredential />} />
         <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />

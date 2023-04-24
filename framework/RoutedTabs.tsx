@@ -71,9 +71,10 @@ export function RoutedTabs(props: {
   );
 
   if (isLoading) {
+    const child = activeKey === -1 ? children[0] : children[activeKey];
     return (
       <RoutedTabs baseUrl={baseUrl}>
-        <RoutedTab url="#">
+        <RoutedTab {...child.props}>
           <PageSection variant="light">
             <Skeleton />
           </PageSection>
