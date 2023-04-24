@@ -29,7 +29,7 @@ describe('EDA Projects CRUD', () => {
       cy.get('h1').should('contain', 'Projects');
       cy.clickTableRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
-      cy.hasTitle(/^Edit Project$/);
+      cy.hasTitle(`Project ${edaProject.name}`);
       cy.typeInputByLabel(/^Name$/, edaProject.name + 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
