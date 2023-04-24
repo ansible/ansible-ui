@@ -1,6 +1,6 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
-import { randomString } from '../../../../framework/utils/random-string'
+import { randomString } from '../../../../framework/utils/random-string';
 
 describe('EDA Credentials- Create, Edit, Delete', () => {
   before(() => {
