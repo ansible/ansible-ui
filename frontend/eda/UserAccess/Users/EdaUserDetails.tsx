@@ -6,7 +6,7 @@ import {
   Skeleton,
   Stack,
 } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,19 +21,17 @@ import {
   PageDetail,
   PageTabs,
   PageTab,
-  PageTable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
-import { useEdaView } from '../../useEventDrivenView';
-import { useControllerTokensColumns } from './hooks/useControllerTokensColumns';
-import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
 import { EdaUserInfo } from '../../../common/Masthead';
+import { ControllerTokens } from './ControllerTokens';
 
-export function UserDetails() {
+// eslint-disable-next-line react/prop-types
+export function EdaUserDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -56,7 +54,7 @@ export function UserDetails() {
         {user?.roles && user.roles.length ? (
           <PageDetail label={t('Roles')}>
             <LabelGroup>
-              {user?.roles.map((role) => (
+              {user.roles.map((role) => (
                 <Label key={role?.id}>{role?.name}</Label>
               ))}
             </LabelGroup>
@@ -72,7 +70,8 @@ export function UserDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit user'),
         onClick: (user: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', user.id.toString())),
@@ -89,30 +88,6 @@ export function UserDetails() {
     [deleteUsers, navigate, t]
   );
 
-  function ControllerTokensTab() {
-    const tableColumns = useControllerTokensColumns();
-
-    const view = useEdaView<EdaControllerToken>({
-      url: `${API_PREFIX}/users/me/awx-tokens/`,
-      tableColumns,
-    });
-    return (
-      <PageLayout>
-        <PageTable
-          tableColumns={tableColumns}
-          errorStateTitle={t('Error loading controller tokens')}
-          emptyStateTitle={t('You currently do not have any tokens from Automation Controller.')}
-          emptyStateDescription={t(
-            'Please create a token from Automation Controller by using the button below.'
-          )}
-          emptyStateButtonText={t('Create controller token')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateEdaControllerToken)}
-          {...view}
-          defaultSubtitle={t('Controller tokens')}
-        />
-      </PageLayout>
-    );
-  }
   return (
     <PageLayout>
       <PageHeader
@@ -127,11 +102,11 @@ export function UserDetails() {
         }
       />
       {user ? (
-        <PageTabs>
+        <PageTabs initialTabIndex={initialTabIndex}>
           <PageTab label={t('Details')}>{renderUserDetailsTab(user)}</PageTab>
           {user.id === me?.id ? (
             <PageTab label={t('Controller Tokens')}>
-              <ControllerTokensTab />
+              <ControllerTokens />
             </PageTab>
           ) : (
             <></>

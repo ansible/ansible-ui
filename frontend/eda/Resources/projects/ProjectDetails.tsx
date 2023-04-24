@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, GitAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, GitAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -66,7 +66,7 @@ export function ProjectDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),

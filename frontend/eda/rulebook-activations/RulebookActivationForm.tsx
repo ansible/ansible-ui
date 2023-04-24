@@ -66,7 +66,7 @@ export function CreateRulebookActivation() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create rulebook activation')}
+        title={t('Create New Rulebook Activation')}
         breadcrumbs={[
           { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           { label: t('Create rulebook activation') },

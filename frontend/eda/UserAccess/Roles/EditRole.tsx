@@ -86,7 +86,7 @@ export function EditRole() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create Role')}
+          title={t('Create New Role')}
           breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Create Role') }]}
         />
         <PageForm
