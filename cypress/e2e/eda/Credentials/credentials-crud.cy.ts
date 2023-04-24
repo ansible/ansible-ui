@@ -1,6 +1,6 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
-import { randomString } from '../../../../framework/utils/random-string';
+import { randomString } from '../../../../framework/utils/random-string'
 
 describe('EDA Credentials- Create, Edit, Delete', () => {
   before(() => {
@@ -36,12 +36,12 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitHub Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'personal access token');
+    cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitHub Credential.');
-    cy.hasDetail('Credential type', 'personal access token');
+    cy.hasDetail('Credential type', 'GitHub personal access token');
     cy.hasDetail('Username', 'admin');
     cy.getEdaCredentialByName(name).then((credential) => {
       cy.wrap(credential).should('not.be.undefined');
@@ -87,7 +87,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
       cy.hasDetail('Description', 'this credential type has been changed');
-      cy.hasDetail('Credential type', 'personal access token');
+      cy.hasDetail('Credential type', 'GitHub personal access token');
       cy.hasDetail('Username', 'velveeta');
       cy.navigateTo(/^Credentials$/);
       cy.deleteEdaCredential(edaCredential);
