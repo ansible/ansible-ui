@@ -115,7 +115,7 @@ export function EditCredential() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit cCedential')}
+            title={t('Edit Credential')}
             breadcrumbs={[
               { label: t('Credentials'), to: RouteObj.EdaCredentials },
               { label: t('Edit Credential') },
