@@ -35,17 +35,17 @@ function ProjectCreateInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
-      <PageFormTextInput<EdaProject>
+      {/* <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
         label={t('SCM Type')}
         placeholder={t('Git')}
-      />
+      /> */}
       <PageFormTextInput<EdaProject>
         name="url"
         isRequired={true}
-        label={t('SCM URL')}
-        placeholder={t('Enter SCM URL')}
+        label={t('Git URL')}
+        placeholder={t('Enter Git URL')}
         validate={isValidUrl}
       />
     </>
@@ -70,12 +70,12 @@ function ProjectEditInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
-      <PageFormTextInput<EdaProject>
+      {/* <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
         label={t('SCM Type')}
         placeholder={t('Git')}
-      />
+      /> */}
     </>
   );
 }

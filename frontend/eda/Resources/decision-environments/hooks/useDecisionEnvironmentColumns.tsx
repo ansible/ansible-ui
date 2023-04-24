@@ -53,8 +53,8 @@ export function useDecisionEnvironmentColumns() {
       },
       {
         header: t('Credential'),
-        cell: (activation) => <EdaCredentialCell id={activation.credential} />,
-        value: (activation) => activation.credential,
+        cell: (activation) => <EdaCredentialCell id={activation.credential_id} />,
+        value: (activation) => activation.credential_id,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
         modal: ColumnModalOption.Hidden,

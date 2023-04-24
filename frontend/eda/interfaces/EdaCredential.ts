@@ -1,2 +1,4 @@
 import { Credential } from './generated/eda-api';
-export type EdaCredential = Credential;
+export interface EdaCredential extends Credential {
+  secret: string;
+}

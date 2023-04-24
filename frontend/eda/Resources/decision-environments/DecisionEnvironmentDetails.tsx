@@ -31,7 +31,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential ?? ''}/`
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential_id ?? ''}/`
   );
 
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
@@ -74,11 +74,11 @@ export function DecisionEnvironmentDetails() {
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
         <PageDetail label={t('Image')}>{decisionEnvironment?.image_url || ''}</PageDetail>
         <PageDetail label={t('Credential')}>
-          {decisionEnvironment && decisionEnvironment.credential ? (
+          {decisionEnvironment && decisionEnvironment.credential_id ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment.credential || ''}`
+                `${decisionEnvironment.credential_id || ''}`
               )}
             >
               {credential?.name}
