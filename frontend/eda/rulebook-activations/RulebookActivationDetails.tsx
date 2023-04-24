@@ -230,7 +230,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           emptyStateIcon={CubesIcon}
           emptyStateDescription={t('No history for this rulebook activation')}
           {...view}
-          defaultSubtitle={t('Rulebook activation history')}
+          defaultSubtitle={t('Rulebook Activation History')}
         />
       </PageLayout>
     );
@@ -241,7 +241,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

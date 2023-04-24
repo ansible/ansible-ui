@@ -26,7 +26,7 @@ export function DecisionEnvironments() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Decision environments')}
+        title={t('Decision Environments')}
         description={t(
           'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
         )}
@@ -43,7 +43,7 @@ export function DecisionEnvironments() {
         emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
-        defaultSubtitle={t('Decision environment')}
+        defaultSubtitle={t('Decision Environment')}
       />
     </PageLayout>
   );

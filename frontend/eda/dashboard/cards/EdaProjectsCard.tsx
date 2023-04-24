@@ -41,7 +41,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
       subtitle={t('Recently updated projects')}
       height="md"
       width="md"
-      linkText={t('Go to projects')}
+      linkText={t('Go to Projects')}
       to={RouteObj.EdaProjects}
       helpTitle={t('Projects')}
       help={t('Projects are a logical collection of playbooks.')}

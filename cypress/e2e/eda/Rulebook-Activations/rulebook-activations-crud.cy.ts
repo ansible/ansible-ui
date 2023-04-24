@@ -14,7 +14,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
         cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
           const edaRulebook = edaRuleBooks[0];
           const name = 'E2E Rulebook Activation ' + randomString(4);
-          cy.navigateTo(/^Rulebook activations$/);
+          cy.navigateTo(/^Rulebook Activations$/);
           cy.clickButton(/^Create rulebook activation$/);
           cy.get('h1').should('contain', 'Create Rulebook Activation');
           cy.typeInputByLabel(/^Name$/, name);
@@ -74,7 +74,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
             cy.clickModalButton('Delete rulebook activations');
             cy.wait('@deleted').then((deleted) => {
               expect(deleted?.response?.statusCode).to.eql(204);
-              cy.hasTitle(/^Rulebook activations$/);
+              cy.hasTitle(/^Rulebook Activations$/);
             });
           });
           cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
