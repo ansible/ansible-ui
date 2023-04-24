@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTab, PageTabs } from '../../../../framework';
+import { PageHeader, PageLayout, RoutedTabs, RoutedTab } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
 import { Job } from '../../interfaces/Job';
@@ -20,14 +20,14 @@ export function JobPage() {
         title={job?.name}
         breadcrumbs={[{ label: t('Jobs'), to: RouteObj.Jobs }, { label: job?.name }]}
       />
-      <PageTabs loading={!job}>
-        <PageTab label={t('Output')}>
+      <RoutedTabs isLoading={!job} baseUrl={RouteObj.JobPage}>
+        <RoutedTab label={t('Output')} url={RouteObj.JobOutput}>
           {job?.type === 'workflow_job' ? <WorkflowOutput job={job} /> : <JobOutput job={job!} />}
-        </PageTab>
-        <PageTab label={t('Details')}>
+        </RoutedTab>
+        <RoutedTab label={t('Details')} url={RouteObj.JobDetails}>
           <JobDetails job={job!} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

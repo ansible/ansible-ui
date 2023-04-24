@@ -60,7 +60,7 @@ describe('credentials', () => {
   it('credential details', () => {
     cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#name', credential.name);
   });
 
