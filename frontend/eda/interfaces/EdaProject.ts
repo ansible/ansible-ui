@@ -17,4 +17,5 @@ export interface EdaProject {
   revision: string;
   url?: string;
   git_hash?: string;
+  isSyncing?: boolean;
 }
