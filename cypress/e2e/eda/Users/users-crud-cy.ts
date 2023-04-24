@@ -48,7 +48,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Users');
       cy.clickTableRow(edaUser.username);
       cy.clickPageAction(/^Edit user$/);
-      cy.hasTitle(`/^Edit user$/`);
+      cy.hasTitle(`/^Edit User$/`);
       cy.typeInputByLabel(/^Username$/, edaUser.username);
       cy.typeInputByLabel(/^First name$/, edaUser.username + 'edited firstname');
       cy.typeInputByLabel(/^Last name$/, edaUser.username + 'edited lastname');

@@ -29,10 +29,6 @@ export function useUserColumns() {
         header: t('Last name'),
         cell: (user) => user.last_name && <TextCell text={user.last_name} />,
       },
-      {
-        header: t('User type'),
-        cell: (user) => user.type && <TextCell text={user.type} />,
-      },
     ],
     [navigate, t]
   );

@@ -62,7 +62,7 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit rule')}
+            title={t('Edit Rule')}
             breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
           />
           <PageForm

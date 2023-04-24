@@ -17,7 +17,8 @@ import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
-import { UserDetails } from './UserAccess/Users/UserDetails';
+import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
+import { EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
 import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
@@ -110,7 +111,19 @@ export function EventDrivenRouter() {
       <Route path={RouteObjWithoutPrefix.EdaUsers} element={<Users />} />
       <Route path={RouteObjWithoutPrefix.CreateEdaUser} element={<CreateUser />} />
       <Route path={RouteObjWithoutPrefix.EditEdaUser} element={<EditUser />} />
-      <Route path={RouteObjWithoutPrefix.EdaUserDetails} element={<UserDetails />} />
+      <Route
+        path={RouteObjWithoutPrefix.CreateEdaControllerToken}
+        element={<CreateControllerToken />}
+      />
+      <Route path={RouteObjWithoutPrefix.EdaUserDetails} element={<EdaUserDetails />} />
+      <Route
+        path={RouteObjWithoutPrefix.EdaUserDetails}
+        element={<EdaUserDetails initialTabIndex={0} />}
+      />
+      <Route
+        path={RouteObjWithoutPrefix.EdaUserDetailsTokens}
+        element={<EdaUserDetails initialTabIndex={1} />}
+      />
 
       <Route path={RouteObjWithoutPrefix.EdaGroups} element={<Groups />} />
       <Route path={RouteObjWithoutPrefix.CreateEdaGroup} element={<EditGroup />} />

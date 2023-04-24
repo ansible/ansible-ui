@@ -1,4 +1,4 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -17,8 +17,9 @@ export function useUserActions(view: IEdaView<EdaUser>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit user'),
+        isPinned: true,
         onClick: (User: EdaUser) =>
           navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
       },
