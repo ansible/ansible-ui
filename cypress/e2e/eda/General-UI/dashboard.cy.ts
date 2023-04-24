@@ -59,7 +59,7 @@ describe('EDA Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.wait('@getProjects')
       .its('response.body.results')
-      .then((results: number) => {
+      .then((results: Array<EdaProject>) => {
         if (results.length === 0) {
           cy.hasTitle(/^There are currently no projects$/).should('be.visible');
           cy.contains(
@@ -83,7 +83,7 @@ describe('EDA Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.wait('@getRBAs')
       .its('response.body.results')
-      .then((results: number) => {
+      .then((results: Array<EdaRulebookActivation>) => {
         if (results.length === 0) {
           cy.contains('h3', 'Rulebook Activations').scrollIntoView();
           cy.hasTitle(/^There are currently no rulebook activations$/).should('be.visible');
@@ -109,7 +109,7 @@ describe('EDA Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.wait('@getDEs')
       .its('response.body.results')
-      .then((results: number) => {
+      .then((results: Array<EdaDecisionEnvironment>) => {
         if (results.length === 0) {
           cy.hasTitle(/^There are currently no decision environments$/).should('be.visible');
           cy.contains(
