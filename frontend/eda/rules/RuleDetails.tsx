@@ -2,7 +2,6 @@ import {
   ClipboardCopyButton,
   CodeBlock,
   CodeBlockAction,
-  CodeBlockCode,
   PageSection,
   Skeleton,
   Stack,
@@ -18,14 +17,11 @@ import {
   PageTab,
   PageTabs,
 } from '../../../framework';
-import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
-import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
-import { EdaRulebookCell } from '../rulebooks/components/EdaRulebookCell';
 
 export function RuleDetails() {
   const { t } = useTranslation();
@@ -33,13 +29,13 @@ export function RuleDetails() {
   const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}/`);
   const [copied, setCopied] = React.useState(false);
 
-  const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {
-    void navigator.clipboard.writeText(text.toString());
-  };
-  const onClick = (event: React.MouseEvent, text: { toString: () => string }) => {
-    clipboardCopyFunc(event, text);
-    setCopied(true);
-  };
+  // const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {
+  //   void navigator.clipboard.writeText(text.toString());
+  // };
+  // const onClick = (event: React.MouseEvent, text: { toString: () => string }) => {
+  //   clipboardCopyFunc(event, text);
+  //   setCopied(true);
+  // };
 
   const actions = (
     <React.Fragment>
@@ -48,7 +44,9 @@ export function RuleDetails() {
           id="basic-copy-button"
           textId="code-content"
           aria-label="Copy to clipboard"
-          onClick={(e) => onClick(e, rule?.conditions || '')}
+          onClick={(e) => {
+            // onClick(e, rule?.conditions || '')
+          }}
           exitDelay={copied ? 1500 : 600}
           maxWidth="110px"
           variant="plain"
@@ -65,11 +63,11 @@ export function RuleDetails() {
       <React.Fragment>
         <PageDetails>
           <PageDetail label={t('Name')}>{rule?.name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>{rule?.description || ''}</PageDetail>
+          {/* <PageDetail label={t('Description')}>{rule?.description || ''}</PageDetail> */}
           {/* <PageDetail label={t('Rule set')}>
             <EdaRuleSetCell />
           </PageDetail> */}
-          <PageDetail label={t('Project')}>
+          {/* <PageDetail label={t('Project')}>
             <EdaProjectCell id={rule?.project} />
           </PageDetail>
           <PageDetail label={t('Rulebook')}>
@@ -88,12 +86,12 @@ export function RuleDetails() {
           </PageDetail>
           <PageDetail label={t('Modified')}>
             {rule?.modified_at ? formatDateString(rule.modified_at) : ''}
-          </PageDetail>
+          </PageDetail> */}
         </PageDetails>
         <PageDetailsSection>
           <PageDetail label={t('Conditions')}>
             <CodeBlock actions={actions}>
-              <CodeBlockCode id="code-content">{rule?.conditions || ''} </CodeBlockCode>
+              {/* <CodeBlockCode id="code-content">{rule?.conditions || ''} </CodeBlockCode> */}
             </CodeBlock>
           </PageDetail>
         </PageDetailsSection>

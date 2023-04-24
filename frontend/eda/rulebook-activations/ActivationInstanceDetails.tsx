@@ -32,7 +32,7 @@ export function ActivationInstanceDetails() {
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation ?? ''}/`
+    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`
   );
 
   const renderActivationDetailsTab = (
@@ -79,17 +79,17 @@ export function ActivationInstanceDetails() {
         breadcrumbs={[
           { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           {
-            label: activationInstance?.activation_name ?? (activation?.name || ''),
+            label: activation?.name || '',
             to: RouteObj.EdaRulebookActivationDetails.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id?.toString() || ''
             ),
           },
           {
             label: t('History'),
             to: RouteObj.EdaRulebookActivationDetailsHistory.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id?.toString() || ''
             ),
           },
           { label: activationInstance?.name ?? `Instance ${activationInstance?.id || ''}` },

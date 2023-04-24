@@ -169,14 +169,14 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Project git hash')}>
               {/* {rulebookActivation?.project?.git_hash || ''} */}
             </PageDetail>
-            <PageDetail label={t('Last restarted')}>
+            {/* <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
                 ? formatDateString(rulebookActivation.last_restarted)
                 : ''}
             </PageDetail>
             <PageDetail label={t('Restarted count')}>
               {rulebookActivation?.restarted_count || 0}
-            </PageDetail>
+            </PageDetail> */}
             <PageDetail label={t('Created')}>
               {rulebookActivation?.created_at
                 ? formatDateString(rulebookActivation?.created_at)

@@ -53,8 +53,8 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.typeInputByLabel(/^First name$/, edaUser.username + 'edited firstname');
       cy.typeInputByLabel(/^Last name$/, edaUser.username + 'edited lastname');
       cy.typeInputByLabel(/^Email$/, 'edited@redhat.com');
-      cy.typeInputByLabel(/^Password$/, edaUser.password);
-      cy.typeInputByLabel(/^Password confirmation$/, edaUser.password);
+      cy.typeInputByLabel(/^Password$/, 'new-password');
+      cy.typeInputByLabel(/^Password confirmation$/, 'new-password');
       cy.selectDropdownOptionByLabel(/^User type$/, 'Regular user');
       cy.selectDropdownOptionByLabel(/^Roles(s)$/, 'Engineering');
       cy.clickButton(/^Save user$/);

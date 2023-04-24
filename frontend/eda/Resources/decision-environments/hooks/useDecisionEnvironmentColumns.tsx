@@ -8,13 +8,16 @@ import {
   TextCell,
 } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../../interfaces/EdaDecisionEnvironment';
 import { EdaCredentialCell } from '../../credentials/components/EdaCredentialCell';
 
 export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
+  return useMemo<ITableColumn<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>[]>(
     () => [
       {
         header: t('Name'),
@@ -53,8 +56,15 @@ export function useDecisionEnvironmentColumns() {
       },
       {
         header: t('Credential'),
-        cell: (decisionEnvironment) => <EdaCredentialCell id={decisionEnvironment.credential_id} />,
-        value: (decisionEnvironment) => decisionEnvironment.credential_id,
+        cell: (decisionEnvironment) => {
+          if ('credential_id' in decisionEnvironment)
+            return <EdaCredentialCell id={decisionEnvironment.credential_id} />;
+          else return <EdaCredentialCell id={decisionEnvironment.credential?.id} />;
+        },
+        value: (decisionEnvironment) => {
+          if ('credential_id' in decisionEnvironment) return decisionEnvironment.credential_id;
+          else return decisionEnvironment.credential?.id;
+        },
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
         modal: ColumnModalOption.Hidden,

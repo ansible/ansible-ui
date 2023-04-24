@@ -1,3 +1,5 @@
+import { RestartPolicyEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+
 //Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
 describe('EDA rulebook activations List', () => {
   before(() => {
@@ -37,7 +39,7 @@ describe('EDA rulebook activations List', () => {
           cy.createEdaRulebookActivation({
             rulebook_id: gitHookDeployRuleBook.id,
             decision_environment_id: edaDecisionEnvironment.id,
-            restart_policy: 'always',
+            restart_policy: RestartPolicyEnum.Always,
           }).then((edaRulebookActivation) => {
             cy.navigateTo(/^Rulebook activations$/);
             /*

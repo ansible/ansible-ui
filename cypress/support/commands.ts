@@ -4,6 +4,7 @@
 import '@cypress/code-coverage/support';
 import { SetOptional } from 'type-fest';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
@@ -18,13 +19,15 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { Label } from '../../frontend/awx/interfaces/Label';
-import './rest-commands';
 import './auth';
-import './eda-commands';
 import './awx-commands';
+import './eda-commands';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -233,7 +236,7 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(
-        edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>
+        edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>
       ): Chainable<EdaRulebookActivation>;
 
       /**

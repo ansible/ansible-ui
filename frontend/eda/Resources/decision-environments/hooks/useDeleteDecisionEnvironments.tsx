@@ -4,24 +4,29 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../hub/useHubView';
 import { API_PREFIX } from '../../../constants';
-import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../../interfaces/EdaDecisionEnvironment';
 import { useDecisionEnvironmentColumns } from './useDecisionEnvironmentColumns';
 
 export function useDeleteDecisionEnvironments(
-  onComplete: (decisionEnvironments: EdaDecisionEnvironment[]) => void
+  onComplete: (
+    decisionEnvironments: (EdaDecisionEnvironment | EdaDecisionEnvironmentRead)[]
+  ) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useDecisionEnvironmentColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<EdaDecisionEnvironment>();
+  const bulkAction = useBulkConfirmation<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>();
   return useCallback(
-    (decisionEnvironments: EdaDecisionEnvironment[]) => {
+    (decisionEnvironments: (EdaDecisionEnvironment | EdaDecisionEnvironmentRead)[]) => {
       bulkAction({
         title: t('Permanently delete decision environments', {
           count: decisionEnvironments.length,
         }),
         confirmText: t(
-          'Yes, I confirm that I want to delete these {{count}} decisionEnvironments.',
+          'Yes, I confirm that I want to delete these {{count}} decision environments.',
           {
             count: decisionEnvironments.length,
           }
@@ -33,7 +38,7 @@ export function useDeleteDecisionEnvironments(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (decisionEnvironment: EdaDecisionEnvironment) =>
+        actionFn: (decisionEnvironment: EdaDecisionEnvironment | EdaDecisionEnvironmentRead) =>
           requestDelete(`${API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
       });
     },

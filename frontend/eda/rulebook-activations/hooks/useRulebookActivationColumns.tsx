@@ -10,9 +10,8 @@ import {
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
 import { EdaDecisionEnvironmentCell } from '../../Resources/decision-environments/components/EdaDecisionEnvironmentCell';
-import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
+import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaRulebookCell } from '../../rulebooks/components/EdaRulebookCell';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
@@ -52,15 +51,20 @@ export function useRulebookActivationColumns() {
       },
       {
         header: t('Rulebook'),
-        cell: (activation) => <EdaRulebookCell id={activation.rulebook_id} />,
-        value: (activation) => activation.rulebook_id,
+        type: 'text',
+        value: (activation) => activation.rulebook.name,
         // table: ColumnTableOption.Expanded,
         modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Project'),
-        cell: (activation) => <EdaProjectCell id={activation.project_id} />,
-        value: (activation) => activation.project_id,
+        cell: (activation) => (
+          <TextCell
+            text={activation.project?.name}
+            to={`${API_PREFIX}/projects/${activation.project?.id ?? ''}`}
+          />
+        ),
+        value: (activation) => activation.project?.name,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
         modal: ColumnModalOption.Hidden,
@@ -68,31 +72,31 @@ export function useRulebookActivationColumns() {
       {
         header: t('Decision environment'),
         cell: (activation) => (
-          <EdaDecisionEnvironmentCell id={activation.decision_environment_id} />
+          <EdaDecisionEnvironmentCell id={activation.decision_environment?.id} />
         ),
-        value: (activation) => activation.decision_environment_id,
+        value: (activation) => activation.decision_environment?.id,
         // table: ColumnTableOption.Expanded,
         list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
-      {
-        header: t('Rules'),
-        type: 'count',
-        value: (activation) => activation?.rules_count ?? 0,
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Fire count'),
-        type: 'count',
-        value: (activation) => activation?.fired_count ?? 0,
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Restarts'),
-        type: 'count',
-        value: (activation) => activation?.restarted_count ?? 0,
-        modal: ColumnModalOption.Hidden,
-      },
+      // {
+      //   header: t('Rules'),
+      //   type: 'count',
+      //   value: (activation) => activation?.rules_count ?? 0,
+      //   modal: ColumnModalOption.Hidden,
+      // },
+      // {
+      //   header: t('Fire count'),
+      //   type: 'count',
+      //   value: (activation) => activation?.fired_count ?? 0,
+      //   modal: ColumnModalOption.Hidden,
+      // },
+      // {
+      //   header: t('Restarts'),
+      //   type: 'count',
+      //   value: (activation) => activation?.restarted_count ?? 0,
+      //   modal: ColumnModalOption.Hidden,
+      // },
       {
         header: t('Created'),
         type: 'datetime',

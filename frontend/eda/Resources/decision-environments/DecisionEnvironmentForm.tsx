@@ -122,7 +122,7 @@ export function EditDecisionEnvironment() {
             onCancel={onCancel}
             defaultValue={{
               ...decisionEnvironment,
-              credential_id: decisionEnvironment?.credential?.id || undefined,
+              credential_id: decisionEnvironment?.credential_id || undefined,
             }}
           >
             <DecisionEnvironmentInputs />

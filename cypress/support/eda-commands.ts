@@ -1,15 +1,22 @@
+import { SetOptional } from 'type-fest';
+import { randomString } from '../../framework/utils/random-string';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { SetOptional } from 'type-fest';
-import { randomString } from '../../framework/utils/random-string';
-import './rest-commands';
-import './commands';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import {
+  CredentialTypeEnum,
+  RestartPolicyEnum,
+} from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
+import './commands';
+import './rest-commands';
 
 /*  EDA related custom command implementation  */
 
@@ -57,10 +64,10 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>) => {
+  (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
     cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
-      restart_policy: 'on-failure',
+      restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
     }).then((edaRulebookActivation) => {
       cy.wrap(edaRulebookActivation)
@@ -156,7 +163,7 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
 Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
     name: 'E2E Credential ' + randomString(4),
-    credential_type: 'Container Registry',
+    credential_type: CredentialTypeEnum.ContainerRegistry,
     description: 'This is a container registry credential',
     username: 'admin',
   }).then((edaCredential) => {
@@ -190,7 +197,7 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
 });
 
 Cypress.Commands.add('createEdaUser', () => {
-  cy.requestPost<EdaUser>(`/api/eda/v1/users/`, {
+  cy.requestPost<EdaUserCreateUpdate>(`/api/eda/v1/users/`, {
     username: `E2E User ${randomString(4)}`,
     email: `${randomString(4)}@redhat.com`,
     password: `${randomString(4)}`,

@@ -5,15 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
 
-export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnvironment>) {
+export function useDecisionEnvironmentsActions(
+  view: IEdaView<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>
+) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments(view.unselectItemsAndRefresh);
-  return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
+  return useMemo<IPageAction<EdaDecisionEnvironment | EdaDecisionEnvironmentRead>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -29,8 +34,7 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected decision environments'),
-        onClick: (decisionEnvironments: EdaDecisionEnvironment[]) =>
-          deleteDecisionEnvironments(decisionEnvironments),
+        onClick: (decisionEnvironments) => deleteDecisionEnvironments(decisionEnvironments),
         isDanger: true,
       },
     ],

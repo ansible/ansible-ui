@@ -19,14 +19,14 @@ import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironments } from './hooks/useDeleteDecisionEnvironments';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
+  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     `${API_PREFIX}/decision-environments/${params.id ?? ''}/`
   );
 
@@ -40,14 +40,14 @@ export function DecisionEnvironmentDetails() {
     }
   });
 
-  const itemActions = useMemo<IPageAction<EdaDecisionEnvironment>[]>(
+  const itemActions = useMemo<IPageAction<EdaDecisionEnvironmentRead>[]>(
     () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         label: t('Edit decision environment'),
-        onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
+        onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           navigate(
             RouteObj.EditEdaDecisionEnvironment.replace(':id', `${decisionEnvironment?.id || ''}`)
           ),
@@ -57,7 +57,7 @@ export function DecisionEnvironmentDetails() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision environment'),
-        onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
+        onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           deleteDecisionEnvironments([decisionEnvironment]),
         isDanger: true,
       },
@@ -66,7 +66,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const renderDecisionEnvironmentDetailsTab = (
-    decisionEnvironment: EdaDecisionEnvironment | undefined
+    decisionEnvironment: EdaDecisionEnvironmentRead | undefined
   ): JSX.Element => {
     return (
       <PageDetails>
@@ -74,7 +74,7 @@ export function DecisionEnvironmentDetails() {
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
         <PageDetail label={t('Image')}>{decisionEnvironment?.image_url || ''}</PageDetail>
         <PageDetail label={t('Credential')}>
-          {decisionEnvironment && decisionEnvironment.credential_id ? (
+          {decisionEnvironment && 'credential' in decisionEnvironment ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
@@ -100,7 +100,7 @@ export function DecisionEnvironmentDetails() {
           { label: decisionEnvironment?.name },
         ]}
         headerActions={
-          <PageActions<EdaDecisionEnvironment>
+          <PageActions<EdaDecisionEnvironmentRead>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={decisionEnvironment}
