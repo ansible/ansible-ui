@@ -54,10 +54,10 @@ export function CreateCredential() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create credential')}
+        title={t('Create Credential')}
         breadcrumbs={[
           { label: t('Credentials'), to: RouteObj.Credentials },
-          { label: t('Create credential') },
+          { label: t('Create Credential') },
         ]}
       />
       <PageForm
@@ -106,7 +106,7 @@ export function EditCredential() {
         <PageHeader
           breadcrumbs={[
             { label: t('Credentials'), to: RouteObj.Credentials },
-            { label: t('Edit credential') },
+            { label: t('Edit Credential') },
           ]}
         />
       </PageLayout>
@@ -115,10 +115,10 @@ export function EditCredential() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit credential')}
+        title={t('Edit Credential')}
         breadcrumbs={[
           { label: t('Credentials'), to: RouteObj.Credentials },
-          { label: t('Edit credential') },
+          { label: t('Edit Credential') },
         ]}
       />
       <PageForm

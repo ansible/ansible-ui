@@ -30,7 +30,7 @@ export function RuleAudit() {
         emptyStateTitle={t('No rule audit data')}
         emptyStateDescription={t('No rule audit data')}
         {...view}
-        defaultSubtitle={t('Rule audit')}
+        defaultSubtitle={t('Rule Audit')}
       />
     </PageLayout>
   );

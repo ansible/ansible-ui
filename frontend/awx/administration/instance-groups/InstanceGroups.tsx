@@ -95,8 +95,8 @@ export function InstanceGroups() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Instance groups')}
-        titleHelpTitle={t('Instance groups')}
+        title={t('Instance Groups')}
+        titleHelpTitle={t('Instance Groups')}
         titleHelp={t('An instance group defines grouped instances or grouped containers')}
         description={t(
           'An instance group provides the ability to group instances in a clustered environment.'

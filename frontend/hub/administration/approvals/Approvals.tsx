@@ -21,7 +21,7 @@ export function Approvals() {
   const rowActions = useApprovalActions(() => void view.refresh());
   return (
     <PageLayout>
-      <PageHeader title={t('Collection approvals')} />
+      <PageHeader title={t('Collection Approvals')} />
       <PageTable<Approval>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
@@ -30,7 +30,7 @@ export function Approvals() {
         errorStateTitle={t('Error loading approvals')}
         emptyStateTitle={t('No approvals yet')}
         {...view}
-        defaultSubtitle={t('Collection approval')}
+        defaultSubtitle={t('Collection Approval')}
       />
     </PageLayout>
   );

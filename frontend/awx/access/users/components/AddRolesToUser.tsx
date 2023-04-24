@@ -18,7 +18,7 @@ export function AddRolesToUser() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Add roles to user')} />
+      <PageHeader title={t('Add Roles to User')} />
       <AddRolesForm users={[user]} onClose={() => navigate(-1)} />
     </PageLayout>
   );

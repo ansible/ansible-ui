@@ -63,7 +63,7 @@ describe('organizations', () => {
     cy.clickTableRow(organization.name);
     cy.hasTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
-    cy.hasTitle(/^Edit organization$/);
+    cy.hasTitle(/^Edit Organization$/);
     cy.typeInputByLabel(/^Name$/, organization.name + 'a');
     cy.clickButton(/^Save organization$/);
     cy.hasTitle(`${organization.name}a`);
@@ -84,7 +84,7 @@ describe('organizations', () => {
   it('navigates to the edit form from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/);
     cy.clickTableRowKebabAction(organization.name, /^Edit organization$/);
-    cy.hasTitle(/^Edit organization$/);
+    cy.hasTitle(/^Edit Organization$/);
   });
 
   it('deletes an organization from the organizations list row item', () => {

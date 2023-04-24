@@ -15,6 +15,6 @@ describe('Job templates Form', () => {
 
     cy.clickButton(/^Create job template$/);
 
-    cy.hasTitle(/^Create job template$/);
+    cy.hasTitle(/^Create Job Template$/);
   });
 });

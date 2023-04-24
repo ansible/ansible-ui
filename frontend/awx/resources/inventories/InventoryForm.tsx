@@ -66,10 +66,10 @@ export function CreateInventory() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create inventory')}
+        title={t('Create Inventory')}
         breadcrumbs={[
           { label: t('Inventories'), to: RouteObj.Inventories },
-          { label: t('Create inventory') },
+          { label: t('Create Inventory') },
         ]}
       />
       <PageForm
@@ -139,7 +139,7 @@ export function EditInventory() {
         <PageHeader
           breadcrumbs={[
             { label: t('Inventories'), to: RouteObj.Inventories },
-            { label: t('Edit inventory') },
+            { label: t('Edit Inventory') },
           ]}
         />
       </PageLayout>
@@ -148,10 +148,10 @@ export function EditInventory() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit inventory')}
+        title={t('Edit Inventory')}
         breadcrumbs={[
           { label: t('Inventories'), to: RouteObj.Inventories },
-          { label: t('Edit inventory') },
+          { label: t('Edit Inventory') },
         ]}
       />
       <PageForm

@@ -36,10 +36,10 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
   columns = useColumnsWithoutExpandedRow(columns);
   return (
     <PageDashboardCard
-      title={t('Rulebook activations')}
+      title={t('Rulebook Activations')}
       subtitle={t('Recently updated activations')}
       height="md"
-      linkText={t('Go to rulebook activations')}
+      linkText={t('Go to Rulebook Activations')}
       to={RouteObj.EdaRulebookActivations}
       helpTitle={t('Rulebook activations')}
       help={t('Rulebook activations are rulebooks that have been activated to run.')}

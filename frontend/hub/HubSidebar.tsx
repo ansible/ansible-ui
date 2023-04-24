@@ -30,7 +30,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
       </NavItem>
       <NavExpandable
         key="automation-content"
-        title={t('Automation content')}
+        title={t('Automation Content')}
         isExpanded
         isActive={isRouteActive(
           [RouteObj.Collections, RouteObj.Namespaces, RouteObj.Repositories],
@@ -53,13 +53,13 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.HubExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.HubExecutionEnvironments)}
         >
-          {t('Execution environments')}
+          {t('Execution Environments')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.SignatureKeys, location)}
           onClick={() => onClick(RouteObj.SignatureKeys)}
         >
-          {t('Signature keys')}
+          {t('Signature Keys')}
         </NavItem>
       </NavExpandable>
       <NavExpandable
@@ -81,7 +81,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.RemoteRegistries, location)}
           onClick={() => onClick(RouteObj.RemoteRegistries)}
         >
-          {t('Remote registries')}
+          {t('Remote Registries')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.Tasks, location)}
@@ -110,7 +110,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.APIToken, location)}
           onClick={() => onClick(RouteObj.APIToken)}
         >
-          {t('API token')}
+          {t('API Token')}
         </NavItem>
       </NavExpandable>
     </CommonSidebar>

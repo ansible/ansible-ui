@@ -25,7 +25,7 @@ export function TaskDetails() {
     <PageLayout>
       <PageHeader
         title={task?.name}
-        breadcrumbs={[{ label: t('Task management'), to: RouteObj.Tasks }, { label: task?.name }]}
+        breadcrumbs={[{ label: t('Task Management'), to: RouteObj.Tasks }, { label: task?.name }]}
       />
       <PageDetails>
         <PageDetail label={t('Name')}>{task?.name}</PageDetail>

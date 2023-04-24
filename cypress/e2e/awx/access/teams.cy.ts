@@ -81,7 +81,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
     cy.typeInputByLabel(/^Name$/, team.name + 'a');
     cy.clickButton(/^Save team$/);
     cy.hasTitle(`${team.name}a`);
@@ -195,7 +195,7 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
   });
 
   it('can delete a team from the details page', () => {
@@ -213,7 +213,7 @@ describe('teams', () => {
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRowPinnedAction(team.name, 'Edit team');
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
   });
 
   it('can delete a team from the teams list row item', () => {

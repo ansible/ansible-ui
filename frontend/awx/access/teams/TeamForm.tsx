@@ -24,8 +24,8 @@ export function CreateTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create team') }]}
+        title={t('Create Team')}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create Team') }]}
       />
       <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
@@ -50,7 +50,7 @@ export function EditTeam() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit team') }]}
+          breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit Team') }]}
         />
       </PageLayout>
     );
@@ -58,8 +58,8 @@ export function EditTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit team') }]}
+        title={t('Edit Team')}
+        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit Team') }]}
       />
       <PageForm
         submitText={t('Save team')}

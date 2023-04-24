@@ -106,7 +106,7 @@ export function Templates() {
     <PageLayout>
       <PageHeader
         title={t('Templates')}
-        titleHelpTitle={t('Templates')}
+        titleHelpTitle={t('Template')}
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}

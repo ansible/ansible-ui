@@ -62,7 +62,7 @@ export function EditInstance() {
         <PageHeader
           breadcrumbs={[
             { label: t('Instances'), to: RouteObj.Instances },
-            { label: t('Edit instance') },
+            { label: t('Edit Instance') },
           ]}
         />
       </PageLayout>

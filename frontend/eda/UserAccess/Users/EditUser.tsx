@@ -49,7 +49,7 @@ export function CreateUser() {
     <>
       <PageHeader
         title={t('Create User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create user') }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create User') }]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -113,7 +113,7 @@ export function EditUser() {
     <PageLayout>
       <PageHeader
         title={t('Edit User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit user') }]}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit User') }]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}

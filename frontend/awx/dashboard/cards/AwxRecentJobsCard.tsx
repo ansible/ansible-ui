@@ -42,7 +42,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
       subtitle={t('Recently finished jobs')}
       width="lg"
       height="md"
-      linkText={t('Go to jobs')}
+      linkText={t('Go to Jobs')}
       to={RouteObj.Jobs}
     >
       <PageTable

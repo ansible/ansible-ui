@@ -46,7 +46,7 @@ export function SignatureKeys() {
   );
   return (
     <PageLayout>
-      <PageHeader title={t('Signature keys')} />
+      <PageHeader title={t('Signature Keys')} />
       <PageTable<SignatureKey>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

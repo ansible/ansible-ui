@@ -54,7 +54,7 @@ export function Collections() {
         description={t(
           'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
         )}
-        titleHelpTitle={t('Collections')}
+        titleHelpTitle={t('Collection')}
         titleHelp={t(
           'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
         )}

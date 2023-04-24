@@ -95,11 +95,8 @@ export function ExecutionEnvironments() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Execution environments')}
-        titleHelpTitle={t('Execution environments')}
-        titleHelp={t('executionEnvironments.title.help')}
+        title={t('Execution Environments')}
         titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
-        description={t('executionEnvironments.title.description')}
       />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}

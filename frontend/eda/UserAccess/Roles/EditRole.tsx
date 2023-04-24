@@ -58,7 +58,7 @@ export function EditRole() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit role') }]}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
           />
         </PageLayout>
       );
@@ -66,8 +66,8 @@ export function EditRole() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit role')}
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit role') }]}
+            title={t('Edit Role')}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
           />
           <PageForm
             schema={RoleSchemaType}
@@ -91,7 +91,7 @@ export function EditRole() {
         />
         <PageForm
           schema={RoleSchemaType}
-          submitText={t('Create Role')}
+          submitText={t('Create role')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

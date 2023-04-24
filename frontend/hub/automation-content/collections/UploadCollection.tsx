@@ -20,10 +20,10 @@ export function UploadCollection() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Upload collection')}
+        title={t('Upload Collection')}
         breadcrumbs={[
           { label: t('Collections'), to: RouteObj.Collections },
-          { label: t('Upload collection') },
+          { label: t('Upload Collection') },
         ]}
       />
       <UploadCollectionByFile />

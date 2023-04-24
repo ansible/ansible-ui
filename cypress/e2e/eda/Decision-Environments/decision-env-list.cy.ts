@@ -7,8 +7,8 @@ describe('EDA Decision Environment List', () => {
 
   it('can filter the Decision Environment list based on Name filter option', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision environments$/);
-      cy.hasTitle(/^Decision environments$/);
+      cy.navigateTo(/^Decision Environments$/);
+      cy.hasTitle(/^Decision Environments$/);
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).should('be.visible').click();
@@ -19,7 +19,7 @@ describe('EDA Decision Environment List', () => {
   it('can bulk delete Decision Environments from the list', () => {
     cy.createEdaDecisionEnvironment().then((edaDE1) => {
       cy.createEdaDecisionEnvironment().then((edaDE2) => {
-        cy.navigateTo(/^Decision environments$/);
+        cy.navigateTo(/^Decision Environments$/);
         cy.get('button[aria-label="table view"]').click();
         cy.selectTableRow(edaDE1.name);
         cy.selectTableRow(edaDE2.name);
@@ -41,15 +41,15 @@ describe('EDA Decision Environment List', () => {
 
   it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision environments$/);
-      cy.hasTitle(/^Decision environments$/);
+      cy.navigateTo(/^Decision Environments$/);
+      cy.hasTitle(/^Decision Environments$/);
       cy.clickTableRowKebabAction(edaDE.name, /^Delete decision-environment$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.hasTitle(/^Decision environments$/);
+      cy.hasTitle(/^Decision Environments$/);
     });
   });
 });

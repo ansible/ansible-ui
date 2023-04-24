@@ -49,10 +49,10 @@ export function CreateOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create organization')}
+        title={t('Create Organization')}
         breadcrumbs={[
           { label: t('Organizations'), to: RouteObj.Organizations },
-          { label: t('Create organization') },
+          { label: t('Create Organization') },
         ]}
       />
       <PageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
@@ -119,10 +119,10 @@ export function EditOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit organization')}
+        title={t('Edit Organization')}
         breadcrumbs={[
           { label: t('Organizations'), to: RouteObj.Organizations },
-          { label: t('Edit organization') },
+          { label: t('Edit Organization') },
         ]}
       />
       {organization ? (

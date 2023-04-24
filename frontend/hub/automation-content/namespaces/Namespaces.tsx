@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { idKeyFn, useHubView } from '../../useHubView';
+import { Namespace } from './Namespace';
 import { useNamespaceFilters } from './hooks/useNamespaceFilters';
 import { useNamespacesColumns } from './hooks/useNamespacesColumns';
-import { Namespace } from './Namespace';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ export function Namespaces() {
         description={t(
           'Use namespaces to organize the collections created by automation developers in your organization.'
         )}
-        titleHelpTitle={t('Namespaces')}
+        titleHelpTitle={t('Namespace')}
         titleHelp={t(
           'Use namespaces to organize the collections created by automation developers in your organization. Create namespaces, upload collections and add additional information and resources that help your end users in their automation tasks.'
         )}

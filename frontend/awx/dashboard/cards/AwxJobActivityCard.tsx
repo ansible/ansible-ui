@@ -12,8 +12,8 @@ export function AwxJobActivityCard() {
   const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
   return (
     <PageDashboardCard
-      title={t('Recent job activity')}
-      linkText={t('Go to jobs')}
+      title={t('Recent Job Activity')}
+      linkText={t('Go to Jobs')}
       to={RouteObj.Jobs}
       width="xxl"
       height="sm"
