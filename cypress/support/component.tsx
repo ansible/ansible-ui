@@ -82,9 +82,7 @@ Cypress.Commands.add('mount', (component, route) => {
           </Page>
         </ActiveUserProvider>
       </PageFramework>
-    </MemoryRouter>,
-    {},
-    undefined
+    </MemoryRouter>
   );
 });
 
