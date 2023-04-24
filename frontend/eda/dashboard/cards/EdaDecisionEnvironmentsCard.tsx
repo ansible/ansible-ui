@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-    DateTimeCell,
-    PageTable,
-    useColumnsWithoutExpandedRow,
-    useColumnsWithoutSort,
-    useVisibleModalColumns,
+  DateTimeCell,
+  PageTable,
+  useColumnsWithoutExpandedRow,
+  useColumnsWithoutSort,
+  useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
