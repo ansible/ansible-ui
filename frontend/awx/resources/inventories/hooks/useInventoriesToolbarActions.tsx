@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { useOptions } from '../../../../common/crud/useOptions';
 import { Inventory } from '../../../interfaces/Inventory';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../useAwxView';
 import { useDeleteInventories } from './useDeleteInventories';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { useOptions } from '../../../../common/crud/useOptions';
 
 export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
           canCreateInventory
             ? undefined
             : t(
-                'You do not have permission to create an inventory. Please contact your Organization Administrator if there is an issue with your access.'
+                'You do not have permission to create an inventory. Please contact your organization administrator if there is an issue with your access.'
               ),
         selection: PageActionSelection.None,
         actions: [

@@ -38,7 +38,7 @@ export function GroupDetails() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
-        label: t('Edit Group'),
+        label: t('Edit group'),
         onClick: (group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
@@ -46,7 +46,7 @@ export function GroupDetails() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete Group'),
+        label: t('Delete group'),
         onClick: (group: EdaGroup) => deleteGroups([group]),
         isDanger: true,
       },

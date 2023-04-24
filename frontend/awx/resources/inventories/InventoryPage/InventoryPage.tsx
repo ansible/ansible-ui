@@ -3,12 +3,12 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
+import { useGet } from '../../../../common/crud/useGet';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 import { InventoryDetails } from './InventoryDetails';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function InventoryPage() {
   const { t } = useTranslation();
@@ -57,7 +57,7 @@ export function InventoryPage() {
         <PageTab label={t('Jobs')}>
           <PageNotImplemented />
         </PageTab>
-        <PageTab label={t('Job Templates')}>
+        <PageTab label={t('Job templates')}>
           <PageNotImplemented />
         </PageTab>
       </PageTabs>

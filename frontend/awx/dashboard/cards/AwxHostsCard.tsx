@@ -9,7 +9,7 @@ export function AwxHostsCard(props: { total: number; failed: number }) {
   return (
     <PageDashboardDonutCard
       title={t('Hosts')}
-      linkText={t('Go to Hosts')}
+      linkText={t('Go to hosts')}
       to={RouteObj.Hosts}
       items={[
         {

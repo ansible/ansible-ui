@@ -19,18 +19,18 @@ import { EdaCredential } from '../../interfaces/EdaCredential';
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
     {
-      label: t('GitHub Personal Access Token'),
-      description: t('GitHub Personal Access Token'),
+      label: t('GitHub personal access token'),
+      description: t('GitHub personal access token'),
       value: 'GitHub Personal Access Token',
     },
     {
-      label: t('GitLab Personal Access Token'),
-      description: t('GitLab Personal Access Token'),
+      label: t('GitLab personal access token'),
+      description: t('GitLab personal access token'),
       value: 'GitLab Personal Access Token',
     },
     {
-      label: t('Container Registry'),
-      description: t('Container Registry Token'),
+      label: t('Container registry'),
+      description: t('Container registry token'),
       value: 'Container Registry',
     },
   ];

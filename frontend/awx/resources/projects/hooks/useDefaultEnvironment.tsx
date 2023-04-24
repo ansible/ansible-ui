@@ -13,7 +13,7 @@ export function useExecutionEnvironmentColumn() {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<Project>>(
     () => ({
-      header: t('Default Environment'),
+      header: t('Default environment'),
       value: (project) => project.summary_fields?.default_environment?.name,
       cell: (project) => (
         <TextCell

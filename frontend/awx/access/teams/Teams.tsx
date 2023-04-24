@@ -61,7 +61,7 @@ export function Teams() {
           canCreateTeam
             ? t('Please create a team by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}

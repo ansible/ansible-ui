@@ -12,13 +12,13 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { requestGet } from '../../../common/crud/Data';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
-import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 
 function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate }) {
   const { jobtemplate } = props;
@@ -82,12 +82,12 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         labelHelp={t('Select a job type for this job template.')}
         name="job_type"
         id="job_type"
-        label={t('Job Type')}
+        label={t('Job type')}
         options={[
           { label: t('Check'), value: 'check' },
           { label: t('Run'), value: 'run' },
         ]}
-        placeholderText={t('Select Job Type')}
+        placeholderText={t('Select job type')}
       />
       <PageFormInventorySelect<JobTemplateForm>
         additionalControls={
@@ -230,7 +230,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_diff_mode_on_launch" />
         }
-        formLabel={t('Show Changes')}
+        formLabel={t('Show changes')}
       />
       <PageFormInstanceGroupSelect<{ instanceGroups: string; id: number }>
         additionalControls={
@@ -249,7 +249,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_tags_on_launch" />
         }
         placeholderText={t('Select or create job tags')}
-        label={t('Job Tags')}
+        label={t('Job tags')}
         options={
           jobtemplate?.job_tags.split(',').map((tag) => ({ value: tag, label: tag })) ?? [
             { label: '', value: '' },
@@ -266,7 +266,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         }
         name="skip_tags"
         placeholderText={t('Select or create skip tags')}
-        label={t('Skip Tags')}
+        label={t('Skip tags')}
         options={
           jobtemplate?.skip_tags.split(',').map((tag) => ({ value: tag, label: tag })) ?? [
             { label: '', value: '' },
@@ -307,7 +307,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         </FormSection>
       ) : null}
       {isWebhookEnabled ? (
-        <FormSection title={t('Webhook Details')}>
+        <FormSection title={t('Webhook details')}>
           <PageFormSelectOption<JobTemplateForm>
             name="webhook_service"
             label={t('Webhook service')}

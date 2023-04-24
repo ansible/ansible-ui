@@ -1,4 +1,4 @@
-describe('EDA Rulebook Activations History Tab', () => {
+describe('EDA rulebook activations History Tab', () => {
   before(() => {
     cy.edaLogin();
   });

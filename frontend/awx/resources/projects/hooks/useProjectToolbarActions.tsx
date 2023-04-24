@@ -31,7 +31,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         isDisabled: canCreateProject
           ? undefined
           : t(
-              'You do not have permission to create a project. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to create a project. Please contact your organization administrator if there is an issue with your access.'
             ),
         href: RouteObj.CreateProject,
       },

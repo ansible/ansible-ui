@@ -38,7 +38,7 @@ function ProjectCreateInputs() {
       <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
-        label={t('SCM Type')}
+        label={t('SCM type')}
         placeholder={t('Git')}
       />
       <PageFormTextInput<EdaProject>
@@ -73,7 +73,7 @@ function ProjectEditInputs() {
       <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
-        label={t('SCM Type')}
+        label={t('SCM type')}
         placeholder={t('Git')}
       />
     </>

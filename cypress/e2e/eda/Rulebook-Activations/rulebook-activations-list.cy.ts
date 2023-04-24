@@ -1,10 +1,10 @@
-//Tests a user's ability to perform certain actions on the Rulebook Activations list in the EDA UI.
-describe('EDA Rulebook Activations List', () => {
+//Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
+describe('EDA rulebook activations List', () => {
   before(() => {
     cy.edaLogin();
   });
 
-  it('can filter the Rulebook Activations list based on Name filter option', () => {
+  it('can filter the rulebook activations list based on Name filter option', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -113,7 +113,7 @@ describe('EDA Rulebook Activations List', () => {
     });
   });
 
-  it('can bulk delete Rulebook Activations from the toolbar', () => {
+  it('can bulk delete rulebook activations from the toolbar', () => {
     cy.createEdaProject().then((edaProject1) => {
       cy.getEdaRulebooks(edaProject1).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -141,7 +141,7 @@ describe('EDA Rulebook Activations List', () => {
                     cy.navigateTo(/^Rulebook activations$/);
                     /*
             uncomment below when working, within() yields multiple elements as 
-            currently select by name doesn't work as expected for Rulebook Activations
+            currently select by name doesn't work as expected for rulebook activations
             cy.selectTableRow(edaRulebookActivation1.name);
             cy.selectTableRow(edaRulebookActivation2.name);
             */

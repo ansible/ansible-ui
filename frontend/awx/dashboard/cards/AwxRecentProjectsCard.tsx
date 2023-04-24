@@ -38,7 +38,7 @@ export function AwxRecentProjectsCard() {
       subtitle={t('Recently updated projects')}
       width="lg"
       height="md"
-      linkText={t('Go to Projects')}
+      linkText={t('Go to projects')}
       to={RouteObj.Projects}
     >
       <PageTable

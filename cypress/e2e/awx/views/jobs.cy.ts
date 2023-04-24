@@ -71,8 +71,8 @@ describe('jobs', () => {
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
     cy.hasDetail('Launched by', 'admin');
-    cy.hasDetail('Execution Environment', 'AWX EE (latest)');
-    cy.hasDetail('Job Slice', '0/1');
+    cy.hasDetail('Execution environment', 'AWX EE (latest)');
+    cy.hasDetail('Job slice', '0/1');
   });
 
   it('filters jobs by id', () => {

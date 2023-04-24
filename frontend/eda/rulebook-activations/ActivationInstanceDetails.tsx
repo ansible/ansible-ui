@@ -11,14 +11,14 @@ import {
   Scrollable,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
+import { ItemsResponse } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
+import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
-import { PageDetailsSection } from '../common/PageDetailsSection';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { ItemsResponse } from '../../common/crud/Data';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -77,7 +77,7 @@ export function ActivationInstanceDetails() {
       <PageHeader
         title={activationInstance?.name ?? `Instance ${activationInstance?.id || ''}`}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook activations'), to: RouteObj.EdaRulebookActivations },
           {
             label: activationInstance?.activation_name ?? (activation?.name || ''),
             to: RouteObj.EdaRulebookActivationDetails.replace(

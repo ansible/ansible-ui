@@ -1,9 +1,9 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
+import { DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { useGet } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { Credential } from '../../../interfaces/Credential';
@@ -81,8 +81,8 @@ export function OrganizationDetails(props: { organization: Organization }) {
         />
       </PageDetail>
       <PageDetail
-        label={t`Instance Groups`}
-        helpText={t`The Instance Groups for this Organization to run on.`}
+        label={t`Instance groups`}
+        helpText={t`The instance groups for this organization to run on.`}
         isEmpty={instanceGroups.length === 0}
       >
         <LabelGroup>
@@ -95,7 +95,7 @@ export function OrganizationDetails(props: { organization: Organization }) {
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Galaxy Credentials')} isEmpty={galaxyCredentials.length === 0}>
+      <PageDetail label={t('Galaxy credentials')} isEmpty={galaxyCredentials.length === 0}>
         <LabelGroup>
           {galaxyCredentials?.map((credential) => (
             <CredentialLabel credential={credential} key={credential.id} />

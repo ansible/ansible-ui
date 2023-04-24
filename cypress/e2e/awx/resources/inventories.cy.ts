@@ -49,7 +49,7 @@ describe('inventories', () => {
     cy.clickLink(/^Create inventory$/);
     cy.typeInputByLabel(/^Name$/, inventoryName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
-    cy.getCheckboxByLabel('Prevent Instance Group Fallback').click();
+    cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);
     cy.hasTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);

@@ -133,13 +133,13 @@ export function useInventoryTypeToolbarFilter() {
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'kind',
-      label: t('Inventory Type'),
+      label: t('Inventory type'),
       type: 'select',
       query: 'or__kind',
       options: [
         { label: t('Inventory'), value: '' },
-        { label: t('Smart Inventory'), value: 'smart' },
-        { label: t('Constructed Inventory'), value: 'constructed' },
+        { label: t('Smart inventory'), value: 'smart' },
+        { label: t('Constructed inventory'), value: 'constructed' },
       ],
       placeholder: t('Select types'),
     }),

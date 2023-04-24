@@ -2,15 +2,15 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
+import { StatusCell } from '../../../../common/StatusCell';
 import {
   useCreatedColumn,
   useDescriptionColumn,
-  useOrganizationNameColumn,
   useModifiedColumn,
   useNameColumn,
+  useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { StatusCell } from '../../../../common/StatusCell';
-import { RouteObj } from '../../../../Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { type WebSocketInventory } from '../Inventories';
 
@@ -46,9 +46,9 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
       value: (inventory: Inventory) => {
         switch (inventory.kind) {
           case 'smart':
-            return t('Smart Inventory');
+            return t('Smart inventory');
           case 'constructed':
-            return t('Constructed Inventory');
+            return t('Constructed inventory');
           default:
             return t('Inventory');
         }

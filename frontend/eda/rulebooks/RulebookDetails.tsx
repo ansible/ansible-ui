@@ -13,8 +13,8 @@ import {
   useInMemoryView,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
+import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
@@ -91,7 +91,7 @@ export function RulebookDetails() {
       {rulebook ? (
         <PageTabs>
           <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
-          <PageTab label={t('Rule Sets')}>
+          <PageTab label={t('Rule sets')}>
             <RulesetsTab />
           </PageTab>
         </PageTabs>

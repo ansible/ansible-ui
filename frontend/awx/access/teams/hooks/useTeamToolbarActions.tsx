@@ -32,7 +32,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         isDisabled: canCreateTeam
           ? undefined
           : t(
-              'You do not have permission to create a team. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to create a team. Please contact your organization administrator if there is an issue with your access.'
             ),
         href: RouteObj.CreateTeam,
       },

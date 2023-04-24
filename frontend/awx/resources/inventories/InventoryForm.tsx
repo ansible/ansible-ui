@@ -1,23 +1,23 @@
+import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { RouteObj } from '../../../Routes';
+import { ItemsResponse, postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
-import { getAwxError } from '../../useAwxView';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { Inventory } from '../../interfaces/Inventory';
-import { ItemsResponse, postRequest, requestPatch } from '../../../common/crud/Data';
-import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { FieldValues } from 'react-hook-form';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
-import { Label } from '../../interfaces/Label';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { Inventory } from '../../interfaces/Inventory';
+import { Label } from '../../interfaces/Label';
+import { getAwxError } from '../../useAwxView';
 
 interface InventoryFields extends FieldValues {
   inventory: Inventory;
@@ -203,7 +203,7 @@ function InventoryInputs() {
         )}
       >
         <PageFormCheckbox
-          label={t('Prevent Instance Group Fallback')}
+          label={t('Prevent instance group fallback')}
           name="inventory.prevent_instance_group_fallback"
         />
       </PageFormGroup>

@@ -29,7 +29,7 @@ export function EditRole() {
         url: Type.Optional(
           Type.String({
             title: t('URL'),
-            placeholder: t('Enter the Description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
           })
         ),
       }),
@@ -58,7 +58,7 @@ export function EditRole() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit role') }]}
           />
         </PageLayout>
       );
@@ -66,12 +66,12 @@ export function EditRole() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Role')}
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
+            title={t('Edit role')}
+            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit role') }]}
           />
           <PageForm
             schema={RoleSchemaType}
-            submitText={t('Save Role')}
+            submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}

@@ -1,10 +1,10 @@
-import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { useTranslation } from 'react-i18next';
-import { useActiveUser } from '../../../common/useActiveUser';
-import { KeyIcon, MonitoringIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
+import { KeyIcon, MonitoringIcon } from '@patternfly/react-icons';
+import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
+import { useActiveUser } from '../../../common/useActiveUser';
 import Picture from '../../assets/images/ansible_analytics_screenshot.png';
-import React, { ReactElement } from 'react';
 
 export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
@@ -95,7 +95,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
           icon={MonitoringIcon}
           button={
             activeUser?.is_superuser ? (
-              <Button onClick={() => null}>{t('Go to Settings')}</Button>
+              <Button onClick={() => null}>{t('Go to settings')}</Button>
             ) : undefined
           }
           footNote={t(

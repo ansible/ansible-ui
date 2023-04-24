@@ -1,21 +1,21 @@
 import {
+  Label,
+  LabelGroup,
   TextList,
   TextListItem,
   TextListItemVariants,
   TextListVariants,
-  LabelGroup,
-  Label,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
-import { UserDateDetail } from '../../../common/UserDateDetail';
+import { useGet } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
+import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -99,8 +99,8 @@ export function TemplateDetails(props: { template: JobTemplate }) {
         </LabelGroup>
       </PageDetail>
       <PageDetail
-        label={t`Instance Groups`}
-        helpText={t`The Instance Groups for this Job Template to run on.`}
+        label={t`Instance groups`}
+        helpText={t`The instance groups for this job template to run on.`}
         isEmpty={instanceGroups.length === 0}
       >
         <LabelGroup>
@@ -162,17 +162,17 @@ export function TemplateDetails(props: { template: JobTemplate }) {
             </TextListItem>
           )}
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent Jobs`}</TextListItem>
+            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
           )}
           {template.use_fact_cache && (
-            <TextListItem component={TextListItemVariants.li}>{t`Fact Storage`}</TextListItem>
+            <TextListItem component={TextListItemVariants.li}>{t`Fact storage`}</TextListItem>
           )}
           {template.webhook_service && (
             <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
           )}
           {template.prevent_instance_group_fallback && (
             <TextListItem component={TextListItemVariants.li}>
-              {t`Prevent Instance Group Fallback`}
+              {t`Prevent instance group fallback`}
             </TextListItem>
           )}
         </TextList>

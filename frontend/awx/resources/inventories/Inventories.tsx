@@ -112,7 +112,7 @@ export function Inventories() {
           canCreateInventory
             ? t('Please create an inventory by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateInventory ? undefined : CubesIcon}
