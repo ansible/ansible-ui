@@ -30,7 +30,7 @@ export function Approvals() {
         errorStateTitle={t('Error loading approvals')}
         emptyStateTitle={t('No approvals yet')}
         {...view}
-        defaultSubtitle={t('Collection approval')}
+        defaultSubtitle={t('Collection Approval')}
       />
     </PageLayout>
   );

@@ -233,7 +233,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           emptyStateIcon={CubesIcon}
           emptyStateDescription={t('No history for this rulebook activation')}
           {...view}
-          defaultSubtitle={t('Rulebook activation history')}
+          defaultSubtitle={t('Rulebook Activation History')}
         />
       </PageLayout>
     );

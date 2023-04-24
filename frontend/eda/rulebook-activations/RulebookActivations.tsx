@@ -39,7 +39,7 @@ export function RulebookActivations() {
         emptyStateButtonText={t('Create rulebook activation')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         {...view}
-        defaultSubtitle={t('Rulebook activation')}
+        defaultSubtitle={t('Rulebook Activation')}
       />
     </PageLayout>
   );

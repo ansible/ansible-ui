@@ -141,7 +141,7 @@ export function EditDecisionEnvironment() {
           ]}
         />
         <PageForm
-          submitText={t('Create Decision Environment')}
+          submitText={t('Create decision environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

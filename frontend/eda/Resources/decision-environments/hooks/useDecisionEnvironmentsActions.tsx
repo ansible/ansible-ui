@@ -21,7 +21,7 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusIcon,
-        label: t('Create Decision Environment'),
+        label: t('Create decision environment'),
         onClick: () => navigate(RouteObj.CreateEdaDecisionEnvironment),
       },
       {

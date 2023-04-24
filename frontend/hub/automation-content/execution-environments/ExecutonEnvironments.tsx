@@ -30,7 +30,7 @@ export function ExecutionEnvironments() {
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
         {...view}
-        defaultSubtitle={t('Execution environment')}
+        defaultSubtitle={t('Execution Environment')}
       />
     </PageLayout>
   );
