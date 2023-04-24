@@ -25,7 +25,6 @@ import './rest-commands';
 import './auth';
 import './eda-commands';
 import './awx-commands';
-import { LinkHTMLAttributes } from 'react';
 
 declare global {
   namespace Cypress {
