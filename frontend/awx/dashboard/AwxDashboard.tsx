@@ -37,7 +37,7 @@ export function AwxDashboard() {
         </Banner>
       )}
       <PageHeader
-        title={t(`Welcome to ${product}`)}
+        title={t(`Welcome to {{product}}`, { product })}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
       <DashboardInternal />
