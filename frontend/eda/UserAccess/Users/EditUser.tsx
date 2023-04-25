@@ -184,7 +184,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         autoComplete="new-password"
         isRequired={mode === 'create'}
       />
-      <PageFormRolesSelect<UserInput> name="roles" labelHelp={t('User roles')} />
+      <PageFormRolesSelect<UserInput> name="roles" labelHelp={t('User role(s)')} />
     </Fragment>
   );
 }

@@ -134,7 +134,7 @@ describe('jobs', () => {
     cy.filterTableByTypeAndText('ID', jobId);
     cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
     cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
     // Clean up newly launched job
     cy.url().then((url) => {
       const jobId = url.substring(url.lastIndexOf('/') + 1);
