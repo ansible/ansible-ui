@@ -245,7 +245,9 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.ts
         env:
-          CYPRESS_EDA_SERVER: http://eda-api:8000/
+          CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
+          CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
+          CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
