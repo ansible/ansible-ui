@@ -12,23 +12,18 @@ import {
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
-import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
-import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { ActivationInstanceLogs } from './ActivationInstanceLogs';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/`
-  );
-
-  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
@@ -53,20 +48,18 @@ export function ActivationInstanceDetails() {
           </PageDetail>
         </PageDetails>
         <PageDetailsSection>
-          {activationInstanceLog?.results?.length && (
-            <PageDetail label={t('Output')}>
-              <CodeBlock>
-                <CodeBlockCode
-                  style={{
-                    minHeight: '150px',
-                  }}
-                  id="code-content"
-                >
-                  {activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
-                </CodeBlockCode>
-              </CodeBlock>
-            </PageDetail>
-          )}
+          <PageDetail label={t('Output')}>
+            <CodeBlock>
+              <CodeBlockCode
+                style={{
+                  minHeight: '150px',
+                }}
+                id="code-content"
+              >
+                <ActivationInstanceLogs />
+              </CodeBlockCode>
+            </CodeBlock>
+          </PageDetail>
         </PageDetailsSection>
       </Scrollable>
     );
