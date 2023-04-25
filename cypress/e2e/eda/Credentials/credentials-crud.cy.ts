@@ -79,7 +79,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
       cy.clickPageAction(/^Edit credential$/);
-      cy.hasTitle(/^Edit Credential$/);
+      cy.hasTitle(`Edit ${edaCredential.name}`);
       cy.typeInputByLabel(/^Name$/, edaCredential.name + 'lalala');
       cy.typeInputByLabel(/^Description$/, 'this credential type has been changed');
       cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub personal access token');
