@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export function ProjectPage() {
         <PageTab label={t('Access')}>
           <PageNotImplemented />
         </PageTab>
-        <PageTab label={t('Job Templates')}>
+        <PageTab label={t('Job templates')}>
           <PageNotImplemented />
         </PageTab>
         <PageTab label={t('Notifications')}>

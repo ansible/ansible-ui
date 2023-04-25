@@ -21,18 +21,23 @@ import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 export function AwxDashboard() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
+  const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
+    fetch(url).then((r) => r.json())
+  );
   return (
     <PageLayout>
-      <Banner variant="info">
-        <Trans>
-          <p>
-            <InfoCircleIcon /> You are currently viewing a tech preview of the new {product} user
-            interface. To return to the original interface, click <a href="/">here</a>.
-          </p>
-        </Trans>
-      </Banner>
+      {config?.ui_next && (
+        <Banner variant="info">
+          <Trans>
+            <p>
+              <InfoCircleIcon /> You are currently viewing a tech preview of the new {product} user
+              interface. To return to the original interface, click <a href="/">here</a>.
+            </p>
+          </Trans>
+        </Banner>
+      )}
       <PageHeader
-        title={t(`Welcome to ${product}`)}
+        title={t(`Welcome to {{product}}`, { product })}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
       />
       <DashboardInternal />
@@ -88,6 +93,9 @@ function DashboardInternal() {
   );
 }
 
+interface IConfigData {
+  ui_next: boolean;
+}
 interface IDashboardData {
   inventories: {
     url: string;

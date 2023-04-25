@@ -11,7 +11,7 @@ export function useInventoriesFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: 'Filter by name',
+        placeholder: t('starts with'),
       },
     ],
     [t]

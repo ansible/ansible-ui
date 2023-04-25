@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -31,7 +31,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential ?? ''}/`
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
   );
 
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
@@ -45,11 +45,11 @@ export function DecisionEnvironmentDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
           navigate(
-            RouteObj.EditEdaDecisionEnvironment.replace(':id', decisionEnvironment.id.toString())
+            RouteObj.EditEdaDecisionEnvironment.replace(':id', `${decisionEnvironment?.id || ''}`)
           ),
       },
       {
@@ -73,13 +73,12 @@ export function DecisionEnvironmentDetails() {
         <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
         <PageDetail label={t('Image')}>{decisionEnvironment?.image_url || ''}</PageDetail>
-        <PageDetail label={t('Tag')}>{decisionEnvironment?.tag || ''}</PageDetail>
         <PageDetail label={t('Credential')}>
           {decisionEnvironment && decisionEnvironment.credential ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment.credential || ''}`
+                `${decisionEnvironment?.credential?.id || ''}`
               )}
             >
               {credential?.name}

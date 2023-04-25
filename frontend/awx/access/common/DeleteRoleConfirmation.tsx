@@ -22,7 +22,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
   const { title, role, user, onConfirm, onClose } = props;
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`Team`) : t(`User`));
+  const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`team`) : t(`user`));
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onClose?.();
@@ -31,7 +31,13 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
   return (
     <Modal
       titleIconVariant="danger"
-      title={title ? title : t(`Remove ${sourceOfRole()} Access`)}
+      title={
+        title
+          ? title
+          : typeof role.team_id !== 'undefined'
+          ? t(`Remove team access`)
+          : t(`Remove user access`)
+      }
       variant={ModalVariant.small}
       isOpen
       onClose={onCloseClicked}
@@ -58,10 +64,12 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
         </Button>,
       ]}
     >
-      {sourceOfRole() === 'Team' ? (
+      {sourceOfRole() === 'team' ? (
         <>
           {t(
-            `Are you sure you want to remove ${role.name} access from ${role.team_name}?  Doing so affects all members of the team.`
+            `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
+              role.team_name
+            }?  Doing so affects all members of the team.`
           )}
           <br />
           <br />
@@ -70,7 +78,13 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
           )}
         </>
       ) : (
-        <>{t(`Are you sure you want to remove ${role.name} access from ${user.username}?`)}</>
+        <>
+          {t(
+            `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
+              user.username
+            }?`
+          )}
+        </>
       )}
     </Modal>
   );

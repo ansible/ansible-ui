@@ -11,7 +11,7 @@ export function useRuleAuditActionsFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: t('Filter by name'),
+        placeholder: t('starts with'),
       },
     ],
     [t]

@@ -44,13 +44,8 @@ function DecisionEnvironmentInputs() {
         maxLength={150}
         isRequired
       />
-      <PageFormTextInput<EdaDecisionEnvironment>
-        name="tag"
-        label={t('Tag')}
-        placeholder={t('Enter tag')}
-      />
       <PageFormSelectOption
-        name={'credential'}
+        name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
         options={
@@ -104,8 +99,8 @@ export function EditDecisionEnvironment() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit decision environment') },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Edit Decision Environment') },
             ]}
           />
         </PageLayout>
@@ -114,10 +109,10 @@ export function EditDecisionEnvironment() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit decision environment')}
+            title={t('Edit Decision Environment')}
             breadcrumbs={[
-              { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit decision environment') },
+              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+              { label: t('Edit Decision Environment') },
             ]}
           />
           <PageForm
@@ -125,7 +120,10 @@ export function EditDecisionEnvironment() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={decisionEnvironment}
+            defaultValue={{
+              ...decisionEnvironment,
+              credential_id: decisionEnvironment?.credential?.id || undefined,
+            }}
           >
             <DecisionEnvironmentInputs />
           </PageForm>
@@ -136,10 +134,10 @@ export function EditDecisionEnvironment() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create decision environment')}
+          title={t('Create Decision Environment')}
           breadcrumbs={[
-            { label: t('Decision environments'), to: RouteObj.EdaDecisionEnvironments },
-            { label: t('Create decision environment') },
+            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Create Decision Environment') },
           ]}
         />
         <PageForm

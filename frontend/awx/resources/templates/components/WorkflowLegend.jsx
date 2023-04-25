@@ -89,7 +89,7 @@ function WorkflowLegend() {
       <Legend>
         <li>
           <NodeTypeLetter>JT</NodeTypeLetter>
-          <span>{t`Job Template`}</span>
+          <span>{t`Job template`}</span>
         </li>
         <li>
           <NodeTypeLetter>W</NodeTypeLetter>
@@ -97,7 +97,7 @@ function WorkflowLegend() {
         </li>
         <li>
           <NodeTypeLetter>I</NodeTypeLetter>
-          <span>{t`Inventory Sync`}</span>
+          <span>{t`Inventory sync`}</span>
         </li>
         <li>
           <NodeTypeLetter>P</NodeTypeLetter>
@@ -105,7 +105,7 @@ function WorkflowLegend() {
         </li>
         <li>
           <NodeTypeLetter>M</NodeTypeLetter>
-          <span>{t`Management Job`}</span>
+          <span>{t`Management job`}</span>
         </li>
         <li>
           <NodeTypeLetter>

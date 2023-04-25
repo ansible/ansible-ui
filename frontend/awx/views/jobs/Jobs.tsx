@@ -61,13 +61,15 @@ export default function Jobs() {
     <PageLayout>
       <PageHeader
         title={t('Jobs')}
-        titleHelpTitle={t('Jobs')}
+        titleHelpTitle={t('Job')}
         titleHelp={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         // headerActions={
         //   <ToggleGroup aria-label={t('show graph toggle')}>

@@ -5,7 +5,9 @@ import { IToolbarFilter } from '../../../../../framework';
 export function useRemoteRegistryFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }],
+    () => [
+      { key: 'name', label: t('Name'), type: 'string', query: 'name', placeholder: 'starts with' },
+    ],
     [t]
   );
   return toolbarFilters;

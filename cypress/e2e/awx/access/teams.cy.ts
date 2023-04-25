@@ -81,7 +81,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
     cy.typeInputByLabel(/^Name$/, team.name + 'a');
     cy.clickButton(/^Save team$/);
     cy.hasTitle(`${team.name}a`);
@@ -171,7 +171,7 @@ describe('teams', () => {
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
       )
       .click();
-    cy.contains('Remove User Access');
+    cy.contains('Remove user access');
     cy.clickButton('Delete');
     cy.filterTableByText(user1.username);
     cy.contains('tr', user1.username)
@@ -195,7 +195,7 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
   });
 
   it('can delete a team from the details page', () => {
@@ -213,7 +213,7 @@ describe('teams', () => {
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRowPinnedAction(team.name, 'Edit team');
-    cy.hasTitle(/^Edit team$/);
+    cy.hasTitle(/^Edit Team$/);
   });
 
   it('can delete a team from the teams list row item', () => {

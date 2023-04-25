@@ -1,8 +1,8 @@
-//Tests a user's ability to create, edit, and delete Rulebook Activations in the EDA UI.
-//IMPORTANT: Rulebook Activations do not have Edit capability in the UI. They can only be enabled or disabled.
+//Tests a user's ability to create, edit, and delete rulebook activations in the EDA UI.
+//IMPORTANT: rulebook activations do not have Edit capability in the UI. They can only be enabled or disabled.
 import { randomString } from '../../../../framework/utils/random-string';
 
-describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
+describe('EDA rulebook activations- Create, Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
   });
@@ -14,15 +14,15 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
         cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
           const edaRulebook = edaRuleBooks[0];
           const name = 'E2E Rulebook Activation ' + randomString(4);
-          cy.navigateTo(/^Rulebook activations$/);
+          cy.navigateTo(/^Rulebook Activations$/);
           cy.clickButton(/^Create rulebook activation$/);
-          cy.get('h1').should('contain', 'Create rulebook activation');
+          cy.get('h1').should('contain', 'Create Rulebook Activation');
           cy.typeInputByLabel(/^Name$/, name);
           cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
-          cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
-          cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRulebook.name);
-          cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
           cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
+          cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRulebook.name);
+          cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
+          cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
           cy.clickButton(/^Create rulebook activation$/);
           cy.get('h1').should('contain', name);
           cy.getEdaRulebookActivation(name).then((edaRulebookActivation) => {
@@ -74,7 +74,7 @@ describe('EDA Rulebook Activations- Create, Edit, Delete', () => {
             cy.clickModalButton('Delete rulebook activations');
             cy.wait('@deleted').then((deleted) => {
               expect(deleted?.response?.statusCode).to.eql(204);
-              cy.hasTitle(/^Rulebook activations$/);
+              cy.hasTitle(/^Rulebook Activations$/);
             });
           });
           cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);

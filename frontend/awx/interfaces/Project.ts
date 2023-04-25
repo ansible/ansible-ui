@@ -36,6 +36,12 @@ export interface Project {
       name: string;
       description: string;
     };
+    default_environment?: {
+      id: number;
+      name: string;
+      description: string;
+      image: string;
+    };
     created_by: {
       id: number;
       username: string;
@@ -131,7 +137,7 @@ export interface Project {
   scm_update_cache_timeout: number;
   allow_override: boolean;
   custom_virtualenv: null;
-  default_environment: null;
+  default_environment: null | string;
   signature_validation_credential: null;
   last_update_failed: boolean;
   last_updated: null | string;

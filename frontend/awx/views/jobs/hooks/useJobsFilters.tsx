@@ -1,7 +1,7 @@
-import { IToolbarFilter } from '../../../../../framework';
-import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter } from '../../../../../framework';
+import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
 
 export function useJobsFilters() {
   const { t } = useTranslation();
@@ -14,33 +14,36 @@ export function useJobsFilters() {
         label: t('ID'),
         type: 'string',
         query: 'id',
+        placeholder: t('equals'),
       },
       {
         key: 'labels__name__icontains',
-        label: t('Label Name'),
+        label: t('Label name'),
         type: 'string',
         query: 'labels__name__icontains',
+        placeholder: t('contains'),
       },
       {
         key: 'type',
-        label: t('Job Type'),
+        label: t('Job type'),
         type: 'select',
         query: 'type',
         options: [
-          { label: t('Source Control Update'), value: 'project_update' },
-          { label: t('Inventory Sync'), value: 'inventory_update' },
-          { label: t('Playbook Run'), value: 'job' },
+          { label: t('Source control update'), value: 'project_update' },
+          { label: t('Inventory sync'), value: 'inventory_update' },
+          { label: t('Playbook run'), value: 'job' },
           { label: t('Command'), value: 'ad_hoc_command' },
-          { label: t('Management Job'), value: 'system_job' },
-          { label: t('Workflow Job'), value: 'workflow_job' },
+          { label: t('Management job'), value: 'system_job' },
+          { label: t('Workflow job'), value: 'workflow_job' },
         ],
-        placeholder: t('Filter By Job Type'),
+        placeholder: t('Select types'),
       },
       {
         key: 'created_by__username__icontains',
-        label: t('Launched By (Username)'),
+        label: t('Launched by (Username)'),
         type: 'string',
         query: 'created_by__username__icontains',
+        placeholder: t('contains'),
       },
       {
         key: 'status',
@@ -57,13 +60,14 @@ export function useJobsFilters() {
           { label: t('Error'), value: 'error' },
           { label: t('Canceled'), value: 'canceled' },
         ],
-        placeholder: t('Filter By Status'),
+        placeholder: t('Select statuses'),
       },
       {
         key: 'job__limit',
         label: t('Limit'),
         type: 'string',
         query: 'job__limit',
+        placeholder: t('equals'),
       },
     ],
     [nameToolbarFilter, t]

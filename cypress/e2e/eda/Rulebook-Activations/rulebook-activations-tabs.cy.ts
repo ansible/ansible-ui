@@ -1,4 +1,4 @@
-describe('EDA Rulebook Activations History Tab', () => {
+describe('EDA rulebook activations History Tab', () => {
   before(() => {
     cy.edaLogin();
   });
@@ -16,7 +16,7 @@ describe('EDA Rulebook Activations History Tab', () => {
               'GET',
               `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
             ).as('getRBAInstance');
-            cy.navigateTo(/^Rulebook activations$/);
+            cy.navigateTo(/^Rulebook Activations$/);
             cy.clickTableRow(edaRulebookActivation.name);
             cy.contains('h1', edaRulebookActivation.name).should('be.visible');
             cy.contains('li', 'History').click();
@@ -51,7 +51,7 @@ describe('EDA Rulebook Activations History Tab', () => {
               'GET',
               `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
             ).as('getRBAInstance');
-            cy.navigateTo(/^Rulebook activations$/);
+            cy.navigateTo(/^Rulebook Activations$/);
             cy.clickTableRow(edaRulebookActivation.name);
             cy.contains('li', 'History').click();
             // TODO: needs further work when RBA actions are done

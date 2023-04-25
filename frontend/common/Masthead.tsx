@@ -45,6 +45,7 @@ import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
+import { useActiveUser } from './useActiveUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -261,9 +262,13 @@ function AccountDropdown() {
   );
 }
 
-function EdaUserInfo() {
+export function EdaUserInfo() {
   const fetcher = useFetcher();
-  const meResponse = useSWR<{ username: string }>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
+  const meResponse = useSWR<{ id: number; username: string }>(
+    `${API_PREFIX}/users/me/`,
+    fetcher,
+    swrOptions
+  );
   return meResponse?.data;
 }
 
@@ -292,6 +297,7 @@ function AccountDropdownInternal() {
     setOpen((open) => !open);
   }, []);
   const { t } = useTranslation();
+  const activeUser = useActiveUser();
   return (
     <Dropdown
       onSelect={onSelect}
@@ -316,8 +322,16 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             automationServer?.type === AutomationServerType.EDA
-              ? history(RouteObj.EdaUsers)
-              : history(RouteObj.Users);
+              ? history(
+                  activeUser
+                    ? RouteObj.EdaUserDetails.replace(':id', activeUser.id.toString())
+                    : RouteObj.EdaUsers
+                )
+              : history(
+                  activeUser
+                    ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
+                    : RouteObj.Users
+                );
           }}
         >
           {t('User details')}

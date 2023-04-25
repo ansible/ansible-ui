@@ -36,13 +36,13 @@ export function useTeamActions(options: {
       activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(
-            `You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.`
+            `You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.`
           );
     const cannotAddUsers = (team: Team) =>
       activeUser?.is_superuser || team?.summary_fields?.user_capabilities?.edit
         ? ''
         : t(
-            `You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.`
+            `You do not have permission to add users. Please contact your organization administrator if there is an issue with your access.`
           );
 
     const actions: IPageAction<Team>[] = [

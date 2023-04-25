@@ -21,8 +21,6 @@ export function useRulebookColumns() {
             }
           />
         ),
-        sort: 'name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -36,21 +34,19 @@ export function useRulebookColumns() {
       },
       {
         header: t('Project'),
-        cell: (rulebook) => <EdaProjectCell id={rulebook.project} />,
-        value: (rulebook) => rulebook.project,
+        cell: (rulebook) => <EdaProjectCell id={rulebook.project_id} />,
+        value: (rulebook) => rulebook.project_id,
         // table: ColumnTableOption.Expanded,
       },
       {
         header: t('Rules'),
         type: 'count',
         value: (rulebook) => rulebook?.rule_count ?? 0,
-        sort: 'rule_count',
       },
       {
         header: t('Fire count'),
         type: 'count',
         value: (rulebook) => rulebook?.fire_count ?? 0,
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },

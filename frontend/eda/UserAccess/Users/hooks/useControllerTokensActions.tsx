@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { EdaRole } from '../../../interfaces/EdaRole';
+import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 import { IEdaView } from '../../../useEventDrivenView';
-import { useDeleteRoles } from './useDeleteRole';
+import { useDeleteControllerTokens } from './useDeleteControllerTokens';
 
-export function useRolesActions(view: IEdaView<EdaRole>) {
+export function useControllerTokensActions(view: IEdaView<EdaControllerToken>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const deleteRoles = useDeleteRoles(view.unselectItemsAndRefresh);
-  return useMemo<IPageAction<EdaRole>[]>(
+  const deleteControllerTokens = useDeleteControllerTokens(view.unselectItemsAndRefresh);
+  return useMemo<IPageAction<EdaControllerToken>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -21,18 +21,19 @@ export function useRolesActions(view: IEdaView<EdaRole>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusIcon,
-        label: t('Create Role'),
-        onClick: () => navigate(RouteObj.CreateEdaRole),
+        label: t('Create controller token'),
+        onClick: () => navigate(RouteObj.CreateEdaControllerToken),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected Roles'),
-        onClick: (Roles: EdaRole[]) => deleteRoles(Roles),
+        label: t('Delete selected controller tokens'),
+        onClick: (controllerTokens: EdaControllerToken[]) =>
+          deleteControllerTokens(controllerTokens),
         isDanger: true,
       },
     ],
-    [deleteRoles, navigate, t]
+    [deleteControllerTokens, navigate, t]
   );
 }

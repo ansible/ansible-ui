@@ -14,7 +14,6 @@ export interface EdaRulebookActivation {
   decision_environment?: EdaDecisionEnvironment;
   rulebook?: { id: string; name: string };
   restart_policy?: string;
-  project?: { id: string; name: string; git_hash: string };
   status?: string;
   is_enabled?: boolean;
   variables_template?: string;
@@ -25,7 +24,8 @@ export interface EdaRulebookActivation {
   fired_count?: number;
   created_at?: string;
   modified_at?: string;
-  extra_var?: { id: string; name: string };
+  extra_var_id?: number;
+  extra_var?: { id: string };
   project_id?: number;
 
   rulebook_id: number;

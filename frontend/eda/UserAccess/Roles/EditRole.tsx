@@ -29,7 +29,7 @@ export function EditRole() {
         url: Type.Optional(
           Type.String({
             title: t('URL'),
-            placeholder: t('Enter the Description'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
           })
         ),
       }),
@@ -71,7 +71,7 @@ export function EditRole() {
           />
           <PageForm
             schema={RoleSchemaType}
-            submitText={t('Save Role')}
+            submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
@@ -91,7 +91,7 @@ export function EditRole() {
         />
         <PageForm
           schema={RoleSchemaType}
-          submitText={t('Create Role')}
+          submitText={t('Create role')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

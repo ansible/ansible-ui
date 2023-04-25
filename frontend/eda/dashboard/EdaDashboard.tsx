@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -12,7 +11,7 @@ import { EdaProject } from '../interfaces/EdaProject';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
-import { EdaRecentProjectsCard } from './cards/EdaRecentProjectsCard';
+import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
@@ -32,8 +31,8 @@ export function EdaDashboard() {
     url: `${API_PREFIX}/activations/`,
     disableQueryString: true,
   });
-  const hasProjectOrDecisionEnvironment =
-    edaProjectView.itemCount !== 0 || edaDecisionEnvironmentView.itemCount !== 0;
+  const hasProject = edaProjectView.itemCount !== 0;
+  const hasDecisionEnvironment = edaDecisionEnvironmentView.itemCount !== 0;
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
 
   return (
@@ -45,9 +44,9 @@ export function EdaDashboard() {
         )}
       />
       <PageDashboard>
-        {(!hasProjectOrDecisionEnvironment || !hasRulebookActivation) && (
+        {(!hasProject || !hasRulebookActivation) && (
           <PageDashboardCard
-            title={t('Getting started')}
+            title={t('Getting Started')}
             description={t(
               'Event-Driven Ansible is a highly scalable, flexible automation capability that works with event sources such as other software vendors’  monitoring tools. In an automatic remediation use case, these vendor tools watch your IT solutions and identify “events,” such as an outage.'
             )}
@@ -56,25 +55,41 @@ export function EdaDashboard() {
             <CardBody>
               <Stack hasGutter>
                 <Text>
-                  To learn how to get started, view the documentation,{' '}
-                  <Link to="https://www.redhat.com/en/engage/event-driven-ansible-20220907">
-                    check out our instruct guides
+                  {t('To learn how to get started, view the documentation, ')}
+                  <Link
+                    to="https://www.redhat.com/en/engage/event-driven-ansible-20220907"
+                    target="_blank"
+                  >
+                    {t('check out our instruct guides')}
                   </Link>
-                  , or follow the steps below.
+                  {t(', or follow the steps below.')}
                 </Text>
                 <ProgressStepper>
                   <ProgressStep
-                    variant={hasProjectOrDecisionEnvironment ? 'success' : 'info'}
-                    description="Create a project or sync a decision environment."
+                    variant={hasProject ? 'success' : 'info'}
+                    description={t('Create a project.')}
                   >
-                    <Link to={RouteObj.CreateEdaProject}>Create a project</Link> or{' '}
-                    <Link to={RouteObj.EdaDecisionEnvironments}>sync a decision environment.</Link>
+                    <Link to={RouteObj.CreateEdaProject}>{t('Project')}</Link>
                   </ProgressStep>
                   <ProgressStep
-                    variant={hasRulebookActivation ? 'success' : 'info'}
-                    description="Create a rulebook activation."
+                    variant={!hasProject ? 'pending' : hasDecisionEnvironment ? 'success' : 'info'}
+                    description={t('Create a decision environment.')}
                   >
-                    <Link to={RouteObj.CreateEdaRulebookActivation}>Rulebook activation</Link>
+                    <Link to={RouteObj.EdaDecisionEnvironments}>{t('Decision Environment')}</Link>
+                  </ProgressStep>
+                  <ProgressStep
+                    variant={
+                      !hasProject || !hasDecisionEnvironment
+                        ? 'pending'
+                        : hasRulebookActivation
+                        ? 'success'
+                        : 'info'
+                    }
+                    description={t('Create a rulebook activation.')}
+                  >
+                    <Link to={RouteObj.CreateEdaRulebookActivation}>
+                      {t('Rulebook Activation')}
+                    </Link>
                   </ProgressStep>
                 </ProgressStepper>
               </Stack>

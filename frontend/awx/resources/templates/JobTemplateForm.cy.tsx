@@ -97,7 +97,7 @@ describe('Create job template ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.hasTitle(/^Create job template$/);
+    cy.hasTitle(/^Create Job Template$/);
   });
   it('Validates properly', () => {
     cy.mount(<CreateJobTemplate />);

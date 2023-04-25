@@ -54,7 +54,7 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
           />
         </PageLayout>
       );
@@ -62,8 +62,8 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit rule')}
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
+            title={t('Edit Rule')}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
           />
           <PageForm
             schema={RuleSchemaType}
@@ -82,8 +82,8 @@ export function EditRule() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create rule')}
-          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create rule') }]}
+          title={t('Create Rule')}
+          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create Rule') }]}
         />
         <PageForm
           schema={RuleSchemaType}

@@ -123,5 +123,5 @@ jobs:
           target: eda-ui
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/eda-ui:main
           labels: ${{ steps.meta.outputs.labels }}

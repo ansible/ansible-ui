@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { RouteObj, RouteType } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteObj, RouteType } from '../Routes';
 
 export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
   const { isNavOpen, setNavOpen } = props;
@@ -53,13 +53,13 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.HubExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.HubExecutionEnvironments)}
         >
-          {t('Execution environments')}
+          {t('Execution Environments')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.SignatureKeys, location)}
           onClick={() => onClick(RouteObj.SignatureKeys)}
         >
-          {t('Signature keys')}
+          {t('Signature Keys')}
         </NavItem>
       </NavExpandable>
       <NavExpandable
@@ -81,7 +81,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.RemoteRegistries, location)}
           onClick={() => onClick(RouteObj.RemoteRegistries)}
         >
-          {t('Remote registries')}
+          {t('Remote Registries')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.Tasks, location)}
@@ -110,7 +110,7 @@ export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.APIToken, location)}
           onClick={() => onClick(RouteObj.APIToken)}
         >
-          {t('API token')}
+          {t('API Token')}
         </NavItem>
       </NavExpandable>
     </CommonSidebar>

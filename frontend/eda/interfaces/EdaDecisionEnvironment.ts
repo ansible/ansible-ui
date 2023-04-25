@@ -10,8 +10,8 @@ export interface EdaDecisionEnvironment {
   name: string;
   description: string;
   image_url: string;
-  tag: string;
-  credential: number;
+  credential: { id: number; name: string };
+  credential_id?: number;
   created_at: string;
   modified_at: string;
 }

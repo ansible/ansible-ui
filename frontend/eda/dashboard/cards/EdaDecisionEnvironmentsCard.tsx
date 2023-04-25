@@ -42,7 +42,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
       height="md"
       linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
-      helpTitle={t('Decision Environments')}
+      helpTitle={t('Decision environments')}
       help={t(
         'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
       )}
@@ -51,19 +51,19 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
         disableBodyPadding={true}
         tableColumns={columns}
         autoHidePagination={true}
-        errorStateTitle={t('Error loading activations')}
+        errorStateTitle={t('Error loading decision environments')}
         emptyStateIcon={PlusCircleIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no rulebook activations')}
-        emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
-        emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
+        emptyStateTitle={t('There are currently no decision environments')}
+        emptyStateDescription={t('Create a decision environment by clicking the button below.')}
+        emptyStateButtonText={t('Create Decision Environment')}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
-        defaultSubtitle={t('Activation')}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
         pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
+        disableLastRowBorder
       />
     </PageDashboardCard>
   );

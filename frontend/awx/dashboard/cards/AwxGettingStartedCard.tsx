@@ -15,7 +15,7 @@ export function AwxGettingStartedCard(props: {
   return (
     <>
       {(!hasInventory || !hasExecutonEnvironment || !hasJobTemplate) && (
-        <PageDashboardCard title={t('Getting started')} width="xxl">
+        <PageDashboardCard title={t('Getting Started')} width="xxl">
           <CardBody>
             <Stack hasGutter>
               <Text>

@@ -95,7 +95,15 @@ export function useSignatureKeysColumns(_options?: {
 export function useSignatureKeyFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }],
+    () => [
+      {
+        key: 'name',
+        label: t('Name'),
+        type: 'string',
+        query: 'name',
+        placeholder: t('starts with'),
+      },
+    ],
     [t]
   );
   return toolbarFilters;

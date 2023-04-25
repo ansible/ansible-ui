@@ -51,7 +51,7 @@ describe('credentials', () => {
   it('edit credential', () => {
     cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.hasTitle(/^Edit credential$/);
+    cy.hasTitle(/^Edit Credential$/);
     cy.typeInputByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
@@ -60,7 +60,7 @@ describe('credentials', () => {
   it('credential details', () => {
     cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#name', credential.name);
   });
 
@@ -68,7 +68,7 @@ describe('credentials', () => {
     cy.clickTableRow(credential.name);
     cy.hasTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.hasTitle(/^Edit credential$/);
+    cy.hasTitle(/^Edit Credential$/);
     cy.typeInputByLabel(/^Name$/, credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
@@ -85,7 +85,7 @@ describe('credentials', () => {
 
   it('credentials table row edit credential', () => {
     cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
-    cy.hasTitle(/^Edit credential$/);
+    cy.hasTitle(/^Edit Credential$/);
   });
 
   it('credentials table row delete credential', () => {

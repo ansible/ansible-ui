@@ -154,7 +154,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.InstanceGroups, location)}
           onClick={() => onClick(RouteObj.InstanceGroups)}
         >
-          {t('Instance groups')}
+          {t('Instance Groups')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.Instances, location)}
@@ -169,7 +169,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.ExecutionEnvironments)}
         >
-          {t('Execution environments')}
+          {t('Execution Environments')}
         </NavItem>
         {/* <NavItem
           isActive={isRouteActive(RouteObj.TopologyView, location)}

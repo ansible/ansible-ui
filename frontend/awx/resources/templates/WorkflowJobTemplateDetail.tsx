@@ -184,7 +184,7 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
       <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
         <TextList component={TextListVariants.ul}>
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent Jobs`}</TextListItem>
+            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
           )}
           {template.webhook_service && (
             <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>

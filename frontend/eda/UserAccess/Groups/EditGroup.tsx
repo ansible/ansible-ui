@@ -77,7 +77,7 @@ export function EditGroup() {
           />
           <PageForm
             schema={GroupSchemaType}
-            submitText={t('Save Group')}
+            submitText={t('Save group')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
@@ -100,7 +100,7 @@ export function EditGroup() {
         />
         <PageForm
           schema={GroupSchemaType}
-          submitText={t('Create Group')}
+          submitText={t('Create group')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

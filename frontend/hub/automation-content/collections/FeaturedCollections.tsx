@@ -30,7 +30,7 @@ export function FeaturedCollections() {
     <>
       <Card isFlat isRounded isLarge>
         <CardHeader>
-          <CardTitle>{t('Featured Collections')}</CardTitle>
+          <CardTitle>{t('Featured collections')}</CardTitle>
         </CardHeader>
         <CardBody>
           <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>

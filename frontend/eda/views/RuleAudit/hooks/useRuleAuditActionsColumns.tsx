@@ -24,16 +24,12 @@ export function useRuleAuditActionsColumns() {
           ) : (
             <TextCell text={ruleAuditAction?.name} />
           ),
-        sort: 'name',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
       {
         header: t('Status'),
         cell: (ruleAuditAction) => <StatusCell status={ruleAuditAction?.status} />,
-        sort: 'status',
-        defaultSort: true,
         card: 'name',
         list: 'name',
       },
@@ -46,7 +42,6 @@ export function useRuleAuditActionsColumns() {
             }
           />
         ),
-        sort: 'fired_at',
       },
     ],
     [t]

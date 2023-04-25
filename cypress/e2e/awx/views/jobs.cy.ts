@@ -58,9 +58,7 @@ describe('jobs', () => {
           .contains(/^Delete job$/)
           .should('exist');
         // Cancel job
-        cy.get('.pf-c-dropdown__menu-item')
-          .contains(/^Cancel job$/)
-          .should('exist');
+        cy.get('#cancel-job').should('exist');
       });
   });
 
@@ -71,8 +69,7 @@ describe('jobs', () => {
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
     cy.hasDetail('Launched by', 'admin');
-    cy.hasDetail('Execution Environment', 'AWX EE (latest)');
-    cy.hasDetail('Job Slice', '0/1');
+    cy.hasDetail('Job slice', '0/1');
   });
 
   it('filters jobs by id', () => {
@@ -137,7 +134,7 @@ describe('jobs', () => {
     cy.filterTableByTypeAndText('ID', jobId);
     cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
     cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
     // Clean up newly launched job
     cy.url().then((url) => {
       const jobId = url.substring(url.lastIndexOf('/') + 1);
