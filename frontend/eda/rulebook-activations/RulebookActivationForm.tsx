@@ -91,9 +91,11 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
-  const { data: projects } = useGet<EdaResult<EdaProject>>(`${API_PREFIX}/projects/`);
+  const { data: projects } = useGet<EdaResult<EdaProject>>(
+    `${API_PREFIX}/projects/?page=1&page_size=200`
+  );
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    `${API_PREFIX}/decision-environments/`
+    `${API_PREFIX}/decision-environments/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
