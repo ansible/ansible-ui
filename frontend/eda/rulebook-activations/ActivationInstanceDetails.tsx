@@ -28,7 +28,7 @@ export function ActivationInstanceDetails() {
   );
 
   const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page=1&page_size=300`
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
