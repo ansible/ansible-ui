@@ -2771,7 +2771,8 @@
     "schemas": {
       "ActionEnum": {
         "enum": ["create", "read", "update", "delete", "enable", "disable", "restart"],
-        "type": "string"
+        "type": "string",
+        "description": "* `create` - create\n* `read` - read\n* `update` - update\n* `delete` - delete\n* `enable` - enable\n* `disable` - disable\n* `restart` - restart"
       },
       "Activation": {
         "type": "object",
@@ -2894,6 +2895,11 @@
           "status": {
             "$ref": "#/components/schemas/Status15cEnum"
           },
+          "activation_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
           "started_at": {
             "type": "string",
             "format": "date-time",
@@ -2904,13 +2910,9 @@
             "format": "date-time",
             "readOnly": true,
             "nullable": true
-          },
-          "activation": {
-            "type": "integer",
-            "nullable": true
           }
         },
-        "required": ["ended_at", "id", "started_at"]
+        "required": ["activation_id", "ended_at", "id", "started_at"]
       },
       "ActivationInstanceLog": {
         "type": "object",
@@ -3216,7 +3218,7 @@
             "type": "string",
             "writeOnly": true
           },
-          "user": {
+          "user_id": {
             "type": "integer",
             "readOnly": true
           },
@@ -3231,7 +3233,7 @@
             "readOnly": true
           }
         },
-        "required": ["created_at", "id", "modified_at", "name", "token", "user"]
+        "required": ["created_at", "id", "modified_at", "name", "token", "user_id"]
       },
       "Credential": {
         "type": "object",
@@ -3319,7 +3321,8 @@
           "GitHub Personal Access Token",
           "GitLab Personal Access Token"
         ],
-        "type": "string"
+        "type": "string",
+        "description": "* `Container Registry` - Container Registry\n* `GitHub Personal Access Token` - GitHub Personal Access Token\n* `GitLab Personal Access Token` - GitLab Personal Access Token"
       },
       "DecisionEnvironment": {
         "type": "object",
@@ -3460,7 +3463,8 @@
       },
       "ImportStateEnum": {
         "enum": ["pending", "running", "failed", "completed"],
-        "type": "string"
+        "type": "string",
+        "description": "* `pending` - Pending\n* `running` - Running\n* `failed` - Failed\n* `completed` - Completed"
       },
       "Login": {
         "type": "object",
@@ -4269,12 +4273,13 @@
             "type": "string",
             "description": "Content of the playbook"
           },
-          "project": {
+          "project_id": {
             "type": "integer",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["id", "name", "playbook"]
+        "required": ["id", "name", "playbook", "project_id"]
       },
       "Project": {
         "type": "object",
@@ -4393,11 +4398,13 @@
           "decision_environment",
           "credential"
         ],
-        "type": "string"
+        "type": "string",
+        "description": "* `activation` - activation\n* `activation_instance` - activation_instance\n* `audit_rule` - audit_rule\n* `audit_event` - audit_event\n* `task` - task\n* `user` - user\n* `project` - project\n* `inventory` - inventory\n* `extra_var` - extra_var\n* `playbook` - playbook\n* `rulebook` - rulebook\n* `role` - role\n* `decision_environment` - decision_environment\n* `credential` - credential"
       },
       "RestartPolicyEnum": {
         "enum": ["always", "on-failure", "never"],
-        "type": "string"
+        "type": "string",
+        "description": "* `always` - always\n* `on-failure` - on-failure\n* `never` - never"
       },
       "RoleDetail": {
         "type": "object",
@@ -4489,12 +4496,13 @@
             "additionalProperties": {},
             "description": "The action in the rule"
           },
-          "ruleset": {
+          "ruleset_id": {
             "type": "integer",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "required": ["action", "id", "name", "ruleset"]
+        "required": ["action", "id", "name", "ruleset_id"]
       },
       "RuleOut": {
         "type": "object",
@@ -4521,17 +4529,17 @@
             },
             "description": "List of stats"
           },
-          "rulebook": {
+          "rulebook_id": {
             "type": "integer",
             "nullable": true,
             "description": "ID of the rulebook"
           },
-          "ruleset": {
+          "ruleset_id": {
             "type": "integer",
             "nullable": true,
             "description": "ID of the ruleset"
           },
-          "project": {
+          "project_id": {
             "type": "integer",
             "nullable": true,
             "description": "ID of the project"
@@ -4651,7 +4659,8 @@
       },
       "Status15cEnum": {
         "enum": ["running", "pending", "failed", "stopped", "completed"],
-        "type": "string"
+        "type": "string",
+        "description": "* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopped` - stopped\n* `completed` - completed"
       },
       "Task": {
         "type": "object",
@@ -4729,7 +4738,8 @@
           "stopped",
           "canceled"
         ],
-        "type": "string"
+        "type": "string",
+        "description": "* `queued` - queued\n* `finished` - finished\n* `failed` - failed\n* `started` - started\n* `deferred` - deferred\n* `scheduled` - scheduled\n* `stopped` - stopped\n* `canceled` - canceled"
       },
       "UserCreateUpdate": {
         "type": "object",
