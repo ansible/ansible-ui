@@ -94,7 +94,7 @@ describe('EDA Dashboard', () => {
           cy.clickButton(/^Create rulebook activation$/);
           cy.hasTitle(/^Create rulebook activation$/).should('be.visible');
         } else if (results.length >= 1) {
-          cy.contains('h3', 'Rulebook Activations')
+          cy.contains('h3', 'Rulebook activations')
             .scrollIntoView()
             .parents('article.pf-c-card')
             .within(() => {
@@ -119,7 +119,7 @@ describe('EDA Dashboard', () => {
           cy.clickButton(/^Create decision environment$/);
           cy.hasTitle(/^Create decision environment$/).should('be.visible');
         } else if (results.length >= 1) {
-          cy.contains('h3', 'Decision Environments')
+          cy.contains('h3', 'Decision environments')
             .parents('article.pf-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
@@ -145,9 +145,9 @@ describe('dashboard checks when resources before any resources are created', () 
     ).should('be.visible');
     cy.hasTitle(/^Projects$/).should('be.visible');
     cy.contains('small', 'Recently updated projects').should('be.visible');
-    cy.hasTitle(/^Rulebook Activations$/).should('be.visible');
+    cy.hasTitle(/^Rulebook activations$/).should('be.visible');
     cy.contains('small', 'Recently updated activations').should('be.visible');
-    cy.hasTitle(/^Decision Environments$/).should('be.visible');
+    cy.hasTitle(/^Decision environments$/).should('be.visible');
     cy.contains('small', 'Recently updated environments').should('be.visible');
   });
 
@@ -164,16 +164,16 @@ describe('dashboard checks when resources before any resources are created', () 
 
   it('user can navigate to the Projects page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to Projects');
+    cy.checkAnchorLinks('Go to projects');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to Rulebook Activations');
+    cy.checkAnchorLinks('Go to rulebook activations');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to Decision Environments');
+    cy.checkAnchorLinks('Go to decision environments');
   });
 });
