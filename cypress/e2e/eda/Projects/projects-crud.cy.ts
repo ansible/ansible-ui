@@ -14,7 +14,7 @@ describe('EDA Projects CRUD', () => {
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
     cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/Alex-Izquierdo/eda-sample-project');
+    cy.typeInputByLabel(/^Git URL$/, 'https://github.com/Alex-Izquierdo/eda-sample-project');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
