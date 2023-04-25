@@ -119,10 +119,10 @@ export function EditProject() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Project')}
+            title={`${t('Edit')} ${project?.name || t('Project')}`}
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit Project') },
+              { label: `${t('Edit')} ${project?.name || t('Project')}` },
             ]}
           />
           <PageForm

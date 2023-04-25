@@ -1,13 +1,14 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { PencilAltIcon, GitAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { GitAltIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  errorToAlertProps,
   IPageAction,
+  PageActions,
   PageActionSelection,
   PageActionType,
-  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -15,7 +16,6 @@ import {
   PageTab,
   PageTabs,
   TextCell,
-  errorToAlertProps,
   usePageAlertToaster,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
@@ -33,7 +33,9 @@ export function ProjectDetails() {
   const navigate = useNavigate();
   const alertToaster = usePageAlertToaster();
 
-  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${params.id ?? ''}/`);
+  const { data: project, refresh } = useGet<EdaProject>(
+    `${API_PREFIX}/projects/${params.id ?? ''}/`
+  );
   const syncProject = useCallback(
     (project: EdaProject) =>
       postRequest(`${API_PREFIX}/projects/${project.id}/sync/`, undefined)
@@ -44,8 +46,9 @@ export function ProjectDetails() {
             timeout: 5000,
           });
         })
-        .catch((err) => alertToaster.addAlert(errorToAlertProps(err))),
-    [alertToaster, t]
+        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
+        .finally(() => refresh()),
+    [alertToaster, refresh, t]
   );
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {
@@ -61,6 +64,9 @@ export function ProjectDetails() {
         icon: SyncAltIcon,
         isPinned: true,
         label: t('Sync project'),
+        isHidden: (project: EdaProject) => {
+          return project?.import_state === 'pending' || project?.import_state === 'running';
+        },
         onClick: (project: EdaProject) => syncProject(project),
       },
       {

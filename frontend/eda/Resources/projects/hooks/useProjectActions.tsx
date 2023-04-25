@@ -30,9 +30,10 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
             variant: 'success',
             timeout: 5000,
           });
+          view.unselectItemsAndRefresh([project]);
         })
         .catch((err) => alertToaster.addAlert(errorToAlertProps(err))),
-    [alertToaster, t]
+    [alertToaster, view, t]
   );
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
@@ -41,6 +42,8 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         selection: PageActionSelection.Single,
         icon: SyncAltIcon,
         isPinned: true,
+        isHidden: (project: EdaProject) =>
+          project?.import_state === 'pending' || project?.import_state === 'running',
         label: t('Sync project'),
         onClick: (project: EdaProject) => syncProject(project),
       },
