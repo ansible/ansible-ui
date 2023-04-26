@@ -112,8 +112,11 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit User') }]}
+        title={`${t('Edit')} ${user?.username || t('User')}`}
+        breadcrumbs={[
+          { label: t('Users'), to: RouteObj.EdaUsers },
+          { label: `${t('Edit')} ${user?.username || t('Credential')}` },
+        ]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}
