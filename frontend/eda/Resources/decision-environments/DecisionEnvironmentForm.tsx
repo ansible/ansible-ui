@@ -109,10 +109,10 @@ export function EditDecisionEnvironment() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Decision Environment')}
+            title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
             breadcrumbs={[
               { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit Decision Environment') },
+              { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
             ]}
           />
           <PageForm

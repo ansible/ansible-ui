@@ -42,7 +42,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
         cy.get('a').click();
       });
       cy.clickPageAction(/^Edit decision environment$/);
-      cy.hasTitle(/^Edit Decision Environment$/);
+      cy.hasTitle(`Edit ${edaDE.name}`);
       cy.typeInputByLabel(/^Name$/, edaDE.name + 'edited');
       cy.clickButton(/^Save decision environment$/);
       cy.hasTitle(`${edaDE.name}edited`);

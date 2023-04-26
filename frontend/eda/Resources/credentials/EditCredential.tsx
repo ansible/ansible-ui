@@ -115,10 +115,10 @@ export function EditCredential() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Credential')}
+            title={`${t('Edit')} ${credential?.name || t('Credential')}`}
             breadcrumbs={[
               { label: t('Credentials'), to: RouteObj.EdaCredentials },
-              { label: t('Edit Credential') },
+              { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
             ]}
           />
           <PageForm
