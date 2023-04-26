@@ -15,7 +15,7 @@ import './auth';
 import './commands';
 import './rest-commands';
 
-/*  AWX related custom command implementation  */
+//  AWX related custom command implementation
 
 Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
@@ -246,7 +246,7 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
   cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
 });
 
-/**Resources for testing AWX*/
+// Resources for testing AWX
 Cypress.Commands.add('createAwxOrganization', () => {
   cy.requestPost<Organization>('/api/v2/organizations/', {
     name: 'E2E Organization ' + randomString(4),

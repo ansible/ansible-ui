@@ -4,6 +4,7 @@
 import '@cypress/code-coverage/support';
 import { SetOptional } from 'type-fest';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
@@ -20,11 +21,10 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { Label } from '../../frontend/awx/interfaces/Label';
-import './rest-commands';
 import './auth';
-import './eda-commands';
 import './awx-commands';
+import './eda-commands';
+import './rest-commands';
 
 declare global {
   namespace Cypress {
@@ -39,8 +39,12 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
 
-      // NAVIGATION COMMANDS
+      // --- NAVIGATION COMMANDS ---
+
+      /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
       navigateTo(label: string | RegExp): Chainable<void>;
+
+      /**Locates a title using its label. No assertion is made. */
       hasTitle(label: string | RegExp): Chainable<void>;
 
       // --- INPUT COMMANDS ---
@@ -48,28 +52,27 @@ declare global {
       /** Get a FormGroup by it's label. A FormGroup is the PF component that wraps an input and provides a label. */
       getFormGroupByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Get an input by it's label. */
-      // Searches for an element with a certain label, then asserts that the element is enabled.
+      /** Get an input by its label. */
       getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Get a checkbox by its label */
+      /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Finds an input by label and types the text into the input .*/
+      /** Finds an input by label and types the text into the input.*/
       typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
 
-      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel .*/
+      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByLabel(
         dropdownLabel: string | RegExp,
         dropdownOptionLabel: string
       ): Chainable<void>;
 
-      // TABLE COMMANDS
+      // --- TABLE COMMANDS ---
 
-      /** Change the current filter type in the table toolbar */
+      /** Change the current filter type in the table toolbar. */
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
 
-      /** Filter the table using it's current filter by entering text */
+      /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;
 
       /** Filter the table using specified filter and text. */
@@ -108,9 +111,10 @@ declare global {
       /** Check if the table row containing the specified text also has the text 'Successful'. */
       tableHasRowWithSuccess(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /** Selects a table row by clicking on the row checkbox. */
       selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
-      /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row*/
+      /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row.*/
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- MODAL COMMANDS ---
@@ -121,7 +125,7 @@ declare global {
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
 
-      /** Clicks the confirm checkbox in the active modal dialog */
+      /** Clicks the confirm checkbox in the active modal dialog. */
       clickModalConfirmCheckbox(): Chainable<void>;
 
       /** Assert that the active modal dialog contains "Success". */
@@ -131,7 +135,7 @@ declare global {
       selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- DETAILS COMMANDS ---
-
+      /**Finds a button with a particular label and clicks it. */
       clickTab(label: string | RegExp): Chainable<void>;
 
       /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
@@ -141,8 +145,10 @@ declare global {
       clickButton(label: string | RegExp): Chainable<void>;
       clickPageAction(label: string | RegExp): Chainable<void>;
 
+      /**Finds an alert by its label. Does not make an assertion.  */
       hasAlert(label: string | RegExp): Chainable<void>;
 
+      /**Finds a tooltip by its label. Does not make an assertion.  */
       hasTooltip(label: string | RegExp): Chainable<void>;
 
       // --- REST API COMMANDS ---
@@ -186,6 +192,8 @@ declare global {
 
       // --- EDA COMMANDS ---
 
+      checkAnchorLinks(anchorName: string): Chainable<void>;
+
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
        *
@@ -208,6 +216,7 @@ declare global {
        * @param action
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
+
       /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
@@ -215,15 +224,21 @@ declare global {
        * @returns {Chainable<EdaProject>}
        */
       createEdaProject(): Chainable<EdaProject>;
+
+      /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
       getEdaRulebooks(edaProject: EdaProject): Chainable<EdaRulebook[]>;
-      getEdaProject(projectName: string): Chainable<EdaProject | undefined>;
+
+      /**Identify a particular project and make it available for use in testing. */
       getEdaRulebookActivation(
         edaRulebookActivationName: string
       ): Chainable<EdaRulebookActivation | undefined>;
 
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
 
+      /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+
+      /**Identify a particular EDA credential and make it available for use in testing. */
       getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;
 
       /**
@@ -245,7 +260,15 @@ declare global {
        */
       deleteEdaProject(project: EdaProject): Chainable<void>;
 
+      /**
+       * `deleteEdaRulebookActivation(edaRulebookActivation: EdaRulebookActivation)`
+       * deletes an EDA rulebook activation via API,
+       * accepts the rulebook activation name as parameter
+       *
+       * @returns {Chainable<void>}
+       */
       deleteEdaRulebookActivation(edaRulebookActivation: EdaRulebookActivation): Chainable<void>;
+
       /**
        * pollEdaResults - Polls eda until results are found
        * @param url The url for the get request
@@ -257,44 +280,56 @@ declare global {
        *    }
        */
       pollEdaResults<T = unknown>(url: string): Chainable<T[]>;
-      createEdaCredential(): Chainable<EdaCredential>;
-      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
+
       /**
-       * Creates an EDA user and returns the same
+       * Creates an EDA credential and returns the same.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      createEdaCredential(): Chainable<EdaCredential>;
+
+      /**
+       * Deletes an EDA credential which is provided.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
+
+      /**
+       * Creates an EDA user and returns the same.
        *
        * @returns {Chainable<EdaUser>}
        */
       createEdaUser(): Chainable<EdaUser>;
 
       /**
-       * Deletes an EDA user which is provided
+       * Deletes an EDA user which is provided.
        *
        * @returns {Chainable<EdaUser>}
        */
       deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
 
       /**
-       * Retrieves an EDA user and returns the same
+       * Retrieves an EDA user and returns the same.
        *
        * @returns {Chainable<EdaUser>}
        */
-
       getEdaUser(): Chainable<EdaUser | undefined>;
 
       /**
-       * Creates a DE and returns the same
+       * Creates a DE and returns the same.
        */
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
       /**
-       * Retrieves a DE by name
+       * Retrieves a DE by name.
        */
       getEdaDecisionEnvironmentByName(
         edaDEName: string
       ): Chainable<EdaDecisionEnvironment | undefined>;
 
       /**
-       * Deletes a DE which is provided
+       * Deletes a DE which is provided.
        */
       deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
