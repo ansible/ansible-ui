@@ -27,8 +27,14 @@ export function ActivationInstanceDetails() {
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/`
   );
 
+  const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`
+  );
+
   const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
+      activationInstanceLogInfo?.count || 10
+    }`
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
