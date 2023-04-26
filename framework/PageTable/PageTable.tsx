@@ -7,6 +7,7 @@ import {
   EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
+  Flex,
   PageSection,
   Skeleton,
   Spinner,
@@ -338,6 +339,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         <EmptyStateNoData
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}
+
           button={
             props.emptyStateButtonClick && (
               <Button
@@ -349,6 +351,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               </Button>
             )
           }
+          actions={
+            props.emptyStateActions && (
+              <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+                <PageActions actions={props.emptyStateActions} />
+              </Flex>
+            )
+          }
+          variant={EmptyStateVariant.large}
         />
       </PageSection>
     );
