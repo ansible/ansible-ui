@@ -15,7 +15,7 @@ export function useActivationHistoryColumns() {
         header: t('Name'),
         cell: (instance) => (
           <TextCell
-            text={instance.name || `Instance ${instance.id}`}
+            text={`${instance?.id || ''} - ${instance?.name || ''}`}
             onClick={() =>
               navigate(RouteObj.EdaActivationInstanceDetails.replace(':id', instance.id.toString()))
             }
