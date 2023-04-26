@@ -103,6 +103,7 @@ export function ProjectDetails() {
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />
         </PageDetail>
+        <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>
