@@ -28,8 +28,6 @@ const ToolbarGroupsDiv = styled.div`
   flex-grow: 1;
 `;
 
-export type IFilterState = Record<string, string[] | undefined>;
-
 export type PagetableToolbarProps<T extends object> = {
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
