@@ -53,4 +53,3 @@ export * from './useFrameworkTranslations';
 export * from './useInMemoryView';
 export * from './useView';
 export * from './utils/compare';
-
