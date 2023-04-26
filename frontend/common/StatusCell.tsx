@@ -4,6 +4,7 @@ import {
   ClockIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
+  HourglassStartIcon,
   InfoCircleIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -74,6 +75,17 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
           color={'red'}
           iconColor={'danger'}
           icon={<ExclamationCircleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
+    case 'starting':
+      return (
+        <TextCell
+          text={t`Starting`}
+          color={'grey'}
+          iconColor={'disabled'}
+          icon={<HourglassStartIcon />}
           to={props.to}
           disableLinks={props.disableLinks}
         />

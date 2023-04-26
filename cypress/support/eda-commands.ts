@@ -13,6 +13,17 @@ import './rest-commands';
 
 /*  EDA related custom command implementation  */
 
+Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
+  cy.contains('a', anchorName).then((link) => {
+    cy.request({
+      method: 'GET',
+      url: link.prop('href') as string,
+    })
+      .its('status')
+      .should('eq', 200);
+  });
+});
+
 Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
     .parent()
