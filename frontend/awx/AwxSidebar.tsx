@@ -55,7 +55,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.HostMetrics, location)}
           onClick={() => onClick(RouteObj.HostMetrics)}
         >
-          {t('Host metrics')}
+          {t('Host Metrics')}
         </NavItem>
       </NavExpandable>
       <NavExpandable

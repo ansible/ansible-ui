@@ -102,6 +102,7 @@
   "Administration": "Administration",
   "All": "All",
   "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted": "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted.",
+  "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted. Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted": "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted. Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted.",
   "All job types": "All job types",
   "Always": "Always",
   "Amazing Collection": "Amazing Collection",
@@ -542,12 +543,6 @@
   "Host config key": "Host config key",
   "Host count": "Host count",
   "Host metrics": "Host metrics",
-  "Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted": "Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted.",
-  "hostMetrics": {
-    "title": {
-      "description": "All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted."
-    }
-  },
   "Hostname": "Hostname",
   "Hosts": "Hosts",
   "Hosts with active failures": "Hosts with active failures",

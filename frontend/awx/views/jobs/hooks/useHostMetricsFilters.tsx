@@ -11,6 +11,7 @@ export function useHostMetricsFilters() {
         label: t('Hostname'),
         type: 'string',
         query: 'hostname__icontains',
+        placeholder: t('contains'),
       },
     ],
     [t]
