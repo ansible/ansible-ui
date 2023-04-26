@@ -38,7 +38,6 @@ import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 import { PageDetailsSection } from '../common/PageDetailSection';
@@ -215,19 +214,16 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   function ActivationHistoryTab() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
-    const toolbarFilters = useActivationHistoryFilters();
 
     const tableColumns = useActivationHistoryColumns();
     const view = useEdaView<EdaActivationInstance>({
       url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
-      toolbarFilters,
       tableColumns,
     });
     return (
       <PageLayout>
         <PageTable
           tableColumns={tableColumns}
-          toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading history')}
           emptyStateTitle={t('No activation history')}
           emptyStateIcon={CubesIcon}
