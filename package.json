@@ -50,9 +50,7 @@
     "cypress:check": "npx nyc report --check-coverage --statements 20 --branches 20 --functions 19 --lines 20 --report-dir ./coverage --temp-dir .nyc_output --reporter=text-summary --exclude-after-remap false",
     "prepare": "husky install",
     "prepush": "concurrently --kill-others-on-fail npm:tsc npm:eslint:changed npm:prettier:changed --prefix-colors cyan,green,blue,magenta,gray",
-    "i18n": "npx i18next-parser --config i18next-parser.config.cjs",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "i18n": "npx i18next-parser --config i18next-parser.config.cjs"
   },
   "dependencies": {
     "@babel/core": "7.21.4",
@@ -154,14 +152,6 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.10.4",
-    "@storybook/addon-actions": "6.5.16",
-    "@storybook/addon-essentials": "6.5.16",
-    "@storybook/addon-interactions": "6.5.16",
-    "@storybook/addon-links": "6.5.16",
-    "@storybook/builder-webpack5": "6.5.16",
-    "@storybook/manager-webpack5": "6.5.16",
-    "@storybook/react": "6.5.16",
-    "@storybook/testing-library": "0.1.0",
     "@typescript-eslint/eslint-plugin": "5.59.0",
     "@typescript-eslint/parser": "5.59.0",
     "cypress": "12.10.0",
@@ -175,7 +165,6 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
-    "eslint-plugin-storybook": "0.6.11",
     "husky": "8.0.3",
     "nodemon": "2.0.22",
     "pino-zen": "2.0.8",
