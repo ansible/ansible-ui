@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
-  PageFormCodeEditor,
+  PageFormDataEditor,
   PageFormSelectOption,
   PageFormSubmitHandler,
   PageFormSwitch,
@@ -176,7 +176,7 @@ export function RulebookActivationInputs() {
         options={RESTART_OPTIONS}
       />
       <PageFormSection singleColumn>
-        <PageFormCodeEditor<IEdaRulebookActivationInputs>
+        <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="variables"
           label={t('Variables')}
           isExpandable

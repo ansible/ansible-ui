@@ -1,10 +1,10 @@
 import { Button, FormSection } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageFormCodeEditor, PageFormSelectOption } from '../../../../framework';
+import { PageFormDataEditor, PageFormSelectOption } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
@@ -19,6 +19,7 @@ import { Project } from '../../interfaces/Project';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate }) {
   const { jobtemplate } = props;
@@ -35,7 +36,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
   const hasWebhookService = useWatch({ name: 'webhook_service ' }) as boolean;
   const isInventoryPrompted = useWatch({ name: 'ask_inventory_on_launch' }) as boolean;
   const askJobTypeOnLaunch = useWatch({ name: 'ask_job_type_on_launch' }) as boolean;
-  const { setValue } = useForm();
+  const { setValue } = useFormContext();
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
@@ -155,11 +156,6 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
-      />
-      <PageFormCodeEditor<JobTemplateForm>
-        toggleLanguages={['yaml', 'json']}
-        label={t('Extra Variables')}
-        name="extra_vars"
       />
       <PageFormTextInput<JobTemplateForm>
         placeholder={t('Add number of forks')}
@@ -347,6 +343,19 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           />
         </FormSection>
       ) : null}
+      <PageFormSection singleColumn>
+        <PageFormDataEditor<JobTemplateForm>
+          additionalControls={
+            <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
+          }
+          labelHelpTitle={t('Extra Variables')}
+          labelHelp={t(`Optional extra variables to be applied to job template`)}
+          toggleLanguages={['yaml', 'json']}
+          label={t('Extra Variables')}
+          name="extra_vars"
+          isExpandable
+        />
+      </PageFormSection>
     </>
   );
 }
