@@ -1,10 +1,10 @@
 import {
   Button,
-  ChipGroup,
   Chip,
+  ChipGroup,
+  ChipGroupProps,
   InputGroup,
   TextInput,
-  ChipGroupProps,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
 import {
@@ -12,9 +12,9 @@ import {
   FieldPath,
   FieldValues,
   PathValue,
-  useFormContext,
   Validate,
   ValidationRule,
+  useFormContext,
 } from 'react-hook-form';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
@@ -48,7 +48,7 @@ interface FieldValuesWithArray<T> extends FieldValues {
 }
 
 export function PageFormMultiInput<
-  T extends { id: number; name: string },
+  T extends { id: number | string; name: string },
   TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
