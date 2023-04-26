@@ -62,7 +62,8 @@ import {
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
-import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
+import { PageTableToolbar } from './PageToolbar';
+import { IToolbarFilter } from './PageToolbarFilter';
 
 const ScrollDiv = styled.div`
   height: 100%;

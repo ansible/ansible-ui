@@ -37,6 +37,7 @@ export * from './PageTable/PageTable';
 export * from './PageTable/PageTableCards';
 export * from './PageTable/PageTableColumn';
 export * from './PageTable/PageToolbar';
+export * from './PageTable/PageToolbarFilter';
 export * from './PageTable/useTableItems';
 export * from './PageTabs';
 export * from './RoutedTabs';

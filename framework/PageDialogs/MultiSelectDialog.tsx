@@ -2,7 +2,7 @@ import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn } from '../PageTable/PageTableColumn';
-import { IToolbarFilter } from '../PageTable/PageToolbar';
+import { IToolbarFilter } from '../PageTable/PageToolbarFilter';
 import { ISelected } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
