@@ -38,7 +38,7 @@ export function ActivationInstanceDetails() {
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation ?? ''}/`
+    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`
   );
 
   const renderActivationDetailsTab = (
@@ -48,7 +48,7 @@ export function ActivationInstanceDetails() {
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>
-            {activationInstance?.name || `Instance ${activationInstance?.id || ''}`}
+            {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
           <PageDetail label={t('Activation status')}>{activationInstance?.status || ''}</PageDetail>
           <PageDetail label={t('Start date')}>
@@ -81,24 +81,24 @@ export function ActivationInstanceDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={activationInstance?.name ?? `Instance ${activationInstance?.id || ''}`}
+        title={`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
         breadcrumbs={[
           { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           {
             label: activationInstance?.activation_name ?? (activation?.name || ''),
             to: RouteObj.EdaRulebookActivationDetails.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id || ''
             ),
           },
           {
             label: t('History'),
             to: RouteObj.EdaRulebookActivationDetailsHistory.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id || ''
             ),
           },
-          { label: activationInstance?.name ?? `Instance ${activationInstance?.id || ''}` },
+          { label: `${activationInstance?.id || ''} - ${activationInstance?.name || ''}` },
         ]}
       />
       {activationInstance ? (
