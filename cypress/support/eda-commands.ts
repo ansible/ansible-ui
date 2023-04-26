@@ -6,7 +6,7 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -190,7 +190,7 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
 });
 
 Cypress.Commands.add('createEdaUser', () => {
-  cy.requestPost<EdaUser>(`/api/eda/v1/users/`, {
+  cy.requestPost<EdaUserCreateUpdate>(`/api/eda/v1/users/`, {
     username: `E2E User ${randomString(4)}`,
     email: `${randomString(4)}@redhat.com`,
     password: `${randomString(4)}`,
