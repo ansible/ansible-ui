@@ -36,7 +36,7 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
  * @deprecated use SelectSingleDialog
  */
 export function useSelectDialog<
-  T extends { id: number; name: string | undefined },
+  T extends { id: number | string; name: string | undefined },
   TMultiple = false
 >(options: ISelectDialogOptions<T, TMultiple>) {
   const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
@@ -97,9 +97,10 @@ export type SelectDialogProps<T extends object, TMultiple> = {
   keyFn: (item: T) => string | number;
 } & ISelectDialogOptions<T, TMultiple>;
 
-export function SelectDialog<T extends { id: number; name: string | undefined }, TMultiple = false>(
-  props: SelectDialogProps<T, TMultiple>
-) {
+export function SelectDialog<
+  T extends { id: number | string; name: string | undefined },
+  TMultiple = false
+>(props: SelectDialogProps<T, TMultiple>) {
   const {
     title,
     open,

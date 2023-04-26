@@ -120,7 +120,7 @@ export interface ItemsResponse<T> {
   results: T[];
 }
 
-export function getItemKey(item: { id: number }) {
+export function getItemKey(item: { id: number | string }) {
   return item.id.toString();
 }
 

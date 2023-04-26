@@ -5,7 +5,7 @@ import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../fram
 import { IView, useView } from '../../framework/useView';
 import { ItemsResponse, getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 
-export type IEdaView<T extends { id: number }> = IView &
+export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -25,7 +25,7 @@ function getQueryString(queryParams: QueryParams) {
     .join('&');
 }
 
-export function useEdaView<T extends { id: number }>(options: {
+export function useEdaView<T extends { id: number | string }>(options: {
   url: string;
   viewPage?: number;
   viewPerPage?: number;
