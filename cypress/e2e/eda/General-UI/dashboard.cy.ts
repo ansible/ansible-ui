@@ -94,7 +94,7 @@ describe('EDA Dashboard', () => {
           cy.clickButton(/^Create rulebook activation$/);
           cy.hasTitle(/^Create rulebook activation$/).should('be.visible');
         } else if (results.length >= 1) {
-          cy.contains('h3', 'Rulebook activations')
+          cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
             .parents('article.pf-c-card')
             .within(() => {
@@ -119,7 +119,7 @@ describe('EDA Dashboard', () => {
           cy.clickButton(/^Create decision environment$/);
           cy.hasTitle(/^Create decision environment$/).should('be.visible');
         } else if (results.length >= 1) {
-          cy.contains('h3', 'Decision environments')
+          cy.contains('h3', 'Decision Environments')
             .parents('article.pf-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
@@ -132,7 +132,7 @@ describe('EDA Dashboard', () => {
 describe('dashboard checks when resources before any resources are created', () => {
   it('checks instruction guide link works in the Getting Started section of the Dashboard page', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Getting started$/).should('be.visible');
+    cy.hasTitle(/^Getting Started$/).should('be.visible');
     cy.checkAnchorLinks('check out our instruct guides');
   });
 
@@ -145,16 +145,16 @@ describe('dashboard checks when resources before any resources are created', () 
     ).should('be.visible');
     cy.hasTitle(/^Projects$/).should('be.visible');
     cy.contains('small', 'Recently updated projects').should('be.visible');
-    cy.hasTitle(/^Rulebook activations$/).should('be.visible');
+    cy.hasTitle(/^Rulebook Activations$/).should('be.visible');
     cy.contains('small', 'Recently updated activations').should('be.visible');
-    cy.hasTitle(/^Decision environments$/).should('be.visible');
+    cy.hasTitle(/^Decision Environments$/).should('be.visible');
     cy.contains('small', 'Recently updated environments').should('be.visible');
   });
 
   it('checks resource creation links work in the Getting Started section of the Dashboard page', () => {
-    const resources = ['Project', 'Decision environment', 'Rulebook activation'];
+    const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
     cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Getting started$/).should('be.visible');
+    cy.hasTitle(/^Getting Started$/).should('be.visible');
     cy.get('ol.pf-c-progress-stepper').within(() => {
       resources.forEach((resource) => {
         cy.checkAnchorLinks(resource);
