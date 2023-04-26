@@ -1,3 +1,5 @@
+import { SetOptional } from 'type-fest';
+import { randomString } from '../../framework/utils/random-string';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
@@ -5,13 +7,22 @@ import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { SetOptional } from 'type-fest';
-import { randomString } from '../../framework/utils/random-string';
-import './rest-commands';
-import './commands';
 import './auth';
+import './commands';
+import './rest-commands';
 
 /*  EDA related custom command implementation  */
+
+Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
+  cy.contains('a', anchorName).then((link) => {
+    cy.request({
+      method: 'GET',
+      url: link.prop('href') as string,
+    })
+      .its('status')
+      .should('eq', 200);
+  });
+});
 
 Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
@@ -75,17 +86,6 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.add('getEdaProject', (projectName: string) => {
-  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${projectName}`).then(
-    (result) => {
-      if (result?.results && result.results.length === 1) {
-        return result.results[0];
-      }
-      return undefined;
-    }
-  );
-});
 
 Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: string) => {
   cy.pollEdaResults<EdaRulebookActivation>(
@@ -222,6 +222,7 @@ Cypress.Commands.add('getEdaUser', () => {
     }
   });
 });
+
 Cypress.Commands.add('createEdaDecisionEnvironment', () => {
   cy.requestPost<EdaDecisionEnvironment>('/api/eda/v1/decision-environments/', {
     name: 'E2E Decision Environment ' + randomString(4),
