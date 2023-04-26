@@ -164,16 +164,16 @@ describe('dashboard checks when resources before any resources are created', () 
 
   it('user can navigate to the Projects page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to projects');
+    cy.checkAnchorLinks('Go to Projects');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to rulebook activations');
+    cy.checkAnchorLinks('Go to Rulebook Activations');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.checkAnchorLinks('Go to decision environments');
+    cy.checkAnchorLinks('Go to Decision Environments');
   });
 });
