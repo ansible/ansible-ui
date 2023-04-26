@@ -19,6 +19,7 @@ import '@patternfly/patternfly/patternfly-base.css';
 import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
 import { mount } from 'cypress/react18';
+import type { MountReturn } from 'cypress/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { User } from '../../frontend/awx/interfaces/User';
@@ -32,10 +33,23 @@ import './commands';
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
+
+// based on typeof mount from Cypress. options and rerenderKey parameters
+// have been removed, and the route object has been added.
+// https://github.com/cypress-io/cypress/blob/f94100577a0267ada71a7ffa970df0c7eb20c903/npm/react18/src/index.ts#L50
+interface IMount {
+  (
+    component: React.ReactNode,
+    route?: {
+      path: string;
+      initialEntries: string[];
+    }
+  ): Cypress.Chainable<MountReturn>;
+}
 declare global {
   namespace Cypress {
     interface Chainable {
-      mount: typeof mount;
+      mount: IMount;
     }
   }
   interface Window {
@@ -44,7 +58,7 @@ declare global {
   }
 }
 
-Cypress.Commands.add('mount', (component, options) => {
+Cypress.Commands.add('mount', (component, route) => {
   cy.fixture('activeUser').then((activeUser: User) => {
     cy.intercept(
       {
@@ -58,23 +72,26 @@ Cypress.Commands.add('mount', (component, options) => {
     );
   });
   return mount(
-    <MemoryRouter initialEntries={['/1']}>
+    <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
       <PageFramework>
         <ActiveUserProvider>
           <Page>
             <Routes>
-              <Route path="/:id" element={component} />
+              <Route path={`${route?.path || '/:id'}`} element={component} />
             </Routes>
           </Page>
         </ActiveUserProvider>
       </PageFramework>
-    </MemoryRouter>,
-    options
+    </MemoryRouter>
   );
 });
 
 // Example use:
 // cy.mount(<MyComponent />)
+// cy.mount(<MyComponent />, {
+//   path: 'ui_next/credentials/:id',
+//   initialEntries: ['ui_next/credentials/1']
+// })
 
 before(() => {
   window.process = {

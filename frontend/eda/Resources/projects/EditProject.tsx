@@ -8,21 +8,23 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
+import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 
-function ProjectInputs() {
+function ProjectCreateInputs() {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<EdaProject>
         name="name"
         label={t('Name')}
-        placeholder={t('Insert name here')}
+        placeholder={t('Enter name')}
         isRequired
         maxLength={150}
         autoComplete="new-name"
@@ -30,26 +32,49 @@ function ProjectInputs() {
       <PageFormTextInput<EdaProject>
         name="description"
         label={t('Description')}
-        placeholder={t('Insert description here ')}
+        placeholder={t('Enter description')}
         maxLength={150}
       />
       <PageFormTextInput<EdaProject>
         name="type"
         isReadOnly={true}
-        label={t('SCM Type')}
+        label={t('SCM type')}
         placeholder={t('Git')}
-        maxLength={150}
       />
       <PageFormTextInput<EdaProject>
         name="url"
         isRequired={true}
         label={t('SCM URL')}
-        placeholder={t('Insert SCM URL here')}
+        placeholder={t('Enter SCM URL')}
+        validate={isValidUrl}
+      />
+    </>
+  );
+}
+
+function ProjectEditInputs() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageFormTextInput<EdaProject>
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter name')}
+        isRequired
+        maxLength={150}
+        autoComplete="new-name"
       />
       <PageFormTextInput<EdaProject>
-        name="token"
-        label={t('SCM token')}
-        placeholder={t('Insert SCM token here')}
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+        maxLength={150}
+      />
+      <PageFormTextInput<EdaProject>
+        name="type"
+        isReadOnly={true}
+        label={t('SCM type')}
+        placeholder={t('Git')}
       />
     </>
   );
@@ -65,19 +90,15 @@ export function EditProject() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);
@@ -89,7 +110,7 @@ export function EditProject() {
           <PageHeader
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit project') },
+              { label: t('Edit Project') },
             ]}
           />
         </PageLayout>
@@ -98,10 +119,10 @@ export function EditProject() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit project')}
+            title={`${t('Edit')} ${project?.name || t('Project')}`}
             breadcrumbs={[
               { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit project') },
+              { label: `${t('Edit')} ${project?.name || t('Project')}` },
             ]}
           />
           <PageForm
@@ -111,7 +132,7 @@ export function EditProject() {
             onCancel={onCancel}
             defaultValue={project}
           >
-            <ProjectInputs />
+            <ProjectEditInputs />
           </PageForm>
         </PageLayout>
       );
@@ -120,10 +141,10 @@ export function EditProject() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create project')}
+          title={t('Create Project')}
           breadcrumbs={[
             { label: t('Projects'), to: RouteObj.EdaProjects },
-            { label: t('Create project') },
+            { label: t('Create Project') },
           ]}
         />
         <PageForm
@@ -132,7 +153,7 @@ export function EditProject() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <ProjectInputs />
+          <ProjectCreateInputs />
         </PageForm>
       </PageLayout>
     );

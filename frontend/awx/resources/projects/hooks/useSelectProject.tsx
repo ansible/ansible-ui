@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Project } from '../../../interfaces/Project';
 import { useAwxView } from '../../../useAwxView';
-import { useProjectsColumns, useProjectsFilters } from '../Projects';
+import { useProjectsColumns } from './useProjectsColumns';
+import { useProjectsFilters } from './useProjectsFilters';
 
 export function useSelectProject(isLookup: boolean) {
   const { t } = useTranslation();

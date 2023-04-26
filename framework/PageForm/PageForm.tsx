@@ -18,6 +18,7 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
+  Path,
   useForm,
   useFormState,
 } from 'react-hook-form';
@@ -76,6 +77,25 @@ export function PageForm<T extends object>(props: {
             );
           } catch (err) {
             err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
+            if (
+              typeof err === 'object' &&
+              err !== null &&
+              'json' in err &&
+              typeof err.json === 'object' &&
+              err.json !== null
+            ) {
+              for (const key in err.json) {
+                let value = (err.json as Record<string, string>)[key];
+                if (typeof value === 'string') {
+                  setFieldError(key as unknown as Path<T>, { message: value });
+                } else if (Array.isArray(value)) {
+                  value = value[0];
+                  if (typeof value === 'string') {
+                    setFieldError(key as unknown as Path<T>, { message: value });
+                  }
+                }
+              }
+            }
           }
         })}
         isHorizontal={isHorizontal}

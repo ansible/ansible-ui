@@ -2,6 +2,8 @@ import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { formatDateString } from '../utils/formatDateString';
+import styled from 'styled-components';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);
@@ -13,32 +15,42 @@ export function DateCell(props: { value: number | string }) {
   );
 }
 
-export function SinceCell(props: {
+const DateCellSpan = styled.span`
+  white-space: nowrap;
+`;
+
+export function DateTimeCell(props: {
   value: string | number | undefined | null;
   author?: string;
+  format?: 'since' | 'date-time';
   onClick?: () => void;
 }) {
   const [translations] = useFrameworkTranslations();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
   useEffect(() => {
-    if (typeof props.value === 'number') {
-      setDateTime(DateTime.fromMillis(props.value).toRelative());
-    } else if (props.value) {
-      setDateTime(DateTime.fromISO(props.value).toRelative());
-    }
-    const timeout = setInterval(() => {
+    if (props.format === 'date-time' && typeof props.value === 'string') {
+      setDateTime(formatDateString(props.value));
+      return;
+    } else {
       if (typeof props.value === 'number') {
         setDateTime(DateTime.fromMillis(props.value).toRelative());
       } else if (props.value) {
         setDateTime(DateTime.fromISO(props.value).toRelative());
       }
-    }, 1000);
-    return () => clearTimeout(timeout);
-  }, [props.value]);
+      const timeout = setInterval(() => {
+        if (typeof props.value === 'number') {
+          setDateTime(DateTime.fromMillis(props.value).toRelative());
+        } else if (props.value) {
+          setDateTime(DateTime.fromISO(props.value).toRelative());
+        }
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [props.format, props.value]);
   if (props.value === undefined) return <></>;
   return (
-    <span style={{ whiteSpace: 'nowrap' }}>
+    <DateCellSpan className="date-time">
       {dateTime}
       {author && <span>&nbsp;{translations.by}&nbsp;</span>}
       {onClick ? (
@@ -48,6 +60,6 @@ export function SinceCell(props: {
       ) : (
         <span>{author}</span>
       )}
-    </span>
+    </DateCellSpan>
   );
 }

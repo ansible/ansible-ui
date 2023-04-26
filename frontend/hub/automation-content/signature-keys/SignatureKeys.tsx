@@ -4,14 +4,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CopyCell,
+  DateTimeCell,
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
-  SinceCell,
   TextCell,
 } from '../../../../framework';
 import { downloadTextFile } from '../../../../framework/utils/download-file';
@@ -32,8 +33,10 @@ export function SignatureKeys() {
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: DownloadIcon,
         label: t('Download key'),
         onClick: (signatureKey) => downloadTextFile('key', signatureKey?.public_key ?? ''),
@@ -79,7 +82,7 @@ export function useSignatureKeysColumns(_options?: {
       },
       {
         header: t('Created'),
-        cell: (signatureKey) => <SinceCell value={signatureKey.pulp_created} />,
+        cell: (signatureKey) => <DateTimeCell format="since" value={signatureKey.pulp_created} />,
         card: 'hidden',
         list: 'secondary',
       },
@@ -92,7 +95,15 @@ export function useSignatureKeysColumns(_options?: {
 export function useSignatureKeyFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [{ key: 'name', label: t('Name'), type: 'string', query: 'name' }],
+    () => [
+      {
+        key: 'name',
+        label: t('Name'),
+        type: 'string',
+        query: 'name',
+        placeholder: t('starts with'),
+      },
+    ],
     [t]
   );
   return toolbarFilters;

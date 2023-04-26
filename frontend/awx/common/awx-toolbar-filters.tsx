@@ -10,6 +10,7 @@ export function useNameToolbarFilter() {
       label: t('Name'),
       type: 'string',
       query: 'name__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -23,6 +24,7 @@ export function useDescriptionToolbarFilter() {
       label: t('Description'),
       type: 'string',
       query: 'description__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -36,6 +38,7 @@ export function useOrganizationToolbarFilter() {
       label: t('Organization'),
       type: 'string',
       query: 'organization__name__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -49,6 +52,7 @@ export function useCreatedByToolbarFilter() {
       label: t('Created by'),
       type: 'string',
       query: 'created_by__username__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -62,6 +66,7 @@ export function useModifiedByToolbarFilter() {
       label: t('Modified by'),
       type: 'string',
       query: 'modified_by__username__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -75,6 +80,7 @@ export function useUsernameToolbarFilter() {
       label: t('Username'),
       type: 'string',
       query: 'username__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -88,6 +94,7 @@ export function useFirstNameToolbarFilter() {
       label: t('First name'),
       type: 'string',
       query: 'first_name__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -101,6 +108,7 @@ export function useLastNameToolbarFilter() {
       label: t('Last name'),
       type: 'string',
       query: 'last_name__icontains',
+      placeholder: t('contains'),
     }),
     [t]
   );
@@ -114,6 +122,26 @@ export function useEmailToolbarFilter() {
       label: t('Email'),
       type: 'string',
       query: 'email__icontains',
+      placeholder: t('contains'),
+    }),
+    [t]
+  );
+}
+
+export function useInventoryTypeToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'kind',
+      label: t('Inventory type'),
+      type: 'select',
+      query: 'or__kind',
+      options: [
+        { label: t('Inventory'), value: '' },
+        { label: t('Smart inventory'), value: 'smart' },
+        { label: t('Constructed inventory'), value: 'constructed' },
+      ],
+      placeholder: t('Select types'),
     }),
     [t]
   );

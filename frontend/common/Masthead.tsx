@@ -20,6 +20,7 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
+  Tooltip,
   Truncate,
 } from '@patternfly/react-core';
 import {
@@ -27,22 +28,24 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
+  RedoAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
-import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
+import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
 import { useSettingsDialog } from '../../framework/Settings';
+import { RouteObj, RouteType } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { API_PREFIX } from '../eda/constants';
-import { RouteObj, RouteType } from '../Routes';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
+import { useActiveUser } from './useActiveUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -138,6 +141,9 @@ export function AnsibleMasthead(props: {
                 {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
                                 <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
                             )} */}
+                <ToolbarItem>
+                  <Refresh />
+                </ToolbarItem>
                 <ToolbarItem>
                   <Notifications />
                 </ToolbarItem>
@@ -256,9 +262,13 @@ function AccountDropdown() {
   );
 }
 
-function EdaUserInfo() {
+export function EdaUserInfo() {
   const fetcher = useFetcher();
-  const meResponse = useSWR<{ username: string }>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
+  const meResponse = useSWR<{ id: number; username: string }>(
+    `${API_PREFIX}/users/me/`,
+    fetcher,
+    swrOptions
+  );
   return meResponse?.data;
 }
 
@@ -287,6 +297,7 @@ function AccountDropdownInternal() {
     setOpen((open) => !open);
   }, []);
   const { t } = useTranslation();
+  const activeUser = useActiveUser();
   return (
     <Dropdown
       onSelect={onSelect}
@@ -311,8 +322,16 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             automationServer?.type === AutomationServerType.EDA
-              ? history(RouteObj.EdaUsers)
-              : history(RouteObj.Users);
+              ? history(
+                  activeUser
+                    ? RouteObj.EdaUserDetails.replace(':id', activeUser.id.toString())
+                    : RouteObj.EdaUsers
+                )
+              : history(
+                  activeUser
+                    ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
+                    : RouteObj.Users
+                );
           }}
         >
           {t('User details')}
@@ -357,5 +376,62 @@ function NotificationsInternal() {
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
+  );
+}
+
+export function Refresh() {
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = useCallback(() => {
+    setRefreshing(true);
+    void mutate((key) => typeof key === 'string').finally(() => {
+      setRefreshing(false);
+    });
+  }, []);
+  const [rotation, setRotation] = useState(0);
+
+  useLayoutEffect(() => {
+    let frame: number;
+    let start: number;
+    function rotate(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+      frame = requestAnimationFrame(rotate);
+      setRotation((rotate) => rotate + elapsed / 3);
+    }
+    function stop(timestamp: number) {
+      if (start === undefined) {
+        start = timestamp;
+      }
+      const elapsed = timestamp - start;
+      start = timestamp;
+
+      frame = requestAnimationFrame(stop);
+      setRotation((rotate) => {
+        if (Math.floor(rotate / 360) !== Math.floor((rotate + elapsed / 3) / 360)) {
+          cancelAnimationFrame(frame);
+          return 0;
+        }
+        return rotate + elapsed / 3;
+      });
+    }
+
+    if (refreshing) {
+      frame = requestAnimationFrame(rotate);
+      return () => cancelAnimationFrame(frame);
+    } else {
+      frame = requestAnimationFrame(stop);
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [refreshing]);
+
+  return (
+    <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
+      <Button id="refresh" onClick={refresh} variant="plain">
+        <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
+      </Button>
+    </Tooltip>
   );
 }

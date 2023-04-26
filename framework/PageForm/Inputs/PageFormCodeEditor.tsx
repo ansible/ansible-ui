@@ -1,9 +1,11 @@
+import { Split } from '@patternfly/react-core';
+import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as monaco from 'monaco-editor';
-import { useEffect, useRef } from 'react';
-import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, FieldPath, FieldValues, Validate, useFormContext } from 'react-hook-form';
 import { FormGroupTextInputProps, useSettings } from '../..';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormCodeEditorInputProps<
@@ -12,13 +14,15 @@ export type PageFormCodeEditorInputProps<
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
+  isExpandable?: boolean;
+  defaultExpanded?: boolean;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 export function PageFormCodeEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormCodeEditorInputProps<TFieldValues, TFieldName>) {
-  const { isReadOnly, validate, ...formGroupInputProps } = props;
+  const { isReadOnly, validate, isExpandable, defaultExpanded, ...formGroupInputProps } = props;
   const { label, name, isRequired } = props;
   const {
     control,
@@ -26,6 +30,7 @@ export function PageFormCodeEditor<
   } = useFormContext<TFieldValues>();
 
   const id = props.id ?? name.split('.').join('-');
+  const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
 
   return (
     <Controller<TFieldValues, TFieldName>
@@ -36,16 +41,34 @@ export function PageFormCodeEditor<
         return (
           <PageFormGroup
             {...formGroupInputProps}
+            label={
+              isExpandable ? (
+                <Split hasGutter style={{ alignItems: 'center' }}>
+                  <AngleRightIcon
+                    style={{
+                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                      transition: 'transform',
+                    }}
+                    onClick={() => setCollapsed((c) => !c)}
+                  />
+                  {props.label}
+                </Split>
+              ) : (
+                props.label
+              )
+            }
             id={id}
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
-            <MonacoEditor
-              id={id}
-              value={value as unknown as string}
-              onChange={onChange}
-              isReadOnly={isReadOnly || isSubmitting}
-              invalid={!(validate && isValidating) && error?.message !== undefined}
-            />
+            {(!isExpandable || !isCollapsed) && (
+              <MonacoEditor
+                id={id}
+                value={value as unknown as string}
+                onChange={onChange}
+                isReadOnly={isReadOnly || isSubmitting}
+                invalid={!(validate && isValidating) && error?.message !== undefined}
+              />
+            )}
           </PageFormGroup>
         );
       }}

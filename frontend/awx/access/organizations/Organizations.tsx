@@ -13,18 +13,20 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -61,28 +63,33 @@ export function Organizations() {
   const toolbarActions = useMemo<IPageAction<Organization>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        isPinned: true,
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
         href: RouteObj.CreateOrganization,
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
         label: t('Add users to selected organizations'),
         onClick: () => selectUsersAddOrganizations(view.selectedItems),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove users from selected organizations'),
         onClick: () => selectUsersRemoveOrganizations(view.selectedItems),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected organizations'),
         onClick: deleteOrganizations,
@@ -101,29 +108,33 @@ export function Organizations() {
   const rowActions = useMemo<IPageAction<Organization>[]>(() => {
     const actions: IPageAction<Organization>[] = [
       {
-        type: PageActionType.singleLink,
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit organization'),
         href: (organization) => {
           return RouteObj.EditOrganization.replace(':id', organization.id.toString());
         },
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: PlusCircleIcon,
         label: t('Add users to organization'),
         onClick: (organization) => selectUsersAddOrganizations([organization]),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove users from organization'),
         onClick: (organization) => selectUsersRemoveOrganizations([organization]),
       },
-      { type: PageActionType.seperator },
+      { type: PageActionType.Seperator },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete organization'),
         onClick: (organization) => deleteOrganizations([organization]),
@@ -137,13 +148,15 @@ export function Organizations() {
     <PageLayout>
       <PageHeader
         title={t('Organizations')}
-        titleHelpTitle={t('Organizations')}
+        titleHelpTitle={t('Organization')}
         titleHelp={t(
-          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/organizations.html"
         description={t(
-          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the ${product} object hierarchy.`
+          `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
+          { product }
         )}
         navigation={<AccessNav active="organizations" />}
       />
@@ -159,9 +172,6 @@ export function Organizations() {
         emptyStateButtonClick={() => navigate(RouteObj.CreateOrganization)}
         {...view}
         defaultSubtitle={t('Organization')}
-        expandedRow={(organization) =>
-          organization.description ? <>{organization.description}</> : undefined
-        }
       />
     </PageLayout>
   );
@@ -196,6 +206,7 @@ export function useOrganizationsColumns(options?: {
       navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString())),
     [navigate]
   );
+  const descriptionColumn = useDescriptionColumn();
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
@@ -206,6 +217,7 @@ export function useOrganizationsColumns(options?: {
     () => [
       idColumn,
       nameColumn,
+      descriptionColumn,
       {
         header: t('Members'),
         type: 'count',
@@ -219,7 +231,7 @@ export function useOrganizationsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
+import { AnsibleError } from './ansible-error';
 import { getCookie } from './cookie';
 import { Delay } from './delay';
-import { HTTPError } from './http-error';
 
 export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
@@ -42,11 +42,12 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
         // Do nothing - response body was not valid json
       }
 
-      throw new HTTPError(response.statusText, response.status, responseBody);
+      throw new AnsibleError(response.statusText, response.status, responseBody);
     }
 
     switch (response.status) {
-      case 204: // No Content
+      case 202: // No Content
+      case 204: // Accepted
         return null as ResponseBody;
     }
     return (await response.json()) as ResponseBody;

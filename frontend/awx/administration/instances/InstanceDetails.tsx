@@ -6,20 +6,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
+  DateTimeCell,
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
   PageLayout,
-  SinceCell,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
 import { useGetItem } from '../../../common/crud/useGetItem';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { StatusCell } from '../../../common/StatusCell';
-import { RouteObj } from '../../../Routes';
 import { AwxError } from '../../common/AwxError';
 import { Instance } from '../../interfaces/Instance';
 import { NodeTypeCell } from './Instances';
@@ -33,17 +34,21 @@ export function InstanceDetails() {
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit instance'),
         onClick: (instance) =>
           history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: HeartbeatIcon,
         variant: ButtonVariant.secondary,
+        isPinned: true,
         label: t('Run health check'),
         onClick: () => {
           void postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});
@@ -105,13 +110,13 @@ function InstanceDetailsTab(props: { instance: Instance }) {
         <BytesCell bytes={instance.memory} />
       </PageDetail>
       <PageDetail label={t('Last health check')}>
-        <SinceCell value={instance.last_health_check} />
+        <DateTimeCell format="since" value={instance.last_health_check} />
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <SinceCell value={instance.created} />
+        <DateTimeCell format="since" value={instance.created} />
       </PageDetail>
       <PageDetail label={t('Modified')}>
-        <SinceCell value={instance.modified} />
+        <DateTimeCell format="since" value={instance.modified} />
       </PageDetail>
     </PageDetails>
   );

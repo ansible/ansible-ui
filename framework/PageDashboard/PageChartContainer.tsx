@@ -1,12 +1,28 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+const ChartContainerDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  align-self: stretch';
+  justify-self: stretch;
+  position: relative;
+  `;
+const PropsDiv = styled.div`
+  position: absolute;
+`;
 
 export interface PageContainerSize {
   width: number;
   height: number;
 }
 
-export function PageChartContainer(props: { children: (size: PageContainerSize) => ReactNode }) {
+export function PageChartContainer(props: {
+  children: (size: PageContainerSize) => ReactNode;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<PageContainerSize>({
     width: ref.current?.clientWidth ?? 0,
@@ -32,18 +48,8 @@ export function PageChartContainer(props: { children: (size: PageContainerSize) 
   useEffect(() => updateSize(), [ref, updateSize]);
   useResizeObserver(ref, () => updateSize());
   return (
-    <div
-      ref={ref}
-      style={{
-        width: '100%',
-        height: '100%',
-        flexGrow: 1,
-        alignSelf: 'stretch',
-        justifySelf: 'stretch',
-        position: 'relative',
-      }}
-    >
-      <div style={{ position: 'absolute' }}>{props.children(containerSize)}</div>
-    </div>
+    <ChartContainerDiv ref={ref} className={props.className}>
+      <PropsDiv>{props.children(containerSize)}</PropsDiv>
+    </ChartContainerDiv>
   );
 }

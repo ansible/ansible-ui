@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, SinceCell, TextCell } from '../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+} from '../../framework';
 import { RouteObj } from '../Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -60,6 +66,8 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       type: 'description',
       value: (item) => item.description,
       list: 'secondary',
+      table: ColumnTableOption.Description,
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
@@ -78,7 +86,8 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       cell: (item) => {
         if (!item.created) return <></>;
         return (
-          <SinceCell
+          <DateTimeCell
+            format="since"
             value={item.created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
@@ -99,8 +108,10 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       },
       sort: options?.disableSort ? undefined : 'created',
       defaultSortDirection: 'desc',
+      table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
   );
@@ -122,7 +133,8 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       cell: (item) => {
         if (!item.modified) return <></>;
         return (
-          <SinceCell
+          <DateTimeCell
+            format="since"
             value={item.modified}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
@@ -143,8 +155,10 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       },
       sort: options?.disableSort ? undefined : 'modified',
       defaultSortDirection: 'desc',
+      table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [history, options?.disableLinks, options?.disableSort, t]
   );

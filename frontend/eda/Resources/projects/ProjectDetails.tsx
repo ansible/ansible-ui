@@ -1,11 +1,13 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, GitAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { GitAltIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  errorToAlertProps,
   IPageAction,
   PageActions,
+  PageActionSelection,
   PageActionType,
   PageDetail,
   PageDetails,
@@ -14,21 +16,40 @@ import {
   PageTab,
   PageTabs,
   TextCell,
+  usePageAlertToaster,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
+import { postRequest } from '../../../common/crud/Data';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${params.id ?? ''}/`);
+  const alertToaster = usePageAlertToaster();
 
+  const { data: project, refresh } = useGet<EdaProject>(
+    `${API_PREFIX}/projects/${params.id ?? ''}/`
+  );
+  const syncProject = useCallback(
+    (project: EdaProject) =>
+      postRequest(`${API_PREFIX}/projects/${project.id}/sync/`, undefined)
+        .then(() => {
+          alertToaster.addAlert({
+            title: `${t('Syncing')} ${project?.name || t('project')}`,
+            variant: 'success',
+            timeout: 5000,
+          });
+        })
+        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
+        .finally(() => refresh()),
+    [alertToaster, refresh, t]
+  );
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {
       navigate(RouteObj.EdaProjects);
@@ -38,21 +59,34 @@ export function ProjectDetails() {
   const itemActions = useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
-        type: PageActionType.single,
-        icon: EditIcon,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: SyncAltIcon,
+        isPinned: true,
+        label: t('Sync project'),
+        isHidden: (project: EdaProject) => {
+          return project?.import_state === 'pending' || project?.import_state === 'running';
+        },
+        onClick: (project: EdaProject) => syncProject(project),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete project'),
         onClick: (project: EdaProject) => deleteProjects([project]),
         isDanger: true,
       },
     ],
-    [deleteProjects, navigate, t]
+    [deleteProjects, navigate, syncProject, t]
   );
 
   const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {
@@ -67,8 +101,9 @@ export function ProjectDetails() {
         <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
-          <StatusLabelCell status={project?.import_state || ''} />
+          <StatusCell status={project?.import_state || ''} />
         </PageDetail>
+        <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>

@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { IEdaView } from '../../../useEventDrivenView';
@@ -16,16 +16,19 @@ export function useGroupsActions(view: IEdaView<EdaGroup>) {
   return useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create Group'),
         onClick: () => navigate(RouteObj.CreateEdaGroup),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected Groups'),
+        label: t('Delete selected groups'),
         onClick: (Groups: EdaGroup[]) => deleteGroups(Groups),
         isDanger: true,
       },

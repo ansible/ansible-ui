@@ -1,36 +1,18 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { CubesIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  IPageAction,
-  ITableColumn,
-  IToolbarFilter,
-  PageActionType,
-  PageHeader,
-  PageLayout,
-  PageTable,
-} from '../../../../framework';
-import {
-  useCreatedColumn,
-  useModifiedColumn,
-  useNameColumn,
-  useOrganizationNameColumn,
-} from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { ScmType } from '../../../common/scm';
-import { StatusCell } from '../../../common/StatusCell';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import {
-  useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
-  useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-} from '../../common/awx-toolbar-filters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
-import { useDeleteProjects } from './hooks/useDeleteProjects';
+import { useProjectActions } from './hooks/useProjectActions';
+import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
+import { useProjectsColumns } from './hooks/useProjectsColumns';
+import { useProjectsFilters } from './hooks/useProjectsFilters';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -43,65 +25,49 @@ export function Projects() {
     toolbarFilters,
     tableColumns,
   });
-  const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
-
-  const toolbarActions = useMemo<IPageAction<Project>[]>(
-    () => [
-      {
-        type: PageActionType.button,
-        variant: ButtonVariant.primary,
-        icon: PlusIcon,
-        label: t('Create project'),
-        onClick: () => navigate(RouteObj.CreateProject),
-      },
-      {
-        type: PageActionType.bulk,
-        icon: TrashIcon,
-        label: t('Delete selected projects'),
-        onClick: deleteProjects,
-        isDanger: true,
-      },
-    ],
-    [navigate, deleteProjects, t]
+  const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useProjectActions(view.unselectItemsAndRefresh);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
+  const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
+  const { refresh } = view;
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+              void refresh();
+              break;
+            case 'workflow_job':
+              void refresh();
+              break;
+            case 'project_update':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
   );
-
-  const rowActions = useMemo<IPageAction<Project>[]>(
-    () => [
-      {
-        type: PageActionType.single,
-        variant: ButtonVariant.secondary,
-        icon: SyncIcon,
-        label: t('Sync'),
-        onClick: (_project) => alert('TODO'),
-      },
-      {
-        type: PageActionType.single,
-        icon: EditIcon,
-        label: t('Edit project'),
-        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
-      },
-      {
-        type: PageActionType.single,
-        icon: TrashIcon,
-        label: t('Delete project'),
-        onClick: (project) => deleteProjects([project]),
-        isDanger: true,
-      },
-    ],
-    [navigate, deleteProjects, t]
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
   );
 
   return (
     <PageLayout>
       <PageHeader
         title={t('Projects')}
-        titleHelpTitle={t('Projects')}
+        titleHelpTitle={t('Project')}
         titleHelp={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your ${product} server, or by placing your playbooks into a source code management (SCM) system supported by ${product}, including Git, Subversion, Mercurial, and Red Hat Insights.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
         description={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
+          { product }
         )}
       />
       <PageTable<Project>
@@ -110,86 +76,25 @@ export function Projects() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading projects')}
-        emptyStateTitle={t('No projects yet')}
-        emptyStateDescription={t('To get started, create an project.')}
-        emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
-        expandedRow={ItemDescriptionExpandedRow<Project>}
+        emptyStateTitle={
+          canCreateProject
+            ? t('There are currently no projects added to your organization.')
+            : t('You do not have permission to create a project')
+        }
+        emptyStateDescription={
+          canCreateProject
+            ? t('Please create a project by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateProject ? undefined : CubesIcon}
+        emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
+        emptyStateButtonClick={
+          canCreateProject ? () => navigate(RouteObj.CreateProject) : undefined
+        }
         {...view}
       />
     </PageLayout>
   );
-}
-
-export function useProjectsFilters() {
-  const { t } = useTranslation();
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      {
-        key: 'type',
-        label: t('Type'),
-        type: 'select',
-        query: 'scm_type',
-        options: [
-          { label: t('Manual'), value: 'manual' },
-          { label: t('Git'), value: 'git' },
-          { label: t('Subversion'), value: 'subversion' },
-          { label: t('Remote archive'), value: 'remote' },
-          { label: t('Red Hat insights'), value: 'insights' },
-        ],
-        placeholder: t('Select types'),
-      },
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      t,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ]
-  );
-  return toolbarFilters;
-}
-
-export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const nameClick = useCallback(
-    (project: Project) => navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString())),
-    [navigate]
-  );
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
-  const organizationColumn = useOrganizationNameColumn(options);
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<Project>[]>(
-    () => [
-      nameColumn,
-      {
-        header: t('Status'),
-        cell: (project) => <StatusCell status={project.status} />,
-      },
-      {
-        header: t('Type'),
-        cell: (project) => <ScmType scmType={project.scm_type} />,
-      },
-      {
-        header: t('Revision'),
-        cell: (project) => project.scm_revision,
-      },
-      organizationColumn,
-      createdColumn,
-      modifiedColumn,
-    ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn]
-  );
-  return tableColumns;
 }

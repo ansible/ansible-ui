@@ -5,10 +5,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../framework';
 import { PageFormSchema } from '../../../framework/PageForm/PageFormSchema';
+import { RouteObj } from '../../Routes';
 import { requestPatch } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 
@@ -36,19 +36,15 @@ export function EditRule() {
 
   const postRequest = usePostRequest<Partial<EdaRule>, EdaRule>();
 
-  const onSubmit: PageFormSubmitHandler<RuleSchema> = async (rule, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        rule = await requestPatch<EdaRule>(`${API_PREFIX}/rules/${id}/`, rule);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newRule = await postRequest(`${API_PREFIX}/rules/`, rule);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<RuleSchema> = async (rule) => {
+    if (Number.isInteger(id)) {
+      rule = await requestPatch<EdaRule>(`${API_PREFIX}/rules/${id}/`, rule);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newRule = await postRequest(`${API_PREFIX}/rules/`, rule);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);
@@ -58,7 +54,7 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
           />
         </PageLayout>
       );
@@ -66,8 +62,8 @@ export function EditRule() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit rule')}
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit rule') }]}
+            title={t('Edit Rule')}
+            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
           />
           <PageForm
             schema={RuleSchemaType}
@@ -86,8 +82,8 @@ export function EditRule() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create rule')}
-          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create rule') }]}
+          title={t('Create Rule')}
+          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create Rule') }]}
         />
         <PageForm
           schema={RuleSchemaType}

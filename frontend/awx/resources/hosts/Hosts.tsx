@@ -7,21 +7,26 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
 import { RouteObj } from '../../../Routes';
+import {
+  useCreatedColumn,
+  useDescriptionColumn,
+  useModifiedColumn,
+  useNameColumn,
+} from '../../../common/columns';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
-import { Host } from '../../interfaces/Host';
+import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
 
@@ -31,20 +36,23 @@ export function Hosts() {
   const navigate = useNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
-  const view = useAwxView<Host>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
+  const view = useAwxView<AwxHost>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<Host>[]>(
+  const toolbarActions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () => navigate(RouteObj.CreateHost),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected hosts'),
         onClick: deleteHosts,
@@ -54,16 +62,18 @@ export function Hosts() {
     [navigate, deleteHosts, t]
   );
 
-  const rowActions = useMemo<IPageAction<Host>[]>(
+  const rowActions = useMemo<IPageAction<AwxHost>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete host'),
         onClick: (host) => deleteHosts([host]),
@@ -78,12 +88,14 @@ export function Hosts() {
       <PageHeader
         title={t('Hosts')}
         description={t(
-          `A system managed by ${product}, which may include a physical, virtual, cloud-based server, or other device.`
+          `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device.`,
+          { product }
         )}
-        titleHelpTitle={t('Hosts')}
+        titleHelpTitle={t('Host')}
         titleHelp={[
           t(
-            `A system managed by ${product}, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.`
+            `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.`,
+            { product }
           ),
           t(
             'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
@@ -91,7 +103,7 @@ export function Hosts() {
         ]}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
       />
-      <PageTable<Host>
+      <PageTable<AwxHost>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -101,7 +113,6 @@ export function Hosts() {
         emptyStateDescription={t('To get started, create an host.')}
         emptyStateButtonText={t('Create host')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateHost)}
-        expandedRow={ItemDescriptionExpandedRow<Host>}
         {...view}
       />
     </PageLayout>
@@ -128,18 +139,19 @@ export function useHostsFilters() {
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
   const nameClick = useCallback(
-    (host: Host) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
+    (host: AwxHost) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
     [navigate]
   );
   const nameColumn = useNameColumn({
     ...options,
     onClick: nameClick,
   });
+  const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<Host>[]>(
-    () => [nameColumn, createdColumn, modifiedColumn],
-    [nameColumn, createdColumn, modifiedColumn]
+  const tableColumns = useMemo<ITableColumn<AwxHost>[]>(
+    () => [nameColumn, descriptionColumn, createdColumn, modifiedColumn],
+    [nameColumn, descriptionColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

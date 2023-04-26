@@ -12,7 +12,7 @@ import {
   ValidationRule,
 } from 'react-hook-form';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/capitalize';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTextInput, FormGroupTextInputProps } from './FormGroupTextInput';
 
 export type PageFormTextInputProps<
@@ -67,6 +67,9 @@ export function PageFormTextInput<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+        function onChangeHandler(value: string) {
+          onChange(value.trimStart());
+        }
         return (
           <FormGroupTextInput
             {...rest}
@@ -74,7 +77,7 @@ export function PageFormTextInput<
             isRequired={isRequired}
             id={id ?? name.split('.').join('-')}
             value={value}
-            onChange={onChange}
+            onChange={onChangeHandler}
             helperTextInvalid={
               error?.message
                 ? validate && isValidating

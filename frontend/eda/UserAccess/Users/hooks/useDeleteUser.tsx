@@ -15,12 +15,12 @@ export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
   return useCallback(
     (Users: EdaUser[]) => {
       bulkAction({
-        title: t('Permanently delete Users', { count: Users.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} Users.', {
+        title: t('Permanently delete users', { count: Users.length }),
+        confirmText: t('Yes, I confirm that I want to delete these {{count}} users.', {
           count: Users.length,
         }),
-        actionButtonText: t('Delete Users', { count: Users.length }),
-        items: Users.sort((l, r) => compareStrings(l.name, r.name)),
+        actionButtonText: t('Delete users', { count: Users.length }),
+        items: Users.sort((l, r) => compareStrings(l.username, r.username)),
         keyFn: idKeyFn,
         isDanger: true,
         confirmationColumns,

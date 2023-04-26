@@ -23,8 +23,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Views
   Dashboard: `${awxRoutePrefix}/dashboard`,
   Jobs: `${awxRoutePrefix}/jobs`,
-  JobOutput: `${awxRoutePrefix}/jobs/:job_type/output/:id`,
-  JobDetails: `${awxRoutePrefix}/jobs/:job_type/details/:id`,
+  JobPage: `${awxRoutePrefix}/jobs/:job_type/:id/*`,
+  JobOutput: `${awxRoutePrefix}/jobs/:job_type/:id/output`,
+  JobDetails: `${awxRoutePrefix}/jobs/:job_type/:id/details`,
   Schedules: `${awxRoutePrefix}/schedules`,
   ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
   WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
@@ -32,18 +33,24 @@ export const RouteObj: { [key: string]: RouteType } = {
 
   // Resources
   Templates: `${awxRoutePrefix}/templates`,
-  JobTemplateDetails: `${awxRoutePrefix}/job_template/details/:id`,
-  WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/details/:id`,
-  WorkflowJobTemplateEdit: `${awxRoutePrefix}/workflow_job_template/edit/:id`,
-  JobTemplateEdit: `${awxRoutePrefix}/job_template/edit/:id`,
+  JobTemplatePage: `${awxRoutePrefix}/job_template/:id/*`,
+  JobTemplateDetails: `${awxRoutePrefix}/job_template/:id/details`,
+  JobTemplateAccess: `${awxRoutePrefix}/job_template/:id/access`,
+  JobTemplateNotifications: `${awxRoutePrefix}/job_template/:id/notifications`,
+  JobTemplateSchedules: `${awxRoutePrefix}/job_template/:id/schedules`,
+  JobTemplateJobs: `${awxRoutePrefix}/job_template/:id/jobs`,
+  JobTemplateSurveys: `${awxRoutePrefix}/job_template/:id/surveys`,
+  WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/:id/details`,
   CreateWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/create`,
   CreateJobTemplate: `${awxRoutePrefix}/job_template/create`,
-  EditTemplate: `${awxRoutePrefix}/templates/edit/:id`,
+  EditJobTemplate: `${awxRoutePrefix}/job_template/:id/edit`,
+  EditWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/:id/edit`,
 
   Credentials: `${awxRoutePrefix}/credentials`,
-  CredentialDetails: `${awxRoutePrefix}/credentials/details/:id`,
+  CredentialPage: `${awxRoutePrefix}/credentials/:id/*`,
+  CredentialDetails: `${awxRoutePrefix}/credentials/:id/details`,
   CreateCredential: `${awxRoutePrefix}/credentials/create`,
-  EditCredential: `${awxRoutePrefix}/credentials/edit/:id`,
+  EditCredential: `${awxRoutePrefix}/credentials/:id/edit`,
 
   Projects: `${awxRoutePrefix}/projects`,
   ProjectDetails: `${awxRoutePrefix}/projects/:id/details`,
@@ -51,9 +58,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditProject: `${awxRoutePrefix}/projects/edit/:id`,
 
   Inventories: `${awxRoutePrefix}/inventories`,
-  InventoryDetails: `${awxRoutePrefix}/inventories/details/:id`,
+  InventoryDetails: `${awxRoutePrefix}/inventories/:inventory_type/details/:id`,
   CreateInventory: `${awxRoutePrefix}/inventories/create`,
   EditInventory: `${awxRoutePrefix}/inventories/edit/:id`,
+  CreateSmartInventory: `${awxRoutePrefix}/smart_inventory/create`,
+  CreateConstructedInventory: `${awxRoutePrefix}/constructed_inventory/create`,
+  EditSmartInventory: `${awxRoutePrefix}/smart_inventory/edit/:id`,
+  EditConstructedInventory: `${awxRoutePrefix}/constructed_inventory/edit/:id`,
 
   Hosts: `${awxRoutePrefix}/hosts`,
   HostDetails: `${awxRoutePrefix}/hosts/details/:id`,
@@ -73,7 +84,11 @@ export const RouteObj: { [key: string]: RouteType } = {
   AddRolesToTeam: `${awxRoutePrefix}/teams/:id/roles/add`,
 
   Users: `${awxRoutePrefix}/users`,
+  UserPage: `${awxRoutePrefix}/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/users/:id/details`,
+  UserOrganizations: `${awxRoutePrefix}/users/:id/organizations`,
+  UserTeams: `${awxRoutePrefix}/users/:id/teams`,
+  UserRoles: `${awxRoutePrefix}/users/:id/roles`,
   CreateUser: `${awxRoutePrefix}/users/create`,
   EditUser: `${awxRoutePrefix}/users/:id/edit`,
   AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,
@@ -86,7 +101,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   ManagementJobs: `${awxRoutePrefix}/management-jobs`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
-  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/details/:id`,
+  InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/:id/details`,
   CreateInstanceGroup: `${awxRoutePrefix}/instance-groups/create`,
   EditInstanceGroup: `${awxRoutePrefix}/instance-groups/edit/:id`,
 
@@ -107,10 +122,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Settings
   Settings: `${awxRoutePrefix}/settings`,
 
+  //Analytics
+  ControllerReports: `${awxRoutePrefix}/reports`,
+  ControllerReport: `${awxRoutePrefix}/report/:id`,
+
   Hub: `${hubRoutePrefix}`,
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
-
   Collections: `${hubRoutePrefix}/collections`,
   CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
@@ -167,18 +185,15 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/create`,
   EditEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/edit/:id`,
 
-  EdaActions: `${edaRoutePrefix}/actions`,
-  EdaActionDetails: `${edaRoutePrefix}/actions/details/:id`,
+  EdaRuleAudit: `${edaRoutePrefix}/rule-audit`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/rule-audit/details/:id`,
 
   EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,
+  EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/rulebook-activations/details/:id/history`,
   CreateEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/create`,
   EditEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/edit/:id`,
-
-  EdaActivities: `${edaRoutePrefix}/activities`,
-  EdaActivityDetails: `${edaRoutePrefix}/activities/details/:id`,
-  CreateEdaActivity: `${edaRoutePrefix}/activities/create`,
-  EditEdaActivity: `${edaRoutePrefix}/activities/edit/:id`,
+  EdaActivationInstanceDetails: `${edaRoutePrefix}/activations-instances/details/:id`,
 
   EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
   EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
@@ -195,6 +210,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   EdaGroups: `${edaRoutePrefix}/groups`,
   EdaRoles: `${edaRoutePrefix}/roles`,
   CreateEdaUser: `${edaRoutePrefix}/users/create`,
+  EdaUserDetailsTokens: `${edaRoutePrefix}/user/details/:id/tokens`,
   EdaUserDetails: `${edaRoutePrefix}/user/details/:id`,
   EditEdaUser: `${edaRoutePrefix}/user/edit/:id`,
   CreateEdaGroup: `${edaRoutePrefix}/groups/create`,
@@ -203,6 +219,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaRole: `${edaRoutePrefix}/roles/create`,
   EdaRoleDetails: `${edaRoutePrefix}/role/details/:id`,
   EditEdaRole: `${edaRoutePrefix}/role/edit/:id`,
+  CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
 };
 
 export function useRoutesWithoutPrefix(prefix: RouteType) {
@@ -210,7 +227,7 @@ export function useRoutesWithoutPrefix(prefix: RouteType) {
     const routes: { [key: string]: RouteType } = {};
     for (const route in RouteObj) {
       if (RouteObj[route].startsWith(prefix)) {
-        routes[route] = RouteObj[route].replace(prefix, '/') as RouteType;
+        routes[route] = RouteObj[route].replace(prefix, '') as RouteType;
       }
     }
     return routes;

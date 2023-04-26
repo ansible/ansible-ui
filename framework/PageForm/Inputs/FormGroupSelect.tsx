@@ -54,8 +54,7 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         maxHeight={280}
         validated={helperTextInvalid ? 'error' : undefined}
         isDisabled={props.isDisabled || isReadOnly}
-        // ZIndex 400 is needed for PF table stick headers
-        style={{ zIndex: open ? 400 : undefined }}
+        hasPlaceholderStyle
       >
         {children as ReactElement[]}
       </Select>

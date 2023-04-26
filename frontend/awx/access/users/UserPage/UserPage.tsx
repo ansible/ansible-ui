@@ -6,16 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageHeader,
   PageLayout,
-  PageTab,
-  PageTabs,
+  RoutedTabs,
+  RoutedTab,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -39,14 +40,17 @@ export function UserPage() {
   const itemActions: IPageAction<User>[] = useMemo(() => {
     const itemActions: IPageAction<User>[] = [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
         onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
         onClick: (user) => deleteUsers([user]),
@@ -72,20 +76,20 @@ export function UserPage() {
           />
         }
       />
-      <PageTabs>
-        <PageTab label={t('Details')}>
+      <RoutedTabs baseUrl={RouteObj.UserPage}>
+        <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
-        </PageTab>
-        <PageTab label={t('Organizations')}>
+        </RoutedTab>
+        <RoutedTab label={t('Organizations')} url={RouteObj.UserOrganizations}>
           <UserOrganizations user={user} />
-        </PageTab>
-        <PageTab label={t('Teams')}>
+        </RoutedTab>
+        <RoutedTab label={t('Teams')} url={RouteObj.UserTeams}>
           <UserTeams user={user} />
-        </PageTab>
-        <PageTab label={t('Roles')}>
+        </RoutedTab>
+        <RoutedTab label={t('Roles')} url={RouteObj.UserRoles}>
           <UserRoles user={user} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

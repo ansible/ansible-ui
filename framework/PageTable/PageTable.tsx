@@ -7,9 +7,11 @@ import {
   EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
+  Flex,
   PageSection,
   Skeleton,
   Spinner,
+  Stack,
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
@@ -34,37 +36,67 @@ import {
   UIEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
+import styled from 'styled-components';
+import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
+import { PageBody } from '../PageBody';
+import { useColumnModal } from '../PageColumnModal';
+import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
+import { useSettings } from '../Settings';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { IPageAction } from '../PageActions/PageAction';
-import { PageActions } from '../PageActions/PageActions';
-import { PageActionType } from '../PageActions/PageActionType';
-import { PageBody } from '../PageBody';
-import { SinceCell } from '../PageCells/DateTimeCell';
-import { LabelsCell } from '../PageCells/LabelsCell';
-import { TextCell } from '../PageCells/TextCell';
-import { useColumnModal } from '../PageColumnModal';
-import { useSettings } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
+import './PageTable.css';
 import { PageTableCards } from './PageTableCards';
+import {
+  ITableColumn,
+  TableColumnCell,
+  useDescriptionColumns,
+  useExpandedColumns,
+  useVisibleTableColumns,
+} from './PageTableColumn';
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
-import { IToolbarFilter, PageTableToolbar } from './PageToolbar';
+import { PageTableToolbar } from './PageToolbar';
+import { IToolbarFilter } from './PageToolbarFilter';
+
+const ScrollDiv = styled.div`
+  height: 100%;
+`;
+
+const EmptyStateDiv = styled.div`
+  height: 100%;
+  background-color: var(--pf-global--BackgroundColor--100);
+`;
+
+const TableCellDiv = styled.div`
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
+
+const ColumnCellDiv = styled.div`
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
 
 export type PageTableProps<T extends object> = {
+  // TODO table id to save table settings
+  // id: string
+
   keyFn: (item: T) => string | number;
 
   itemCount?: number;
+
+  /** The current page of items to show. If undefined, then the table shows a loading state. */
   pageItems: T[] | undefined;
 
   toolbarActions?: IPageAction<T>[];
-
   tableColumns: ITableColumn<T>[];
-
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
@@ -82,6 +114,8 @@ export type PageTableProps<T extends object> = {
   perPage: number;
   setPage: (page: number) => void;
   setPerPage: (perPage: number) => void;
+
+  /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
@@ -91,8 +125,15 @@ export type PageTableProps<T extends object> = {
   unselectItem?: (item: T) => void;
   selectItems?: (items: T[]) => void;
   unselectAll?: () => void;
+
+  /**
+   * Callback where if defined, enables single selection of items in the table.
+   */
+  // TODO rename to onSingleSelect
   onSelect?: (item: T) => void;
-  selectNoneText?: string;
+
+  // TODO make error state a react component? <TableError /> What to do if not provided? - reuse CommonEmptyStates
+  // TODO make empty state a react component? <TableEmpty /> What to do if not provided? - reuse CommonEmptyStates
 
   errorStateTitle: string;
   error?: Error;
@@ -101,25 +142,51 @@ export type PageTableProps<T extends object> = {
   emptyStateDescription?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyStateIcon?: React.ComponentType<any>;
+  emptyStateActions?: IPageAction<T>[];
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string | null;
   emptyStateButtonClick?: () => void;
   emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
+
+  /**
+   * Enables multi-selection of items even though there are no actions that are bulk actions.
+   * This is used in the bulk select dialog where the selected items are used outside the table.
+   */
+  // TODO rename to showMultiSelect
   showSelect?: boolean;
 
   disableTableView?: boolean;
   disableListView?: boolean;
   disableCardView?: boolean;
 
+  /** Disables column management for the table. Used for tables in modals. */
+  // TODO - only enable column management on tables with id
   disableColumnManagement?: boolean;
 
+  // TODO remember user setting so that when they return to this table it uses their last setting
   defaultTableView?: PageTableViewType;
 
+  /**
+   * Disables the padding that shows up on large screens around the table.
+   * Used in modals and other places.
+   */
+  // TODO - There is a request to add a user setting to allow users to turn off padding.
   disableBodyPadding?: boolean;
 
+  /**
+   * Default subtitle is used in list and card views as the default subtitle if there is no subtitle column.
+   * Example is team card that has the work 'team' under the team name. Makes the card feel polished.
+   */
   defaultSubtitle?: ReactNode;
 
+  /**
+   * A render function that if defined, enables expanded row content.
+   * Columns that are marked as expanded content will enable the expanded row
+   * and will add to the content returned from the expandedRow render function.
+   */
   expandedRow?: (item: T) => ReactNode;
+
+  disableLastRowBorder?: boolean;
 };
 
 /**
@@ -139,11 +206,62 @@ export type PageTableProps<T extends object> = {
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
+
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
+  const tableColumns = useVisibleTableColumns(managedColumns);
+
+  const descriptionColumns = useDescriptionColumns(managedColumns);
+  const expandedRowColumns = useExpandedColumns(managedColumns);
+  const expandedRow = useMemo(() => {
+    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
+
+    if (descriptionColumns.length) {
+      for (const descriptionColumn of descriptionColumns) {
+        if ('value' in descriptionColumn) {
+          expandedRowFunctions.push((item) => {
+            const value = descriptionColumn.value?.(item);
+            if (value) {
+              return <div>{value}</div>;
+            }
+          });
+        } else {
+          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
+        }
+      }
+    }
+
+    if (expandedRowColumns.length) {
+      expandedRowFunctions.push((item) => (
+        <PageDetailsFromColumns
+          item={item}
+          columns={expandedRowColumns}
+          disablePadding
+          numberOfColumns="multiple"
+        />
+      ));
+    }
+
+    if (props.expandedRow) {
+      expandedRowFunctions.push(props.expandedRow);
+    }
+
+    if (expandedRowFunctions.length === 0) return undefined;
+    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
+
+    const newExpandedRow = (item: T) => (
+      <Stack hasGutter style={{ gap: 12 }}>
+        {expandedRowFunctions.map((fn) => fn(item))}
+      </Stack>
+    );
+
+    return newExpandedRow;
+  }, [descriptionColumns, expandedRowColumns, props.expandedRow]);
+
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
 
   const hasTableViewType = !props.disableTableView;
   const hasListViewType = !props.disableListView;
@@ -163,7 +281,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
-      <div className="dark-2" style={{ height: '100%' }}>
+      <EmptyStateDiv>
         <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
           <EmptyStateIcon
             icon={ExclamationCircleIcon}
@@ -176,20 +294,25 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
           <EmptyStateBody>{error.message}</EmptyStateBody>
         </EmptyState>
-      </div>
+      </EmptyStateDiv>
     );
   }
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection variant={props.emptyStateVariant || 'default'}>
-        <EmptyState variant={EmptyStateVariant.large} style={{ paddingTop: 48 }}>
+      <EmptyStateDiv>
+        <EmptyState variant={EmptyStateVariant.large}>
           <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
           <Title headingLevel="h4" size="lg">
             {props.emptyStateTitle}
           </Title>
           {props.emptyStateDescription && (
             <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
+          )}
+          {props.emptyStateActions && (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <PageActions actions={props.emptyStateActions} />
+            </Flex>
           )}
           {props.emptyStateButtonClick && (
             <Button
@@ -201,7 +324,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
             </Button>
           )}
         </EmptyState>
-      </PageSection>
+      </EmptyStateDiv>
     );
   }
 
@@ -227,7 +350,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} tableColumns={managedColumns} />
+          <PageTableView {...props} tableColumns={tableColumns} expandedRow={expandedRow} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
@@ -282,8 +405,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
-    toolbarActions?.find((toolbarAction) => PageActionType.bulk === toolbarAction.type) !==
-      undefined;
+    toolbarActions?.find(
+      (action) => 'selection' in action && action.selection === PageActionSelection.Multiple
+    ) !== undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState<{
     left: number;
@@ -315,12 +439,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const settings = useSettings();
 
   return (
-    <div
-      className="pf-c-scroll-inner-wrapper"
-      style={{ height: '100%', marginBottom: -1 }}
-      ref={containerRef}
-      onScroll={onScroll}
-    >
+    <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
       <TableComposable
         aria-label="Simple table"
         variant={
@@ -328,6 +447,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         }
         gridBreakPoint=""
         isStickyHeader
+        className="page-table"
       >
         {itemCount === undefined ? (
           <Thead>
@@ -352,9 +472,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             ? new Array(perPage).fill(0).map((_, index) => (
                 <Tr key={index}>
                   <Td>
-                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <TableCellDiv>
                       <Skeleton height="27px" />
-                    </div>
+                    </TableCellDiv>
                   </Td>
                 </Tr>
               ))
@@ -363,9 +483,9 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 <Tr key={index}>
                   {showSelect && <Td></Td>}
                   <Td colSpan={tableColumns.length}>
-                    <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <ColumnCellDiv>
                       <Skeleton height="27px" />
-                    </div>
+                    </ColumnCellDiv>
                   </Td>
                 </Tr>
               ))
@@ -386,6 +506,8 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   unselectAll={unselectAll}
                   onSelect={onSelect}
                   expandedRow={expandedRow}
+                  isLastRow={rowIndex === pageItems.length - 1}
+                  disableLastRowBorder={props.disableLastRowBorder}
                 />
               ))}
         </Tbody>
@@ -406,7 +528,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           )}
         </EmptyState>
       )}
-    </div>
+    </ScrollDiv>
   );
 }
 
@@ -479,6 +601,7 @@ function TableHead<T extends object>(props: {
               <Th
                 key={column.header}
                 sort={getColumnSort(index, column)}
+                modifier="nowrap"
                 style={{
                   minWidth:
                     column.minWidth === 0
@@ -531,6 +654,8 @@ function TableRow<T extends object>(props: {
   onSelect?: (item: T) => void;
   unselectAll?: () => void;
   expandedRow?: (item: T) => ReactNode;
+  isLastRow?: boolean;
+  disableLastRowBorder?: boolean;
 }) {
   const {
     columns,
@@ -545,6 +670,7 @@ function TableRow<T extends object>(props: {
     showSelect,
     onSelect,
     expandedRow,
+    disableLastRowBorder,
   } = props;
   const [expanded, setExpanded] = useState(false);
   const settings = useSettings();
@@ -552,11 +678,10 @@ function TableRow<T extends object>(props: {
   return (
     <>
       <Tr
-        className={isItemSelected ? 'selected' : undefined}
         isRowSelected={expanded}
         style={{
           boxShadow: 'unset',
-          borderBottom: expanded ? 'unset' : undefined,
+          borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
         }}
       >
         {expandedRow && (
@@ -622,11 +747,7 @@ function TableRow<T extends object>(props: {
         />
       </Tr>
       {expandedRow && expanded && expandedContent && (
-        <Tr
-          className={isItemSelected ? 'selected' : undefined}
-          isExpanded={expanded}
-          style={{ boxShadow: 'unset' }}
-        >
+        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
             <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
@@ -693,8 +814,7 @@ function TableCells<T extends object>(props: {
             right: 0,
             padding: 0,
             paddingRight: 0,
-            // ZIndex 400 is needed for PF table stick headers
-            zIndex: actionsExpanded ? 400 : undefined,
+            zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
         >
@@ -709,87 +829,4 @@ function TableCells<T extends object>(props: {
       )}
     </Fragment>
   );
-}
-
-type CellFn<T extends object, R> = (item: T) => R;
-
-export interface ITableColumnCommon<T extends object> {
-  id?: string;
-  header: string;
-  minWidth?: number;
-  maxWidth?: number;
-  enabled?: boolean;
-  isIdColumn?: boolean;
-
-  sort?: string;
-  defaultSortDirection?: 'asc' | 'desc';
-  defaultSort?: boolean;
-
-  icon?: (item: T) => ReactNode;
-  card?: 'name' | 'subtitle' | 'description' | 'hidden';
-  list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
-}
-
-export enum TableColumnCardType {
-  'description',
-  'hidden',
-  'count',
-}
-
-export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
-  type?: undefined;
-  value?: CellFn<T, string | string[] | number | boolean>;
-  cell: CellFn<T, ReactNode | undefined>;
-}
-
-export interface ITableColumnTypeCount<T extends object> extends ITableColumnCommon<T> {
-  type: 'count';
-  value: CellFn<T, number | undefined>;
-}
-
-export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
-  type: 'labels';
-  value: CellFn<T, string[] | undefined>;
-}
-
-export interface ITableColumnTypeDateTime<T extends object> extends ITableColumnCommon<T> {
-  type: 'datetime';
-  value: CellFn<T, number | string | undefined>;
-}
-
-export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
-  type: 'description';
-  value: CellFn<T, string | undefined | null>;
-}
-
-export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
-  type: 'text';
-  value: CellFn<T, string | null | undefined>;
-}
-
-export type ITableColumn<T extends object> =
-  | ITableColumnTypeReactNode<T>
-  | ITableColumnTypeDateTime<T>
-  | ITableColumnTypeLabels<T>
-  | ITableColumnTypeCount<T>
-  | ITableColumnTypeText<T>
-  | ITableColumnTypeDescription<T>;
-
-export function TableColumnCell<T extends object>(props: { item: T; column?: ITableColumn<T> }) {
-  const { item, column } = props;
-  if (!column) return <></>;
-  switch (column.type) {
-    case 'text':
-      return <TextCell text={column.value(item)} />;
-    case 'labels':
-      return <LabelsCell labels={column.value(item) ?? []} />;
-    case 'description':
-      return <TextCell text={column.value(item)} />;
-    case 'count':
-      return <>{column.value(item) ?? '-'}</>;
-    case 'datetime':
-      return <SinceCell value={column.value(item)} />;
-    default:
-      return <>{column.cell(item)}</>;
-  }
 }

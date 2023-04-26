@@ -7,19 +7,20 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -47,14 +48,17 @@ export function ExecutionEnvironments() {
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Create execution environment'),
         onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
         onClick: deleteExecutionEnvironments,
@@ -67,7 +71,8 @@ export function ExecutionEnvironments() {
   const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
@@ -76,7 +81,8 @@ export function ExecutionEnvironments() {
           ),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
@@ -89,11 +95,8 @@ export function ExecutionEnvironments() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Execution environments')}
-        titleHelpTitle={t('Execution environments')}
-        titleHelp={t('executionEnvironments.title.help')}
+        title={t('Execution Environments')}
         titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
-        description={t('executionEnvironments.title.description')}
       />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}
@@ -106,7 +109,6 @@ export function ExecutionEnvironments() {
         emptyStateButtonText={t('Create execution environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateExecutionEnvironment)}
         {...view}
-        expandedRow={ItemDescriptionExpandedRow<ExecutionEnvironment>}
       />
     </PageLayout>
   );
@@ -154,12 +156,14 @@ export function useExecutionEnvironmentsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
+  const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       nameColumn,
+      descriptionColumn,
       {
         header: t('Image'),
         cell: (executionEnvironment) => executionEnvironment.image,
@@ -168,7 +172,7 @@ export function useExecutionEnvironmentsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, t, organizationColumn, createdColumn, modifiedColumn]
+    [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

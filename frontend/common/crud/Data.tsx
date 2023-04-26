@@ -77,7 +77,7 @@ async function requestCommon<ResponseBody>(
 
             let body: unknown;
             try {
-              body = await response?.json();
+              body = await response?.clone().json();
             } catch (bodyParseError) {
               return error;
             }
@@ -120,7 +120,7 @@ export interface ItemsResponse<T> {
   results: T[];
 }
 
-export function getItemKey(item: { id: number }) {
+export function getItemKey(item: { id: number | string }) {
   return item.id.toString();
 }
 

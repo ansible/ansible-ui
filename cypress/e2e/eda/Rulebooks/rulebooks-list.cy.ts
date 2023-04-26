@@ -5,19 +5,7 @@ describe('EDA Rulebooks List', () => {
     cy.edaLogin();
   });
 
-  it.skip('can filter the Rulebooks list based on specific criteria', () => {
-    //change test stub name to stipulate what the specific criteria is
-  });
-
-  it.skip('can perform a basic search on the Rulebooks list', () => {
-    //need to use mock data to test the search feature
-  });
-
-  it.skip('can perform an advanced search on the Rulebooks list', () => {
-    //need to use mock data to test the search feature
-  });
-
-  it.skip('can verify the functionality of items in the kebab menu on the Rulebooks list view', () => {
-    //disable rulebook
+  it.skip('can filter the Rulebooks list by Name', () => {
+    //write test here
   });
 });

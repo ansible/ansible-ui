@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
@@ -15,16 +15,19 @@ export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {
   return useMemo<IPageAction<EdaRulebookActivation>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t(' activation'),
         onClick: () => navigate(RouteObj.CreateEdaRulebookActivation),
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected rulebook activations'),
+        label: t('Delete selected activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
       },

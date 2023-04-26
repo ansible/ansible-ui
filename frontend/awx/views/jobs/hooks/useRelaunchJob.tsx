@@ -1,5 +1,5 @@
-import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { usePageAlertToaster } from '../../../../../framework';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
@@ -11,14 +11,12 @@ import {
   WorkflowJobRelaunch,
 } from '../../../interfaces/RelaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { getRelaunchEndpoint } from '../jobUtils';
+import { getJobOutputUrl, getRelaunchEndpoint } from '../jobUtils';
 
-export function useRelaunchJob(
-  onComplete: (jobs: UnifiedJob[]) => void,
-  jobRelaunchParams?: JobRelaunch
-) {
+export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const postRequest = usePostRequest();
 
   return async (job: UnifiedJob) => {
@@ -27,12 +25,6 @@ export function useRelaunchJob(
     if (!relaunchEndpoint) {
       return Promise.reject(new Error('Unable to retrieve launch configuration'));
     }
-
-    const alert: AlertProps = {
-      variant: 'info',
-      title: t('Relaunching job'),
-    };
-    alertToaster.addAlert(alert);
 
     // Get relaunch configuration
     try {
@@ -88,17 +80,11 @@ export function useRelaunchJob(
             break;
         }
 
-        alertToaster.replaceAlert(alert, {
-          variant: 'success',
-          title: t('Job relaunched'),
-          timeout: 2000,
-        });
-
-        // TODO: The relaunch should open up the job details UI (for now we're refreshing the jobs list)
-        onComplete([job]);
+        // Navigate to Job Output UI
+        navigate(getJobOutputUrl(job));
       }
     } catch (error) {
-      alertToaster.replaceAlert(alert, {
+      alertToaster.addAlert({
         variant: 'danger',
         title: t('Failed to relaunch job'),
         children: error instanceof Error && error.message,

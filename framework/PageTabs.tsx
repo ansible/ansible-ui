@@ -22,10 +22,11 @@ export function PageTabs(props: {
   children: ReactNode;
   preComponents?: ReactNode;
   postComponents?: ReactNode;
+  initialTabIndex?: number;
   loading?: boolean;
 }) {
   const { loading } = props;
-  const [activeKey, setActiveKey] = useState<number>(0);
+  const [activeKey, setActiveKey] = useState<number>(props?.initialTabIndex ?? 0);
   const onSelect = useCallback(
     (_: unknown, key: string | number) => setActiveKey(key as number),
     [setActiveKey]

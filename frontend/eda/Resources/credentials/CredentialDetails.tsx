@@ -1,12 +1,13 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -15,10 +16,11 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
+import { CredentialOptions } from './EditCredential';
 import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 
 export function CredentialDetails() {
@@ -38,14 +40,16 @@ export function CredentialDetails() {
   const itemActions = useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
-        type: PageActionType.single,
-        icon: EditIcon,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
         onClick: (credential: EdaCredential) => deleteCredentials([credential]),
@@ -55,18 +59,25 @@ export function CredentialDetails() {
     [deleteCredentials, navigate, t]
   );
 
-  const renderCredentialDetailsTab = (credential: EdaCredential | undefined): JSX.Element => {
+  const renderCredentialDetailsTab = (
+    credential: EdaCredential | undefined,
+    t: TFunction<'translation', undefined>
+  ): JSX.Element => {
+    const credentialOption = CredentialOptions(t).find(
+      (option) => option.value === credential?.credential_type
+    );
     return (
       <PageDetails>
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
-        <PageDetail label={t('SCM type')}>{credential?.credential_type || t('Git')}</PageDetail>
-        <PageDetail label={t('SCM URL')}>{credential?.username || ''}</PageDetail>
-        <PageDetail label={t('SCM token')}>{credential?.secret || ''}</PageDetail>
+        <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
+        <PageDetail label={t('Credential type')}>
+          {credentialOption ? credentialOption?.label : credential?.credential_type}
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {credential?.created_at ? formatDateString(credential.created_at) : ''}
         </PageDetail>
-        <PageDetail label={t('Modified')}>
+        <PageDetail label={t('Last modified')}>
           {credential?.modified_at ? formatDateString(credential.modified_at) : ''}
         </PageDetail>
       </PageDetails>
@@ -91,7 +102,7 @@ export function CredentialDetails() {
       />
       {credential ? (
         <PageTabs>
-          <PageTab label={t('Details')}>{renderCredentialDetailsTab(credential)}</PageTab>
+          <PageTab label={t('Details')}>{renderCredentialDetailsTab(credential, t)}</PageTab>
         </PageTabs>
       ) : (
         <PageTabs>

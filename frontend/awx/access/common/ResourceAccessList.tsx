@@ -3,9 +3,9 @@ import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, IPageActionButton, PageActionType, PageTable } from '../../../../framework';
-import { useActiveUser } from '../../../common/useActiveUser';
+import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { useActiveUser } from '../../../common/useActiveUser';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
@@ -79,26 +79,30 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const toolbarActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add users'),
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to add users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectUsersAddTeams([resource]),
-      } as IPageActionButton,
+      },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove users'),
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: (users) => removeUsersFromResource(users, resource, view.unselectItemsAndRefresh),
       },
@@ -116,7 +120,8 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const rowActions = useMemo<IPageAction<User>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user'),
         onClick: (user) => removeUsersFromResource([user], resource, view.unselectItemsAndRefresh),
@@ -132,7 +137,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
             user.user_roles?.some((role) => !role.user_capabilities.unattach)
           ) {
             return t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             );
           }
           return undefined;

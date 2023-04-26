@@ -1,31 +1,36 @@
-# package gets the package.json and package-lock.json with the version set to 0.0.0
-# this is so that future steps can optimize the docker layers and reuse layers from the docker cache
-FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as source
-WORKDIR /ansible-ui
-COPY . .
-RUN npm version 0.0.0 --no-git-tag-version || true
+# eda-ui
+FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine as eda-ui
+ARG NGINX_CONF=./nginx.conf
+ARG NGINX_CONFIGURATION_PATH=/etc/nginx/nginx.conf
+ENV DIST_UI="/opt/app-root/ui/eda"
+COPY ${NGINX_CONF} ${NGINX_CONFIGURATION_PATH}
+RUN mkdir -p ${DIST_UI}/
+COPY /build/eda/ ${DIST_UI}
+ARG USER_ID=${USER_ID:-1001}
+RUN adduser -S eda -u "$USER_ID" -G root
+USER 0
+RUN for dir in \
+      ${DIST_UI}/ \
+      ${NGINX_CONF} \
+      ${NGINX_CONFIGURATION_PATH} \
+      /var/cache/nginx \
+      /var/log/nginx \
+      /var/lib/nginx ; \
+    do mkdir -m 0775 -p $dir ; chmod g+rwx $dir ; chgrp root $dir ; done && \
+    for file in \
+      /var/run/nginx.pid ; \
+    do touch $file ; chmod g+rw $file ; done
+USER "$USER_ID"
 
-# docker should be able to cache this step unless package-lock.json changes
-FROM --platform=${TARGETPLATFORM:-linux/amd64} node:18-alpine as dependencies
-WORKDIR /ansible-ui
-COPY --from=source /ansible-ui/package*.json ./
-RUN npm ci --omit=dev --omit=optional --ignore-scripts
-
-# builder
-FROM --platform=${TARGETPLATFORM:-linux/amd64} dependencies as builder
-COPY --from=source /ansible-ui/ .
+# ansible-ui
+FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine as ansible-ui
 ARG VERSION
-RUN VERSION=$VERSION DISCLAIMER=true npm run build
-
-# final output image uses alpine with minimal dependencies installed 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
-ARG VERSION
-COPY --from=builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:18-alpine /usr/local/bin/node /usr/local/bin/node
 RUN apk upgrade --no-cache -U && apk add --no-cache libstdc++
 RUN addgroup -g 1000 -S node && adduser -u 1000 -S node -G node
 USER node
 WORKDIR /home/node
 ENV NODE_ENV production
 ENV VERSION $VERSION
-COPY --from=builder --chown=node /ansible-ui/build ./
+COPY --chown=node /build/ ./
 CMD ["node", "proxy.mjs"]

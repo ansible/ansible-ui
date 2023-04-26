@@ -1,45 +1,44 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Fragment } from 'react';
-import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
-import { EdaGroup } from '../../interfaces/EdaGroup';
-import { EdaUser } from '../../interfaces/EdaUser';
-import { getEdaError } from '../../useEventDrivenView';
-import { PageFormGroupSelect } from '../Groups/components/PageFormGroupSelect';
+import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaRole, EdaRoleRef } from '../../interfaces/EdaRole';
+import { EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
+import { PageFormRolesSelect } from '../Roles/components/PageFormRolesSelect';
 
-interface UserFields extends FieldValues {
-  user: EdaUser;
-  groups?: EdaGroup[];
-}
+type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
+  roles?: EdaRoleRef[];
+  confirmPassword: string;
+};
 
 export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const postRequest = usePostRequest<Partial<EdaUser>, EdaUser>();
-
-  const onSubmit: PageFormSubmitHandler<IUserInput> = async (userInput, _, setFieldError) => {
-    const { user, userType, confirmPassword } = userInput;
-    user.is_superuser = userType === t('System administrator');
+  const postRequest = usePostRequest<EdaUserCreateUpdate, EdaUser>();
+  const onSubmit: PageFormSubmitHandler<UserInput> = async (userInput, _, setFieldError) => {
+    const { roles, confirmPassword, ...user } = userInput;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
     }
-    const newUser = await postRequest(`${API_PREFIX}/activations/`, user);
+    const createUser: EdaUserCreateUpdate = {
+      ...user,
+      roles: roles?.map((role) => role.id) ?? [],
+    };
+    const newUser = await postRequest(`${API_PREFIX}/users/`, createUser);
     navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
@@ -48,15 +47,14 @@ export function CreateUser() {
   return (
     <>
       <PageHeader
-        title={t('Create user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create user') }]}
+        title={t('Create User')}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create User') }]}
       />
       <PageForm
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ userType: 'Normal user' }}
       >
         <UserInputs mode="create" />
       </PageForm>
@@ -69,36 +67,30 @@ export function EditUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useSWR<EdaUser>(
-    `${API_PREFIX}/users/${id.toString()}/`,
-    requestGet,
-    swrOptions
-  );
-
-  const onSubmit: PageFormSubmitHandler<IUserInput> = async (
-    userInput: IUserInput,
-    setError,
+  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}/`);
+  const { data: rolesResult } = useGet<EdaResult<EdaRole>>(`${API_PREFIX}/roles/`);
+  const roles = rolesResult?.results;
+  const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
+  const onSubmit: PageFormSubmitHandler<UserInput> = async (
+    userInput: UserInput,
+    _setError,
     setFieldError
   ) => {
-    const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      if (user.password) {
-        if (confirmPassword !== user.password) {
-          setFieldError('confirmPassword', { message: t('Password does not match.') });
-          return false;
-        }
+    const { roles, confirmPassword, ...user } = userInput;
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
       }
-      const newUser = await requestPatch<EdaUser>(`${API_PREFIX}/users/${id}/`, user);
-      navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(await getEdaError(err));
     }
+    const editUser: EdaUserCreateUpdate = { ...user, roles: roles?.map((role) => role.id) ?? [] };
+    const updatedUser = await patchRequest(`${API_PREFIX}/users/${id}/`, editUser);
+    navigate(RouteObj.EdaUserDetails.replace(':id', updatedUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
 
-  if (!user) {
+  if (!user || !rolesResult) {
     return (
       <PageLayout>
         <PageHeader
@@ -108,17 +100,20 @@ export function EditUser() {
     );
   }
 
-  const defaultValue: Partial<IUserInput> = {
-    user: user,
-    userType: user.is_superuser ? 'System administrator' : 'Normal user',
+  const defaultValue: Partial<UserInput> = {
+    ...user,
+    roles: roles?.filter((role) => user.roles.find((roleRef) => roleRef.id === role.id)) ?? [],
   };
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit user') }]}
+        title={`${t('Edit')} ${user?.username || t('User')}`}
+        breadcrumbs={[
+          { label: t('Users'), to: RouteObj.EdaUsers },
+          { label: `${t('Edit')} ${user?.username || t('Credential')}` },
+        ]}
       />
-      <PageForm<IUserInput>
+      <PageForm<UserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -131,19 +126,13 @@ export function EditUser() {
   );
 }
 
-interface IUserInput {
-  user: EdaUser;
-  userType: string;
-  confirmPassword: string;
-}
-
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
   return (
     <Fragment>
-      <PageFormTextInput
-        name="user.username"
+      <PageFormTextInput<UserInput>
+        name="username"
         label={t('Username')}
         placeholder={t('Enter username')}
         isRequired
@@ -159,48 +148,32 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           }
         }}
       />
-      <PageFormTextInput
-        name="user.firstName"
+      <PageFormTextInput<UserInput>
+        name="first_name"
         label={t('First name')}
         placeholder={t('Enter first name')}
         maxLength={150}
       />
-      <PageFormTextInput
-        name="user.lastName"
+      <PageFormTextInput<UserInput>
+        name="last_name"
         label={t('Last name')}
         placeholder={t('Enter last name')}
         maxLength={150}
       />
-      <PageFormTextInput name="user.email" label={t('Email')} placeholder={t('Enter email')} />
-      <PageFormSelectOption
-        name="userType"
-        label={t('User type')}
-        placeholderText={t('Select user type')}
-        options={[
-          {
-            label: t('System administrator'),
-            description: t('can edit, change, and update any inventory or automation definition'),
-            value: 'System administrator',
-          },
-          {
-            label: t('Normal user'),
-            description: t(
-              'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
-            ),
-            value: 'Normal user',
-          },
-        ]}
-        isRequired
+      <PageFormTextInput<UserInput>
+        name="email"
+        label={t('Email')}
+        placeholder={t('Enter email')}
       />
-      <PageFormTextInput
-        name="user.password"
+      <PageFormTextInput<UserInput>
+        name="password"
         label={t('Password')}
         placeholder={t('Enter password')}
         type="password"
         autoComplete="new-password"
         isRequired={mode === 'create'}
       />
-      <PageFormTextInput
+      <PageFormTextInput<UserInput>
         name="confirmPassword"
         label={t('Confirm password')}
         placeholder={t('Enter password')}
@@ -208,7 +181,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         autoComplete="new-password"
         isRequired={mode === 'create'}
       />
-      <PageFormGroupSelect<UserFields> name="user.groups" />
+      <PageFormRolesSelect<UserInput> name="roles" labelHelp={t('User role(s)')} />
     </Fragment>
   );
 }

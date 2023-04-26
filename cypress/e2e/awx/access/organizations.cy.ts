@@ -19,10 +19,10 @@ describe('organizations', () => {
   after(() => {
     cy.deleteAwxOrganization(organization);
     // Sometimes if tests are stopped in the middle, we get left over organizations
-    // Cleanup E2E organizations older than 2 hours
+    // Cleanup E2E organizations older than 20 minutes
     cy.requestGet<ItemsResponse<Organization>>(
-      `/api/v2/organizations/?limit=100&created__lt=${new Date(
-        Date.now() - 2 * 60 * 60 * 1000
+      `/api/v2/organizations/?page_size=100&created__lt=${new Date(
+        Date.now() - 20 * 60 * 1000
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {
@@ -32,15 +32,15 @@ describe('organizations', () => {
   });
 
   it('renders the organizations list page', () => {
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.hasTitle(/^Organizations$/);
   });
 
   it('creates and then deletes a basic organization', () => {
     const organizationName = 'E2E Organization ' + randomString(4);
-    cy.navigateTo(/^Organizations$/, false);
+    cy.navigateTo(/^Organizations$/);
     cy.clickLink(/^Create organization$/);
-    cy.typeByLabel(/^Name$/, organizationName);
+    cy.typeInputByLabel(/^Name$/, organizationName);
     cy.clickButton(/^Create organization$/);
     cy.hasTitle(organizationName);
     // Clean up this organization
@@ -51,28 +51,28 @@ describe('organizations', () => {
   });
 
   it('renders the organization details page', () => {
-    cy.navigateTo(/^Organizations$/, false);
-    cy.clickRow(organization.name);
+    cy.navigateTo(/^Organizations$/);
+    cy.clickTableRow(organization.name);
     cy.hasTitle(organization.name);
     cy.clickButton(/^Details$/);
     cy.contains('#name', organization.name);
   });
 
   it('edits an organization from the details page', () => {
-    cy.navigateTo(/^Organizations$/, false);
-    cy.clickRow(organization.name);
+    cy.navigateTo(/^Organizations$/);
+    cy.clickTableRow(organization.name);
     cy.hasTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
-    cy.hasTitle(/^Edit organization$/);
-    cy.typeByLabel(/^Name$/, 'a');
+    cy.hasTitle(/^Edit Organization$/);
+    cy.typeInputByLabel(/^Name$/, organization.name + 'a');
     cy.clickButton(/^Save organization$/);
     cy.hasTitle(`${organization.name}a`);
   });
 
   it('deletes an organization from the details page', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
-      cy.clickRow(testOrganization.name);
+      cy.navigateTo(/^Organizations$/);
+      cy.clickTableRow(testOrganization.name);
       cy.hasTitle(testOrganization.name);
       cy.clickPageAction(/^Delete organization/);
       cy.get('#confirm').click();
@@ -82,15 +82,15 @@ describe('organizations', () => {
   });
 
   it('navigates to the edit form from the organizations list row item', () => {
-    cy.navigateTo(/^Organizations$/, false);
-    cy.clickRowAction(organization.name, /^Edit organization$/);
-    cy.hasTitle(/^Edit organization$/);
+    cy.navigateTo(/^Organizations$/);
+    cy.clickTableRowKebabAction(organization.name, /^Edit organization$/);
+    cy.hasTitle(/^Edit Organization$/);
   });
 
   it('deletes an organization from the organizations list row item', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
-      cy.clickRowAction(testOrganization.name, /^Delete organization$/);
+      cy.navigateTo(/^Organizations$/);
+      cy.clickTableRowKebabAction(testOrganization.name, /^Delete organization$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);
@@ -101,9 +101,9 @@ describe('organizations', () => {
 
   it('deletes an organization from the organizations list toolbar', () => {
     cy.createAwxOrganization().then((testOrganization) => {
-      cy.navigateTo(/^Organizations$/, false);
-      cy.selectRow(testOrganization.name);
-      cy.clickToolbarAction(/^Delete selected organizations$/);
+      cy.navigateTo(/^Organizations$/);
+      cy.selectTableRow(testOrganization.name);
+      cy.clickToolbarKebabAction(/^Delete selected organizations$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);

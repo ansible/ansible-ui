@@ -1,19 +1,17 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { useRefreshAction } from '../../../common/useRefreshAction';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
 import { useTeamActions } from './hooks/useTeamActions';
+import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
-import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 
 export function Teams() {
   const { t } = useTranslation();
@@ -23,7 +21,6 @@ export function Teams() {
   const view = useAwxView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
-  const headerActions = useRefreshAction(view.refreshing, view.refresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
@@ -48,7 +45,6 @@ export function Teams() {
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
         navigation={<AccessNav active="teams" />}
-        headerActions={<PageActions actions={headerActions} iconOnly collapse="never" />}
       />
       <PageTable<Team>
         toolbarFilters={toolbarFilters}
@@ -65,7 +61,7 @@ export function Teams() {
           canCreateTeam
             ? t('Please create a team by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
@@ -73,7 +69,6 @@ export function Teams() {
         emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
         {...view}
         defaultSubtitle={t('Team')}
-        expandedRow={ItemDescriptionExpandedRow<Team>}
       />
     </PageLayout>
   );

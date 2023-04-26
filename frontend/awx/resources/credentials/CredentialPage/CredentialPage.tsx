@@ -2,7 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  RoutedTabs,
+  RoutedTab,
+} from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
@@ -14,8 +20,9 @@ export function CredentialPage() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
-  const actions = useCredentialActions({ onDeleted: () => navigate(RouteObj.Credentials) });
-
+  const actions = useCredentialActions({
+    onDeleted: () => navigate(RouteObj.Credentials),
+  });
   return (
     <PageLayout>
       <PageHeader
@@ -32,11 +39,11 @@ export function CredentialPage() {
           />
         }
       />
-      <PageTabs loading={!credential}>
-        <PageTab label={t('Details')}>
+      <RoutedTabs isLoading={!credential} baseUrl={RouteObj.CredentialPage}>
+        <RoutedTab label={t('Details')} url={RouteObj.CredentialDetails}>
           <CredentialDetails credential={credential!} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

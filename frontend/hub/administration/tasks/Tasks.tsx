@@ -2,19 +2,19 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
+  DateTimeCell,
   ElapsedTimeCell,
   ITableColumn,
   IToolbarFilter,
   PageHeader,
   PageLayout,
   PageTable,
-  SinceCell,
   TextCell,
 } from '../../../../framework';
 import { useInMemoryView } from '../../../../framework/useInMemoryView';
-import { useGet } from '../../../common/crud/useGet';
-import { StatusCell } from '../../../common/StatusCell';
 import { RouteObj } from '../../../Routes';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
 import { pulpHRefKeyFn } from '../../useHubView';
 import { getIdFromPulpHref } from '../../usePulpView';
 import { Task } from './Task';
@@ -81,20 +81,20 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
       },
       {
         header: t('Started'),
-        cell: (task) => <SinceCell value={task.started_at} />,
+        cell: (task) => <DateTimeCell format="since" value={task.started_at} />,
         sort: 'started_at',
         list: 'secondary',
       },
       {
         header: t('Finished'),
-        cell: (task) => <SinceCell value={task.finished_at} />,
+        cell: (task) => <DateTimeCell format="since" value={task.finished_at} />,
         sort: 'finished_at',
         card: 'hidden',
         list: 'secondary',
       },
       {
         header: t('Created'),
-        cell: (task) => <SinceCell value={task.pulp_created} />,
+        cell: (task) => <DateTimeCell format="since" value={task.pulp_created} />,
         sort: 'pulp_created',
         card: 'hidden',
         list: 'secondary',
@@ -109,8 +109,20 @@ export function useTaskFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
-      { key: 'name', label: t('Task name'), type: 'string', query: 'name__contains' },
-      { key: 'status', label: t('Status'), type: 'string', query: 'state' },
+      {
+        key: 'name',
+        label: t('Task name'),
+        type: 'string',
+        query: 'name__contains',
+        placeholder: t('contains'),
+      },
+      {
+        key: 'status',
+        label: t('Status'),
+        type: 'string',
+        query: 'state',
+        placeholder: t('equals'),
+      },
     ],
     [t]
   );

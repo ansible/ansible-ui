@@ -1,31 +1,32 @@
-import { TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { CubesIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import {
-  IPageAction,
-  ITableColumn,
-  IToolbarFilter,
-  PageActionType,
-  PageHeader,
-  PageLayout,
-  PageTable,
-} from '../../../../framework';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { RouteObj } from '../../../Routes';
-import {
-  useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
-  useModifiedByToolbarFilter,
-  useNameToolbarFilter,
-} from '../../common/awx-toolbar-filters';
-import { Inventory } from '../../interfaces/Inventory';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { type Inventory } from '../../interfaces/Inventory';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../useAwxView';
-import { useDeleteInventories } from './hooks/useDeleteInventories';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
+import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
+import { useInventoryActions } from './hooks/useInventoryActions';
+
+export type WebSocketInventory = {
+  status: string;
+} & Inventory;
+
+type WebSocketMessage = {
+  group_name?: string;
+  type?: string;
+  status?: string;
+  inventory_id?: number;
+};
 
 export function Inventories() {
   const { t } = useTranslation();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
+  const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useAwxView<Inventory>({
@@ -33,39 +34,61 @@ export function Inventories() {
     toolbarFilters,
     tableColumns,
   });
-  const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
+  const { refresh, pageItems } = view;
+  const toolbarActions = useInventoriesToolbarActions(view);
+  const rowActions = useInventoryActions({
+    onInventoriesDeleted: view.unselectItemsAndRefresh,
+    onInventoryCopied: view.refresh,
+  });
 
-  const toolbarActions = useMemo<IPageAction<Inventory>[]>(
-    () => [
-      {
-        type: PageActionType.bulk,
-        icon: TrashIcon,
-        label: t('Delete selected inventories'),
-        onClick: deleteInventories,
-        isDanger: true,
-      },
-    ],
-    [deleteInventories, t]
+  const handleWebSocketMessage = useCallback(
+    (message?: WebSocketMessage) => {
+      if (!message?.inventory_id) return;
+      switch (message?.group_name) {
+        case 'inventories':
+          switch (message?.status) {
+            case 'deleted':
+              void refresh();
+              break;
+          }
+          break;
+        case 'jobs':
+          switch (message?.type) {
+            case 'inventory_update':
+              switch (message?.status) {
+                case 'canceled':
+                case 'error':
+                case 'failed':
+                case 'pending':
+                case 'running':
+                case 'successful': {
+                  const wsInventory = (pageItems ?? []).find(
+                    (inv) => inv.id === message.inventory_id
+                  );
+                  if (!wsInventory) return;
+                  (wsInventory as WebSocketInventory).status = message.status;
+                  break;
+                }
+              }
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh, pageItems]
   );
 
-  const rowActions = useMemo<IPageAction<Inventory>[]>(
-    () => [
-      {
-        type: PageActionType.single,
-        icon: TrashIcon,
-        label: t('Delete inventory'),
-        onClick: (inventory) => deleteInventories([inventory]),
-        isDanger: true,
-      },
-    ],
-    [deleteInventories, t]
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'], inventories: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
   );
 
   return (
     <PageLayout>
       <PageHeader
         title={t('Inventories')}
-        titleHelpTitle={t('Inventories')}
+        titleHelpTitle={t('Inventory')}
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
@@ -80,47 +103,22 @@ export function Inventories() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventories')}
-        emptyStateTitle={t('No inventories yet')}
-        expandedRow={ItemDescriptionExpandedRow<Inventory>}
+        emptyStateTitle={
+          canCreateInventory
+            ? t('There are currently no inventories added.')
+            : t('You do not have permission to create an inventory.')
+        }
+        emptyStateDescription={
+          canCreateInventory
+            ? t('Please create an inventory by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateInventory ? undefined : CubesIcon}
+        emptyStateActions={canCreateInventory ? toolbarActions.slice(0, 1) : undefined}
         {...view}
       />
     </PageLayout>
   );
-}
-
-export function useInventoriesFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [nameToolbarFilter, descriptionToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
-  );
-  return toolbarFilters;
-}
-
-export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const navigate = useNavigate();
-  const nameClick = useCallback(
-    (inventory: Inventory) =>
-      navigate(RouteObj.InventoryDetails.replace(':id', inventory.id.toString())),
-    [navigate]
-  );
-  const nameColumn = useNameColumn({
-    ...options,
-    onClick: nameClick,
-  });
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<Inventory>[]>(
-    () => [nameColumn, createdColumn, modifiedColumn],
-    [nameColumn, createdColumn, modifiedColumn]
-  );
-  return tableColumns;
 }

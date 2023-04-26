@@ -92,12 +92,12 @@ describe('Create job template ', () => {
   });
   it('Create Template - Displays error message on internal server error', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.typeByLabel(/^Name$/, 'Test');
+    cy.typeInputByLabel(/^Name$/, 'Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.hasTitle(/^Create job template$/);
+    cy.hasTitle(/^Create Job Template$/);
   });
   it('Validates properly', () => {
     cy.mount(<CreateJobTemplate />);
@@ -108,11 +108,11 @@ describe('Create job template ', () => {
   });
   it('Should update fields properly', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.typeByLabel(/^Name$/, 'Test');
+    cy.typeInputByLabel(/^Name$/, 'Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
-    cy.typeByLabel(/^Inventory$/, 'Demo Inventory');
-    cy.typeByLabel(/^Project$/, 'Demo Project').as('ProjectInput');
+    cy.typeInputByLabel(/^Inventory$/, 'Demo Inventory');
+    cy.typeInputByLabel(/^Project$/, 'Demo Project').as('ProjectInput');
     cy.get('@ProjectInput').blur();
     cy.get('button[aria-describedby="playbook-form-group"]').click();
     cy.clickButton(/^hello_world.yml$/);

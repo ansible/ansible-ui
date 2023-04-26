@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -9,13 +9,32 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { RouteObj } from '../../../Routes';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 
+export function CredentialOptions(t: TFunction<'translation'>) {
+  return [
+    {
+      label: t('GitHub personal access token'),
+      description: t('GitHub personal access token'),
+      value: 'GitHub Personal Access Token',
+    },
+    {
+      label: t('GitLab personal access token'),
+      description: t('GitLab personal access token'),
+      value: 'GitLab Personal Access Token',
+    },
+    {
+      label: t('Container registry'),
+      description: t('Container registry token'),
+      value: 'Container Registry',
+    },
+  ];
+}
 function CredentialInputs() {
   const { t } = useTranslation();
   return (
@@ -23,7 +42,7 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="name"
         label={t('Name')}
-        placeholder={t('Insert name here')}
+        placeholder={t('Enter name')}
         isRequired
         maxLength={150}
         autoComplete="new-name"
@@ -31,36 +50,27 @@ function CredentialInputs() {
       <PageFormTextInput<EdaCredential>
         name="description"
         label={t('Description')}
-        placeholder={t('Insert description here ')}
+        placeholder={t('Enter description ')}
         maxLength={150}
       />
       <PageFormSelectOption<EdaCredential>
         name="credential_type"
         label={t('Type')}
-        placeholderText={t('Select a credential type')}
-        options={[
-          {
-            label: t('Github Personal Access Token'),
-            description: t('Github Personal Access Token'),
-            value: 'Github',
-          },
-          {
-            label: t('Gitlab Personal Access Token'),
-            description: t('Gitlab Personal Access Token'),
-            value: 'Gitlab',
-          },
-        ]}
         isRequired
+        placeholderText={t('Select credential type')}
+        options={CredentialOptions(t)}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
         label={t('User name')}
-        placeholder={t('Insert user name here')}
+        isRequired
+        placeholder={t('Enter username')}
       />
       <PageFormTextInput<EdaCredential>
         name="secret"
-        label={t('Secret')}
-        placeholder={t('Insert credential secret here')}
+        label={t('Token')}
+        type="password"
+        placeholder={t('Enter credential token')}
       />
     </>
   );
@@ -76,19 +86,15 @@ export function EditCredential() {
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
 
-  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        await requestPatch<EdaCredential>(`${API_PREFIX}/credentials/${id}/`, credential);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(-1);
-      } else {
-        const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
-        (cache as unknown as { clear: () => void }).clear?.();
-        navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('Unknown error'));
+  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
+    if (Number.isInteger(id)) {
+      await requestPatch<EdaCredential>(`${API_PREFIX}/credentials/${id}/`, credential);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(-1);
+    } else {
+      const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
+      (cache as unknown as { clear: () => void }).clear?.();
+      navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);
@@ -100,7 +106,7 @@ export function EditCredential() {
           <PageHeader
             breadcrumbs={[
               { label: t('Credentials'), to: RouteObj.EdaCredentials },
-              { label: t('Edit credential') },
+              { label: t('Edit Credential') },
             ]}
           />
         </PageLayout>
@@ -109,10 +115,10 @@ export function EditCredential() {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit credential')}
+            title={`${t('Edit')} ${credential?.name || t('Credential')}`}
             breadcrumbs={[
               { label: t('Credentials'), to: RouteObj.EdaCredentials },
-              { label: t('Edit credential') },
+              { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
             ]}
           />
           <PageForm
@@ -131,10 +137,10 @@ export function EditCredential() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create credential')}
+          title={t('Create Credential')}
           breadcrumbs={[
             { label: t('Credentials'), to: RouteObj.EdaCredentials },
-            { label: t('Create credential') },
+            { label: t('Create Credential') },
           ]}
         />
         <PageForm

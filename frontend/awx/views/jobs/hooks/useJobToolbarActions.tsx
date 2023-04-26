@@ -1,7 +1,7 @@
 import { BanIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { useCancelJobs } from './useCancelJobs';
 import { useDeleteJobs } from './useDeleteJobs';
@@ -14,14 +14,16 @@ export function useJobToolbarActions(onComplete: (jobs: UnifiedJob[]) => void) {
   return useMemo<IPageAction<UnifiedJob>[]>(
     () => [
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
         isDanger: true,
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Cancel selected jobs'),
         onClick: cancelJobs,

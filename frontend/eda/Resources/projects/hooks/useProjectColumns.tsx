@@ -1,10 +1,17 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
+import { StatusCell } from '../../../../common/StatusCell';
+import { ScmType } from '../../../../common/scm';
 import { EdaProject } from '../../../interfaces/EdaProject';
-import { StatusLabelCell } from '../../../common/StatusLabelCell';
 
 export function useProjectColumns() {
   const { t } = useTranslation();
@@ -21,18 +28,56 @@ export function useProjectColumns() {
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
+      },
+      {
+        header: t('Description'),
+        type: 'description',
+        value: (instance) => instance.description,
+        table: ColumnTableOption.Description,
+        card: 'description',
+        list: 'description',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Status'),
-        cell: (project) => <StatusLabelCell status={project.import_state} />,
+        cell: (project) => <StatusCell status={project.import_state} />,
+      },
+      {
+        header: t('Type'),
+        cell: () => <ScmType scmType="git" />,
+        modal: ColumnModalOption.Hidden,
+      },
+      {
+        header: t('Url'),
+        cell: (item) => <TextCell text={item.url} to={item.url} />,
+        value: (instance) => instance.url,
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Revision'),
-        cell: (project) => <TextCell text={project?.git_hash ? project.git_hash : ''} />,
+        cell: (project) => <CopyCell text={project?.git_hash ? project.git_hash : ''} />,
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
+      },
+      {
+        header: t('Created'),
+        type: 'datetime',
+        value: (instance) => instance.created_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
+      },
+      {
+        header: t('Last modified'),
+        type: 'datetime',
+        value: (instance) => instance.modified_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
       },
     ],
 

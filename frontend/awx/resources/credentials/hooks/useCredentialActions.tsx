@@ -3,10 +3,11 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionType } from '../../../../../framework';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
-import { useDeleteCredentials } from '../useDeleteCredentials';
+import { useDeleteCredentials } from './useDeleteCredentials';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 
 export function useCredentialActions(options?: { onDeleted: (crednetials: Credential[]) => void }) {
   const { t } = useTranslation();
@@ -15,17 +16,22 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Edit credential'),
+        isDisabled: (credential) => cannotEditResource(credential, t),
         onClick: (credential) =>
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete credential'),
+        isDisabled: (credential) => cannotDeleteResource(credential, t),
         onClick: (credential) => deleteCredentials([credential]),
         isDanger: true,
       },

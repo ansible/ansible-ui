@@ -3,9 +3,9 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { getItemKey, ItemsResponse, swrOptions, useFetcher } from '../common/crud/Data';
+import { ItemsResponse, getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 
-export type IEdaView<T extends { id: number }> = IView &
+export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -25,7 +25,7 @@ function getQueryString(queryParams: QueryParams) {
     .join('&');
 }
 
-export function useEdaView<T extends { id: number }>(options: {
+export function useEdaView<T extends { id: number | string }>(options: {
   url: string;
   viewPage?: number;
   viewPerPage?: number;
@@ -33,12 +33,14 @@ export function useEdaView<T extends { id: number }>(options: {
   tableColumns?: ITableColumn<T>[];
   queryParams?: QueryParams;
   disableQueryString?: boolean;
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
 }): IEdaView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
 
-  let defaultSort: string | undefined = undefined;
-  let defaultSortDirection: 'asc' | 'desc' | undefined = undefined;
+  let defaultSort: string | undefined = options.defaultSort;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
 
   // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
   if (tableColumns && tableColumns.length) {
@@ -91,7 +93,10 @@ export function useEdaView<T extends { id: number }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<ItemsResponse<T>>(url, fetcher);
+  const response = useSWR<ItemsResponse<T>>(url, fetcher, {
+    ...swrOptions,
+    refreshInterval: 10 * 1000,
+  });
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(() => {
@@ -156,23 +161,4 @@ export function useEdaView<T extends { id: number }>(options: {
     unselectItemsAndRefresh,
     view,
   ]);
-}
-
-export async function getEdaError(err: unknown) {
-  if (err instanceof HTTPError) {
-    try {
-      const response = (await err.response.json()) as { __all__?: string[] };
-      if ('__all__' in response && Array.isArray(response.__all__)) {
-        return JSON.stringify(response.__all__[0]);
-      } else {
-        return JSON.stringify(response);
-      }
-    } catch {
-      return err.message;
-    }
-  } else if (err instanceof Error) {
-    return err.message;
-  } else {
-    return 'unknown error';
-  }
 }

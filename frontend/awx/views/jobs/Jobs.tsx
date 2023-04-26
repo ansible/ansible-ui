@@ -11,6 +11,7 @@ import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
+import { JobExpanded } from './JobExpanded';
 
 export default function Jobs() {
   const { t } = useTranslation();
@@ -42,6 +43,9 @@ export default function Jobs() {
             case 'workflow_job':
               void refresh();
               break;
+            case 'project_update':
+              void refresh();
+              break;
           }
           break;
       }
@@ -57,13 +61,15 @@ export default function Jobs() {
     <PageLayout>
       <PageHeader
         title={t('Jobs')}
-        titleHelpTitle={t('Jobs')}
+        titleHelpTitle={t('Job')}
         titleHelp={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         // headerActions={
         //   <ToggleGroup aria-label={t('show graph toggle')}>
@@ -97,6 +103,7 @@ export default function Jobs() {
         errorStateTitle={t('Error loading jobs')}
         emptyStateTitle={t('No jobs yet')}
         emptyStateDescription={t('Please run a job to populate this list.')}
+        expandedRow={JobExpanded}
         {...view}
       />
     </PageLayout>

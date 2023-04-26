@@ -7,19 +7,20 @@ import {
   IPageAction,
   ITableColumn,
   IToolbarFilter,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useTypeColumn,
 } from '../../../common/columns';
-import { ItemDescriptionExpandedRow } from '../../../common/ItemDescriptionExpandedRow';
-import { RouteObj } from '../../../Routes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -50,25 +51,30 @@ export function Templates() {
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.dropdown,
+        type: PageActionType.Dropdown,
         variant: ButtonVariant.primary,
+        isPinned: true,
         label: t('Create template'),
+        selection: PageActionSelection.None,
         icon: PlusCircleIcon,
-        options: [
+        actions: [
           {
-            type: PageActionType.button,
-            label: t('Create Job Template'),
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
+            label: t('Create job template'),
             onClick: () => navigate(RouteObj.CreateJobTemplate),
           },
           {
-            type: PageActionType.button,
-            label: t('Create Workflow Job Template'),
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
+            label: t('Create workflow job template'),
             onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
           },
         ],
       },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: 'Delete selected templates',
         onClick: deleteTemplates,
@@ -80,26 +86,27 @@ export function Templates() {
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
-        label: t(`Edit Template`),
-        onClick: (template) =>
-          navigate(RouteObj.JobTemplateEdit.replace(':id', template.id.toString())),
+        label: t(`Edit template`),
+        href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t(`Delete Template`),
+        label: t(`Delete template`),
         onClick: (template) => deleteTemplates([template]),
       },
     ],
-    [navigate, deleteTemplates, t]
+    [deleteTemplates, t]
   );
   return (
     <PageLayout>
       <PageHeader
         title={t('Templates')}
-        titleHelpTitle={t('Templates')}
+        titleHelpTitle={t('Template')}
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}
@@ -114,11 +121,10 @@ export function Templates() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading templates')}
-        emptyStateTitle={t('No Templates yet')}
+        emptyStateTitle={t('No templates yet')}
         emptyStateDescription={t('To get started, create a template.')}
         emptyStateButtonText={t('Create template')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
-        expandedRow={ItemDescriptionExpandedRow<JobTemplate | WorkflowJobTemplate>}
         {...view}
       />
     </PageLayout>
@@ -162,19 +168,20 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   });
   const makeReadable: (template: JobTemplate | WorkflowJobTemplate) => string = (template) => {
     if (template.type === 'workflow_job_template') {
-      return t('Workflow Job Template');
+      return t('Workflow job template');
     }
-    return t('Job Template');
+    return t('Job template');
   };
   const createdColumn = useCreatedColumn(options);
+  const descriptionColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
     makeReadable,
   });
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
-    () => [nameColumn, typeOfTemplate, createdColumn, modifiedColumn],
-    [nameColumn, typeOfTemplate, createdColumn, modifiedColumn]
+    () => [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn],
+    [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
-  IPageActionButton,
+  PageActionSelection,
   PageActionType,
   PageTable,
 } from '../../../../../framework';
@@ -38,19 +38,22 @@ export function UserTeams(props: { user: User }) {
   const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: PageActionType.button,
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        isPinned: true,
         icon: PlusIcon,
         label: t('Add user to teams'),
         isDisabled: canAddUserToTeam
           ? undefined
           : t(
-              'You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permissions to add this user to a team. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectTeamsAddUsers([user]),
-      } as IPageActionButton,
+      },
       {
-        type: PageActionType.bulk,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
@@ -61,7 +64,8 @@ export function UserTeams(props: { user: User }) {
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
         onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
@@ -89,7 +93,7 @@ export function UserTeams(props: { user: User }) {
           canAddUserToTeam
             ? t('Please add a team by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}

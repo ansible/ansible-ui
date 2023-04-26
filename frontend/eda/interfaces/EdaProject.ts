@@ -14,7 +14,9 @@ export interface EdaProject {
   created_at?: string;
   modified_at?: string;
   import_state: string;
+  import_error: string;
   revision: string;
   url?: string;
   git_hash?: string;
+  isSyncing?: boolean;
 }

@@ -3,15 +3,16 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
+  DateTimeCell,
   IPageAction,
   ITableColumn,
+  PageActionSelection,
   PageActionType,
   PageHeader,
   PageLayout,
   PageTab,
   PageTable,
   PageTabs,
-  SinceCell,
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
@@ -22,7 +23,7 @@ export function Repositories() {
   const { t } = useTranslation();
   return (
     <PageLayout>
-      <PageHeader title={t('Repository management')} />
+      <PageHeader title={t('Repository Management')} />
       <PageTabs>
         <PageTab label={t('Local')}>
           <LocalRepositories />
@@ -80,7 +81,9 @@ export function useLocalRepositoriesColumns(_options?: {
       },
       {
         header: 'Modified',
-        cell: (repository) => <SinceCell value={repository.repository.pulp_last_updated} />,
+        cell: (repository) => (
+          <DateTimeCell format="since" value={repository.repository.pulp_last_updated} />
+        ),
       },
     ],
     []
@@ -101,21 +104,24 @@ export function RemoteRepositories() {
   const rowActions = useMemo<IPageAction<RemoteRepository>[]>(
     () => [
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CogIcon,
         label: t('Configure repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: SyncIcon,
         label: t('Sync repository'),
         onClick: (repository) =>
           navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit repository'),
         onClick: (repository) =>
@@ -152,15 +158,17 @@ export function useRemoteRepositoriesColumns(_options?: {
       },
       {
         header: t('Last sync'),
-        cell: (repository) => <SinceCell value={repository.last_sync_task.finished_at} />,
+        cell: (repository) => (
+          <DateTimeCell format="since" value={repository.last_sync_task.finished_at} />
+        ),
       },
       {
         header: t('Last modified'),
-        cell: (repository) => <SinceCell value={repository.updated_at} />,
+        cell: (repository) => <DateTimeCell format="since" value={repository.updated_at} />,
       },
       {
         header: t('Created'),
-        cell: (repository) => <SinceCell value={repository.created_at} />,
+        cell: (repository) => <DateTimeCell format="since" value={repository.created_at} />,
       },
     ],
     [t]

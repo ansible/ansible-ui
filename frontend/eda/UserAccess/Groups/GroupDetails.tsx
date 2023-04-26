@@ -1,18 +1,19 @@
 import { DropdownPosition } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
-  PageActions,
+  PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
+import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useDeleteGroups } from './hooks/useDeleteGroup';
@@ -34,16 +35,18 @@ export function GroupDetails() {
   const itemActions = useMemo<IPageAction<EdaGroup>[]>(
     () => [
       {
-        type: PageActionType.single,
-        icon: EditIcon,
-        label: t('Edit Group'),
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        label: t('Edit group'),
         onClick: (group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
       {
-        type: PageActionType.single,
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete Group'),
+        label: t('Delete group'),
         onClick: (group: EdaGroup) => deleteGroups([group]),
         isDanger: true,
       },

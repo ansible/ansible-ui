@@ -18,7 +18,7 @@ export function AddRolesToTeam() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Add roles to team')} />
+      <PageHeader title={t('Add Roles to Team')} />
       <AddRolesForm teams={[team]} onClose={() => navigate(-1)} />
     </PageLayout>
   );
