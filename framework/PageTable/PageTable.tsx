@@ -14,7 +14,7 @@ import {
   Stack,
   Title,
 } from '@patternfly/react-core';
-import { SearchIcon } from '@patternfly/react-icons';
+import { SearchIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
@@ -46,15 +46,11 @@ import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { IPageAction } from '../PageActions/PageAction';
-import { PageActionType } from '../PageActions/PageActionType';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { useSettings } from '../Settings';
-import { Scrollable } from '../components/Scrollable';
-import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
@@ -287,59 +283,34 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
-      <EmptyStateDiv>
-        <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
-          <EmptyStateIcon
-            icon={ExclamationCircleIcon}
-            color="var(--pf-global--danger-color--100)"
-          />
-          <Title headingLevel="h2" size="lg">
-            {/* Unable to connect */}
-            {props.errorStateTitle}
-          </Title>
-          {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
-          <EmptyStateBody>{error.message}</EmptyStateBody>
-        </EmptyState>
-      </EmptyStateDiv>
-      <div className="dark-2" style={{ height: '100%' }}>
-        <EmptyStateError message={error.message} />
+      <div>
+        <EmptyStateDiv>
+          <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
+            <EmptyStateIcon
+              icon={ExclamationCircleIcon}
+              color="var(--pf-global--danger-color--100)"
+            />
+            <Title headingLevel="h2" size="lg">
+              {/* Unable to connect */}
+              {props.errorStateTitle}
+            </Title>
+            {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
+            <EmptyStateBody>{error.message}</EmptyStateBody>
+          </EmptyState>
+        </EmptyStateDiv>
+        <div className="dark-2" style={{ height: '100%' }}>
+          <EmptyStateError message={error.message} />
+        </div>
       </div>
     );
   }
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <EmptyStateDiv>
-        <EmptyState variant={EmptyStateVariant.large}>
-          <EmptyStateIcon icon={props.emptyStateIcon ?? PlusCircleIcon} />
-          <Title headingLevel="h4" size="lg">
-            {props.emptyStateTitle}
-          </Title>
-          {props.emptyStateDescription && (
-            <EmptyStateBody>{props.emptyStateDescription}</EmptyStateBody>
-          )}
-          {props.emptyStateActions && (
-            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-              <PageActions actions={props.emptyStateActions} />
-            </Flex>
-          )}
-          {props.emptyStateButtonClick && (
-            <Button
-              variant="primary"
-              onClick={props.emptyStateButtonClick}
-              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-            >
-              {props.emptyStateButtonText}
-            </Button>
-          )}
-        </EmptyState>
-      </EmptyStateDiv>
-=======
       <PageSection>
         <EmptyStateNoData
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}
-
           button={
             props.emptyStateButtonClick && (
               <Button
