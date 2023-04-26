@@ -107,8 +107,8 @@ export function RulebookActivationInputs() {
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
       projectId !== undefined
-        ? `${API_PREFIX}/rulebooks/?project_id=${projectId}`
-        : `${API_PREFIX}/rulebooks/`
+        ? `${API_PREFIX}/rulebooks/?project_id=${projectId}&page=1&page_size=200`
+        : `${API_PREFIX}/rulebooks/?page=1&page_size=200`
     );
     return Promise.resolve({
       total: response.count,
