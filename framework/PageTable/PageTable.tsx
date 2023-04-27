@@ -14,7 +14,7 @@ import {
   Stack,
   Title,
 } from '@patternfly/react-core';
-import { SearchIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
@@ -71,7 +71,7 @@ const ScrollDiv = styled.div`
   height: 100%;
 `;
 
-const EmptyStateDiv = styled.div`
+const ErrorStateDiv = styled.div`
   height: 100%;
   background-color: var(--pf-global--BackgroundColor--100);
 `;
@@ -283,25 +283,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (error) {
     return (
-      <div>
-        <EmptyStateDiv>
-          <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
-            <EmptyStateIcon
-              icon={ExclamationCircleIcon}
-              color="var(--pf-global--danger-color--100)"
-            />
-            <Title headingLevel="h2" size="lg">
-              {/* Unable to connect */}
-              {props.errorStateTitle}
-            </Title>
-            {/* <EmptyStateBody>There was an error retrieving data. Check your connection and reload the page.</EmptyStateBody> */}
-            <EmptyStateBody>{error.message}</EmptyStateBody>
-          </EmptyState>
-        </EmptyStateDiv>
-        <div className="dark-2" style={{ height: '100%' }}>
-          <EmptyStateError message={error.message} />
-        </div>
-      </div>
+      <ErrorStateDiv>
+        <EmptyStateError message={error.message} />
+      </ErrorStateDiv>
     );
   }
 
@@ -312,7 +296,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}
           button={
-            props.emptyStateButtonClick && (
+            (props.emptyStateButtonClick && (
               <Button
                 variant="primary"
                 onClick={props.emptyStateButtonClick}
@@ -320,14 +304,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               >
                 {props.emptyStateButtonText}
               </Button>
-            )
-          }
-          actions={
-            props.emptyStateActions && (
+            )) ||
+            (props.emptyStateActions && (
               <Flex justifyContent={{ default: 'justifyContentCenter' }}>
                 <PageActions actions={props.emptyStateActions} />
               </Flex>
-            )
+            ))
           }
           variant={EmptyStateVariant.large}
         />

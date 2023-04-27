@@ -13,13 +13,12 @@ export function EmptyStateCustom(props: {
   description: ReactNode;
   icon?: ComponentClass;
   button?: ReactElement;
-  actions?: ReactNode;
   footNote?: string;
   image?: ReactElement;
   variant?: 'xs' | 'xl' | 'small' | 'large' | 'full' | undefined;
   style?: React.CSSProperties;
 }) {
-  const { title, description, icon, button, footNote, image, variant, style, actions } = props;
+  const { title, description, icon, button, footNote, image, variant, style } = props;
   return (
     <EmptyState variant={variant || EmptyStateVariant.full} style={style}>
       {icon && <EmptyStateIcon icon={icon} />}
@@ -27,7 +26,6 @@ export function EmptyStateCustom(props: {
         {title}
       </Title>
       <EmptyStateBody>{description}</EmptyStateBody>
-      {actions && actions}
       {button && <EmptyStatePrimary>{button}</EmptyStatePrimary>}
       {image && (
         <>

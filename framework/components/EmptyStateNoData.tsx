@@ -7,18 +7,16 @@ export function EmptyStateNoData(props: {
   title: string;
   description: ReactNode;
   variant: 'xs' | 'xl' | 'small' | 'large' | 'full' | undefined;
-  actions?: ReactNode;
 }) {
-  const { button, description, title, variant, actions } = props;
+  const { button, description, title, variant } = props;
   return (
     <EmptyStateCustom
-      icon={button || actions ? PlusCircleIcon : CubesIcon}
+      icon={button ? PlusCircleIcon : CubesIcon}
       title={title}
       description={description}
       button={button}
       variant={variant}
       style={{ paddingTop: '48px' }}
-      actions={actions}
     />
   );
 }
