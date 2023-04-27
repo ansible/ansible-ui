@@ -1,5 +1,7 @@
 // import '@patternfly/react-core/dist/styles/base.css'
 import '@patternfly/patternfly/patternfly-base.css';
+import '@patternfly/patternfly/patternfly-charts.css';
+
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { Suspense } from 'react';
