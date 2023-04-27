@@ -25,6 +25,7 @@ export interface IFrameworkTranslations {
   selectNone: string;
   selectedText: string;
   showLess: string;
+  sort: string;
   submitText: string;
   submittingText: string;
   successText: string;
@@ -56,6 +57,7 @@ const defaultTranslations: IFrameworkTranslations = {
   processingText: 'Processing',
   selectNone: 'Select none',
   selectedText: 'Selected',
+  sort: 'Sort',
   showLess: 'Show less',
   submitText: 'Submit',
   submittingText: 'Submitting',

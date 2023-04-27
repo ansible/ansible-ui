@@ -23,8 +23,9 @@ import { useBreakpoint } from '../components/useBreakPoint';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import './PageToolbar.css';
 import { IToolbarFilter, PageTableToolbarFilters } from './PageToolbarFilter';
+import { PageTableSortOption, PageTableToolbarSort } from './PageToolbarSort';
 
-const ToolbarGroupsDiv = styled.div`
+const FlexGrowDiv = styled.div`
   flex-grow: 1;
 `;
 
@@ -53,8 +54,12 @@ export type PagetableToolbarProps<T extends object> = {
   selectItems?: (items: T[]) => void;
   unselectAll?: () => void;
   onSelect?: (item: T) => void;
-
   showSelect?: boolean;
+
+  sort?: string;
+  setSort?: (sort: string) => void;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
 
   viewType: PageTableViewType;
   setViewType: (viewType: PageTableViewType) => void;
@@ -64,6 +69,7 @@ export type PagetableToolbarProps<T extends object> = {
   disableCardView?: boolean;
   disableColumnManagement?: boolean;
   bottomBorder?: boolean;
+  sortOptions?: PageTableSortOption[];
 };
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -80,6 +86,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     clearAllFilters,
     openColumnModal,
     bottomBorder,
+    sort,
+    setSort,
+    sortDirection,
+    setSortDirection,
+    sortOptions,
   } = props;
 
   const sm = useBreakpoint('md');
@@ -142,7 +153,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
     >
-      <ToolbarContent>
+      <ToolbarContent style={{ justifyContent: 'end', justifyItems: 'end' }}>
         {showSelect && (
           <ToolbarGroup>
             <ToolbarItem variant="bulk-select">
@@ -163,9 +174,15 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <ToolbarGroupsDiv />
-
-        <ToolbarGroup variant="button-group">
+        <FlexGrowDiv />
+        <PageTableToolbarSort
+          sort={sort}
+          setSort={setSort}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          sortOptions={sortOptions}
+        />
+        <ToolbarGroup variant="button-group" style={{ justifyContent: 'end' }}>
           {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
             <ToolbarItem>
               <Tooltip content={'Manage columns'}>

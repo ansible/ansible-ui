@@ -6,6 +6,8 @@ import {
   SelectOption,
   SelectOptionObject,
   SelectVariant,
+  Split,
+  SplitItem,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
@@ -16,8 +18,8 @@ import {
 } from '@patternfly/react-core';
 import { ArrowRightIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import styled from 'styled-components';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
+import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export const enum PageFilterTypeE {
@@ -63,78 +65,85 @@ export function PageTableToolbarFilters(props: PageTableToolbarFiltersProps) {
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
 
+  const showFilterLabel = !useBreakpoint('md');
+
   if (!toolbarFilters) return <></>;
   if (toolbarFilters.length === 0) return <></>;
 
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
       <ToolbarGroup variant="filter-group">
+        {showFilterLabel && <ToolbarItem variant="label">Filter</ToolbarItem>}
         <ToolbarItem>
-          <InputGroup style={{ zIndex: 400 }}>
-            {toolbarFilters.length === 1 ? (
-              <>
-                <InputGroupText
-                  style={{
-                    border: 0,
-                    paddingLeft: 12,
-                    paddingRight: 2,
-                    color: 'inherit',
-                    borderRadius: '4px 0px 0px 4px',
-                  }}
-                >
-                  <FilterIcon />
-                </InputGroupText>
-                <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
-                  {toolbarFilters[0].label}
-                </InputGroupText>
-              </>
-            ) : (
-              <>
-                <InputGroupText
-                  style={{
-                    border: 0,
-                    paddingLeft: 12,
-                    paddingRight: 12,
-                    color: 'inherit',
-                    borderRadius: '4px 0px 0px 4px',
-                  }}
-                >
-                  <FilterIcon />
-                </InputGroupText>
-                <FormGroupSelect
-                  id="filter"
-                  onSelect={(_, v) => setSeletedFilter(v.toString())}
-                  value={selectedFilter}
-                  placeholderText=""
-                >
-                  {toolbarFilters.map((filter) => (
-                    <SelectOption key={filter.key} value={filter.key}>
-                      {filter.label}
-                    </SelectOption>
-                  ))}
-                </FormGroupSelect>
-              </>
-            )}
-          </InputGroup>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ToolbarFilterInput
-            id="filter-input"
-            filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
-            addFilter={(value: string) => {
-              let values = filters?.[selectedFilter];
-              if (!values) values = [];
-              if (!values.includes(value)) values.push(value);
-              setFilters?.({ ...filters, [selectedFilter]: values });
-            }}
-            removeFilter={(value: string) => {
-              let values = filters?.[selectedFilter];
-              if (!values) values = [];
-              values = values.filter((v) => v !== value);
-              setFilters?.({ ...filters, [selectedFilter]: values });
-            }}
-            values={filters?.[selectedFilter] ?? []}
-          />
+          <Split>
+            <SplitItem>
+              <InputGroup style={{ zIndex: 400 }}>
+                {toolbarFilters.length === 1 ? (
+                  <>
+                    <InputGroupText
+                      style={{
+                        border: 0,
+                        paddingLeft: 12,
+                        paddingRight: 2,
+                        color: 'inherit',
+                        borderRadius: '4px 0px 0px 4px',
+                      }}
+                    >
+                      <FilterIcon />
+                    </InputGroupText>
+                    <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
+                      {toolbarFilters[0].label}
+                    </InputGroupText>
+                  </>
+                ) : (
+                  <>
+                    <InputGroupText
+                      style={{
+                        border: 0,
+                        paddingLeft: 12,
+                        paddingRight: 12,
+                        color: 'inherit',
+                        borderRadius: '4px 0px 0px 4px',
+                      }}
+                    >
+                      <FilterIcon />
+                    </InputGroupText>
+                    <FormGroupSelect
+                      id="filter"
+                      onSelect={(_, v) => setSeletedFilter(v.toString())}
+                      value={selectedFilter}
+                      placeholderText=""
+                    >
+                      {toolbarFilters.map((filter) => (
+                        <SelectOption key={filter.key} value={filter.key}>
+                          {filter.label}
+                        </SelectOption>
+                      ))}
+                    </FormGroupSelect>
+                  </>
+                )}
+              </InputGroup>
+            </SplitItem>
+            <SplitItem isFilled>
+              <ToolbarFilterInput
+                id="filter-input"
+                filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
+                addFilter={(value: string) => {
+                  let values = filters?.[selectedFilter];
+                  if (!values) values = [];
+                  if (!values.includes(value)) values.push(value);
+                  setFilters?.({ ...filters, [selectedFilter]: values });
+                }}
+                removeFilter={(value: string) => {
+                  let values = filters?.[selectedFilter];
+                  if (!values) values = [];
+                  values = values.filter((v) => v !== value);
+                  setFilters?.({ ...filters, [selectedFilter]: values });
+                }}
+                values={filters?.[selectedFilter] ?? []}
+              />
+            </SplitItem>
+          </Split>
         </ToolbarItem>
         {toolbarFilters.map((filter) => {
           const values = filters?.[filter.key] ?? [];
@@ -285,15 +294,10 @@ function ToolbarSelectFilter(props: {
         onToggle={setOpen}
         selections={selections}
         onSelect={onSelect}
-        placeholderText={
-          values.length ? (
-            translations.selectedText
-          ) : (
-            <SelectionSpan>{props.placeholder}</SelectionSpan>
-          )
-        }
+        placeholderText={values.length ? translations.selectedText : props.placeholder}
         // ZIndex 400 is needed for PF table stick headers
         style={{ zIndex: open ? 400 : 0 }}
+        hasPlaceholderStyle
       >
         {options.map((option) => (
           <SelectOption id={option.value} key={option.value} value={option.value}>
@@ -304,7 +308,3 @@ function ToolbarSelectFilter(props: {
     </>
   );
 }
-
-const SelectionSpan = styled.span`
-  opacity: 0.7;
-`;
