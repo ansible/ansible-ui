@@ -4,7 +4,7 @@ export interface IFrameworkTranslations {
   by: string;
   cancelText: string;
   canceledText: string;
-  filter: string;
+  cardView: string;
   clearAllFilters: string;
   clickToRefresh: string;
   closeText: string;
@@ -12,6 +12,8 @@ export interface IFrameworkTranslations {
   countMore: string;
   documentation: string;
   errorText: string;
+  filter: string;
+  listView: string;
   manageColumns: string;
   moreInformation: string;
   noItemsFound: string;
@@ -30,6 +32,7 @@ export interface IFrameworkTranslations {
   submitText: string;
   submittingText: string;
   successText: string;
+  tableView: string;
   unknownError: string;
   validating: string;
 }
@@ -38,7 +41,7 @@ const defaultTranslations: IFrameworkTranslations = {
   by: 'by',
   cancelText: 'Cancel',
   canceledText: 'Canceled',
-  filter: 'Filter',
+  cardView: 'Card view',
   clearAllFilters: 'Clear all filters',
   clickToRefresh: 'Click to refresh',
   closeText: 'Close',
@@ -46,6 +49,8 @@ const defaultTranslations: IFrameworkTranslations = {
   countMore: '{count} more',
   documentation: 'Documentation',
   errorText: 'Error',
+  filter: 'Filter',
+  listView: 'List view',
   manageColumns: 'Manage columns',
   moreInformation: 'More information',
   noItemsFound: 'No items found',
@@ -59,11 +64,12 @@ const defaultTranslations: IFrameworkTranslations = {
   processingText: 'Processing',
   selectNone: 'Select none',
   selectedText: 'Selected',
-  sort: 'Sort',
   showLess: 'Show less',
+  sort: 'Sort',
   submitText: 'Submit',
   submittingText: 'Submitting',
   successText: 'Success',
+  tableView: 'Table view',
   unknownError: 'Unknown error',
   validating: 'Validating...',
 };

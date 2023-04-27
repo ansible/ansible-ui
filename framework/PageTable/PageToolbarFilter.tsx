@@ -52,13 +52,13 @@ export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter;
 
 export type IFilterState = Record<string, string[] | undefined>;
 
-export type PageTableToolbarFiltersProps = {
+export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
   filters?: Record<string, string[]>;
   setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
 };
 
-export function PageTableToolbarFilters(props: PageTableToolbarFiltersProps) {
+export function PageToolbarFilters(props: PageToolbarFiltersProps) {
   const { toolbarFilters, filters, setFilters } = props;
 
   const [selectedFilter, setSeletedFilter] = useState(() =>
@@ -77,9 +77,9 @@ export function PageTableToolbarFilters(props: PageTableToolbarFiltersProps) {
       <ToolbarGroup variant="filter-group">
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <ToolbarItem>
-          <Split>
+          <Split style={{ zIndex: 400 }}>
             <SplitItem>
-              <InputGroup style={{ zIndex: 400 }}>
+              <InputGroup>
                 {toolbarFilters.length === 1 ? (
                   <>
                     <InputGroupText

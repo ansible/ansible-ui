@@ -21,7 +21,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ITableColumn } from './PageTableColumn';
 
-export type PageTableToolbarSortProps = {
+export type PageToolbarSortProps = {
   sort?: string;
   setSort?: (sort: string) => void;
   sortDirection?: 'asc' | 'desc';
@@ -35,7 +35,7 @@ export interface PageTableSortOption {
   type?: 'text' | 'number' | undefined;
 }
 
-export function PageTableToolbarSort(props: PageTableToolbarSortProps) {
+export function PageToolbarSort(props: PageToolbarSortProps) {
   const { sort, setSort, sortDirection, setSortDirection, sortOptions } = props;
 
   const sortOption = sortOptions?.find((sortOption) => sortOption.value === sort);
