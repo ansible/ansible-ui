@@ -144,9 +144,6 @@ export function usePageToolbarSortOptionsFromColumns<T extends object>(
         }
 
         switch (column.type) {
-          case 'datetime':
-            sortOptions.push({ label: column.header, value: column.sort });
-            break;
           case 'count':
             sortOptions.push({ label: column.header, value: column.sort, type: 'number' });
             break;
