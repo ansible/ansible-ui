@@ -214,6 +214,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         placeholder={t('Enter username')}
         isRequired
         autoFocus
+        autoComplete="off"
       />
       <PageFormTextInput
         name="password"
