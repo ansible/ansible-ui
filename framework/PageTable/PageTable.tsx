@@ -64,6 +64,7 @@ import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { PageTableToolbar } from './PageToolbar';
 import { IToolbarFilter } from './PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from './PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -279,6 +280,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
+  const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
+
   if (error) {
     return (
       <EmptyStateDiv>
@@ -347,6 +350,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         viewType={viewType}
         setViewType={setViewType}
         bottomBorder
+        sortOptions={sortOptions}
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>

@@ -1,30 +1,28 @@
 import {
-  Button,
+  Flex,
   OnPerPageSelect,
   OnSetPage,
   Pagination,
   PaginationVariant,
   Skeleton,
-  ToggleGroup,
-  ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
-  Tooltip,
 } from '@patternfly/react-core';
-import { ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
 import { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { BulkSelector } from '../components/BulkSelector';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
+import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
-import { IToolbarFilter, PageTableToolbarFilters } from './PageToolbarFilter';
+import { IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
+import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
+import { PageToolbarView } from './PageToolbarView';
 
-const ToolbarGroupsDiv = styled.div`
+const FlexGrowDiv = styled.div`
   flex-grow: 1;
 `;
 
@@ -53,8 +51,12 @@ export type PagetableToolbarProps<T extends object> = {
   selectItems?: (items: T[]) => void;
   unselectAll?: () => void;
   onSelect?: (item: T) => void;
-
   showSelect?: boolean;
+
+  sort?: string;
+  setSort?: (sort: string) => void;
+  sortDirection?: 'asc' | 'desc';
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
 
   viewType: PageTableViewType;
   setViewType: (viewType: PageTableViewType) => void;
@@ -64,6 +66,7 @@ export type PagetableToolbarProps<T extends object> = {
   disableCardView?: boolean;
   disableColumnManagement?: boolean;
   bottomBorder?: boolean;
+  sortOptions?: PageTableSortOption[];
 };
 
 export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
@@ -80,6 +83,11 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     clearAllFilters,
     openColumnModal,
     bottomBorder,
+    sort,
+    setSort,
+    sortDirection,
+    setSortDirection,
+    sortOptions,
   } = props;
 
   const sm = useBreakpoint('md');
@@ -107,12 +115,6 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
       ));
 
   const showToolbar = showSelect || showSearchAndFilters || showToolbarActions;
-
-  let viewTypeCount = 0;
-  if (!props.disableTableView) viewTypeCount++;
-  if (!props.disableCardView) viewTypeCount++;
-  if (!props.disableListView) viewTypeCount++;
-
   if (!showToolbar) {
     return <Fragment />;
   }
@@ -142,7 +144,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
     >
-      <ToolbarContent>
+      <ToolbarContent style={{ justifyContent: 'end', justifyItems: 'end' }}>
+        {/* Selection */}
         {showSelect && (
           <ToolbarGroup>
             <ToolbarItem variant="bulk-select">
@@ -150,12 +153,15 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             </ToolbarItem>
           </ToolbarGroup>
         )}
-        <PageTableToolbarFilters
+
+        {/* Filters */}
+        <PageToolbarFilters
           toolbarFilters={toolbarFilters}
           filters={filters}
           setFilters={setFilters}
         />
-        {/* Action Buttons */}
+
+        {/* Actions */}
         <ToolbarGroup variant="button-group">
           <PageActions
             actions={toolbarActions}
@@ -163,87 +169,38 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
             wrapper={ToolbarItem}
           />
         </ToolbarGroup>
-        <ToolbarGroupsDiv />
 
-        <ToolbarGroup variant="button-group">
-          {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
-            <ToolbarItem>
-              <Tooltip content={'Manage columns'}>
-                <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
-              </Tooltip>
-            </ToolbarItem>
-          )}
-          {viewTypeCount > 1 && (
-            <ToolbarItem>
-              <ToggleGroup aria-label="table view toggle">
-                {[
-                  !props.disableTableView && PageTableViewTypeE.Table,
-                  !props.disableListView && PageTableViewTypeE.List,
-                  !props.disableCardView && PageTableViewTypeE.Cards,
-                ]
-                  .filter((i) => i)
-                  .map((vt) => {
-                    switch (vt) {
-                      case PageTableViewTypeE.Cards:
-                        return (
-                          <Tooltip
-                            content={'Card view'}
-                            key={vt}
-                            position="top-end"
-                            enableFlip={false}
-                          >
-                            <ToggleGroupItem
-                              icon={<ThLargeIcon />}
-                              isSelected={viewType === PageTableViewTypeE.Cards}
-                              onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
-                              aria-label="card view"
-                            />
-                          </Tooltip>
-                        );
-                      case PageTableViewTypeE.List:
-                        return (
-                          <Tooltip
-                            content={'List view'}
-                            key={vt}
-                            position="top-end"
-                            enableFlip={false}
-                          >
-                            <ToggleGroupItem
-                              icon={<ListIcon />}
-                              isSelected={viewType === PageTableViewTypeE.List}
-                              onClick={() => setViewType?.(PageTableViewTypeE.List)}
-                              aria-label="list view"
-                            />
-                          </Tooltip>
-                        );
-                      case PageTableViewTypeE.Table:
-                        return (
-                          <Tooltip
-                            content={'Table view'}
-                            key={vt}
-                            position="top-end"
-                            enableFlip={false}
-                          >
-                            <ToggleGroupItem
-                              icon={<TableIcon />}
-                              isSelected={viewType === PageTableViewTypeE.Table}
-                              onClick={() => setViewType?.(PageTableViewTypeE.Table)}
-                              aria-label="table view"
-                            />
-                          </Tooltip>
-                        );
-                    }
-                  })}
-              </ToggleGroup>
-            </ToolbarItem>
-          )}
-        </ToolbarGroup>
+        {/* Spacing */}
+        <FlexGrowDiv />
 
-        {/* {toolbarButtonActions.length > 0 && <ToolbarGroup variant="button-group">{toolbarActionButtons}</ToolbarGroup>} */}
-        {/* <ToolbarGroup variant="button-group">{toolbarActionDropDownItems}</ToolbarGroup> */}
+        {/* The flex below is needed to make the toolbar wrap elements properly */}
+        <Flex>
+          {/* Sort */}
+          <PageToolbarSort
+            sort={sort}
+            setSort={setSort}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+            sortOptions={sortOptions}
+          />
+
+          {/* View */}
+          <PageToolbarView
+            disableTableView={props.disableTableView}
+            disableListView={props.disableListView}
+            disableCardView={props.disableCardView}
+            disableColumnManagement={props.disableColumnManagement}
+            viewType={viewType}
+            setViewType={setViewType}
+            openColumnModal={openColumnModal}
+          />
+        </Flex>
 
         {/* Pagination */}
-        <ToolbarItem visibility={{ default: 'hidden', '2xl': 'visible' }}>
+        <ToolbarItem
+          visibility={{ default: 'hidden', '2xl': 'visible' }}
+          style={{ marginLeft: 24 }}
+        >
           <Pagination
             variant={PaginationVariant.top}
             isCompact
