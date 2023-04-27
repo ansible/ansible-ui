@@ -107,6 +107,7 @@ function ToolbarSortSelect(props: {
   const onSelect = useCallback(
     (e: unknown, value: string | SelectOptionObject) => {
       setSort?.(value.toString());
+      setOpen(false);
     },
     [setSort]
   );

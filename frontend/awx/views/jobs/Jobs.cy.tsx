@@ -75,8 +75,7 @@ describe('Jobs.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
-        cy.get('.pf-c-select__toggle').click();
-        cy.clickButton('ID');
+        cy.selectToolbarFilterType('ID');
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction(/^Delete selected jobs$/);
         cy.contains(
@@ -146,8 +145,7 @@ describe('Jobs.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: UnifiedJob[]) => {
         const job = results[0];
-        cy.get('.pf-c-select__toggle').click();
-        cy.clickButton('ID');
+        cy.selectToolbarFilterType('ID');
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction(/^Cancel selected jobs$/);
         cy.contains(
