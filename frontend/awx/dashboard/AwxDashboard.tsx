@@ -49,7 +49,7 @@ function DashboardInternal() {
   const executionEnvironments = useExecutionEnvironments();
 
   const recentJobsView = useAwxView<Job>({
-    url: '/api/v2/jobs/',
+    url: '/api/v2/unified_jobs/',
     disableQueryString: true,
     defaultSort: 'finished',
     defaultSortDirection: 'desc',
