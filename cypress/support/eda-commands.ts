@@ -13,6 +13,13 @@ import './rest-commands';
 
 /*  EDA related custom command implementation  */
 
+Cypress.Commands.add('checkLogoSuccess', () => {
+  cy.get('img').should('be.visible');
+  cy.get('img').should('have.attr', 'src');
+  cy.get('img').should('have.attr', 'alt', 'brand logo');
+  cy.get('img').should('have.prop', 'naturalWidth').should('be.greaterThan', 0);
+});
+
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   cy.contains('a', anchorName).then((link) => {
     cy.request({

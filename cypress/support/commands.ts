@@ -193,6 +193,7 @@ declare global {
       // --- EDA COMMANDS ---
 
       checkAnchorLinks(anchorName: string): Chainable<void>;
+      checkLogoSuccess(): Chainable<void>;
 
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,

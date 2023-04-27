@@ -36,6 +36,12 @@ describe('EDA Dashboard', () => {
     cy.deleteEdaProject(edaProject);
   });
 
+  it('checks Ansible brand logo has loaded successfully and the header title', () => {
+    cy.edaLogin();
+    cy.checkLogoSuccess();
+    cy.hasTitle(/^Ansible$/).should('be.visible');
+  });
+
   it('shows the user an RBA card with a list of RBAs visible including working links', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.get('[data-label="Name"] div > a').contains(edaRBA.name).click();
