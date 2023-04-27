@@ -10,8 +10,8 @@ interface IJobChartData {
   jobs: {
     failed: [number, number][];
     successful: [number, number][];
-    canceled: [number, number][];
-    error: [number, number][];
+    canceled?: [number, number][];
+    error?: [number, number][];
   };
 }
 
@@ -45,8 +45,8 @@ export function JobsChart(props: {
 
   const failed = data?.jobs.failed.map(reducer) ?? [];
   const successful = data?.jobs.successful.map(reducer) ?? [];
-  const canceled = data?.jobs.canceled.map(reducer) ?? [];
-  const error = data?.jobs.error.map(reducer) ?? [];
+  const canceled = data?.jobs.canceled?.map(reducer) ?? [];
+  const error = data?.jobs.error?.map(reducer) ?? [];
 
   const { activeTheme } = useSettings();
   let successfulColor = 'var(--pf-chart-color-green-300)';
