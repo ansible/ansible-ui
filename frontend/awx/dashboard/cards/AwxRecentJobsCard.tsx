@@ -53,7 +53,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
         emptyStateIcon={PlusCircleIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no projects')}
+        emptyStateTitle={t('There are currently no jobs')}
         emptyStateDescription={t('Create a job by clicking the button below.')}
         emptyStateButtonText={t('Create job')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
