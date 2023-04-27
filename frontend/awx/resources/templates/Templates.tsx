@@ -78,6 +78,7 @@ export function Templates() {
         icon: TrashIcon,
         label: 'Delete selected templates',
         onClick: deleteTemplates,
+        isDanger: true,
       },
     ],
     [deleteTemplates, navigate, t]
@@ -92,12 +93,14 @@ export function Templates() {
         label: t(`Edit template`),
         href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t(`Delete template`),
         onClick: (template) => deleteTemplates([template]),
+        isDanger: true,
       },
     ],
     [deleteTemplates, t]

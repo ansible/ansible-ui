@@ -50,6 +50,7 @@ export function Hosts() {
         label: t('Create host'),
         onClick: () => navigate(RouteObj.CreateHost),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -71,6 +72,7 @@ export function Hosts() {
         label: t('Edit host'),
         onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

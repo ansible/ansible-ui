@@ -56,6 +56,7 @@ export function ExecutionEnvironments() {
         label: t('Create execution environment'),
         onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -80,6 +81,7 @@ export function ExecutionEnvironments() {
             RouteObj.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
           ),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

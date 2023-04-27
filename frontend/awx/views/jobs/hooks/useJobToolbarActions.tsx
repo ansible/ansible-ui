@@ -16,17 +16,18 @@ export function useJobToolbarActions(onComplete: (jobs: UnifiedJob[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
+        icon: BanIcon,
+        label: t('Cancel selected jobs'),
+        onClick: cancelJobs,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected jobs'),
         onClick: deleteJobs,
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: BanIcon,
-        label: t('Cancel selected jobs'),
-        onClick: cancelJobs,
       },
     ],
     [deleteJobs, cancelJobs, t]
