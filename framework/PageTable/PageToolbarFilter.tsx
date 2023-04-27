@@ -65,6 +65,8 @@ export function PageTableToolbarFilters(props: PageTableToolbarFiltersProps) {
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
 
+  const [translations] = useFrameworkTranslations();
+
   const showFilterLabel = !useBreakpoint('md');
 
   if (!toolbarFilters) return <></>;
@@ -73,7 +75,7 @@ export function PageTableToolbarFilters(props: PageTableToolbarFiltersProps) {
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
       <ToolbarGroup variant="filter-group">
-        {showFilterLabel && <ToolbarItem variant="label">Filter</ToolbarItem>}
+        {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <ToolbarItem>
           <Split>
             <SplitItem>

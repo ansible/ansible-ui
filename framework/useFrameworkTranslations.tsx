@@ -4,6 +4,7 @@ export interface IFrameworkTranslations {
   by: string;
   cancelText: string;
   canceledText: string;
+  filter: string;
   clearAllFilters: string;
   clickToRefresh: string;
   closeText: string;
@@ -37,6 +38,7 @@ const defaultTranslations: IFrameworkTranslations = {
   by: 'by',
   cancelText: 'Cancel',
   canceledText: 'Canceled',
+  filter: 'Filter',
   clearAllFilters: 'Clear all filters',
   clickToRefresh: 'Click to refresh',
   closeText: 'Close',
