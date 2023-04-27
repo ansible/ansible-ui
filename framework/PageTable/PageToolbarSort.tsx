@@ -10,7 +10,7 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import {
-  SortAlphaDownIcon,
+  SortAlphaDownAltIcon,
   SortAlphaUpIcon,
   SortAmountDownIcon,
   SortAmountUpIcon,
@@ -50,7 +50,7 @@ export function PageTableToolbarSort(props: PageTableToolbarSortProps) {
           case 'asc':
             return <SortAlphaUpIcon />;
           case 'desc':
-            return <SortAlphaDownIcon />;
+            return <SortAlphaDownAltIcon />;
         }
         break;
       case 'number':
@@ -137,7 +137,26 @@ export function usePageToolbarSortOptionsFromColumns<T extends object>(
     const sortOptions: PageTableSortOption[] = [];
     for (const column of tableColumns) {
       if (column.sort) {
-        sortOptions.push({ label: column.header, value: column.sort });
+        if (column.defaultSort) {
+          // Assumes the defauilt sort is a text column
+          sortOptions.push({ label: column.header, value: column.sort, type: 'text' });
+          continue;
+        }
+
+        switch (column.type) {
+          case 'datetime':
+            sortOptions.push({ label: column.header, value: column.sort });
+            break;
+          case 'count':
+            sortOptions.push({ label: column.header, value: column.sort, type: 'number' });
+            break;
+          case 'text':
+            sortOptions.push({ label: column.header, value: column.sort, type: 'text' });
+            break;
+          default:
+            sortOptions.push({ label: column.header, value: column.sort });
+            break;
+        }
       }
     }
     return sortOptions;
