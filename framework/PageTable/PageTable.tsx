@@ -284,7 +284,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   if (error) {
     return (
       <ErrorStateDiv>
-        <EmptyStateError message={error.message} />
+        <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />
       </ErrorStateDiv>
     );
   }
