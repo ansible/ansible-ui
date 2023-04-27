@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Alert, ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  ButtonVariant,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Title,
+} from '@patternfly/react-core';
+import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +22,12 @@ import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
+import styled from 'styled-components';
+
+const EmptyStateDiv = styled.div`
+  height: 100%;
+  background-color: var(--pf-global--BackgroundColor--100);
+`;
 
 export function UserRoles(props: { user: User }) {
   const { user } = props;
@@ -63,24 +76,29 @@ export function UserRoles(props: { user: User }) {
     ],
     [t]
   );
+  const isSysAdmin =
+    view?.pageItems && view.pageItems.length > 0
+      ? view.pageItems.some((role) => role.name === 'System Administrator')
+      : false;
+
+  if (isSysAdmin) {
+    return (
+      <EmptyStateDiv>
+        <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h2" size="lg">
+            {t(`System Administrator`)}
+          </Title>
+          <EmptyStateBody>
+            {t(`System administrators have unrestricted access to all resources.`)}
+          </EmptyStateBody>
+        </EmptyState>
+      </EmptyStateDiv>
+    );
+  }
+
   return (
     <>
-      {user.is_superuser && (
-        <Alert
-          variant="warning"
-          title={t('System administrators have unrestricted access to all resources.')}
-          isInline
-          style={{ border: 0 }}
-        />
-      )}
-      {user.is_system_auditor && (
-        <Alert
-          variant="warning"
-          title={t('System auditor have unrestricted access to all resources.')}
-          isInline
-          style={{ border: 0 }}
-        />
-      )}
       <PageTable<Role>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
