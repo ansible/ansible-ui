@@ -38,6 +38,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
     <PageFormGroup {...formGroupProps} id={id}>
       <InputGroup>
         <TextInput
+          autoComplete={props.autoComplete}
           placeholder={placeholder}
           onChange={props.onChange}
           id={id}
