@@ -272,6 +272,12 @@ export function EdaUserInfo() {
   return meResponse?.data;
 }
 
+function isEdaServer(
+  server: { type: AutomationServerType; name: string; url: string } | undefined
+): boolean {
+  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
+}
+
 function UserInfo() {
   const { automationServer } = useAutomationServers();
   const fetcher = useFetcher();
@@ -286,8 +292,8 @@ function UserInfo() {
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
   const { automationServer } = useAutomationServers();
-  const userInfo = automationServer?.type === AutomationServerType.EDA ? EdaUserInfo() : UserInfo();
-
+  const edaActiveUser = isEdaServer(automationServer) ? EdaUserInfo() : undefined;
+  const userInfo = isEdaServer(automationServer) ? edaActiveUser : UserInfo();
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -321,10 +327,10 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            automationServer?.type === AutomationServerType.EDA
+            isEdaServer(automationServer)
               ? history(
-                  activeUser
-                    ? RouteObj.EdaUserDetails.replace(':id', activeUser.id.toString())
+                  edaActiveUser
+                    ? RouteObj.EdaUserDetails.replace(':id', `${edaActiveUser?.id || ''}`)
                     : RouteObj.EdaUsers
                 )
               : history(
