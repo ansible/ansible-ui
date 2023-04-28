@@ -142,7 +142,7 @@ describe('TeamAccess', () => {
       // Remove users
       cy.selectTableRow('admin'); //  User cannot be removed as they are a system administrator
       cy.selectTableRow('user-2');
-      cy.clickButton(/^Remove users$/);
+      cy.clickToolbarKebabAction(/^Remove users$/);
       // Confirmation modal is displayed with a warning
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(

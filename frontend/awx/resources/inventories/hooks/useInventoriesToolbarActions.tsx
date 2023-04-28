@@ -54,6 +54,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
           },
         ],
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,

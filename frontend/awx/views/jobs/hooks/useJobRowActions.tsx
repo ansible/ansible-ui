@@ -86,19 +86,21 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t(`Delete job`),
-        isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
-        onClick: (job: UnifiedJob) => deleteJobs([job]),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
         isDisabled: (job: UnifiedJob) => cannotCancelJob(job),
         isHidden: (job: UnifiedJob) => Boolean(!cannotCancelJob(job)), // Hidden when a job is running and cancellable since we have the iconOnly row action will also be available to trigger cancel in that scenario
         onClick: (job: UnifiedJob) => cancelJobs([job]),
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t(`Delete job`),
+        isDisabled: (job: UnifiedJob) => cannotDeleteJob(job),
+        onClick: (job: UnifiedJob) => deleteJobs([job]),
+        isDanger: true,
       },
     ];
     return actions;

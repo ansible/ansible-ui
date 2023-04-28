@@ -11,12 +11,14 @@ export function useHostMetricsRowActions(onComplete: (host: HostMetric[]) => voi
 
   return useMemo<IPageAction<HostMetric>[]>(() => {
     return [
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t(`Delete hostname`),
         onClick: (host: HostMetric) => deleteHostMetrics([host]),
+        isDanger: true,
       },
     ];
   }, [deleteHostMetrics, t]);

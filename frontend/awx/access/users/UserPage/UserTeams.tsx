@@ -51,12 +51,14 @@ export function UserTeams(props: { user: User }) {
             ),
         onClick: () => selectTeamsAddUsers([user]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
+        isDanger: true,
       },
     ],
     [t, canAddUserToTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
@@ -69,6 +71,7 @@ export function UserTeams(props: { user: User }) {
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
         onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
+        isDanger: true,
       },
     ],
     [removeTeamsFromUsers, t, user]
