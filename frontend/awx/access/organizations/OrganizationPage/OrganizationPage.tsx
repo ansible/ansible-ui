@@ -13,6 +13,7 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  PageBackTab,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
@@ -97,6 +98,11 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
   const { t } = useTranslation();
   return (
     <PageTabs>
+      <PageBackTab
+        label={t('Back to Organizations')}
+        url={RouteObj.Organizations}
+        persistentFilterKey="organizations"
+      />
       <PageTab label={t('Details')}>
         <OrganizationDetails organization={organization} />
       </PageTab>

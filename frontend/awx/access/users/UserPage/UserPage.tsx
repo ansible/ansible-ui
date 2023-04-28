@@ -13,6 +13,7 @@ import {
   PageLayout,
   RoutedTabs,
   RoutedTab,
+  PageBackTab,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
@@ -77,6 +78,7 @@ export function UserPage() {
         }
       />
       <RoutedTabs baseUrl={RouteObj.UserPage}>
+        <PageBackTab label={t('Back to Users')} url={RouteObj.Users} persistentFilterKey="users" />
         <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
         </RoutedTab>

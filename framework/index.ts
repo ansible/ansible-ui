@@ -40,6 +40,7 @@ export * from './PageTable/PageToolbar';
 export * from './PageTable/useTableItems';
 export * from './PageTabs';
 export * from './RoutedTabs';
+export * from './PageBackTab';
 export * from './Settings';
 export * from './components/BulkSelector';
 export * from './components/Collapse';
