@@ -1,11 +1,4 @@
-import {
-  CodeBlock,
-  CodeBlockCode,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Stack,
-} from '@patternfly/react-core';
+import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +23,7 @@ import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
-import { postRequest, swrOptions, useFetcher } from '../../common/crud/Data';
+import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
@@ -41,18 +34,7 @@ import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns
 import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 import { PageDetailsSection } from '../common/PageDetailSection';
-import { EdaExtraVars } from '../interfaces/EdaExtraVars';
-import useSWR from 'swr';
-
-export function ExtraVarsData(extraVarId: string) {
-  const fetcher = useFetcher();
-  const response = useSWR<EdaExtraVars>(
-    `${API_PREFIX}/extra-vars/${extraVarId}/`,
-    fetcher,
-    swrOptions
-  );
-  return response?.data;
-}
+import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -64,10 +46,6 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
-
-  const extraVar = rulebookActivation?.extra_var?.id
-    ? ExtraVarsData(rulebookActivation?.extra_var?.id)
-    : undefined;
 
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
     if (restarted.length > 0) {
@@ -202,18 +180,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             </PageDetail>
           </PageDetails>
           <PageDetailsSection>
-            {extraVar?.extra_var && (
+            {rulebookActivation?.extra_var?.id && (
               <PageDetail label={t('Variables')}>
-                <CodeBlock>
-                  <CodeBlockCode
-                    style={{
-                      minHeight: '150px',
-                    }}
-                    id="code-content"
-                  >
-                    {JSON.stringify(extraVar?.extra_var)}
-                  </CodeBlockCode>
-                </CodeBlock>
+                <EdaExtraVarsCell id={rulebookActivation.extra_var.id} />
               </PageDetail>
             )}
           </PageDetailsSection>
