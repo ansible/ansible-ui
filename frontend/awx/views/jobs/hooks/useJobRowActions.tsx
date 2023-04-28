@@ -38,7 +38,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: MinusCircleIcon,
         label: t(`Cancel job`),
@@ -48,7 +48,7 @@ export function useJobRowActions(onComplete: (jobs: UnifiedJob[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: RocketIcon,
         label: t(`Relaunch job`),
