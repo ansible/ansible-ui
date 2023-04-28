@@ -20,7 +20,7 @@ export interface EdaRulebookActivation {
   instances_count?: number;
   rules_count?: number;
   last_restarted?: string;
-  restarted_count?: number;
+  restart_count?: number;
   fired_count?: number;
   created_at?: string;
   modified_at?: string;

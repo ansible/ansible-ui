@@ -41,13 +41,12 @@ export function CreateRulebookActivation() {
     ...rulebookActivation
   }) => {
     let extra_var: { id: number } | undefined;
-    if (variables) {
+    if (variables && variables.trim().length > 0) {
       try {
         extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
           extra_var: variables,
         });
       } catch (err) {
-        extra_var = undefined;
         throw err;
       }
     }

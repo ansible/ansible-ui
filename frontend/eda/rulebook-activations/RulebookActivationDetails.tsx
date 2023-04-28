@@ -30,7 +30,7 @@ import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
-import { postRequest } from '../../common/crud/Data';
+import { postRequest, swrOptions, useFetcher } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
@@ -42,6 +42,17 @@ import { useRestartRulebookActivations } from './hooks/useControlRulebookActivat
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 import { PageDetailsSection } from '../common/PageDetailSection';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
+import useSWR from 'swr';
+
+export function ExtraVarsData(extraVarId: string) {
+  const fetcher = useFetcher();
+  const response = useSWR<EdaExtraVars>(
+    `${API_PREFIX}/extra-vars/${extraVarId}/`,
+    fetcher,
+    swrOptions
+  );
+  return response?.data;
+}
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -54,9 +65,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     `${API_PREFIX}/activations/${params.id ?? ''}/`
   );
 
-  const { data: extraVar } = useGet<EdaExtraVars>(
-    `${API_PREFIX}/extra-vars/${rulebookActivation?.extra_var?.id ?? ''}/`
-  );
+  const extraVar = rulebookActivation?.extra_var?.id
+    ? ExtraVarsData(rulebookActivation?.extra_var?.id)
+    : undefined;
 
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
     if (restarted.length > 0) {
@@ -177,7 +188,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 : ''}
             </PageDetail>
             <PageDetail label={t('Restarted count')}>
-              {rulebookActivation?.restarted_count || 0}
+              {rulebookActivation?.restart_count || 0}
             </PageDetail>
             <PageDetail label={t('Created')}>
               {rulebookActivation?.created_at
