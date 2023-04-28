@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
+  PageFormSelectOption,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,9 +16,12 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
+import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaCredential } from '../../interfaces/EdaCredential';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const isValidUrl = useIsValidUrl();
   return (
     <>
@@ -48,12 +52,26 @@ function ProjectCreateInputs() {
         placeholder={t('Enter SCM URL')}
         validate={isValidUrl}
       />
+      <PageFormSelectOption
+        name={'credential_id'}
+        label={t('Credential')}
+        placeholderText={t('Select credential')}
+        options={
+          credentials?.results
+            ? credentials.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+      />
     </>
   );
 }
 
 function ProjectEditInputs() {
   const { t } = useTranslation();
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   return (
     <>
       <PageFormTextInput<EdaProject>
@@ -75,6 +93,19 @@ function ProjectEditInputs() {
         isReadOnly={true}
         label={t('SCM type')}
         placeholder={t('Git')}
+      />
+      <PageFormSelectOption
+        name={'credential_id'}
+        label={t('Credential')}
+        placeholderText={t('Select credential')}
+        options={
+          credentials?.results
+            ? credentials.results.map((item: { name: string; id: number }) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
       />
     </>
   );
@@ -130,7 +161,7 @@ export function EditProject() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={project}
+            defaultValue={{ ...project, credential_id: project?.credential?.id || undefined }}
           >
             <ProjectEditInputs />
           </PageForm>
