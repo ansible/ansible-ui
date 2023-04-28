@@ -1,13 +1,16 @@
 import { Page } from '@patternfly/react-core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useBreakpoint } from '../../framework';
 import { AnsibleMasthead } from '../common/Masthead';
-import { WebSocketProvider } from './common/useAwxWebSocket';
 import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxRouter } from './AwxRouter';
 import { AwxSidebar } from './AwxSidebar';
+import { WebSocketProvider } from './common/useAwxWebSocket';
 
 export function AWX() {
-  const [isNavOpen, setNavOpen] = useState(() => window.innerWidth >= 1200);
+  const isXl = useBreakpoint('xl');
+  const [isNavOpen, setNavOpen] = useState(() => isXl);
+  useEffect(() => setNavOpen(isXl), [isXl, setNavOpen]);
   return (
     <WebSocketProvider>
       <ActiveUserProvider>

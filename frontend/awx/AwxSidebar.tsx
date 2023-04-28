@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { RouteObj, RouteType } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteObj, RouteType } from '../Routes';
 import { useActiveUser } from '../common/useActiveUser';
 
 export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
