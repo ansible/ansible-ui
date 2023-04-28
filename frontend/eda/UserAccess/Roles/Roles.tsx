@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { useRoleColumns } from './hooks/useRoleColumns';
 import { API_PREFIX } from '../../constants';
@@ -9,7 +7,6 @@ import { useEdaView } from '../../useEventDrivenView';
 
 export function Roles() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const tableColumns = useRoleColumns();
   const view = useEdaView<EdaRole>({
     url: `${API_PREFIX}/roles/`,
@@ -21,12 +18,9 @@ export function Roles() {
       <PageTable
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading roles')}
-        emptyStateTitle={t('No roles yet')}
-        emptyStateDescription={t('To get started, create a role.')}
-        emptyStateButtonText={t('Create role')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRole)}
+        emptyStateTitle={t('There are currently no roles added for your organization.')}
         {...view}
-        defaultSubtitle={t('Role')}
+        defaultSubtitle={t('Roles')}
       />
     </PageLayout>
   );
