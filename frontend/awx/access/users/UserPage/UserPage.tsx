@@ -48,6 +48,7 @@ export function UserPage() {
         label: t('Edit user'),
         onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

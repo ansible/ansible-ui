@@ -39,12 +39,14 @@ export function UserRoles(props: { user: User }) {
         label: t('Add role to user'),
         onClick: () => navigate(RouteObj.AddRolesToUser.replace(':id', user.id.toString())),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected roles from user'),
         onClick: () => alert('TODO'),
+        isDanger: true,
       },
     ],
     [navigate, t, user.id]
@@ -59,6 +61,7 @@ export function UserRoles(props: { user: User }) {
         icon: TrashIcon,
         label: t('Remove role from user'),
         onClick: () => alert('TODO'),
+        isDanger: true,
       },
     ],
     [t]

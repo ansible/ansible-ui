@@ -53,6 +53,7 @@ export function OrganizationPage() {
         onClick: (organization) =>
           history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

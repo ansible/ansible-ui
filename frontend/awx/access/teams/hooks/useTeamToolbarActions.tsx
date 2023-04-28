@@ -57,6 +57,13 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
       //   label: t('Remove users from selected teams'),
       //   onClick: () => selectUsersRemoveTeams(view.selectedItems), // This hook has been repurposed as useSelectAndRemoveUsersFromTeam to handle removing users from a single team
       // },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        icon: SyncIcon,
+        label: t('Refresh'),
+        onClick: () => void view.refresh(),
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -65,14 +72,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         label: t('Delete selected teams'),
         onClick: deleteTeams,
         isDanger: true,
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-        icon: SyncIcon,
-        label: t('Refresh'),
-        onClick: () => void view.refresh(),
       },
     ],
     [canCreateTeam, deleteTeams, selectUsersAddTeams, t, view]

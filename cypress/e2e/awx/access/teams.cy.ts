@@ -126,7 +126,7 @@ describe('teams', () => {
     // Remove users
     cy.selectTableRow(user1.username);
     cy.selectTableRow(user2.username);
-    cy.clickButton(/^Remove users$/);
+    cy.clickToolbarKebabAction(/^Remove users$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);

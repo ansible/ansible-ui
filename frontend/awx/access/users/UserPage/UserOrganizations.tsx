@@ -44,6 +44,7 @@ export function UserOrganizations(props: { user: User }) {
         label: t('Add user to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -51,6 +52,7 @@ export function UserOrganizations(props: { user: User }) {
         label: t('Remove user from selected organizations'),
         onClick: () =>
           removeOrganizationsFromUsers([user], view.selectedItems, view.unselectItemsAndRefresh),
+        isDanger: true,
       },
     ],
     [
@@ -71,6 +73,7 @@ export function UserOrganizations(props: { user: User }) {
         label: t('Remove user from organization'),
         onClick: (organization) =>
           removeOrganizationsFromUsers([user], [organization], view.unselectItemsAndRefresh),
+        isDanger: true,
       },
     ],
     [removeOrganizationsFromUsers, t, user, view.unselectItemsAndRefresh]

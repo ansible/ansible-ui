@@ -39,12 +39,14 @@ export function TeamRoles(props: { team: Team }) {
         label: t('Add role to team'),
         onClick: () => navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString())),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Remove selected roles from team'),
         onClick: () => alert('TODO'),
+        isDanger: true,
       },
     ],
     [navigate, t, team.id]
@@ -59,6 +61,7 @@ export function TeamRoles(props: { team: Team }) {
         icon: TrashIcon,
         label: t('Remove role from team'),
         onClick: () => alert('TODO'),
+        isDanger: true,
       },
     ],
     [t]

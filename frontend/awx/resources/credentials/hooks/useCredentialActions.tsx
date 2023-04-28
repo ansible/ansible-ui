@@ -26,6 +26,7 @@ export function useCredentialActions(options?: { onDeleted: (crednetials: Creden
         onClick: (credential) =>
           navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,

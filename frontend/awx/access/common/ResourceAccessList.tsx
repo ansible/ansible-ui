@@ -92,11 +92,11 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
             ),
         onClick: () => selectUsersAddTeams([resource]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
-        isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove users'),
         isDisabled: canAddAndRemoveUsers
@@ -105,6 +105,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
               'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: (users) => removeUsersFromResource(users, resource, view.unselectItemsAndRefresh),
+        isDanger: true,
       },
     ],
     [
@@ -142,6 +143,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
           }
           return undefined;
         },
+        isDanger: true,
       },
     ],
     [canAddAndRemoveUsers, removeUsersFromResource, resource, t, view.unselectItemsAndRefresh]

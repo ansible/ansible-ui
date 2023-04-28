@@ -32,18 +32,6 @@ export function useTemplateActions(options: {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete template'),
-        onClick: (template) => {
-          if (!template) return;
-          deleteTemplates([template]);
-        },
-        ouiaId: 'job-template-detail-delete-button',
-        isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t('Launch template'),
         onClick: async (template) => {
@@ -58,6 +46,19 @@ export function useTemplateActions(options: {
         },
         ouiaId: 'job-template-detail-launch-button',
         isDanger: false,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete template'),
+        onClick: (template) => {
+          if (!template) return;
+          deleteTemplates([template]);
+        },
+        ouiaId: 'job-template-detail-delete-button',
+        isDanger: true,
       },
     ];
     return itemActions;

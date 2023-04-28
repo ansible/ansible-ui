@@ -38,17 +38,18 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
+        icon: BanIcon,
+        label: t('Cancel selected projects'),
+        onClick: cancelProjects,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected projects'),
         onClick: deleteProjects,
         isDanger: true,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: BanIcon,
-        label: t('Cancel selected projects'),
-        onClick: cancelProjects,
       },
     ],
     [canCreateProject, cancelProjects, deleteProjects, t]

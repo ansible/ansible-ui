@@ -24,6 +24,7 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
         label: t('Create credential'),
         onClick: () => navigate(RouteObj.CreateCredential),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
