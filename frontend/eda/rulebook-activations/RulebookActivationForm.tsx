@@ -172,7 +172,7 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={<Link to={RouteObj.CreateEdaProject}>Create decision environment</Link>}
+        footer={<Link to={RouteObj.CreateEdaDecisionEnvironment}>Create decision environment</Link>}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="restart_policy"
