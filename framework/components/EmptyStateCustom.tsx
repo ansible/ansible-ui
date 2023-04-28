@@ -15,10 +15,12 @@ export function EmptyStateCustom(props: {
   button?: ReactElement;
   footNote?: string;
   image?: ReactElement;
+  variant?: 'xs' | 'xl' | 'small' | 'large' | 'full' | undefined;
+  style?: React.CSSProperties;
 }) {
-  const { title, description, icon, button, footNote, image } = props;
+  const { title, description, icon, button, footNote, image, variant, style } = props;
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
+    <EmptyState variant={variant || EmptyStateVariant.full} style={style}>
       {icon && <EmptyStateIcon icon={icon} />}
       <Title headingLevel="h4" size="lg">
         {title}
