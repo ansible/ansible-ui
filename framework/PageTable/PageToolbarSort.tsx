@@ -33,6 +33,7 @@ export interface PageTableSortOption {
   label: string;
   value: string;
   type?: 'text' | 'number' | undefined;
+  defaultDirection?: 'asc' | 'desc';
 }
 
 export function PageToolbarSort(props: PageToolbarSortProps) {
@@ -81,7 +82,12 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
         <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
         <ToolbarItem>
           <Split>
-            <ToolbarSortSelect sortOptions={sortOptions} sort={sort} setSort={setSort} />
+            <ToolbarSortSelect
+              sortOptions={sortOptions}
+              sort={sort}
+              setSort={setSort}
+              setSortDirection={setSortDirection}
+            />
             <Button
               variant="control"
               icon={sortDirectionIcon}
@@ -100,16 +106,21 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
 function ToolbarSortSelect(props: {
   sort?: string;
   setSort?: (sort: string) => void;
+  setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   sortOptions: PageTableSortOption[];
 }) {
-  const { sortOptions: options, sort, setSort } = props;
+  const { sortOptions: options, sort, setSort, setSortDirection } = props;
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(
     (e: unknown, value: string | SelectOptionObject) => {
+      const sortOption = options.find((option) => option.value === value.toString());
+      if (sortOption && sort !== value.toString() && sortOption.defaultDirection) {
+        setSortDirection?.(sortOption.defaultDirection);
+      }
       setSort?.(value.toString());
       setOpen(false);
     },
-    [setSort]
+    [options, setSort, setSortDirection, sort]
   );
   return (
     <Select
@@ -139,20 +150,39 @@ export function usePageToolbarSortOptionsFromColumns<T extends object>(
     for (const column of tableColumns) {
       if (column.sort) {
         if (column.defaultSort) {
-          // Assumes the defauilt sort is a text column
-          sortOptions.push({ label: column.header, value: column.sort, type: 'text' });
+          // Assumes the default sort is a text column
+          sortOptions.push({
+            label: column.header,
+            value: column.sort,
+            type: 'text',
+            defaultDirection: column.defaultSortDirection,
+          });
           continue;
         }
 
         switch (column.type) {
           case 'count':
-            sortOptions.push({ label: column.header, value: column.sort, type: 'number' });
+            sortOptions.push({
+              label: column.header,
+              value: column.sort,
+              type: 'number',
+              defaultDirection: column.defaultSortDirection,
+            });
             break;
           case 'text':
-            sortOptions.push({ label: column.header, value: column.sort, type: 'text' });
+            sortOptions.push({
+              label: column.header,
+              value: column.sort,
+              type: 'text',
+              defaultDirection: column.defaultSortDirection,
+            });
             break;
           default:
-            sortOptions.push({ label: column.header, value: column.sort });
+            sortOptions.push({
+              label: column.header,
+              value: column.sort,
+              defaultDirection: column.defaultSortDirection,
+            });
             break;
         }
       }
