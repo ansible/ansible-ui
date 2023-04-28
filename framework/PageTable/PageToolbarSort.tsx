@@ -115,7 +115,6 @@ function ToolbarSortSelect(props: {
     (e: unknown, value: string | SelectOptionObject) => {
       const sortOption = options.find((option) => option.value === value.toString());
       if (sortOption && sort !== value.toString() && sortOption.defaultDirection) {
-        console.log(sortOption.defaultDirection);
         setSortDirection?.(sortOption.defaultDirection);
       }
       setSort?.(value.toString());
