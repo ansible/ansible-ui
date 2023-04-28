@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
 import { User } from '../../../interfaces/User';
@@ -12,14 +11,6 @@ export function UserDetails(props: { user: User }) {
 
   return (
     <>
-      {user.is_superuser && (
-        <Alert
-          variant="info"
-          title={t('System administrators have unrestricted access to all resources.')}
-          isInline
-          style={{ border: 0 }}
-        />
-      )}
       <PageDetails>
         <PageDetail label={t('Username')}>{user.username}</PageDetail>
         <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
