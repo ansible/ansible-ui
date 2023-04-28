@@ -1,6 +1,5 @@
 import useSWR from 'swr';
 import { TextCell } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { useFetcher } from '../../../common/crud/Data';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
@@ -21,10 +20,5 @@ export function EdaRulebookCell(props: { id?: number }) {
     }
     return <></>;
   }
-  return (
-    <TextCell
-      text={data.name}
-      to={props.id ? RouteObj.EdaRulebookDetails.replace(':id', props.id.toString()) : undefined}
-    />
-  );
+  return <TextCell text={data.name} />;
 }
