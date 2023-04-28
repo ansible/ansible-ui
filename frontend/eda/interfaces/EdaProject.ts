@@ -10,7 +10,8 @@ export interface EdaProject {
   name: string;
   description?: string;
   type?: string;
-  token?: string;
+  credential_id?: string;
+  credential?: { id: string; name: string };
   created_at?: string;
   modified_at?: string;
   import_state: string;
@@ -18,5 +19,4 @@ export interface EdaProject {
   revision: string;
   url?: string;
   git_hash?: string;
-  isSyncing?: boolean;
 }

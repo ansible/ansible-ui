@@ -2,7 +2,7 @@ import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/reac
 import { GitAltIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   errorToAlertProps,
   IPageAction,
@@ -98,12 +98,23 @@ export function ProjectDetails() {
           <TextCell icon={<GitAltIcon color="#F1502F" />} iconSize="md" text={'Git'} />
         </PageDetail>
         <PageDetail label={t('SCM URL')}>{project?.url || ''}</PageDetail>
-        <PageDetail label={t('SCM token')}>{project?.token || ''}</PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />
         </PageDetail>
         <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
+        <PageDetail label={t('Credential')}>
+          {project && project.credential ? (
+            <Link
+              to={RouteObj.EdaCredentialDetails.replace(':id', `${project?.credential?.id || ''}`)}
+            >
+              {project?.credential?.name}
+            </Link>
+          ) : (
+            project?.credential?.name || ''
+          )}
+        </PageDetail>
+
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>
