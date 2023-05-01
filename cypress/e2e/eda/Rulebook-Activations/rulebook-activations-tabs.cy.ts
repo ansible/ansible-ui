@@ -3,7 +3,7 @@ describe('EDA rulebook activations History Tab', () => {
     cy.edaLogin();
   });
 
-  it.skip('renders the instances that are related to the rulebook activation', () => {
+  it('renders the instances that are related to the rulebook activation', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -14,7 +14,7 @@ describe('EDA rulebook activations History Tab', () => {
           }).then((edaRulebookActivation) => {
             cy.intercept(
               'GET',
-              `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?order_by=name&page=1&page_size=10`
+              `api/eda/v1/activations/${edaRulebookActivation.id}/instances/?page=1&page_size=10`
             ).as('getRBAInstance');
             cy.navigateTo(/^Rulebook Activations$/);
             cy.clickTableRow(edaRulebookActivation.name);
@@ -26,7 +26,7 @@ describe('EDA rulebook activations History Tab', () => {
                 cy.wrap(id).as('ID');
                 cy.get('@ID').then(($id) => {
                   const id = $id.toString();
-                  cy.contains('td[data-label="Name"]', `Instance ${id}`);
+                  cy.contains('td[data-label="Name"]', `${id} - ${edaRulebookActivation.name}`);
                 });
               });
             cy.deleteEdaRulebookActivation(edaRulebookActivation);
