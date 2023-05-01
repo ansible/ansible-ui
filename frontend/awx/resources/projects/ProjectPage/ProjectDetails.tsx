@@ -325,7 +325,13 @@ export function ProjectDetails(props: { project: Project }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
+      {project.scm_clean ||
+        project.scm_delete_on_update ||
+        project.scm_track_submodules ||
+        project.scm_update_on_launch ||
+        (project.allow_override && (
+          <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
+        ))}
     </PageDetails>
   );
 }
