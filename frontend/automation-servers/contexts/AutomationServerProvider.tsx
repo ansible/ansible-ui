@@ -1,5 +1,3 @@
-import { Type } from '@sinclair/typebox';
-import { TypeCompiler } from '@sinclair/typebox/compiler';
 import {
   createContext,
   Dispatch,
@@ -10,9 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AutomationServer, AutomationServerSchema } from '../interfaces/AutomationServer';
-
-export const AutomationServersCompiler = TypeCompiler.Compile(Type.Array(AutomationServerSchema));
+import { AutomationServer } from '../interfaces/AutomationServer';
 
 interface IAutomationServersContext {
   automationServers: AutomationServer[];
@@ -59,9 +55,6 @@ export function loadAutomationServers(): AutomationServer[] {
   try {
     servers = JSON.parse(hostsString) as AutomationServer[];
   } catch {
-    servers = [];
-  }
-  if (!AutomationServersCompiler.Check(servers)) {
     servers = [];
   }
   servers = servers.filter(

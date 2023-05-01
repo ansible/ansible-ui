@@ -1,9 +1,12 @@
-import { Static, Type } from '@sinclair/typebox';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
-import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+} from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
@@ -19,30 +22,11 @@ export function EditGroup() {
   const id = Number(params.id);
   const { data: Group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${id.toString()}/`);
 
-  const GroupSchemaType = useMemo(
-    () =>
-      Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        }),
-        url: Type.Optional(
-          Type.String({
-            title: t('URL'),
-            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
-      }),
-    [t]
-  );
-
-  type GroupSchema = Static<typeof GroupSchemaType>;
-
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaGroup>, EdaGroup>();
 
-  const onSubmit: PageFormSubmitHandler<GroupSchema> = async (Group) => {
+  const onSubmit: PageFormSubmitHandler<EdaGroup> = async (Group) => {
     if (Number.isInteger(id)) {
       Group = await requestPatch<EdaGroup>(`${API_PREFIX}/groups/${id}/`, Group);
       navigate(-1);
@@ -75,15 +59,14 @@ export function EditGroup() {
               { label: t('Edit Group') },
             ]}
           />
-          <PageForm
-            schema={GroupSchemaType}
+          <PageForm<EdaGroup>
             submitText={t('Save group')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={Group}
           >
-            <PageFormSchema schema={GroupSchemaType} />
+            <PageFormTextInput<EdaGroup> name="name" label={t('Name')} isRequired />
           </PageForm>
         </PageLayout>
       );
@@ -98,14 +81,13 @@ export function EditGroup() {
             { label: t('Create Group') },
           ]}
         />
-        <PageForm
-          schema={GroupSchemaType}
+        <PageForm<EdaGroup>
           submitText={t('Create group')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <PageFormSchema schema={GroupSchemaType} />
+          <PageFormTextInput<EdaGroup> name="name" label={t('Name')} isRequired />
         </PageForm>
       </PageLayout>
     );

@@ -46,6 +46,7 @@ describe('jobs', () => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
       .parent()
@@ -53,22 +54,19 @@ describe('jobs', () => {
         // Relaunch job
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
-        // Delete job
-        cy.get('.pf-c-dropdown__menu-item')
-          .contains(/^Delete job$/)
-          .should('exist');
-        // Cancel job
-        cy.get('#cancel-job').should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/).should('exist');
       });
   });
 
   it('renders additional details on expanding job row', () => {
     cy.navigateTo(/^Jobs$/);
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
-    cy.hasDetail('Launched by', 'admin');
+    // cy.hasDetail('Launched by', 'admin'); // not always admin
     cy.hasDetail('Job slice', '0/1');
   });
 

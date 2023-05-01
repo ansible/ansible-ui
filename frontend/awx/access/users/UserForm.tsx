@@ -11,9 +11,9 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { RouteObj } from '../../../Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
@@ -117,8 +117,9 @@ export function EditUser() {
     );
   }
 
+  const { password, ...defaultUserValue } = user;
   const defaultValue: Partial<IUserInput> = {
-    user: user,
+    user: defaultUserValue,
     userType: user.is_superuser
       ? 'System administrator'
       : user.is_system_auditor

@@ -147,30 +147,33 @@ describe('projects', () => {
       cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
     });
   });
-  it('can cancel project sync from projects list table row kebab menu', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-      scm_url: 'foo',
-    }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
-      cy.filterTableByText(testProject.name);
-      cy.contains('td', testProject.name)
-        .parent()
-        .within(() => {
-          cy.get('#cancel-project-sync').click();
-        });
-      cy.get('#confirm').click();
-      cy.clickButton(/^Cancel project sync/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.filterTableByText(testProject.name);
-      cy.get('td[data-label="Status"]').should('contain', 'Canceled');
-      cy.clickButton(/^Clear all filters$/);
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
-    });
-  });
+
+  // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
+  // it('can cancel project sync from projects list table row kebab menu', () => {
+  //   cy.requestPost<Project>('/api/v2/projects/', {
+  //     name: 'E2E Project ' + randomString(4),
+  //     organization: organization.id,
+  //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
+  //     scm_url: 'foo',
+  //   }).then((testProject) => {
+  //     cy.navigateTo(/^Projects$/);
+  //     cy.filterTableByText(testProject.name);
+  //     cy.contains('td', testProject.name)
+  //       .parent()
+  //       .within(() => {
+  //         cy.get('#cancel-project-sync').click();
+  //       });
+  //     cy.get('#confirm').click();
+  //     cy.clickButton(/^Cancel project sync/);
+  //     cy.contains(/^Success$/);
+  //     cy.clickButton(/^Close$/);
+  //     cy.filterTableByText(testProject.name);
+  //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
+  //     cy.clickButton(/^Clear all filters$/);
+  //     cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+  //   });
+  // });
+
   it('can copy project from projects list table row kebab menu', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
@@ -184,11 +187,13 @@ describe('projects', () => {
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
     });
   });
+
   //   it('can edit project from projects list table row kebab menu', () => {
   //       cy.navigateTo(/^Projects$/, true);
   //       cy.get('#edit-project').click();
   //       cy.hasTitle(/^Edit project$/);
   //   });
+
   it('can delete project from projects list table row kebab menu', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
@@ -204,6 +209,7 @@ describe('projects', () => {
       cy.getTableRowByText(testProject.name).should('not.exist');
     });
   });
+
   it('can delete project from projects list toolbar ', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
@@ -220,23 +226,25 @@ describe('projects', () => {
       cy.getTableRowByText(testProject.name).should('not.exist');
     });
   });
-  it('can cancel project sync from projects list toolbar ', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-      scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-      scm_url: 'foo',
-    }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
-      cy.selectTableRow(testProject.name);
-      cy.clickToolbarKebabAction(/^Cancel selected projects$/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Cancel project sync/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.filterTableByText(testProject.name);
-      cy.get('td[data-label="Status"]').should('contain', 'Canceled');
-      cy.clickButton(/^Clear all filters$/);
-    });
-  });
+
+  // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
+  // it('can cancel project sync from projects list toolbar ', () => {
+  //   cy.requestPost<Project>('/api/v2/projects/', {
+  //     name: 'E2E Project ' + randomString(4),
+  //     organization: organization.id,
+  //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
+  //     scm_url: 'foo',
+  //   }).then((testProject) => {
+  //     cy.navigateTo(/^Projects$/);
+  //     cy.selectTableRow(testProject.name);
+  //     cy.clickToolbarKebabAction(/^Cancel selected projects$/);
+  //     cy.get('#confirm').click();
+  //     cy.clickButton(/^Cancel project sync/);
+  //     cy.contains(/^Success$/);
+  //     cy.clickButton(/^Close$/);
+  //     cy.filterTableByText(testProject.name);
+  //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
+  //     cy.clickButton(/^Clear all filters$/);
+  //   });
+  // });
 });
