@@ -23,6 +23,9 @@ import {
 } from '@patternfly/react-core';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
+import { useCallback } from 'react';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { useGet } from '../../../../common/crud/useGet';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();
@@ -33,6 +36,32 @@ export function ProjectDetails(props: { project: Project }) {
   }
   const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
+  );
+  const view = useGet<Project>(`/api/v2/projects/${project.id}/`);
+  const { refresh } = view;
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+              void refresh();
+              break;
+            case 'workflow_job':
+              void refresh();
+              break;
+            case 'project_update':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
   );
 
   const brand: string = process.env.BRAND ?? 'AWX';
