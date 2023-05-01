@@ -68,6 +68,12 @@ const ToolbarSpan = styled.span`
   flex-grow: 1;
 `;
 
+function isEdaServer(
+  server: { type: AutomationServerType; name: string; url: string } | undefined
+): boolean {
+  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
+}
+
 export function AnsibleMasthead(props: {
   isNavOpen: boolean;
   setNavOpen: (open: boolean) => void;
@@ -81,6 +87,7 @@ export function AnsibleMasthead(props: {
 
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
+  const { automationServer } = useAutomationServers();
 
   return (
     <Masthead display={{ default: 'inline' }}>
@@ -144,9 +151,11 @@ export function AnsibleMasthead(props: {
                 <ToolbarItem>
                   <Refresh />
                 </ToolbarItem>
-                <ToolbarItem>
-                  <Notifications />
-                </ToolbarItem>
+                {!isEdaServer(automationServer) && (
+                  <ToolbarItem>
+                    <Notifications />
+                  </ToolbarItem>
+                )}
 
                 {/* <ToolbarItem>
                   <ApplicationLauncherBasic />
@@ -272,12 +281,6 @@ export function EdaUserInfo() {
   return meResponse?.data;
 }
 
-function isEdaServer(
-  server: { type: AutomationServerType; name: string; url: string } | undefined
-): boolean {
-  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
-}
-
 function UserInfo() {
   const { automationServer } = useAutomationServers();
   const fetcher = useFetcher();
@@ -346,7 +349,7 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              automationServer?.type === AutomationServerType.EDA
+              isEdaServer(automationServer)
                 ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
                 : await fetch('/api/logout/');
               history('/');
