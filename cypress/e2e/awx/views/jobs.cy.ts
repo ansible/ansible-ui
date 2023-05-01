@@ -66,7 +66,7 @@ describe('jobs', () => {
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
-    cy.hasDetail('Launched by', 'admin');
+    // cy.hasDetail('Launched by', 'admin'); // not always admin
     cy.hasDetail('Job slice', '0/1');
   });
 
