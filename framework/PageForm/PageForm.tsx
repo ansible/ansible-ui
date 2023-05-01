@@ -38,7 +38,7 @@ export function PageForm<T extends object>(props: {
   disableBody?: boolean;
   disablePadding?: boolean;
 }) {
-  const { schema, defaultValue, disableBody, disablePadding } = props;
+  const { defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
   });
