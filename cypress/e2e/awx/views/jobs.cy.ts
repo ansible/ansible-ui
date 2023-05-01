@@ -46,7 +46,7 @@ describe('jobs', () => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
-    cy.filterTableByTypeAndText('ID', job.id.toString());
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
       .parent()
@@ -61,7 +61,7 @@ describe('jobs', () => {
 
   it('renders additional details on expanding job row', () => {
     cy.navigateTo(/^Jobs$/);
-    cy.filterTableByTypeAndText('ID', job.id.toString());
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
