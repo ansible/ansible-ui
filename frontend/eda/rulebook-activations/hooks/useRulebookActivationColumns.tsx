@@ -90,7 +90,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Restarts'),
         type: 'count',
-        value: (activation) => activation?.restarted_count ?? 0,
+        value: (activation) => activation?.restart_count ?? 0,
         modal: ColumnModalOption.Hidden,
       },
       {

@@ -41,15 +41,10 @@ export function CreateRulebookActivation() {
     ...rulebookActivation
   }) => {
     let extra_var: { id: number } | undefined;
-    if (variables) {
-      try {
-        extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
-          extra_var: variables,
-        });
-      } catch (err) {
-        extra_var = undefined;
-        throw err;
-      }
+    if (variables && variables.trim().length > 0) {
+      extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
+        extra_var: variables,
+      });
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
