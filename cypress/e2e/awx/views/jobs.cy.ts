@@ -53,12 +53,8 @@ describe('jobs', () => {
         // Relaunch job
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
-        // Delete job
-        cy.get('.pf-c-dropdown__menu-item')
-          .contains(/^Delete job$/)
-          .should('exist');
-        // Cancel job
-        cy.get('#cancel-job').should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/).should('exist');
       });
   });
 
