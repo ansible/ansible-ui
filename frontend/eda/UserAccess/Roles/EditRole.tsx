@@ -1,9 +1,12 @@
-import { Static, Type } from '@sinclair/typebox';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
-import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+} from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
@@ -19,30 +22,11 @@ export function EditRole() {
   const id = Number(params.id);
   const { data: Role } = useGet<EdaRole>(`${API_PREFIX}/roles/${id.toString()}/`);
 
-  const RoleSchemaType = useMemo(
-    () =>
-      Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        }),
-        url: Type.Optional(
-          Type.String({
-            title: t('URL'),
-            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
-      }),
-    [t]
-  );
-
-  type RoleSchema = Static<typeof RoleSchemaType>;
-
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaRole>, EdaRole>();
 
-  const onSubmit: PageFormSubmitHandler<RoleSchema> = async (Role) => {
+  const onSubmit: PageFormSubmitHandler<EdaRole> = async (Role) => {
     if (Number.isInteger(id)) {
       Role = await requestPatch<EdaRole>(`${API_PREFIX}/roles/${id}/`, Role);
       navigate(-1);
@@ -69,15 +53,15 @@ export function EditRole() {
             title={t('Edit Role')}
             breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
           />
-          <PageForm
-            schema={RoleSchemaType}
+          <PageForm<EdaRole>
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={Role}
           >
-            <PageFormSchema schema={RoleSchemaType} />
+            <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
+            <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
           </PageForm>
         </PageLayout>
       );
@@ -89,14 +73,14 @@ export function EditRole() {
           title={t('Create Role')}
           breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Create Role') }]}
         />
-        <PageForm
-          schema={RoleSchemaType}
+        <PageForm<EdaRole>
           submitText={t('Create role')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <PageFormSchema schema={RoleSchemaType} />
+          <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
+          <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
         </PageForm>
       </PageLayout>
     );

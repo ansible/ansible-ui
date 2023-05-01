@@ -1,5 +1,3 @@
-import { ajvResolver } from '@hookform/resolvers/ajv';
-
 import {
   ActionGroup,
   Alert,
@@ -9,7 +7,6 @@ import {
   gridItemSpanValueShape,
   Tooltip,
 } from '@patternfly/react-core';
-import * as Ajv from 'ajv';
 import { JSONSchema6 } from 'json-schema';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
@@ -44,12 +41,6 @@ export function PageForm<T extends object>(props: {
   const { schema, defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
-    resolver: schema
-      ? ajvResolver(
-          schema as Ajv.JSONSchemaType<T>,
-          { strict: false, addFormats: true } as Ajv.Options
-        )
-      : undefined,
   });
 
   const [frameworkTranslations] = useFrameworkTranslations();
@@ -180,11 +171,9 @@ export function PageFormGrid(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
 
   const Component = (
-    <>
-      <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-        {props.children}
-      </Grid>
-    </>
+    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+      {props.children}
+    </Grid>
   );
 
   return Component;
