@@ -70,7 +70,6 @@
     "@rollup/plugin-replace": "5.0.2",
     "@rollup/plugin-strip": "3.0.2",
     "@rollup/plugin-typescript": "11.1.0",
-    "@sinclair/typebox": "0.28.5",
     "@svgr/webpack": "7.0.0",
     "@types/cookie": "0.5.1",
     "@types/css-minimizer-webpack-plugin": "3.2.0",
