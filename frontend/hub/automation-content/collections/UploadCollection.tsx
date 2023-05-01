@@ -1,19 +1,19 @@
 import { Alert } from '@patternfly/react-core';
-import { Static, Type } from '@sinclair/typebox';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageDetails, PageForm, PageHeader, PageLayout } from '../../../../framework';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { postRequestFile } from '../../../common/crud/Data';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
+import { postRequestFile } from '../../../common/crud/Data';
 import { useRepositories } from '../../administration/repositories/hooks/useRepositories';
 import { useNamespaces } from '../namespaces/hooks/useNamespaces';
 
-const UploadSchema = Type.Object({ file: Type.Any() });
-type UploadData = Static<typeof UploadSchema>;
+interface UploadData {
+  file: unknown;
+}
 
 export function UploadCollection() {
   const { t } = useTranslation();
@@ -43,7 +43,6 @@ export function UploadCollectionByFile() {
         <LoadingPage />
       ) : (
         <PageForm<UploadData>
-          schema={UploadSchema}
           submitText={t('Confirm')}
           cancelText={t('Cancel')}
           onCancel={onCancel}

@@ -180,11 +180,9 @@ export function PageFormGrid(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
 
   const Component = (
-    <>
-      <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-        {props.children}
-      </Grid>
-    </>
+    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+      {props.children}
+    </Grid>
   );
 
   return Component;
