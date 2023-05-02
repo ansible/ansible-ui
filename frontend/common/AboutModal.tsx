@@ -17,7 +17,7 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         setDialog(undefined);
         props.onClose?.();
       }}
-      trademark="Trademark and copyright information here"
+      trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
       brandImageSrc="/static/media/brand-logo.svg"
       brandImageAlt={t('Brand Logo')}
       productName={process.env.PRODUCT ?? t('AWX')}
