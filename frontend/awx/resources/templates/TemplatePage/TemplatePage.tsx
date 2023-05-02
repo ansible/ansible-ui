@@ -6,7 +6,7 @@ import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { RoutedTabs, RoutedTab } from '../../../../common/RoutedTabs';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -43,6 +43,11 @@ export function TemplatePage() {
         }
       />
       <RoutedTabs isLoading={!template} baseUrl={RouteObj.JobTemplatePage}>
+        <PageBackTab
+          label={t('Back to Templates')}
+          url={RouteObj.Templates}
+          persistentFilterKey="templates"
+        />
         <RoutedTab label={t('Details')} url={RouteObj.JobTemplateDetails}>
           <TemplateDetails template={template} />
         </RoutedTab>
