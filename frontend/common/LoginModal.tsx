@@ -38,6 +38,7 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       }
       isOpen
       onClose={onClose}
+      showClose={process.env.EDA !== 'true'}
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
