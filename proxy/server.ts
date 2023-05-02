@@ -85,7 +85,12 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
 
       let websocket: WebSocket | undefined;
       if (server) {
-        let new_uri = server.replace('https', 'wss');
+        let new_uri: string;
+        if (server.startsWith('https')) {
+          new_uri = server.replace('https', 'wss');
+        } else {
+          new_uri = server.replace('http', 'ws');
+        }
         new_uri = join(new_uri, `/websocket/`);
         websocket = new WebSocket(new_uri, {
           headers: incommingMessage.headers,
