@@ -2,13 +2,8 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  RoutedTabs,
-  RoutedTab,
-} from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { RoutedTabs, RoutedTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
@@ -39,7 +34,11 @@ export function CredentialPage() {
           />
         }
       />
-      <RoutedTabs isLoading={!credential} baseUrl={RouteObj.CredentialPage}>
+      <RoutedTabs
+        isLoading={!credential}
+        baseUrl={RouteObj.CredentialPage}
+        persistentFilterKey="credentials"
+      >
         <RoutedTab label={t('Details')} url={RouteObj.CredentialDetails}>
           <CredentialDetails credential={credential!} />
         </RoutedTab>

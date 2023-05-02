@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, RoutedTabs, RoutedTab } from '../../../../framework';
+import { PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
+import { RoutedTabs, RoutedTab } from '../../../common/RoutedTabs';
 import { RouteObj } from '../../../Routes';
 import { Job } from '../../interfaces/Job';
 import { JobDetails } from './JobDetails';

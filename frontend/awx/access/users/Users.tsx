@@ -21,7 +21,7 @@ import {
 import { RouteObj } from '../../../Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { usePersistentFilters } from '../../../../framework/PersistentFilters';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';

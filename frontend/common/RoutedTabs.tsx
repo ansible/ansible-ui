@@ -18,11 +18,12 @@ import {
   Tab,
   Tabs,
   TabsComponent,
+  TabTitleText,
 } from '@patternfly/react-core';
+import { CaretLeftIcon } from '@patternfly/react-icons';
 import { getPersistentFilters } from './PersistentFilters';
-import { PageBackTab } from './PageBackTab';
 
-interface RoutedTabProps {
+interface IRoutedTabProps {
   label?: string;
   url: string;
   children: ReactNode;
@@ -43,14 +44,14 @@ export function RoutedTabs(props: {
   const params = useParams();
 
   const baseUrl = replaceRouteParams(props.baseUrl, params);
-  const children = useMemo<ReactElement<RoutedTabProps>[]>(
+  const children = useMemo<ReactElement<IRoutedTabProps>[]>(
     () =>
       Children.toArray(props.children).filter((child) => {
         if (!isValidElement(child)) {
           return false;
         }
         return child.type === RoutedTab || child.type === PageBackTab;
-      }) as ReactElement<RoutedTabProps>[],
+      }) as ReactElement<IRoutedTabProps>[],
     [props.children]
   );
   const activeKey = children.findIndex((child) => {
@@ -176,8 +177,31 @@ export function RoutedTabs(props: {
   );
 }
 
-export function RoutedTab(props: RoutedTabProps) {
+export function RoutedTab(props: IRoutedTabProps) {
   return <>{props.children}</>;
+}
+
+export function PageBackTab(props: {
+  label: React.ReactNode;
+  url: string;
+  persistentFilterKey?: string;
+  eventKey?: number;
+}) {
+  const { label, url, persistentFilterKey, eventKey } = props;
+  const qs = getPersistentFilters(persistentFilterKey);
+
+  return (
+    <Tab
+      title={
+        <TabTitleText>
+          <CaretLeftIcon />
+          {label}
+        </TabTitleText>
+      }
+      href={`${url}${qs}`}
+      eventKey={eventKey ?? 99}
+    />
+  );
 }
 
 function replaceRouteParams(path: string, params: { [key: string]: string | undefined }) {

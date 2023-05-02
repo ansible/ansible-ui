@@ -7,7 +7,6 @@ import {
   Skeleton,
   Tab,
   Tabs,
-  TabTitleText,
 } from '@patternfly/react-core';
 import {
   Children,
@@ -18,6 +17,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+
 export function PageTabs(props: {
   children: ReactNode;
   preComponents?: ReactNode;
@@ -26,19 +26,20 @@ export function PageTabs(props: {
   loading?: boolean;
 }) {
   const { loading } = props;
+  const [activeKey, setActiveKey] = useState<number>(props?.initialTabIndex ?? 0);
+  const onSelect = useCallback(
+    (_: unknown, key: string | number) => setActiveKey(key as number),
+    [setActiveKey]
+  );
   const children = Children.toArray(props.children);
-  let firstTabIndex = null as number | null;
   const tabs = children.map((child, index) => {
     if (isValidElement(child)) {
       if (child.type === PageTab) {
-        if (firstTabIndex === null) {
-          firstTabIndex = index;
-        }
         const label = (child.props as { label: string }).label;
         return (
           <Tab
             key={label ?? index}
-            title={<TabTitleText>{label ? label : <Skeleton width="60px" />}</TabTitleText>}
+            title={label ? label : <Skeleton width="60px" />}
             eventKey={index}
           />
         );
@@ -46,13 +47,6 @@ export function PageTabs(props: {
     }
     return child;
   });
-  const [activeKey, setActiveKey] = useState<number>(
-    props?.initialTabIndex ?? (firstTabIndex || 0)
-  );
-  const onSelect = useCallback(
-    (_: unknown, key: string | number) => setActiveKey(key as number),
-    [setActiveKey]
-  );
   const content = children[activeKey];
 
   if (loading) {

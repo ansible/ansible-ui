@@ -2,16 +2,11 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  RoutedTabs,
-  RoutedTab,
-} from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
+import { RoutedTabs, RoutedTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
