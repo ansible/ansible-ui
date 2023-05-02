@@ -9,7 +9,8 @@ describe('EDA Users List', () => {
     cy.navigateTo(/^Users$/);
     cy.hasTitle(/^Users$/);
   });
-  it.skip('renders the Credentials details page and shows expected information', () => {
+
+  it.skip('renders the Users details page and shows expected information', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);
       cy.clickTableRow(edaUser.username);
@@ -19,6 +20,7 @@ describe('EDA Users List', () => {
       cy.deleteEdaUser(edaUser);
     });
   });
+
   it.skip('can filter the Users list based on Name', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo(/^Users$/);

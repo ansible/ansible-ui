@@ -86,4 +86,8 @@ describe('EDA Users- Create, Edit, Delete', () => {
       });
     });
   });
+
+  it.skip('can view and select from the list of available roles in the Users create form', () => {
+    //write test here
+  });
 });
