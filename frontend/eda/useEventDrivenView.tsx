@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
 import { ItemsResponse, getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
+import { SWR_REFRESH_INTERVAL } from './constants';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
@@ -95,7 +96,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
   const fetcher = useFetcher();
   const response = useSWR<ItemsResponse<T>>(url, fetcher, {
     ...swrOptions,
-    refreshInterval: 10 * 1000,
+    refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);

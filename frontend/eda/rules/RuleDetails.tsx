@@ -23,14 +23,18 @@ import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';
-import { API_PREFIX } from '../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 import { EdaRulebookCell } from '../rulebooks/components/EdaRulebookCell';
 
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}/`);
+  const { data: rule } = useGet<EdaRule>(
+    `${API_PREFIX}/rules/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

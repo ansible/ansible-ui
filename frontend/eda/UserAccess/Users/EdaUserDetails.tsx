@@ -25,7 +25,7 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
 import { EdaUserInfo } from '../../../common/Masthead';
@@ -36,7 +36,11 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${params.id ?? ''}/`);
+  const { data: user } = useGet<EdaUser>(
+    `${API_PREFIX}/users/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
 
   const me = EdaUserInfo();
   const deleteUsers = useDeleteUsers((deleted) => {
