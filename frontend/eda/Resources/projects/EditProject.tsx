@@ -44,6 +44,7 @@ function ProjectCreateInputs() {
         isReadOnly={true}
         label={t('SCM type')}
         placeholder={t('Git')}
+        labelHelp={t('There is currently only one SCM available for use.')}
       />
       <PageFormTextInput<EdaProject>
         name="url"
@@ -51,6 +52,9 @@ function ProjectCreateInputs() {
         label={t('SCM URL')}
         placeholder={t('Enter SCM URL')}
         validate={isValidUrl}
+        labelHelp={t(
+          'A URL to a remote archive, such as Github or a build artifact stored in Artifactory and unpacks it into the project path for use.'
+        )}
       />
       <PageFormSelectOption
         name={'credential_id'}
@@ -64,6 +68,7 @@ function ProjectCreateInputs() {
               }))
             : []
         }
+        labelHelp={t('The token needed to utilize the SCM URL.')}
       />
     </>
   );
