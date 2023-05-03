@@ -14,6 +14,7 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  DateTimeCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
@@ -101,6 +102,12 @@ export function DecisionEnvironmentDetails() {
           ) : (
             credential?.name || ''
           )}
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
+        </PageDetail>
+        <PageDetail label={t('Modified')}>
+          <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
         </PageDetail>
       </PageDetails>
     );
