@@ -25,8 +25,9 @@ export function Projects() {
     toolbarFilters,
     tableColumns,
   });
+  const showToastMessage = true;
   const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useProjectActions(view.unselectItemsAndRefresh);
+  const rowActions = useProjectActions(view.unselectItemsAndRefresh, showToastMessage);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;

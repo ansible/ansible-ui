@@ -26,7 +26,13 @@ export function useProjectNameColumn() {
                   overflow: 'hidden',
                 }}
               >
-                <a href={RouteObj.ProjectDetails.replace(':id', project.id.toString())}>
+                <a
+                  href={RouteObj.ProjectDetails.replace(':id', project.id.toString())}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString()));
+                  }}
+                >
                   {project.name}
                 </a>
               </div>
