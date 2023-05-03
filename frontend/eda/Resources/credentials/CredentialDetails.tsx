@@ -74,7 +74,7 @@ export function CredentialDetails() {
         <PageDetail
           label={t('Credential type')}
           helpText={t(
-            'The credential type that is supported with teh automation controller. It enables synchronization of cloud inventory.'
+            'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
           )}
         >
           {credentialOption ? credentialOption?.label : credential?.credential_type}
