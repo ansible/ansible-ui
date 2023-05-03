@@ -4,6 +4,7 @@ import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/reac
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
@@ -28,6 +29,7 @@ export default function Jobs() {
   });
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
+  usePersistentFilters('jobs');
 
   const [showGraph] = useState(false);
 

@@ -11,12 +11,11 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
-  RoutedTabs,
-  RoutedTab,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { useGetItem } from '../../../../common/crud/useGetItem';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -78,6 +77,7 @@ export function UserPage() {
         }
       />
       <RoutedTabs baseUrl={RouteObj.UserPage}>
+        <PageBackTab label={t('Back to Users')} url={RouteObj.Users} persistentFilterKey="users" />
         <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
         </RoutedTab>

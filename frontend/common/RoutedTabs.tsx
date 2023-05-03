@@ -18,12 +18,16 @@ import {
   Tab,
   Tabs,
   TabsComponent,
+  TabTitleText,
 } from '@patternfly/react-core';
+import { CaretLeftIcon } from '@patternfly/react-icons';
+import { getPersistentFilters } from './PersistentFilters';
 
-interface RoutedTabProps {
+interface IRoutedTabProps {
   label?: string;
   url: string;
   children: ReactNode;
+  persistentFilterKey?: string;
 }
 
 export function RoutedTabs(props: {
@@ -40,11 +44,14 @@ export function RoutedTabs(props: {
   const params = useParams();
 
   const baseUrl = replaceRouteParams(props.baseUrl, params);
-  const children = useMemo<ReactElement<RoutedTabProps>[]>(
+  const children = useMemo<ReactElement<IRoutedTabProps>[]>(
     () =>
-      Children.toArray(props.children).filter(
-        (child) => isValidElement(child) && child.type === RoutedTab
-      ) as ReactElement<RoutedTabProps>[],
+      Children.toArray(props.children).filter((child) => {
+        if (!isValidElement(child)) {
+          return false;
+        }
+        return child.type === RoutedTab || child.type === PageBackTab;
+      }) as ReactElement<IRoutedTabProps>[],
     [props.children]
   );
   const activeKey = children.findIndex((child) => {
@@ -53,19 +60,29 @@ export function RoutedTabs(props: {
   });
   useEffect(() => {
     if (activeKey === -1) {
-      const url = children[0].props.url;
-      navigate(replaceRouteParams(url, params));
+      const firstTab = children.find((child) => child.type === RoutedTab);
+      if (firstTab) {
+        const url = firstTab.props.url;
+        navigate(replaceRouteParams(url, params));
+      }
     }
   });
 
   const handleSelect = useCallback(
     (event: React.MouseEvent<HTMLElement, MouseEvent>, key: string | number) => {
       const match = children[Number(key)];
-      if (match) {
-        event.preventDefault();
-        const url = match.props.url;
-        navigate(replaceRouteParams(url, params));
+      if (!match) {
+        return;
       }
+      event.preventDefault();
+      let url;
+      if (match.type === RoutedTab) {
+        url = replaceRouteParams(match.props.url, params);
+      } else {
+        const qs = getPersistentFilters(match.props.persistentFilterKey);
+        url = `${match.props.url}${qs}`;
+      }
+      navigate(replaceRouteParams(url, params));
     },
     [navigate, children, params]
   );
@@ -114,6 +131,17 @@ export function RoutedTabs(props: {
             >
               {children.map((child, index) => {
                 const { label, url } = child.props;
+                if (child.type === PageBackTab) {
+                  return (
+                    <PageBackTab
+                      key={label ?? index}
+                      label={label}
+                      url={url}
+                      persistentFilterKey={child.props.persistentFilterKey as string}
+                      eventKey={index}
+                    />
+                  );
+                }
                 return (
                   <Tab
                     key={label ?? index}
@@ -149,8 +177,31 @@ export function RoutedTabs(props: {
   );
 }
 
-export function RoutedTab(props: RoutedTabProps) {
+export function RoutedTab(props: IRoutedTabProps) {
   return <>{props.children}</>;
+}
+
+export function PageBackTab(props: {
+  label: React.ReactNode;
+  url: string;
+  persistentFilterKey?: string;
+  eventKey?: number;
+}) {
+  const { label, url, persistentFilterKey, eventKey } = props;
+  const qs = getPersistentFilters(persistentFilterKey);
+
+  return (
+    <Tab
+      title={
+        <TabTitleText>
+          <CaretLeftIcon />
+          {label}
+        </TabTitleText>
+      }
+      href={`${url}${qs}`}
+      eventKey={eventKey ?? 99}
+    />
+  );
 }
 
 function replaceRouteParams(path: string, params: { [key: string]: string | undefined }) {

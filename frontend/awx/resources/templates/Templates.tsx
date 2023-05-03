@@ -27,6 +27,7 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
@@ -45,6 +46,7 @@ export function Templates() {
       type: 'job_template,workflow_job_template',
     },
   });
+  usePersistentFilters('templates');
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
