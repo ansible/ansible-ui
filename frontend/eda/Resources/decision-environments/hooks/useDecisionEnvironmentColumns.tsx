@@ -45,9 +45,7 @@ export function useDecisionEnvironmentColumns() {
       },
       {
         header: t('Image'),
-        cell: (decisionEnvironment) => (
-          <TextCell text={decisionEnvironment.image_url} to={decisionEnvironment.image_url} />
-        ),
+        cell: (decisionEnvironment) => <TextCell text={decisionEnvironment.image_url} />,
         value: (decisionEnvironment) => decisionEnvironment.image_url,
         modal: ColumnModalOption.Hidden,
       },
