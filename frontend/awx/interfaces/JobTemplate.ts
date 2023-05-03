@@ -31,6 +31,7 @@ export interface JobTemplate
     | 'project'
   > {
   id: number;
+  extra_vars: string;
   type: 'job_template';
   job_type: 'run' | 'check';
   url: string;
