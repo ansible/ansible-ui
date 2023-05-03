@@ -129,8 +129,9 @@ describe('projects', () => {
       cy.navigateTo(/^Projects$/);
       cy.clickTableRow(project.name);
       cy.hasTitle(project.name);
+      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
-      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
+      cy.wait('@projectUpdateRequest');
       cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
     });
   });

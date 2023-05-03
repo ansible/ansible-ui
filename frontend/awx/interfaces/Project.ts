@@ -42,6 +42,20 @@ export interface Project {
       description: string;
       image: string;
     };
+    credential?: {
+      id: number;
+      name: string;
+      description: string;
+      kind: string;
+      cloud: boolean;
+    };
+    signature_validation_credential?: {
+      id: number;
+      name: string;
+      description: string;
+      kind: string;
+      cloud: boolean;
+    };
     created_by: {
       id: number;
       username: string;
