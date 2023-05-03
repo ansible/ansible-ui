@@ -20,7 +20,7 @@ describe('EDA User Tokens Tab', () => {
       cy.clickButton('Create controller token');
       cy.hasTitle('Create Controller Token');
       cy.typeInputByLabel('Name', newTokenName);
-      cy.typeInputByLabel('Token', awxToken.token);
+      cy.typeInputByLabel('Token', awxToken.token as string);
       cy.clickButton('Create controller token');
       cy.contains('td', newTokenName);
     });
