@@ -9,10 +9,7 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
-import { EdaDecisionEnvironmentCell } from '../../Resources/decision-environments/components/EdaDecisionEnvironmentCell';
-import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaRulebookCell } from '../../rulebooks/components/EdaRulebookCell';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
@@ -49,31 +46,6 @@ export function useRulebookActivationColumns() {
       {
         header: t('Status'),
         cell: (activation) => <StatusCell status={activation?.status} />,
-      },
-      {
-        header: t('Rulebook'),
-        cell: (activation) => <EdaRulebookCell id={activation.rulebook_id} />,
-        value: (activation) => activation.rulebook_id,
-        // table: ColumnTableOption.Expanded,
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Project'),
-        cell: (activation) => <EdaProjectCell id={activation.project_id} />,
-        value: (activation) => activation.project_id,
-        // table: ColumnTableOption.Expanded,
-        list: 'secondary',
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Decision environment'),
-        cell: (activation) => (
-          <EdaDecisionEnvironmentCell id={activation.decision_environment_id} />
-        ),
-        value: (activation) => activation.decision_environment_id,
-        // table: ColumnTableOption.Expanded,
-        list: 'secondary',
-        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Rules'),

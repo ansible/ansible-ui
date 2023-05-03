@@ -45,8 +45,8 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
         isPinned: true,
-        label: t('Enabled'),
-        labelOff: t('Disabled'),
+        label: t('Rulebook activation enabled'),
+        labelOff: t('Rulebook activation disabled'),
         onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
           if (activate) void enableActivation(activation);
           else void disableActivation(activation);
@@ -57,7 +57,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: RedoIcon,
-        label: t('Restart'),
+        label: t('Restart rulebook activation'),
         isHidden: (activation: EdaRulebookActivation) =>
           !activation.is_enabled || activation.restart_policy !== 'always',
         onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
@@ -66,7 +66,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete'),
+        label: t('Delete rulebook activation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
