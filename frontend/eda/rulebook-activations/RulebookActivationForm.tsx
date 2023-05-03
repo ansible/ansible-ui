@@ -140,7 +140,6 @@ export function RulebookActivationInputs() {
         }
         footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
         labelHelp={t('Projects are a logical collection of playbooks.')}
-        isRequired
       />
       <PageFormAsyncSelect<IEdaRulebookActivationInputs>
         name="rulebook"
