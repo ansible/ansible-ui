@@ -92,7 +92,7 @@ module.exports = function (env, argv) {
         });
       }),
       new HtmlWebpackPlugin({
-        title: 'AnsibleDev',
+        title: process.env.PRODUCT ? process.env.PRODUCT : 'AnsibleDev',
         template: 'frontend/index.html',
       }),
       new MiniCssExtractPlugin({
