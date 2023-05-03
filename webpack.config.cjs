@@ -109,6 +109,16 @@ module.exports = function (env, argv) {
       }),
       new MonacoWebpackPlugin({
         languages: ['json', 'yaml', 'shell'],
+        customLanguages: [
+          {
+            label: 'yaml',
+            entry: 'monaco-yaml',
+            worker: {
+              id: 'monaco-yaml/yamlWorker',
+              entry: 'monaco-yaml/yaml.worker',
+            },
+          },
+        ],
       }),
     ].filter(Boolean),
     output: {
