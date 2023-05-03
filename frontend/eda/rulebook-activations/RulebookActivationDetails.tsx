@@ -79,8 +79,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
         isPinned: true,
-        label: t('Enabled'),
-        labelOff: t('Disabled'),
+        label: t('Rulebook activation enabled'),
+        labelOff: t('Rulebook activation disabled'),
         onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
           if (activate) void enableRulebookActivation(activation);
           else void disableRulebookActivation(activation);
