@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { GitAltIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -98,7 +98,7 @@ export function ProjectDetails() {
           label={t('SCM type')}
           helpText={t('There is currently only one SCM type available for use.')}
         >
-          <TextCell icon={<GitAltIcon color="#F1502F" />} iconSize="md" text={'Git'} />
+          <TextCell text={'Git'} />
         </PageDetail>
         <PageDetail
           label={t('SCM URL')}
