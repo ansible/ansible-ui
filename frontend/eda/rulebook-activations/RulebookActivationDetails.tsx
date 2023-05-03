@@ -127,7 +127,12 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Description')}>
               {rulebookActivation?.description || ''}
             </PageDetail>
-            <PageDetail label={t('Decision environment')}>
+            <PageDetail
+              label={t('Decision environment')}
+              helpText={t(
+                'Decision environments contain a rulebook image that dictate where the rulebooks will run.'
+              )}
+            >
               {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
                 <Link
                   to={RouteObj.EdaDecisionEnvironmentDetails.replace(
@@ -141,15 +146,26 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 rulebookActivation?.decision_environment?.name || ''
               )}
             </PageDetail>
-            <PageDetail label={t('Rulebook')}>
+            <PageDetail
+              label={t('Rulebook')}
+              helpText={t('Rulebooks will be filtered according to the Project selected.')}
+            >
               {rulebookActivation?.rulebook?.name || ''}
             </PageDetail>
-            <PageDetail label={t('Restart policy')}>
+            <PageDetail
+              label={t('Restart policy')}
+              helpText={t(
+                'A way to determine which event would restart an activation. (Events: on always, never, or on failure)'
+              )}
+            >
               {rulebookActivation?.restart_policy
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
             </PageDetail>
-            <PageDetail label={t('Project')}>
+            <PageDetail
+              label={t('Project')}
+              helpText={t('Projects are a logical collection of playbooks.')}
+            >
               {rulebookActivation && rulebookActivation.project_id && (
                 <EdaProjectCell id={rulebookActivation.project_id} />
               )}
@@ -181,7 +197,12 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetails>
           <PageDetailsSection>
             {rulebookActivation?.extra_var?.id && (
-              <PageDetail label={t('Variables')}>
+              <PageDetail
+                label={t('Variables')}
+                helpText={t(
+                  'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+                )}
+              >
                 <EdaExtraVarsCell id={rulebookActivation.extra_var.id} />
               </PageDetail>
             )}

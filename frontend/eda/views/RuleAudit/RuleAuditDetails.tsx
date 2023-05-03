@@ -41,7 +41,10 @@ export function RuleAuditDetails() {
           <PageDetail label={t('Status')}>
             <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
-          <PageDetail label={t('Rulebook activation')}>
+          <PageDetail
+            label={t('Rulebook activation')}
+            helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
+          >
             {ruleAudit && ruleAudit.activation?.id ? (
               <Link
                 to={RouteObj.EdaRulebookActivationDetails.replace(

@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -21,6 +21,14 @@ import { EdaResult } from '../../interfaces/EdaResult';
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const imageHelpBlock = (
+    <Trans i18nKey="imageHelpBlock">
+      <p>The full image location, including the container registry, image name, and version tag.</p>
+      <br />
+      <p>Examples:</p>
+      <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
+    </Trans>
+  );
   return (
     <>
       <PageFormTextInput<EdaDecisionEnvironment>
@@ -43,6 +51,7 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Enter image name')}
         maxLength={150}
         isRequired
+        labelHelp={imageHelpBlock}
       />
       <PageFormSelectOption
         name={'credential_id'}
@@ -56,6 +65,9 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
+        labelHelp={t(
+          'Credentials are used for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.'
+        )}
       />
     </>
   );
