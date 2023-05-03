@@ -1,6 +1,7 @@
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
+import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -426,4 +427,21 @@ Cypress.Commands.add('deleteAwxInstanceGroup', (instanceGroup: InstanceGroup) =>
   if (instanceGroupId) {
     cy.requestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, true);
   }
+});
+
+Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
+  let awxServer = Cypress.env('AWX_SERVER') as string;
+  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  cy.request<AwxToken>({
+    method: 'POST',
+    url: `${awxServer}/api/v2/tokens/`,
+    body: { ...awxToken },
+    headers: {
+      Authorization:
+        'Basic ' +
+        Buffer.from(
+          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
+        ).toString('base64'),
+    },
+  }).then((response) => response.body);
 });
