@@ -7,7 +7,6 @@ describe('EDA User Tokens Tab', () => {
   before(() => {
     cy.createAwxToken().then((token) => {
       awxToken = token;
-      console.log(token);
     });
     cy.edaLogin();
   });
