@@ -245,6 +245,9 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.ts
         env:
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
           CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
           CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
           CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
