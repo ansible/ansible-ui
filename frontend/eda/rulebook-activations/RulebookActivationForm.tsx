@@ -72,7 +72,7 @@ export function CreateRulebookActivation() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ restart_policy: 'always', is_enabled: true, variables:'' }}
+        defaultValue={{ restart_policy: 'always', is_enabled: true, variables: '' }}
       >
         <RulebookActivationInputs />
       </PageForm>
