@@ -10,7 +10,6 @@ import {
 } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { StatusCell } from '../../../../common/StatusCell';
-import { ScmType } from '../../../../common/scm';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function useProjectColumns() {
@@ -45,18 +44,7 @@ export function useProjectColumns() {
         cell: (project) => <StatusCell status={project.import_state} />,
       },
       {
-        header: t('Type'),
-        cell: () => <ScmType scmType="git" />,
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Url'),
-        cell: (item) => <TextCell text={item.url} to={item.url} />,
-        value: (instance) => instance.url,
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Revision'),
+        header: t('Git hash'),
         cell: (project) => <CopyCell text={project?.git_hash ? project.git_hash : ''} />,
         list: 'secondary',
         modal: ColumnModalOption.Hidden,
