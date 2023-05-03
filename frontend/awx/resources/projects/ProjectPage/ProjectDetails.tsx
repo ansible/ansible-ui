@@ -45,11 +45,7 @@ export function ProjectDetails(props: { project: Project }) {
         case 'jobs':
           switch (message?.type) {
             case 'job':
-              void refresh();
-              break;
             case 'workflow_job':
-              void refresh();
-              break;
             case 'project_update':
               void refresh();
               break;
