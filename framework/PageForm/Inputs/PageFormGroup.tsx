@@ -8,7 +8,7 @@ export type PageFormGroupProps = Pick<
 > & {
   id?: string;
   labelHelpTitle?: string;
-  labelHelp?: string;
+  labelHelp?: string | ReactNode;
   additionalControls?: ReactNode;
 };
 
