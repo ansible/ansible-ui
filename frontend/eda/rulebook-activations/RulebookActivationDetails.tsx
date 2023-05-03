@@ -195,8 +195,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 : ''}
             </PageDetail>
           </PageDetails>
-          <PageDetailsSection>
-            {rulebookActivation?.extra_var?.id && (
+          {rulebookActivation?.extra_var?.id && (
+            <PageDetailsSection>
               <PageDetail
                 label={t('Variables')}
                 helpText={t(
@@ -205,8 +205,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               >
                 <EdaExtraVarsCell id={rulebookActivation.extra_var.id} />
               </PageDetail>
-            )}
-          </PageDetailsSection>
+            </PageDetailsSection>
+          )}
         </PageSection>
       </Scrollable>
     );
