@@ -1,5 +1,5 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { GitAltIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 import { postRequest } from '../../../common/crud/Data';
@@ -34,7 +34,9 @@ export function ProjectDetails() {
   const alertToaster = usePageAlertToaster();
 
   const { data: project, refresh } = useGet<EdaProject>(
-    `${API_PREFIX}/projects/${params.id ?? ''}/`
+    `${API_PREFIX}/projects/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
   const syncProject = useCallback(
     (project: EdaProject) =>
@@ -94,16 +96,29 @@ export function ProjectDetails() {
       <PageDetails>
         <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{project?.description || ''}</PageDetail>
-        <PageDetail label={t('SCM type')}>
-          <TextCell icon={<GitAltIcon color="#F1502F" />} iconSize="md" text={'Git'} />
+        <PageDetail
+          label={t('SCM type')}
+          helpText={t('There is currently only one SCM type available for use.')}
+        >
+          <TextCell text={'Git'} />
         </PageDetail>
-        <PageDetail label={t('SCM URL')}>{project?.url || ''}</PageDetail>
+        <PageDetail
+          label={t('SCM URL')}
+          helpText={t(
+            'A URL to a remote archive, such as Github or a build artifact stored in Artifactory and unpacks it into the project path for use.'
+          )}
+        >
+          {project?.url || ''}
+        </PageDetail>
         <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />
         </PageDetail>
         <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
-        <PageDetail label={t('Credential')}>
+        <PageDetail
+          label={t('Credential')}
+          helpText={t('The token needed to utilize the SCM URL.')}
+        >
           {project && project.credential ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(':id', `${project?.credential?.id || ''}`)}

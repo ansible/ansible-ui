@@ -21,6 +21,7 @@ import {
 import { RouteObj } from '../../../Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
@@ -36,6 +37,7 @@ export function Users() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
+  usePersistentFilters('users');
 
   const toolbarFilters = useUsersFilters();
 

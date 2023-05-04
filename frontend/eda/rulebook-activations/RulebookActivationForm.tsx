@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
-  PageFormCodeEditor,
+  PageFormDataEditor,
   PageFormSelectOption,
   PageFormSubmitHandler,
   PageFormSwitch,
@@ -72,7 +72,7 @@ export function CreateRulebookActivation() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ restart_policy: 'always', is_enabled: true }}
+        defaultValue={{ restart_policy: 'always', is_enabled: true, variables: '' }}
       >
         <RulebookActivationInputs />
       </PageForm>
@@ -139,6 +139,7 @@ export function RulebookActivationInputs() {
             : []
         }
         footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
+        labelHelp={t('Projects are a logical collection of playbooks.')}
       />
       <PageFormAsyncSelect<IEdaRulebookActivationInputs>
         name="rulebook"
@@ -153,6 +154,7 @@ export function RulebookActivationInputs() {
         )}
         limit={200}
         isRequired
+        labelHelp={t('Rulebooks will be filtered according to the Project selected.')}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="decision_environment_id"
@@ -168,19 +170,29 @@ export function RulebookActivationInputs() {
         }
         isRequired
         footer={<Link to={RouteObj.CreateEdaDecisionEnvironment}>Create decision environment</Link>}
+        labelHelp={t(
+          'Decision environments contain a rulebook image that dictate where the rulebooks will run.'
+        )}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
         options={RESTART_OPTIONS}
+        labelHelp={t(
+          'A way to determine which event would restart an activation. (Events: on always, never, or on failure)'
+        )}
+        isRequired
       />
       <PageFormSection singleColumn>
-        <PageFormCodeEditor<IEdaRulebookActivationInputs>
+        <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="variables"
           label={t('Variables')}
           isExpandable
           defaultExpanded={false}
+          labelHelp={t(
+            'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+          )}
         />
       </PageFormSection>
       <PageFormSwitch<IEdaRulebookActivationInputs>
@@ -189,6 +201,7 @@ export function RulebookActivationInputs() {
         formLabel={t('Rulebook activation enabled?')}
         label={t('Enabled')}
         labelOff={t('Disabled')}
+        labelHelp={t('Automatically enable this rulebook activation to run.')}
       />
     </>
   );

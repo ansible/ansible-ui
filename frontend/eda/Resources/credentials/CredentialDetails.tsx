@@ -18,7 +18,7 @@ import {
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { CredentialOptions } from './EditCredential';
 import { useDeleteCredentials } from './hooks/useDeleteCredentials';
@@ -28,7 +28,9 @@ export function CredentialDetails() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${params.id ?? ''}/`
+    `${API_PREFIX}/credentials/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const deleteCredentials = useDeleteCredentials((deleted) => {
@@ -71,7 +73,12 @@ export function CredentialDetails() {
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
         <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
-        <PageDetail label={t('Credential type')}>
+        <PageDetail
+          label={t('Credential type')}
+          helpText={t(
+            'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
+          )}
+        >
           {credentialOption ? credentialOption?.label : credential?.credential_type}
         </PageDetail>
         <PageDetail label={t('Created')}>

@@ -3,6 +3,7 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { SetOptional } from 'type-fest';
+import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -189,6 +190,7 @@ declare global {
       deleteAwxUser(user: User): Chainable<void>;
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
       deleteAwxLabel(label: Label): Chainable<void>;
+      createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
 
       createInventoryHostGroup(
         organization: Organization

@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -14,10 +14,11 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  DateTimeCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironments } from './hooks/useDeleteDecisionEnvironments';
@@ -26,8 +27,18 @@ export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const imageHelpBlock = (
+    <Trans i18nKey="imageHelpBlock">
+      <p>The full image location, including the container registry, image name, and version tag.</p>
+      <br />
+      <p>Examples:</p>
+      <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
+    </Trans>
+  );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
-    `${API_PREFIX}/decision-environments/${params.id ?? ''}/`
+    `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const { data: credential } = useGet<EdaCredential>(
@@ -72,8 +83,15 @@ export function DecisionEnvironmentDetails() {
       <PageDetails>
         <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
-        <PageDetail label={t('Image')}>{decisionEnvironment?.image_url || ''}</PageDetail>
-        <PageDetail label={t('Credential')}>
+        <PageDetail label={t('Image')} helpText={imageHelpBlock}>
+          {decisionEnvironment?.image_url || ''}
+        </PageDetail>
+        <PageDetail
+          label={t('Credential')}
+          helpText={t(
+            'Credentials are used for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.'
+          )}
+        >
           {decisionEnvironment && decisionEnvironment.credential ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
@@ -86,6 +104,12 @@ export function DecisionEnvironmentDetails() {
           ) : (
             credential?.name || ''
           )}
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
+        </PageDetail>
+        <PageDetail label={t('Modified')}>
+          <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
         </PageDetail>
       </PageDetails>
     );

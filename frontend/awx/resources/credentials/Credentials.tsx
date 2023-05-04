@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
 import { useAwxView } from '../../useAwxView';
@@ -13,6 +14,7 @@ export function Credentials() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
+  usePersistentFilters('credentials');
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns();
   const view = useAwxView<Credential>({

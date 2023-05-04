@@ -59,6 +59,9 @@ function CredentialInputs() {
         isRequired
         placeholderText={t('Select credential type')}
         options={CredentialOptions(t)}
+        labelHelp={t(
+          'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
+        )}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
@@ -71,6 +74,9 @@ function CredentialInputs() {
         label={t('Token')}
         type="password"
         placeholder={t('Enter credential token')}
+        labelHelp={t(
+          'Tokens allow you to authenticate yourself and adjust the degree of restrictive permissions in addition to the base RBAC permissions.'
+        )}
       />
     </>
   );
