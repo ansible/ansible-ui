@@ -26,7 +26,7 @@ import { StatusCell } from '../../common/StatusCell';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
-import { API_PREFIX } from '../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
@@ -44,7 +44,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const alertToaster = usePageAlertToaster();
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${params.id ?? ''}/`
+    `${API_PREFIX}/activations/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {

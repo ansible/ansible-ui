@@ -15,7 +15,7 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
-import { API_PREFIX } from '../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
@@ -25,7 +25,11 @@ import { useRulesetFilters } from './hooks/useRulesetFilters';
 export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rulebook } = useGet<EdaRulebook>(`${API_PREFIX}/rulebooks/${params.id ?? ''}/`);
+  const { data: rulebook } = useGet<EdaRulebook>(
+    `${API_PREFIX}/rulebooks/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
     return (

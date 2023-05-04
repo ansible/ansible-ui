@@ -16,7 +16,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
@@ -30,7 +30,11 @@ export function RuleAuditDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const { data: ruleAudit } = useGet<EdaRuleAudit>(`${API_PREFIX}/audit-rules/${params.id ?? ''}/`);
+  const { data: ruleAudit } = useGet<EdaRuleAudit>(
+    `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
 
   const renderRuleAuditDetailsTab = (ruleAudit: EdaRuleAudit | undefined): JSX.Element => {
     return (

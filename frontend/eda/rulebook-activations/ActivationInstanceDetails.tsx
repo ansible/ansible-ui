@@ -15,7 +15,7 @@ import { RouteObj } from '../../Routes';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
-import { API_PREFIX } from '../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -24,21 +24,29 @@ export function ActivationInstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/`
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count || 10
-    }`
+    }`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`
+    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const renderActivationDetailsTab = (
