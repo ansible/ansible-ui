@@ -44,11 +44,11 @@ export function useRulebookActivationColumns() {
         modal: ColumnModalOption.Hidden,
       },
       {
-        header: t('Status'),
+        header: t('Activation status'),
         cell: (activation) => <StatusCell status={activation?.status} />,
       },
       {
-        header: t('Rules'),
+        header: t('Number of rules'),
         type: 'count',
         value: (activation) => activation?.rules_count ?? 0,
         modal: ColumnModalOption.Hidden,
@@ -60,7 +60,7 @@ export function useRulebookActivationColumns() {
         modal: ColumnModalOption.Hidden,
       },
       {
-        header: t('Restarts'),
+        header: t('Restart count'),
         type: 'count',
         value: (activation) => activation?.restart_count ?? 0,
         modal: ColumnModalOption.Hidden,
