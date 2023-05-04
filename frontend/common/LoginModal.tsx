@@ -133,8 +133,13 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             redirect: 'manual',
           });
         } catch (err) {
-          if (err instanceof HTTPError && err.response.status === 0) {
+          if (!(err instanceof HTTPError)) {
+            throw err;
+          }
+          if (err.response.status === 0) {
             // Do nothing
+          } else if (err.response.status === 401 || err.response.status === 403) {
+            throw new Error('Invalid username or password. Please try again.');
           } else {
             throw err;
           }
