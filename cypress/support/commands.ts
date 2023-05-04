@@ -20,11 +20,12 @@ import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisio
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
 import './eda-commands';
 import './rest-commands';
+import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 
 declare global {
   namespace Cypress {
@@ -154,7 +155,10 @@ declare global {
       // --- REST API COMMANDS ---
 
       /** Sends a request to the API to create a particular resource. */
-      requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
+      requestPost<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
 
       /** Sends a request to the API to get a particular resource. */
       requestGet<T>(url: string): Chainable<T>;
@@ -191,7 +195,7 @@ declare global {
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
       // --- EDA COMMANDS ---
-
+      selectUserRoleByName(roleName: string): Chainable<void>;
       checkAnchorLinks(anchorName: string): Chainable<void>;
       checkLogoSuccess(): Chainable<void>;
 
@@ -296,12 +300,15 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
+      getEdaRoles(): Chainable<EdaRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
        * @returns {Chainable<EdaUser>}
        */
-      createEdaUser(): Chainable<EdaUser>;
+      createEdaUser(
+        user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>
+      ): Chainable<EdaUser>;
 
       /**
        * Deletes an EDA user which is provided.
@@ -315,7 +322,9 @@ declare global {
        *
        * @returns {Chainable<EdaUser>}
        */
-      getEdaUser(): Chainable<EdaUser | undefined>;
+      getEdaActiveUser(): Chainable<EdaUser | undefined>;
+
+      getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
 
       /**
        * Creates a DE and returns the same.
