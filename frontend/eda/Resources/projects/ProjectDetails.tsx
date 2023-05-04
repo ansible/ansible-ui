@@ -22,7 +22,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 import { postRequest } from '../../../common/crud/Data';
@@ -34,7 +34,9 @@ export function ProjectDetails() {
   const alertToaster = usePageAlertToaster();
 
   const { data: project, refresh } = useGet<EdaProject>(
-    `${API_PREFIX}/projects/${params.id ?? ''}/`
+    `${API_PREFIX}/projects/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
   const syncProject = useCallback(
     (project: EdaProject) =>
