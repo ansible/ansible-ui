@@ -1,6 +1,5 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   PageTable,
   useColumnsWithoutExpandedRow,
@@ -16,7 +15,6 @@ import { useRuleAuditColumns } from '../../views/RuleAudit/hooks/useRuleAuditCol
 export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAudit> }) {
   const { view } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const tableColumns = useRuleAuditColumns();
   let columns = useVisibleModalColumns(tableColumns);
   columns = useColumnsWithoutSort(columns);
