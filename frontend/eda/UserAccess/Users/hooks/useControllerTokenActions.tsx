@@ -5,6 +5,7 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../..
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteControllerTokens } from './useDeleteControllerTokens';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useControllerTokenActions(view: IEdaView<EdaControllerToken>) {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ export function useControllerTokenActions(view: IEdaView<EdaControllerToken>) {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         isPinned: true,

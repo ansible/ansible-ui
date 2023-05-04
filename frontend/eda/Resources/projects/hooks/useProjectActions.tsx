@@ -15,6 +15,7 @@ import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteProjects } from './useDeleteProjects';
 import { postRequest } from '../../../../common/crud/Data';
 import { API_PREFIX } from '../../../constants';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
         icon: SyncAltIcon,
         isPinned: true,
         isHidden: (project: EdaProject) =>

@@ -1,4 +1,5 @@
 import {
+  ButtonVariant,
   DropdownPosition,
   Label,
   LabelGroup,
@@ -80,6 +81,7 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,

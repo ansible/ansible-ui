@@ -1,4 +1,10 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import {
+  ButtonVariant,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Stack,
+} from '@patternfly/react-core';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,6 +69,7 @@ export function ProjectDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
         icon: SyncAltIcon,
         isPinned: true,
         label: t('Sync project'),

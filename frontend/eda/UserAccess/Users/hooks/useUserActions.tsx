@@ -7,6 +7,7 @@ import { RouteObj } from '../../../../Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useUserActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         label: t('Edit user'),
