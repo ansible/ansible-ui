@@ -59,7 +59,7 @@ export function ActivationInstanceDetails() {
           </PageDetail>
         </PageDetails>
         <PageDetailsSection>
-          {activationInstanceLog?.results?.length && (
+          {activationInstanceLog?.results?.length ? (
             <PageDetail label={t('Output')}>
               <CodeBlock>
                 <CodeBlockCode
@@ -72,7 +72,7 @@ export function ActivationInstanceDetails() {
                 </CodeBlockCode>
               </CodeBlock>
             </PageDetail>
-          )}
+          ) : null}
         </PageDetailsSection>
       </Scrollable>
     );
