@@ -1,4 +1,10 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import {
+  ButtonVariant,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Stack,
+} from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -55,8 +61,10 @@ export function DecisionEnvironmentDetails() {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
           navigate(

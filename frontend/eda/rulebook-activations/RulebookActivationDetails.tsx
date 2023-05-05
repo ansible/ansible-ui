@@ -25,7 +25,6 @@ import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
-import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -164,19 +163,25 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
             </PageDetail>
-            <PageDetail
-              label={t('Project')}
-              helpText={t('Projects are a logical collection of playbooks.')}
-            >
-              {rulebookActivation && rulebookActivation.project_id && (
-                <EdaProjectCell id={rulebookActivation.project_id} />
+            <PageDetail label={t('Project')}>
+              {rulebookActivation && rulebookActivation.project?.id ? (
+                <Link
+                  to={RouteObj.EdaProjectDetails.replace(
+                    ':id',
+                    `${rulebookActivation.project?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.project?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.project?.name || ''
               )}
             </PageDetail>
-            <PageDetail label={t('Status')}>
+            <PageDetail label={t('Activation status')}>
               <StatusCell status={rulebookActivation?.status || ''} />
             </PageDetail>
             <PageDetail label={t('Project git hash')}>
-              {/* {rulebookActivation?.project?.git_hash || ''} */}
+              {rulebookActivation?.project?.git_hash || ''}
             </PageDetail>
             <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
