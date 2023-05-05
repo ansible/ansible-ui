@@ -1,10 +1,13 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 
-Cypress.Commands.add('requestPost', function requestPost<T>(url: string, body: Partial<T>) {
+Cypress.Commands.add('requestPost', function requestPost<
+  ResponseT,
+  RequestT = ResponseT
+>(url: string, body: Partial<RequestT>) {
   cy.getCookie('csrftoken').then((cookie) =>
     cy
-      .request<T>({
+      .request<ResponseT>({
         method: 'POST',
         url,
         body,

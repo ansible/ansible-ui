@@ -13,7 +13,7 @@ describe('EDA User Tokens Tab', () => {
 
   it('can add a new Token', () => {
     const newTokenName = 'E2E Token ' + randomString(8);
-    cy.getEdaUser().then((activeUser) => {
+    cy.getEdaActiveUser().then((activeUser) => {
       cy.navigateTo('Users');
       cy.clickTableRow(activeUser?.username ?? '');
       cy.clickTab('Controller Tokens');

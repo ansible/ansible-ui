@@ -21,11 +21,12 @@ import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisio
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
 import './eda-commands';
 import './rest-commands';
+import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 
 declare global {
   namespace Cypress {
@@ -155,7 +156,10 @@ declare global {
       // --- REST API COMMANDS ---
 
       /** Sends a request to the API to create a particular resource. */
-      requestPost<T>(url: string, data: Partial<T>): Chainable<T>;
+      requestPost<ResponseT, RequestT = ResponseT>(
+        url: string,
+        data: Partial<RequestT>
+      ): Chainable<ResponseT>;
 
       /** Sends a request to the API to get a particular resource. */
       requestGet<T>(url: string): Chainable<T>;
@@ -194,7 +198,22 @@ declare global {
 
       // --- EDA COMMANDS ---
 
+      /**
+       * selects Eda role that is passed inside the role selection modal
+       * Contributor, Auditor, Viewer, Editor, Operator, Admin
+       * @param roleName
+       */
+      selectEdaUserRoleByName(roleName: string): Chainable<void>;
+
+      /**
+       * checks anchor links if they work as expected
+       * @param anchorName
+       */
       checkAnchorLinks(anchorName: string): Chainable<void>;
+
+      /**
+       * checks if Ansible logo has loaded successfully
+       */
       checkLogoSuccess(): Chainable<void>;
 
       /**
@@ -298,12 +317,15 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
+      getEdaRoles(): Chainable<EdaRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
        * @returns {Chainable<EdaUser>}
        */
-      createEdaUser(): Chainable<EdaUser>;
+      createEdaUser(
+        user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>
+      ): Chainable<EdaUser>;
 
       /**
        * Deletes an EDA user which is provided.
@@ -313,11 +335,16 @@ declare global {
       deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
 
       /**
-       * Retrieves an EDA user and returns the same.
+       * Retrieves an EDA active user which is admin.
        *
        * @returns {Chainable<EdaUser>}
        */
-      getEdaUser(): Chainable<EdaUser | undefined>;
+      getEdaActiveUser(): Chainable<EdaUser | undefined>;
+
+      /**
+       * @param name retrieves EDA user when a name is passed
+       */
+      getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
 
       /**
        * Creates a DE and returns the same.

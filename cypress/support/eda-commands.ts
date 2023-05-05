@@ -4,6 +4,7 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
+import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
@@ -12,6 +13,16 @@ import './commands';
 import './rest-commands';
 
 /*  EDA related custom command implementation  */
+
+Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
+  cy.get('button[aria-label="Options menu"]').click();
+  cy.contains('a', roleName)
+    .parents('td[data-label="Name"]')
+    .prev()
+    .within(() => {
+      cy.get('input[type="checkbox"]').click();
+    });
+});
 
 Cypress.Commands.add('checkLogoSuccess', () => {
   cy.get('img').should('be.visible');
@@ -196,34 +207,64 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   });
 });
 
-Cypress.Commands.add('createEdaUser', () => {
-  cy.requestPost<EdaUserCreateUpdate>(`/api/eda/v1/users/`, {
-    username: `E2E User ${randomString(4)}`,
-    email: `${randomString(4)}@redhat.com`,
-    password: `${randomString(4)}`,
-  }).then((edaUser) => {
-    Cypress.log({
-      displayName: 'EDA USER CREATION :',
-      message: [`Created 👉  ${edaUser.username}`],
-    });
-    return edaUser;
+Cypress.Commands.add('getEdaRoles', () => {
+  cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
+    const edaRoles = response.results;
+    return edaRoles;
   });
 });
 
+Cypress.Commands.add(
+  'createEdaUser',
+  (user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>) => {
+    cy.requestPost<EdaUser, SetOptional<EdaUserCreateUpdate, 'username' | 'password'>>(
+      `/api/eda/v1/users/`,
+      {
+        username: `E2EUser${randomString(4)}`,
+        password: `${randomString(4)}`,
+        ...user,
+      }
+    ).then((edaUser) => {
+      Cypress.log({
+        displayName: 'EDA USER CREATION :',
+        message: [`Created 👉  ${edaUser.username}`],
+      });
+      return edaUser;
+    });
+  }
+);
+
 Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
-  cy.requestDelete(`/api/eda/v1/credentials/${user.id}/`, true).then(() => {
+  cy.requestDelete(`/api/eda/v1/users/${user.id}/`, true).then(() => {
     Cypress.log({
-      displayName: 'EDA CREDENTIAL DELETION :',
+      displayName: 'EDA USER DELETION :',
       message: [`Deleted 👉  ${user.username}`],
     });
   });
 });
 
-Cypress.Commands.add('getEdaUser', () => {
-  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/me/`).then((result) => {
-    // This will take care of deleting the project and the associated org, inventory
-    if (Array.isArray(result?.results) && result?.results.length === 1) {
-      return result?.results[0];
+Cypress.Commands.add('getEdaActiveUser', () => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/me/`).then((response) => {
+    if (Array.isArray(response?.results) && response?.results.length > 1) {
+      Cypress.log({
+        displayName: 'EDA USER ROLE:',
+        message: [response?.results[1].roles[0].name],
+      });
+      return response?.results[1];
+    } else {
+      return undefined;
+    }
+  });
+});
+
+Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?name=${edaUserName}`).then((response) => {
+    if (Array.isArray(response?.results) && response?.results.length > 1) {
+      Cypress.log({
+        displayName: 'EDA USER ROLE:',
+        message: [response?.results[1].roles[0].name],
+      });
+      return response?.results[1];
     } else {
       return undefined;
     }

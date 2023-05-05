@@ -8,7 +8,7 @@ describe('EDA Login / Logoff', () => {
   });
 
   it('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
-    cy.getEdaUser().then((edaUser) => {
+    cy.getEdaActiveUser().then((edaUser) => {
       if (Cypress.env('TEST_STANDALONE') === true) {
         cy.intercept('GET', '/api/logout/').as('loggedOut');
         cy.edaLogout();
