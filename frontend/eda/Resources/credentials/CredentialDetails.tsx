@@ -1,4 +1,10 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import {
+  ButtonVariant,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Stack,
+} from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -43,8 +49,10 @@ export function CredentialDetails() {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),

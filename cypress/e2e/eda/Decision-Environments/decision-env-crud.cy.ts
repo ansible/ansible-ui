@@ -41,7 +41,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.contains('td', edaDE.name).within(() => {
         cy.get('a').click();
       });
-      cy.clickPageAction(/^Edit decision environment$/);
+      cy.clickButton(/^Edit decision environment$/);
       cy.hasTitle(`Edit ${edaDE.name}`);
       cy.typeInputByLabel(/^Name$/, edaDE.name + 'edited');
       cy.clickButton(/^Save decision environment$/);

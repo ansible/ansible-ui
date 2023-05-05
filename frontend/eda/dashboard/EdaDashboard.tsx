@@ -14,6 +14,8 @@ import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard
 import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
+import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
+import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
@@ -25,6 +27,10 @@ export function EdaDashboard() {
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
     url: `${API_PREFIX}/decision-environments/`,
+    disableQueryString: true,
+  });
+  const edaRuleAuditView = useEdaView<EdaRuleAudit>({
+    url: `${API_PREFIX}/audit-rules/`,
     disableQueryString: true,
   });
   const edaRulebookActivationView = useEdaView<EdaRulebookActivation>({
@@ -99,6 +105,7 @@ export function EdaDashboard() {
         <RuleAuditChart />
         <EdaRecentProjectsCard view={edaProjectView} />
         <EdaDecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
+        <EdaRuleAuditCard view={edaRuleAuditView} />
         <EdaRulebookActivationsCard view={edaRulebookActivationView} />
       </PageDashboard>
     </>

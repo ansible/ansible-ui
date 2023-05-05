@@ -182,7 +182,6 @@ export function RulebookActivationInputs() {
         labelHelp={t(
           'A way to determine which event would restart an activation. (Events: on always, never, or on failure)'
         )}
-        isRequired
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>

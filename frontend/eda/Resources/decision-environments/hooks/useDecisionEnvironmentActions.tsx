@@ -7,6 +7,7 @@ import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironment>) {
   const { t } = useTranslation();
@@ -16,8 +17,10 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
           navigate(
