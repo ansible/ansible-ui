@@ -197,8 +197,23 @@ declare global {
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
       // --- EDA COMMANDS ---
-      selectUserRoleByName(roleName: string): Chainable<void>;
+
+      /**
+       * selects Eda role that is passed inside the role selection modal
+       * Contributor, Auditor, Viewer, Editor, Operator, Admin
+       * @param roleName
+       */
+      selectEdaUserRoleByName(roleName: string): Chainable<void>;
+
+      /**
+       * checks anchor links if they work as expected
+       * @param anchorName
+       */
       checkAnchorLinks(anchorName: string): Chainable<void>;
+
+      /**
+       * checks if Ansible logo has loaded successfully
+       */
       checkLogoSuccess(): Chainable<void>;
 
       /**
@@ -320,12 +335,15 @@ declare global {
       deleteEdaUser(edaUserName: EdaUser): Chainable<void>;
 
       /**
-       * Retrieves an EDA user and returns the same.
+       * Retrieves an EDA active user which is admin.
        *
        * @returns {Chainable<EdaUser>}
        */
       getEdaActiveUser(): Chainable<EdaUser | undefined>;
 
+      /**
+       * @param name retrieves EDA user when a name is passed
+       */
       getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
 
       /**

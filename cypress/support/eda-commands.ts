@@ -14,7 +14,7 @@ import './rest-commands';
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('selectUserRoleByName', (roleName: string) => {
+Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
   cy.get('button[aria-label="Options menu"]').click();
   cy.contains('a', roleName)
     .parents('td[data-label="Name"]')

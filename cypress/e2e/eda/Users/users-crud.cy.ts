@@ -6,6 +6,8 @@ describe('EDA Users- Create, Edit, Delete', () => {
   let roleIDs: string[];
   let editorRoleID: string;
   let auditorRoleName: string;
+  let contributorRoleName: string;
+
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
@@ -13,6 +15,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       roleIDs = rolesArray.map((role) => role.id);
       editorRoleID = roleIDs[2];
       auditorRoleName = roleNames[4];
+      contributorRoleName = roleNames[0];
     });
   });
 
@@ -33,10 +36,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.typeInputByLabel(/^Email$/, userInfo.Email);
     cy.typeInputByLabel(/^Password$/, userInfo.Password);
     cy.typeInputByLabel(/^Confirm password$/, userInfo.Password);
-    cy.get('button[aria-label="Options menu"]').click();
-    cy.contains('tbody tr', 'Contributor').within(() => {
-      cy.get('input[type="checkbox"]').check();
-    });
+    cy.selectEdaUserRoleByName(contributorRoleName);
     cy.contains('button', 'Confirm').should('be.enabled').click();
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userInfo.FirstName);
@@ -66,13 +66,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.typeInputByLabel(/^Email$/, 'edited@redhat.com');
       cy.typeInputByLabel(/^Password$/, 'newpass');
       cy.typeInputByLabel(/^Confirm password$/, 'newpass');
-      cy.get('button[aria-label="Options menu"]').click();
-      cy.contains('a', auditorRoleName)
-        .parents('td[data-label="Name"]')
-        .prev()
-        .within(() => {
-          cy.get('input[type="checkbox"]').click();
-        });
+      cy.selectEdaUserRoleByName(auditorRoleName);
       cy.contains('button', 'Confirm').should('be.enabled').click();
       cy.clickButton(/^Save user$/);
       cy.hasDetail('Username', `${edaUser.username}edited`);
