@@ -40,7 +40,7 @@ describe('EDA User Tokens Tab', () => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
         cy.filterTableByText(activeUser?.username);
-        cy.clickLink(`${activeUser.username}`);
+        cy.clickLink(activeUser?.username);
         cy.clickButton('Controller Tokens');
         cy.get('.pf-c-toggle-group__button').eq(2).click();
         cy.get(`#${activeUserToken.id}`).within(() => {
@@ -56,7 +56,7 @@ describe('EDA User Tokens Tab', () => {
         );
         cy.clickModalButton('Delete controller tokens');
         cy.wait('@deleted').then((deleted) => {
-          expect(deleted?.response.statusCode).to.eql(204);
+          expect(deleted?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
       });
