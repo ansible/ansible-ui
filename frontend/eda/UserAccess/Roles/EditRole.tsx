@@ -8,12 +8,12 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { API_PREFIX } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function EditRole() {
   const { t } = useTranslation();
@@ -25,10 +25,11 @@ export function EditRole() {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaRole>, EdaRole>();
+  const patchRequest = usePatchRequest<Partial<EdaRole>, EdaRole>();
 
   const onSubmit: PageFormSubmitHandler<EdaRole> = async (Role) => {
     if (Number.isInteger(id)) {
-      Role = await requestPatch<EdaRole>(`${API_PREFIX}/roles/${id}/`, Role);
+      Role = await patchRequest(`${API_PREFIX}/roles/${id}/`, Role);
       navigate(-1);
     } else {
       const newRole = await postRequest(`${API_PREFIX}/roles/`, Role);

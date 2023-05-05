@@ -8,12 +8,12 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function EditGroup() {
   const { t } = useTranslation();
@@ -25,10 +25,11 @@ export function EditGroup() {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaGroup>, EdaGroup>();
+  const patchRequest = usePatchRequest<Partial<EdaGroup>, EdaGroup>();
 
   const onSubmit: PageFormSubmitHandler<EdaGroup> = async (Group) => {
     if (Number.isInteger(id)) {
-      Group = await requestPatch<EdaGroup>(`${API_PREFIX}/groups/${id}/`, Group);
+      Group = await patchRequest(`${API_PREFIX}/groups/${id}/`, Group);
       navigate(-1);
     } else {
       const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
