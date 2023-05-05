@@ -11,6 +11,7 @@ export interface Project
   extends Omit<SwaggerProject, 'summary_fields' | 'related' | 'id' | 'name'> {
   id: number;
   name: string;
+  base_dir: string;
   summary_fields: {
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
@@ -53,5 +54,7 @@ export interface Project
     last_update?: string;
   };
 }
+
+export type SCMType = '' | 'git' | 'svn' | 'insights' | 'archive' | null;
 
 export type AwxProjectCreate = Omit<Project, 'id' | 'summary_fields' | 'related'>;
