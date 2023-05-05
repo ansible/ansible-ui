@@ -39,7 +39,7 @@ describe('EDA User Tokens Tab', () => {
     cy.addCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
-        cy.filterTableByText(activeUser.username);
+        cy.filterTableByText(activeUser?.username);
         cy.clickLink(`${activeUser.username}`);
         cy.clickButton('Controller Tokens');
         cy.get('.pf-c-toggle-group__button').eq(2).click();
@@ -56,7 +56,7 @@ describe('EDA User Tokens Tab', () => {
         );
         cy.clickModalButton('Delete controller tokens');
         cy.wait('@deleted').then((deleted) => {
-          expect(deleted.response.statusCode).to.eql(204);
+          expect(deleted?.response.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
       });
