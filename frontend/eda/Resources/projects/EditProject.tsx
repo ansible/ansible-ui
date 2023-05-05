@@ -10,7 +10,6 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
@@ -18,6 +17,7 @@ import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaCredential } from '../../interfaces/EdaCredential';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -125,10 +125,11 @@ export function EditProject() {
 
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
+  const patchRequest = usePatchRequest<Partial<EdaProject>, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
     if (Number.isInteger(id)) {
-      await requestPatch<EdaProject>(`${API_PREFIX}/projects/${id}/`, project);
+      await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } else {

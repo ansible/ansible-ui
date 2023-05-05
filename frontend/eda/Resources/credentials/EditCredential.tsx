@@ -10,11 +10,11 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
@@ -91,10 +91,11 @@ export function EditCredential() {
 
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
+  const patchRequest = usePatchRequest<Partial<EdaCredential>, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
     if (Number.isInteger(id)) {
-      await requestPatch<EdaCredential>(`${API_PREFIX}/credentials/${id}/`, credential);
+      await patchRequest(`${API_PREFIX}/credentials/${id}/`, credential);
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } else {

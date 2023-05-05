@@ -9,11 +9,11 @@ import {
   PageLayout,
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { requestPatch } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
+import { usePatchRequest } from '../../common/crud/usePatchRequest';
 
 export function EditRule() {
   const { t } = useTranslation();
@@ -25,10 +25,11 @@ export function EditRule() {
   const { cache } = useSWRConfig();
 
   const postRequest = usePostRequest<Partial<EdaRule>, EdaRule>();
+  const patchRequest = usePatchRequest<Partial<EdaRule>, EdaRule>();
 
   const onSubmit: PageFormSubmitHandler<EdaRule> = async (rule) => {
     if (Number.isInteger(id)) {
-      rule = await requestPatch<EdaRule>(`${API_PREFIX}/rules/${id}/`, rule);
+      rule = await patchRequest(`${API_PREFIX}/rules/${id}/`, rule);
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } else {

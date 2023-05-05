@@ -10,13 +10,13 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -83,13 +83,11 @@ export function EditDecisionEnvironment() {
   );
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
+  const patchRequest = usePatchRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     if (Number.isInteger(id)) {
-      await requestPatch<EdaDecisionEnvironment>(
-        `${API_PREFIX}/decision-environments/${id}/`,
-        decisionEnvironment
-      );
+      await patchRequest(`${API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } else {
