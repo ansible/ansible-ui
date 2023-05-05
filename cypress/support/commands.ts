@@ -341,7 +341,7 @@ declare global {
        *
        * @returns {Chainable<EdaUser>}
        */
-      getEdaActiveUser(): Chainable<EdaUser | undefined>;
+      getEdaActiveUser(): Chainable<EdaUser>;
 
       /**
        * @param name retrieves EDA user when a name is passed
