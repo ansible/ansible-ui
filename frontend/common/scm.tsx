@@ -1,7 +1,10 @@
 import { ReactNode } from 'react';
 import { TextCell } from '../../framework';
 
-export function getScmType(scm_type: string): { text: string; icon?: ReactNode } {
+export function getScmType(scm_type: string | null | undefined): {
+  text: string;
+  icon?: ReactNode;
+} {
   switch (scm_type) {
     case 'git':
       return {
@@ -30,7 +33,7 @@ export function getScmType(scm_type: string): { text: string; icon?: ReactNode }
   }
 }
 
-export function ScmType(props: { scmType: string }) {
+export function ScmType(props: { scmType: string | null | undefined }) {
   const scm = getScmType(props.scmType);
   return <TextCell icon={scm.icon} iconSize="md" text={scm.text} />;
 }

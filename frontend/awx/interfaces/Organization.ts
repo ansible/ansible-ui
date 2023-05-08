@@ -1,12 +1,11 @@
 import { Organization as SwaggerOrganization } from './generated-from-swagger/api';
 import {
   SummaryFieldsByUser,
-  SummeryFieldObjectRole,
   SummaryFieldsExecutionEnvironment,
+  SummeryFieldObjectRole,
 } from './summary-fields/summary-fields';
 
-export interface Organization
-  extends Omit<SwaggerOrganization, 'id' | 'username' | 'summary_fields'> {
+export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_fields'> {
   id: number;
   name: string;
   summary_fields: {
@@ -42,3 +41,5 @@ export interface Organization
     default_environment: SummaryFieldsExecutionEnvironment;
   };
 }
+
+export type AwxOrganizationCreate = Omit<Organization, 'id' | 'summary_fields'>;

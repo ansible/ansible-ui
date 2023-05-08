@@ -1,12 +1,12 @@
 import {
-  UnifiedJobList as SwaggerUnifiedJobList,
   InventoryUpdateList as SwaggerInventoryUpdateList,
   JobList as SwaggerJobList,
   ProjectUpdateList as SwaggerProjectUpdateList,
-  WorkflowJob as SwaggerWorkflowJob,
   SystemJob as SwaggerSystemJob,
+  UnifiedJobList as SwaggerUnifiedJobList,
+  WorkflowJob as SwaggerWorkflowJob,
 } from './generated-from-swagger/api';
-import { SummaryFieldsUnifiedJob } from './summary-fields/summary-fields';
+import { JobSummaryFields } from './summary-fields/summary-fields';
 
 type JobListProperties = Pick<
   SwaggerJobList,
@@ -93,7 +93,7 @@ export interface UnifiedJob
     schedule?: string;
     system_job_template?: string;
   };
-  summary_fields: SummaryFieldsUnifiedJob;
+  summary_fields: JobSummaryFields;
   launched_by: {
     id: number;
     name: string;

@@ -17,14 +17,14 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
+import './PageFramework.css';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
-import './PageFramework.css';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface ICatalogBreadcrumb {
   id?: string;
-  label?: string;
+  label?: string | null;
   to?: string;
   target?: string;
   component?: React.ElementType;
@@ -67,7 +67,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
 export interface PageHeaderProps {
   navigation?: ReactNode;
   breadcrumbs?: ICatalogBreadcrumb[];
-  title?: string;
+  title?: string | null;
   titleHelpTitle?: string;
   titleHelp?: string | string[];
   titleDocLink?: string;

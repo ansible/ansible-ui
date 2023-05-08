@@ -33,7 +33,16 @@ export interface SummaryFieldCredential {
   cloud: boolean;
 }
 
-export interface SummaryFieldsUnifiedJob {
+export interface SummaryFieldJob {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  failed: boolean;
+  elapsed: number;
+}
+
+export interface JobSummaryFields {
   organization?: SummaryFieldsOrganization;
   inventory?: {
     id: number;

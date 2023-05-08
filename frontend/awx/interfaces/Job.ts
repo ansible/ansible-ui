@@ -7,7 +7,7 @@
  */
 
 import { JobDetail as SwaggerJobDetail } from './generated-from-swagger/api';
-import { SummaryFieldsUnifiedJob } from './summary-fields/summary-fields';
+import { JobSummaryFields } from './summary-fields/summary-fields';
 
 export interface Job
   extends Omit<
@@ -24,7 +24,7 @@ export interface Job
   name: string;
   id: number;
   type: string;
-  summary_fields: SummaryFieldsUnifiedJob;
+  summary_fields: JobSummaryFields;
   related: {
     created_by?: string;
     labels?: string;
