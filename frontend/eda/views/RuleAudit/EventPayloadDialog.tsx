@@ -1,10 +1,11 @@
-import { CodeBlock, CodeBlockCode, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, CodeBlock, CodeBlockCode, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../../framework';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 import { useEffect, useState } from 'react';
+import { TimesCircleIcon } from '@patternfly/react-icons';
 
 export interface EventPayloadModalProps {
   event?: EdaRuleAuditEvent;
@@ -23,6 +24,11 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
       hasNoBodyWrapper
       onClose={onClose}
       variant={ModalVariant.medium}
+      actions={[
+        <Button key="cancel" variant="secondary" icon={<TimesCircleIcon />} onClick={onClose}>
+          {t('Close')}
+        </Button>,
+      ]}
     >
       <Scrollable>
         <PageDetails>
