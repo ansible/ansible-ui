@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
-import { SetOptional } from 'type-fest';
+import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
@@ -169,6 +169,21 @@ declare global {
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
       // --- AWX COMMANDS ---
+      awxRequest<ResponseT = unknown>(
+        method: string,
+        url: string,
+        body?: Cypress.RequestBody
+      ): Chainable<Cypress.Response<ResponseT>>;
+
+      awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
+        url: string,
+        body: RequestBodyT
+      ): Chainable<ResponseBodyT>;
+
+      awxRequestGet<ResponseBodyT = unknown>(url: string): Chainable<ResponseBodyT>;
+
+      awxRequestDelete(url: string): Chainable<void>;
+
       createAwxOrganization(): Chainable<Organization>;
 
       /**
@@ -176,9 +191,13 @@ declare global {
        *  with the name `E2E Project` and appends a random string at the end of the name
        * @returns {Chainable<Project>}
        */
-      createAwxProject(): Chainable<Project>;
+      createAwxProject(
+        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
+      ): Chainable<Project>;
+      createEdaSpecificAwxProject(): Chainable<Project>;
       createAwxInventory(): Chainable<Inventory>;
       createAwxJobTemplate(): Chainable<JobTemplate>;
+      createEdaSpecificAwxJobTemplate(): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
       createAwxInstanceGroup(): Chainable<InstanceGroup>;
