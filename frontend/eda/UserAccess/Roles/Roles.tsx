@@ -14,7 +14,12 @@ export function Roles() {
   });
   return (
     <PageLayout>
-      <PageHeader title={t('Roles')} />
+      <PageHeader
+        title={t('Roles')}
+        description={t(
+          'A role is a set of permissions that can be assigned to users based on their role within an organization.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading roles')}
