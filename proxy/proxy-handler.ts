@@ -2,7 +2,7 @@
 import cookie from 'cookie';
 import http from 'http';
 import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2';
-import { request, RequestOptions } from 'https';
+import { RequestOptions, request } from 'https';
 import { pipeline } from 'stream';
 import {
   HTTP2_HEADER_CACHE_CONTROL,
@@ -48,11 +48,17 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   const proxyUrl = new URL(target);
 
-  // if (proxyUrl.hostname !== 'localhost') {
   headers[HTTP2_HEADER_HOST] = proxyUrl.hostname;
   headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname;
   headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname;
-  // }
+
+  console.log({
+    HTTP2_HEADER_HOST: headers[HTTP2_HEADER_HOST],
+    origin: headers['origin'],
+    HTTP2_HEADER_REFERER: headers[HTTP2_HEADER_REFERER],
+  });
+
+  console.log(headers);
 
   const requestOptions: RequestOptions = {
     protocol: proxyUrl.protocol,
