@@ -21,7 +21,12 @@ export function RuleAudit() {
 
   return (
     <PageLayout>
-      <PageHeader title={`Rule Audit`} />
+      <PageHeader
+        title={`Rule Audit`}
+        description={t(
+          'Rule audit allows auditing of rules which have been triggered by incoming events.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
