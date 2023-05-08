@@ -175,6 +175,7 @@ Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
     name: 'E2E Credential ' + randomString(4),
     credential_type: 'Container Registry',
+    secret: 'test token',
     description: 'This is a container registry credential',
     username: 'admin',
   }).then((edaCredential) => {
