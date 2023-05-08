@@ -5,7 +5,6 @@ import { PageDetailsSection } from '../../common/PageDetailSection';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 import { useEffect, useState } from 'react';
-import { TimesCircleIcon } from '@patternfly/react-icons';
 
 export interface EventPayloadModalProps {
   event?: EdaRuleAuditEvent;
@@ -25,7 +24,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
       onClose={onClose}
       variant={ModalVariant.medium}
       actions={[
-        <Button key="cancel" variant="secondary" icon={<TimesCircleIcon />} onClick={onClose}>
+        <Button key="cancel" variant="primary" onClick={onClose}>
           {t('Close')}
         </Button>,
       ]}
