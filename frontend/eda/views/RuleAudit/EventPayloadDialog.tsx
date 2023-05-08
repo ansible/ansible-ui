@@ -27,7 +27,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>{props?.event?.source_name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>{props?.event?.source_type || ''}</PageDetail>
+          <PageDetail label={t('Source type')}>{props?.event?.source_type || ''}</PageDetail>
           <PageDetail label={t('Timestamp')}>
             {props?.event?.received_at ? formatDateString(props.event?.received_at) : ''}
           </PageDetail>

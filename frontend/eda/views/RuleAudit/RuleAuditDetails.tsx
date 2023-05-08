@@ -49,17 +49,17 @@ export function RuleAuditDetails() {
             label={t('Rulebook activation')}
             helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
           >
-            {ruleAudit && ruleAudit.activation?.id ? (
+            {ruleAudit && ruleAudit.activation_id ? (
               <Link
                 to={RouteObj.EdaRulebookActivationDetails.replace(
                   ':id',
-                  `${ruleAudit.activation?.id || ''}`
+                  `${ruleAudit.activation_id || ''}`
                 )}
               >
-                {ruleAudit?.activation?.name}
+                {ruleAudit?.activation_name}
               </Link>
             ) : (
-              ruleAudit?.activation?.name || ''
+              ruleAudit?.activation_name || ''
             )}
           </PageDetail>
           <PageDetail label={t('Created')}>
