@@ -52,6 +52,7 @@ function DecisionEnvironmentInputs() {
         maxLength={150}
         isRequired
         labelHelp={imageHelpBlock}
+        labelHelpTitle={t('Image')}
       />
       <PageFormSelectOption
         name={'credential_id'}
@@ -65,9 +66,8 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
-        labelHelp={t(
-          'Credentials are used for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.'
-        )}
+        labelHelp={t('The token needed to utilize the Decision environment image.')}
+        labelHelpTitle={t('Credential')}
       />
     </>
   );
