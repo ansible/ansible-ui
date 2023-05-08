@@ -332,7 +332,7 @@ Cypress.Commands.add(
   (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>) => {
     cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
-      organization: project.organization,
+      organization: project?.organization,
       scm_type: 'git',
       scm_url: 'https://github.com/ansible/ansible-tower-samples',
       ...project,
@@ -457,7 +457,7 @@ Cypress.Commands.add(
       }).then((host) => {
         cy.awxRequestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id}/groups/`, {
           name: 'E2E Group ' + randomString(4),
-          inventory: inventory.id,
+          inventory: host.inventory,
         }).then((group) => ({
           inventory,
           host,
