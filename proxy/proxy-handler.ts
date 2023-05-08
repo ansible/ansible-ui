@@ -53,6 +53,10 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
   headers['origin'] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}`;
   headers[HTTP2_HEADER_REFERER] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}`;
 
+  // Remove x-forwarded-proto header
+  // fixes django - django.security.csrf Forbidden (Referer checking failed - Referer is insecure while host is secure.
+  delete headers['x-forwarded-proto'];
+
   logger.info({ msg: 'headers', headers });
 
   const requestOptions: RequestOptions = {
