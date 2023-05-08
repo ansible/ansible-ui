@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* Copyright Contributors to the Open Cluster Management project */
 import cookie from 'cookie';
 import http from 'http';
