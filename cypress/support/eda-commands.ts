@@ -1,5 +1,6 @@
 import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
+import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
@@ -10,7 +11,6 @@ import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebook
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './commands';
-import './rest-commands';
 
 /*  EDA related custom command implementation  */
 
@@ -268,6 +268,22 @@ Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
     } else {
       return undefined;
     }
+  });
+});
+
+Cypress.Commands.add('addCurrentUserAwxToken', (awxToken: string) => {
+  cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
+    name: 'AWX Token ' + randomString(4),
+    token: awxToken,
+  });
+});
+
+Cypress.Commands.add('deleteCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
+  cy.requestDelete(`/api/eda/v1/users/me/awx-tokens/${awxToken.id}/`, true).then(() => {
+    Cypress.log({
+      displayName: 'EDA CONTROLLER TOKEN DELETION :',
+      message: [awxToken.name],
+    });
   });
 });
 

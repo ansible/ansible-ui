@@ -1,6 +1,6 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -16,21 +16,22 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
-  errorToAlertProps,
-  usePageAlertToaster,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
-import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
-import { useRestartRulebookActivations } from './hooks/useControlRulebookActivations';
+import {
+  useDisableRulebookActivations,
+  useEnableRulebookActivations,
+  useRestartRulebookActivations,
+} from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 import { PageDetailsSection } from '../common/PageDetailSection';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
@@ -40,7 +41,6 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const alertToaster = usePageAlertToaster();
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`,
@@ -48,26 +48,23 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     SWR_REFRESH_INTERVAL
   );
 
+  const enableRulebookActivation = useEnableRulebookActivations((enabled) => {
+    if (enabled.length > 0) {
+      refresh();
+    }
+  });
+
+  const disableRulebookActivation = useDisableRulebookActivations((disabled) => {
+    if (disabled.length > 0) {
+      refresh();
+    }
+  });
+
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
     if (restarted.length > 0) {
       refresh();
     }
   });
-
-  const enableRulebookActivation = useCallback(
-    (rulebookActivation: EdaRulebookActivation) =>
-      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/enable/`, undefined)
-        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
-        .finally(() => refresh()),
-    [alertToaster, refresh]
-  );
-  const disableRulebookActivation = useCallback(
-    (rulebookActivation: EdaRulebookActivation) =>
-      postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined)
-        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
-        .finally(() => refresh()),
-    [alertToaster, refresh]
-  );
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
@@ -83,8 +80,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
         onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-          if (activate) void enableRulebookActivation(activation);
-          else void disableRulebookActivation(activation);
+          if (activate) void enableRulebookActivation([activation]);
+          else void disableRulebookActivation([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
       },
