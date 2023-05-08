@@ -1,4 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import {
+  LabelGroup,
+  TextList,
+  TextListItem,
+  TextListItemVariants,
+  TextListVariants,
+} from '@patternfly/react-core';
+import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
@@ -9,23 +17,15 @@ import {
   PageDetails,
   TextCell,
 } from '../../../../../framework';
+import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { RouteObj } from '../../../../Routes';
 import { StatusCell } from '../../../../common/StatusCell';
-import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
-import { ScmType } from '../../../../common/scm';
-import { Project } from '../../../interfaces/Project';
-import {
-  LabelGroup,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
-import { CredentialLabel } from '../../../common/CredentialLabel';
-import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { useGet } from '../../../../common/crud/useGet';
+import { ScmType } from '../../../../common/scm';
+import { CredentialLabel } from '../../../common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { Project } from '../../../interfaces/Project';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();

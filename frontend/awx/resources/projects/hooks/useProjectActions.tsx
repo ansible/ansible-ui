@@ -28,7 +28,7 @@ export function useProjectActions(
 
   return useMemo<IPageAction<Project>[]>(() => {
     const cannotCancelProjectDueToStatus = (project: Project) =>
-      ['pending', 'waiting', 'running'].includes(project.status)
+      ['pending', 'waiting', 'running'].includes(project.status ?? '')
         ? ''
         : t(`The project sync cannot be canceled because it is not running`);
     const cannotCancelProjectDueToPermissions = (project: Project) =>
@@ -47,10 +47,10 @@ export function useProjectActions(
       if (project.scm_type === '') {
         return t(`Cannot sync project`);
       }
-      if (project.scm_type !== '' && !project?.summary_fields?.user_capabilities?.start) {
+      if (project.scm_type && !project?.summary_fields?.user_capabilities?.start) {
         return t(`The project cannot be synced due to insufficient permission`);
       }
-      if (['pending', 'waiting', 'running'].includes(project.status)) {
+      if (['pending', 'waiting', 'running'].includes(project.status ?? '')) {
         return t(`The project cannot be synced because a sync job is currently running`);
       }
       return '';
