@@ -780,7 +780,7 @@ export interface PatchedUserCreateUpdate {
 
 export interface PermissionRef {
   resource_type: ResourceTypeEnum;
-  action: ActionEnum;
+  action: ActionEnum[];
 }
 
 export interface Playbook {
