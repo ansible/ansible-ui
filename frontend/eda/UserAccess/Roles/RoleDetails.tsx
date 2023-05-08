@@ -29,6 +29,22 @@ export function RoleDetails() {
     undefined,
     SWR_REFRESH_INTERVAL
   );
+  const ResourceTypes = {
+    activation: t('Activation'),
+    activation_instance: t('Activation Instance'),
+    audit_rule: t('Audit Rule'),
+    audit_event: t('Audit Event'),
+    task: t('Task'),
+    user: t('User'),
+    project: t('Project'),
+    inventory: t('Inventory'),
+    extra_var: t('Extra Vars'),
+    playbook: t('Playbook'),
+    rulebook: t('Rulebook'),
+    role: t('Role'),
+    decision_environment: t('Decision environment'),
+    credential: t('Credential'),
+  };
 
   return (
     <PageLayout>
@@ -59,14 +75,16 @@ export function RoleDetails() {
                     style={{ fontWeight: 'normal' }}
                     key={permission?.resource_type}
                   >
-                    {permission?.resource_type}
+                    {ResourceTypes[permission?.resource_type] || permission?.resource_type}
                   </DescriptionListTerm>
                   <DescriptionListDescription>
-                    <LabelGroup numLabels={5}>
-                      {permission?.action.map((action) => (
-                        <Label key={action}>{action}</Label>
-                      ))}
-                    </LabelGroup>
+                    {!!permission?.action.length && (
+                      <LabelGroup numLabels={5}>
+                        {permission?.action.map((action) => (
+                          <Label key={action}>{action}</Label>
+                        ))}
+                      </LabelGroup>
+                    )}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               ))}
