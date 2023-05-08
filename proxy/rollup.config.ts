@@ -22,7 +22,7 @@ export default {
     }),
     strip({
       include: ['**/*.(ts|js)'],
-      functions: ['console.*', 'assert.*', 'logger.trace', 'logger.debug'],
+      functions: ['console.*', 'assert.*', 'logger.trace'],
     }),
   ],
 };
