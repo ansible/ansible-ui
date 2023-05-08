@@ -49,9 +49,9 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   const proxyUrl = new URL(target);
 
-  headers[HTTP2_HEADER_HOST] = proxyUrl.hostname;
-  headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname;
-  headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname;
+  headers[HTTP2_HEADER_HOST] = `${proxyUrl.hostname}:${proxyUrl.port}`;
+  headers['origin'] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}`;
+  headers[HTTP2_HEADER_REFERER] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}/`;
 
   console.log({
     HTTP2_HEADER_HOST: headers[HTTP2_HEADER_HOST],
