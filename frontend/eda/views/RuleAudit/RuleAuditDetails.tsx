@@ -137,11 +137,11 @@ export function RuleAuditDetails() {
       {ruleAudit ? (
         <PageTabs>
           <PageTab label={t('Details')}>{renderRuleAuditDetailsTab(ruleAudit)}</PageTab>
-          <PageTab label={t('Actions')}>
-            <RuleAuditActionsTab />
-          </PageTab>
           <PageTab label={t('Events')}>
             <RuleAuditEventsTab />
+          </PageTab>
+          <PageTab label={t('Actions')}>
+            <RuleAuditActionsTab />
           </PageTab>
         </PageTabs>
       ) : (
