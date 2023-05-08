@@ -24,7 +24,7 @@ export function useCancelProjects(onComplete?: (projects: Project[]) => void) {
     return '';
   };
   const cannotCancelProjectDueToStatus = (project: Project) => {
-    if (!isProjectRunning(project.status))
+    if (!isProjectRunning(project.status ?? ''))
       return t(`The project sync cannot be canceled because it is not running`);
     return '';
   };
@@ -34,7 +34,7 @@ export function useCancelProjects(onComplete?: (projects: Project[]) => void) {
       cannotCancelProjectDueToStatus
     );
     const runningProjects: Project[] = projects.filter((project) =>
-      isProjectRunning(project.status)
+      isProjectRunning(project.status ?? '')
     );
     const uncancellableProjectsDueToPermissions: Project[] = runningProjects.filter(
       cannotCancelProjectDueToPermissions
