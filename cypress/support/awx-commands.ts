@@ -435,7 +435,23 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   cy.request<AwxToken>({
     method: 'POST',
     url: `${awxServer}/api/v2/tokens/`,
-    body: { ...awxToken },
+    body: { description: 'E2E-' + randomString(4), ...awxToken },
+    headers: {
+      Authorization:
+        'Basic ' +
+        Buffer.from(
+          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
+        ).toString('base64'),
+    },
+  }).then((response) => response.body);
+});
+
+Cypress.Commands.add('deleteAwxToken', (awxToken: AwxToken) => {
+  let awxServer = Cypress.env('AWX_SERVER') as string;
+  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  cy.request<AwxToken>({
+    method: 'DELETE',
+    url: `${awxServer}/api/v2/tokens/${awxToken.id}/`,
     headers: {
       Authorization:
         'Basic ' +
