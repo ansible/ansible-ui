@@ -16,9 +16,11 @@ import {
   InstanceGroup,
   JobTemplate,
 } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
@@ -26,7 +28,6 @@ import './auth';
 import './awx-commands';
 import './eda-commands';
 import './rest-commands';
-import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 
 declare global {
   namespace Cypress {
@@ -191,6 +192,7 @@ declare global {
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
       deleteAwxLabel(label: Label): Chainable<void>;
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
+      deleteAwxToken(awxToken: AwxToken): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization
@@ -339,7 +341,7 @@ declare global {
        *
        * @returns {Chainable<EdaUser>}
        */
-      getEdaActiveUser(): Chainable<EdaUser | undefined>;
+      getEdaActiveUser(): Chainable<EdaUser>;
 
       /**
        * @param name retrieves EDA user when a name is passed
@@ -349,6 +351,11 @@ declare global {
       /**
        * Creates a DE and returns the same.
        */
+
+      addCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
+
+      deleteCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
+
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
       /**
