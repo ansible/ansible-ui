@@ -25,3 +25,7 @@
 :root:where(.pf-theme-dark) .dark-3 {
   background-color: var(--pf-global--BackgroundColor--400);
 }
+
+.pf-c-truncate__start {
+  min-width: unset;
+}
