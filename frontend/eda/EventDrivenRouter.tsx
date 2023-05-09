@@ -3,11 +3,14 @@ import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
-import { EditCredential } from './Resources/credentials/EditCredential';
+import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
 import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
-import { EditDecisionEnvironment } from './Resources/decision-environments/DecisionEnvironmentForm';
+import {
+  CreateDecisionEnvironment,
+  EditDecisionEnvironment,
+} from './Resources/decision-environments/DecisionEnvironmentForm';
 import { DecisionEnvironments } from './Resources/decision-environments/DecisionEnvironments';
-import { EditProject } from './Resources/projects/EditProject';
+import { CreateProject, EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
 import { EditGroup } from './UserAccess/Groups/EditGroup';
@@ -43,18 +46,18 @@ export function EventDrivenRouter() {
 
       <Route path={RouteObjWithoutPrefix.EdaDashboard} element={<EdaDashboard />} />
 
-      <Route path={RouteObjWithoutPrefix.CreateEdaProject} element={<EditProject />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaProject} element={<CreateProject />} />
       <Route path={RouteObjWithoutPrefix.EditEdaProject} element={<EditProject />} />
       <Route path={RouteObjWithoutPrefix.EdaProjectDetails} element={<ProjectDetails />} />
       <Route path={RouteObjWithoutPrefix.EdaProjects} element={<Projects />} />
 
-      <Route path={RouteObjWithoutPrefix.CreateEdaCredential} element={<EditCredential />} />
+      <Route path={RouteObjWithoutPrefix.CreateEdaCredential} element={<CreateCredential />} />
       <Route path={RouteObjWithoutPrefix.EditEdaCredential} element={<EditCredential />} />
       <Route path={RouteObjWithoutPrefix.EdaCredentialDetails} element={<CredentialDetails />} />
       <Route path={RouteObjWithoutPrefix.EdaCredentials} element={<Credentials />} />
       <Route
         path={RouteObjWithoutPrefix.CreateEdaDecisionEnvironment}
-        element={<EditDecisionEnvironment />}
+        element={<CreateDecisionEnvironment />}
       />
       <Route
         path={RouteObjWithoutPrefix.EditEdaDecisionEnvironment}

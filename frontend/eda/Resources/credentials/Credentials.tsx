@@ -24,7 +24,12 @@ export function Credentials() {
   const rowActions = useCredentialActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Credentials')} />
+      <PageHeader
+        title={t('Credentials')}
+        description={t(
+          'Credentials are utilized by EDA for authentication when launching rulebooks.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
