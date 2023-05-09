@@ -11,11 +11,9 @@ const ruleAuditEndpoint = `${API_PREFIX}/audit-rules/`;
 
 export function RuleAudit() {
   const { t } = useTranslation();
-  const toolbarFilters = useRuleAuditFilters();
   const tableColumns = useRuleAuditColumns();
   const view = useEdaView<EdaRuleAudit>({
     url: ruleAuditEndpoint,
-    toolbarFilters,
     tableColumns,
   });
 
@@ -29,7 +27,6 @@ export function RuleAudit() {
       />
       <PageTable
         tableColumns={tableColumns}
-        toolbarFilters={toolbarFilters}
         emptyStateIcon={CubesIcon}
         errorStateTitle={t('Error loading rule audit data')}
         emptyStateTitle={t('No rule audit data')}
