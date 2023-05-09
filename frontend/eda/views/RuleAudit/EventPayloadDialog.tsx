@@ -1,4 +1,4 @@
-import { CodeBlock, CodeBlockCode, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, CodeBlock, CodeBlockCode, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../../framework';
 import { PageDetailsSection } from '../../common/PageDetailSection';
@@ -23,11 +23,16 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
       hasNoBodyWrapper
       onClose={onClose}
       variant={ModalVariant.medium}
+      actions={[
+        <Button key="cancel" variant="primary" onClick={onClose}>
+          {t('Close')}
+        </Button>,
+      ]}
     >
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>{props?.event?.source_name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>{props?.event?.source_type || ''}</PageDetail>
+          <PageDetail label={t('Source type')}>{props?.event?.source_type || ''}</PageDetail>
           <PageDetail label={t('Timestamp')}>
             {props?.event?.received_at ? formatDateString(props.event?.received_at) : ''}
           </PageDetail>

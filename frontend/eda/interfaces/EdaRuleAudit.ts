@@ -10,7 +10,8 @@ export interface EdaRuleAudit {
   name?: string;
   description?: string;
   status?: string;
-  activation?: { id: number; name?: string };
+  activation_id?: string;
+  activation_name?: string;
   created_at?: string;
   fired_at?: string;
 }
