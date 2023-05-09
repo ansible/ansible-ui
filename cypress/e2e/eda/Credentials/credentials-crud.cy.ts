@@ -14,7 +14,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a container registry credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'Container registry');
+    cy.selectDropdownOptionByLabel(/^Credential type$/, 'Container registry');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
@@ -36,7 +36,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitHub Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub personal access token');
+    cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
@@ -58,7 +58,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitLab Credential.');
-    cy.selectDropdownOptionByLabel(/^Type$/, 'GitLab personal access token');
+    cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitLab personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
@@ -82,7 +82,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.hasTitle(`Edit ${edaCredential.name}`);
       cy.typeInputByLabel(/^Name$/, edaCredential.name + 'lalala');
       cy.typeInputByLabel(/^Description$/, 'this credential type has been changed');
-      cy.selectDropdownOptionByLabel(/^Type$/, 'GitHub personal access token');
+      cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
       cy.typeInputByLabel(/^User name$/, 'velveeta');
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
