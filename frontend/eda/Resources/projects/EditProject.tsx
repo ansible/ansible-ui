@@ -119,6 +119,40 @@ function ProjectEditInputs() {
   );
 }
 
+export function CreateProject() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { cache } = useSWRConfig();
+  const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
+
+  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+    const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
+  };
+
+  const onCancel = () => navigate(-1);
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create Project')}
+        breadcrumbs={[
+          { label: t('Projects'), to: RouteObj.EdaProjects },
+          { label: t('Create Project') },
+        ]}
+      />
+      <PageForm
+        submitText={t('Create project')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+      >
+        <ProjectCreateInputs />
+      </PageForm>
+    </PageLayout>
+  );
+}
+
 export function EditProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -127,73 +161,44 @@ export function EditProject() {
   const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
   const patchRequest = usePatchRequest<Partial<EdaProject>, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
-    if (Number.isInteger(id)) {
-      await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(-1);
-    } else {
-      const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
-    }
+    await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
   };
   const onCancel = () => navigate(-1);
 
-  if (Number.isInteger(id)) {
-    if (!project) {
-      return (
-        <PageLayout>
-          <PageHeader
-            breadcrumbs={[
-              { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: t('Edit Project') },
-            ]}
-          />
-        </PageLayout>
-      );
-    } else {
-      return (
-        <PageLayout>
-          <PageHeader
-            title={`${t('Edit')} ${project?.name || t('Project')}`}
-            breadcrumbs={[
-              { label: t('Projects'), to: RouteObj.EdaProjects },
-              { label: `${t('Edit')} ${project?.name || t('Project')}` },
-            ]}
-          />
-          <PageForm
-            submitText={t('Save project')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={{ ...project, credential_id: project?.credential?.id || undefined }}
-          >
-            <ProjectEditInputs />
-          </PageForm>
-        </PageLayout>
-      );
-    }
+  if (!project) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Projects'), to: RouteObj.EdaProjects },
+            { label: t('Edit Project') },
+          ]}
+        />
+      </PageLayout>
+    );
   } else {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create Project')}
+          title={`${t('Edit')} ${project?.name || t('Project')}`}
           breadcrumbs={[
             { label: t('Projects'), to: RouteObj.EdaProjects },
-            { label: t('Create Project') },
+            { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />
         <PageForm
-          submitText={t('Create project')}
+          submitText={t('Save project')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
+          defaultValue={{ ...project, credential_id: project?.credential?.id || undefined }}
         >
-          <ProjectCreateInputs />
+          <ProjectEditInputs />
         </PageForm>
       </PageLayout>
     );

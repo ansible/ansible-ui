@@ -16,6 +16,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.typeInputByLabel(/^Description$/, 'This is a container registry credential.');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'Container registry');
     cy.typeInputByLabel(/^User name$/, 'admin');
+    cy.typeInputByLabel(/^Token$/, 'test token');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a container registry credential.');
@@ -36,6 +37,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitHub Credential.');
+    cy.typeInputByLabel(/^Token$/, 'test token');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
@@ -58,6 +60,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
     cy.typeInputByLabel(/^Description$/, 'This is a GitLab Credential.');
+    cy.typeInputByLabel(/^Token$/, 'test token');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitLab personal access token');
     cy.typeInputByLabel(/^User name$/, 'admin');
     cy.clickButton(/^Create credential$/);
@@ -82,6 +85,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.hasTitle(`Edit ${edaCredential.name}`);
       cy.typeInputByLabel(/^Name$/, edaCredential.name + 'lalala');
       cy.typeInputByLabel(/^Description$/, 'this credential type has been changed');
+      cy.typeInputByLabel(/^Token$/, 'test token');
       cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
       cy.typeInputByLabel(/^User name$/, 'velveeta');
       cy.clickButton(/^Save credential$/);
