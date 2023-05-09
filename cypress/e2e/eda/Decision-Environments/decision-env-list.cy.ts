@@ -8,7 +8,12 @@ describe('EDA Decision Environment List', () => {
   it('can filter the Decision Environment list based on Name filter option', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo(/^Decision Environments$/);
-      cy.hasTitle(/^Decision Environments$/);
+      cy.hasTitle(/^Decision Environments$/)
+        .next('p')
+        .should(
+          'have.text',
+          'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
+        );
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).should('be.visible').click();

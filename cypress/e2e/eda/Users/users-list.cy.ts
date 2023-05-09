@@ -21,7 +21,12 @@ describe('EDA Users List', () => {
 
   it('renders the Users list page', () => {
     cy.navigateTo(/^Users$/);
-    cy.hasTitle(/^Users$/);
+    cy.hasTitle(/^Users$/)
+      .next('p')
+      .should(
+        'have.text',
+        'A user is someone who has access to EDA with associated permissions and credentials.'
+      );
   });
 
   it('renders the Users details page and shows expected information', () => {
