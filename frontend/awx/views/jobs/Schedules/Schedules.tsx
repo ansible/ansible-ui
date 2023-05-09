@@ -7,10 +7,12 @@ import { useAwxView } from '../../../useAwxView';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
+import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 
 export function Schedules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
   const view = useAwxView<Schedule>({
@@ -18,8 +20,11 @@ export function Schedules() {
     toolbarFilters,
     tableColumns,
   });
-
-  const rowActions = useSchedulesActions({ onDeleted: () => void view.refresh() });
+  console.log(tableColumns);
+  const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh);
+  const rowActions = useSchedulesActions({
+    onScheduleToggleorDeleteCompleted: () => void view.refresh(),
+  });
   return (
     <PageLayout>
       <PageHeader
@@ -35,6 +40,7 @@ export function Schedules() {
       />
       <PageTable<Schedule>
         toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading schedules')}

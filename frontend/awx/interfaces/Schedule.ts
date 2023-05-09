@@ -1,9 +1,10 @@
 import { Schedule as SwaggerSchedule } from './generated-from-swagger/api';
 
 export interface Schedule
-  extends Omit<SwaggerSchedule, 'summary_fields' | 'id' | 'name' | 'related'> {
+  extends Omit<SwaggerSchedule, 'summary_fields' | 'id' | 'name' | 'related' | 'enabled'> {
   id: number;
   name: string;
+  enabled: boolean;
   related: { unified_job_template: string };
   summary_fields: {
     unified_job_template: {

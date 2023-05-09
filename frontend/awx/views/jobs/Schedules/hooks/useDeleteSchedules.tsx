@@ -6,23 +6,23 @@ import { getItemKey, requestDelete } from '../../../../../common/crud/Data';
 import { Schedule } from '../../../../interfaces/Schedule';
 import { useSchedulesColumns } from './useSchedulesColumns';
 
-export function useDeleteSchedules(onComplete?: (credentials: Schedule[]) => void) {
+export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useSchedulesColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useBulkConfirmation<Schedule>();
-  const deleteCredentials = (credentials: Schedule[]) => {
+  const deleteSchedules = (schedules: Schedule[]) => {
     bulkAction({
       title:
-        credentials.length === 1
+        schedules.length === 1
           ? t('Permanently delete schedule')
           : t('Permanently delete schedules'),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} schedules.', {
-        count: credentials.length,
+        count: schedules.length,
       }),
-      actionButtonText: t('Delete schedule', { count: credentials.length }),
-      items: credentials.sort((l, r) => compareStrings(l.name, r.name)),
+      actionButtonText: t('Delete schedule', { count: schedules.length }),
+      items: schedules.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
@@ -31,5 +31,5 @@ export function useDeleteSchedules(onComplete?: (credentials: Schedule[]) => voi
       actionFn: (schedule: Schedule) => requestDelete(`/api/v2/schedules/${schedule.id}/`),
     });
   };
-  return deleteCredentials;
+  return deleteSchedules;
 }

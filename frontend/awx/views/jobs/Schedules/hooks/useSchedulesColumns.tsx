@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn } from '../../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../../common/columns';
-import {} from '../../../../interfaces/Credential';
 import { Schedule } from '../../../../interfaces/Schedule';
 import { getScheduleResourceUrl } from './ getScheduleResourceUrl';
 
@@ -13,9 +12,9 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
 
   const makeReadable: (item: Schedule) => string = useCallback(
     (schedule: Schedule) => {
-      interface JobTypeLabel {
+      type JobTypeLabel = {
         [key: string]: string;
-      }
+      };
       const jobTypeLabels: JobTypeLabel = {
         inventory_update: t`Inventory Sync`,
         job: t`Playbook Run`,
@@ -32,8 +31,8 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
   const descriptionColumn = useDescriptionColumn();
   const tableColumns = useMemo<ITableColumn<Schedule>[]>(
-    () => [nameColumn, typeColumn, descriptionColumn],
-    [typeColumn, nameColumn, descriptionColumn]
+    () => [nameColumn, descriptionColumn, typeColumn],
+    [typeColumn, descriptionColumn, nameColumn]
   );
   return tableColumns;
 }

@@ -31,7 +31,7 @@ export function getScheduleResourceUrl(schedule: Schedule): string {
       schedule.summary_fields.unified_job_template.unified_job_type
     ),
   };
-  const str: string = RouteObj.ScheduleEdit.replace(
+  const str: string = RouteObj.EditSchedule.replace(
     /:resource_id|:schedule_id|:resource_type/g,
     (matched: string) => urlSubStringMap[matched]
   );
