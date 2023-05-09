@@ -210,12 +210,6 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
-      - name: Setup EDA Server
-        run: |
-          mkdir eda
-          cd eda
-          echo "${{ secrets.EDA_DOCKER_COMPOSE }}" > docker-compose.yaml
-          docker compose up -d --quiet-pull
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
@@ -239,7 +233,7 @@ jobs:
       - uses: cypress-io/github-action@v4
         with:
           install: false
-          start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 --network eda_default ansible-ui
+          start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 ansible-ui
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
