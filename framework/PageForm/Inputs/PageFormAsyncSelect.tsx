@@ -30,6 +30,7 @@ export interface PageFormAsyncSelectProps<
   name: TFieldName;
   label: string;
   labelHelp?: string | ReactNode;
+  labelHelpTitle?: string;
   placeholder: string;
   loadingPlaceholder: string;
   loadingErrorText: string;
@@ -62,6 +63,7 @@ export function PageFormAsyncSelect<
     valueToString,
     valueToDescription,
     labelHelp,
+    labelHelpTitle,
   } = props;
   const id = props.id ?? name.split('.').join('-');
 
@@ -107,6 +109,7 @@ export function PageFormAsyncSelect<
             id={id}
             label={label}
             labelHelp={labelHelp}
+            labelHelpTitle={labelHelpTitle}
             helperTextInvalid={loadingError ? loadingErrorText : error?.message}
             isRequired={isRequired}
           >

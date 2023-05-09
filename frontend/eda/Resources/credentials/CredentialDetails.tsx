@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction, Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -31,6 +31,16 @@ import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
+  const credentialTypeHelpBlock = (
+    <Trans i18nKey="credentialTypeHelpBlock">
+      <p>The credential type defines what the credential will be used for.</p>
+      <br />
+      <p>There are three types:</p>
+      <p>GitHub Personal Access Token</p>
+      <p>GitLab Personal Access Token</p>
+      <p>Container Registry</p>
+    </Trans>
+  );
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: credential } = useGet<EdaCredential>(
@@ -81,12 +91,7 @@ export function CredentialDetails() {
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
         <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
-        <PageDetail
-          label={t('Credential type')}
-          helpText={t(
-            'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
-          )}
-        >
+        <PageDetail label={t('Credential type')} helpText={credentialTypeHelpBlock}>
           {credentialOption ? credentialOption?.label : credential?.credential_type}
         </PageDetail>
         <PageDetail label={t('Created')}>

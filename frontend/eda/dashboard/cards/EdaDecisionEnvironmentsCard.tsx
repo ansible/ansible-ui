@@ -43,9 +43,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
       linkText={t('Go to Decision Environments')}
       to={RouteObj.EdaDecisionEnvironments}
       helpTitle={t('Decision environments')}
-      help={t(
-        'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
-      )}
+      help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >
       <PageTable
         disableBodyPadding={true}

@@ -96,9 +96,7 @@ export function DecisionEnvironmentDetails() {
         </PageDetail>
         <PageDetail
           label={t('Credential')}
-          helpText={t(
-            'Credentials are used for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.'
-          )}
+          helpText={t('The token needed to utilize the Decision environment image.')}
         >
           {decisionEnvironment && decisionEnvironment.credential ? (
             <Link
