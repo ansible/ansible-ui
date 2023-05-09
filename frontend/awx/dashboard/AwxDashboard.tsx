@@ -3,7 +3,7 @@ import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout } from '../../../framework';
+import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -17,6 +17,10 @@ import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
 import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
+import { WelcomeModal } from './WelcomeModal';
+import { useEffect } from 'react';
+
+const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
 export function AwxDashboard() {
   const { t } = useTranslation();
@@ -24,6 +28,15 @@ export function AwxDashboard() {
   const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
+  const [_, setDialog] = usePageDialog();
+  const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);
+  const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
+  useEffect(() => {
+    if (config?.ui_next && !hideWelcomeMessage) {
+      setDialog(<WelcomeModal />);
+    }
+  }, [config?.ui_next, hideWelcomeMessage, setDialog]);
+
   return (
     <PageLayout>
       {config?.ui_next && (
