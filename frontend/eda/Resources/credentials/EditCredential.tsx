@@ -1,4 +1,4 @@
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction, Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -37,6 +37,16 @@ export function CredentialOptions(t: TFunction<'translation'>) {
 }
 function CredentialInputs() {
   const { t } = useTranslation();
+  const credentialTypeHelpBlock = (
+    <Trans i18nKey="credentialTypeHelpBlock">
+      <p>The credential type defines what the credential will be used for.</p>
+      <br />
+      <p>There are three types:</p>
+      <p>GitHub Personal Access Token</p>
+      <p>GitLab Personal Access Token</p>
+      <p>Container Registry</p>
+    </Trans>
+  );
   return (
     <>
       <PageFormTextInput<EdaCredential>
@@ -55,13 +65,12 @@ function CredentialInputs() {
       />
       <PageFormSelectOption<EdaCredential>
         name="credential_type"
-        label={t('Type')}
+        label={t('Credential type')}
         isRequired
         placeholderText={t('Select credential type')}
         options={CredentialOptions(t)}
-        labelHelp={t(
-          'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
-        )}
+        labelHelp={credentialTypeHelpBlock}
+        labelHelpTitle={t('Credential type')}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
@@ -74,9 +83,8 @@ function CredentialInputs() {
         label={t('Token')}
         type="password"
         placeholder={t('Enter credential token')}
-        labelHelp={t(
-          'Tokens allow you to authenticate yourself and adjust the degree of restrictive permissions in addition to the base RBAC permissions.'
-        )}
+        labelHelp={t('Tokens allow you to authenticate to your destination.')}
+        labelHelpTitle={t('Token')}
       />
     </>
   );
