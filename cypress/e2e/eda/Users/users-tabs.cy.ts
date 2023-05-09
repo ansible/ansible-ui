@@ -1,13 +1,18 @@
 //Tests the actions a user can perform on the tabs inside of a User in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 
 describe('EDA User Tokens Tab', () => {
   let awxToken: AwxToken;
+  let edaProject: Project;
   before(() => {
     cy.createAwxToken().then((token) => {
       awxToken = token;
+    });
+    cy.createEdaSpecificAwxProject().then((project) => {
+      edaProject = project;
     });
     cy.edaLogin();
   });
