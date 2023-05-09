@@ -255,26 +255,25 @@ Cypress.Commands.add('createAwxOrganization', () => {
   });
 });
 
-Cypress.Commands.add(
-  'awxRequest',
-  function awxRequest(method: string, url: string, body?: Cypress.RequestBody) {
-    let awxServer = Cypress.env('AWX_SERVER') as string;
-    if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-    cy.request({
-      method,
-      url,
-      body,
-      headers: {
-        Referer: Cypress.config().baseUrl,
-        Authorization:
-          'Basic ' +
-          Buffer.from(
-            `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-          ).toString('base64'),
-      },
-    });
-  }
-);
+Cypress.Commands.add('awxRequest', function awxRequest<
+  T
+>(method: string, url: string, body?: Cypress.RequestBody) {
+  let awxServer = Cypress.env('AWX_SERVER') as string;
+  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  cy.request<T>({
+    method,
+    url,
+    body,
+    headers: {
+      Referer: Cypress.config().baseUrl,
+      Authorization:
+        'Basic ' +
+        Buffer.from(
+          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
+        ).toString('base64'),
+    },
+  });
+});
 
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
