@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { useRuleAuditColumns } from './hooks/useRuleAuditColumns';
-import { useRuleAuditFilters } from './hooks/useRuleAuditFilters';
 import { API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
 import { CubesIcon } from '@patternfly/react-icons';

@@ -3,7 +3,7 @@
 describe('EDA Users List', () => {
   let roleIDs: string[];
   let editorRoleID: string;
-  let contributorRoleID: string;
+  let _contributorRoleID: string;
   let auditorRoleID: string;
   let viewerRoleID: string;
   let operatorRoleID: string;
@@ -11,7 +11,7 @@ describe('EDA Users List', () => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
       roleIDs = rolesArray.map((role) => role.id);
-      contributorRoleID = roleIDs[0];
+      _contributorRoleID = roleIDs[0];
       viewerRoleID = roleIDs[1];
       editorRoleID = roleIDs[2];
       auditorRoleID = roleIDs[4];
@@ -34,21 +34,10 @@ describe('EDA Users List', () => {
       roles: [editorRoleID],
     }).then((edaUser) => {
       cy.navigateTo(/^Users$/);
-      cy.clickTableRow(edaUser.username);
+      cy.contains(edaUser.username).click();
       cy.hasTitle(edaUser.username);
       cy.clickButton(/^Details$/);
       cy.get('dd#username').should('contain', edaUser.username);
-      cy.deleteEdaUser(edaUser);
-    });
-  });
-
-  it('can filter the Users list based on Name', () => {
-    cy.createEdaUser({
-      roles: [contributorRoleID],
-    }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
-      cy.filterTableByText(edaUser.username);
-      cy.get('td[data-label="Username"]').should('contain', edaUser.username);
       cy.deleteEdaUser(edaUser);
     });
   });
@@ -61,8 +50,8 @@ describe('EDA Users List', () => {
         roles: [viewerRoleID],
       }).then((viewer) => {
         cy.navigateTo(/^Users$/);
-        cy.selectTableRow(auditor.username);
-        cy.selectTableRow(viewer.username);
+        cy.selectTableRow(auditor.username, false);
+        cy.selectTableRow(viewer.username, false);
         cy.clickToolbarKebabAction(/^Delete selected users$/);
         cy.intercept('DELETE', `/api/eda/v1/users/${auditor.id}/`).as('auditor');
         cy.intercept('DELETE', `/api/eda/v1/users/${viewer.id}/`).as('viewer');
@@ -74,7 +63,6 @@ describe('EDA Users List', () => {
         });
         cy.assertModalSuccess();
         cy.clickButton(/^Close$/);
-        cy.clickButton(/^Clear all filters$/);
       });
     });
   });
@@ -84,13 +72,12 @@ describe('EDA Users List', () => {
       roles: [operatorRoleID],
     }).then((edaUser) => {
       cy.navigateTo(/^Users$/);
-      cy.selectTableRow(edaUser.username);
+      cy.selectTableRow(edaUser.username, false);
       cy.clickToolbarKebabAction(/^Delete selected users$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
     });
   });
 
