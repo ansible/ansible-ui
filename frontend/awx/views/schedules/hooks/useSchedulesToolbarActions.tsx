@@ -2,13 +2,13 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObj } from '../../../../../Routes';
-import { useOptions } from '../../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
+import { RouteObj } from '../../../../Routes';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteSchedules } from './useDeleteSchedules';
 
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../../framework';
-import { Schedule } from '../../../../interfaces/Schedule';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { Schedule } from '../../../interfaces/Schedule';
 
 export function useScheduleToolbarActions(onComplete: (schedules: Schedule[]) => void) {
   const { t } = useTranslation();

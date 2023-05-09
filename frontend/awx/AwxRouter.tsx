@@ -34,7 +34,7 @@ import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPa
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
-import { CreateSchedule } from './views/jobs/Schedules/ScheduleForm';
+import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
@@ -43,7 +43,7 @@ import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import HostMetrics from './views/jobs/HostMetrics';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
-import { Schedules } from './views/jobs/Schedules/Schedules';
+import { Schedules } from './views/schedules/Schedules';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);

@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
-import { Schedule } from '../../../interfaces/Schedule';
-import { useAwxView } from '../../../useAwxView';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
+import { Schedule } from '../../interfaces/Schedule';
+import { useAwxView } from '../../useAwxView';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
@@ -20,7 +20,6 @@ export function Schedules() {
     toolbarFilters,
     tableColumns,
   });
-  console.log(tableColumns);
   const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => void view.refresh(),

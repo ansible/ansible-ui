@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../../../framework';
+import { IToolbarFilter } from '../../../../../framework';
 import {
   useDescriptionToolbarFilter,
   useNameToolbarFilter,
-} from '../../../../common/awx-toolbar-filters';
+} from '../../../common/awx-toolbar-filters';
 
 export function useSchedulesFilter() {
   const nameToolbarFilter = useNameToolbarFilter();
