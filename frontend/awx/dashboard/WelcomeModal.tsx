@@ -54,6 +54,7 @@ export function WelcomeModal() {
           isChecked={isChecked}
           onChange={handleChange}
           name="do-not-show-welcome-modal"
+          id="welcome-modal-checkbox"
         />
       </CheckboxDiv>
     </Modal>
