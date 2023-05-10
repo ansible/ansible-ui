@@ -47,7 +47,7 @@ describe('EDA User Tokens Tab', () => {
   });
 
   it('can delete a Token from the list', () => {
-    cy.addEdaCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
+    cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
         cy.filterTableByText(activeUser?.username);
