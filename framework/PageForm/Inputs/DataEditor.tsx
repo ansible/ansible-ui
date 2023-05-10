@@ -1,9 +1,9 @@
+import useResizeObserver from '@react-hook/resize-observer';
+import * as monaco from 'monaco-editor';
+import { setDiagnosticsOptions as setYamlDiagnosticOptions } from 'monaco-yaml';
 import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
-import { setDiagnosticsOptions as setYamlDiagnosticOptions } from 'monaco-yaml';
-import * as monaco from 'monaco-editor';
-import useResizeObserver from '@react-hook/resize-observer';
 
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
@@ -92,14 +92,27 @@ export function DataEditor<
         switch (label) {
           case 'editorWorkerService':
             return new Worker(
-              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url)
+              new URL(
+                '../../../node_modules/monaco-editor/esm/vs/editor/editor.worker',
+                import.meta.url
+              ),
+              { type: 'module' }
             );
           case 'json':
             return new Worker(
-              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url)
+              new URL(
+                '../../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
+                import.meta.url
+              ),
+              { type: 'module' }
             );
           case 'yaml':
-            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url));
+            return new Worker(
+              new URL('../../../node_modules/monaco-yaml/yaml.worker', import.meta.url),
+              {
+                type: 'module',
+              }
+            );
           default:
             throw new Error(`Unknown label ${label}`);
         }
