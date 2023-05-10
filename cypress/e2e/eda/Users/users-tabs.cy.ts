@@ -20,7 +20,7 @@ describe('EDA User Tokens Tab', () => {
     const newTokenName = 'E2E Token ' + randomString(8);
     cy.getEdaActiveUser().then((activeUser) => {
       cy.navigateTo('Users');
-      cy.contains(activeUser?.username ?? '').click();
+      cy.clickLink(activeUser?.username);
       cy.clickTab('Controller Tokens');
       cy.clickButton('Create controller token');
       cy.hasTitle('Create Controller Token');
@@ -39,7 +39,6 @@ describe('EDA User Tokens Tab', () => {
     cy.addEdaCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
-        cy.filterTableByText(activeUser?.username);
         cy.clickLink(activeUser?.username);
         cy.clickButton('Controller Tokens');
         cy.get('.pf-c-toggle-group__button').eq(2).click();
