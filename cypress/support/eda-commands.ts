@@ -272,14 +272,14 @@ Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
   });
 });
 
-Cypress.Commands.add('addCurrentUserAwxToken', (awxToken: string) => {
+Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
   cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
     token: awxToken,
   });
 });
 
-Cypress.Commands.add('deleteCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
+Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
   cy.requestDelete(`/api/eda/v1/users/me/awx-tokens/${awxToken.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA CONTROLLER TOKEN DELETION :',

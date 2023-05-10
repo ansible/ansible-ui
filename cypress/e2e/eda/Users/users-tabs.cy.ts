@@ -31,12 +31,12 @@ describe('EDA User Tokens Tab', () => {
       cy.contains('td', newTokenName);
       cy.wait('@created')
         .its('response.body')
-        .then((token: EdaControllerToken) => cy.deleteCurrentUserAwxToken(token));
+        .then((token: EdaControllerToken) => cy.deleteEdaCurrentUserAwxToken(token));
     });
   });
 
   it('can delete a Token from the list', () => {
-    cy.addCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
+    cy.addEdaCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
         cy.filterTableByText(activeUser?.username);
