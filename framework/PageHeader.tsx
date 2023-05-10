@@ -18,6 +18,7 @@ import {
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
 import './PageFramework.css';
+import { usePageNavSideBar } from './PageNav/PageNavSidebar';
 import { useBreakpoint } from './components/useBreakPoint';
 import { usePageNavigate } from './components/usePageNavigate';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
@@ -101,7 +102,9 @@ export interface PageHeaderProps {
  * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const { navigation, breadcrumbs, title, description, controls, headerActions, footer } = props;
+  const { breadcrumbs, title, description, controls, headerActions, footer } = props;
+  const navBar = usePageNavSideBar();
+  const navigation = !navBar.isOpen ? props.navigation : undefined;
   const lg = useBreakpoint('lg');
   const xl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
