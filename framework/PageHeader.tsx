@@ -103,11 +103,11 @@ export interface PageHeaderProps {
  */
 export function PageHeader(props: PageHeaderProps) {
   const { breadcrumbs, title, description, controls, headerActions, footer } = props;
-  const navBar = usePageNavSideBar();
-  const navigation = !navBar.isOpen ? props.navigation : undefined;
-  const lg = useBreakpoint('lg');
-  const xl = useBreakpoint('xl');
+  const isLg = useBreakpoint('lg');
+  const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
+  const navBar = usePageNavSideBar();
+  const navigation = navBar.isOpen && isXl ? undefined : props.navigation;
   const [translations] = useFrameworkTranslations();
   return (
     <>
@@ -147,15 +147,15 @@ export function PageHeader(props: PageHeaderProps) {
         variant={PageSectionVariants.light}
         className="border-top border-bottom dark-3"
         style={{
-          paddingTop: breadcrumbs ? (xl ? 16 : 12) : xl ? 16 : 12,
-          paddingBottom: xl ? 16 : 12,
+          paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+          paddingBottom: isXl ? 16 : 12,
         }}
       >
         <Stack hasGutter>
           <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
             <FlexItem grow={{ default: 'grow' }}>
               {breadcrumbs && (
-                <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: lg ? 6 : 4 }} />
+                <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
               )}
               {title ? (
                 props.titleHelp ? (
@@ -211,7 +211,7 @@ export function PageHeader(props: PageHeaderProps) {
                 </Title>
               )}
               {isMdOrLarger && description && (
-                <Text component="p" style={{ paddingTop: xl ? 4 : 2, opacity: 0.8 }}>
+                <Text component="p" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
                   {typeof description === 'string' ? (
                     <Truncate content={description} />
                   ) : (
