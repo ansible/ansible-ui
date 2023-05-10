@@ -1,4 +1,10 @@
-import { ButtonVariant, DropdownPosition, PageSection, Skeleton } from '@patternfly/react-core';
+import {
+  ButtonVariant,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Tooltip,
+} from '@patternfly/react-core';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +29,10 @@ import { useGetItem } from '../../../common/crud/useGetItem';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
 import { Instance } from '../../interfaces/Instance';
-import { NodeTypeCell } from './Instances';
+
+import { Dotted } from '../../../../framework/components/Dotted';
+import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -87,11 +96,14 @@ export function InstanceDetails() {
 function InstanceDetailsTab(props: { instance: Instance }) {
   const { t } = useTranslation();
   const { instance } = props;
+  const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{instance.hostname}</PageDetail>
       <PageDetail label={t('Node type')}>
-        <NodeTypeCell node_type={instance.node_type} />
+        <Tooltip content={toolTipMap[instance.node_type]}>
+          <Dotted>{`${capitalizeFirstLetter(instance.node_type)}`}</Dotted>
+        </Tooltip>
       </PageDetail>
       <PageDetail label={t('Status')}>
         <StatusCell

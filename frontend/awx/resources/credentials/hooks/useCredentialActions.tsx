@@ -9,7 +9,7 @@ import { Credential } from '../../../interfaces/Credential';
 import { useDeleteCredentials } from './useDeleteCredentials';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 
-export function useCredentialActions(options?: { onDeleted: (crednetials: Credential[]) => void }) {
+export function useCredentialActions(options?: { onDeleted: (credentials: Credential[]) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteCredentials = useDeleteCredentials(options?.onDeleted);
