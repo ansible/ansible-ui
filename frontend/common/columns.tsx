@@ -32,6 +32,7 @@ export function useNameColumn<
   header?: string;
   url?: string;
   onClick?: (item: T) => void;
+  sort?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
@@ -48,12 +49,12 @@ export function useNameColumn<
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
         />
       ),
-      sort: disableSort ? undefined : 'name',
+      sort: disableSort ? undefined : options?.sort ?? 'name',
       card: 'name',
       list: 'name',
       defaultSort: true,
     }),
-    [disableLinks, disableSort, onClick, options?.header, t, url]
+    [disableLinks, disableSort, options?.sort, onClick, options?.header, t, url]
   );
   return column;
 }
