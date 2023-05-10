@@ -170,19 +170,40 @@ declare global {
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
       // --- AWX COMMANDS ---
+
+      /**
+       * This command is written to allow asynchronous resource creation in an AWX build using
+       * a user token as the authentication method.
+       * @param method
+       * @param url
+       * @param body
+       */
       awxRequest<ResponseT = unknown>(
         method: string,
         url: string,
         body?: Cypress.RequestBody
       ): Chainable<Cypress.Response<ResponseT>>;
 
+      /**
+       * This command only works for creating a resource in AWX.
+       * @param url
+       * @param body
+       */
       awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
         url: string,
         body: RequestBodyT
       ): Chainable<ResponseBodyT>;
 
+      /**
+       * This command only works for retrieving a resource in AWX.
+       * @param url
+       */
       awxRequestGet<ResponseBodyT = unknown>(url: string): Chainable<ResponseBodyT>;
 
+      /**
+       * This command only works for deleting a resource in AWX.
+       * @param url
+       */
       awxRequestDelete(url: string): Chainable<void>;
 
       createAwxOrganization(): Chainable<Organization>;
@@ -195,8 +216,17 @@ declare global {
       createAwxProject(
         project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
       ): Chainable<Project>;
+
+      /**
+       * Creates a project in AWX that is specific to being utilized in an EDA test.
+       */
       createEdaSpecificAwxProject(): Chainable<Project>;
       createAwxInventory(): Chainable<Inventory>;
+
+      /**
+       * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
+       * @param options
+       */
       createAwxOrganizationProjectInventoryJobTemplate(options?: {
         project?: Partial<Omit<Project, 'id'>>;
         jobTemplate?: Partial<JobTemplate>;
@@ -224,10 +254,23 @@ declare global {
       deleteAwxUser(user: User): Chainable<void>;
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
       deleteAwxLabel(label: Label): Chainable<void>;
+
+      /**
+       * This creates a user token in AWX that can be exported as a string and used in EDA.
+       * @param awxToken
+       */
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
+
+      /**
+       * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
+       */
       getGlobalAwxToken(): Chainable<AwxToken>;
       deleteAwxToken(awxToken: AwxToken): Chainable<void>;
 
+      /**
+       * Command for deleting resources created for testing
+       * @param resources
+       */
       deleteAwxResources(resources?: IAwxResources): Chainable<void>;
 
       createInventoryHostGroup(

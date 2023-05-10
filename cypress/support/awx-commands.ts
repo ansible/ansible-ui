@@ -396,12 +396,12 @@ Cypress.Commands.add(
   }
 );
 
-/* Interface for tracking created resources that will need to be delete at the end of testing using cy.deleteAwxResources */
+/** Interface for tracking created resources that will need to be delete 
+at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
   jobTemplate?: JobTemplate;
 }
 
-/* Command for deleting resources created for testing */
 Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
   if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
 });
