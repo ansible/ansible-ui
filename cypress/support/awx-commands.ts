@@ -409,10 +409,10 @@ export interface IAwxResources {
 
 /* Command for deleting resources created for testing */
 Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
-  cy.deleteAwxProject(resources?.project);
-  cy.deleteAwxInventory(resources?.inventory);
-  cy.deleteAwxJobTemplate(resources?.jobTemplate);
-  cy.deleteAwxOrganization(resources?.organization);
+  if (resources?.project) cy.deleteAwxProject(resources.project);
+  if (resources?.inventory) cy.deleteAwxInventory(resources.inventory);
+  if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
+  if (resources?.organization) cy.deleteAwxOrganization(resources.organization);
 });
 
 Cypress.Commands.add(
