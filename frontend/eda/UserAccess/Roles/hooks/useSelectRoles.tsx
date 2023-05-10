@@ -7,7 +7,7 @@ import { useSelectDialog } from '../../../../../framework';
 
 export function useSelectRoles() {
   const { t } = useTranslation();
-  const tableColumns = useRoleColumns();
+  const tableColumns = useRoleColumns(false);
   const view = useEdaView<EdaRole>({
     url: `${API_PREFIX}/roles/`,
     tableColumns,

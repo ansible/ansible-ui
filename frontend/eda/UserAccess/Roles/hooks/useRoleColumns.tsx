@@ -5,19 +5,22 @@ import { ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 
-export function useRoleColumns() {
+export function useRoleColumns(withLinks: boolean) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRole>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (role) => (
-          <TextCell
-            text={role.name}
-            onClick={() => navigate(RouteObj.EdaRoleDetails.replace(':id', role.id.toString()))}
-          />
-        ),
+        cell: (role) =>
+          withLinks ? (
+            <TextCell
+              text={role.name}
+              onClick={() => navigate(RouteObj.EdaRoleDetails.replace(':id', role.id.toString()))}
+            />
+          ) : (
+            <TextCell text={role.name} />
+          ),
         card: 'name',
         list: 'name',
       },
@@ -28,6 +31,6 @@ export function useRoleColumns() {
         list: 'description',
       },
     ],
-    [navigate, t]
+    [navigate, withLinks, t]
   );
 }

@@ -7,7 +7,7 @@ import { useEdaView } from '../../useEventDrivenView';
 
 export function Roles() {
   const { t } = useTranslation();
-  const tableColumns = useRoleColumns();
+  const tableColumns = useRoleColumns(true);
   const view = useEdaView<EdaRole>({
     url: `${API_PREFIX}/roles/`,
     tableColumns,

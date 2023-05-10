@@ -16,7 +16,7 @@ import './commands';
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
   cy.get('button[aria-label="Options menu"]').click();
-  cy.contains('a', roleName)
+  cy.contains(roleName)
     .parents('td[data-label="Name"]')
     .prev()
     .within(() => {
