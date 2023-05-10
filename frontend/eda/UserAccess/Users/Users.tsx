@@ -5,7 +5,6 @@ import { RouteObj } from '../../../Routes';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
-import { useUserFilters } from './hooks/useUserFilters';
 import { useUsersActions } from './hooks/useUsersActions';
 import { API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
@@ -13,11 +12,9 @@ import { useEdaView } from '../../useEventDrivenView';
 export function Users() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const toolbarFilters = useUserFilters();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
     url: `${API_PREFIX}/users/`,
-    toolbarFilters,
     tableColumns,
   });
   const toolbarActions = useUsersActions(view);
@@ -33,7 +30,6 @@ export function Users() {
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
-        toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading users')}
         emptyStateTitle={t('No users yet')}
