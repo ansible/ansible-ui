@@ -40,7 +40,7 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
   const [subscriptions, setSubscriptions] = useState<Subscriptions>({});
 
   useEffect(() => {
-    if (automationServer) {
+    if (automationServer || process.env.AWX === 'true') {
       const loc = window.location;
       let new_uri: string;
       if (loc.protocol === 'https:') {
