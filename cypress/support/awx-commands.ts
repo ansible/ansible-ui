@@ -377,31 +377,57 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
   }
 });
 
-Cypress.Commands.add('createAwxJobTemplate', () => {
-  cy.createAwxProject().then((project) => {
-    cy.createAwxInventory().then((inventory) => {
-      cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
-        name: 'E2E Job Template ' + randomString(4),
-        playbook: 'hello_world.yml',
-        project: project.id.toString(),
-        inventory: inventory.id,
-      }).then((jobTemplate) => jobTemplate);
+Cypress.Commands.add(
+  'createAwxOrganizationProjectInventoryJobTemplate',
+  (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
+    cy.createAwxOrganization().then((organization) => {
+      cy.createAwxProject({ organization: organization.id, ...options?.project }).then(
+        (project) => {
+          cy.createAwxInventory().then((inventory) => {
+            cy.createAwxJobTemplate(project, inventory, options?.jobTemplate).then(
+              (jobTemplate) => ({
+                project,
+                inventory,
+                jobTemplate,
+                organization,
+              })
+            );
+          });
+        }
+      );
     });
-  });
+  }
+);
+
+/* Interface for tracking created resources that will need to be delete at the end of testing using cy.deleteAwxResources */
+export interface IAwxResources {
+  project?: Project;
+  inventory?: Inventory;
+  jobTemplate?: JobTemplate;
+  organization?: Organization;
+}
+
+/* Command for deleting resources created for testing */
+Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
+  cy.deleteAwxProject(resources?.project);
+  cy.deleteAwxInventory(resources?.inventory);
+  cy.deleteAwxJobTemplate(resources?.jobTemplate);
+  cy.deleteAwxOrganization(resources?.organization);
 });
 
-Cypress.Commands.add('createEdaSpecificAwxJobTemplate', () => {
-  cy.createEdaSpecificAwxProject().then((project) => {
-    cy.createAwxInventory().then((inventory) => {
-      cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
-        name: 'EDA Job Template ' + randomString(4),
-        playbook: 'basic.yml',
-        project: project.id.toString(),
-        inventory: inventory.id,
-      }).then((jobTemplate) => jobTemplate);
-    });
-  });
-});
+Cypress.Commands.add(
+  'createAwxJobTemplate',
+  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
+    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
+      name: 'E2E Job Template ' + randomString(4),
+      playbook: 'hello_world.yml',
+      project: project.id.toString(),
+      inventory: inventory.id,
+      organization: project.organization,
+      ...jobTemplate,
+    }).then((jobTemplate) => jobTemplate);
+  }
+);
 
 Cypress.Commands.add('deleteAwxJobTemplate', (jobTemplate: JobTemplate) => {
   const projectId = jobTemplate.project;

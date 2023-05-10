@@ -26,6 +26,7 @@ import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebook
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
+import { IAwxResources } from './awx-commands';
 import './eda-commands';
 import './rest-commands';
 
@@ -196,8 +197,21 @@ declare global {
       ): Chainable<Project>;
       createEdaSpecificAwxProject(): Chainable<Project>;
       createAwxInventory(): Chainable<Inventory>;
-      createAwxJobTemplate(): Chainable<JobTemplate>;
-      createEdaSpecificAwxJobTemplate(): Chainable<JobTemplate>;
+      createAwxOrganizationProjectInventoryJobTemplate(options?: {
+        project?: Partial<Omit<Project, 'id'>>;
+        jobTemplate?: Partial<JobTemplate>;
+      }): Chainable<{
+        project: Project;
+        inventory: Inventory;
+        jobTemplate: JobTemplate;
+        organization: Organization;
+      }>;
+
+      createAwxJobTemplate(
+        project: Project,
+        inventory: Inventory,
+        jobTemplate?: Partial<JobTemplate>
+      ): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
       createAwxInstanceGroup(): Chainable<InstanceGroup>;
@@ -213,6 +227,8 @@ declare global {
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
       getGlobalAwxToken(): Chainable<AwxToken>;
       deleteAwxToken(awxToken: AwxToken): Chainable<void>;
+
+      deleteAwxResources(resources?: IAwxResources): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization

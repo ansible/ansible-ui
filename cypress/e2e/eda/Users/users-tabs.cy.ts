@@ -1,24 +1,29 @@
 //Tests the actions a user can perform on the tabs inside of a User in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
+import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA User Tokens Tab', () => {
   let awxToken: AwxToken;
-  let edaProject: Project;
+  let awxResources: IAwxResources;
+
   before(() => {
     cy.createAwxToken().then((token) => {
       awxToken = token;
     });
-    cy.createEdaSpecificAwxProject().then((project) => {
-      edaProject = project;
-    });
+
+    cy.createAwxOrganizationProjectInventoryJobTemplate({
+      project: { scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample' },
+      jobTemplate: { name: 'run_basic', playbook: 'basic.yml' },
+    }).then((resources) => (awxResources = resources));
+
     cy.edaLogin();
   });
 
   after(() => {
     cy.deleteAwxToken(awxToken);
+    cy.deleteAwxResources(awxResources);
   });
 
   it('can add a new Token', () => {
@@ -30,9 +35,10 @@ describe('EDA User Tokens Tab', () => {
       cy.clickButton('Create controller token');
       cy.hasTitle('Create Controller Token');
       cy.typeInputByLabel('Name', newTokenName);
-      cy.typeInputByLabel('Token', awxToken.token as string);
+      cy.typeInputByLabel('Token', awxToken.token);
       cy.intercept('POST', '/api/eda/v1/users/me/awx-tokens/').as('created');
       cy.clickButton('Create controller token');
+      // cy.setPageSize(100);
       cy.contains('td', newTokenName);
       cy.wait('@created')
         .its('response.body')
@@ -41,7 +47,7 @@ describe('EDA User Tokens Tab', () => {
   });
 
   it('can delete a Token from the list', () => {
-    cy.addCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
+    cy.addCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
         cy.filterTableByText(activeUser?.username);
