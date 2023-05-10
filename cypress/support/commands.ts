@@ -211,6 +211,7 @@ declare global {
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
       deleteAwxLabel(label: Label): Chainable<void>;
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
+      getGlobalAwxToken(): Chainable<AwxToken>;
       deleteAwxToken(awxToken: AwxToken): Chainable<void>;
 
       createInventoryHostGroup(

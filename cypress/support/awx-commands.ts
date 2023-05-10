@@ -260,19 +260,12 @@ Cypress.Commands.add('awxRequest', function awxRequest<
 >(method: string, url: string, body?: Cypress.RequestBody) {
   let awxServer = Cypress.env('AWX_SERVER') as string;
   if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  cy.createAwxToken().then((awxToken) => {
+  cy.getGlobalAwxToken().then((awxToken) => {
     cy.request<T>({
       method,
       url: awxServer + url,
       body,
-      headers: {
-        'X-CSRFToken': awxToken.token,
-        Authorization:
-          'Basic ' +
-          Buffer.from(
-            `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-          ).toString('base64'),
-      },
+      headers: { Authorization: 'Bearer ' + awxToken.token },
     });
   });
 });
@@ -499,32 +492,31 @@ Cypress.Commands.add('deleteAwxInstanceGroup', (instanceGroup: InstanceGroup) =>
 Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   let awxServer = Cypress.env('AWX_SERVER') as string;
   if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  const username = Cypress.env('AWX_USERNAME') as string;
+  const password = Cypress.env('AWX_PASSWORD') as string;
+  const authorization = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
   cy.request<AwxToken>({
     method: 'POST',
     url: `${awxServer}/api/v2/tokens/`,
     body: { description: 'E2E-' + randomString(4), ...awxToken },
-    headers: {
-      Authorization:
-        'Basic ' +
-        Buffer.from(
-          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-        ).toString('base64'),
-    },
+    headers: { authorization },
   }).then((response) => response.body);
 });
 
+Cypress.Commands.add('getGlobalAwxToken', () => {
+  if (globalAwxToken) cy.wrap(globalAwxToken);
+  else cy.createAwxToken().then((awxToken) => (globalAwxToken = awxToken));
+});
+
 Cypress.Commands.add('deleteAwxToken', (awxToken: AwxToken) => {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  cy.request<AwxToken>({
-    method: 'DELETE',
-    url: `${awxServer}/api/v2/tokens/${awxToken.id}/`,
-    headers: {
-      Authorization:
-        'Basic ' +
-        Buffer.from(
-          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-        ).toString('base64'),
-    },
-  }).then((response) => response.body);
+  cy.awxRequestDelete(`/api/v2/tokens/${awxToken.id}/`);
+});
+
+// Global variable to store the token for AWX
+// Created on demand when a cammand needs it
+let globalAwxToken: AwxToken | undefined;
+
+after(() => {
+  // Delete the token if it was created
+  if (globalAwxToken) cy.deleteAwxToken(globalAwxToken);
 });
