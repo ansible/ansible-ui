@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { PageNavigateCallbackContextProvider } from './components/usePageNavigate';
 import { PageAlertToasterProvider } from './PageAlertToaster';
 import { PageDialogProvider } from './PageDialogs/PageDialog';
 import './PageFramework.css';
+import { PageNavSideBarProvider } from './PageNav/PageNavSidebar';
 import { SettingsProvider } from './Settings';
+import { PageNavigateCallbackContextProvider } from './components/usePageNavigate';
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
 
 /**
@@ -19,7 +20,7 @@ export function PageFramework(props: { children: ReactNode; navigate?: (to: stri
         <PageDialogProvider>
           <PageAlertToasterProvider>
             <PageNavigateCallbackContextProvider callback={props.navigate}>
-              {props.children}
+              <PageNavSideBarProvider>{props.children}</PageNavSideBarProvider>
             </PageNavigateCallbackContextProvider>
           </PageAlertToasterProvider>
         </PageDialogProvider>

@@ -3,25 +3,26 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { RouteObj, RouteType } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 
-export function HubSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
-  const { isNavOpen, setNavOpen } = props;
+export function HubSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const isXl = useBreakpoint('xl');
+  const navBar = usePageNavSideBar();
   const onClick = useCallback(
     (route: RouteType) => {
       navigate(route);
-      if (!isXl) setNavOpen(false);
+      if (!isXl) navBar.setState({ isOpen: !navBar.isOpen });
     },
-    [navigate, isXl, setNavOpen]
+    [navigate, isXl, navBar]
   );
   return (
-    <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
+    <CommonSidebar>
       <NavItem
         isActive={isRouteActive(RouteObj.HubDashboard, location)}
         onClick={() => onClick(RouteObj.HubDashboard)}
