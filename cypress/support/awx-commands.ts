@@ -380,19 +380,14 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
 Cypress.Commands.add(
   'createAwxOrganizationProjectInventoryJobTemplate',
   (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
-    cy.createAwxOrganization().then((organization) => {
-      cy.createAwxProject({ organization: organization.id, ...options?.project }).then(
+    cy.createAwxInventory().then((inventory) => {
+      cy.createAwxProject({ organization: inventory.organization, ...options?.project }).then(
         (project) => {
-          cy.createAwxInventory().then((inventory) => {
-            cy.createAwxJobTemplate(project, inventory, options?.jobTemplate).then(
-              (jobTemplate) => ({
-                project,
-                inventory,
-                jobTemplate,
-                organization,
-              })
-            );
-          });
+          cy.createAwxJobTemplate(project, inventory, options?.jobTemplate).then((jobTemplate) => ({
+            project,
+            inventory,
+            jobTemplate,
+          }));
         }
       );
     });
@@ -401,18 +396,12 @@ Cypress.Commands.add(
 
 /* Interface for tracking created resources that will need to be delete at the end of testing using cy.deleteAwxResources */
 export interface IAwxResources {
-  project?: Project;
-  inventory?: Inventory;
   jobTemplate?: JobTemplate;
-  organization?: Organization;
 }
 
 /* Command for deleting resources created for testing */
 Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
-  if (resources?.project) cy.deleteAwxProject(resources.project);
-  if (resources?.inventory) cy.deleteAwxInventory(resources.inventory);
   if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
-  if (resources?.organization) cy.deleteAwxOrganization(resources.organization);
 });
 
 Cypress.Commands.add(
