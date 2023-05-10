@@ -41,6 +41,7 @@ export function InstanceGroups() {
         icon: PlusCircleIcon,
         variant: ButtonVariant.primary,
         isPinned: true,
+        selection: PageActionSelection.None,
         label: t('Create group'),
         actions: [
           {
@@ -57,6 +58,7 @@ export function InstanceGroups() {
           },
         ],
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -79,6 +81,7 @@ export function InstanceGroups() {
         onClick: (instanceGroup) =>
           navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -94,11 +97,11 @@ export function InstanceGroups() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Instance groups')}
-        titleHelpTitle={t('Instance groups')}
+        title={t('Instance Groups')}
+        titleHelpTitle={t('Instance Groups')}
         titleHelp={t('An instance group defines grouped instances or grouped containers')}
         description={t(
-          'An Instance Group provides the ability to group instances in a clustered environment.'
+          'An instance group provides the ability to group instances in a clustered environment.'
         )}
       />
       <PageTable<InstanceGroup>
@@ -126,7 +129,7 @@ export function useInstanceGroupsFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name__icontains',
-        placeholder: t('Enter name'),
+        placeholder: t('contains'),
       },
     ],
     [t]

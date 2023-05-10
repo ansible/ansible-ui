@@ -15,26 +15,22 @@ export function useActivationHistoryColumns() {
         header: t('Name'),
         cell: (instance) => (
           <TextCell
-            text={instance.name || `Instance ${instance.id}`}
+            text={`${instance?.id || ''} - ${instance?.name || ''}`}
             onClick={() =>
               navigate(RouteObj.EdaActivationInstanceDetails.replace(':id', instance.id.toString()))
             }
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('Status'),
         cell: (instance: EdaActivationInstance) => <StatusCell status={instance.status} />,
-        sort: 'status',
       },
       {
         header: t('Start date'),
         cell: (instance) => <DateCell value={instance.started_at} />,
-        sort: 'started_at',
       },
     ],
     [navigate, t]

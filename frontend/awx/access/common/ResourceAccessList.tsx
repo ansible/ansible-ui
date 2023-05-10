@@ -88,23 +88,24 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to add users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to add users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectUsersAddTeams([resource]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
-        isPinned: true,
         icon: MinusCircleIcon,
         label: t('Remove users'),
         isDisabled: canAddAndRemoveUsers
           ? undefined
           : t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: (users) => removeUsersFromResource(users, resource, view.unselectItemsAndRefresh),
+        isDanger: true,
       },
     ],
     [
@@ -137,11 +138,12 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
             user.user_roles?.some((role) => !role.user_capabilities.unattach)
           ) {
             return t(
-              'You do not have permission to remove users. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to remove users. Please contact your organization administrator if there is an issue with your access.'
             );
           }
           return undefined;
         },
+        isDanger: true,
       },
     ],
     [canAddAndRemoveUsers, removeUsersFromResource, resource, t, view.unselectItemsAndRefresh]

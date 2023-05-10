@@ -14,14 +14,12 @@ export function useUserColumns() {
         header: t('Username'),
         cell: (user) => (
           <TextCell
-            text={user.name}
+            text={user.username}
             onClick={() => navigate(RouteObj.EdaUserDetails.replace(':id', user.id.toString()))}
           />
         ),
-        sort: 'name',
         card: 'name',
         list: 'name',
-        defaultSort: true,
       },
       {
         header: t('First name'),
@@ -30,10 +28,6 @@ export function useUserColumns() {
       {
         header: t('Last name'),
         cell: (user) => user.last_name && <TextCell text={user.last_name} />,
-      },
-      {
-        header: t('User type'),
-        cell: (user) => user.type && <TextCell text={user.type} />,
       },
     ],
     [navigate, t]

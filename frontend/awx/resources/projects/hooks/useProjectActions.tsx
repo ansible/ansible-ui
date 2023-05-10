@@ -15,7 +15,10 @@ import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
 
-export function useProjectActions(onComplete: (projects: Project[]) => void) {
+export function useProjectActions(
+  onComplete: (projects: Project[]) => void,
+  showToastMessage?: boolean
+) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteProjects = useDeleteProjects(onComplete);
@@ -25,7 +28,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
 
   return useMemo<IPageAction<Project>[]>(() => {
     const cannotCancelProjectDueToStatus = (project: Project) =>
-      ['pending', 'waiting', 'running'].includes(project.status)
+      ['pending', 'waiting', 'running'].includes(project.status ?? '')
         ? ''
         : t(`The project sync cannot be canceled because it is not running`);
     const cannotCancelProjectDueToPermissions = (project: Project) =>
@@ -44,10 +47,10 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
       if (project.scm_type === '') {
         return t(`Cannot sync project`);
       }
-      if (project.scm_type !== '' && !project?.summary_fields?.user_capabilities?.start) {
+      if (project.scm_type && !project?.summary_fields?.user_capabilities?.start) {
         return t(`The project cannot be synced due to insufficient permission`);
       }
-      if (['pending', 'waiting', 'running'].includes(project.status)) {
+      if (['pending', 'waiting', 'running'].includes(project.status ?? '')) {
         return t(`The project cannot be synced because a sync job is currently running`);
       }
       return '';
@@ -87,8 +90,6 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         label: t('Sync project'),
         isDisabled: cannotSyncProject,
         onClick: (project: Project) => {
-          // TODO: make into a hook using websockets
-          // update revision hash
           const alert: AlertProps = {
             variant: 'success',
             title: t(`Syncing ${project.name}.`),
@@ -96,7 +97,7 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
           };
           postRequest(`/api/v2/projects/${project?.id ?? 0}/update/`, { id: project.id })
             .then(() => {
-              alertToaster.addAlert(alert);
+              showToastMessage ? alertToaster.addAlert(alert) : null;
             })
             .catch((error) => {
               alertToaster.addAlert({
@@ -147,5 +148,5 @@ export function useProjectActions(onComplete: (projects: Project[]) => void) {
         isDanger: true,
       },
     ];
-  }, [alertToaster, cancelProjects, deleteProjects, navigate, postRequest, t]);
+  }, [alertToaster, cancelProjects, deleteProjects, showToastMessage, navigate, postRequest, t]);
 }

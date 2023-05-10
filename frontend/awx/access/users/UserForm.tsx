@@ -11,9 +11,9 @@ import {
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { RouteObj } from '../../../Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { RouteObj } from '../../../Routes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
@@ -60,8 +60,8 @@ export function CreateUser() {
   return (
     <>
       <PageHeader
-        title={t('Create user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create user') }]}
+        title={t('Create User')}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create User') }]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -111,14 +111,15 @@ export function EditUser() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
+          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
         />
       </PageLayout>
     );
   }
 
+  const { password, ...defaultUserValue } = user;
   const defaultValue: Partial<IUserInput> = {
-    user: user,
+    user: defaultUserValue,
     userType: user.is_superuser
       ? 'System administrator'
       : user.is_system_auditor
@@ -128,8 +129,8 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit user')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit user') }]}
+        title={t('Edit User')}
+        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}

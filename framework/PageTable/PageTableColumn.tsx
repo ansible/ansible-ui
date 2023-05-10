@@ -128,7 +128,7 @@ interface ITableColumnCommon<T extends object> {
 //** Column that renders using a render function that returns a ReactNode. */
 export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
   type?: undefined;
-  value?: CellFn<T, string | string[] | number | boolean>;
+  value?: CellFn<T, string | string[] | number | boolean | undefined | null>;
   cell: CellFn<T, ReactNode | undefined>;
 }
 
@@ -282,3 +282,20 @@ export function useExpandedColumns<T extends object>(columns: ITableColumn<T>[])
 }
 
 type CellFn<T extends object, R> = (item: T) => R;
+
+/** Hook to disable sorting on all columns. */
+export function useColumnsWithoutSort<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(() => columns.map((column) => ({ ...column, sort: undefined })), [columns]);
+}
+
+/** Hook to disable sorting on all columns. */
+export function useColumnsWithoutExpandedRow<T extends object>(columns: ITableColumn<T>[]) {
+  return useMemo(
+    () =>
+      columns.map((column) => ({
+        ...column,
+        table: column.table === ColumnTableOption.Expanded ? undefined : column.table,
+      })),
+    [columns]
+  );
+}

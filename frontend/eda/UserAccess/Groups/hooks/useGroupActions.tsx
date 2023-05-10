@@ -1,4 +1,4 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -17,8 +17,8 @@ export function useGroupActions(view: IEdaView<EdaGroup>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
-        label: t('Edit Group'),
+        icon: PencilAltIcon,
+        label: t('Edit group'),
         onClick: (Group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', Group.id.toString())),
       },
@@ -26,7 +26,7 @@ export function useGroupActions(view: IEdaView<EdaGroup>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete Group'),
+        label: t('Delete group'),
         onClick: (Group: EdaGroup) => deleteGroups([Group]),
         isDanger: true,
       },

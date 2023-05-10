@@ -1,14 +1,13 @@
 // import '@patternfly/react-core/dist/styles/base.css'
 import '@patternfly/patternfly/patternfly-base.css';
+import '@patternfly/patternfly/patternfly-charts.css';
+
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
-import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import Backend from 'i18next-http-backend';
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
-import { initReactI18next } from 'react-i18next';
 import Main from './Main';
+import './i18n';
 
 const container = document.createElement('div');
 container.style.position = 'fixed';
@@ -18,25 +17,11 @@ container.style.overflow = 'hidden';
 document.body.appendChild(container);
 const root = createRoot(container);
 
-void i18n
-  .use(Backend)
-  .use(LanguageDetector)
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'fr'],
-    debug: false,
-    interpolation: {
-      escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
-    },
-  })
-  .then(() => {
-    root.render(
-      <Suspense fallback={<div />}>
-        <Main />
-      </Suspense>
-    );
-  });
+root.render(
+  <Suspense fallback={<div />}>
+    <Main />
+  </Suspense>
+);
 
 /* istanbul ignore next */
 if (process.env.PWA === 'true' && 'serviceWorker' in navigator) {

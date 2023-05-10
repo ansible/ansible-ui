@@ -13,20 +13,20 @@ export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<EdaUser>();
   return useCallback(
-    (Users: EdaUser[]) => {
+    (users: EdaUser[]) => {
       bulkAction({
-        title: t('Permanently delete Users', { count: Users.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} Users.', {
-          count: Users.length,
+        title: t('Permanently delete users', { count: users.length }),
+        confirmText: t('Yes, I confirm that I want to delete these {{count}} users.', {
+          count: users.length,
         }),
-        actionButtonText: t('Delete Users', { count: Users.length }),
-        items: Users.sort((l, r) => compareStrings(l.name, r.name)),
+        actionButtonText: t('Delete users', { count: users.length }),
+        items: users.sort((l, r) => compareStrings(l.username, r.username)),
         keyFn: idKeyFn,
         isDanger: true,
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (User: EdaUser) => requestDelete(`${API_PREFIX}/Users/${User.id}/`),
+        actionFn: (user: EdaUser) => requestDelete(`${API_PREFIX}/users/${user.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

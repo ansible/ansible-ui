@@ -28,7 +28,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { PageDetailsSection } from '../../common/PageDetailSection';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useDeleteInventories } from './hooks/useDeleteInventories';
 
@@ -36,7 +36,11 @@ export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: inventory } = useGet<EdaInventory>(`${API_PREFIX}/inventory/${params.id ?? ''}/`);
+  const { data: inventory } = useGet<EdaInventory>(
+    `${API_PREFIX}/inventory/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

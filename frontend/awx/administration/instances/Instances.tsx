@@ -86,6 +86,12 @@ export function Instances() {
         isPinned: true,
         icon: HeartbeatIcon,
         label: t('Run health check'),
+        isDisabled: (instance) => {
+          if (instance.node_type === 'execution') {
+            return undefined;
+          }
+          return t('Health checks cannot be run on instances of this type');
+        },
         onClick: (instance) => {
           const alert: AlertProps = {
             variant: 'info',
@@ -155,7 +161,7 @@ export function useInstancesFilters() {
         label: t('Name'),
         type: 'string',
         query: 'hostname__icontains',
-        placeholder: t('Enter name'),
+        placeholder: t('contains'),
       },
       {
         key: 'type',

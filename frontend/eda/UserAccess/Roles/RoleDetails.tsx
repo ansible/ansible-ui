@@ -1,72 +1,97 @@
-import { DropdownPosition } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
-  PageActions,
-  PageDetailsFromColumns,
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
+  Scrollable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
-import { useDeleteRoles } from './hooks/useDeleteRole';
-import { useRoleColumns } from './hooks/useRoleColumns';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Label,
+  LabelGroup,
+} from '@patternfly/react-core';
 
 export function RoleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { data: role } = useGet<EdaRole>(`${API_PREFIX}/roles/${params.id ?? ''}/`);
-  const tableColumns = useRoleColumns();
-
-  const deleteRoles = useDeleteRoles((deleted) => {
-    if (deleted.length > 0) {
-      navigate(RouteObj.EdaRoles);
-    }
-  });
-
-  const itemActions = useMemo<IPageAction<EdaRole>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: EditIcon,
-        label: t('Edit Role'),
-        onClick: (role: EdaRole) =>
-          navigate(RouteObj.EditEdaRole.replace(':id', role.id.toString())),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete Role'),
-        onClick: (role: EdaRole) => deleteRoles([role]),
-        isDanger: true,
-      },
-    ],
-    [deleteRoles, navigate, t]
+  const { data: role } = useGet<EdaRole>(
+    `${API_PREFIX}/roles/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
+  const ResourceTypes = {
+    activation: t('Activation'),
+    activation_instance: t('Activation Instance'),
+    audit_rule: t('Audit Rule'),
+    audit_event: t('Audit Event'),
+    task: t('Task'),
+    user: t('User'),
+    project: t('Project'),
+    inventory: t('Inventory'),
+    extra_var: t('Extra Vars'),
+    playbook: t('Playbook'),
+    rulebook: t('Rulebook'),
+    role: t('Role'),
+    decision_environment: t('Decision environment'),
+    credential: t('Credential'),
+  };
+
   return (
     <PageLayout>
       <PageHeader
         title={role?.name}
         breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: role?.name }]}
-        headerActions={
-          <PageActions<EdaRole>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={role}
-          />
-        }
       />
-      <PageDetailsFromColumns item={role} columns={tableColumns} />
+      <Scrollable>
+        <PageDetails>
+          <PageDetail label={t('Name')}>{role?.name || ''}</PageDetail>
+          <PageDetail label={t('Description')}>{role?.description || ''}</PageDetail>
+          <PageDetail label={t('Created')}>
+            <DateTimeCell format="date-time" value={role?.created_at} />
+          </PageDetail>
+        </PageDetails>
+        <PageDetails numberOfColumns={'single'}>
+          <PageDetail label={t('Permissions')}>
+            <DescriptionList
+              isCompact
+              isHorizontal
+              horizontalTermWidthModifier={{
+                default: '16ch',
+              }}
+            >
+              {role?.permissions.map((permission) => (
+                <DescriptionListGroup key={permission?.resource_type}>
+                  <DescriptionListTerm
+                    style={{ fontWeight: 'normal' }}
+                    key={permission?.resource_type}
+                  >
+                    {ResourceTypes[permission?.resource_type] || permission?.resource_type}
+                  </DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {!!permission?.action.length && (
+                      <LabelGroup numLabels={5}>
+                        {permission?.action.map((action) => (
+                          <Label key={action}>{action}</Label>
+                        ))}
+                      </LabelGroup>
+                    )}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              ))}
+            </DescriptionList>
+          </PageDetail>
+        </PageDetails>
+      </Scrollable>
     </PageLayout>
   );
 }

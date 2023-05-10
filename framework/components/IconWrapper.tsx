@@ -25,7 +25,7 @@ export function IconWrapper(props: {
   if (props.padRight) {
     switch (props.size) {
       case 'sm':
-        paddingRight = 4;
+        paddingRight = 6;
         break;
       case 'md':
         paddingRight = 6;

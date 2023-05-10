@@ -1,18 +1,18 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { CubesIcon } from '@patternfly/react-icons';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { RouteObj } from '../../../Routes';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
-import { useProjectsFilters } from './hooks/useProjectsFilters';
-import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
+import { useProjectsColumns } from './hooks/useProjectsColumns';
+import { useProjectsFilters } from './hooks/useProjectsFilters';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -25,8 +25,9 @@ export function Projects() {
     toolbarFilters,
     tableColumns,
   });
+  const showToastMessage = true;
   const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
-  const rowActions = useProjectActions(view.unselectItemsAndRefresh);
+  const rowActions = useProjectActions(view.unselectItemsAndRefresh, showToastMessage);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
@@ -59,13 +60,15 @@ export function Projects() {
     <PageLayout>
       <PageHeader
         title={t('Projects')}
-        titleHelpTitle={t('Projects')}
+        titleHelpTitle={t('Project')}
         titleHelp={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your ${product} server, or by placing your playbooks into a source code management (SCM) system supported by ${product}, including Git, Subversion, Mercurial, and Red Hat Insights.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
         description={t(
-          `A Project is a logical collection of Ansible playbooks, represented in ${product}.`
+          `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
+          { product }
         )}
       />
       <PageTable<Project>
@@ -83,7 +86,7 @@ export function Projects() {
           canCreateProject
             ? t('Please create a project by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateProject ? undefined : CubesIcon}

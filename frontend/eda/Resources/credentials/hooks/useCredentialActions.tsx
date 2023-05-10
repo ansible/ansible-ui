@@ -1,4 +1,4 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { RouteObj } from '../../../../Routes';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteCredentials } from './useDeleteCredentials';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useCredentialActions(view: IEdaView<EdaCredential>) {
   const { t } = useTranslation();
@@ -16,8 +17,10 @@ export function useCredentialActions(view: IEdaView<EdaCredential>) {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),

@@ -56,6 +56,7 @@ export function ExecutionEnvironments() {
         label: t('Create execution environment'),
         onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -80,6 +81,7 @@ export function ExecutionEnvironments() {
             RouteObj.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
           ),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -95,11 +97,8 @@ export function ExecutionEnvironments() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Execution environments')}
-        titleHelpTitle={t('Execution environments')}
-        titleHelp={t('executionEnvironments.title.help')}
+        title={t('Execution Environments')}
         titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
-        description={t('executionEnvironments.title.description')}
       />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}

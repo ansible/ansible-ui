@@ -1,4 +1,4 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { RouteObj } from '../../../../Routes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironment>) {
   const { t } = useTranslation();
@@ -16,8 +17,10 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
           navigate(

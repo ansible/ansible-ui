@@ -1,4 +1,5 @@
 import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -12,25 +13,28 @@ import {
   Scrollable,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { useGet } from '../../../common/crud/useGet';
 import { RouteObj } from '../../../Routes';
-import { API_PREFIX } from '../../constants';
+import { StatusCell } from '../../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
+import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
+import { useEdaView } from '../../useEventDrivenView';
+import { useRuleAuditActionsColumns } from './hooks/useRuleAuditActionsColumns';
+import { useRuleAuditActionsFilters } from './hooks/useRuleAuditActionsFilters';
 import { useRuleAuditEventsColumns } from './hooks/useRuleAuditEventsColumns';
 import { useRuleAuditEventsFilters } from './hooks/useRuleAuditEventsFilters';
-import { useRuleAuditActionsFilters } from './hooks/useRuleAuditActionsFilters';
-import { useRuleAuditActionsColumns } from './hooks/useRuleAuditActionsColumns';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
-import { useEdaView } from '../../useEventDrivenView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
-import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
-import { StatusLabelCell } from '../../common/StatusLabelCell';
 
 export function RuleAuditDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const { data: ruleAudit } = useGet<EdaRuleAudit>(`${API_PREFIX}/audit-rules/${params.id ?? ''}/`);
+  const { data: ruleAudit } = useGet<EdaRuleAudit>(
+    `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
 
   const renderRuleAuditDetailsTab = (ruleAudit: EdaRuleAudit | undefined): JSX.Element => {
     return (
@@ -39,20 +43,23 @@ export function RuleAuditDetails() {
           <PageDetail label={t('Rule name')}>{ruleAudit?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{ruleAudit?.description || ''}</PageDetail>
           <PageDetail label={t('Status')}>
-            <StatusLabelCell status={ruleAudit?.status || ''} />
+            <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
-          <PageDetail label={t('Rulebook activation')}>
-            {ruleAudit && ruleAudit.activation?.id ? (
+          <PageDetail
+            label={t('Rulebook activation')}
+            helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
+          >
+            {ruleAudit && ruleAudit.activation_id ? (
               <Link
                 to={RouteObj.EdaRulebookActivationDetails.replace(
                   ':id',
-                  `${ruleAudit.activation?.id || ''}`
+                  `${ruleAudit.activation_id || ''}`
                 )}
               >
-                {ruleAudit?.activation?.name}
+                {ruleAudit?.activation_name}
               </Link>
             ) : (
-              ruleAudit?.activation?.name || ''
+              ruleAudit?.activation_name || ''
             )}
           </PageDetail>
           <PageDetail label={t('Created')}>
@@ -86,7 +93,7 @@ export function RuleAuditDetails() {
           emptyStateTitle={t('No actions yet')}
           emptyStateDescription={t('No actions yet for this rule audit')}
           {...view}
-          defaultSubtitle={t('Actions')}
+          defaultSubtitle={t('Action')}
         />
       </PageLayout>
     );
@@ -112,7 +119,7 @@ export function RuleAuditDetails() {
           emptyStateIcon={CubesIcon}
           emptyStateDescription={t('No events for this rule audit')}
           {...view}
-          defaultSubtitle={t('Rule audit events')}
+          defaultSubtitle={t('Rule Audit Event')}
         />
       </PageLayout>
     );
@@ -123,18 +130,18 @@ export function RuleAuditDetails() {
       <PageHeader
         title={ruleAudit?.name}
         breadcrumbs={[
-          { label: t('Rule audit'), to: RouteObj.EdaRuleAudit },
+          { label: t('Rule Audit'), to: RouteObj.EdaRuleAudit },
           { label: ruleAudit?.name },
         ]}
       />
       {ruleAudit ? (
         <PageTabs>
           <PageTab label={t('Details')}>{renderRuleAuditDetailsTab(ruleAudit)}</PageTab>
-          <PageTab label={t('Actions')}>
-            <RuleAuditActionsTab />
-          </PageTab>
           <PageTab label={t('Events')}>
             <RuleAuditEventsTab />
+          </PageTab>
+          <PageTab label={t('Actions')}>
+            <RuleAuditActionsTab />
           </PageTab>
         </PageTabs>
       ) : (

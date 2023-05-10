@@ -14,6 +14,19 @@ import { Link } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
+import styled from 'styled-components';
+
+const IconSpan = styled.span`
+  padding-right: 4px;
+`;
+const StyledDropdownItem = styled.div<{ hasSwitches: boolean; isDanger: boolean }>`
+  --pf-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
+    hasSwitches ? '40px' : undefined};
+  --pf-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
+    hasSwitches ? '16px' : undefined};
+  --pf-c-dropdown__menu-item--Color: ${({ isDanger }) =>
+    isDanger ? 'var(--pf-global--danger-color--100)' : undefined};
+`;
 
 interface PageActionDropdownProps<T extends object> {
   actions: IPageAction<T>[];
@@ -59,6 +72,14 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
     () =>
       actions.find(
         (action) => action.type !== PageActionType.Seperator && action.icon !== undefined
+      ) !== undefined,
+    [actions]
+  );
+  const hasSwitches = useMemo(
+    () =>
+      actions.find(
+        (action) =>
+          action.type !== PageActionType.Seperator && action.type === PageActionType.Switch
       ) !== undefined,
     [actions]
   );
@@ -118,6 +139,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
           selectedItems={selectedItems ?? []}
           selectedItem={selectedItem}
           hasIcons={hasIcons}
+          hasSwitches={hasSwitches}
           index={index}
         />
       ))}
@@ -140,9 +162,10 @@ function PageDropdownActionItem<T extends object>(props: {
   selectedItems: T[];
   selectedItem?: T;
   hasIcons: boolean;
+  hasSwitches: boolean;
   index: number;
 }): JSX.Element {
-  const { action, selectedItems, selectedItem, hasIcons, index } = props;
+  const { action, selectedItems, selectedItem, hasIcons, hasSwitches, index } = props;
   const isPageActionDisabled = usePageActionDisabled<T>();
   const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
 
@@ -158,37 +181,33 @@ function PageDropdownActionItem<T extends object>(props: {
       }
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <DropdownItem
-            icon={
-              Icon ? (
-                <span style={{ paddingRight: 4 }}>
-                  <Icon />
-                </span>
-              ) : undefined
-            }
-            onClick={() => {
-              switch (action.selection) {
-                case PageActionSelection.None:
-                  action.onClick();
-                  break;
-                case PageActionSelection.Single:
-                  if (selectedItem) action.onClick(selectedItem);
-                  break;
-                case PageActionSelection.Multiple:
-                  if (selectedItems) action.onClick(selectedItems);
-                  break;
+          <StyledDropdownItem hasSwitches={hasSwitches} isDanger={Boolean(action.isDanger)}>
+            <DropdownItem
+              icon={
+                Icon ? (
+                  <IconSpan>
+                    <Icon />
+                  </IconSpan>
+                ) : undefined
               }
-            }}
-            isAriaDisabled={isButtonDisabled}
-            style={{
-              color:
-                action.isDanger && !isButtonDisabled
-                  ? 'var(--pf-global--danger-color--100)'
-                  : undefined,
-            }}
-          >
-            {action.label}
-          </DropdownItem>
+              onClick={() => {
+                switch (action.selection) {
+                  case PageActionSelection.None:
+                    action.onClick();
+                    break;
+                  case PageActionSelection.Single:
+                    if (selectedItem) action.onClick(selectedItem);
+                    break;
+                  case PageActionSelection.Multiple:
+                    if (selectedItems) action.onClick(selectedItems);
+                    break;
+                }
+              }}
+              isAriaDisabled={isButtonDisabled}
+            >
+              {action.label}
+            </DropdownItem>
+          </StyledDropdownItem>
         </Tooltip>
       );
     }

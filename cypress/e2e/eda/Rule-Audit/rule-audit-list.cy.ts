@@ -6,7 +6,13 @@ describe('EDA Rule Audits List', () => {
   });
 
   it.skip('can render the Rule Audits list view', () => {
-    //change test stub name to stipulate what the specific criteria is
+    cy.navigateTo(/^Rule Audit$/);
+    cy.hasTitle(/^Rule Audit$/)
+      .next('p')
+      .should(
+        'have.text',
+        'Rule audit allows auditing of rules which have been triggered by incoming events.'
+      );
   });
 
   it.skip('can filter the Rule Audits list based on specific criteria', () => {

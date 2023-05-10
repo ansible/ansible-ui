@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
-import { IToolbarFilter } from '../PageTable/PageToolbar';
+import { IToolbarFilter } from '../PageTable/PageToolbarFilter';
 import { ISelected } from '../PageTable/useTableItems';
 import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';
@@ -36,7 +36,7 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
  * @deprecated use SelectSingleDialog
  */
 export function useSelectDialog<
-  T extends { id: number; name: string | undefined },
+  T extends { id: number | string; name: string | undefined },
   TMultiple = false
 >(options: ISelectDialogOptions<T, TMultiple>) {
   const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
@@ -97,9 +97,10 @@ export type SelectDialogProps<T extends object, TMultiple> = {
   keyFn: (item: T) => string | number;
 } & ISelectDialogOptions<T, TMultiple>;
 
-export function SelectDialog<T extends { id: number; name: string | undefined }, TMultiple = false>(
-  props: SelectDialogProps<T, TMultiple>
-) {
+export function SelectDialog<
+  T extends { id: number | string; name: string | undefined },
+  TMultiple = false
+>(props: SelectDialogProps<T, TMultiple>) {
   const {
     title,
     open,

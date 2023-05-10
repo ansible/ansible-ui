@@ -3,10 +3,12 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  CopyCell,
   IPageAction,
   ITableColumn,
   PageActionSelection,
   PageActionType,
+  PageHeader,
   PageLayout,
   PageTable,
   TextCell,
@@ -15,6 +17,8 @@ import {
 import { PageTableViewTypeE } from '../../framework/PageTable/PageTableViewType';
 import { useView } from '../../framework/useView';
 import { useLoginModal } from '../common/LoginModal';
+import AwxIcon from './AWX.svg';
+import EdaIcon from './EDA.svg';
 import { useAutomationServers } from './contexts/AutomationServerProvider';
 import { useAddAutomationServer } from './hooks/useAddAutomationServer';
 import { useRemoveAutomationServers } from './hooks/useRemoveAutomationServers';
@@ -37,6 +41,7 @@ export function AutomationServers() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
+        isPinned: true,
         variant: ButtonVariant.primary,
         icon: PlusCircleIcon,
         label: t('Add automation server'),
@@ -74,12 +79,16 @@ export function AutomationServers() {
     [removeAutomationServers, t]
   );
 
+  // const filters = useAutomationServerFilters();
+
   return (
     <PageLayout>
+      <PageHeader title={t('Automation servers')} />
       <PageTable<AutomationServer>
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
+        // toolbarFilters={filters}
         errorStateTitle={t('Error loading automation servers')}
         emptyStateTitle={t('Welcome to Ansible')}
         emptyStateDescription={t('To get started, add your Ansible automation servers.')}
@@ -112,6 +121,16 @@ export function useAutomationServersColumns(_options?: {
         ),
         card: 'name',
         list: 'name',
+        icon: (server) => {
+          switch (server.type) {
+            case AutomationServerType.AWX:
+              return <AwxIcon />;
+            case AutomationServerType.EDA:
+              return <EdaIcon />;
+            case AutomationServerType.HUB:
+              return <div style={{ fontSize: 'xx-large' }}>HUB</div>;
+          }
+        },
       },
       {
         header: t('Type'),
@@ -132,7 +151,24 @@ export function useAutomationServersColumns(_options?: {
       },
       {
         header: t('Url'),
-        cell: (server) => <TextCell text={server.url} />,
+        value: (server) => server.url,
+        cell: (server) => <CopyCell text={server.url} />,
+        // card: 'description',
+        // list: 'description',
+      },
+      {
+        header: t('Labels'),
+        type: 'labels',
+        value: (server) => {
+          switch (server.type) {
+            case AutomationServerType.AWX:
+              return ['AWX'];
+            case AutomationServerType.EDA:
+              return ['EDA'];
+            case AutomationServerType.HUB:
+              return ['HUB'];
+          }
+        },
         card: 'description',
         list: 'description',
       },
@@ -141,3 +177,25 @@ export function useAutomationServersColumns(_options?: {
   );
   return tableColumns;
 }
+
+// export function useAutomationServerFilters() {
+//   const { t } = useTranslation();
+//   const toolbarFilters = useMemo<IToolbarFilter[]>(
+//     () => [
+//       {
+//         key: 'type',
+//         label: t('Types'),
+//         type: 'select',
+//         query: 'type',
+//         options: [
+//           { label: t('AWX'), value: AutomationServerType.AWX },
+//           { label: t('EDA'), value: AutomationServerType.EDA },
+//           { label: t('HUB'), value: AutomationServerType.HUB },
+//         ],
+//         placeholder: t('Select types'),
+//       },
+//     ],
+//     [t]
+//   );
+//   return toolbarFilters;
+// }

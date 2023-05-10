@@ -14,7 +14,7 @@ describe('EDA Projects CRUD', () => {
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
     cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/ansible/event-driven-ansible');
+    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/Alex-Izquierdo/eda-sample-project');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
@@ -29,7 +29,7 @@ describe('EDA Projects CRUD', () => {
       cy.get('h1').should('contain', 'Projects');
       cy.clickTableRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
-      cy.hasTitle(/^Edit project$/);
+      cy.hasTitle(`Edit ${edaProject.name}`);
       cy.typeInputByLabel(/^Name$/, edaProject.name + 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);

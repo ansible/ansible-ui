@@ -11,12 +11,11 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
-  PageTab,
-  PageTabs,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { useGetItem } from '../../../../common/crud/useGetItem';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -48,6 +47,7 @@ export function UserPage() {
         label: t('Edit user'),
         onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -76,20 +76,21 @@ export function UserPage() {
           />
         }
       />
-      <PageTabs>
-        <PageTab label={t('Details')}>
+      <RoutedTabs baseUrl={RouteObj.UserPage}>
+        <PageBackTab label={t('Back to Users')} url={RouteObj.Users} persistentFilterKey="users" />
+        <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
-        </PageTab>
-        <PageTab label={t('Organizations')}>
+        </RoutedTab>
+        <RoutedTab label={t('Organizations')} url={RouteObj.UserOrganizations}>
           <UserOrganizations user={user} />
-        </PageTab>
-        <PageTab label={t('Teams')}>
+        </RoutedTab>
+        <RoutedTab label={t('Teams')} url={RouteObj.UserTeams}>
           <UserTeams user={user} />
-        </PageTab>
-        <PageTab label={t('Roles')}>
+        </RoutedTab>
+        <RoutedTab label={t('Roles')} url={RouteObj.UserRoles}>
           <UserRoles user={user} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

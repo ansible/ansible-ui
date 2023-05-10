@@ -47,16 +47,18 @@ export function UserTeams(props: { user: User }) {
         isDisabled: canAddUserToTeam
           ? undefined
           : t(
-              'You do not have permissions to add this user to a team. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permissions to add this user to a team. Please contact your organization administrator if there is an issue with your access.'
             ),
         onClick: () => selectTeamsAddUsers([user]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
         label: t('Remove user from selected teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
+        isDanger: true,
       },
     ],
     [t, canAddUserToTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
@@ -69,6 +71,7 @@ export function UserTeams(props: { user: User }) {
         icon: MinusCircleIcon,
         label: t('Remove user from team'),
         onClick: (team: Team) => removeTeamsFromUsers([user], [team]),
+        isDanger: true,
       },
     ],
     [removeTeamsFromUsers, t, user]
@@ -93,7 +96,7 @@ export function UserTeams(props: { user: User }) {
           canAddUserToTeam
             ? t('Please add a team by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}

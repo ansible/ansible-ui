@@ -56,7 +56,7 @@ describe('users', () => {
     cy.navigateTo(/^Users$/);
     cy.clickTableRow(user.username);
     cy.hasTitle(user.username);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#username', user.username);
   });
 
@@ -65,7 +65,7 @@ describe('users', () => {
     cy.clickTableRow(user.username);
     cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
-    cy.hasTitle(/^Edit user$/);
+    cy.hasTitle(/^Edit User$/);
     cy.typeInputByLabel(/^Username$/, user.username + 'a');
     cy.clickButton(/^Save user$/);
     cy.hasTitle(`${user.username}a`);
@@ -84,7 +84,7 @@ describe('users', () => {
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo(/^Users$/);
     cy.clickTableRowPinnedAction(user.username, 'Edit user');
-    cy.hasTitle(/^Edit user$/);
+    cy.hasTitle(/^Edit User$/);
   });
 
   it('deletes a user from the users list row item', () => {

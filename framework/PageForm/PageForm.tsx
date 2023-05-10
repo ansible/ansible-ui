@@ -1,5 +1,3 @@
-import { ajvResolver } from '@hookform/resolvers/ajv';
-
 import {
   ActionGroup,
   Alert,
@@ -9,7 +7,6 @@ import {
   gridItemSpanValueShape,
   Tooltip,
 } from '@patternfly/react-core';
-import * as Ajv from 'ajv';
 import { JSONSchema6 } from 'json-schema';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
@@ -18,6 +15,7 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
+  Path,
   useForm,
   useFormState,
 } from 'react-hook-form';
@@ -40,15 +38,9 @@ export function PageForm<T extends object>(props: {
   disableBody?: boolean;
   disablePadding?: boolean;
 }) {
-  const { schema, defaultValue, disableBody, disablePadding } = props;
+  const { defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DeepPartial<T>),
-    resolver: schema
-      ? ajvResolver(
-          schema as Ajv.JSONSchemaType<T>,
-          { strict: false, addFormats: true } as Ajv.Options
-        )
-      : undefined,
   });
 
   const [frameworkTranslations] = useFrameworkTranslations();
@@ -76,6 +68,25 @@ export function PageForm<T extends object>(props: {
             );
           } catch (err) {
             err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
+            if (
+              typeof err === 'object' &&
+              err !== null &&
+              'json' in err &&
+              typeof err.json === 'object' &&
+              err.json !== null
+            ) {
+              for (const key in err.json) {
+                let value = (err.json as Record<string, string>)[key];
+                if (typeof value === 'string') {
+                  setFieldError(key as unknown as Path<T>, { message: value });
+                } else if (Array.isArray(value)) {
+                  value = value[0];
+                  if (typeof value === 'string') {
+                    setFieldError(key as unknown as Path<T>, { message: value });
+                  }
+                }
+              }
+            }
           }
         })}
         isHorizontal={isHorizontal}
@@ -160,11 +171,9 @@ export function PageFormGrid(props: {
   const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
 
   const Component = (
-    <>
-      <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
-        {props.children}
-      </Grid>
-    </>
+    <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2}>
+      {props.children}
+    </Grid>
   );
 
   return Component;

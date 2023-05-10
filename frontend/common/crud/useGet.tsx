@@ -5,7 +5,8 @@ import { useGetRequest } from './useGetRequest';
 /** useGet - returns data from a url. */
 export function useGet<T>(
   url: string | undefined,
-  query?: Record<string, string | number | boolean>
+  query?: Record<string, string | number | boolean>,
+  refreshInterval?: number
 ) {
   const getRequest = useGetRequest<T>();
 
@@ -23,7 +24,10 @@ export function useGet<T>(
     url += '?' + new URLSearchParams(normalizedQuery).toString();
   }
 
-  const response = useSWR<T>(url, getRequest, { dedupingInterval: 0 });
+  const response = useSWR<T>(url, getRequest, {
+    dedupingInterval: 0,
+    ...(refreshInterval && { refreshInterval }),
+  });
 
   const refresh = useCallback(() => {
     void response.mutate();

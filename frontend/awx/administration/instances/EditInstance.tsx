@@ -1,13 +1,11 @@
-import { Static, Type } from '@sinclair/typebox';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
-import { PageHeader, PageLayout } from '../../../../framework';
+import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { RouteObj } from '../../../Routes';
+import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { Instance } from '../../interfaces/Instance';
 import { getAwxError } from '../../useAwxView';
 
@@ -23,30 +21,13 @@ export function EditInstance() {
     swrOptions
   );
 
-  const EditInstanceSchema = useMemo(
-    () =>
-      Type.Object({
-        capacity_adjustment: Type.Number({
-          title: t('Capacity'),
-          max: 99,
-          min: instance?.cpu_capacity ?? 1,
-          valueLabel: 'forks',
-        }),
-        enabled: Type.Boolean({
-          title: t('Enabled'),
-        }),
-      }),
-    [instance?.cpu_capacity, t]
-  );
-
-  type CreateInstance = Static<typeof EditInstanceSchema>;
-
   const { cache } = useSWRConfig();
 
-  const onSubmit: PageFormSubmitHandler<CreateInstance> = async (editedInstance, setError) => {
+  const onSubmit: PageFormSubmitHandler<Instance> = async (editedInstance, setError) => {
     try {
-      editedInstance.capacity_adjustment =
-        Math.round(editedInstance.capacity_adjustment * 100) / 100;
+      editedInstance.capacity_adjustment = (Math.round(
+        (editedInstance.capacity_adjustment as unknown as number) * 100
+      ) / 100) as unknown as string;
       await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance);
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
@@ -62,7 +43,7 @@ export function EditInstance() {
         <PageHeader
           breadcrumbs={[
             { label: t('Instances'), to: RouteObj.Instances },
-            { label: t('Edit instance') },
+            { label: t('Edit Instance') },
           ]}
         />
       </PageLayout>
@@ -77,18 +58,24 @@ export function EditInstance() {
             { label: instance.hostname },
           ]}
         />
-        <PageForm
-          schema={EditInstanceSchema}
+        <PageForm<Instance>
           submitText={t('Save instance')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
           defaultValue={{
-            capacity_adjustment: Number(instance.capacity_adjustment),
+            capacity_adjustment: Number(instance.capacity_adjustment) as unknown as string,
             enabled: instance.enabled,
           }}
         >
-          <PageFormSchema schema={EditInstanceSchema} />
+          <PageFormSlider
+            name="capacity_adjustment"
+            label={t('Capacity')}
+            max={99}
+            min={instance?.cpu_capacity ?? 1}
+            valueLabel={t('forks')}
+          />
+          <PageFormCheckbox<Instance> name="enabled" label={t('Enabled')} />
         </PageForm>
       </PageLayout>
     );

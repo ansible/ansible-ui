@@ -45,6 +45,7 @@ import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
+import { useActiveUser } from './useActiveUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -67,6 +68,12 @@ const ToolbarSpan = styled.span`
   flex-grow: 1;
 `;
 
+function isEdaServer(
+  server: { type: AutomationServerType; name: string; url: string } | undefined
+): boolean {
+  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
+}
+
 export function AnsibleMasthead(props: {
   isNavOpen: boolean;
   setNavOpen: (open: boolean) => void;
@@ -80,6 +87,7 @@ export function AnsibleMasthead(props: {
 
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
+  const { automationServer } = useAutomationServers();
 
   return (
     <Masthead display={{ default: 'inline' }}>
@@ -143,9 +151,11 @@ export function AnsibleMasthead(props: {
                 <ToolbarItem>
                   <Refresh />
                 </ToolbarItem>
-                <ToolbarItem>
-                  <Notifications />
-                </ToolbarItem>
+                {!isEdaServer(automationServer) && (
+                  <ToolbarItem>
+                    <Notifications />
+                  </ToolbarItem>
+                )}
 
                 {/* <ToolbarItem>
                   <ApplicationLauncherBasic />
@@ -261,9 +271,13 @@ function AccountDropdown() {
   );
 }
 
-function EdaUserInfo() {
+export function EdaUserInfo() {
   const fetcher = useFetcher();
-  const meResponse = useSWR<{ username: string }>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
+  const meResponse = useSWR<{ id: number; username: string }>(
+    `${API_PREFIX}/users/me/`,
+    fetcher,
+    swrOptions
+  );
   return meResponse?.data;
 }
 
@@ -281,8 +295,8 @@ function UserInfo() {
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
   const { automationServer } = useAutomationServers();
-  const userInfo = automationServer?.type === AutomationServerType.EDA ? EdaUserInfo() : UserInfo();
-
+  const edaActiveUser = isEdaServer(automationServer) ? EdaUserInfo() : undefined;
+  const userInfo = isEdaServer(automationServer) ? edaActiveUser : UserInfo();
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -292,6 +306,7 @@ function AccountDropdownInternal() {
     setOpen((open) => !open);
   }, []);
   const { t } = useTranslation();
+  const activeUser = useActiveUser();
   return (
     <Dropdown
       onSelect={onSelect}
@@ -315,9 +330,17 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            automationServer?.type === AutomationServerType.EDA
-              ? history(RouteObj.EdaUsers)
-              : history(RouteObj.Users);
+            isEdaServer(automationServer)
+              ? history(
+                  edaActiveUser
+                    ? RouteObj.EdaUserDetails.replace(':id', `${edaActiveUser?.id || ''}`)
+                    : RouteObj.EdaUsers
+                )
+              : history(
+                  activeUser
+                    ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
+                    : RouteObj.Users
+                );
           }}
         >
           {t('User details')}
@@ -326,7 +349,7 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              automationServer?.type === AutomationServerType.EDA
+              isEdaServer(automationServer)
                 ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
                 : await fetch('/api/logout/');
               history('/');

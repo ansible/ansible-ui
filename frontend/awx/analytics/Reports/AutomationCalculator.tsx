@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next';
 import { ChartSchemaElement, ChartLegendEntry } from 'react-json-chart-builder';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 import { AnalyticsErrorState } from './ErrorStates';
+import { Scrollable } from '../../../../framework';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -196,7 +197,8 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         .then((r: { error?: { keyword?: string } }) =>
           setSpecificError(r?.error?.keyword || 'unknown')
-        );
+        )
+        .catch(() => setSpecificError('unknown'));
     }
   }, [error, optionsError]);
 
@@ -358,51 +360,54 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      <PageSection>
-        <Card>
-          <CardBody>
-            <Grid hasGutter>
-              <GridItem span={9}>{!isLoading && renderLeft()}</GridItem>
-              <GridItem span={3}>{!isLoading && renderRight()}</GridItem>
-              <GridItem span={12}>
-                {isLoading ? (
-                  <>
-                    <p>{t('Enter the time it takes to run the following templates manually.')}</p>
-                    <Spinner data-cy={'spinner'} isSVG />
-                  </>
-                ) : (
-                  <TemplatesTable
-                    data={data?.meta.legend || []}
-                    variableRow={{
-                      key: getParams().sort_options.toString(),
-                      value:
-                        options?.sort_options
-                          .find((x) => x.key === getParams().sort_options.toString())
-                          ?.value.toString() || '',
-                    }}
-                    readOnly={true}
-                    getSortParams={{
-                      sort: {
-                        sortBy: {
-                          index: 1,
-                          direction: getParams().sort_order.toString() === 'desc' ? 'desc' : 'asc',
+      <Scrollable>
+        <PageSection>
+          <Card>
+            <CardBody>
+              <Grid hasGutter>
+                <GridItem span={9}>{!isLoading && renderLeft()}</GridItem>
+                <GridItem span={3}>{!isLoading && renderRight()}</GridItem>
+                <GridItem span={12}>
+                  {isLoading ? (
+                    <>
+                      <p>{t('Enter the time it takes to run the following templates manually.')}</p>
+                      <Spinner data-cy={'spinner'} isSVG />
+                    </>
+                  ) : (
+                    <TemplatesTable
+                      data={data?.meta.legend || []}
+                      variableRow={{
+                        key: getParams().sort_options.toString(),
+                        value:
+                          options?.sort_options
+                            .find((x) => x.key === getParams().sort_options.toString())
+                            ?.value.toString() || '',
+                      }}
+                      readOnly={true}
+                      getSortParams={{
+                        sort: {
+                          sortBy: {
+                            index: 1,
+                            direction:
+                              getParams().sort_order.toString() === 'desc' ? 'desc' : 'asc',
+                          },
+                          onSort: () =>
+                            updateSearchParams(
+                              'sort_order',
+                              getParams().sort_order.toString() !== 'desc' ? 'desc' : 'asc'
+                            ),
+                          columnIndex: 1,
                         },
-                        onSort: () =>
-                          updateSearchParams(
-                            'sort_order',
-                            getParams().sort_order.toString() !== 'desc' ? 'desc' : 'asc'
-                          ),
-                        columnIndex: 1,
-                      },
-                    }}
-                  />
-                )}
-              </GridItem>
-            </Grid>
-          </CardBody>
-          <CardFooter></CardFooter>
-        </Card>
-      </PageSection>
+                      }}
+                    />
+                  )}
+                </GridItem>
+              </Grid>
+            </CardBody>
+            <CardFooter></CardFooter>
+          </Card>
+        </PageSection>
+      </Scrollable>
       <Pagination
         itemCount={data?.meta.count}
         perPageOptions={defaultPerPageOptions}

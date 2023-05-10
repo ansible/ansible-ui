@@ -1,4 +1,4 @@
-describe('Job Templates Form', () => {
+describe('Job templates Form', () => {
   before(() => {
     cy.awxLogin();
   });
@@ -11,10 +11,10 @@ describe('Job Templates Form', () => {
   it('Should throw create job template form validation error and not navigate to details view', () => {
     cy.navigateTo(/^Templates$/);
     cy.contains(/^Create template$/).click();
-    cy.contains(/^Create Job Template$/).click();
+    cy.contains(/^Create job template$/).click();
 
     cy.clickButton(/^Create job template$/);
 
-    cy.hasTitle(/^Create job template$/);
+    cy.hasTitle(/^Create Job Template$/);
   });
 });

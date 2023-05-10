@@ -21,7 +21,7 @@ export function RemoteRegistries() {
   const rowActions = useRemoteRegistryActions();
   return (
     <PageLayout>
-      <PageHeader title={t('Remote registries')} />
+      <PageHeader title={t('Remote Registries')} />
       <PageTable<RemoteRegistry>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

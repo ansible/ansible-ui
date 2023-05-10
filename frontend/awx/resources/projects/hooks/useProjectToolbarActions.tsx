@@ -31,17 +31,9 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         isDisabled: canCreateProject
           ? undefined
           : t(
-              'You do not have permission to create a project. Please contact your Organization Administrator if there is an issue with your access.'
+              'You do not have permission to create a project. Please contact your organization administrator if there is an issue with your access.'
             ),
         href: RouteObj.CreateProject,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected projects'),
-        onClick: deleteProjects,
-        isDanger: true,
       },
       {
         type: PageActionType.Button,
@@ -49,6 +41,15 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         icon: BanIcon,
         label: t('Cancel selected projects'),
         onClick: cancelProjects,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected projects'),
+        onClick: deleteProjects,
+        isDanger: true,
       },
     ],
     [canCreateProject, cancelProjects, deleteProjects, t]

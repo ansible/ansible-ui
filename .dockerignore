@@ -7,11 +7,11 @@
 /.vscode
 /.vscode
 /Dockerfile
-/build
 /certs
 /coverage
 /cypress
 /docs
 /node_modules
+/publish
 /scripts
 /stories

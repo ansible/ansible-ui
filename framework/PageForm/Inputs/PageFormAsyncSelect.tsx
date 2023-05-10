@@ -9,7 +9,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -29,11 +29,14 @@ export interface PageFormAsyncSelectProps<
   id?: string;
   name: TFieldName;
   label: string;
+  labelHelp?: string | ReactNode;
+  labelHelpTitle?: string;
   placeholder: string;
   loadingPlaceholder: string;
   loadingErrorText: string;
   query: (page: number) => Promise<{ total: number; values: SelectionType[] }>;
   valueToString: (value: SelectionType | undefined) => string;
+  valueToDescription?: (value: SelectionType | undefined) => ReactNode;
   isRequired?: boolean;
   isReadOnly?: boolean;
   openSelectDialog?: (
@@ -58,6 +61,9 @@ export function PageFormAsyncSelect<
     placeholder,
     query,
     valueToString,
+    valueToDescription,
+    labelHelp,
+    labelHelpTitle,
   } = props;
   const id = props.id ?? name.split('.').join('-');
 
@@ -73,6 +79,7 @@ export function PageFormAsyncSelect<
 
   const queryHandler = useCallback(
     (page: number) => {
+      setValue(name, undefined as FieldPathValue<TFieldValues, TFieldName>);
       setLoadingError(undefined);
       return query(page)
         .then((result) => {
@@ -101,6 +108,8 @@ export function PageFormAsyncSelect<
           <PageFormGroup
             id={id}
             label={label}
+            labelHelp={labelHelp}
+            labelHelpTitle={labelHelpTitle}
             helperTextInvalid={loadingError ? loadingErrorText : error?.message}
             isRequired={isRequired}
           >
@@ -108,6 +117,7 @@ export function PageFormAsyncSelect<
               id={id}
               query={queryHandler}
               valueToString={valueToString}
+              valueToDescription={valueToDescription}
               placeholder={placeholder}
               loadingPlaceholder={loadingPlaceholder}
               value={value}
@@ -140,6 +150,7 @@ export interface AsyncSelectProps<SelectionType> {
   id?: string;
   value: SelectionType | undefined;
   valueToString: (value: SelectionType | undefined) => string;
+  valueToDescription?: (value: SelectionType | undefined) => ReactNode;
   onSelect: (value: SelectionType | undefined) => void;
   query: (pageSize: number) => Promise<{ total: number; values: SelectionType[] }>;
   placeholder: string;
@@ -174,6 +185,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   const [open, setOpen] = useState(false);
 
   const [valueToString] = useState(() => props.valueToString);
+  const [valueToDescription] = useState(() => props.valueToDescription);
 
   const value = useMemo(() => {
     if (!props.value) return undefined;
@@ -189,6 +201,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   const reload = useCallback(() => {
     setLoading((loading) => {
       if (loading) return loading;
+      setOptions([]);
       query(props.limit)
         .then((result) => {
           if (result.total === 1 && result.values.length === 1) {
@@ -223,11 +236,19 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           return false;
         })
         .map((option) => (
-          <SelectOption key={option.toString()} value={option}>
+          <SelectOption
+            key={option.toString()}
+            value={option}
+            description={
+              option instanceof AsyncSelectSelectOptionObject<SelectionType> && option.option
+                ? valueToDescription?.(option.option as SelectionType)
+                : undefined
+            }
+          >
             {option.toString()}
           </SelectOption>
         )),
-    [options]
+    [options, valueToDescription]
   );
 
   return (
@@ -283,7 +304,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         validated={validated}
         isDisabled={options === null || loading || isReadOnly}
         onFilter={onFilter}
-        hasInlineFilter={true}
+        hasInlineFilter={options !== null && options.length > 10}
         menuAppendTo="parent"
         maxHeight={500}
         footer={
@@ -301,7 +322,15 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         }
       >
         {(options ?? []).map((option) => (
-          <SelectOption key={option.toString()} value={option}>
+          <SelectOption
+            key={option.toString()}
+            value={option}
+            description={
+              option instanceof AsyncSelectSelectOptionObject<SelectionType> && option.option
+                ? valueToDescription?.(option.option as SelectionType)
+                : undefined
+            }
+          >
             {option.toString()}
           </SelectOption>
         ))}

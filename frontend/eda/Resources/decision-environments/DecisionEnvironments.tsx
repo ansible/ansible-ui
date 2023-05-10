@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageTableViewTypeE } from '../../../../framework/PageTable/PageTableViewType';
 import { RouteObj } from '../../../Routes';
+import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import { useEdaView } from '../../useEventDrivenView';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
 import { useDecisionEnvironmentColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
-import { API_PREFIX } from '../../constants';
-import { useEdaView } from '../../useEventDrivenView';
-import { PageTableViewTypeE } from '../../../../framework/PageTable/PageTableViewType';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
@@ -25,7 +25,12 @@ export function DecisionEnvironments() {
   const rowActions = useDecisionEnvironmentActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('DecisionEnvironments')} />
+      <PageHeader
+        title={t('Decision Environments')}
+        description={t(
+          'Decision environments contain a rulebook image that dictates where the rulebooks will run.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

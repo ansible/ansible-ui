@@ -48,7 +48,10 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         value: (user) => user.email,
         sort: 'email',
       },
-      createdColumn,
+      {
+        ...createdColumn,
+        sort: undefined,
+      },
     ],
     [createdColumn, t]
   );

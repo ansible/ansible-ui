@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../framework';
+import { RouteObj, RouteType } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { RouteObj, RouteType } from '../Routes';
 import { useActiveUser } from '../common/useActiveUser';
 
 export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
@@ -154,7 +154,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.InstanceGroups, location)}
           onClick={() => onClick(RouteObj.InstanceGroups)}
         >
-          {t('Instance groups')}
+          {t('Instance Groups')}
         </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.Instances, location)}
@@ -169,7 +169,7 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.ExecutionEnvironments)}
         >
-          {t('Execution environments')}
+          {t('Execution Environments')}
         </NavItem>
         {/* <NavItem
           isActive={isRouteActive(RouteObj.TopologyView, location)}
@@ -196,6 +196,13 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
             onClick={() => onClick(RouteObj.ControllerReports)}
           >
             {t('Reports')}
+          </NavItem>
+
+          <NavItem
+            isActive={isRouteActive(RouteObj.HostMetrics, location)}
+            onClick={() => onClick(RouteObj.HostMetrics)}
+          >
+            {t('Host Metrics')}
           </NavItem>
         </NavExpandable>
       )}

@@ -49,10 +49,10 @@ export function CreateOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create organization')}
+        title={t('Create Organization')}
         breadcrumbs={[
           { label: t('Organizations'), to: RouteObj.Organizations },
-          { label: t('Create organization') },
+          { label: t('Create Organization') },
         ]}
       />
       <PageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
@@ -119,10 +119,10 @@ export function EditOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit organization')}
+        title={t('Edit Organization')}
         breadcrumbs={[
           { label: t('Organizations'), to: RouteObj.Organizations },
-          { label: t('Edit organization') },
+          { label: t('Edit Organization') },
         ]}
       />
       {organization ? (
@@ -155,7 +155,10 @@ function OrganizationInputs(props: { orgId?: number }) {
         name="organization.description"
         placeholder={t('Enter description')}
       />
-      <PageFormInstanceGroupSelect<OrganizationFields> name="instanceGroups" />
+      <PageFormInstanceGroupSelect<OrganizationFields>
+        name="instanceGroups"
+        labelHelp={t(`Select the instance groups for this organization to run on.`)}
+      />
       <PageFormExecutionEnvironmentSelect<OrganizationFields>
         organizationId={orgId ? orgId.toString() : undefined}
         name="organization.summary_fields.default_environment.name"

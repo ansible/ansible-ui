@@ -27,12 +27,12 @@ import {
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
+import { PageNotImplemented } from '../../../common/PageNotImplemented';
 import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxWorkflow } from './WorkflowPrototype/AwxWorkflowPrototype';
-import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 
 export function WorkflowJobTemplateDetail() {
@@ -98,10 +98,12 @@ export function WorkflowJobTemplateDetail() {
             <TemplateDetailsTab template={template} />
           </PageTab>
           <PageTab label={t('Access')}>
-            <TemplateAccessTab template={template} />
+            <PageNotImplemented />
+            {/* <TemplateAccessTab template={template} /> */}
           </PageTab>
           <PageTab label={t('Visualizer')}>
-            <WorkflowVisualizer template={template} />
+            <PageNotImplemented />
+            {/* <WorkflowVisualizer template={template} /> */}
           </PageTab>
           {process.env.NODE_ENV === 'development' && (
             <PageTab label={t('Visualizer (Tech Preview)')}>
@@ -190,7 +192,7 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
       <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
         <TextList component={TextListVariants.ul}>
           {template.allow_simultaneous && (
-            <TextListItem component={TextListItemVariants.li}>{t`Concurrent Jobs`}</TextListItem>
+            <TextListItem component={TextListItemVariants.li}>{t`Concurrent jobs`}</TextListItem>
           )}
           {template.webhook_service && (
             <TextListItem component={TextListItemVariants.li}>{t`Webhooks`}</TextListItem>
@@ -201,10 +203,10 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
   );
 }
 
-function TemplateAccessTab(props: { template: WorkflowJobTemplate }) {
-  return <div>{props.template.name}</div>;
-}
+// function TemplateAccessTab(props: { template: WorkflowJobTemplate }) {
+//   return <div>{props.template.name}</div>;
+// }
 
-function WorkflowVisualizer(props: { template: WorkflowJobTemplate }) {
-  return <VisualizerTab template={props.template} />;
-}
+// function WorkflowVisualizer(props: { template: WorkflowJobTemplate }) {
+//   return <VisualizerTab template={props.template} />;
+// }

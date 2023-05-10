@@ -27,6 +27,7 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
@@ -45,6 +46,7 @@ export function Templates() {
       type: 'job_template,workflow_job_template',
     },
   });
+  usePersistentFilters('templates');
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
@@ -55,18 +57,19 @@ export function Templates() {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
+        selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('Create Job Template'),
+            label: t('Create job template'),
             onClick: () => navigate(RouteObj.CreateJobTemplate),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('Create Workflow Job Template'),
+            label: t('Create workflow job template'),
             onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
           },
         ],
@@ -77,6 +80,7 @@ export function Templates() {
         icon: TrashIcon,
         label: 'Delete selected templates',
         onClick: deleteTemplates,
+        isDanger: true,
       },
     ],
     [deleteTemplates, navigate, t]
@@ -85,28 +89,29 @@ export function Templates() {
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
         icon: EditIcon,
-        label: t(`Edit Template`),
-        onClick: (template) =>
-          navigate(RouteObj.JobTemplateEdit.replace(':id', template.id.toString())),
+        label: t(`Edit template`),
+        href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t(`Delete Template`),
+        label: t(`Delete template`),
         onClick: (template) => deleteTemplates([template]),
+        isDanger: true,
       },
     ],
-    [navigate, deleteTemplates, t]
+    [deleteTemplates, t]
   );
   return (
     <PageLayout>
       <PageHeader
         title={t('Templates')}
-        titleHelpTitle={t('Templates')}
+        titleHelpTitle={t('Template')}
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}
@@ -121,7 +126,7 @@ export function Templates() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading templates')}
-        emptyStateTitle={t('No Templates yet')}
+        emptyStateTitle={t('No templates yet')}
         emptyStateDescription={t('To get started, create a template.')}
         emptyStateButtonText={t('Create template')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
@@ -168,9 +173,9 @@ export function useTemplatesColumns(options?: { disableSort?: boolean; disableLi
   });
   const makeReadable: (template: JobTemplate | WorkflowJobTemplate) => string = (template) => {
     if (template.type === 'workflow_job_template') {
-      return t('Workflow Job Template');
+      return t('Workflow job template');
     }
-    return t('Job Template');
+    return t('Job template');
   };
   const createdColumn = useCreatedColumn(options);
   const descriptionColumn = useDescriptionColumn();

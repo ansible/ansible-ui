@@ -54,7 +54,7 @@ export function Collections() {
         description={t(
           'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
         )}
-        titleHelpTitle={t('Collections')}
+        titleHelpTitle={t('Collection')}
         titleHelp={t(
           'Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.'
         )}
@@ -86,7 +86,7 @@ function FeaturedCollections(props: { collectionCount?: number }) {
       <PageSection>
         <Card isFlat isRounded isLarge>
           <CardHeader>
-            <CardTitle>{t('Featured Collections')}</CardTitle>
+            <CardTitle>{t('Featured collections')}</CardTitle>
           </CardHeader>
           <CardBody>
             <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>

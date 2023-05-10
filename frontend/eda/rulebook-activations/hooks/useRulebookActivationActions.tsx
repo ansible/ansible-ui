@@ -1,41 +1,55 @@
-import { TrashIcon } from '@patternfly/react-icons';
+import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { IEdaView } from '../../useEventDrivenView';
-import { useRelaunchActivation, useRestartActivation } from './useActivationDialogs';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import {
+  useDisableRulebookActivations,
+  useEnableRulebookActivations,
+  useRestartRulebookActivations,
+} from './useControlRulebookActivations';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
-  const relaunchActivation = useRelaunchActivation();
-  const restartActivation = useRestartActivation();
+  const enableActivations = useEnableRulebookActivations(view.unselectItemsAndRefresh);
+  const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
-  return useMemo<IPageAction<EdaRulebookActivation>[]>(
-    () => [
+  return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
+    const actions: IPageAction<EdaRulebookActivation>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Switch,
         selection: PageActionSelection.Single,
-        label: 'Relaunch',
-        onClick: (activation: EdaRulebookActivation) => relaunchActivation(activation),
+        isPinned: true,
+        label: t('Rulebook activation enabled'),
+        labelOff: t('Rulebook activation disabled'),
+        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
+          if (activate) void enableActivations([activation]);
+          else void disableActivations([activation]);
+        },
+        isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: 'Restart',
-        onClick: (activation: EdaRulebookActivation) => restartActivation(activation),
+        icon: RedoIcon,
+        label: t('Restart rulebook activation'),
+        isHidden: (activation: EdaRulebookActivation) =>
+          !activation.is_enabled || activation.restart_policy !== 'always',
+        onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete rulebookActivation'),
+        label: t('Delete rulebook activation'),
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
       },
-    ],
-    [relaunchActivation, restartActivation, deleteRulebookActivations, t]
-  );
+    ];
+    return actions;
+  }, [t, restartActivations, enableActivations, disableActivations, deleteRulebookActivations]);
 }

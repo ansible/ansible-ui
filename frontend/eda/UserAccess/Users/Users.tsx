@@ -24,7 +24,12 @@ export function Users() {
   const rowActions = useUserActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Users')} />
+      <PageHeader
+        title={t('Users')}
+        description={t(
+          'A user is someone who has access to EDA with associated permissions and credentials.'
+        )}
+      />
       <PageTable
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

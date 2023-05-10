@@ -11,28 +11,42 @@ import {
   Scrollable,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
-import { API_PREFIX } from '../constants';
+import { ItemsResponse } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
+import { PageDetailsSection } from '../common/PageDetailsSection';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
-import { PageDetailsSection } from '../common/PageDetailsSection';
-import React from 'react';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/`
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
-  const { data: activationInstanceLog } = useGet<EdaActivationInstanceLog>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/`
+  const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
+
+  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
+      activationInstanceLogInfo?.count || 10
+    }`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation ?? ''}/`
+    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const renderActivationDetailsTab = (
@@ -42,7 +56,7 @@ export function ActivationInstanceDetails() {
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Name')}>
-            {activationInstance?.name || `Instance ${activationInstance?.id || ''}`}
+            {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
           <PageDetail label={t('Activation status')}>{activationInstance?.status || ''}</PageDetail>
           <PageDetail label={t('Start date')}>
@@ -53,18 +67,20 @@ export function ActivationInstanceDetails() {
           </PageDetail>
         </PageDetails>
         <PageDetailsSection>
-          <PageDetail label={t('Output')}>
-            <CodeBlock>
-              <CodeBlockCode
-                style={{
-                  minHeight: '150px',
-                }}
-                id="code-content"
-              >
-                {activationInstanceLog?.log || ''}
-              </CodeBlockCode>
-            </CodeBlock>
-          </PageDetail>
+          {activationInstanceLog?.results?.length ? (
+            <PageDetail label={t('Output')}>
+              <CodeBlock>
+                <CodeBlockCode
+                  style={{
+                    minHeight: '150px',
+                  }}
+                  id="code-content"
+                >
+                  {activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
+                </CodeBlockCode>
+              </CodeBlock>
+            </PageDetail>
+          ) : null}
         </PageDetailsSection>
       </Scrollable>
     );
@@ -73,24 +89,24 @@ export function ActivationInstanceDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={activationInstance?.name ?? `Instance ${activationInstance?.id || ''}`}
+        title={`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
         breadcrumbs={[
           { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           {
             label: activationInstance?.activation_name ?? (activation?.name || ''),
             to: RouteObj.EdaRulebookActivationDetails.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id || ''
             ),
           },
           {
             label: t('History'),
             to: RouteObj.EdaRulebookActivationDetailsHistory.replace(
               ':id',
-              activationInstance?.activation || ''
+              activationInstance?.activation_id || ''
             ),
           },
-          { label: activationInstance?.name ?? `Instance ${activationInstance?.id || ''}` },
+          { label: `${activationInstance?.id || ''} - ${activationInstance?.name || ''}` },
         ]}
       />
       {activationInstance ? (

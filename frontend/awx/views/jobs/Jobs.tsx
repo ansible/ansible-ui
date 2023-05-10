@@ -4,6 +4,7 @@ import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/reac
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
@@ -28,6 +29,7 @@ export default function Jobs() {
   });
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
+  usePersistentFilters('jobs');
 
   const [showGraph] = useState(false);
 
@@ -61,13 +63,15 @@ export default function Jobs() {
     <PageLayout>
       <PageHeader
         title={t('Jobs')}
-        titleHelpTitle={t('Jobs')}
+        titleHelpTitle={t('Job')}
         titleHelp={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
         description={t(
-          `A job is an instance of ${product} launching an Ansible playbook against an inventory of hosts.`
+          `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
+          { product }
         )}
         // headerActions={
         //   <ToggleGroup aria-label={t('show graph toggle')}>

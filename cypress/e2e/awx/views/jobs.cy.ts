@@ -46,6 +46,7 @@ describe('jobs', () => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
       .parent()
@@ -53,26 +54,20 @@ describe('jobs', () => {
         // Relaunch job
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
-        // Delete job
-        cy.get('.pf-c-dropdown__menu-item')
-          .contains(/^Delete job$/)
-          .should('exist');
-        // Cancel job
-        cy.get('.pf-c-dropdown__menu-item')
-          .contains(/^Cancel job$/)
-          .should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/).should('exist');
       });
   });
 
   it('renders additional details on expanding job row', () => {
     cy.navigateTo(/^Jobs$/);
+    cy.filterTableByTypeAndText('ID', job.id ? job.id.toString() : '');
     const jobName = job.name ? job.name : '';
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
     cy.hasDetail('Project', 'E2E Project');
-    cy.hasDetail('Launched by', 'admin');
-    cy.hasDetail('Execution Environment', 'AWX EE (latest)');
-    cy.hasDetail('Job Slice', '0/1');
+    // cy.hasDetail('Launched by', 'admin'); // not always admin
+    cy.hasDetail('Job slice', '0/1');
   });
 
   it('filters jobs by id', () => {
@@ -137,7 +132,7 @@ describe('jobs', () => {
     cy.filterTableByTypeAndText('ID', jobId);
     cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
     cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs button', 'Output').should('have.attr', 'aria-selected', 'true');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
     // Clean up newly launched job
     cy.url().then((url) => {
       const jobId = url.substring(url.lastIndexOf('/') + 1);

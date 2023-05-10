@@ -30,7 +30,7 @@ describe('Inventories.cy.ts', () => {
       cy.get('ul.pf-c-select__menu').within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
-        cy.contains(/^Inventory Type$/).should('be.visible');
+        cy.contains(/^Inventory type$/).should('be.visible');
         cy.contains(/^Organization$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');
         cy.contains(/^Modified by$/).should('be.visible');
@@ -40,7 +40,20 @@ describe('Inventories.cy.ts', () => {
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
-
+    it('disable "create inventory" toolbar action if the user does not have permissions', () => {
+      cy.stub(useOptions, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {},
+        },
+      }));
+      cy.mount(<Inventories />);
+      cy.contains('button', /^Create inventory$/).as('createButton');
+      cy.get('@createButton').should('have.attr', 'disabled');
+      cy.get('@createButton').click({ force: true });
+      cy.hasTooltip(
+        /^You do not have permission to create an inventory. Please contact your organization administrator if there is an issue with your access.$/
+      );
+    });
     it('disable delete row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -67,12 +80,8 @@ describe('Inventories.cy.ts', () => {
         .should('be.an', 'array')
         .then((results: Inventory[]) => {
           const inventory = results.find((i) => i.id === 7);
-
           cy.contains('tr', (inventory as Inventory).name).within(() => {
-            cy.get('button.toggle-kebab').click();
-            cy.get('a[data-ouia-component-type="PF4/DropdownItem"]')
-              .contains(/^Edit inventory$/)
-              .as('editButton');
+            cy.get('button[aria-label="Edit inventory"]').as('editButton');
           });
           cy.get('@editButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@editButton').click();
@@ -175,7 +184,7 @@ describe('Inventories.cy.ts', () => {
       cy.mount(<Inventories />);
       cy.contains(/^You do not have permission to create an inventory.$/);
       cy.contains(
-        /^Please contact your Organization Administrator if there is an issue with your access.$/
+        /^Please contact your organization administrator if there is an issue with your access.$/
       );
       cy.contains('button', /^Create inventory$/).should('not.exist');
     });

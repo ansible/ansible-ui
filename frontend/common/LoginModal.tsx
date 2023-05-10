@@ -11,10 +11,10 @@ import {
   usePageDialog,
 } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
+import { RouteObj } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { RouteObj } from '../Routes';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -38,6 +38,7 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       }
       isOpen
       onClose={onClose}
+      showClose={process.env.EDA !== 'true'}
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
@@ -132,8 +133,13 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             redirect: 'manual',
           });
         } catch (err) {
-          if (err instanceof HTTPError && err.response.status === 0) {
+          if (!(err instanceof HTTPError)) {
+            throw err;
+          }
+          if (err.response.status === 0) {
             // Do nothing
+          } else if (err.response.status === 401 || err.response.status === 403) {
+            throw new Error('Invalid username or password. Please try again.');
           } else {
             throw err;
           }
@@ -146,7 +152,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             navigate(RouteObj.Dashboard);
             break;
           case AutomationServerType.EDA:
-            navigate(RouteObj.EdaProjects);
+            navigate(RouteObj.EdaDashboard);
             break;
           case AutomationServerType.HUB:
             navigate(RouteObj.HubDashboard);
@@ -214,6 +220,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         placeholder={t('Enter username')}
         isRequired
         autoFocus
+        autoComplete="off"
       />
       <PageFormTextInput
         name="password"

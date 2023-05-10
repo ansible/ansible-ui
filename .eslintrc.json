@@ -18,6 +18,7 @@
     "plugin:i18next/recommended"
   ],
   "rules": {
+    "semi": ["error", "always"],
     "no-only-tests/no-only-tests": "error",
     "react/react-in-jsx-scope": "off",
     "no-console": "error",

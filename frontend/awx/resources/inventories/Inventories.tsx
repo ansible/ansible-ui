@@ -88,7 +88,7 @@ export function Inventories() {
     <PageLayout>
       <PageHeader
         title={t('Inventories')}
-        titleHelpTitle={t('Inventories')}
+        titleHelpTitle={t('Inventory')}
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
@@ -112,7 +112,7 @@ export function Inventories() {
           canCreateInventory
             ? t('Please create an inventory by using the button below.')
             : t(
-                'Please contact your Organization Administrator if there is an issue with your access.'
+                'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateInventory ? undefined : CubesIcon}

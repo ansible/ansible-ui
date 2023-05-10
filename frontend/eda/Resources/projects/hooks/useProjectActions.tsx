@@ -1,23 +1,58 @@
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  errorToAlertProps,
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteProjects } from './useDeleteProjects';
+import { postRequest } from '../../../../common/crud/Data';
+import { API_PREFIX } from '../../../constants';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
+  const alertToaster = usePageAlertToaster();
+  const syncProject = useCallback(
+    (project: EdaProject) =>
+      postRequest(`${API_PREFIX}/projects/${project.id}/sync/`, undefined)
+        .then(() => {
+          alertToaster.addAlert({
+            title: `${t('Syncing')} ${project?.name || t('project')}`,
+            variant: 'success',
+            timeout: 5000,
+          });
+          view.unselectItemsAndRefresh([project]);
+        })
+        .catch((err) => alertToaster.addAlert(errorToAlertProps(err))),
+    [alertToaster, view, t]
+  );
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        variant: ButtonVariant.primary,
+        icon: SyncAltIcon,
+        isPinned: true,
+        isHidden: (project: EdaProject) =>
+          project?.import_state === 'pending' || project?.import_state === 'running',
+        label: t('Sync project'),
+        onClick: (project: EdaProject) => syncProject(project),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
@@ -31,6 +66,6 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         isDanger: true,
       },
     ],
-    [deleteProjects, navigate, t]
+    [deleteProjects, syncProject, navigate, t]
   );
 }

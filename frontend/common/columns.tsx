@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ColumnTableOption, DateTimeCell, ITableColumn, TextCell } from '../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+} from '../../framework';
 import { RouteObj } from '../Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -20,7 +26,9 @@ export function useIdColumn<T extends { name: string; id: number }>() {
   return column;
 }
 
-export function useNameColumn<T extends { name: string; id: number }>(options?: {
+export function useNameColumn<
+  T extends { name?: string; hostname?: string; id: number }
+>(options?: {
   header?: string;
   url?: string;
   onClick?: (item: T) => void;
@@ -34,7 +42,7 @@ export function useNameColumn<T extends { name: string; id: number }>(options?: 
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
-          text={item.name}
+          text={item.name || item.hostname}
           iconSize="sm"
           to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
@@ -59,6 +67,7 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       value: (item) => item.description,
       list: 'secondary',
       table: ColumnTableOption.Description,
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
@@ -102,6 +111,7 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [navigate, options?.disableLinks, options?.disableSort, t]
   );
@@ -148,6 +158,7 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
+      modal: ColumnModalOption.Hidden,
     }),
     [history, options?.disableLinks, options?.disableSort, t]
   );

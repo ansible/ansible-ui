@@ -13,9 +13,9 @@ import {
   useInMemoryView,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { useGet } from '../../common/crud/useGet';
 import { RouteObj } from '../../Routes';
-import { API_PREFIX } from '../constants';
+import { useGet } from '../../common/crud/useGet';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
@@ -25,7 +25,11 @@ import { useRulesetFilters } from './hooks/useRulesetFilters';
 export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rulebook } = useGet<EdaRulebook>(`${API_PREFIX}/rulebooks/${params.id ?? ''}/`);
+  const { data: rulebook } = useGet<EdaRulebook>(
+    `${API_PREFIX}/rulebooks/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {
     return (
@@ -91,7 +95,7 @@ export function RulebookDetails() {
       {rulebook ? (
         <PageTabs>
           <PageTab label={t('Details')}>{renderRulebookDetailsTab(rulebook)}</PageTab>
-          <PageTab label={t('Rule Sets')}>
+          <PageTab label={t('Rule sets')}>
             <RulesetsTab />
           </PageTab>
         </PageTabs>

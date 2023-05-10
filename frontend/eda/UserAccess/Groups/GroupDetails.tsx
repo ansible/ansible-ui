@@ -1,5 +1,5 @@
 import { DropdownPosition } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +14,7 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useDeleteGroups } from './hooks/useDeleteGroup';
 import { useGroupColumns } from './hooks/useGroupColumns';
@@ -23,7 +23,11 @@ export function GroupDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${params.id ?? ''}/`);
+  const { data: group } = useGet<EdaGroup>(
+    `${API_PREFIX}/groups/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
+  );
   const tableColumns = useGroupColumns();
 
   const deleteGroups = useDeleteGroups((deleted) => {
@@ -37,8 +41,8 @@ export function GroupDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
-        label: t('Edit Group'),
+        icon: PencilAltIcon,
+        label: t('Edit group'),
         onClick: (group: EdaGroup) =>
           navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
       },
@@ -46,7 +50,7 @@ export function GroupDetails() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete Group'),
+        label: t('Delete group'),
         onClick: (group: EdaGroup) => deleteGroups([group]),
         isDanger: true,
       },

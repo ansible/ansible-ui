@@ -1,7 +1,13 @@
-import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  ButtonVariant,
+  DropdownPosition,
+  PageSection,
+  Skeleton,
+  Stack,
+} from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction, Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -18,17 +24,29 @@ import {
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { CredentialOptions } from './EditCredential';
 import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
+  const credentialTypeHelpBlock = (
+    <Trans i18nKey="credentialTypeHelpBlock">
+      <p>The credential type defines what the credential will be used for.</p>
+      <br />
+      <p>There are three types:</p>
+      <p>GitHub Personal Access Token</p>
+      <p>GitLab Personal Access Token</p>
+      <p>Container Registry</p>
+    </Trans>
+  );
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${params.id ?? ''}/`
+    `${API_PREFIX}/credentials/${params.id ?? ''}/`,
+    undefined,
+    SWR_REFRESH_INTERVAL
   );
 
   const deleteCredentials = useDeleteCredentials((deleted) => {
@@ -41,8 +59,10 @@ export function CredentialDetails() {
     () => [
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
           navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
@@ -71,7 +91,7 @@ export function CredentialDetails() {
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
         <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
-        <PageDetail label={t('Credential type')}>
+        <PageDetail label={t('Credential type')} helpText={credentialTypeHelpBlock}>
           {credentialOption ? credentialOption?.label : credential?.credential_type}
         </PageDetail>
         <PageDetail label={t('Created')}>

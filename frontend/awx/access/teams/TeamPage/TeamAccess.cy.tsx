@@ -90,9 +90,9 @@ describe('TeamAccess', () => {
         .get(`button[data-ouia-component-id="${role.name}-${role.id}"]`)
         .first()
         .click();
-      cy.contains(`Are you sure you want to remove ${role.name} access from user-2?`).should(
-        'exist'
-      );
+      cy.contains(
+        `Are you sure you want to remove ${role.name.toLowerCase()} access from user-2?`
+      ).should('exist');
     });
   });
   it('Attempting to delete a team role brings up confirmation modal with a warning', () => {
@@ -118,7 +118,7 @@ describe('TeamAccess', () => {
         .first()
         .click();
       cy.contains(
-        `Are you sure you want to remove ${role.name} access from Team 2 Org 0? Doing so affects all members of the team.`
+        `Are you sure you want to remove ${role.name.toLowerCase()} access from Team 2 Org 0? Doing so affects all members of the team.`
       ).should('exist');
     });
   });
@@ -140,9 +140,9 @@ describe('TeamAccess', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(<TeamAccess team={team} />);
       // Remove users
-      cy.selectTableRow('admin'); //  User cannot be removed as they are a System Administrator
+      cy.selectTableRow('admin'); //  User cannot be removed as they are a system administrator
       cy.selectTableRow('user-2');
-      cy.clickButton(/^Remove users$/);
+      cy.clickToolbarKebabAction(/^Remove users$/);
       // Confirmation modal is displayed with a warning
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(

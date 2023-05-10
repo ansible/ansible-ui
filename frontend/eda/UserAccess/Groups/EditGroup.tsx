@@ -1,16 +1,19 @@
-import { Static, Type } from '@sinclair/typebox';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
-import { PageFormSchema } from '../../../../framework/PageForm/PageFormSchema';
-import { requestPatch } from '../../../common/crud/Data';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+} from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
-import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function EditGroup() {
   const { t } = useTranslation();
@@ -19,40 +22,18 @@ export function EditGroup() {
   const id = Number(params.id);
   const { data: Group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${id.toString()}/`);
 
-  const GroupSchemaType = useMemo(
-    () =>
-      Type.Object({
-        name: Type.String({
-          title: t('Name'),
-          placeholder: t('Enter the name'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-        }),
-        url: Type.Optional(
-          Type.String({
-            title: t('URL'),
-            placeholder: t('Enter the URL'), // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-          })
-        ),
-      }),
-    [t]
-  );
-
-  type GroupSchema = Static<typeof GroupSchemaType>;
-
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<EdaGroup>, EdaGroup>();
+  const patchRequest = usePatchRequest<Partial<EdaGroup>, EdaGroup>();
 
-  const onSubmit: PageFormSubmitHandler<GroupSchema> = async (Group, setError) => {
-    try {
-      if (Number.isInteger(id)) {
-        Group = await requestPatch<EdaGroup>(`${API_PREFIX}/groups/${id}/`, Group);
-        navigate(-1);
-      } else {
-        const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
-        navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
-      }
-    } catch (err) {
-      setError('TODO');
+  const onSubmit: PageFormSubmitHandler<EdaGroup> = async (Group) => {
+    if (Number.isInteger(id)) {
+      Group = await patchRequest(`${API_PREFIX}/groups/${id}/`, Group);
+      navigate(-1);
+    } else {
+      const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
+      navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
     }
   };
   const onCancel = () => navigate(-1);
@@ -79,15 +60,14 @@ export function EditGroup() {
               { label: t('Edit Group') },
             ]}
           />
-          <PageForm
-            schema={GroupSchemaType}
-            submitText={t('Save Group')}
+          <PageForm<EdaGroup>
+            submitText={t('Save group')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={Group}
           >
-            <PageFormSchema schema={GroupSchemaType} />
+            <PageFormTextInput<EdaGroup> name="name" label={t('Name')} isRequired />
           </PageForm>
         </PageLayout>
       );
@@ -102,14 +82,13 @@ export function EditGroup() {
             { label: t('Create Group') },
           ]}
         />
-        <PageForm
-          schema={GroupSchemaType}
-          submitText={t('Create Group')}
+        <PageForm<EdaGroup>
+          submitText={t('Create group')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
         >
-          <PageFormSchema schema={GroupSchemaType} />
+          <PageFormTextInput<EdaGroup> name="name" label={t('Name')} isRequired />
         </PageForm>
       </PageLayout>
     );

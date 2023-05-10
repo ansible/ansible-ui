@@ -1,18 +1,8 @@
 import { ChartDonut, ChartDonutProps } from '@patternfly/react-charts';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Flex,
-  FlexItem,
-  Skeleton,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
+import { CardBody, Flex, FlexItem, Skeleton, Split, SplitItem } from '@patternfly/react-core';
 import { Fragment } from 'react';
-import { usePageNavigate } from '../components/usePageNavigate';
 import { PageChartContainer } from './PageChartContainer';
+import { PageDashboardCard } from './PageDashboardCard';
 
 export function PageDonutChart(props: Omit<ChartDonutProps, 'width' | 'height'>) {
   return (
@@ -37,25 +27,15 @@ export function PageDonutChart(props: Omit<ChartDonutProps, 'width' | 'height'>)
 
 export function PageDashboardDonutCard(props: {
   title: string;
+  linkText?: string;
   to: string;
   items: { count: number; label: string; color: string }[];
   loading?: boolean;
 }) {
   const { title, items, loading } = props;
   const total = items.reduce((total, item) => total + item.count, 0);
-  const history = usePageNavigate();
   return (
-    <Card
-      isFlat
-      isSelectable
-      isRounded
-      style={{ transition: 'box-shadow 0.25s' }}
-      onClick={() => history(props.to)}
-    >
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-
+    <PageDashboardCard title={title} width="sm" height="xs" linkText={props.linkText} to={props.to}>
       <CardBody>
         {loading === true ? (
           <Split hasGutter>
@@ -133,7 +113,7 @@ export function PageDashboardDonutCard(props: {
           </Split>
         )}
       </CardBody>
-    </Card>
+    </PageDashboardCard>
   );
 }
 
