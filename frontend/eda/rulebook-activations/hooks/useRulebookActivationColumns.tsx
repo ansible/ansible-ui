@@ -56,7 +56,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Fire count'),
         type: 'count',
-        value: (activation) => activation?.fired_count ?? 0,
+        value: (activation) => activation?.rules_fired_count ?? 0,
         modal: ColumnModalOption.Hidden,
       },
       {
