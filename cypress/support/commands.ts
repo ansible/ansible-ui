@@ -352,9 +352,9 @@ declare global {
        * Creates a DE and returns the same.
        */
 
-      addCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
+      addEdaCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
 
-      deleteCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
+      deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
 
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
