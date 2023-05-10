@@ -113,7 +113,7 @@ const RuleAuditChart = () => {
       width="xxl"
       height="sm"
       to={RouteObj.EdaRuleAudit}
-      help={t('Rule audit allows auditing of rulebooks that have run or bugs that have come up.')}
+      help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <PageDashboardChart
         groups={[

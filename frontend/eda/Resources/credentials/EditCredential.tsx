@@ -1,4 +1,4 @@
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction, Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -37,6 +37,16 @@ export function CredentialOptions(t: TFunction<'translation'>) {
 }
 function CredentialInputs() {
   const { t } = useTranslation();
+  const credentialTypeHelpBlock = (
+    <Trans i18nKey="credentialTypeHelpBlock">
+      <p>The credential type defines what the credential will be used for.</p>
+      <br />
+      <p>There are three types:</p>
+      <p>GitHub Personal Access Token</p>
+      <p>GitLab Personal Access Token</p>
+      <p>Container Registry</p>
+    </Trans>
+  );
   return (
     <>
       <PageFormTextInput<EdaCredential>
@@ -55,13 +65,12 @@ function CredentialInputs() {
       />
       <PageFormSelectOption<EdaCredential>
         name="credential_type"
-        label={t('Type')}
+        label={t('Credential type')}
         isRequired
         placeholderText={t('Select credential type')}
         options={CredentialOptions(t)}
-        labelHelp={t(
-          'The credential type that is supported with the automation controller. It enables synchronization of cloud inventory.'
-        )}
+        labelHelp={credentialTypeHelpBlock}
+        labelHelpTitle={t('Credential type')}
       />
       <PageFormTextInput<EdaCredential>
         name="username"
@@ -74,11 +83,45 @@ function CredentialInputs() {
         label={t('Token')}
         type="password"
         placeholder={t('Enter credential token')}
-        labelHelp={t(
-          'Tokens allow you to authenticate yourself and adjust the degree of restrictive permissions in addition to the base RBAC permissions.'
-        )}
+        isRequired
+        labelHelp={t('Tokens allow you to authenticate to your destination.')}
+        labelHelpTitle={t('Token')}
       />
     </>
+  );
+}
+
+export function CreateCredential() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const { cache } = useSWRConfig();
+  const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
+
+  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
+    const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
+  };
+  const onCancel = () => navigate(-1);
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create Credential')}
+        breadcrumbs={[
+          { label: t('Credentials'), to: RouteObj.EdaCredentials },
+          { label: t('Create Credential') },
+        ]}
+      />
+      <PageForm
+        submitText={t('Create credential')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+      >
+        <CredentialInputs />
+      </PageForm>
+    </PageLayout>
   );
 }
 
@@ -90,71 +133,42 @@ export function EditCredential() {
   const { data: credential } = useGet<EdaCredential>(`${API_PREFIX}/credentials/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
   const patchRequest = usePatchRequest<Partial<EdaCredential>, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
-    if (Number.isInteger(id)) {
-      await patchRequest(`${API_PREFIX}/credentials/${id}/`, credential);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(-1);
-    } else {
-      const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
-    }
+    await patchRequest(`${API_PREFIX}/credentials/${id}/`, credential);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
   };
   const onCancel = () => navigate(-1);
 
-  if (Number.isInteger(id)) {
-    if (!credential) {
-      return (
-        <PageLayout>
-          <PageHeader
-            breadcrumbs={[
-              { label: t('Credentials'), to: RouteObj.EdaCredentials },
-              { label: t('Edit Credential') },
-            ]}
-          />
-        </PageLayout>
-      );
-    } else {
-      return (
-        <PageLayout>
-          <PageHeader
-            title={`${t('Edit')} ${credential?.name || t('Credential')}`}
-            breadcrumbs={[
-              { label: t('Credentials'), to: RouteObj.EdaCredentials },
-              { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
-            ]}
-          />
-          <PageForm
-            submitText={t('Save credential')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={credential}
-          >
-            <CredentialInputs />
-          </PageForm>
-        </PageLayout>
-      );
-    }
+  if (!credential) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Credentials'), to: RouteObj.EdaCredentials },
+            { label: t('Edit Credential') },
+          ]}
+        />
+      </PageLayout>
+    );
   } else {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create Credential')}
+          title={`${t('Edit')} ${credential?.name || t('Credential')}`}
           breadcrumbs={[
             { label: t('Credentials'), to: RouteObj.EdaCredentials },
-            { label: t('Create Credential') },
+            { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
           ]}
         />
         <PageForm
-          submitText={t('Create credential')}
+          submitText={t('Save credential')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
+          defaultValue={credential}
         >
           <CredentialInputs />
         </PageForm>

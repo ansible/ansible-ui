@@ -52,6 +52,7 @@ function DecisionEnvironmentInputs() {
         maxLength={150}
         isRequired
         labelHelp={imageHelpBlock}
+        labelHelpTitle={t('Image')}
       />
       <PageFormSelectOption
         name={'credential_id'}
@@ -65,11 +66,48 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
-        labelHelp={t(
-          'Credentials are used for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.'
-        )}
+        labelHelp={t('The token needed to utilize the Decision environment image.')}
+        labelHelpTitle={t('Credential')}
       />
     </>
+  );
+}
+
+export function CreateDecisionEnvironment() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { cache } = useSWRConfig();
+  const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
+
+  const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
+    const newDecisionEnvironment = await postRequest(
+      `${API_PREFIX}/decision-environments/`,
+      decisionEnvironment
+    );
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(
+      RouteObj.EdaDecisionEnvironmentDetails.replace(':id', newDecisionEnvironment.id.toString())
+    );
+  };
+  const onCancel = () => navigate(-1);
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Create Decision Environment')}
+        breadcrumbs={[
+          { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+          { label: t('Create Decision Environment') },
+        ]}
+      />
+      <PageForm
+        submitText={t('Create decision environment')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+      >
+        <DecisionEnvironmentInputs />
+      </PageForm>
+    </PageLayout>
   );
 }
 
@@ -82,79 +120,45 @@ export function EditDecisionEnvironment() {
     `${API_PREFIX}/decision-environments/${id.toString()}/`
   );
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
   const patchRequest = usePatchRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
-    if (Number.isInteger(id)) {
-      await patchRequest(`${API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(-1);
-    } else {
-      const newDecisionEnvironment = await postRequest(
-        `${API_PREFIX}/decision-environments/`,
-        decisionEnvironment
-      );
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(
-        RouteObj.EdaDecisionEnvironmentDetails.replace(':id', newDecisionEnvironment.id.toString())
-      );
-    }
+    await patchRequest(`${API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
   };
   const onCancel = () => navigate(-1);
 
-  if (Number.isInteger(id)) {
-    if (!decisionEnvironment) {
-      return (
-        <PageLayout>
-          <PageHeader
-            breadcrumbs={[
-              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: t('Edit Decision Environment') },
-            ]}
-          />
-        </PageLayout>
-      );
-    } else {
-      return (
-        <PageLayout>
-          <PageHeader
-            title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
-            breadcrumbs={[
-              { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
-              { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
-            ]}
-          />
-          <PageForm
-            submitText={t('Save decision environment')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={{
-              ...decisionEnvironment,
-              credential_id: decisionEnvironment?.credential?.id || undefined,
-            }}
-          >
-            <DecisionEnvironmentInputs />
-          </PageForm>
-        </PageLayout>
-      );
-    }
+  if (!decisionEnvironment) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Edit Decision Environment') },
+          ]}
+        />
+      </PageLayout>
+    );
   } else {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Create Decision Environment')}
+          title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
           breadcrumbs={[
             { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
-            { label: t('Create Decision Environment') },
+            { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
           ]}
         />
         <PageForm
-          submitText={t('Create decision environment')}
+          submitText={t('Save decision environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
+          defaultValue={{
+            ...decisionEnvironment,
+            credential_id: decisionEnvironment?.credential?.id || undefined,
+          }}
         >
           <DecisionEnvironmentInputs />
         </PageForm>

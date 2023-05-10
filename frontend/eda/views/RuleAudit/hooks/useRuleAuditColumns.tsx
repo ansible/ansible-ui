@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { StatusCell } from '../../../../common/StatusCell';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
@@ -30,6 +30,26 @@ export function useRuleAuditColumns() {
         cell: (ruleAudit) => <StatusCell status={ruleAudit?.status} />,
         card: 'name',
         list: 'name',
+      },
+      {
+        header: t('Rulebook activation'),
+        cell: (ruleAudit) =>
+          ruleAudit?.activation_id ? (
+            <TextCell
+              text={ruleAudit?.activation_name}
+              onClick={() =>
+                navigate(
+                  RouteObj.EdaRulebookActivationDetails.replace(
+                    ':id',
+                    ruleAudit?.activation_id || ''
+                  )
+                )
+              }
+            />
+          ) : (
+            <TextCell text={ruleAudit?.activation_name || ''} />
+          ),
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Last fired date'),

@@ -14,6 +14,13 @@ describe('EDA rulebook activations List', () => {
             decision_environment_id: edaDecisionEnvironment.id,
           }).then((edaRulebookActivation) => {
             cy.navigateTo(/^Rulebook Activations$/);
+            cy.hasTitle(/^Rulebook Activations$/)
+              .next('p')
+              .should(
+                'have.text',
+                'Rulebook activations are rulebooks that have been activated to run.'
+              );
+
             /*
             filtering by text doesn't work for rulebook activations
             cy.filterTableByText(edaRulebookActivation.name);

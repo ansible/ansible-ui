@@ -112,7 +112,7 @@ export function ProjectDetails() {
         <PageDetail
           label={t('SCM URL')}
           helpText={t(
-            'A URL to a remote archive, such as Github or a build artifact stored in Artifactory and unpacks it into the project path for use.'
+            'A URL to a remote archive, such as a Github Release or a build artifact stored in Artifactory and unpacks it into the project path for use.'
           )}
         >
           {project?.url || ''}

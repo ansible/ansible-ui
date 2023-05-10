@@ -31,8 +31,8 @@ import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { VisualizerTab } from './components/WorkflowJobTemplateVisualizer/VisualizerTab';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import { PageNotImplemented } from '../../../common/PageNotImplemented';
 
 export function WorkflowJobTemplateDetail() {
   const { t } = useTranslation();
@@ -97,10 +97,12 @@ export function WorkflowJobTemplateDetail() {
             <TemplateDetailsTab template={template} />
           </PageTab>
           <PageTab label={t('Access')}>
-            <TemplateAccessTab template={template} />
+            <PageNotImplemented />
+            {/* <TemplateAccessTab template={template} /> */}
           </PageTab>
           <PageTab label={t('Visualizer')}>
-            <WorkflowVisualizer template={template} />
+            <PageNotImplemented />
+            {/* <WorkflowVisualizer template={template} /> */}
           </PageTab>
         </PageTabs>
       ) : (
@@ -195,10 +197,10 @@ function TemplateDetailsTab(props: { template: WorkflowJobTemplate }) {
   );
 }
 
-function TemplateAccessTab(props: { template: WorkflowJobTemplate }) {
-  return <div>{props.template.name}</div>;
-}
+// function TemplateAccessTab(props: { template: WorkflowJobTemplate }) {
+//   return <div>{props.template.name}</div>;
+// }
 
-function WorkflowVisualizer(props: { template: WorkflowJobTemplate }) {
-  return <VisualizerTab template={props.template} />;
-}
+// function WorkflowVisualizer(props: { template: WorkflowJobTemplate }) {
+//   return <VisualizerTab template={props.template} />;
+// }

@@ -11,7 +11,13 @@ describe('EDA Rule Audits List', () => {
   });
 
   it.skip('can render the Rule Audits list view', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo(/^Rule Audit$/);
+    cy.hasTitle(/^Rule Audit$/)
+      .next('p')
+      .should(
+        'have.text',
+        'Rule audit allows auditing of rules which have been triggered by incoming events.'
+      );
   });
 
   it.skip('a rulebook activation run results in a record showing on the rule audit list', () => {

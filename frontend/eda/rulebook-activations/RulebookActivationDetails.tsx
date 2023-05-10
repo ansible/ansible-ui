@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -41,6 +41,16 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const restartPolicyHelpBlock = (
+    <Trans i18nKey="restartPolicyHelpBlock">
+      <p>A policy to decide when to restart a rulebook.</p>
+      <br />
+      <p>Policies:</p>
+      <p>Always: restarts when a rulebook finishes.</p>
+      <p>Never: never restarts a rulebook when it finishes.</p>
+      <p>On failure: only restarts when it fails.</p>
+    </Trans>
+  );
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`,
@@ -127,9 +137,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             </PageDetail>
             <PageDetail
               label={t('Decision environment')}
-              helpText={t(
-                'Decision environments contain a rulebook image that dictate where the rulebooks will run.'
-              )}
+              helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
             >
               {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
                 <Link
@@ -146,21 +154,19 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             </PageDetail>
             <PageDetail
               label={t('Rulebook')}
-              helpText={t('Rulebooks will be filtered according to the Project selected.')}
+              helpText={t('Rulebooks will be shown according to the project selected.')}
             >
               {rulebookActivation?.rulebook?.name || ''}
             </PageDetail>
-            <PageDetail
-              label={t('Restart policy')}
-              helpText={t(
-                'A way to determine which event would restart an activation. (Events: on always, never, or on failure)'
-              )}
-            >
+            <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
               {rulebookActivation?.restart_policy
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
             </PageDetail>
-            <PageDetail label={t('Project')}>
+            <PageDetail
+              label={t('Project')}
+              helpText={t('Projects are a logical collection of rulebooks.')}
+            >
               {rulebookActivation && rulebookActivation.project?.id ? (
                 <Link
                   to={RouteObj.EdaProjectDetails.replace(

@@ -357,7 +357,9 @@ Cypress.Commands.add('deleteAwxProject', (project: Project) => {
   // Delete project
   cy.awxRequestDelete(`/api/v2/projects/${project.id}/`);
   // Delete organization for the project
-  cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`);
+  if (organizationId) {
+    cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, true);
+  }
 });
 
 Cypress.Commands.add('createAwxInventory', () => {

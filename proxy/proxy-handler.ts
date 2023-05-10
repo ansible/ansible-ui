@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 /* Copyright Contributors to the Open Cluster Management project */
 import cookie from 'cookie';
 import http from 'http';
 import { Http2ServerRequest, Http2ServerResponse, OutgoingHttpHeaders } from 'http2';
-import { request, RequestOptions } from 'https';
+import { RequestOptions, request } from 'https';
 import { pipeline } from 'stream';
 import {
   HTTP2_HEADER_CACHE_CONTROL,
@@ -48,11 +49,13 @@ export function proxyHandler(req: Http2ServerRequest, res: Http2ServerResponse):
 
   const proxyUrl = new URL(target);
 
-  // if (proxyUrl.hostname !== 'localhost') {
-  headers[HTTP2_HEADER_HOST] = proxyUrl.hostname;
-  headers['origin'] = proxyUrl.protocol + '//' + proxyUrl.hostname;
-  headers[HTTP2_HEADER_REFERER] = proxyUrl.protocol + '//' + proxyUrl.hostname;
-  // }
+  headers[HTTP2_HEADER_HOST] = `${proxyUrl.hostname}:${proxyUrl.port}`;
+  headers['origin'] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}`;
+  headers[HTTP2_HEADER_REFERER] = `${proxyUrl.protocol}//${proxyUrl.hostname}:${proxyUrl.port}`;
+
+  // Remove x-forwarded-proto header
+  // fixes django - django.security.csrf Forbidden (Referer checking failed - Referer is insecure while host is secure.)
+  delete headers['x-forwarded-proto'];
 
   const requestOptions: RequestOptions = {
     protocol: proxyUrl.protocol,
