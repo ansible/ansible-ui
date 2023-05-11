@@ -1,7 +1,12 @@
 //Tests a user's ability to perform certain actions on the Rule Audits list in the EDA UI.
+// import { JobTemplate } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 describe('EDA Rule Audits List', () => {
+  // let edaAwxJobTemplate: JobTemplate;
   before(() => {
+    // cy.createEdaSpecificAwxJobTemplate().then((jobTemplate) => {
+    //   edaAwxJobTemplate = jobTemplate;
+    // });
     cy.edaLogin();
   });
 
@@ -15,15 +20,7 @@ describe('EDA Rule Audits List', () => {
       );
   });
 
-  it.skip('can filter the Rule Audits list based on specific criteria', () => {
+  it.skip('a rulebook activation run results in a record showing on the rule audit list', () => {
     //change test stub name to stipulate what the specific criteria is
-  });
-
-  it.skip('can bulk delete Rule Audits from the list', () => {
-    //write test here
-  });
-
-  it.skip('can verify the functionality of items in the kebab menu on the Rule Audits list view', () => {
-    //write test here
   });
 });

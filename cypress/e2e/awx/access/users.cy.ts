@@ -5,7 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { User } from '../../../../frontend/awx/interfaces/User';
 
-describe('users', () => {
+describe('Users List Actions', () => {
   let organization: Organization;
   let user: User;
 
@@ -71,6 +71,33 @@ describe('users', () => {
     cy.hasTitle(`${user.username}a`);
   });
 
+  it('navigates to the edit form from the users list row item', () => {
+    cy.navigateTo(/^Users$/);
+    cy.clickTableRowPinnedAction(user.username, 'Edit user');
+    cy.hasTitle(/^Edit User$/);
+  });
+});
+
+describe('Users Delete Actions', () => {
+  let organization: Organization;
+  let user: User;
+
+  before(() => {
+    cy.awxLogin();
+
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+    });
+  });
+
+  after(() => {
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+  });
+
+  beforeEach(() => {
+    cy.createAwxUser(organization).then((testUser) => (user = testUser));
+  });
+
   it('deletes a user from the details page', () => {
     cy.navigateTo(/^Users$/);
     cy.clickTableRow(user.username);
@@ -79,12 +106,6 @@ describe('users', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.hasTitle(/^Users$/);
-  });
-
-  it('navigates to the edit form from the users list row item', () => {
-    cy.navigateTo(/^Users$/);
-    cy.clickTableRowPinnedAction(user.username, 'Edit user');
-    cy.hasTitle(/^Edit User$/);
   });
 
   it('deletes a user from the users list row item', () => {

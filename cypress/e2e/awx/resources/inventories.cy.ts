@@ -32,7 +32,6 @@ describe('inventories', () => {
 
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxLabel(label);
     cy.deleteAwxOrganization(organization);
     cy.deleteAwxInventory(inventory);
   });
