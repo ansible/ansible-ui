@@ -74,6 +74,17 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
   });
 });
 
+Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
+  cy.get('.pf-c-pagination')
+    .first()
+    .within(() => {
+      cy.get('.pf-c-options-menu').within(() => {
+        cy.get('button').click();
+        cy.contains('button', `${text} per page`).click();
+      });
+    });
+});
+
 Cypress.Commands.add('filterTableByText', (text: string) => {
   cy.get('#filter-input').within(() => {
     cy.get('input').clear().type(text, { delay: 0 });
