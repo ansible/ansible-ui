@@ -53,13 +53,14 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           return <TextCell text={jobTypes[job.type]} />;
         },
         sort: 'type',
-        card: 'description',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('Duration'),
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
-        list: 'secondary',
+        // list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
       {

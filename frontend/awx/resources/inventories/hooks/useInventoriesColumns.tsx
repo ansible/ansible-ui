@@ -53,6 +53,8 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
             return t('Inventory');
         }
       },
+      card: 'subtitle',
+      list: 'subtitle',
     }),
     [t]
   );

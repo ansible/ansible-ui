@@ -41,6 +41,8 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
           }
           return t('Unknown');
         },
+        card: 'subtitle',
+        list: 'subtitle',
       },
       createdColumn,
       modifiedColumn,
