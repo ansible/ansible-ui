@@ -43,6 +43,16 @@ describe('jobs', () => {
     cy.contains(job.name as string);
   });
 
+  it('relaunches job and navigates to job output', () => {
+    cy.navigateTo(/^Jobs$/);
+    const jobId = job.id ? job.id.toString() : '';
+    const jobName = job.name ? job.name : '';
+    cy.filterTableByTypeAndText('ID', jobId);
+    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
+    cy.hasTitle(jobName).should('be.visible');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
+  });
+
   it('renders the toolbar and row actions', () => {
     cy.navigateTo(/^Jobs$/);
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
@@ -129,15 +139,5 @@ describe('jobs', () => {
       cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
-  });
-
-  it('relaunches job and navigates to job output', () => {
-    cy.navigateTo(/^Jobs$/);
-    const jobId = job.id ? job.id.toString() : '';
-    const jobName = job.name ? job.name : '';
-    cy.filterTableByTypeAndText('ID', jobId);
-    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
-    cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 });
