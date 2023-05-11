@@ -2,14 +2,14 @@ import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaContr
 import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
 
 function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
-  const beforeTime = new Date(
-    Date.now() - (30 + new Date().getTimezoneOffset()) * 60 * 60 * 1000
-  ).toLocaleString();
-  if (!resource.created_at || resource.created_at > beforeTime) return false;
-  if (resource.name && resource.name.startsWith(prefix)) {
-    return true;
-  }
-  return false;
+  if (!resource.name) return false;
+  if (!resource.name.startsWith(prefix)) return false;
+
+  if (!resource.created_at) return false;
+  const created = new Date(resource.created_at);
+  const beforeTime = new Date(Date.now() - 10 * 60 * 1000);
+
+  return created < beforeTime;
 }
 
 describe('EDA Cleanup', () => {
