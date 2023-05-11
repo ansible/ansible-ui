@@ -65,7 +65,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/unified_jobs/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        const url = getJobsAPIUrl(resource.job_type);
+        const url = getJobsAPIUrl(resource.job_type ?? '');
         cy.awxRequestDelete(`${url}${resource.id}/`);
       }
     });
