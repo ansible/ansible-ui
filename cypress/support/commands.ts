@@ -75,6 +75,8 @@ declare global {
       /** Change the current filter type in the table toolbar. */
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
 
+      setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;
 
