@@ -306,7 +306,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         onFilter={onFilter}
         hasInlineFilter={options !== null && options.length > 10}
         menuAppendTo="parent"
-        maxHeight={500}
+        maxHeight={'45vh'}
         footer={
           props.openSelectDialog ? (
             <Button
