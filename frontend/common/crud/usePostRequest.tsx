@@ -29,7 +29,6 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
       },
       signal: signal ?? abortSignalRef.current.signal,
     });
-
     if (!response.ok) {
       if (response.status === 401) {
         navigate(RouteObj.Login + '?navigate-back=true');
@@ -46,11 +45,15 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
     }
 
     switch (response.status) {
-      case 202: // No Content
-      case 204: // Accepted
+      case 204: // No Content
         return null as ResponseBody;
     }
-    return (await response.json()) as ResponseBody;
+
+    try {
+      return (await response.json()) as ResponseBody;
+    } catch {
+      return null as ResponseBody;
+    }
   };
 }
 

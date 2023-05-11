@@ -57,31 +57,30 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       ) {
         // TODO: If password is needed for relaunch, handle with dialog
       } else {
+        let relaunchJob;
         switch (job.type) {
           case 'ad_hoc_command': {
-            await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
+            relaunchJob = await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
             break;
           }
           case 'workflow_job': {
-            await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
+            relaunchJob = await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
             break;
           }
           case 'job': {
-            await postRequest(relaunchEndpoint, {
+            relaunchJob = await postRequest(relaunchEndpoint, {
               ...jobRelaunchParams,
             } as JobRelaunch);
             break;
           }
           case 'inventory_update':
-            await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
+            relaunchJob = await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
             break;
           case 'project_update':
-            await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
+            relaunchJob = await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
             break;
         }
-
-        // Navigate to Job Output UI
-        navigate(getJobOutputUrl(job));
+        navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
       }
     } catch (error) {
       alertToaster.addAlert({
