@@ -5,16 +5,20 @@ import {
   JobTemplate,
   UnifiedJobList,
 } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { IAwxResources } from '../../../support/awx-commands';
 
 describe('jobs', () => {
+  let awxResources: IAwxResources;
   let jobTemplate: JobTemplate;
   let job: UnifiedJobList;
 
   before(() => {
     cy.awxLogin();
 
-    cy.createAwxJobTemplate().then((template) => {
-      jobTemplate = template;
+    cy.createAwxOrganizationProjectInventoryJobTemplate().then((resources) => {
+      awxResources = resources;
+      jobTemplate = resources.jobTemplate;
+
       // Launch job to populate jobs list
       const templateId = jobTemplate.id ? jobTemplate.id.toString() : '';
       cy.requestPost<UnifiedJobList>(
@@ -30,13 +34,23 @@ describe('jobs', () => {
     // Delete launched job
     const jobId = job.id ? job.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
-    cy.deleteAwxJobTemplate(jobTemplate);
+    cy.deleteAwxResources(awxResources);
   });
 
   it('renders jobs list', () => {
     cy.navigateTo(/^Jobs$/);
     cy.hasTitle(/^Jobs$/);
     cy.contains(job.name as string);
+  });
+
+  it('relaunches job and navigates to job output', () => {
+    cy.navigateTo(/^Jobs$/);
+    const jobId = job.id ? job.id.toString() : '';
+    const jobName = job.name ? job.name : '';
+    cy.filterTableByTypeAndText('ID', jobId);
+    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
+    cy.hasTitle(jobName).should('be.visible');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
   it('renders the toolbar and row actions', () => {
@@ -55,7 +69,9 @@ describe('jobs', () => {
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
         cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
-        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/).should('exist');
+        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/, { timeout: 60 * 1000 }).should(
+          'exist'
+        );
       });
   });
 
@@ -122,22 +138,6 @@ describe('jobs', () => {
       cy.clickButton(/^Close$/);
       cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
-    });
-  });
-
-  it('relaunches job and navigates to job output', () => {
-    cy.navigateTo(/^Jobs$/);
-    const jobId = job.id ? job.id.toString() : '';
-    const jobName = job.name ? job.name : '';
-    cy.filterTableByTypeAndText('ID', jobId);
-    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
-    cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
-    // Clean up newly launched job
-    cy.url().then((url) => {
-      const jobId = url.substring(url.lastIndexOf('/') + 1);
-      cy.navigateTo(/^Jobs$/);
-      cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     });
   });
 });

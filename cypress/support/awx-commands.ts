@@ -1,4 +1,5 @@
 import '@cypress/code-coverage/support';
+import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
@@ -260,53 +261,99 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
 
 // Resources for testing AWX
 Cypress.Commands.add('createAwxOrganization', () => {
-  cy.requestPost<Organization>('/api/v2/organizations/', {
+  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>('/api/v2/organizations/', {
     name: 'E2E Organization ' + randomString(4),
-  }).then((organization) => organization);
+  });
+});
+
+Cypress.Commands.add('awxRequest', function awxRequest<
+  T
+>(method: string, url: string, body?: Cypress.RequestBody) {
+  let awxServer = Cypress.env('AWX_SERVER') as string;
+  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  cy.getGlobalAwxToken().then((awxToken) => {
+    cy.request<T>({
+      method,
+      url: awxServer + url,
+      body,
+      headers: { Authorization: 'Bearer ' + awxToken.token },
+    });
+  });
+});
+
+Cypress.Commands.add('awxRequestPost', function awxRequestPost<
+  RequestBodyT extends Cypress.RequestBody,
+  ResponseBodyT = RequestBodyT
+>(url: string, body: RequestBodyT) {
+  cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
+});
+
+Cypress.Commands.add('awxRequestGet', function awxRequestGet<ResponseBodyT = unknown>(url: string) {
+  cy.awxRequest<ResponseBodyT>('GET', url).then((response) => response.body);
+});
+
+Cypress.Commands.add('awxRequestDelete', function awxRequestDelete(url: string) {
+  cy.awxRequest('DELETE', url);
 });
 
 Cypress.Commands.add('deleteAwxOrganization', (organization: Organization) => {
-  cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+  cy.awxRequestDelete(`/api/v2/organizations/${organization.id}/`);
 });
 
 Cypress.Commands.add('createAwxTeam', (organization: Organization) => {
-  cy.requestPost<Team>('/api/v2/teams/', {
+  cy.awxRequestPost<Pick<Team, 'name' | 'organization'>, Team>('/api/v2/teams/', {
     name: 'E2E Team ' + randomString(4),
     organization: organization.id,
-  }).then((team) => team);
+  });
 });
 
 Cypress.Commands.add('deleteAwxTeam', (team: Team) => {
   if (team.id) {
-    cy.requestDelete(`/api/v2/teams/${team.id.toString()}/`, true);
+    cy.awxRequestDelete(`/api/v2/teams/${team.id.toString()}/`);
   }
 });
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
-  cy.requestPost<User>(`/api/v2/organizations/${organization.id.toString()}/users/`, {
-    username: 'e2e-user-' + randomString(4),
-    is_superuser: false,
-    is_system_auditor: false,
-    password: 'pw',
-    user_type: 'normal',
-  }).then((user) => user);
+  cy.awxRequestPost<Omit<User, 'id' | 'auth' | 'summary_fields'>, User>(
+    `/api/v2/organizations/${organization.id.toString()}/users/`,
+    {
+      username: 'e2e-user-' + randomString(4),
+      is_superuser: false,
+      is_system_auditor: false,
+      password: 'pw',
+      user_type: 'normal',
+    }
+  ).then((user) => user);
 });
 
 Cypress.Commands.add('deleteAwxUser', (user: User) => {
   if (user.id) {
-    cy.requestDelete(`/api/v2/users/${user.id}/`, true);
+    cy.awxRequestDelete(`/api/v2/users/${user.id}/`);
   }
 });
 
-Cypress.Commands.add('createAwxProject', () => {
-  cy.createAwxOrganization().then((organization) => {
-    cy.requestPost<Project>('/api/v2/projects/', {
+Cypress.Commands.add(
+  'createAwxProject',
+  (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>) => {
+    cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
+      organization: project?.organization,
       scm_type: 'git',
       scm_url: 'https://github.com/ansible/ansible-tower-samples',
+      ...project,
     }).then((project) => {
       waitForProjectToFinishSyncing(project.id);
+    });
+  }
+);
+
+Cypress.Commands.add('createEdaSpecificAwxProject', () => {
+  cy.createAwxOrganization().then((organization) => {
+    cy.createAwxProject({
+      name: 'EDA Project ' + randomString(4),
+      organization: organization.id,
+      scm_type: 'git',
+      scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample',
     });
   });
 });
@@ -316,10 +363,10 @@ Cypress.Commands.add('deleteAwxProject', (project: Project) => {
   // Delete sync job related to project
   if (project && project.related && typeof project.related.last_job === 'string') {
     const projectUpdateEndpoint: string = project.related.last_job;
-    cy.requestDelete(projectUpdateEndpoint);
+    cy.awxRequestDelete(projectUpdateEndpoint);
   }
   // Delete project
-  cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+  cy.awxRequestDelete(`/api/v2/projects/${project.id}/`);
   // Delete organization for the project
   if (organizationId) {
     cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, true);
@@ -328,7 +375,7 @@ Cypress.Commands.add('deleteAwxProject', (project: Project) => {
 
 Cypress.Commands.add('createAwxInventory', () => {
   cy.createAwxOrganization().then((organization) => {
-    cy.requestPost<Inventory>('/api/v2/inventories/', {
+    cy.awxRequestPost<Partial<Inventory>>('/api/v2/inventories/', {
       name: 'E2E Inventory ' + randomString(4),
       organization: organization.id,
     }).then((inventory) => inventory);
@@ -339,32 +386,60 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
   const organizationId = inventory.organization;
   // Delete organization created for this inventory (this will also delete the inventory)
   if (organizationId) {
-    cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, true);
+    cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`);
   }
 });
 
-Cypress.Commands.add('createAwxJobTemplate', () => {
-  cy.createAwxProject().then((project) => {
+Cypress.Commands.add(
+  'createAwxOrganizationProjectInventoryJobTemplate',
+  (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
     cy.createAwxInventory().then((inventory) => {
-      cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
-        name: 'E2E Job Template ' + randomString(4),
-        playbook: 'hello_world.yml',
-        project: project.id.toString(),
-        inventory: inventory.id,
-      }).then((jobTemplate) => jobTemplate);
+      cy.createAwxProject({ organization: inventory.organization, ...options?.project }).then(
+        (project) => {
+          cy.createAwxJobTemplate(project, inventory, options?.jobTemplate).then((jobTemplate) => ({
+            project,
+            inventory,
+            jobTemplate,
+          }));
+        }
+      );
     });
-  });
+  }
+);
+
+/** Interface for tracking created resources that will need to be delete 
+at the end of testing using cy.deleteAwxResources*/
+export interface IAwxResources {
+  jobTemplate?: JobTemplate;
+}
+
+Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
+  if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
 });
+
+Cypress.Commands.add(
+  'createAwxJobTemplate',
+  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
+    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
+      name: 'E2E Job Template ' + randomString(4),
+      playbook: 'hello_world.yml',
+      project: project.id.toString(),
+      inventory: inventory.id,
+      organization: project.organization,
+      ...jobTemplate,
+    }).then((jobTemplate) => jobTemplate);
+  }
+);
 
 Cypress.Commands.add('deleteAwxJobTemplate', (jobTemplate: JobTemplate) => {
   const projectId = jobTemplate.project;
 
   if (jobTemplate.id) {
     const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
-    cy.requestDelete(`/api/v2/job_templates/${templateId}/`, true);
+    cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`);
   }
   if (projectId) {
-    cy.requestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
+    cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
       // This will take care of deleting the project and the associated org, inventory
       cy.deleteAwxProject(project);
     });
@@ -375,7 +450,7 @@ let requestCount = 1;
 
 // Polling to wait till a project is synced
 function waitForProjectToFinishSyncing(projectId: number) {
-  cy.requestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
     // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
     if (project.status === 'successful' || requestCount > 300) {
       if (requestCount > 300) {
@@ -394,17 +469,17 @@ function waitForProjectToFinishSyncing(projectId: number) {
 Cypress.Commands.add(
   'createInventoryHostGroup',
   function createInventoryHostGroup(organization: Organization) {
-    cy.requestPost<Inventory>('/api/v2/inventories/', {
+    cy.awxRequestPost<Partial<Inventory>>('/api/v2/inventories/', {
       name: 'E2E Inventory ' + randomString(4),
       organization: organization.id,
     }).then((inventory) => {
-      cy.requestPost<AwxHost>('/api/v2/hosts/', {
+      cy.awxRequestPost<Partial<AwxHost>, AwxHost>('/api/v2/hosts/', {
         name: 'E2E Host ' + randomString(4),
         inventory: inventory.id,
       }).then((host) => {
-        cy.requestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id}/groups/`, {
+        cy.awxRequestPost<{ name: string; inventory: number }>(`/api/v2/hosts/${host.id}/groups/`, {
           name: 'E2E Group ' + randomString(4),
-          inventory: inventory.id,
+          inventory: host.inventory,
         }).then((group) => ({
           inventory,
           host,
@@ -416,7 +491,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxLabel', (organization: Organization) => {
-  cy.requestPost<Label>('/api/v2/labels/', {
+  cy.awxRequestPost<Partial<Label>>('/api/v2/labels/', {
     name: 'E2E Label ' + randomString(4),
     organization: organization.id,
   }).then((label) => label);
@@ -425,12 +500,12 @@ Cypress.Commands.add('createAwxLabel', (organization: Organization) => {
 Cypress.Commands.add('deleteAwxLabel', (label: Label) => {
   const labelId = label.id;
   if (labelId) {
-    cy.requestDelete(`/api/v2/labels/${labelId.toString()}/`, true);
+    cy.awxRequestDelete(`/api/v2/labels/${labelId.toString()}/`);
   }
 });
 
 Cypress.Commands.add('createAwxInstanceGroup', () => {
-  cy.requestPost<InstanceGroup>('/api/v2/instance_groups/', {
+  cy.awxRequestPost<InstanceGroup>('/api/v2/instance_groups/', {
     name: 'E2E Instance Group ' + randomString(4),
   }).then((instanceGroup) => instanceGroup);
 });
@@ -438,39 +513,38 @@ Cypress.Commands.add('createAwxInstanceGroup', () => {
 Cypress.Commands.add('deleteAwxInstanceGroup', (instanceGroup: InstanceGroup) => {
   const instanceGroupId = instanceGroup.id;
   if (instanceGroupId) {
-    cy.requestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, true);
+    cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`);
   }
 });
 
 Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   let awxServer = Cypress.env('AWX_SERVER') as string;
   if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+  const username = Cypress.env('AWX_USERNAME') as string;
+  const password = Cypress.env('AWX_PASSWORD') as string;
+  const authorization = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
   cy.request<AwxToken>({
     method: 'POST',
     url: `${awxServer}/api/v2/tokens/`,
     body: { description: 'E2E-' + randomString(4), ...awxToken },
-    headers: {
-      Authorization:
-        'Basic ' +
-        Buffer.from(
-          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-        ).toString('base64'),
-    },
+    headers: { authorization },
   }).then((response) => response.body);
 });
 
+Cypress.Commands.add('getGlobalAwxToken', () => {
+  if (globalAwxToken) cy.wrap(globalAwxToken);
+  else cy.createAwxToken().then((awxToken) => (globalAwxToken = awxToken));
+});
+
 Cypress.Commands.add('deleteAwxToken', (awxToken: AwxToken) => {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  cy.request<AwxToken>({
-    method: 'DELETE',
-    url: `${awxServer}/api/v2/tokens/${awxToken.id}/`,
-    headers: {
-      Authorization:
-        'Basic ' +
-        Buffer.from(
-          `${Cypress.env('AWX_USERNAME') as string}:${Cypress.env('AWX_PASSWORD') as string}`
-        ).toString('base64'),
-    },
-  }).then((response) => response.body);
+  cy.awxRequestDelete(`/api/v2/tokens/${awxToken.id}/`);
+});
+
+// Global variable to store the token for AWX
+// Created on demand when a cammand needs it
+let globalAwxToken: AwxToken | undefined;
+
+after(() => {
+  // Delete the token if it was created
+  if (globalAwxToken) cy.deleteAwxToken(globalAwxToken);
 });
