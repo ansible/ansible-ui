@@ -1,5 +1,7 @@
+import { Tooltip } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
@@ -7,14 +9,12 @@ import {
   DateTimeCell,
   ITableColumn,
 } from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { useNavigate } from 'react-router-dom';
-import { StatusCell } from '../../../../common/StatusCell';
-import { RouteObj } from '../../../../Routes';
 import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
-import { Tooltip } from '@patternfly/react-core';
+import { RouteObj } from '../../../../Routes';
+import { StatusCell } from '../../../../common/StatusCell';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
+import { Instance } from '../../../interfaces/Instance';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -64,7 +64,13 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         ),
         sort: 'errors',
       },
-      { cell: makeReadable, sort: 'node_type', header: t('Instance type') },
+      {
+        cell: makeReadable,
+        sort: 'node_type',
+        header: t('Instance type'),
+        card: 'subtitle',
+        list: 'subtitle',
+      },
       {
         header: t('Running jobs'),
         cell: (instance) => instance.jobs_running,

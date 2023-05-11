@@ -116,6 +116,7 @@ export function Hosts() {
         emptyStateButtonText={t('Create host')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateHost)}
         {...view}
+        defaultSubtitle={t('Host')}
       />
     </PageLayout>
   );
