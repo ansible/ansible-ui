@@ -139,6 +139,32 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   );
 });
 
+Cypress.Commands.add('getEdaProjects', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?page=${page}&page_size=${perPage}`);
+});
+
+Cypress.Commands.add('getEdaDecisionEnvironments', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+    `/api/eda/v1/decision-environments/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaRulebookActivations', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaRulebookActivation>>(
+    `/api/eda/v1/activations/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaCredential>>(
+    `/api/eda/v1/credentials/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?page=${page}&page_size=${perPage}`);
+});
+
 Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProjectName}`).then(
     (result) => {
@@ -221,7 +247,7 @@ Cypress.Commands.add(
     cy.requestPost<EdaUser, SetOptional<EdaUserCreateUpdate, 'username' | 'password'>>(
       `/api/eda/v1/users/`,
       {
-        username: `E2EUser${randomString(4)}`,
+        username: `E2E User${randomString(4)}`,
         password: `${randomString(4)}`,
         ...user,
       }
