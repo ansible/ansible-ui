@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core';
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
@@ -32,12 +32,43 @@ export function SettingsProvider(props: { children?: ReactNode }) {
           ? 'dark'
           : 'light'
         : theme;
+
+    let tableLayout: 'comfortable' | 'compact' = 'comfortable';
+    switch (localStorage.getItem('tableLayout')) {
+      case 'compact':
+        tableLayout = 'compact';
+        break;
+      case 'comfortable':
+        tableLayout = 'comfortable';
+        break;
+    }
+
+    let formColumns: 'single' | 'multiple' = 'multiple';
+    switch (localStorage.getItem('formColumns')) {
+      case 'single':
+        formColumns = 'single';
+        break;
+      case 'multiple':
+        formColumns = 'multiple';
+        break;
+    }
+
+    let formLayout: 'vertical' | 'horizontal' = 'vertical';
+    switch (localStorage.getItem('formLayout')) {
+      case 'vertical':
+        formLayout = 'vertical';
+        break;
+      case 'horizontal':
+        formLayout = 'horizontal';
+        break;
+    }
+
     const settings: Settings = {
       theme,
       activeTheme,
-      tableLayout: localStorage.getItem('tableLayout') as 'compact' | 'comfortable',
-      formColumns: localStorage.getItem('formColumns') as 'single' | 'multiple',
-      formLayout: localStorage.getItem('formLayout') as 'vertical' | 'horizontal',
+      tableLayout,
+      formColumns,
+      formLayout,
     };
 
     if (activeTheme === 'dark') {
