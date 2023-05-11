@@ -14,6 +14,7 @@ import {
   PageTable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -27,7 +28,6 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
@@ -131,6 +131,7 @@ export function Templates() {
         emptyStateButtonText={t('Create template')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
         {...view}
+        defaultSubtitle={t('Template')}
       />
     </PageLayout>
   );

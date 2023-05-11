@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { RouteObj } from '../../../Routes';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { Credential } from '../../interfaces/Credential';
 import { useAwxView } from '../../useAwxView';
 import { useCredentialActions } from './hooks/useCredentialActions';
@@ -50,6 +50,7 @@ export function Credentials() {
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
         {...view}
+        defaultSubtitle={t('Credential')}
       />
     </PageLayout>
   );

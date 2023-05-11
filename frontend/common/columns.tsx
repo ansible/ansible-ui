@@ -191,6 +191,7 @@ export function useOrganizationNameColumn(options?: {
           disableLinks={options?.disableLinks}
         />
       ),
+      value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
     }),
     [options?.disableLinks, options?.disableSort, t]
@@ -211,6 +212,8 @@ export function useTypeColumn<T extends object>(options: {
       header: t('Type'),
       value: (item) => makeReadable(item),
       type: 'text',
+      card: 'subtitle',
+      list: 'subtitle',
     }),
     [t, makeReadable]
   );

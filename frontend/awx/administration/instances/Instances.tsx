@@ -4,10 +4,10 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
+import { useInstanceRowActions } from './hooks/useInstanceRowActions';
+import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
-import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
-import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 
 export function Instances() {
   const { t } = useTranslation();

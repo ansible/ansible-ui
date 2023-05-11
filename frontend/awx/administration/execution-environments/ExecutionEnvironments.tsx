@@ -111,6 +111,7 @@ export function ExecutionEnvironments() {
         emptyStateButtonText={t('Create execution environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateExecutionEnvironment)}
         {...view}
+        defaultSubtitle={t('Execution environment')}
       />
     </PageLayout>
   );

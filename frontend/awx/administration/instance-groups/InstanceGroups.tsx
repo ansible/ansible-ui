@@ -115,6 +115,7 @@ export function InstanceGroups() {
         emptyStateButtonText={t('Create instance group')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateInstanceGroup)}
         {...view}
+        defaultSubtitle={t('Instance Group')}
       />
     </PageLayout>
   );
@@ -162,6 +163,8 @@ export function useInstanceGroupsColumns(options?: {
           />
         ),
         sort: 'name',
+        card: 'name',
+        list: 'name',
       },
       {
         header: t('Type'),
@@ -170,7 +173,8 @@ export function useInstanceGroupsColumns(options?: {
             text={instanceGroup.is_container_group ? t('Container group') : t('Instance group')}
           />
         ),
-        card: 'description',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('Running jobs'),

@@ -95,6 +95,7 @@ export function Projects() {
           canCreateProject ? () => navigate(RouteObj.CreateProject) : undefined
         }
         {...view}
+        defaultSubtitle={t('Project')}
       />
     </PageLayout>
   );

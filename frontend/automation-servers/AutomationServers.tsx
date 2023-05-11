@@ -153,8 +153,7 @@ export function useAutomationServersColumns(_options?: {
         header: t('Url'),
         value: (server) => server.url,
         cell: (server) => <CopyCell text={server.url} />,
-        // card: 'description',
-        // list: 'description',
+        list: 'secondary',
       },
       {
         header: t('Labels'),
