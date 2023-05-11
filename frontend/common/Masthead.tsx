@@ -194,7 +194,9 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                       <DropdownItem
                         onClick={() => {
                           open(
-                            'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                            isEdaServer(automationServer)
+                              ? 'https://www.redhat.com/en/engage/event-driven-ansible-20220907'
+                              : 'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
                             '_blank'
                           );
                         }}
