@@ -42,7 +42,7 @@ describe('EDA Login / Logoff', () => {
   it.skip('can log out and login as a different user', () => {
     // TODO: needs further work when Users page is functional
     const userDetails = {
-      Username: `E2E User ${randomString(4)}`,
+      Username: `E2EUser ${randomString(4)}`,
       FirstName: 'Firstname',
       LastName: 'Lastname',
       Email: 'first.last@redhat.com',
