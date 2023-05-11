@@ -32,10 +32,13 @@ import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { useAwxView } from '../../useAwxView';
 
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const config = useAwxConfig();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
   const view = useAwxView<ExecutionEnvironment>({
@@ -98,7 +101,7 @@ export function ExecutionEnvironments() {
     <PageLayout>
       <PageHeader
         title={t('Execution Environments')}
-        titleDocLink="https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/execution_environments.html`}
       />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}

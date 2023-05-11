@@ -29,6 +29,8 @@ import {
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -38,6 +40,7 @@ export function Hosts() {
   const tableColumns = useHostsColumns();
   const view = useAwxView<AwxHost>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
+  const config = useAwxConfig();
 
   const toolbarActions = useMemo<IPageAction<AwxHost>[]>(
     () => [
@@ -103,7 +106,7 @@ export function Hosts() {
             'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
           ),
         ]}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/hosts.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/hosts.html`}
       />
       <PageTable<AwxHost>
         toolbarFilters={toolbarFilters}

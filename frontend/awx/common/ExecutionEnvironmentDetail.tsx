@@ -7,6 +7,8 @@ import { PageDetail } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
+import getDocsBaseUrl from './util/getDocsBaseUrl';
+import { useAwxConfig } from './useAwxConfig';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-global--warning-color--100);
@@ -37,9 +39,8 @@ function ExecutionEnvironmentDetail(props: {
     helpText,
   } = props;
   const { t } = useTranslation();
-  // TODO: use config context to generate the base docs URL
-  const docsBaseUrl = 'https://docs.ansible.com/automation-controller/latest';
-  const docsLink = `${docsBaseUrl}/html/upgrade-migration-guide/upgrade_to_ees.html`;
+  const config = useAwxConfig();
+  const docsLink = `${getDocsBaseUrl(config)}/html/upgrade-migration-guide/upgrade_to_ees.html`;
   const label = isDefaultEnvironment
     ? t('Default execution environment')
     : t('Execution environment');

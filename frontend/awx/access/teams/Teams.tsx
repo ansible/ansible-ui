@@ -13,6 +13,8 @@ import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Teams() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export function Teams() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   usePersistentFilters('teams');
+  const config = useAwxConfig();
 
   return (
     <PageLayout>
@@ -42,7 +45,7 @@ export function Teams() {
             'For instance, permissions may be granted to a whole Team rather than each user on the Team.'
           ),
         ]}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/teams.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/teams.html`}
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
