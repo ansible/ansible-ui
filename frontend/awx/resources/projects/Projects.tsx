@@ -6,6 +6,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
@@ -31,6 +32,8 @@ export function Projects() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
+  usePersistentFilters('projects');
+
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {

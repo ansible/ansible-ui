@@ -36,6 +36,7 @@ import {
 import { Organization } from '../../interfaces/Organization';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
@@ -44,6 +45,7 @@ export function Organizations() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
+  usePersistentFilters('organizations');
 
   const toolbarFilters = useOrganizationsFilters();
 
