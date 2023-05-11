@@ -139,7 +139,7 @@ declare global {
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
-      clickTab(label: string | RegExp): Chainable<void>;
+      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
 
       /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
