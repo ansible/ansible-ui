@@ -21,7 +21,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
 
   it('can create a User, select role(s) to add the user to, and assert the information showing on the details page', () => {
     const userInfo = {
-      username: `E2E User${randomString(4)}`,
+      username: `E2EUser${randomString(4)}`,
       FirstName: 'Firstname',
       LastName: 'Lastname',
       Email: 'first.last@redhat.com',

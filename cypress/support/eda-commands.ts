@@ -247,7 +247,7 @@ Cypress.Commands.add(
     cy.requestPost<EdaUser, SetOptional<EdaUserCreateUpdate, 'username' | 'password'>>(
       `/api/eda/v1/users/`,
       {
-        username: `E2E User${randomString(4)}`,
+        username: `E2EUser${randomString(4)}`,
         password: `${randomString(4)}`,
         ...user,
       }

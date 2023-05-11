@@ -74,7 +74,7 @@ describe('EDA Cleanup', () => {
   it('cleanup old eda users', () => {
     cy.getEdaUsers(1, 100).then((result) => {
       for (const resource of result.results ?? []) {
-        if (isOldResource('E2E User', resource)) {
+        if (isOldResource('E2EUser', resource)) {
           cy.deleteEdaUser(resource);
         }
       }
