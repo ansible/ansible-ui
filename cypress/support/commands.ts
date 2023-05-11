@@ -20,6 +20,7 @@ import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerT
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
@@ -258,6 +259,18 @@ declare global {
       ): Chainable<EdaRulebookActivation | undefined>;
 
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
+
+      getEdaProjects(page: number, pageSize: number): Chainable<EdaResult<EdaProject>>;
+      getEdaDecisionEnvironments(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaDecisionEnvironment>>;
+      getEdaRulebookActivations(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaRulebookActivation>>;
+      getEdaCredentials(page: number, pageSize: number): Chainable<EdaResult<EdaCredential>>;
+      getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
