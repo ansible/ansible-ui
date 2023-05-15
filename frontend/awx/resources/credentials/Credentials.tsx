@@ -9,6 +9,8 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -24,6 +26,8 @@ export function Credentials() {
   });
   const toolbarActions = useCredentialToolbarActions(view);
   const rowActions = useCredentialActions({ onDeleted: () => void view.refresh() });
+  const config = useAwxConfig();
+
   return (
     <PageLayout>
       <PageHeader
@@ -33,7 +37,7 @@ export function Credentials() {
           `Credentials are utilized by {{product}} for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system. You can grant users and teams the ability to use these credentials, without actually exposing the credential to the user. If you have a user move to a different team or leave the organization, you don’t have to re-key all of your systems just because that credential was available in {{product}}.`,
           { product }
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/credentials.html`}
         description={t(
           `Credentials are utilized by {{product}} for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.`,
           { product }

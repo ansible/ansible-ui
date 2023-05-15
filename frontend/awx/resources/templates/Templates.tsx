@@ -32,6 +32,8 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -47,6 +49,7 @@ export function Templates() {
     },
   });
   usePersistentFilters('templates');
+  const config = useAwxConfig();
 
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
@@ -115,7 +118,7 @@ export function Templates() {
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/job_templates.html`}
         description={t(
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}

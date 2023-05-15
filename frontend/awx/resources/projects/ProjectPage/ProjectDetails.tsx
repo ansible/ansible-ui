@@ -9,7 +9,6 @@ import {
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   CopyCell,
   DateTimeCell,
@@ -26,17 +25,14 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Project } from '../../../interfaces/Project';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();
   const { project } = props;
   const history = useNavigate();
-  {
-    /* TODO config provider */
-  }
-  const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
-    fetch(url).then((r) => r.json())
-  );
+  const config = useAwxConfig();
   const view = useGet<Project>(`/api/v2/projects/${project.id}/`);
   const { refresh } = view;
   const handleWebSocketMessage = useCallback(
@@ -104,9 +100,9 @@ export function ProjectDetails(props: { project: Project }) {
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={
-          'https://docs.ansible.com/automation-controller/latest/html/userguide/projects.html#manage-playbooks-using-source-control'
-        }
+        href={`${getDocsBaseUrl(
+          config
+        )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
       >
         {t`Documentation.`}
       </a>
@@ -199,10 +195,6 @@ export function ProjectDetails(props: { project: Project }) {
       )}
     </TextList>
   );
-
-  interface IConfigData {
-    project_base_dir: string | null;
-  }
 
   return (
     <PageDetails>

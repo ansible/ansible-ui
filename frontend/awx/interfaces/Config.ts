@@ -84,6 +84,7 @@ export interface Config {
     };
   };
   become_methods: string[][];
+  ui_next?: boolean;
   project_base_dir: string;
   project_local_paths: unknown[];
   custom_virtualenvs: unknown[];

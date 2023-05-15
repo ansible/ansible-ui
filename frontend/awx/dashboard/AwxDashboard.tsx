@@ -19,15 +19,14 @@ import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 import { WelcomeModal } from './WelcomeModal';
 import { useEffect } from 'react';
+import { useAwxConfig } from '../common/useAwxConfig';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
 export function AwxDashboard() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
-    fetch(url).then((r) => r.json())
-  );
+  const config = useAwxConfig();
   const [_, setDialog] = usePageDialog();
   const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
@@ -106,9 +105,6 @@ function DashboardInternal() {
   );
 }
 
-interface IConfigData {
-  ui_next: boolean;
-}
 interface IDashboardData {
   inventories: {
     url: string;

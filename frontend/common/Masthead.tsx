@@ -50,6 +50,8 @@ import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
+import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../awx/common/useAwxConfig';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -88,7 +90,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const { automationServer } = useAutomationServers();
-
+  const config = useAwxConfig();
   const navBar = usePageNavSideBar();
 
   return (
@@ -206,7 +208,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                           open(
                             isEdaServer(automationServer)
                               ? 'https://www.redhat.com/en/engage/event-driven-ansible-20220907'
-                              : 'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                              : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
                             '_blank'
                           );
                         }}

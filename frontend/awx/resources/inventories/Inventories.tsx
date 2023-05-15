@@ -12,6 +12,8 @@ import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
 import { useInventoryActions } from './hooks/useInventoryActions';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export type WebSocketInventory = {
   status: string;
@@ -42,6 +44,7 @@ export function Inventories() {
     onInventoryCopied: view.refresh,
   });
   usePersistentFilters('inventories');
+  const config = useAwxConfig();
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
@@ -94,7 +97,7 @@ export function Inventories() {
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/inventories.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/inventories.html`}
         description={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
