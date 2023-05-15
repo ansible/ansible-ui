@@ -32,12 +32,15 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Users() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   usePersistentFilters('users');
+  const config = useAwxConfig();
 
   const toolbarFilters = useUsersFilters();
 
@@ -204,7 +207,7 @@ export function Users() {
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/users.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/users.html`}
         description={t(
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }

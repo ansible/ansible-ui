@@ -13,6 +13,8 @@ import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export default function Jobs() {
   const { t } = useTranslation();
@@ -30,6 +32,7 @@ export default function Jobs() {
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
   usePersistentFilters('jobs');
+  const config = useAwxConfig();
 
   const [showGraph] = useState(false);
 
@@ -68,7 +71,7 @@ export default function Jobs() {
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/jobs.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/jobs.html`}
         description={t(
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
