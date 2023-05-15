@@ -11,10 +11,10 @@ import {
 import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
-import styled from 'styled-components';
 
 const IconSpan = styled.span`
   padding-right: 4px;
@@ -290,7 +290,7 @@ function PageDropdownActionItem<T extends object>(props: {
 const TransparentIcon = () => <CircleIcon style={{ opacity: 0 }} />;
 
 export function filterActionSeperators<T extends object>(actions: IPageAction<T>[]) {
-  const filteredActions = [...actions];
+  let filteredActions = [...actions];
 
   // Remove seperators at beginning of actions
   while (filteredActions.length > 0 && filteredActions[0].type === PageActionType.Seperator) {
@@ -305,7 +305,24 @@ export function filterActionSeperators<T extends object>(actions: IPageAction<T>
     filteredActions.pop();
   }
 
-  // TODO remove two seperators in a row
+  // Remove two seperators side by side
+  filteredActions = collapseAdjacentSeperators(filteredActions);
 
   return filteredActions;
+}
+
+function collapseAdjacentSeperators<T extends object>(actions: IPageAction<T>[]): IPageAction<T>[] {
+  const result: IPageAction<T>[] = [];
+  let previousAction: IPageAction<T> | undefined;
+  for (const action of actions) {
+    if (action.type === PageActionType.Seperator) {
+      if (!previousAction || previousAction.type !== PageActionType.Seperator) {
+        result.push(action);
+      }
+    } else {
+      result.push(action);
+    }
+    previousAction = action;
+  }
+  return result;
 }
