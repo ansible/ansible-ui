@@ -413,6 +413,10 @@ declare global {
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
+      checkActionsofResource(resourceType: string): Chainable<JQuery<HTMLElement>>;
+      checkResourceNameAndAction(resourceTypes: string[], action: string): Chainable<void>;
+      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+
       getEdaRoles(): Chainable<EdaRole[]>;
       /**
        * Creates an EDA user and returns the same.

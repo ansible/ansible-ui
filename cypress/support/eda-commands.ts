@@ -234,6 +234,36 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   });
 });
 
+Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
+  return cy
+    .contains('dt.pf-c-description-list__term', resourceType)
+    .next()
+    .then((result) => {
+      cy.wrap(result);
+    });
+});
+
+Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], action: string) => {
+  resourceTypes.forEach((resource) => {
+    cy.contains('dt.pf-c-description-list__term', resource)
+      .next()
+      .within(() => {
+        cy.contains(action);
+      });
+  });
+});
+
+Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
+  cy.requestGet<EdaRole>(`/api/eda/v1/roles/${roleID}`).then((response) => {
+    Cypress.log({
+      displayName: 'EDA PERMS :',
+      message: [response.name],
+    });
+    const edaRolePermissions = response.permissions;
+    return edaRolePermissions;
+  });
+});
+
 Cypress.Commands.add('getEdaRoles', () => {
   cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
     const edaRoles = response.results;
@@ -342,7 +372,6 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
-    //cy.waitEdaDESync(decisionEnvironment);
     cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, true).then(
       () => {
         Cypress.log({
@@ -353,22 +382,3 @@ Cypress.Commands.add(
     );
   }
 );
-
-/*
-  Cypress.Commands.add('waitEdaDESync', (decisionEnvironment) => {
-    cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
-      `/api/eda/v1/decision-environments/?name=${decisionEnvironment.name}`
-    ).then((result) => {
-      if (Array.isArray(result?.results) && result.results.length === 1) {
-        const project = result.results[0];
-        if (project.import_state !== 'completed') {
-          cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
-        } else {
-          cy.wrap(project);
-        }
-      } else {
-        cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
-      }
-    });
-  });
-  */
