@@ -34,6 +34,7 @@ export interface IToolbarStringFilter {
   type: 'string';
   query: string;
   placeholder: string;
+  isPinned?: boolean;
 }
 
 export interface IToolbarSelectFilter {
@@ -46,6 +47,7 @@ export interface IToolbarSelectFilter {
   }[];
   query: string;
   placeholder: string;
+  isPinned?: boolean;
 }
 
 export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter;
@@ -58,12 +60,94 @@ export type PageToolbarFiltersProps = {
   setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
 };
 
-export function PageToolbarFilters(props: PageToolbarFiltersProps) {
+function ToolbarContent(props: PageToolbarFiltersProps) {
   const { toolbarFilters, filters, setFilters } = props;
 
   const [selectedFilter, setSeletedFilter] = useState(() =>
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
   );
+
+  if (!toolbarFilters) return <></>;
+  if (toolbarFilters.length === 0) return <></>;
+  return (
+    <>
+      <ToolbarItem>
+        <Split style={{ zIndex: 400 }}>
+          <SplitItem>
+            <InputGroup>
+              {toolbarFilters.length === 1 ? (
+                <>
+                  <InputGroupText
+                    style={{
+                      border: 0,
+                      paddingLeft: 12,
+                      paddingRight: 2,
+                      color: 'inherit',
+                      borderRadius: '4px 0px 0px 4px',
+                    }}
+                  >
+                    <FilterIcon />
+                  </InputGroupText>
+                  <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
+                    {toolbarFilters[0].label}
+                  </InputGroupText>
+                </>
+              ) : (
+                <>
+                  <InputGroupText
+                    style={{
+                      border: 0,
+                      paddingLeft: 12,
+                      paddingRight: 12,
+                      color: 'inherit',
+                      borderRadius: '4px 0px 0px 4px',
+                    }}
+                  >
+                    <FilterIcon />
+                  </InputGroupText>
+                  <FormGroupSelect
+                    id="filter"
+                    onSelect={(_, v) => setSeletedFilter(v.toString())}
+                    value={selectedFilter}
+                    placeholderText=""
+                  >
+                    {toolbarFilters.map((filter) => (
+                      <SelectOption key={filter.key} value={filter.key}>
+                        {filter.label}
+                      </SelectOption>
+                    ))}
+                  </FormGroupSelect>
+                </>
+              )}
+            </InputGroup>
+          </SplitItem>
+          <SplitItem isFilled>
+            <ToolbarFilterInput
+              id="filter-input"
+              filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
+              addFilter={(value: string) => {
+                let values = filters?.[selectedFilter];
+                if (!values) values = [];
+                if (!values.includes(value)) values.push(value);
+                setFilters?.({ ...filters, [selectedFilter]: values });
+              }}
+              removeFilter={(value: string) => {
+                let values = filters?.[selectedFilter];
+                if (!values) values = [];
+                values = values.filter((v) => v !== value);
+                setFilters?.({ ...filters, [selectedFilter]: values });
+              }}
+              values={filters?.[selectedFilter] ?? []}
+            />
+          </SplitItem>
+        </Split>
+      </ToolbarItem>
+    </>
+  );
+}
+
+export function PageToolbarFilters(props: PageToolbarFiltersProps) {
+  const { toolbarFilters, setFilters, filters } = props;
 
   const [translations] = useFrameworkTranslations();
 
@@ -71,84 +155,21 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
   if (!toolbarFilters) return <></>;
   if (toolbarFilters.length === 0) return <></>;
+  const groupedFilters = toolbarFilters.filter((filter) => {
+    return !filter.isPinned;
+  });
+  const pinnedFilters = toolbarFilters.filter((filter) => {
+    return !!filter.isPinned;
+  });
 
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
       <ToolbarGroup variant="filter-group">
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
-        <ToolbarItem>
-          <Split style={{ zIndex: 400 }}>
-            <SplitItem>
-              <InputGroup>
-                {toolbarFilters.length === 1 ? (
-                  <>
-                    <InputGroupText
-                      style={{
-                        border: 0,
-                        paddingLeft: 12,
-                        paddingRight: 2,
-                        color: 'inherit',
-                        borderRadius: '4px 0px 0px 4px',
-                      }}
-                    >
-                      <FilterIcon />
-                    </InputGroupText>
-                    <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
-                      {toolbarFilters[0].label}
-                    </InputGroupText>
-                  </>
-                ) : (
-                  <>
-                    <InputGroupText
-                      style={{
-                        border: 0,
-                        paddingLeft: 12,
-                        paddingRight: 12,
-                        color: 'inherit',
-                        borderRadius: '4px 0px 0px 4px',
-                      }}
-                    >
-                      <FilterIcon />
-                    </InputGroupText>
-                    <FormGroupSelect
-                      id="filter"
-                      onSelect={(_, v) => setSeletedFilter(v.toString())}
-                      value={selectedFilter}
-                      placeholderText=""
-                    >
-                      {toolbarFilters.map((filter) => (
-                        <SelectOption key={filter.key} value={filter.key}>
-                          {filter.label}
-                        </SelectOption>
-                      ))}
-                    </FormGroupSelect>
-                  </>
-                )}
-              </InputGroup>
-            </SplitItem>
-            <SplitItem isFilled>
-              <ToolbarFilterInput
-                id="filter-input"
-                filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
-                addFilter={(value: string) => {
-                  let values = filters?.[selectedFilter];
-                  if (!values) values = [];
-                  if (!values.includes(value)) values.push(value);
-                  setFilters?.({ ...filters, [selectedFilter]: values });
-                }}
-                removeFilter={(value: string) => {
-                  let values = filters?.[selectedFilter];
-                  if (!values) values = [];
-                  values = values.filter((v) => v !== value);
-                  setFilters?.({ ...filters, [selectedFilter]: values });
-                }}
-                values={filters?.[selectedFilter] ?? []}
-              />
-            </SplitItem>
-          </Split>
-        </ToolbarItem>
-        {toolbarFilters.map((filter) => {
-          const values = filters?.[filter.key] ?? [];
+        <ToolbarContent {...{ toolbarFilters: groupedFilters, setFilters, filters }} />
+        <ToolbarContent {...{ toolbarFilters: pinnedFilters, setFilters, filters }} />
+        {toolbarFilters?.map((filter) => {
+          const values = filters?.[filter.key] || [];
           return (
             <ToolbarFilter
               key={filter.label}
