@@ -2,7 +2,8 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
@@ -42,17 +43,18 @@ export function TeamPage() {
           />
         }
       />
-      <PageTabs loading={!team}>
-        <PageTab label={t('Details')}>
+      <RoutedTabs isLoading={!team} baseUrl={RouteObj.TeamPage}>
+        <PageBackTab label={t('Back to Teams')} url={RouteObj.Teams} persistentFilterKey="teams" />
+        <RoutedTab label={t('Details')} url={RouteObj.TeamDetails}>
           <TeamDetails team={team} />
-        </PageTab>
-        <PageTab label={t('Access')}>
+        </RoutedTab>
+        <RoutedTab label={t('Access')} url={RouteObj.TeamAccess}>
           <TeamAccess team={team} />
-        </PageTab>
-        <PageTab label={t('Roles')}>
+        </RoutedTab>
+        <RoutedTab label={t('Roles')} url={RouteObj.TeamRoles}>
           <TeamRoles team={team} />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

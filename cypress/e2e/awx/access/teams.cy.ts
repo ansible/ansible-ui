@@ -73,7 +73,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#name', team.name);
   });
 
@@ -91,7 +91,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
     // Add users to team -> TODO: Replace with Wizard when it is ready
     cy.clickButton(/^Add users$/);
     cy.selectTableRowInDialog(user1.username);
@@ -122,7 +122,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
     // Remove users
     cy.selectTableRow(user1.username);
     cy.selectTableRow(user2.username);
@@ -143,7 +143,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
     cy.clickTableRowKebabAction(user1.username, /^Remove user$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
@@ -164,7 +164,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
     cy.filterTableByText(user1.username);
     cy.contains('tr', user1.username)
       .find(
@@ -187,7 +187,7 @@ describe('teams', () => {
     cy.navigateTo(/^Teams$/);
     cy.clickTableRow(team.name);
     cy.hasTitle(team.name);
-    cy.clickTab(/^Roles$/);
+    cy.clickTab(/^Roles$/, true);
   });
 
   it('can navigate to the edit form from the team details page', () => {

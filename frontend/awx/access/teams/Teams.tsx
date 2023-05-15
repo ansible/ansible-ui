@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useOptions } from '../../../common/crud/useOptions';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { useAwxView } from '../../useAwxView';
@@ -23,6 +24,7 @@ export function Teams() {
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
+  usePersistentFilters('teams');
 
   return (
     <PageLayout>

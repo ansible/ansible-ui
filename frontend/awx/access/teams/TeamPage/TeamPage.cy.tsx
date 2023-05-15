@@ -1,4 +1,5 @@
 import { TeamPage } from './TeamPage';
+import { RouteObj } from '../../../../Routes';
 
 describe('TeamPage', () => {
   beforeEach(() => {
@@ -6,7 +7,10 @@ describe('TeamPage', () => {
       { method: 'GET', url: '/api/v2/teams/*/', hostname: 'localhost' },
       { fixture: 'team.json' }
     );
-    cy.mount(<TeamPage />);
+    cy.mount(<TeamPage />, {
+      path: RouteObj.TeamPage,
+      initialEntries: [RouteObj.TeamDetails.replace(':id', '1')],
+    });
   });
   it('Component renders and displays team in breadcrumb', () => {
     cy.contains('nav[aria-label="Breadcrumb"]', 'Team 2 Org 0').should('exist');
@@ -23,9 +27,12 @@ describe('TeamPage', () => {
     );
   });
   it('Displays tabs for Details, Access and Roles', () => {
-    cy.get('button[data-ouia-component-type="PF4/TabButton"]').should('have.length', 3);
-    cy.get('button[data-ouia-component-type="PF4/TabButton"]').eq(0).should('have.text', 'Details');
-    cy.get('button[data-ouia-component-type="PF4/TabButton"]').eq(1).should('have.text', 'Access');
-    cy.get('button[data-ouia-component-type="PF4/TabButton"]').eq(2).should('have.text', 'Roles');
+    cy.get('a[data-ouia-component-type="PF4/TabButton"]').should('have.length', 4);
+    cy.get('a[data-ouia-component-type="PF4/TabButton"]')
+      .eq(0)
+      .should('have.text', 'Back to Teams');
+    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(1).should('have.text', 'Details');
+    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(2).should('have.text', 'Access');
+    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(3).should('have.text', 'Roles');
   });
 });

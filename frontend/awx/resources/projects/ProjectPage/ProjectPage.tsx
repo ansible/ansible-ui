@@ -2,7 +2,8 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
@@ -35,23 +36,28 @@ export function ProjectPage() {
           />
         }
       />
-      <PageTabs loading={!project}>
-        <PageTab label={t('Details')}>
+      <RoutedTabs isLoading={!project} baseUrl={RouteObj.ProjectPage}>
+        <PageBackTab
+          label={t('Back to Projects')}
+          url={RouteObj.Projects}
+          persistentFilterKey="projects"
+        />
+        <RoutedTab label={t('Details')} url={RouteObj.ProjectDetails}>
           <ProjectDetails project={project} />
-        </PageTab>
-        <PageTab label={t('Access')}>
+        </RoutedTab>
+        <RoutedTab label={t('Access')} url={RouteObj.ProjectAccess}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Job templates')}>
+        </RoutedTab>
+        <RoutedTab label={t('Job templates')} url={RouteObj.ProjectTemplates}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Notifications')}>
+        </RoutedTab>
+        <RoutedTab label={t('Notifications')} url={RouteObj.ProjectNotifications}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Schedules')}>
+        </RoutedTab>
+        <RoutedTab label={t('Schedules')} url={RouteObj.ProjectSchedules}>
           <PageNotImplemented />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

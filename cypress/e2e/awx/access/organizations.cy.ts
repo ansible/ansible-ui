@@ -54,7 +54,7 @@ describe('organizations', () => {
     cy.navigateTo(/^Organizations$/);
     cy.clickTableRow(organization.name);
     cy.hasTitle(organization.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#name', organization.name);
   });
 

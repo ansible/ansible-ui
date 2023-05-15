@@ -67,32 +67,32 @@ describe('projects', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
   it('can navigate to project access tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
   });
   it('can navigate to project job templates tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Job templates$/);
+    cy.clickTab(/^Job templates$/, true);
   });
   it('can navigate to project notifications tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Notifications$/);
+    cy.clickTab(/^Notifications$/, true);
   });
   it('can navigate to project schedules tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Schedules$/);
+    cy.clickTab(/^Schedules$/, true);
   });
   it('can copy project from project details page', () => {
     cy.requestPost<Project>('/api/v2/projects/', {

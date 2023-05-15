@@ -102,8 +102,12 @@ Cypress.Commands.add('clickLink', (label: string | RegExp) => {
   cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
-Cypress.Commands.add('clickTab', (label: string | RegExp) => {
-  cy.contains('button[role="tab"]', label).click();
+Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
+  if (isLink) {
+    cy.contains('a[role="tab"]', label).click();
+  } else {
+    cy.contains('button[role="tab"]', label).click();
+  }
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {

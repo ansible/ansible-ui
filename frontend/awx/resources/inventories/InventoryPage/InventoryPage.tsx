@@ -2,7 +2,8 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { useGet } from '../../../../common/crud/useGet';
@@ -34,33 +35,38 @@ export function InventoryPage() {
           />
         }
       />
-      <PageTabs loading={!inventory}>
-        <PageTab label={t('Details')}>
+      <RoutedTabs isLoading={!inventory} baseUrl={RouteObj.InventoryPage}>
+        <PageBackTab
+          label={t('Back to Inventories')}
+          url={RouteObj.Inventories}
+          persistentFilterKey="inventories"
+        />
+        <RoutedTab label={t('Details')} url={RouteObj.InventoryDetails}>
           <InventoryDetails inventory={inventory!} />
-        </PageTab>
-        <PageTab label={t('Access')}>
+        </RoutedTab>
+        <RoutedTab label={t('Access')} url={RouteObj.InventoryAccess}>
           <PageNotImplemented />
-        </PageTab>
+        </RoutedTab>
         {inventory?.kind !== 'smart' && (
-          <PageTab label={t('Groups')}>
+          <RoutedTab label={t('Groups')} url={RouteObj.InventoryGroups}>
             <PageNotImplemented />
-          </PageTab>
+          </RoutedTab>
         )}
-        <PageTab label={t('Hosts')}>
+        <RoutedTab label={t('Hosts')} url={RouteObj.InventoryHosts}>
           <PageNotImplemented />
-        </PageTab>
+        </RoutedTab>
         {inventory?.kind !== 'constructed' && (
-          <PageTab label={t('Sources')}>
+          <RoutedTab label={t('Sources')} url={RouteObj.InventorySources}>
             <PageNotImplemented />
-          </PageTab>
+          </RoutedTab>
         )}
-        <PageTab label={t('Jobs')}>
+        <RoutedTab label={t('Jobs')} url={RouteObj.InventoryJobs}>
           <PageNotImplemented />
-        </PageTab>
-        <PageTab label={t('Job templates')}>
+        </RoutedTab>
+        <RoutedTab label={t('Job templates')} url={RouteObj.InventoryJobTemplates}>
           <PageNotImplemented />
-        </PageTab>
-      </PageTabs>
+        </RoutedTab>
+      </RoutedTabs>
     </PageLayout>
   );
 }

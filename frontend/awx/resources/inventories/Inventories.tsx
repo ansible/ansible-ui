@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../useAwxView';
@@ -40,6 +41,7 @@ export function Inventories() {
     onInventoriesDeleted: view.unselectItemsAndRefresh,
     onInventoryCopied: view.refresh,
   });
+  usePersistentFilters('inventories');
 
   const handleWebSocketMessage = useCallback(
     (message?: WebSocketMessage) => {
