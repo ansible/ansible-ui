@@ -1,6 +1,6 @@
 import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
 
-describe('EDA Roles List', () => {
+describe('Auditor EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
   let resourceAndActionsArray: EdaRole[];
   let auditorRoleID: string;
@@ -33,6 +33,8 @@ describe('EDA Roles List', () => {
     ];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Auditor$/);
+    cy.contains('dd#name', 'Auditor').should('be.visible');
+    cy.contains('dd#description', 'Has all read permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
       auditorResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);

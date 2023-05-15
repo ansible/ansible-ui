@@ -1,6 +1,6 @@
 import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
 
-describe('EDA Roles List', () => {
+describe('Viewer EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
   let resourceAndActionsArray: EdaRole[];
   let viewerRoleID: string;
@@ -32,6 +32,10 @@ describe('EDA Roles List', () => {
     ];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Viewer$/);
+    cy.contains('dd#name', 'Viewer').should('be.visible');
+    cy.contains('dd#description', 'Has read permissions, except users and roles.').should(
+      'be.visible'
+    );
     cy.get('dd#permissions').within(() => {
       viewerResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);

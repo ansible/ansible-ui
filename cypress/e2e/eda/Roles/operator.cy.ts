@@ -34,6 +34,11 @@ describe('Operator EDA Role - Resource types and permissions', () => {
     const operatorActions = ['enable', 'read', 'disable', 'restart'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Operator$/);
+    cy.contains('dd#name', 'Operator').should('be.visible');
+    cy.contains(
+      'dd#description',
+      'Has read permissions. Has permissions to enable and disable rulebook activations.'
+    ).should('be.visible');
     cy.get('dd#permissions').within(() => {
       operatorResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);

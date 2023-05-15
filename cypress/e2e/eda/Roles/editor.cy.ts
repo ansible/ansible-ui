@@ -1,6 +1,6 @@
 import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
 
-describe('EDA Roles List', () => {
+describe('Editor EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
   let resourceAndActionsArray: EdaRole[];
   let editorRoleID: string;
@@ -30,6 +30,8 @@ describe('EDA Roles List', () => {
     const editorActions = ['create', 'read', 'update', 'delete'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Editor$/);
+    cy.contains('dd#name', 'Editor').should('be.visible');
+    cy.contains('dd#description', 'Has create and edit permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
       editorResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);

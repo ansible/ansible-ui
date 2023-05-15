@@ -29,6 +29,11 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
     const contributorActions = ['create', 'read', 'update', 'delete'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Contributor$/);
+    cy.contains('dd#name', 'Contributor').should('be.visible');
+    cy.contains(
+      'dd#description',
+      'Has create and update permissions with an exception of users and roles. Has enable and disable rulebook activation permissions'
+    ).should('be.visible');
 
     cy.get('dd#permissions').within(() => {
       contributorResourceTypes.forEach((resource) => {

@@ -1,6 +1,6 @@
 import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
 
-describe('EDA Roles List', () => {
+describe('Admin EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
   let resourceAndActionsArray: EdaRole[];
   let adminRoleID: string;
@@ -31,7 +31,8 @@ describe('EDA Roles List', () => {
     const adminActions = ['create', 'read', 'update', 'delete', 'enable', 'disable', 'restart'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Admin$/);
-
+    cy.contains('dd#name', 'Admin').should('be.visible');
+    cy.contains('dd#description', 'Has all permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
       adminResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);
