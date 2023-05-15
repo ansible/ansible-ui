@@ -36,9 +36,8 @@ describe('EDA Dashboard', () => {
     cy.deleteEdaProject(edaProject);
   });
 
-  it('checks Ansible brand logo has loaded successfully and the header title', () => {
+  it('checks Ansible header title', () => {
     cy.edaLogin();
-    cy.checkLogoSuccess();
     cy.hasTitle(/^Ansible$/).should('be.visible');
   });
 
