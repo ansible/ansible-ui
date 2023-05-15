@@ -1,4 +1,3 @@
-import { isArray } from 'cypress/types/lodash';
 import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
