@@ -18,6 +18,11 @@ describe('Admin EDA Role - Resource types and permissions', () => {
 
   it('can render the Roles list view and utilize the Roles links to view details', () => {
     const adminResourceTypes = [
+      'Activation',
+      'Activation Instance',
+      'Audit Rule',
+      'Audit Event',
+      'Task',
       'User',
       'Project',
       'Inventory',
@@ -28,7 +33,18 @@ describe('Admin EDA Role - Resource types and permissions', () => {
       'Decision environment',
       'Credential',
     ];
-    const adminActions = ['create', 'read', 'update', 'delete', 'enable', 'disable', 'restart'];
+    const admin_ResourceTypes = [
+      'User',
+      'Project',
+      'Inventory',
+      'Extra Vars',
+      'Playbook',
+      'Role',
+      'Rulebook',
+      'Decision environment',
+      'Credential',
+    ];
+    const adminActions = ['create', 'read', 'update', 'delete'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Admin$/);
     cy.contains('h1', 'Admin').should('be.visible');
@@ -71,10 +87,6 @@ describe('Admin EDA Role - Resource types and permissions', () => {
     cy.checkActionsofResource('Audit Rule').within(() => {
       cy.contains(adminActions[1]);
     });
-
-    cy.checkResourceNameAndAction(adminResourceTypes, adminActions[0]);
-    cy.checkResourceNameAndAction(adminResourceTypes, adminActions[1]);
-    cy.checkResourceNameAndAction(adminResourceTypes, adminActions[2]);
-    cy.checkResourceNameAndAction(adminResourceTypes, adminActions[3]);
+    cy.checkResourceNameAndAction(admin_ResourceTypes, adminActions);
   });
 });

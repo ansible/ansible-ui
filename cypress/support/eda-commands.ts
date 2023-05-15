@@ -1,3 +1,4 @@
+import { isArray } from 'cypress/types/lodash';
 import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
@@ -243,12 +244,18 @@ Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
     });
 });
 
-Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], action: string) => {
+Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[] | string) => {
   resourceTypes.forEach((resource) => {
     cy.contains('dt.pf-c-description-list__term', resource)
       .next()
       .within(() => {
-        cy.contains(action);
+        if (Array.isArray(actions)) {
+          actions.forEach((action) => {
+            cy.contains(action);
+          });
+        } else if (!Array.isArray(actions)) {
+          cy.contains(actions);
+        }
       });
   });
 });

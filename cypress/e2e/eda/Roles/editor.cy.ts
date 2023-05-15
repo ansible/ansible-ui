@@ -19,6 +19,20 @@ describe('Editor EDA Role - Resource types and permissions', () => {
   it('can render the Roles list view and utilize the Roles links to view details', () => {
     const editorResourceTypes = [
       'Activation',
+      'Activation Instance',
+      'Audit Rule',
+      'Audit Event',
+      'Task',
+      'Project',
+      'Inventory',
+      'Extra Vars',
+      'Playbook',
+      'Rulebook',
+      'Decision environment',
+      'Credential',
+    ];
+    const editor_ResourceTypes = [
+      'Activation',
       'Project',
       'Inventory',
       'Extra Vars',
@@ -46,10 +60,18 @@ describe('Editor EDA Role - Resource types and permissions', () => {
         `${resourceAndActionsArray.length}`
       );
     });
-
-    cy.checkResourceNameAndAction(editorResourceTypes, editorActions[0]);
-    cy.checkResourceNameAndAction(editorResourceTypes, editorActions[1]);
-    cy.checkResourceNameAndAction(editorResourceTypes, editorActions[2]);
-    cy.checkResourceNameAndAction(editorResourceTypes, editorActions[3]);
+    cy.checkActionsofResource('Activation Instance').within(() => {
+      cy.contains(editorActions[1]);
+    });
+    cy.checkActionsofResource('Audit Event').within(() => {
+      cy.contains(editorActions[1]);
+    });
+    cy.checkActionsofResource('Audit Rule').within(() => {
+      cy.contains(editorActions[1]);
+    });
+    cy.checkActionsofResource('Task').within(() => {
+      cy.contains(editorActions[1]);
+    });
+    cy.checkResourceNameAndAction(editor_ResourceTypes, editorActions);
   });
 });
