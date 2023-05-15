@@ -32,7 +32,7 @@ describe('AWX Cleanup', () => {
 
   it('cleanup organizations', () => {
     cy.awxRequestGet<ItemsResponse<Organization>>(
-      `/api/v2/organizations?name__startswith=E2E&page=1&page_size=200created__lt=${tenMinutesAgo}`
+      `/api/v2/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
         cy.deleteAwxOrganization(resource);
@@ -42,7 +42,7 @@ describe('AWX Cleanup', () => {
 
   it('cleanup users', () => {
     cy.awxRequestGet<ItemsResponse<User>>(
-      `/api/v2/users?username__startswith=e2e&page=1&page_size=200created__lt=${tenMinutesAgo}`
+      `/api/v2/users?username__startswith=e2e&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
         cy.deleteAwxUser(resource);
