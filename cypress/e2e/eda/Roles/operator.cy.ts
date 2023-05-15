@@ -31,7 +31,20 @@ describe('Operator EDA Role - Resource types and permissions', () => {
       'Decision environment',
       'Credential',
     ];
-    const operatorActions = ['enable', 'read', 'disable', 'restart'];
+    const operator_ResourceTypes = [
+      'Activation Instance',
+      'Audit Rule',
+      'Audit Event',
+      'Task',
+      'Project',
+      'Inventory',
+      'Extra Vars',
+      'Playbook',
+      'Rulebook',
+      'Decision environment',
+      'Credential',
+    ];
+    const operatorActions = ['read'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Operator$/);
     cy.contains('h1', 'Operator').should('be.visible');
@@ -53,15 +66,16 @@ describe('Operator EDA Role - Resource types and permissions', () => {
         `${resourceAndActionsArray.length}`
       );
     });
-    cy.checkResourceNameAndAction(operatorResourceTypes, 'read');
     cy.get('dd#permissions').within(() => {
       cy.contains('dt.pf-c-description-list__term', 'Activation')
         .next()
         .within(() => {
-          operatorActions.forEach((action) => {
-            cy.contains(action);
-          });
+          cy.contains('read');
+          cy.contains('enable');
+          cy.contains('disable');
+          cy.contains('restart');
         });
+      cy.checkResourceNameAndAction(operator_ResourceTypes, operatorActions);
     });
   });
 });

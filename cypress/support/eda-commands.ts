@@ -244,24 +244,17 @@ Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
     });
 });
 
-Cypress.Commands.add(
-  'checkResourceNameAndAction',
-  (resourceTypes: string[], actions: string[] | string) => {
-    resourceTypes.forEach((resource) => {
-      cy.contains('dt.pf-c-description-list__term', resource)
-        .next()
-        .within(() => {
-          if (Array.isArray(actions)) {
-            actions.forEach((action) => {
-              cy.contains(action);
-            });
-          } else if (!Array.isArray(actions)) {
-            cy.contains(actions);
-          }
+Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
+  resourceTypes.forEach((resource) => {
+    cy.contains('dt.pf-c-description-list__term', resource)
+      .next()
+      .within(() => {
+        actions.forEach((action) => {
+          cy.contains(action);
         });
-    });
-  }
-);
+      });
+  });
+});
 
 Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
   cy.requestGet<EdaRole>(`/api/eda/v1/roles/${roleID}`).then((response) => {

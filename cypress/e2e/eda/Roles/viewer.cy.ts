@@ -30,6 +30,7 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
       'Rulebook',
       'Decision environment',
     ];
+    const viewerActions = ['read'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Viewer$/);
     cy.contains('h1', 'Viewer').should('be.visible');
@@ -50,6 +51,6 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
         `${resourceAndActionsArray.length}`
       );
     });
-    cy.checkResourceNameAndAction(viewerResourceTypes, 'read');
+    cy.checkResourceNameAndAction(viewerResourceTypes, viewerActions);
   });
 });

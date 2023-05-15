@@ -427,10 +427,7 @@ declare global {
        * @param {string[]} resourceTypes
        * @param {string} action
        */
-      checkResourceNameAndAction(
-        resourceTypes: string[],
-        action: string[] | string
-      ): Chainable<void>;
+      checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
 
       /**
        * getEdaRolePermissions returns the permissions of a given role id of a role

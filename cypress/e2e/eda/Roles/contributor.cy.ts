@@ -18,6 +18,20 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
 
   it('can render the Roles list view and utilize the Roles links to view details', () => {
     const contributorResourceTypes = [
+      'Activation',
+      'Activation Instance',
+      'Audit Rule',
+      'Audit Event',
+      'Task',
+      'Project',
+      'Inventory',
+      'Extra Vars',
+      'Playbook',
+      'Rulebook',
+      'Decision environment',
+      'Credential',
+    ];
+    const contributor_ResourceTypes = [
       'Project',
       'Inventory',
       'Extra Vars',
@@ -72,9 +86,6 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
     cy.checkActionsofResource('Task').within(() => {
       cy.contains(contributorActions[1]);
     });
-    cy.checkResourceNameAndAction(contributorResourceTypes, contributorActions[0]);
-    cy.checkResourceNameAndAction(contributorResourceTypes, contributorActions[1]);
-    cy.checkResourceNameAndAction(contributorResourceTypes, contributorActions[2]);
-    cy.checkResourceNameAndAction(contributorResourceTypes, contributorActions[3]);
+    cy.checkResourceNameAndAction(contributor_ResourceTypes, contributorActions);
   });
 });

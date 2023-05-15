@@ -31,6 +31,7 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
       'Decision environment',
       'Credential',
     ];
+    const auditorActions = ['read'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Auditor$/);
     cy.contains('h1', 'Auditor').should('be.visible');
@@ -49,6 +50,6 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
         `${resourceAndActionsArray.length}`
       );
     });
-    cy.checkResourceNameAndAction(auditorResourceTypes, 'read');
+    cy.checkResourceNameAndAction(auditorResourceTypes, auditorActions);
   });
 });
