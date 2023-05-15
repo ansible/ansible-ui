@@ -34,6 +34,7 @@ describe('Operator EDA Role - Resource types and permissions', () => {
     const operatorActions = ['enable', 'read', 'disable', 'restart'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Operator$/);
+    cy.contains('h1', 'Operator').should('be.visible');
     cy.contains('dd#name', 'Operator').should('be.visible');
     cy.contains(
       'dd#description',

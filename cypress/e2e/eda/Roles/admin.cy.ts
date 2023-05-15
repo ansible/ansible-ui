@@ -31,6 +31,7 @@ describe('Admin EDA Role - Resource types and permissions', () => {
     const adminActions = ['create', 'read', 'update', 'delete', 'enable', 'disable', 'restart'];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Admin$/);
+    cy.contains('h1', 'Admin').should('be.visible');
     cy.contains('dd#name', 'Admin').should('be.visible');
     cy.contains('dd#description', 'Has all permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {

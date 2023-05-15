@@ -32,6 +32,7 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
     ];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Viewer$/);
+    cy.contains('h1', 'Viewer').should('be.visible');
     cy.contains('dd#name', 'Viewer').should('be.visible');
     cy.contains('dd#description', 'Has read permissions, except users and roles.').should(
       'be.visible'

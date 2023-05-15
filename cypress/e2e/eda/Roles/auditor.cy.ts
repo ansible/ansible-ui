@@ -33,6 +33,7 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
     ];
     cy.navigateTo(/^Roles$/);
     cy.clickLink(/^Auditor$/);
+    cy.contains('h1', 'Auditor').should('be.visible');
     cy.contains('dd#name', 'Auditor').should('be.visible');
     cy.contains('dd#description', 'Has all read permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
