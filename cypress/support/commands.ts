@@ -296,11 +296,6 @@ declare global {
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
       /**
-       * checks if Ansible logo has loaded successfully
-       */
-      checkLogoSuccess(): Chainable<void>;
-
-      /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
        *
        * accepts 2 parameters action name and edaRulebookActivation name
