@@ -56,11 +56,11 @@ describe('Admin EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${adminResourceTypes.length}`
+        `${resourceAndActionsArray.length}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${adminResourceTypes.length}`
+        `${resourceAndActionsArray.length}`
       );
     });
 

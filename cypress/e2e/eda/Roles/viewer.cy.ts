@@ -44,11 +44,11 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${viewerResourceTypes.length}`
+        `${resourceAndActionsArray.length}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${viewerResourceTypes.length}`
+        `${resourceAndActionsArray.length}`
       );
     });
     cy.checkResourceNameAndAction(viewerResourceTypes, viewerActions);
