@@ -77,16 +77,16 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
         <Route path={RouteObjWithoutPrefix.EditCredential} element={<EditCredential />} />
         <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />
-        <Route path={RouteObjWithoutPrefix.ProjectDetails} element={<ProjectPage />} />
+        <Route path={RouteObjWithoutPrefix.ProjectPage} element={<ProjectPage />} />
         {/* <Route path={RouteObjWithoutPrefix.ProjectEdit} element={<ProjectEdit />} /> */}
         <Route path={RouteObjWithoutPrefix.Inventories} element={<Inventories />} />
-        <Route path={RouteObjWithoutPrefix.InventoryDetails} element={<InventoryPage />} />
+        <Route path={RouteObjWithoutPrefix.InventoryPage} element={<InventoryPage />} />
         <Route path={RouteObjWithoutPrefix.CreateInventory} element={<CreateInventory />} />
         <Route path={RouteObjWithoutPrefix.EditInventory} element={<EditInventory />} />
 
         <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
         <Route path={RouteObjWithoutPrefix.Organizations} element={<Organizations />} />
-        <Route path={RouteObjWithoutPrefix.OrganizationDetails} element={<OrganizationPage />} />
+        <Route path={RouteObjWithoutPrefix.OrganizationPage} element={<OrganizationPage />} />
         <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
         <Route path={RouteObjWithoutPrefix.EditOrganization} element={<EditOrganization />} />
         <Route path={RouteObjWithoutPrefix.Users} element={<Users />} />
@@ -95,7 +95,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.EditUser} element={<EditUser />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToUser} element={<AddRolesToUser />} />
         <Route path={RouteObjWithoutPrefix.Teams} element={<Teams />} />
-        <Route path={RouteObjWithoutPrefix.TeamDetails} element={<TeamPage />} />
+        <Route path={RouteObjWithoutPrefix.TeamPage} element={<TeamPage />} />
         <Route path={RouteObjWithoutPrefix.CreateTeam} element={<CreateTeam />} />
         <Route path={RouteObjWithoutPrefix.EditTeam} element={<EditTeam />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToTeam} element={<AddRolesToTeam />} />
