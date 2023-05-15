@@ -16,7 +16,7 @@ import './commands';
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
   cy.get('button[aria-label="Options menu"]').click();
-  cy.contains('a', roleName)
+  cy.contains(roleName)
     .parents('td[data-label="Name"]')
     .prev()
     .within(() => {
@@ -139,6 +139,32 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   );
 });
 
+Cypress.Commands.add('getEdaProjects', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?page=${page}&page_size=${perPage}`);
+});
+
+Cypress.Commands.add('getEdaDecisionEnvironments', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+    `/api/eda/v1/decision-environments/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaRulebookActivations', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaRulebookActivation>>(
+    `/api/eda/v1/activations/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaCredential>>(
+    `/api/eda/v1/credentials/?page=${page}&page_size=${perPage}`
+  );
+});
+
+Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?page=${page}&page_size=${perPage}`);
+});
+
 Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProjectName}`).then(
     (result) => {
@@ -175,6 +201,7 @@ Cypress.Commands.add('createEdaCredential', () => {
   cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
     name: 'E2E Credential ' + randomString(4),
     credential_type: 'Container Registry',
+    secret: 'test token',
     description: 'This is a container registry credential',
     username: 'admin',
   }).then((edaCredential) => {
@@ -271,14 +298,14 @@ Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
   });
 });
 
-Cypress.Commands.add('addCurrentUserAwxToken', (awxToken: string) => {
+Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
   cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
     token: awxToken,
   });
 });
 
-Cypress.Commands.add('deleteCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
+Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
   cy.requestDelete(`/api/eda/v1/users/me/awx-tokens/${awxToken.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA CONTROLLER TOKEN DELETION :',

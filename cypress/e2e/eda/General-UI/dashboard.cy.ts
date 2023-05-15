@@ -136,11 +136,12 @@ describe('EDA Dashboard', () => {
 });
 
 describe('dashboard checks when resources before any resources are created', () => {
-  it('checks instruction guide link works in the Getting Started section of the Dashboard page', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Getting Started$/).should('be.visible');
-    cy.checkAnchorLinks('check out our instruct guides');
-  });
+  // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
+  // it('checks instruction guide link works in the Getting Started section of the Dashboard page', () => {
+  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.hasTitle(/^Getting Started$/).should('be.visible');
+  //   cy.checkAnchorLinks('check out our instruct guides');
+  // });
 
   it('checks the dashboard landing page titles ', () => {
     cy.navigateTo(/^Dashboard$/);
@@ -157,16 +158,17 @@ describe('dashboard checks when resources before any resources are created', () 
     cy.contains('small', 'Recently updated environments').should('be.visible');
   });
 
-  it('checks resource creation links work in the Getting Started section of the Dashboard page', () => {
-    const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
-    cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Getting Started$/).should('be.visible');
-    cy.get('ol.pf-c-progress-stepper').within(() => {
-      resources.forEach((resource) => {
-        cy.checkAnchorLinks(resource);
-      });
-    });
-  });
+  // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
+  // it('checks resource creation links work in the Getting Started section of the Dashboard page', () => {
+  //   const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
+  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.hasTitle(/^Getting Started$/).should('be.visible');
+  //   cy.get('ol.pf-c-progress-stepper').within(() => {
+  //     resources.forEach((resource) => {
+  //       cy.checkAnchorLinks(resource);
+  //     });
+  //   });
+  // });
 
   it('user can navigate to the Projects page using the link from the Dashboard', () => {
     cy.navigateTo(/^Dashboard$/);

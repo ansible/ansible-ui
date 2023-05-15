@@ -12,5 +12,6 @@
 /cypress
 /docs
 /node_modules
+/publish
 /scripts
 /stories

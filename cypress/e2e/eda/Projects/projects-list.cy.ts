@@ -8,7 +8,9 @@ describe('EDA Projects List', () => {
 
   it('renders the EDA projects page', () => {
     cy.navigateTo(/^Projects$/);
-    cy.hasTitle(/^Projects$/);
+    cy.hasTitle(/^Projects$/)
+      .next('p')
+      .should('have.text', 'Projects are a logical collection of playbooks.');
   });
 
   it('renders the Project details page', () => {

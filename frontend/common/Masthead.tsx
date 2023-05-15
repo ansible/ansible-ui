@@ -37,6 +37,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
+import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { useSettingsDialog } from '../../framework/Settings';
 import { RouteObj, RouteType } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
@@ -74,11 +75,7 @@ function isEdaServer(
   return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
 }
 
-export function AnsibleMasthead(props: {
-  isNavOpen: boolean;
-  setNavOpen: (open: boolean) => void;
-  hideLogin?: boolean;
-}) {
+export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   const { hideLogin } = props;
   const isSmallOrLarger = useBreakpoint('sm');
   const { t } = useTranslation();
@@ -89,10 +86,12 @@ export function AnsibleMasthead(props: {
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const { automationServer } = useAutomationServers();
 
+  const navBar = usePageNavSideBar();
+
   return (
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
-        <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
+        <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
           <PageToggleButton variant="plain" aria-label="Global navigation">
             <BarsIcon />
           </PageToggleButton>
@@ -195,7 +194,9 @@ export function AnsibleMasthead(props: {
                       <DropdownItem
                         onClick={() => {
                           open(
-                            'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                            isEdaServer(automationServer)
+                              ? 'https://www.redhat.com/en/engage/event-driven-ansible-20220907'
+                              : 'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
                             '_blank'
                           );
                         }}

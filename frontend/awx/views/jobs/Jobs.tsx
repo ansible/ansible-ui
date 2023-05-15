@@ -3,16 +3,16 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/react-core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
+import { JobExpanded } from './JobExpanded';
 import { useJobRowActions } from './hooks/useJobRowActions';
+import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
-import { useJobToolbarActions } from './hooks/useJobToolbarActions';
-import { JobExpanded } from './JobExpanded';
 
 export default function Jobs() {
   const { t } = useTranslation();
@@ -107,6 +107,7 @@ export default function Jobs() {
         emptyStateDescription={t('Please run a job to populate this list.')}
         expandedRow={JobExpanded}
         {...view}
+        defaultSubtitle={t('Job')}
       />
     </PageLayout>
   );

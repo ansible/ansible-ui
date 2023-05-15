@@ -3,6 +3,7 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  CopyCell,
   IPageAction,
   ITableColumn,
   PageActionSelection,
@@ -150,9 +151,9 @@ export function useAutomationServersColumns(_options?: {
       },
       {
         header: t('Url'),
-        cell: (server) => <div>{server.url}</div>,
-        // card: 'description',
-        // list: 'description',
+        value: (server) => server.url,
+        cell: (server) => <CopyCell text={server.url} />,
+        list: 'secondary',
       },
       {
         header: t('Labels'),

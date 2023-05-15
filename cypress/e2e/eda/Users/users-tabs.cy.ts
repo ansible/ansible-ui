@@ -2,44 +2,54 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
+import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA User Tokens Tab', () => {
   let awxToken: AwxToken;
+  let awxResources: IAwxResources;
+
   before(() => {
     cy.createAwxToken().then((token) => {
       awxToken = token;
     });
+
+    cy.createAwxOrganizationProjectInventoryJobTemplate({
+      project: { scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample' },
+      jobTemplate: { name: 'run_basic', playbook: 'basic.yml' },
+    }).then((resources) => (awxResources = resources));
+
     cy.edaLogin();
   });
 
   after(() => {
     cy.deleteAwxToken(awxToken);
+    cy.deleteAwxResources(awxResources);
   });
 
   it('can add a new Token', () => {
     const newTokenName = 'E2E Token ' + randomString(8);
     cy.getEdaActiveUser().then((activeUser) => {
       cy.navigateTo('Users');
-      cy.clickTableRow(activeUser?.username ?? '');
+      cy.clickLink(activeUser?.username);
       cy.clickTab('Controller Tokens');
       cy.clickButton('Create controller token');
       cy.hasTitle('Create Controller Token');
       cy.typeInputByLabel('Name', newTokenName);
-      cy.typeInputByLabel('Token', awxToken.token as string);
+      cy.typeInputByLabel('Token', awxToken.token);
       cy.intercept('POST', '/api/eda/v1/users/me/awx-tokens/').as('created');
       cy.clickButton('Create controller token');
+      // cy.setPageSize(100);
       cy.contains('td', newTokenName);
       cy.wait('@created')
         .its('response.body')
-        .then((token: EdaControllerToken) => cy.deleteCurrentUserAwxToken(token));
+        .then((token: EdaControllerToken) => cy.deleteEdaCurrentUserAwxToken(token));
     });
   });
 
   it('can delete a Token from the list', () => {
-    cy.addCurrentUserAwxToken(awxToken.token as string).then((activeUserToken) => {
+    cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.getEdaActiveUser().then((activeUser) => {
         cy.navigateTo('Users');
-        cy.filterTableByText(activeUser?.username);
         cy.clickLink(activeUser?.username);
         cy.clickButton('Controller Tokens');
         cy.get('.pf-c-toggle-group__button').eq(2).click();

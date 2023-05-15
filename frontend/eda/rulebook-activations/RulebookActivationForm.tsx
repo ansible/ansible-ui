@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
@@ -82,6 +82,16 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
+  const restartPolicyHelpBlock = (
+    <Trans i18nKey="restartPolicyHelpBlock">
+      <p>A policy to decide when to restart a rulebook.</p>
+      <br />
+      <p>Policies:</p>
+      <p>Always: restarts when a rulebook finishes.</p>
+      <p>Never: never restarts a rulebook when it finishes.</p>
+      <p>On failure: only restarts when it fails.</p>
+    </Trans>
+  );
   const { data: projects } = useGet<EdaResult<EdaProject>>(
     `${API_PREFIX}/projects/?page=1&page_size=200`
   );
@@ -139,7 +149,8 @@ export function RulebookActivationInputs() {
             : []
         }
         footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
-        labelHelp={t('Projects are a logical collection of playbooks.')}
+        labelHelp={t('Projects are a logical collection of rulebooks.')}
+        labelHelpTitle={t('Project')}
       />
       <PageFormAsyncSelect<IEdaRulebookActivationInputs>
         name="rulebook"
@@ -154,7 +165,8 @@ export function RulebookActivationInputs() {
         )}
         limit={200}
         isRequired
-        labelHelp={t('Rulebooks will be filtered according to the Project selected.')}
+        labelHelp={t('Rulebooks will be shown according to the project selected.')}
+        labelHelpTitle={t('Rulebook')}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="decision_environment_id"
@@ -170,18 +182,16 @@ export function RulebookActivationInputs() {
         }
         isRequired
         footer={<Link to={RouteObj.CreateEdaDecisionEnvironment}>Create decision environment</Link>}
-        labelHelp={t(
-          'Decision environments contain a rulebook image that dictate where the rulebooks will run.'
-        )}
+        labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
+        labelHelpTitle={t('Decision environment')}
       />
       <PageFormSelectOption<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
         options={RESTART_OPTIONS}
-        labelHelp={t(
-          'A way to determine which event would restart an activation. (Events: on always, never, or on failure)'
-        )}
+        labelHelp={restartPolicyHelpBlock}
+        labelHelpTitle={t('Restart policy')}
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>
@@ -192,6 +202,7 @@ export function RulebookActivationInputs() {
           labelHelp={t(
             'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
           )}
+          labelHelpTitle={t('Variables')}
         />
       </PageFormSection>
       <PageFormSwitch<IEdaRulebookActivationInputs>
@@ -201,6 +212,7 @@ export function RulebookActivationInputs() {
         label={t('Enabled')}
         labelOff={t('Disabled')}
         labelHelp={t('Automatically enable this rulebook activation to run.')}
+        labelHelpTitle={t('Rulebook activation enabled')}
       />
     </>
   );

@@ -9,7 +9,7 @@ module.exports = {
   // Default namespace used in your i18next config
 
   defaultValue: (locale, namespace, key) => {
-    if (locale === 'fr')
+    if (locale === 'zu')
       return key
         .toUpperCase()
         .split('')
@@ -52,7 +52,7 @@ module.exports = {
   lineEnding: 'auto',
   // Control the line ending. See options at https://github.com/ryanve/eol
 
-  locales: ['en', 'fr'],
+  locales: ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'],
   // An array of the locales in your applications
 
   namespaceSeparator: false,
