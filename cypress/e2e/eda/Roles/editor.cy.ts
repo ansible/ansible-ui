@@ -49,14 +49,7 @@ describe('Editor EDA Role - Resource types and permissions', () => {
       editorResourceTypes.forEach((resource) => {
         cy.contains('dt span.pf-c-description-list__text', resource);
       });
-      cy.get('dt span.pf-c-description-list__text').should(
-        'have.length',
-        `${resourceAndActionsArray}`
-      );
-      cy.get('dd.pf-c-description-list__description').should(
-        'have.length',
-        `${resourceAndActionsArray}`
-      );
+      cy.get('.pf-c-description-list__group').should('have.length', `${resourceAndActionsArray}`);
     });
     cy.checkActionsofResource('Activation Instance').within(() => {
       cy.contains(editorActions[1]);
