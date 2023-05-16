@@ -1,8 +1,6 @@
-import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
-
 describe('Viewer EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
-  let resourceAndActionsArray: EdaRole[];
+  let resourceAndActionsArray: number;
   let viewerRoleID: string;
 
   before(() => {
@@ -11,7 +9,7 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
       roleIDs = rolesArray.map((role) => role.id);
       viewerRoleID = roleIDs[2];
       cy.getEdaRolePermissions(viewerRoleID).then((result) => {
-        resourceAndActionsArray = result;
+        resourceAndActionsArray = result.length;
       });
     });
   });
@@ -44,11 +42,11 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
     });
     cy.checkResourceNameAndAction(viewerResourceTypes, viewerActions);

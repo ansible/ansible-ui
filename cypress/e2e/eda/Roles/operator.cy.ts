@@ -1,8 +1,6 @@
-import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
-
 describe('Operator EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
-  let resourceAndActionsArray: EdaRole[];
+  let resourceAndActionsArray: number;
   let operatorRoleID: string;
 
   before(() => {
@@ -11,7 +9,7 @@ describe('Operator EDA Role - Resource types and permissions', () => {
       roleIDs = rolesArray.map((role) => role.id);
       operatorRoleID = roleIDs[4];
       cy.getEdaRolePermissions(operatorRoleID).then((result) => {
-        resourceAndActionsArray = result;
+        resourceAndActionsArray = result.length;
       });
     });
   });
@@ -59,11 +57,11 @@ describe('Operator EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
     });
     cy.get('dd#permissions').within(() => {

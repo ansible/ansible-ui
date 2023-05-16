@@ -1,8 +1,6 @@
-import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
-
 describe('Auditor EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
-  let resourceAndActionsArray: EdaRole[];
+  let resourceAndActionsArray: number;
   let auditorRoleID: string;
 
   before(() => {
@@ -11,7 +9,7 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
       roleIDs = rolesArray.map((role) => role.id);
       auditorRoleID = roleIDs[5];
       cy.getEdaRolePermissions(auditorRoleID).then((result) => {
-        resourceAndActionsArray = result;
+        resourceAndActionsArray = result.length;
       });
     });
   });
@@ -43,11 +41,11 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
     });
     cy.checkResourceNameAndAction(auditorResourceTypes, auditorActions);

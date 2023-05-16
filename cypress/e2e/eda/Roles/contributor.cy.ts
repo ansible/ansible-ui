@@ -1,8 +1,6 @@
-import { EdaRole } from '../../../../frontend/eda/interfaces/EdaRole';
-
 describe('Contributor EDA Role - Resource types and permissions', () => {
   let roleIDs: string[];
-  let resourceAndActionsArray: EdaRole[];
+  let resourceAndActionsArray: number;
   let contributorRoleID: string;
 
   before(() => {
@@ -11,7 +9,7 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
       roleIDs = rolesArray.map((role) => role.id);
       contributorRoleID = roleIDs[3];
       cy.getEdaRolePermissions(contributorRoleID).then((result) => {
-        resourceAndActionsArray = result;
+        resourceAndActionsArray = result.length;
       });
     });
   });
@@ -56,11 +54,11 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
       });
       cy.get('dt span.pf-c-description-list__text').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
       cy.get('dd.pf-c-description-list__description').should(
         'have.length',
-        `${resourceAndActionsArray.length}`
+        `${resourceAndActionsArray}`
       );
     });
     cy.checkActionsofResource('Activation').within(() => {
