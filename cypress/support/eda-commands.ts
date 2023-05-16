@@ -280,8 +280,6 @@ Cypress.Commands.add('getEdaActiveUser', () => {
   });
 });
 
-
-
 Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
   cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
