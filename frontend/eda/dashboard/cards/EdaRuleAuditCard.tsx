@@ -27,7 +27,7 @@ export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAudit> }) {
       linkText={t('Go to Rule Audit')}
       to={RouteObj.EdaRuleAudit}
       helpTitle={t('Rule audit')}
-      help={t('Rules that have been fired recently.')}
+      help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <PageTable
         disableBodyPadding={true}
