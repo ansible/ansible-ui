@@ -433,11 +433,6 @@ declare global {
       getEdaActiveUser(): Chainable<EdaUser>;
 
       /**
-       * @param name retrieves EDA user when a name is passed
-       */
-      getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
-
-      /**
        * Creates a DE and returns the same.
        */
 
