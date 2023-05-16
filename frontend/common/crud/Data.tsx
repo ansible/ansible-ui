@@ -4,6 +4,7 @@ import { Input, Options } from 'ky/distribution/types/options';
 import { SWRConfiguration } from 'swr';
 import { RouteObj } from '../../Routes';
 import { getCookie } from './cookie';
+import { API_PREFIX } from '../../eda/constants';
 
 export async function requestGet<ResponseBody>(
   url: string,
@@ -102,6 +103,11 @@ async function requestCommon<ResponseBody>(
       switch (err.response.status) {
         case 401:
           location.assign(RouteObj.Login + '?navigate-back=true');
+          break;
+        case 403:
+          if (url.endsWith(`${API_PREFIX}/users/me/`)) {
+            location.assign(RouteObj.Login + '?navigate-back=true');
+          }
           break;
       }
     }
