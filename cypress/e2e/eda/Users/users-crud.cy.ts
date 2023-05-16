@@ -1,5 +1,6 @@
 //Tests a user's ability to create, edit, and delete Users in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
+import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 
 describe('EDA Users- Create, Edit, Delete', () => {
   let roleNames: string[];
@@ -38,17 +39,15 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.typeInputByLabel(/^Confirm password$/, userInfo.Password);
     cy.selectEdaUserRoleByName(contributorRoleName);
     cy.contains('button', 'Confirm').should('be.enabled').click();
+    cy.intercept('POST', `/api/eda/v1/users/`).as('createUser');
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userInfo.FirstName);
     cy.hasDetail('Last name', userInfo.LastName);
     cy.hasDetail('Email', userInfo.Email);
     cy.hasDetail('Username', userInfo.username);
-    cy.getEdaUserByName(userInfo.username).then((username) => {
-      cy.wrap(username).should('not.be.undefined');
-      if (username) {
-        cy.deleteEdaUser(username);
-      }
-    });
+    cy.wait('@createUser')
+      .its('response.body')
+      .then((user: EdaUser) => cy.deleteEdaUser(user));
   });
 
   it('can edit a User including the roles the user belongs to', () => {
