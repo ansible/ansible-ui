@@ -7,13 +7,17 @@ import { useDeleteSchedules } from './useDeleteSchedules';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { getScheduleResourceUrl } from './getScheduleResourceUrl';
 import { requestPatch } from '../../../../common/crud/Data';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { useOptions } from '../../../../common/crud/useOptions';
 
 export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted: () => void }) {
   const { t } = useTranslation();
   const deleteSchedule = useDeleteSchedules(options?.onScheduleToggleorDeleteCompleted);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
+  const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const handleToggleSchedule: (schedule: Schedule, enabled: boolean) => Promise<void> = useCallback(
     async (schedule, enabled) => {
-      await requestPatch(`/api/v2/schedules/${schedule.id}/`, { enabled });
+      await requestPatch<Schedule>(`/api/v2/schedules/${schedule.id}/`, { enabled });
       options?.onScheduleToggleorDeleteCompleted();
     },
     [options]
@@ -25,15 +29,18 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t(`Edit schedule`),
-        isDisabled: (schedule) => cannotEditResource(schedule, t),
+        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         href: (schedule) => getScheduleResourceUrl(schedule),
       },
       {
         isPinned: true,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
         labelOff: t('Disabled'),
         label: t('Enabled'),
+        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),
         isSwitchOn: (schedule) => schedule.enabled,
       },
@@ -48,7 +55,7 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
         isDanger: true,
       },
     ],
-    [deleteSchedule, handleToggleSchedule, t]
+    [deleteSchedule, handleToggleSchedule, canCreateSchedule, t]
   );
   return rowActions;
 }

@@ -4,11 +4,14 @@ import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesColumns } from './useSchedulesColumns';
+import { useMemo } from 'react';
 
 export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useSchedulesColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
+
   const bulkAction = useBulkConfirmation<Schedule>();
   const deleteSchedules = (schedules: Schedule[]) => {
     bulkAction({
@@ -21,7 +24,7 @@ export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void)
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
-      actionColumns: [deleteActionNameColumn],
+      actionColumns: actionColumns,
       onComplete,
       actionFn: (schedule: Schedule) => requestDelete(`/api/v2/schedules/${schedule.id}/`),
     });

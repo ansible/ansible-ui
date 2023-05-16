@@ -8,6 +8,9 @@ import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { CubesIcon } from '@patternfly/react-icons';
 
 export function Schedules() {
   const { t } = useTranslation();
@@ -20,6 +23,8 @@ export function Schedules() {
     toolbarFilters,
     tableColumns,
   });
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
+  const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => void view.refresh(),
@@ -43,10 +48,23 @@ export function Schedules() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading schedules')}
-        emptyStateTitle={t('No schedules yet')}
-        emptyStateDescription={t('To get started, create a schedule.')}
-        emptyStateButtonText={t('Create schedule')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateSchedule)}
+        emptyStateTitle={
+          canCreateSchedule
+            ? t('No schedules yet')
+            : t('You do not have permission to create a schedule')
+        }
+        emptyStateDescription={
+          canCreateSchedule
+            ? t('Please create a schedule by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateSchedule ? undefined : CubesIcon}
+        emptyStateButtonText={canCreateSchedule ? t('Create schedule') : undefined}
+        emptyStateButtonClick={
+          canCreateSchedule ? () => navigate(RouteObj.CreateSchedule) : undefined
+        }
         {...view}
       />
     </PageLayout>
