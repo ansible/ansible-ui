@@ -6,6 +6,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
@@ -13,6 +14,8 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectsFilters } from './hooks/useProjectsFilters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -31,6 +34,8 @@ export function Projects() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
+  usePersistentFilters('projects');
+
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {
@@ -55,6 +60,7 @@ export function Projects() {
     { control: ['limit_reached_1'], jobs: ['status_changed'] },
     handleWebSocketMessage as (data: unknown) => void
   );
+  const config = useAwxConfig();
 
   return (
     <PageLayout>
@@ -65,7 +71,7 @@ export function Projects() {
           `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
           { product }
         )}
-        titleDocLink="https://docs.ansible.com/ansible-tower/latest/html/userguide/projects.html"
+        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/projects.html`}
         description={t(
           `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
           { product }

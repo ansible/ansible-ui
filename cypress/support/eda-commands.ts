@@ -24,13 +24,6 @@ Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
     });
 });
 
-Cypress.Commands.add('checkLogoSuccess', () => {
-  cy.get('img').should('be.visible');
-  cy.get('img').should('have.attr', 'src');
-  cy.get('img').should('have.attr', 'alt', 'brand logo');
-  cy.get('img').should('have.prop', 'naturalWidth').should('be.greaterThan', 0);
-});
-
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   cy.contains('a', anchorName).then((link) => {
     cy.request({
@@ -294,6 +287,9 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
+  cy.wrap(user).should('not.be.undefined');
+  cy.wrap(user.id).should('not.equal', 1);
+  if (user.id === 1) return; // DO NOT DELETE ADMIN USER
   cy.requestDelete(`/api/eda/v1/users/${user.id}/`, true).then(() => {
     Cypress.log({
       displayName: 'EDA USER DELETION :',
@@ -307,23 +303,9 @@ Cypress.Commands.add('getEdaActiveUser', () => {
     if (Array.isArray(response?.results) && response?.results.length > 1) {
       Cypress.log({
         displayName: 'EDA USER ROLE:',
-        message: [response?.results[1].roles[0].name],
+        message: [response?.results[0].roles[0].name],
       });
-      return response?.results[1];
-    } else {
-      return undefined;
-    }
-  });
-});
-
-Cypress.Commands.add('getEdaUserByName', (edaUserName: string) => {
-  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?name=${edaUserName}`).then((response) => {
-    if (Array.isArray(response?.results) && response?.results.length > 1) {
-      Cypress.log({
-        displayName: 'EDA USER ROLE:',
-        message: [response?.results[1].roles[0].name],
-      });
-      return response?.results[1];
+      return response?.results[0];
     } else {
       return undefined;
     }

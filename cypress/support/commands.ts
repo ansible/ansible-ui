@@ -143,7 +143,7 @@ declare global {
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
-      clickTab(label: string | RegExp): Chainable<void>;
+      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
 
       /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
@@ -294,11 +294,6 @@ declare global {
        * @param anchorName
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
-
-      /**
-       * checks if Ansible logo has loaded successfully
-       */
-      checkLogoSuccess(): Chainable<void>;
 
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
@@ -458,11 +453,6 @@ declare global {
        * @returns {Chainable<EdaUser>}
        */
       getEdaActiveUser(): Chainable<EdaUser>;
-
-      /**
-       * @param name retrieves EDA user when a name is passed
-       */
-      getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
 
       /**
        * Creates a DE and returns the same.

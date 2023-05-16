@@ -40,13 +40,18 @@ import { useBreakpoint } from '../../framework';
 import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { useSettingsDialog } from '../../framework/Settings';
 import { RouteObj, RouteType } from '../Routes';
+import AwxIcon from '../assets/AWX.svg';
+import EdaIcon from '../assets/EDA.svg';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
+import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
+import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../awx/common/useAwxConfig';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -85,7 +90,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const { automationServer } = useAutomationServers();
-
+  const config = useAwxConfig();
   const navBar = usePageNavSideBar();
 
   return (
@@ -101,12 +106,19 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              <img
-                src="/static/media/brand-logo.svg"
-                alt={t('brand logo')}
-                height="45"
-                style={{ height: '45px' }}
-              />
+              {shouldShowAutmationServers().showAutomationServers ? (
+                <>
+                  {automationServer?.type === AutomationServerType.EDA && <EdaIcon />}
+                  {automationServer?.type === AutomationServerType.AWX && <AwxIcon />}
+                </>
+              ) : (
+                <img
+                  src="/static/media/brand-logo.svg"
+                  alt={t('brand logo')}
+                  height="45"
+                  style={{ height: '45px' }}
+                />
+              )}
               <IconDiv>
                 {brand && (
                   <TruncateContentSpan>
@@ -196,7 +208,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                           open(
                             isEdaServer(automationServer)
                               ? 'https://www.redhat.com/en/engage/event-driven-ansible-20220907'
-                              : 'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                              : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
                             '_blank'
                           );
                         }}
