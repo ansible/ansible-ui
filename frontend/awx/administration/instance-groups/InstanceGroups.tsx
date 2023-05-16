@@ -130,7 +130,7 @@ export function useInstanceGroupsFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name__icontains',
-        placeholder: t('contains'),
+        comparison: 'contains',
       },
     ],
     [t]

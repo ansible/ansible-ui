@@ -114,14 +114,14 @@ export function useTaskFilters() {
         label: t('Task name'),
         type: 'string',
         query: 'name__contains',
-        placeholder: t('contains'),
+        comparison: 'contains',
       },
       {
         key: 'status',
         label: t('Status'),
         type: 'string',
         query: 'state',
-        placeholder: t('equals'),
+        comparison: 'equals',
       },
     ],
     [t]
