@@ -1,7 +1,7 @@
 import { RouteObj } from '../../../../Routes';
 import { Schedule } from '../../../interfaces/Schedule';
 
-export function getScheduleResourceUrl(schedule: Schedule): string {
+export function getScheduleResourceUrl(schedule: Schedule, view?: 'details' | null): string {
   const getResourceTypeSubString: string = (() => {
     switch (schedule.summary_fields.unified_job_template.unified_job_type) {
       case 'inventory_update':
@@ -22,9 +22,15 @@ export function getScheduleResourceUrl(schedule: Schedule): string {
     ':schedule_id': `${schedule.id.toString()}`,
     ':resource_type': getResourceTypeSubString,
   };
-  const str: string = RouteObj.EditSchedule.replace(
+  let str: string = RouteObj.EditSchedule.replace(
     /:resource_id|:schedule_id|:resource_type/g,
     (matched: string) => urlSubStringMap[matched]
   );
+  if (view === 'details') {
+    str = RouteObj.ScheduleDetails.replace(
+      /:resource_id|:schedule_id|:resource_type/g,
+      (matched: string) => urlSubStringMap[matched]
+    );
+  }
   return str;
 }
