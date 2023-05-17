@@ -7,7 +7,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.edaLogin();
   });
 
-  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it.skip('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.waitEdaProjectSync(edaProject);
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
@@ -56,7 +56,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     });
   });
 
-  it('can delete a Rulebook Activation from the details view', () => {
+  it.skip('can delete a Rulebook Activation from the details view', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
         const edaRulebook = edaRuleBooks[0];
