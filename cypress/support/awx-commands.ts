@@ -357,7 +357,7 @@ Cypress.Commands.add(
   (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
     cy.createAwxProject({
       name: 'EDA Project ' + randomString(4),
-      organization: options?.project?.organization,
+      organization: options?.project?.organization ?? null,
       scm_type: 'git',
       scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample',
     });
@@ -473,7 +473,9 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
     if (result && result.count === 0) {
       cy.createAwxOrganizationProjectInventoryJobTemplate();
     } else {
-      cy.awxRequestGet<JobTemplate>(`/api/v2/job_templates/${result.results[0].id.toString()}`);
+      cy.awxRequestGet<JobTemplate>(
+        `/api/v2/job_templates/${result.results[0].id?.toString() ?? ''}`
+      );
     }
   });
 });

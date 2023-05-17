@@ -226,6 +226,7 @@ declare global {
       createEdaSpecificAwxProject(options?: {
         project?: Partial<Omit<Project, 'id'>>;
       }): Chainable<Project>;
+
       createAwxInventory(options?: {
         inventory?: Partial<Omit<Inventory, 'id'>>;
       }): Chainable<Inventory>;
