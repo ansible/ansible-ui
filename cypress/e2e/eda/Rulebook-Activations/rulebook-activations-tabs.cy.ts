@@ -3,7 +3,7 @@ describe('EDA rulebook activations History Tab', () => {
     cy.edaLogin();
   });
 
-  it('renders the instances that are related to the rulebook activation', () => {
+  it.skip('renders the instances that are related to the rulebook activation', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];

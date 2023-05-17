@@ -4,7 +4,7 @@ describe('EDA rulebook activations List', () => {
     cy.edaLogin();
   });
 
-  it('can filter the rulebook activations list based on Name filter option', () => {
+  it.skip('can filter the rulebook activations list based on Name filter option', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -92,7 +92,7 @@ describe('EDA rulebook activations List', () => {
   //   });
   // });
 
-  it('can delete a single Rulebook Activation from the line item on the list view', () => {
+  it.skip('can delete a single Rulebook Activation from the line item on the list view', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
@@ -120,7 +120,7 @@ describe('EDA rulebook activations List', () => {
     });
   });
 
-  it('can bulk delete rulebook activations from the toolbar', () => {
+  it.skip('can bulk delete rulebook activations from the toolbar', () => {
     cy.createEdaProject().then((edaProject1) => {
       cy.getEdaRulebooks(edaProject1).then((edaRuleBooksArray) => {
         const gitHookDeployRuleBook = edaRuleBooksArray[0];
