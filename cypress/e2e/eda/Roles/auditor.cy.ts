@@ -1,13 +1,14 @@
 describe('Auditor EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let auditorRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      auditorRoleID = roleIDs[5];
+      const auditorRole = rolesArray
+        ? rolesArray.find((role) => role.name === 'Auditor')
+        : undefined;
+      auditorRoleID = auditorRole ? auditorRole.id : '';
       cy.getEdaRolePermissions(auditorRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });

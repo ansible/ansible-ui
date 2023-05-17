@@ -1,13 +1,12 @@
 describe('Viewer EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let viewerRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      viewerRoleID = roleIDs[2];
+      const viewerRole = rolesArray ? rolesArray.find((role) => role.name === 'Viewer') : undefined;
+      viewerRoleID = viewerRole ? viewerRole.id : '';
       cy.getEdaRolePermissions(viewerRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });

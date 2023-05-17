@@ -1,13 +1,12 @@
 describe('Editor EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let editorRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      editorRoleID = roleIDs[1];
+      const editorRole = rolesArray ? rolesArray.find((role) => role.name === 'Editor') : undefined;
+      editorRoleID = editorRole ? editorRole.id : '';
       cy.getEdaRolePermissions(editorRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });

@@ -1,13 +1,12 @@
 describe('Admin EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let adminRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      adminRoleID = roleIDs[0];
+      const adminRole = rolesArray ? rolesArray.find((role) => role.name === 'Admin') : undefined;
+      adminRoleID = adminRole ? adminRole.id : '';
       cy.getEdaRolePermissions(adminRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });

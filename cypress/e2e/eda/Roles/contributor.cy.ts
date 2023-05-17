@@ -1,13 +1,14 @@
 describe('Contributor EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let contributorRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      contributorRoleID = roleIDs[3];
+      const contributorRole = rolesArray
+        ? rolesArray.find((role) => role.name === 'Contributor')
+        : undefined;
+      contributorRoleID = contributorRole ? contributorRole.id : '';
       cy.getEdaRolePermissions(contributorRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });

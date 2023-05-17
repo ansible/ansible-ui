@@ -1,13 +1,14 @@
 describe('Operator EDA Role - Resource types and permissions', () => {
-  let roleIDs: string[];
   let resourceAndActionsArray: number;
   let operatorRoleID: string;
 
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      operatorRoleID = roleIDs[4];
+      const operatorRole = rolesArray
+        ? rolesArray.find((role) => role.name === 'Operator')
+        : undefined;
+      operatorRoleID = operatorRole ? operatorRole.id : '';
       cy.getEdaRolePermissions(operatorRoleID).then((result) => {
         resourceAndActionsArray = result.length;
       });
