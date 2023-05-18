@@ -22,10 +22,12 @@ import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/StatusCell';
 import { useGet } from '../../common/crud/useGet';
+import { PageDetailsSection } from '../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
+import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import {
   useDisableRulebookActivations,
@@ -33,8 +35,6 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { PageDetailsSection } from '../common/PageDetailSection';
-import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -94,6 +94,10 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           else void disableRulebookActivation([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+        isDisabled: (activation: EdaRulebookActivation) =>
+          activation.status === 'stopping'
+            ? t('Cannot change activation status while stopping')
+            : undefined,
       },
       {
         type: PageActionType.Button,
