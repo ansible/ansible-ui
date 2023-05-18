@@ -223,8 +223,13 @@ declare global {
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
        */
-      createEdaSpecificAwxProject(): Chainable<Project>;
-      createAwxInventory(): Chainable<Inventory>;
+      createEdaSpecificAwxProject(options?: {
+        project?: Partial<Omit<Project, 'id'>>;
+      }): Chainable<Project>;
+
+      createAwxInventory(options?: {
+        inventory?: Partial<Omit<Inventory, 'id'>>;
+      }): Chainable<Inventory>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
@@ -245,6 +250,19 @@ declare global {
         inventory: Inventory,
         jobTemplate?: Partial<JobTemplate>
       ): Chainable<JobTemplate>;
+      /**
+       * This command creates a job template with specific variables that will work in conjunction with
+       * an EDA project and rulebook activation.
+       * @param project
+       * @param inventory
+       * @param jobTemplate
+       */
+      createEdaAwxJobTemplate(
+        project: Project,
+        inventory: Inventory,
+        jobTemplate?: Partial<JobTemplate>
+      ): Chainable<JobTemplate>;
+      getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
       createAwxInstanceGroup(): Chainable<InstanceGroup>;
