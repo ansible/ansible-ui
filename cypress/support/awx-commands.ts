@@ -13,6 +13,7 @@ import {
   InstanceGroup,
   JobTemplate,
 } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { ItemsResponse } from '../../frontend/common/crud/Data';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -351,16 +352,17 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createEdaSpecificAwxProject', () => {
-  cy.createAwxOrganization().then((organization) => {
+Cypress.Commands.add(
+  'createEdaSpecificAwxProject',
+  (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
     cy.createAwxProject({
       name: 'EDA Project ' + randomString(4),
-      organization: organization.id,
+      organization: options?.project?.organization ?? null,
       scm_type: 'git',
       scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample',
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('deleteAwxProject', (project: Project) => {
   const organizationId = project.organization;
@@ -377,14 +379,24 @@ Cypress.Commands.add('deleteAwxProject', (project: Project) => {
   }
 });
 
-Cypress.Commands.add('createAwxInventory', () => {
-  cy.createAwxOrganization().then((organization) => {
-    cy.awxRequestPost<Partial<Inventory>>('/api/v2/inventories/', {
-      name: 'E2E Inventory ' + randomString(4),
-      organization: organization.id,
-    }).then((inventory) => inventory);
-  });
-});
+Cypress.Commands.add(
+  'createAwxInventory',
+  (options?: { inventory?: Partial<Omit<Inventory, 'id'>> }) => {
+    if (options?.inventory?.organization) {
+      cy.awxRequestPost<Partial<Inventory>>('/api/v2/inventories/', {
+        name: 'E2E Inventory ' + randomString(4),
+        organization: options?.inventory?.organization,
+      }).then((inventory) => inventory);
+    } else {
+      cy.createAwxOrganization().then((organization) => {
+        cy.awxRequestPost<Partial<Inventory>>('/api/v2/inventories/', {
+          name: 'E2E Inventory ' + randomString(4),
+          organization: organization.id,
+        }).then((inventory) => inventory);
+      });
+    }
+  }
+);
 
 Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
   const organizationId = inventory.organization;
@@ -397,16 +409,20 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
 Cypress.Commands.add(
   'createAwxOrganizationProjectInventoryJobTemplate',
   (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
-    cy.createAwxInventory().then((inventory) => {
-      cy.createAwxProject({ organization: inventory.organization, ...options?.project }).then(
-        (project) => {
-          cy.createAwxJobTemplate(project, inventory, options?.jobTemplate).then((jobTemplate) => ({
-            project,
-            inventory,
-            jobTemplate,
-          }));
-        }
-      );
+    cy.createAwxOrganization().then((organization) => {
+      cy.createAwxInventory({ inventory: { organization: organization.id } }).then((inventory) => {
+        cy.createEdaSpecificAwxProject({ project: { organization: organization.id } }).then(
+          (project) => {
+            cy.createEdaAwxJobTemplate(project, inventory, options?.jobTemplate).then(
+              (jobTemplate) => ({
+                project,
+                inventory,
+                jobTemplate,
+              })
+            );
+          }
+        );
+      });
     });
   }
 );
@@ -434,6 +450,35 @@ Cypress.Commands.add(
     }).then((jobTemplate) => jobTemplate);
   }
 );
+
+Cypress.Commands.add(
+  'createEdaAwxJobTemplate',
+  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
+    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
+      name: 'run_basic',
+      playbook: 'basic.yml',
+      project: project.id.toString(),
+      inventory: inventory.id,
+      organization: inventory.organization,
+      ...jobTemplate,
+    }).then((jobTemplate) => jobTemplate);
+  }
+);
+
+Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => {
+  cy.awxRequestGet<ItemsResponse<JobTemplate>>(
+    `/api/v2/job_templates/?name=${awxJobTemplateName}`
+  ).then((result) => {
+    cy.log('RESULT RESULT', result);
+    if (result && result.count === 0) {
+      cy.createAwxOrganizationProjectInventoryJobTemplate();
+    } else {
+      cy.awxRequestGet<JobTemplate>(
+        `/api/v2/job_templates/${result.results[0].id?.toString() ?? ''}`
+      );
+    }
+  });
+});
 
 Cypress.Commands.add('deleteAwxJobTemplate', (jobTemplate: JobTemplate) => {
   const projectId = jobTemplate.project;
