@@ -33,6 +33,7 @@ export * from './PageForm/PageForm';
 export * from './PageFramework';
 export * from './PageHeader';
 export * from './PageLayout';
+export * from './PageNav/PageNavSidebar';
 export * from './PageTable/PageTable';
 export * from './PageTable/PageTableCards';
 export * from './PageTable/PageTableColumn';
