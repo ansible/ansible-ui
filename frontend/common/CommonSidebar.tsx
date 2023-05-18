@@ -1,10 +1,9 @@
 import { Nav, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useBreakpoint } from '../../framework';
-import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
-import { RouteObj, RouteType } from '../Routes';
+import { useLocation } from 'react-router-dom';
+import { usePageNavBarClick, usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
+import { RouteObj } from '../Routes';
 import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
@@ -14,21 +13,10 @@ import { shouldShowAutmationServers } from './should-show-autmation-servers';
 export function CommonSidebar(props: { children?: ReactNode }) {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
   const { automationServer } = useAutomationServers();
-
   const navBar = usePageNavSideBar();
-  const isXl = useBreakpoint('xl');
-  const onClick = useCallback(
-    (route: RouteType) => {
-      navigate(route);
-      if (!isXl) navBar.setState({ isOpen: !navBar.isOpen });
-    },
-    [navigate, isXl, navBar]
-  );
-
+  const onClick = usePageNavBarClick();
   const { showAutomationServers } = shouldShowAutmationServers();
-
   return (
     <PageSidebar
       isNavOpen={navBar.isOpen}

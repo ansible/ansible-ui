@@ -1,10 +1,8 @@
 import { NavExpandable, NavItem } from '@patternfly/react-core';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useBreakpoint } from '../../framework';
-import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
-import { RouteObj, RouteType } from '../Routes';
+import { useLocation } from 'react-router-dom';
+import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
+import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { useActiveUser } from '../common/useActiveUser';
@@ -12,16 +10,7 @@ import { useActiveUser } from '../common/useActiveUser';
 export function AwxSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
-  const isXl = useBreakpoint('xl');
-  const navBar = usePageNavSideBar();
-  const onClick = useCallback(
-    (route: RouteType) => {
-      navigate(route);
-      if (!isXl) navBar.setState({ isOpen: !navBar.isOpen });
-    },
-    [navigate, isXl, navBar]
-  );
+  const onClick = usePageNavBarClick();
   const activeUser = useActiveUser();
 
   return (
