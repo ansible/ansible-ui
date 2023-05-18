@@ -13,6 +13,7 @@ export default defineConfig({
       external: [
         'react',
         'react-dom',
+        'react-dom-router',
         '@patternfly/react-core',
         '@patternfly/react-icons',
         '@patternfly/patternfly',
