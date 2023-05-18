@@ -49,6 +49,7 @@ export * from './components/Scrollable';
 export * from './components/icons/RunningIcon';
 export * from './components/pfcolors';
 export * from './components/useBreakPoint';
+export * from './components/usePageNavigate';
 export * from './useFrameworkTranslations';
 export * from './useInMemoryView';
 export * from './useView';
