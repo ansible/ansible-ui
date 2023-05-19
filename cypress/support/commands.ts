@@ -348,7 +348,7 @@ declare global {
       createEdaProject(): Chainable<EdaProject>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
-      getEdaRulebooks(edaProject: EdaProject): Chainable<EdaRulebook[]>;
+      getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;
 
       /**Identify a particular project and make it available for use in testing. */
       getEdaRulebookActivation(

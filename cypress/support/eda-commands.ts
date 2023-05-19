@@ -78,11 +78,10 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
-  // TODO: Once the API supports it, only get rulebooks for the project
-  // Sometimes it takes a while for the rulebooks to be created.
-  // Poll for EdaRulebooks until some are found.
-  cy.pollEdaResults<EdaRulebook>('/api/eda/v1/rulebooks/').then((edaRulebooks) => {
+Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
+  let url = `/api/eda/v1/rulebooks/?project_id=${edaProject.id}`;
+  if (rulebookName) url = url + `&name=${rulebookName}`;
+  cy.pollEdaResults<EdaRulebook>(url).then((edaRulebooks) => {
     return edaRulebooks;
   });
 });
