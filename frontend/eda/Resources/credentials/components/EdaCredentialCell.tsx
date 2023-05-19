@@ -4,7 +4,7 @@ import { RouteObj } from '../../../../Routes';
 import { useFetcher } from '../../../../common/crud/Data';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 
-export function EdaCredentialCell(props: { id?: number }) {
+export function EdaCredentialCell(props: { id?: number | null }) {
   const fetcher = useFetcher();
   const { data } = useSWR<EdaCredential>(
     props.id ? `/api/eda/v1/credentials/${props.id}/` : undefined,
