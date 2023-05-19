@@ -71,22 +71,20 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */
-              cy.edaRuleBookActivationActions(
-                'Restart rulebook activation',
-                edaRulebookActivation.name
-              );
-              cy.clickModalConfirmCheckbox();
-              cy.clickModalButton('Restart rulebook activations');
-              cy.assertModalSuccess();
-              cy.clickButton(/^Close$/);
-              cy.deleteEdaRulebookActivation(edaRulebookActivation);
-            });
-            cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
+            cy.edaRuleBookActivationActions(
+              'Restart rulebook activation',
+              edaRulebookActivation.name
+            );
+            cy.clickModalConfirmCheckbox();
+            cy.clickModalButton('Restart rulebook activations');
+            cy.assertModalSuccess();
+            cy.clickButton(/^Close$/);
+            cy.deleteEdaRulebookActivation(edaRulebookActivation);
           });
+          cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
         });
-        cy.deleteEdaProject(edaProject);
-        cy.deleteEdaCurrentUserAwxToken(activeUserToken);
       });
+      cy.deleteEdaProject(edaProject);
     });
   });
 
