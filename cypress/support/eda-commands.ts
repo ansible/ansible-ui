@@ -78,11 +78,10 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
-  // TODO: Once the API supports it, only get rulebooks for the project
-  // Sometimes it takes a while for the rulebooks to be created.
-  // Poll for EdaRulebooks until some are found.
-  cy.pollEdaResults<EdaRulebook>('/api/eda/v1/rulebooks/').then((edaRulebooks) => {
+Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
+  let url = `/api/eda/v1/rulebooks/?project_id=${edaProject.id}`;
+  if (rulebookName) url = url + `&name=${rulebookName}`;
+  cy.pollEdaResults<EdaRulebook>(url).then((edaRulebooks) => {
     return edaRulebooks;
   });
 });
@@ -318,6 +317,28 @@ Cypress.Commands.add('getEdaActiveUser', () => {
       return response?.results[0];
     } else {
       return undefined;
+    }
+  });
+});
+
+Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
+  cy.requestGet<EdaResult<EdaControllerToken>>(`/api/eda/v1/users/me/awx-tokens/`);
+});
+
+Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
+  cy.getEdaCurrentUserAwxTokens().then((result) => {
+    switch (result.count) {
+      case 0:
+        cy.createAwxToken().then((awxToken) => {
+          cy.addEdaCurrentUserAwxToken(awxToken.token);
+        });
+        break;
+      case 1:
+        // Do nothing - token exists
+        break;
+      case 2:
+        // TODO delete some tokens!
+        break;
     }
   });
 });
