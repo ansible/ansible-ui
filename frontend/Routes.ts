@@ -39,6 +39,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   // Resources
   Templates: `${awxRoutePrefix}/templates`,
   JobTemplatePage: `${awxRoutePrefix}/job_template/:id/*`,
+  JobTemplateScheduleDetails: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/details`,
   JobTemplateDetails: `${awxRoutePrefix}/job_template/:id/details`,
   JobTemplateAccess: `${awxRoutePrefix}/job_template/:id/access`,
   JobTemplateNotifications: `${awxRoutePrefix}/job_template/:id/notifications`,
@@ -50,6 +51,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   WorkflowJobTemplateAccess: `${awxRoutePrefix}/workflow_job_template/:id/access`,
   WorkflowJobTemplateNotifications: `${awxRoutePrefix}/workflow_job_template/:id/notifications`,
   WorkflowJobTemplateSchedules: `${awxRoutePrefix}/workflow_job_template/:id/schedules`,
+  WorkflowJobTemplateScheduleDetails: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/details`,
   WorkflowJobTemplateJobs: `${awxRoutePrefix}/workflow_job_template/:id/jobs`,
   WorkflowJobTemplateSurvey: `${awxRoutePrefix}/workflow_job_template/:id/survey`,
   WorkflowJobTemplateVisualizer: `${awxRoutePrefix}/workflow_job_template/:id/visualizer`,
@@ -72,6 +74,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   ProjectTemplates: `${awxRoutePrefix}/projects/:id/templates`,
   ProjectNotifications: `${awxRoutePrefix}/projects/:id/notifications`,
   ProjectSchedules: `${awxRoutePrefix}/projects/:id/schedules`,
+  ProjectScheduleDetails: `${awxRoutePrefix}/projects/:id/schedules/:schedule_id/details`,
   CreateProject: `${awxRoutePrefix}/projects/create`,
   EditProject: `${awxRoutePrefix}/projects/:id/edit`,
 
@@ -82,6 +85,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   InventoryGroups: `${awxRoutePrefix}/inventories/:inventory_type/:id/groups`,
   InventoryHosts: `${awxRoutePrefix}/inventories/:inventory_type/:id/hosts`,
   InventorySources: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources`,
+  InventorySourcesDetails: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/details`,
+  InventorySourceSchedules: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/schedules`,
+  InventorySourceScheduleDetails: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/details`,
   InventoryJobs: `${awxRoutePrefix}/inventories/:inventory_type/:id/jobs`,
   InventoryJobTemplates: `${awxRoutePrefix}/inventories/:inventory_type/:id/job_templates`,
   CreateInventory: `${awxRoutePrefix}/inventories/create`,

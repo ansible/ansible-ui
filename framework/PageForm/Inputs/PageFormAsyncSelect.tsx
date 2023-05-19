@@ -9,7 +9,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -35,6 +35,7 @@ export interface PageFormAsyncSelectProps<
   placeholder: string;
   loadingPlaceholder: string;
   loadingErrorText: string;
+  additionalControls?: ReactElement;
   query: (page: number) => Promise<{ total: number; values: SelectionType[] }>;
   valueToString: (value: SelectionType | undefined) => string;
   valueToDescription?: (value: SelectionType | undefined) => ReactNode;
@@ -65,6 +66,7 @@ export function PageFormAsyncSelect<
     valueToDescription,
     labelHelp,
     labelHelpTitle,
+    additionalControls,
   } = props;
   const id = props.id ?? name.split('.').join('-');
 
@@ -113,6 +115,7 @@ export function PageFormAsyncSelect<
             labelHelpTitle={labelHelpTitle}
             helperTextInvalid={loadingError ? loadingErrorText : error?.message}
             isRequired={isRequired}
+            additionalControls={additionalControls}
           >
             <AsyncSelect<SelectionType>
               id={id}
@@ -254,7 +257,6 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         )),
     [options, valueToDescription]
   );
-
   return (
     <InputGroup>
       <Select
