@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../../Routes';
 import { StatusCell } from '../../../../common/StatusCell';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
 
 export function useRuleAuditColumns() {
@@ -41,7 +41,7 @@ export function useRuleAuditColumns() {
                 navigate(
                   RouteObj.EdaRulebookActivationDetails.replace(
                     ':id',
-                    ruleAudit?.activation_id || ''
+                    ruleAudit?.activation_id.toString() || ''
                   )
                 )
               }

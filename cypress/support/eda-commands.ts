@@ -10,9 +10,15 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { CredentialTypeEnum } from '../../frontend/eda/interfaces/generated/eda-api';
+import {
+  CredentialTypeEnum,
+  RestartPolicyEnum,
+} from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
 import './commands';
 
@@ -83,10 +89,10 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>) => {
+  (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
     cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
-      restart_policy: 'on-failure',
+      restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
     }).then((edaRulebookActivation) => {
       cy.wrap(edaRulebookActivation)
