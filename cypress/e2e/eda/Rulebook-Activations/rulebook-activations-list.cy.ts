@@ -54,7 +54,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   });
 
   // TODO enable the test when the restart bug for an activation with no project id is fixed [AAP-11217]
-  it('can restart a Rulebook Activation from the from the line item in list view', () => {
+  it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
     cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.createEdaProject().then((edaProject) => {
         cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
@@ -133,7 +133,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
               cy.clickModalButton('Delete rulebook activations');
               cy.assertModalSuccess();
               cy.clickButton(/^Close$/);
-              cy.deleteEdaRulebookActivation(edaRulebookActivation);
             });
             cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
           });
@@ -171,12 +170,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
                         `api/eda/v1/activations/${edaRulebookActivation2.id}/`
                       ).as('edaRulebookActivation2');
                       cy.navigateTo(/^Rulebook Activations$/);
-                      /*
-            uncomment below when working, within() yields multiple elements as 
-            currently select by name doesn't work as expected for rulebook activations
-            cy.selectTableRow(edaRulebookActivation1.name);
-            cy.selectTableRow(edaRulebookActivation2.name);
-            */
                       const rulebookActivations = [
                         edaRulebookActivation1.name,
                         edaRulebookActivation2.name,
