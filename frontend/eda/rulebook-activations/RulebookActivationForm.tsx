@@ -26,7 +26,11 @@ import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../interfaces/EdaRulebookActivation';
+import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -72,7 +76,7 @@ export function CreateRulebookActivation() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ restart_policy: 'always', is_enabled: true, variables: '' }}
+        defaultValue={{ restart_policy: RestartPolicyEnum.Always, is_enabled: true, variables: '' }}
       >
         <RulebookActivationInputs />
       </PageForm>
@@ -218,7 +222,7 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = EdaRulebookActivation & {
+type IEdaRulebookActivationInputs = EdaRulebookActivationCreate & {
   rulebook: EdaRulebook;
   variables: string;
 };

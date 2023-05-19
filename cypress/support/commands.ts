@@ -23,7 +23,10 @@ import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
@@ -383,7 +386,7 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(
-        edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>
+        edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>
       ): Chainable<EdaRulebookActivation>;
 
       /**

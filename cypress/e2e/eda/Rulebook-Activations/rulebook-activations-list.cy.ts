@@ -1,3 +1,5 @@
+import { RestartPolicyEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+
 //Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
 import { IAwxResources } from '../../../support/awx-commands';
@@ -55,18 +57,17 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   // TODO enable the test when the restart bug for an activation with no project id is fixed [AAP-11217]
   it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
-    cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
-      cy.createEdaProject().then((edaProject) => {
-        cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-          const gitHookDeployRuleBook = edaRuleBooksArray[0];
-          cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-            cy.createEdaRulebookActivation({
-              rulebook_id: gitHookDeployRuleBook.id,
-              decision_environment_id: edaDecisionEnvironment.id,
-              restart_policy: 'always',
-            }).then((edaRulebookActivation) => {
-              cy.navigateTo(/^Rulebook Activations$/);
-              /*
+    cy.createEdaProject().then((edaProject) => {
+      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
+        const gitHookDeployRuleBook = edaRuleBooksArray[0];
+        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
+          cy.createEdaRulebookActivation({
+            rulebook_id: gitHookDeployRuleBook.id,
+            decision_environment_id: edaDecisionEnvironment.id,
+            restart_policy: RestartPolicyEnum.Always,
+          }).then((edaRulebookActivation) => {
+            cy.navigateTo(/^Rulebook Activations$/);
+            /*
       filtering by text doesn't work for rulebook activations
       cy.filterTableByText(edaRulebookActivation.name);
       */

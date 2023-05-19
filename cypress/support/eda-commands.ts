@@ -1,14 +1,24 @@
 import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
-import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import {
+  EdaControllerToken,
+  EdaControllerTokenCreate,
+} from '../../frontend/eda/interfaces/EdaControllerToken';
+import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import {
+  CredentialTypeEnum,
+  RestartPolicyEnum,
+} from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
 import './commands';
 
@@ -79,10 +89,10 @@ Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>) => {
+  (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
     cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
-      restart_policy: 'on-failure',
+      restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
     }).then((edaRulebookActivation) => {
       cy.wrap(edaRulebookActivation)
@@ -207,9 +217,9 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
 });
 
 Cypress.Commands.add('createEdaCredential', () => {
-  cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
+  cy.requestPost<EdaCredentialCreate>('/api/eda/v1/credentials/', {
     name: 'E2E Credential ' + randomString(4),
-    credential_type: 'Container Registry',
+    credential_type: CredentialTypeEnum.ContainerRegistry,
     secret: 'test token',
     description: 'This is a container registry credential',
     username: 'admin',
@@ -329,7 +339,7 @@ Cypress.Commands.add('getEdaActiveUser', () => {
 });
 
 Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
-  cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
+  cy.requestPost<EdaControllerTokenCreate>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
     token: awxToken,
   });
