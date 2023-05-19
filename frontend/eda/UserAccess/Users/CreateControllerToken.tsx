@@ -8,16 +8,16 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { EdaUserInfo } from '../../../common/Masthead';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
-import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
-import { EdaUserInfo } from '../../../common/Masthead';
+import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput<EdaControllerToken>
+      <PageFormTextInput<EdaControllerTokenCreate>
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
@@ -25,13 +25,13 @@ function ControllerTokenInputs() {
         maxLength={150}
         autoComplete="new-name"
       />
-      <PageFormTextInput<EdaControllerToken>
+      <PageFormTextInput<EdaControllerTokenCreate>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description ')}
         maxLength={150}
       />
-      <PageFormTextInput<EdaControllerToken>
+      <PageFormTextInput<EdaControllerTokenCreate>
         name="token"
         label={t('Token')}
         maxLength={150}
@@ -44,10 +44,10 @@ function ControllerTokenInputs() {
 export function CreateControllerToken() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const postRequest = usePostRequest<Partial<EdaControllerToken>, EdaControllerToken>();
+  const postRequest = usePostRequest<EdaControllerTokenCreate, EdaControllerToken>();
   const user = EdaUserInfo();
 
-  const onSubmit: PageFormSubmitHandler<EdaControllerToken> = async (token) => {
+  const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(`${API_PREFIX}/users/me/awx-tokens/`, token);
     navigate(RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`));
   };

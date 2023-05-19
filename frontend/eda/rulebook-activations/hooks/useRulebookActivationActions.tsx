@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { Status7EbEnum } from '../../interfaces/generated/eda-api';
 import { IEdaView } from '../../useEventDrivenView';
 import {
   useDisableRulebookActivations,
@@ -31,7 +32,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === 'stopping'
+          activation.status === Status7EbEnum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },

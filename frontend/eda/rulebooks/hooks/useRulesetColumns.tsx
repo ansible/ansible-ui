@@ -31,16 +31,16 @@ export function useRulesetColumns() {
         card: 'name',
         list: 'name',
       },
-      {
-        header: t('Fire count'),
-        cell: (ruleset) => (
-          <TextCell
-            text={ruleset?.fired_stats?.fired_count ? `${ruleset.fired_stats.fired_count}` : ''}
-          />
-        ),
-        card: 'name',
-        list: 'name',
-      },
+      // {
+      //   header: t('Fire count'),
+      //   cell: (ruleset) => (
+      //     <TextCell
+      //       text={ruleset?.fired_stats?.fired_count ? `${ruleset.fired_stats.fired_count}` : ''}
+      //     />
+      //   ),
+      //   card: 'name',
+      //   list: 'name',
+      // },
     ],
     [navigate, t]
   );

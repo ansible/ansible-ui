@@ -11,13 +11,13 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
-import { EdaProject } from '../../interfaces/EdaProject';
-import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { EdaProject, EdaProjectCreate } from '../../interfaces/EdaProject';
+import { EdaResult } from '../../interfaces/EdaResult';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ function ProjectCreateInputs() {
   const isValidUrl = useIsValidUrl();
   return (
     <>
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput<EdaProjectCreate>
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
@@ -33,13 +33,13 @@ function ProjectCreateInputs() {
         maxLength={150}
         autoComplete="new-name"
       />
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput<EdaProjectCreate>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}
         maxLength={150}
       />
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput
         name="type"
         isReadOnly={true}
         label={t('SCM type')}
@@ -47,7 +47,7 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('SCM type')}
         labelHelp={t('There is currently only one SCM available for use.')}
       />
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput<EdaProjectCreate>
         name="url"
         isRequired={true}
         label={t('SCM URL')}
@@ -82,7 +82,7 @@ function ProjectEditInputs() {
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   return (
     <>
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput<EdaProjectCreate>
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
@@ -90,13 +90,13 @@ function ProjectEditInputs() {
         maxLength={150}
         autoComplete="new-name"
       />
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput<EdaProjectCreate>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}
         maxLength={150}
       />
-      <PageFormTextInput<EdaProject>
+      <PageFormTextInput
         name="type"
         isReadOnly={true}
         label={t('SCM type')}
@@ -123,9 +123,9 @@ export function CreateProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<Partial<EdaProject>, EdaProject>();
+  const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+  const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
@@ -161,9 +161,9 @@ export function EditProject() {
   const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
-  const patchRequest = usePatchRequest<Partial<EdaProject>, EdaProject>();
+  const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
 
-  const onSubmit: PageFormSubmitHandler<EdaProject> = async (project) => {
+  const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
@@ -196,7 +196,7 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, credential_id: project?.credential?.id || undefined }}
+          defaultValue={{ ...project, credential_id: project?.credential_id }}
         >
           <ProjectEditInputs />
         </PageForm>

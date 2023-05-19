@@ -93,17 +93,17 @@ export function ActivationInstanceDetails() {
         breadcrumbs={[
           { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
           {
-            label: activationInstance?.activation_name ?? (activation?.name || ''),
+            label: activation?.name || '',
             to: RouteObj.EdaRulebookActivationDetails.replace(
               ':id',
-              activationInstance?.activation_id || ''
+              activationInstance?.activation_id.toString() || ''
             ),
           },
           {
             label: t('History'),
             to: RouteObj.EdaRulebookActivationDetailsHistory.replace(
               ':id',
-              activationInstance?.activation_id || ''
+              activationInstance?.activation_id.toString() || ''
             ),
           },
           { label: `${activationInstance?.id || ''} - ${activationInstance?.name || ''}` },

@@ -7,7 +7,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
 export function useDeleteRulebookActivations(
-  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+  onComplete: (rulebookActivations: (EdaRulebookActivation | EdaRulebookActivation)[]) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();

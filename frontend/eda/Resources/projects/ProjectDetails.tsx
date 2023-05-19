@@ -10,11 +10,10 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  errorToAlertProps,
   IPageAction,
-  PageActions,
   PageActionSelection,
   PageActionType,
+  PageActions,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -22,16 +21,17 @@ import {
   PageTab,
   PageTabs,
   TextCell,
+  errorToAlertProps,
   usePageAlertToaster,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/StatusCell';
+import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
-import { EdaProject } from '../../interfaces/EdaProject';
+import { EdaProject, EdaProjectRead } from '../../interfaces/EdaProject';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
-import { postRequest } from '../../../common/crud/Data';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -98,7 +98,7 @@ export function ProjectDetails() {
     [deleteProjects, navigate, syncProject, t]
   );
 
-  const renderProjectDetailsTab = (project: EdaProject | undefined): JSX.Element => {
+  const renderProjectDetailsTab = (project: EdaProjectRead | undefined): JSX.Element => {
     return (
       <PageDetails>
         <PageDetail label={t('Name')}>{project?.name || ''}</PageDetail>

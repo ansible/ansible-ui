@@ -28,41 +28,12 @@ export enum ActionEnum {
   Restart = 'restart',
 }
 
-/** Serializer for the Activation model. */
-export interface Activation {
-  id: number;
-  name: string;
-  description?: string;
-  is_enabled?: boolean;
-  decision_environment_id: number | null;
-  project_id: number | null;
-  rulebook_id: number | null;
-  extra_var_id: number | null;
-  /**
-   * * `always` - always
-   * * `on-failure` - on-failure
-   * * `never` - never
-   */
-  restart_policy?: RestartPolicyEnum;
-  /**
-   * @min -2147483648
-   * @max 2147483647
-   */
-  restart_count?: number;
-  /** Name of the referenced rulebook */
-  rulebook_name: string;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  modified_at: string;
-}
-
 /** Serializer for creating the Activation. */
 export interface ActivationCreate {
   name: string;
   description?: string;
   is_enabled?: boolean;
-  decision_environment_id: number | null;
+  decision_environment_id: number;
   project_id?: number | null;
   rulebook_id: number;
   extra_var_id?: number | null;
@@ -79,14 +50,15 @@ export interface ActivationInstance {
   id: number;
   name?: string;
   /**
+   * * `starting` - starting
    * * `running` - running
    * * `pending` - pending
    * * `failed` - failed
    * * `stopped` - stopped
    * * `completed` - completed
    */
-  status?: Status15CEnum;
-  activation_id: number | null;
+  status?: Status7EbEnum;
+  activation_id: number;
   /** @format date-time */
   started_at: string;
   /** @format date-time */
@@ -105,6 +77,46 @@ export interface ActivationInstanceLog {
   activation_instance: number;
 }
 
+/** Serializer for listing the Activation model objects. */
+export interface ActivationList {
+  id: number;
+  name: string;
+  description?: string;
+  is_enabled?: boolean;
+  /**
+   * * `starting` - starting
+   * * `running` - running
+   * * `pending` - pending
+   * * `failed` - failed
+   * * `stopped` - stopped
+   * * `completed` - completed
+   */
+  status: Status7EbEnum;
+  decision_environment_id: number | null;
+  project_id: number | null;
+  rulebook_id: number | null;
+  extra_var_id: number | null;
+  /**
+   * * `always` - always
+   * * `on-failure` - on-failure
+   * * `never` - never
+   */
+  restart_policy?: RestartPolicyEnum;
+  /**
+   * @min -2147483648
+   * @max 2147483647
+   */
+  restart_count?: number;
+  /** Name of the referenced rulebook */
+  rulebook_name: string;
+  rules_count: number;
+  rules_fired_count: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
+}
+
 /** Serializer for reading the Activation with related objects info. */
 export interface ActivationRead {
   id: number;
@@ -113,13 +125,14 @@ export interface ActivationRead {
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
   /**
+   * * `starting` - starting
    * * `running` - running
    * * `pending` - pending
    * * `failed` - failed
    * * `stopped` - stopped
    * * `completed` - completed
    */
-  status: Status15CEnum;
+  status: Status7EbEnum;
   project?: ProjectRef | null;
   /** Serializer for Rulebook reference. */
   rulebook: RulebookRef;
@@ -138,6 +151,8 @@ export interface ActivationRead {
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
+  rules_count: number;
+  rules_fired_count: number;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
@@ -166,7 +181,7 @@ export interface AuditAction {
   fired_at: string;
   /** @format date-time */
   rule_fired_at?: string | null;
-  audit_rule?: number | null;
+  audit_rule_id: number | null;
 }
 
 export interface AuditEvent {
@@ -200,22 +215,22 @@ export interface AuditRule {
   description?: string;
   /** Status of the fired rule */
   status?: string;
-  /** Name of the related ruleset */
-  ruleset_name?: string;
+  /** @format date-time */
+  created_at: string;
   /**
    * The fired timestamp of the rule
    * @format date-time
    */
   fired_at: string;
-  /** @format date-time */
-  created_at: string;
   /** @format uuid */
   rule_uuid?: string | null;
   /** @format uuid */
   ruleset_uuid?: string | null;
+  /** Name of the related ruleset */
+  ruleset_name?: string;
+  activation_instance_id: number | null;
+  job_instance_id: number | null;
   definition?: Record<string, any>;
-  activation_instance?: number | null;
-  job_instance?: number | null;
 }
 
 export interface AuditRuleOut {
@@ -247,12 +262,17 @@ export interface AwxToken {
   id: number;
   name: string;
   description?: string;
-  token: string;
   user_id: number;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
   modified_at: string;
+}
+
+export interface AwxTokenCreate {
+  name: string;
+  description?: string;
+  token: string;
 }
 
 export interface Credential {
@@ -400,7 +420,7 @@ export interface PaginatedActivationInstanceList {
   results?: ActivationInstance[];
 }
 
-export interface PaginatedActivationList {
+export interface PaginatedActivationListList {
   /** @example 123 */
   count?: number;
   /**
@@ -417,7 +437,7 @@ export interface PaginatedActivationList {
   page_size?: number | null;
   /** @example 50 */
   page?: number | null;
-  results?: Activation[];
+  results?: ActivationList[];
 }
 
 export interface PaginatedAuditActionList {
@@ -744,6 +764,7 @@ export interface PatchedDecisionEnvironmentCreate {
 export interface PatchedProject {
   name?: string;
   description?: string;
+  credential_id?: number | null;
   id?: number;
   url?: string;
   git_hash?: string;
@@ -780,7 +801,7 @@ export interface PatchedUserCreateUpdate {
 
 export interface PermissionRef {
   resource_type: ResourceTypeEnum;
-  action: ActionEnum[];
+  action: ActionEnum;
 }
 
 export interface Playbook {
@@ -795,6 +816,7 @@ export interface Playbook {
 export interface Project {
   name: string;
   description?: string;
+  credential_id: number | null;
   id: number;
   url: string;
   git_hash: string;
@@ -812,6 +834,25 @@ export interface ProjectCreateRequest {
   url: string;
   name: string;
   description?: string;
+  credential_id?: number | null;
+}
+
+/** Serializer for reading the Project with embedded objects. */
+export interface ProjectRead {
+  name: string;
+  description?: string;
+  credential?: CredentialRef | null;
+  id: number;
+  url: string;
+  git_hash: string;
+  import_state: ImportStateEnum;
+  import_error: string | null;
+  /** @format uuid */
+  import_task_id: string | null;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  modified_at: string;
 }
 
 export interface ProjectRef {
@@ -942,7 +983,6 @@ export interface RuleOut {
 export interface Rulebook {
   id: number;
   name: string;
-  path?: string;
   description?: string | null;
   rulesets?: string;
   /** ID of the project */
@@ -957,7 +997,6 @@ export interface Rulebook {
 export interface RulebookRef {
   id: number;
   name: string;
-  path?: string;
   description?: string | null;
 }
 
@@ -985,16 +1024,19 @@ export interface RulesetOut {
 }
 
 /**
+ * * `starting` - starting
  * * `running` - running
  * * `pending` - pending
  * * `failed` - failed
  * * `stopped` - stopped
  * * `completed` - completed
  */
-export enum Status15CEnum {
+export enum Status7EbEnum {
+  Starting = 'starting',
   Running = 'running',
   Pending = 'pending',
   Failed = 'failed',
+  Stopping = 'stopping',
   Stopped = 'stopped',
   Completed = 'completed',
 }
@@ -1081,6 +1123,11 @@ export interface UserDetail {
   first_name?: string;
   /** @maxLength 150 */
   last_name?: string;
+  /**
+   * Superuser status
+   * Designates that this user has all permissions without explicitly assigning them.
+   */
+  is_superuser?: boolean;
   roles: RoleRef[];
   /** @format date-time */
   created_at: string;
@@ -1097,6 +1144,8 @@ export interface UserList {
   first_name: string;
   /** The user's last name. */
   last_name: string;
+  /** The user is a superuser. */
+  is_superuser: boolean;
   roles: RoleRef[];
 }
 
@@ -1411,7 +1460,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   };
   activations = {
     /**
-     * @description List all activations
+     * @description List all Activations
      *
      * @tags activations
      * @name ActivationsList
@@ -1420,6 +1469,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     activationsList: (
       query?: {
+        /** Filter by activation name. */
+        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1427,7 +1478,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<PaginatedActivationList, any>({
+      this.request<PaginatedActivationListList, any>({
         path: `/activations/`,
         method: 'GET',
         query: query,
@@ -1445,7 +1496,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     activationsCreate: (data: ActivationCreate, params: RequestParams = {}) =>
-      this.request<Activation, any>({
+      this.request<ActivationRead, any>({
         path: `/activations/`,
         method: 'POST',
         body: data,
@@ -2112,7 +2163,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Get project by id
+     * @description Get a project by id
      *
      * @tags projects
      * @name ProjectsRetrieve
@@ -2120,7 +2171,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     projectsRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<Project, any>({
+      this.request<ProjectRead, any>({
         path: `/projects/${id}/`,
         method: 'GET',
         secure: true,
@@ -2258,6 +2309,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description Ruleset list of a rulebook by its id
+     *
+     * @tags rulebooks
+     * @name RulebooksRulesetsList
+     * @request GET:/rulebooks/{id}/rulesets/
+     * @secure
+     */
+    rulebooksRulesetsList: (
+      id: number,
+      query?: {
+        /** Filter by ruleset name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedRulesetOutList, any>({
+        path: `/rulebooks/${id}/rulesets/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Get the rulebook by its id
      *
      * @tags rulebooks
@@ -2286,35 +2366,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<Rulebook, any>({
         path: `/rulebooks/${id}/json/`,
         method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Ruleset list of a rulebook by its id
-     *
-     * @tags rulebooks
-     * @name RulebooksRulesetsList
-     * @request GET:/rulebooks/{id}/rulesets/
-     * @secure
-     */
-    rulebooksRulesetsList: (
-      id: number,
-      query?: {
-        /** Filter by ruleset name. */
-        name?: string;
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedRulesetOutList, any>({
-        path: `/rulebooks/${id}/rulesets/`,
-        method: 'GET',
-        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -2623,7 +2674,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/users/me/awx-tokens/
      * @secure
      */
-    usersMeAwxTokensCreate: (data: AwxToken, params: RequestParams = {}) =>
+    usersMeAwxTokensCreate: (data: AwxTokenCreate, params: RequestParams = {}) =>
       this.request<AwxToken, any>({
         path: `/users/me/awx-tokens/`,
         method: 'POST',

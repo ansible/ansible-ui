@@ -38,18 +38,18 @@ export function useRulebookColumns() {
         value: (rulebook) => rulebook.project_id,
         // table: ColumnTableOption.Expanded,
       },
-      {
-        header: t('Rules'),
-        type: 'count',
-        value: (rulebook) => rulebook?.rule_count ?? 0,
-      },
-      {
-        header: t('Fire count'),
-        type: 'count',
-        value: (rulebook) => rulebook?.fire_count ?? 0,
-        card: 'name',
-        list: 'name',
-      },
+      // {
+      //   header: t('Rules'),
+      //   type: 'count',
+      //   value: (rulebook) => rulebook?.rule_count ?? 0,
+      // },
+      // {
+      //   header: t('Fire count'),
+      //   type: 'count',
+      //   value: (rulebook) => rulebook?.fire_count ?? 0,
+      //   card: 'name',
+      //   list: 'name',
+      // },
       {
         header: t('Created'),
         type: 'datetime',

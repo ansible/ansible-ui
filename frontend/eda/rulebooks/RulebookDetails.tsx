@@ -38,8 +38,8 @@ export function RulebookDetails() {
           <PageDetails>
             <PageDetail label={t('Name')}>{rulebook?.name || ''}</PageDetail>
             <PageDetail label={t('Description')}>{rulebook?.description || ''}</PageDetail>
-            <PageDetail label={t('Number of rules')}>{rulebook?.rule_count || ''}</PageDetail>
-            <PageDetail label={t('Fire count')}>{rulebook?.fire_count || ''}</PageDetail>
+            {/* <PageDetail label={t('Number of rules')}>{rulebook?.rule_count || ''}</PageDetail> */}
+            {/* <PageDetail label={t('Fire count')}>{rulebook?.fire_count || ''}</PageDetail> */}
             <PageDetail label={t('Created')}>
               {rulebook?.created_at ? formatDateString(rulebook.created_at) : ''}
             </PageDetail>

@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 
 export function useEnableRulebookActivations(
-  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+  onComplete: (rulebookActivations: (EdaRulebookActivation | EdaRulebookActivation)[]) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();
@@ -72,7 +72,7 @@ export function useDisableRulebookActivations(
 }
 
 export function useRestartRulebookActivations(
-  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
+  onComplete: (rulebookActivations: (EdaRulebookActivation | EdaRulebookActivation)[]) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();

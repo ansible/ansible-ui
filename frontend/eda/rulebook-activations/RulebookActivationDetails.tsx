@@ -26,6 +26,7 @@ import { PageDetailsSection } from '../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { Status7EbEnum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -95,7 +96,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === 'stopping'
+          activation.status === Status7EbEnum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
@@ -190,11 +191,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Project git hash')}>
               {rulebookActivation?.project?.git_hash || ''}
             </PageDetail>
-            <PageDetail label={t('Last restarted')}>
+            {/* <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
                 ? formatDateString(rulebookActivation.last_restarted)
                 : ''}
-            </PageDetail>
+            </PageDetail> */}
             <PageDetail label={t('Restarted count')}>
               {rulebookActivation?.restart_count || 0}
             </PageDetail>

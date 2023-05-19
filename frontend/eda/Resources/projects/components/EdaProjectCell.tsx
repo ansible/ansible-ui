@@ -4,7 +4,7 @@ import { RouteObj } from '../../../../Routes';
 import { useFetcher } from '../../../../common/crud/Data';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
-export function EdaProjectCell(props: { id?: number; disableLink?: boolean }) {
+export function EdaProjectCell(props: { id?: number | null; disableLink?: boolean }) {
   const fetcher = useFetcher();
   const { data } = useSWR<EdaProject>(
     props.id ? `/api/eda/v1/projects/${props.id}/` : undefined,

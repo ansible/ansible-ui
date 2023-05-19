@@ -11,12 +11,12 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -157,7 +157,7 @@ export function EditDecisionEnvironment() {
           onCancel={onCancel}
           defaultValue={{
             ...decisionEnvironment,
-            credential_id: decisionEnvironment?.credential?.id || undefined,
+            credential_id: decisionEnvironment?.credential_id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />
