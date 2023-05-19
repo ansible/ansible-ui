@@ -475,14 +475,17 @@ declare global {
        */
       getEdaActiveUser(): Chainable<EdaUser>;
 
-      /**
-       * Creates a DE and returns the same.
-       */
+      getEdaCurrentUserAwxTokens(): Chainable<EdaResult<EdaControllerToken>>;
+
+      ensureEdaCurrentUserAwxToken(): Chainable<void>;
 
       addEdaCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
 
       deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
 
+      /**
+       * Creates a DE and returns the same.
+       */
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
       /**
