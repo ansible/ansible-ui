@@ -10,7 +10,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   it.skip('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.waitEdaProjectSync(edaProject);
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
         cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
           const edaRulebook = edaRuleBooks[0];
           const name = 'E2E Rulebook Activation ' + randomString(4);

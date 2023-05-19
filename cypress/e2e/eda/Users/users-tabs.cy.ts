@@ -46,30 +46,32 @@ describe('EDA User Tokens Tab', () => {
     });
   });
 
-  it('can delete a Token from the list', () => {
-    cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
-      cy.getEdaActiveUser().then((activeUser) => {
-        cy.navigateTo('Users');
-        cy.clickLink(activeUser?.username);
-        cy.clickButton('Controller Tokens');
-        cy.get('.pf-c-toggle-group__button').eq(2).click();
-        cy.get(`#${activeUserToken.id}`).within(() => {
-          cy.get('.toggle-kebab')
-            .click()
-            .then(() => {
-              cy.get('li').click();
-            });
-        });
-        cy.clickModalConfirmCheckbox();
-        cy.intercept('DELETE', `/api/eda/v1/users/me/awx-tokens/${activeUserToken.id}/`).as(
-          'deleted'
-        );
-        cy.clickModalButton('Delete controller tokens');
-        cy.wait('@deleted').then((deleted) => {
-          expect(deleted?.response?.statusCode).to.eql(204);
-        });
-        cy.assertModalSuccess();
-      });
-    });
-  });
+  // EDA ONLY SUPPORTS A SINGLE TOKEN AND THROWS ERROR IF THERE ARE MORE
+  // SINCE MULTIPLE E2E RUNS ARE RUNNING IN PARALLEL, THIS TEST WILL CAUSE FAILURES
+  // it('can delete a Token from the list', () => {
+  //   cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
+  //     cy.getEdaActiveUser().then((activeUser) => {
+  //       cy.navigateTo('Users');
+  //       cy.clickLink(activeUser?.username);
+  //       cy.clickButton('Controller Tokens');
+  //       cy.get('.pf-c-toggle-group__button').eq(2).click();
+  //       cy.get(`#${activeUserToken.id}`).within(() => {
+  //         cy.get('.toggle-kebab')
+  //           .click()
+  //           .then(() => {
+  //             cy.get('li').click();
+  //           });
+  //       });
+  //       cy.clickModalConfirmCheckbox();
+  //       cy.intercept('DELETE', `/api/eda/v1/users/me/awx-tokens/${activeUserToken.id}/`).as(
+  //         'deleted'
+  //       );
+  //       cy.clickModalButton('Delete controller tokens');
+  //       cy.wait('@deleted').then((deleted) => {
+  //         expect(deleted?.response?.statusCode).to.eql(204);
+  //       });
+  //       cy.assertModalSuccess();
+  //     });
+  //   });
+  // });
 });
