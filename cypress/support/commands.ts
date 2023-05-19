@@ -352,6 +352,10 @@ declare global {
         edaRulebookActivationName: string
       ): Chainable<EdaRulebookActivation | undefined>;
 
+      waitForRulebookActionStatus(
+        edaRulebookActivation: EdaRulebookActivation
+      ): Chainable<EdaRulebookActivation>;
+
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
 
       getEdaProjects(page: number, pageSize: number): Chainable<EdaResult<EdaProject>>;
