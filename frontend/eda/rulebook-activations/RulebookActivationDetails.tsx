@@ -25,7 +25,10 @@ import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationStatus,
+} from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -35,7 +38,6 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { Status7EbEnum } from '../interfaces/generated/eda-api';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -96,7 +98,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status7EbEnum.Stopping
+          activation.status === EdaRulebookActivationStatus.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
