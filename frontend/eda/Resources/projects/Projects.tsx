@@ -26,7 +26,7 @@ export function Projects() {
     <PageLayout>
       <PageHeader
         title={t('Projects')}
-        description={t('Projects are a logical collection of playbooks.')}
+        description={t('Projects are a logical collection of rulebooks.')}
       />
       <PageTable
         tableColumns={tableColumns}
