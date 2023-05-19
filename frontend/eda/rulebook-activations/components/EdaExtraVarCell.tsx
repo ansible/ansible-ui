@@ -1,9 +1,9 @@
+import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import useSWR from 'swr';
 import { useFetcher } from '../../../common/crud/Data';
 import { EdaExtraVars } from '../../interfaces/EdaExtraVars';
-import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 
-export function EdaExtraVarsCell(props: { id?: number; disableLink?: boolean }) {
+export function EdaExtraVarsCell(props: { id?: number | null; disableLink?: boolean }) {
   const fetcher = useFetcher();
   const { data } = useSWR<EdaExtraVars>(
     props.id ? `/api/eda/v1/extra-vars/${props.id}/` : undefined,

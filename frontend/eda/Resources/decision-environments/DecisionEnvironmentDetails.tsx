@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  DateTimeCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
@@ -20,7 +21,6 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
-  DateTimeCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
@@ -48,7 +48,7 @@ export function DecisionEnvironmentDetails() {
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential_id ?? ''}/`
   );
 
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
@@ -98,11 +98,11 @@ export function DecisionEnvironmentDetails() {
           label={t('Credential')}
           helpText={t('The token needed to utilize the Decision environment image.')}
         >
-          {decisionEnvironment && decisionEnvironment.credential ? (
+          {decisionEnvironment && decisionEnvironment.credential_id ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment?.credential?.id || ''}`
+                `${decisionEnvironment?.credential_id || ''}`
               )}
             >
               {credential?.name}
