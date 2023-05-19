@@ -1,4 +1,3 @@
-import { randomString } from '../../../../framework/utils/random-string';
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
 import { IAwxResources } from '../../../support/awx-commands';
 
@@ -19,7 +18,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAwxResources(awxResources);
   });
 
-  it.only('renders the instances that are related to the rulebook activation', () => {
+  it('renders the instances that are related to the rulebook activation', () => {
     cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.createEdaProject().then((edaProject) => {
         cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {

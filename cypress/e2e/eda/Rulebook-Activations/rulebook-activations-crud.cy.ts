@@ -21,8 +21,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAwxResources(awxResources);
   });
 
-  it.skip('user cannot create an RBA if more than one token exists', () => {});
-
   it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.createEdaProject().then((edaProject) => {
