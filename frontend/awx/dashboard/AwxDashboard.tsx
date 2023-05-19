@@ -11,13 +11,7 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import {
-  PageDashboardCard,
-  PageDashboardCount,
-  PageHeader,
-  PageLayout,
-  usePageDialog,
-} from '../../../framework';
+import { PageDashboardCard, PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -110,12 +104,24 @@ function DashboardInternal() {
               configuration management, and application deployment, without requiring any special
               coding skills.
             </p>
+          </TextContent>
+        </CardBody>
+      </PageDashboardCard>
+      <PageDashboardCard width="md" title="Playbooks">
+        <CardBody>
+          <TextContent>
             <p>
               With Ansible, you can define the desired state of your systems in simple, declarative
               YAML files, called playbooks. Playbooks contain a list of tasks that you want to
               perform on your systems, and Ansible takes care of executing those tasks on the target
               systems.
             </p>
+          </TextContent>
+        </CardBody>
+      </PageDashboardCard>
+      <PageDashboardCard width="md" title="Connections">
+        <CardBody>
+          <TextContent>
             <p>
               Ansible works by connecting to the target systems over SSH or WinRM, and then executes
               the defined tasks using various modules that are available in Ansible's library. These
@@ -123,15 +129,17 @@ function DashboardInternal() {
               and can perform a wide range of tasks, such as installing software, copying files, or
               configuring system settings.
             </p>
+          </TextContent>
+        </CardBody>
+      </PageDashboardCard>
+      <PageDashboardCard width="md" title="Agentless">
+        <CardBody>
+          <TextContent>
             <p>
               One of the key benefits of Ansible is that it is agentless, meaning you don't need to
               install any software or agents on the target systems to use it. This makes it easy to
               get started with Ansible and also helps to reduce the overhead of managing and
               maintaining agents on your systems.
-            </p>
-            <p>
-              Overall, Ansible is a powerful and flexible tool that can help you automate your IT
-              infrastructure, improve your productivity, and ensure consistency across your systems.
             </p>
           </TextContent>
         </CardBody>
@@ -148,7 +156,7 @@ function DashboardInternal() {
       <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />
       <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />
 
-      <PageDashboardCount
+      {/* <PageDashboardCount
         title={t('Organizations', { count: data.organizations.total })}
         count={data.organizations.total}
       />
@@ -159,7 +167,7 @@ function DashboardInternal() {
       <PageDashboardCount
         title={t('Users', { count: data.users.total })}
         count={data.users.total}
-      />
+      /> */}
 
       {recentJobsView.itemCount !== 0 && <AwxJobActivityCard />}
       <AwxRecentJobsCard view={recentJobsView} />

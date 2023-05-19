@@ -17,8 +17,8 @@ export function PageDashboardGettingStarted(props: {
 }) {
   const { t } = useTranslation();
   const { steps } = props;
-  // const isComplete = steps.every((step) => step.isComplete);
-  // if (isComplete) return <></>;
+  const isComplete = steps.every((step) => step.isComplete);
+  if (isComplete) return <></>;
 
   return (
     <PageDashboardCard title={t('Getting Started')} width="xxl">
