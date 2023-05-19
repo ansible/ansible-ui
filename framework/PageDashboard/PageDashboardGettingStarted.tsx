@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDashboardCard } from './PageDashboardCard';
 
-interface PageDashboardGettingStartedStep {
+export interface PageDashboardGettingStartedStep {
   title: string;
   description: string;
   to: string;
@@ -17,14 +17,14 @@ export function PageDashboardGettingStarted(props: {
 }) {
   const { t } = useTranslation();
   const { steps } = props;
-  const isComplete = steps.every((step) => step.isComplete);
-  if (isComplete) return <></>;
+  // const isComplete = steps.every((step) => step.isComplete);
+  // if (isComplete) return <></>;
 
   return (
     <PageDashboardCard title={t('Getting Started')} width="xxl">
       <CardBody>
         <Stack hasGutter>
-          {props.children}
+          <div>{props.children}</div>
           <ProgressStepper>
             {steps.map((step, index) => (
               <ProgressStep

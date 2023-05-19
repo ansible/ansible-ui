@@ -1,15 +1,31 @@
 /* eslint-disable i18next/no-literal-string */
-import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
+import {
+  Banner,
+  Bullseye,
+  CardBody,
+  PageSection,
+  Spinner,
+  TextContent,
+} from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
+import {
+  PageDashboardCard,
+  PageDashboardCount,
+  PageHeader,
+  PageLayout,
+  usePageDialog,
+} from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { useAwxConfig } from '../common/useAwxConfig';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { Job } from '../interfaces/Job';
 import { useAwxView } from '../useAwxView';
+import { WelcomeModal } from './WelcomeModal';
 import { AwxGettingStartedCard } from './cards/AwxGettingStartedCard';
 import { AwxHostsCard } from './cards/AwxHostsCard';
 import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
@@ -17,9 +33,6 @@ import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
 import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
-import { WelcomeModal } from './WelcomeModal';
-import { useEffect } from 'react';
-import { useAwxConfig } from '../common/useAwxConfig';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
@@ -58,6 +71,7 @@ export function AwxDashboard() {
 }
 
 function DashboardInternal() {
+  const { t } = useTranslation();
   const executionEnvironments = useExecutionEnvironments();
 
   const recentJobsView = useAwxView<Job>({
@@ -87,17 +101,66 @@ function DashboardInternal() {
 
   return (
     <PageDashboard>
+      <PageDashboardCard width="xxl" title="About Ansible">
+        <CardBody>
+          <TextContent>
+            <p>
+              Ansible is an open-source automation tool that helps you manage and configure your
+              computer systems or servers. It allows you to automate tasks such as provisioning,
+              configuration management, and application deployment, without requiring any special
+              coding skills.
+            </p>
+            <p>
+              With Ansible, you can define the desired state of your systems in simple, declarative
+              YAML files, called playbooks. Playbooks contain a list of tasks that you want to
+              perform on your systems, and Ansible takes care of executing those tasks on the target
+              systems.
+            </p>
+            <p>
+              Ansible works by connecting to the target systems over SSH or WinRM, and then executes
+              the defined tasks using various modules that are available in Ansible's library. These
+              modules are written in various programming languages, such as Python, Ruby, or Perl,
+              and can perform a wide range of tasks, such as installing software, copying files, or
+              configuring system settings.
+            </p>
+            <p>
+              One of the key benefits of Ansible is that it is agentless, meaning you don't need to
+              install any software or agents on the target systems to use it. This makes it easy to
+              get started with Ansible and also helps to reduce the overhead of managing and
+              maintaining agents on your systems.
+            </p>
+            <p>
+              Overall, Ansible is a powerful and flexible tool that can help you automate your IT
+              infrastructure, improve your productivity, and ensure consistency across your systems.
+            </p>
+          </TextContent>
+        </CardBody>
+      </PageDashboardCard>
+      <AwxGettingStartedCard
+        hasInventory={hasInventory}
+        hasExecutonEnvironment={hasExecutonEnvironment}
+        hasJobTemplate={hasJobTemplate}
+      />
       <AwxInventoriesCard
         total={data.inventories.total}
         failed={data.inventories.inventory_failed}
       />
       <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />
       <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />
-      <AwxGettingStartedCard
-        hasInventory={hasInventory}
-        hasExecutonEnvironment={hasExecutonEnvironment}
-        hasJobTemplate={hasJobTemplate}
+
+      <PageDashboardCount
+        title={t('Organizations', { count: data.organizations.total })}
+        count={data.organizations.total}
       />
+      <PageDashboardCount
+        title={t('Teams', { count: data.teams.total })}
+        count={data.teams.total}
+      />
+      <PageDashboardCount
+        title={t('Users', { count: data.users.total })}
+        count={data.users.total}
+      />
+
       {recentJobsView.itemCount !== 0 && <AwxJobActivityCard />}
       <AwxRecentJobsCard view={recentJobsView} />
       <AwxRecentProjectsCard />
