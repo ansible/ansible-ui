@@ -35,6 +35,7 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { Status7EbEnum } from '../interfaces/generated/eda-api';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -95,7 +96,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === 'stopping'
+          activation.status === Status7EbEnum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },

@@ -1036,6 +1036,7 @@ export enum Status7EbEnum {
   Running = 'running',
   Pending = 'pending',
   Failed = 'failed',
+  Stopping = 'stopping',
   Stopped = 'stopped',
   Completed = 'completed',
 }
