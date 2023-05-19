@@ -3,7 +3,6 @@
   --output-line-column-width: calc(50px + var(--output-line-chars) * 1ch);
   display: grid;
   grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
-  border-bottom: 1px solid var(--pf-global--BorderColor--100);
   overflow-x: auto;
   background-color: var(--pf-global--BackgroundColor--100);
 

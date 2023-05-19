@@ -66,5 +66,6 @@ export interface Job
   host_status_counts: {
     ok: number;
     failures: number;
+    dark?: number;
   };
 }

@@ -144,7 +144,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
     >
-      <ToolbarContent style={{ justifyContent: 'end', justifyItems: 'end' }}>
+      <ToolbarContent style={{ justifyContent: 'end' }}>
         {/* Selection */}
         {showSelect && (
           <ToolbarGroup>

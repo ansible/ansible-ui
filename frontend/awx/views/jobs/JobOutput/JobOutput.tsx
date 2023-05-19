@@ -1,4 +1,5 @@
 import {
+  PageSection,
   Label,
   SearchInput,
   Skeleton,
@@ -6,17 +7,30 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
+import { JobStatusBar } from './JobStatusBar';
+import { HostStatusBar } from './HostStatusBar';
+import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobOutputEvents } from './JobOutputEvents';
+
+const Section = styled(PageSection)`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 204px);
+`;
 
 export function JobOutput(props: { job: Job }) {
   const { t } = useTranslation();
   const { job } = props;
   if (!job) return <Skeleton />;
   return (
-    <>
+    <Section variant="light" className="dark-1">
+      <JobStatusBar job={job} />
+      <HostStatusBar job={job} />
+      <JobOutputToolbar job={job} />
       <Toolbar className="dark-2 border-bottom">
         <ToolbarContent>
           <ToolbarItem>
@@ -42,6 +56,6 @@ export function JobOutput(props: { job: Job }) {
         </ToolbarContent>
       </Toolbar>
       <JobOutputEvents job={job} />
-    </>
+    </Section>
   );
 }

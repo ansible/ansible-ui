@@ -21,10 +21,9 @@ const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 const ScrollContainer = styled.div`
   overflow: auto;
-  flex: 1;
   backgroundcolor: var(--pf-global--BackgroundColor--100);
   font-size: var(--pf-chart-global--FontSize--sm);
-  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pf-global--BorderColor--100);
 `;
 
 export function JobOutputEvents(props: { job: Job }) {
