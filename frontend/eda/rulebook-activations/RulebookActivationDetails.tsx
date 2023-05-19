@@ -94,6 +94,10 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           else void disableRulebookActivation([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+        isDisabled: (activation: EdaRulebookActivation) =>
+          activation.status === 'stopping'
+            ? t('Cannot change activation status while stopping')
+            : undefined,
       },
       {
         type: PageActionType.Button,
