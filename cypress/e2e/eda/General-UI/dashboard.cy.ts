@@ -1,29 +1,40 @@
 //Tests a user's ability to perform certain actions on the Dashboard of the EDA UI.
 //Implementation of Visual Tests makes sense here at some point
+import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
+import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Dashboard', () => {
+  let awxToken: AwxToken;
   let edaProject: EdaProject;
   let gitHookDeployRuleBook: EdaRulebook;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
+  let edaToken: EdaControllerToken;
 
   before(() => {
     cy.edaLogin();
-    cy.createEdaProject().then((project) => {
-      edaProject = project;
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-          edaDecisionEnvironment = decisionEnvironment;
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
-          }).then((edaRulebookActivation) => {
-            edaRBA = edaRulebookActivation;
+
+    cy.createAwxToken().then((token) => {
+      awxToken = token;
+      cy.addEdaCurrentUserAwxToken(awxToken.token).then((token) => {
+        edaToken = token;
+        cy.createEdaProject().then((project) => {
+          edaProject = project;
+          cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
+            gitHookDeployRuleBook = edaRuleBooksArray[0];
+            cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
+              edaDecisionEnvironment = decisionEnvironment;
+              cy.createEdaRulebookActivation({
+                rulebook_id: gitHookDeployRuleBook.id,
+                decision_environment_id: decisionEnvironment.id,
+              }).then((edaRulebookActivation) => {
+                edaRBA = edaRulebookActivation;
+              });
+            });
           });
         });
       });
@@ -34,11 +45,12 @@ describe('EDA Dashboard', () => {
     cy.deleteEdaRulebookActivation(edaRBA);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
+    cy.deleteEdaCurrentUserAwxToken(edaToken);
   });
 
   it('checks Ansible header title', () => {
-    cy.edaLogin();
-    cy.hasTitle(/^Ansible$/).should('be.visible');
+    cy.navigateTo(/^Dashboard$/);
+    cy.hasTitle('Ansible').should('be.visible');
   });
 
   it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -144,7 +156,7 @@ describe('dashboard checks when resources before any resources are created', () 
 
   it('checks the dashboard landing page titles ', () => {
     cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Welcome to EDA Server$/).should('be.visible');
+    cy.hasTitle('Welcome to').should('be.visible');
     cy.contains(
       'p span',
       'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
