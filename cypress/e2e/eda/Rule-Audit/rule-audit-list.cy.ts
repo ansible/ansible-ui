@@ -1,7 +1,6 @@
 //Tests a user's ability to perform certain actions on the Rule Audits list in the EDA UI.
 
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
-// import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA Rule Audits List', () => {
