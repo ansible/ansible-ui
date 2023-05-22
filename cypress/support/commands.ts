@@ -348,7 +348,7 @@ declare global {
       createEdaProject(): Chainable<EdaProject>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
-      getEdaRulebooks(edaProject: EdaProject): Chainable<EdaRulebook[]>;
+      getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;
 
       /**Identify a particular project and make it available for use in testing. */
       getEdaRulebookActivation(
@@ -479,14 +479,17 @@ declare global {
        */
       getEdaActiveUser(): Chainable<EdaUser>;
 
-      /**
-       * Creates a DE and returns the same.
-       */
+      getEdaCurrentUserAwxTokens(): Chainable<EdaResult<EdaControllerToken>>;
+
+      ensureEdaCurrentUserAwxToken(): Chainable<void>;
 
       addEdaCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
 
       deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
 
+      /**
+       * Creates a DE and returns the same.
+       */
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
       /**
