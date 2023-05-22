@@ -41,7 +41,7 @@ export function SvnSubForm() {
         />
         <PageFormTextInput
           name="project.scm_branch"
-          label={t('Revision #')}
+          label={t('Revision number')}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
           )}

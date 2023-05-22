@@ -21,7 +21,7 @@ export function InsightsSubForm() {
           credentialType={credentialTypeIDs.insights}
           isRequired
         />
-        <ScmTypeOptions />
+        <ScmTypeOptions hideAllowOverride />
       </PageFormSection>
     </PageFormHidden>
   );
