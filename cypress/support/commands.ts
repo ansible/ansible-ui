@@ -486,6 +486,8 @@ declare global {
 
       deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
 
+      deleteAllEdaCurrentUserTokens(): Chainable<void>;
+
       /**
        * Creates a DE and returns the same.
        */
