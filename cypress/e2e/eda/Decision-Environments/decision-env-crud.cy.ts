@@ -31,7 +31,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can verify edit functionality of a decision environment', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision Environments$/);
+      cy.visit('/eda/decision-environments?sort=&page=1&perPage=100');
       cy.hasTitle(/^Decision Environments$/);
       /*
       DE's are displayed by default in card view hence clickTableRow() doesn't work 
@@ -56,7 +56,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can delete a decision environment from the details page', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision Environments$/);
+      cy.visit('/eda/decision-environments?sort=&page=1&perPage=100');
       cy.hasTitle(/^Decision Environments$/);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).within(() => {

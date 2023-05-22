@@ -94,11 +94,30 @@ declare global {
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /**
+       * Get the list card containing the specified text.
+       * @param name
+       * @param filter
+       */
+      getListCardByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
+        name: string | RegExp,
+        label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /**
+       * Finds a list card containing text and clicks action specified by label.
+       * @param name
+       * @param label
+       * @param filter
+       */
+      clickListCardKebabAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean

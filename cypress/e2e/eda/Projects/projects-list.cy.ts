@@ -34,7 +34,7 @@ describe('EDA Projects List', () => {
   it('can bulk delete Projects from the Projects list', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
-        cy.navigateTo(/^Projects$/);
+        cy.visit('/eda/projects?sort=&page=1&perPage=50');
         cy.selectTableRow(edaProject.name);
         cy.selectTableRow(testProject.name);
         cy.clickToolbarKebabAction(/^Delete selected projects$/);
