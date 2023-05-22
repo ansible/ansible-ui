@@ -39,7 +39,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
             cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
             cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
             cy.clickButton(/^Create rulebook activation$/);
-            cy.get('h1').should('contain', name);
+            cy.contains('h1', name).should('be.visible');
             cy.getEdaRulebookActivation(name).then((edaRulebookActivation) => {
               if (edaRulebookActivation) {
                 cy.deleteEdaRulebookActivation(edaRulebookActivation);
