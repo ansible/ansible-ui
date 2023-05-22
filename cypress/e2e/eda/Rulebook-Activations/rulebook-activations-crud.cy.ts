@@ -25,7 +25,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
       cy.createEdaProject().then((edaProject) => {
         cy.waitEdaProjectSync(edaProject);
-        cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+        cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
           cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
             const edaRulebook = edaRuleBooks[0];
             const name = 'E2E Rulebook Activation ' + randomString(4);
