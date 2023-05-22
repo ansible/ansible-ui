@@ -11,7 +11,7 @@ interface IConfigData {
   project_local_paths?: string[];
 }
 
-export function ManualSubForm() {
+export function ManualSubForm(props: { localPath?: string }) {
   const { t } = useTranslation();
   const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
@@ -42,12 +42,23 @@ export function ManualSubForm() {
       </p>
     </Trans>
   );
-  const options = config?.project_local_paths
+  const projectLocalPaths = config?.project_local_paths
     ? config?.project_local_paths.map((path) => ({
         label: path,
         value: path,
       }))
     : [];
+  const localPath =
+    typeof props.localPath === 'string' && props.localPath.length > 0
+      ? [
+          {
+            label: props.localPath,
+            value: props.localPath,
+          },
+        ]
+      : [];
+  const options = [...projectLocalPaths, ...localPath];
+
   return (
     <PageFormHidden watch="project.scm_type" hidden={(type: string) => type !== 'manual'}>
       <PageFormSection title={t('Type Details')}>

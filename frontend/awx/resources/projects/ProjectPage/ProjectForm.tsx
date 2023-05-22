@@ -207,13 +207,13 @@ export function EditProject() {
           project,
         }}
       >
-        <ProjectInputs />
+        <ProjectInputs project={project} />
       </PageForm>
     </PageLayout>
   );
 }
 
-function ProjectInputs() {
+function ProjectInputs(props: { project?: Project }) {
   const { t } = useTranslation();
   const org = useWatch({ name: 'project.summary_fields.organization' }) as Organization;
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
@@ -272,7 +272,9 @@ function ProjectInputs() {
         selectTitle={t('Select Signature Validation Credential')}
         credentialType={credentialTypeIDs.cryptography}
       />
-      <ManualSubForm />
+      <ManualSubForm
+        localPath={props.project?.local_path ? props.project?.local_path : undefined}
+      />
       <GitSubForm />
       <SvnSubForm />
       <ArchiveSubForm />
