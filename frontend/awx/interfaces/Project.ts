@@ -8,10 +8,11 @@ import {
 } from './summary-fields/summary-fields';
 
 export interface Project
-  extends Omit<SwaggerProject, 'summary_fields' | 'related' | 'id' | 'name'> {
+  extends Omit<SwaggerProject, 'summary_fields' | 'related' | 'id' | 'name' | 'scm_type'> {
   id: number;
   name: string;
   base_dir: string;
+  scm_type: '' | 'manual' | 'git' | 'svn' | 'insights' | 'archive' | null;
   summary_fields: {
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;

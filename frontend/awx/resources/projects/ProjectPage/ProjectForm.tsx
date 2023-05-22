@@ -129,6 +129,10 @@ export function EditProject() {
   const id = Number(params.id);
   const { data: project } = useGet<Project>(`/api/v2/projects/${id.toString()}/`);
 
+  if (project && project.scm_type === '') {
+    project.scm_type = 'manual';
+  }
+
   const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values, setError) => {
     const { project: editedProject } = values;
 
