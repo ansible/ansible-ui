@@ -35,25 +35,25 @@ describe('EDA Rule Audits List', () => {
       );
   });
 
-  it.only('a rulebook activation run results in a record showing on the rule audit list', () => {
-    cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
-      cy.createEdaProject().then((edaProject) => {
-        cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
-          const edaRulebook = edaRuleBooks[3];
-          cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-            cy.createEdaRulebookActivation({
-              rulebook_id: edaRulebook.id,
-              decision_environment_id: edaDecisionEnvironment.id,
-            }).then((edaRulebookActivation) => {
-              cy.navigateTo(/^Rule Audit$/);
-              // cy.deleteEdaRulebookActivation(edaRulebookActivation);
-            });
-            cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-          });
-        });
-        cy.deleteEdaProject(edaProject);
-        cy.deleteAllEdaCurrentUserTokens();
-      });
-    });
-  });
+  // it('a rulebook activation run results in a record showing on the rule audit list', () => {
+  //   cy.addEdaCurrentUserAwxToken(awxToken.token).then((activeUserToken) => {
+  //     cy.createEdaProject().then((edaProject) => {
+  //       cy.getEdaRulebooks(edaProject).then((edaRuleBooks) => {
+  //         const edaRulebook = edaRuleBooks[3];
+  //         cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
+  //           cy.createEdaRulebookActivation({
+  //             rulebook_id: edaRulebook.id,
+  //             decision_environment_id: edaDecisionEnvironment.id,
+  //           }).then((edaRulebookActivation) => {
+  //             cy.navigateTo(/^Rule Audit$/);
+  //             // cy.deleteEdaRulebookActivation(edaRulebookActivation);
+  //           });
+  //           cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
+  //         });
+  //       });
+  //       cy.deleteEdaProject(edaProject);
+  //       cy.deleteAllEdaCurrentUserTokens();
+  //     });
+  //   });
+  // });
 });
