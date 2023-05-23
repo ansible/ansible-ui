@@ -316,6 +316,8 @@ declare global {
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
+      clickEdaPageAction(label: string | RegExp): Chainable<void>;
+
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
        *
@@ -339,6 +341,7 @@ declare global {
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
 
+      edaRuleBookActivationCheckbox(rbaName: string): Chainable<void>;
       /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
