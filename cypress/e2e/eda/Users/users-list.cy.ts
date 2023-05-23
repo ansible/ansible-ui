@@ -33,7 +33,7 @@ describe('EDA Users List', () => {
     cy.createEdaUser({
       roles: [editorRoleID],
     }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
+      cy.visit('/eda/users?sort=&page=1&perPage=100');
       cy.contains(edaUser.username).click();
       cy.hasTitle(edaUser.username);
       cy.clickButton(/^Details$/);
