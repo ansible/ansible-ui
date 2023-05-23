@@ -18,39 +18,72 @@ import {
 } from '@patternfly/react-core';
 import { ArrowRightIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
-export const enum PageFilterTypeE {
-  string = 'string',
-  select = 'select',
-}
-export type PageFilterType = keyof typeof PageFilterTypeE;
-
-export interface IToolbarStringFilter {
+/** Common Toolbar Filter Properties */
+interface ToolbarFilterCommon {
+  /** The key is use to uniquly identify the filter.
+   * It is used to track state of the filter and to store the filter value in the browser querystring. */
   key: string;
+
+  /** The label to show for the filter. */
   label: string;
-  type: 'string';
-  query: string;
-  placeholder: string;
+
+  /** Indicated if the filter should be pinned outside of the filter select. */
   isPinned?: boolean;
+
+  /** Query used by the useView hook to perform the filtering. */
+  query: string;
+
+  /** The placeholder for the filter. */
+  placeholder?: string;
 }
 
-export interface IToolbarSelectFilter {
-  key: string;
-  label: string;
+/** Filter for filtering by user text input. */
+export interface IToolbarTextFilter extends ToolbarFilterCommon {
+  /** Filter for filtering by user text input. */
+  type: 'string';
+
+  /** The comparison to use when filtering. */
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+}
+
+/** Filter for filtering by user selection of option. */
+export interface IToolbarSelectFilter extends ToolbarFilterCommon {
+  /** Filter for filtering by user selection of option. */
   type: 'select';
+
+  /** The options to show in the select. */
   options: {
+    /** The label to show for the option. */
     label: string;
+
+    /** The description to show for the option. */
+    description?: string;
+
+    /** The value to use for the option. */
     value: string;
   }[];
-  query: string;
-  placeholder: string;
-  isPinned?: boolean;
 }
 
-export type IToolbarFilter = IToolbarStringFilter | IToolbarSelectFilter;
+// TODO Add support for advanced filter
+/** Filter for advanced combining of filters.
+ * Disables the other filters on the toolbar and allows the user to build a complex filter underneath the toolbar */
+// export interface IToolbarAdvancedFilter extends ToolbarFilterCommon {
+//   /** Filter for advanced combining of filters. */
+//   type: 'advanced';
+
+//   /** The operation to use when combining the filters. */
+//   operation: 'and' | 'or';
+
+//   /** The filters to show in the advanced filter. */
+//   filters: IToolbarFilter;
+// }
+
+export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter;
 
 export type IFilterState = Record<string, string[] | undefined>;
 
@@ -224,7 +257,13 @@ function ToolbarFilterInput(props: {
   const { filter } = props;
   switch (filter?.type) {
     case 'string':
-      return <ToolbarTextFilter {...props} placeholder={filter.placeholder} />;
+      return (
+        <ToolbarTextFilter
+          {...props}
+          comparison={filter.comparison}
+          placeholder={filter.placeholder}
+        />
+      );
     case 'select':
       return (
         <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
@@ -233,12 +272,32 @@ function ToolbarFilterInput(props: {
   return <></>;
 }
 
-function ToolbarTextFilter(props: {
-  id?: string;
-  addFilter: (value: string) => void;
-  placeholder?: string;
-}) {
+function ToolbarTextFilter(
+  props: {
+    id?: string;
+    addFilter: (value: string) => void;
+  } & Pick<IToolbarTextFilter, 'comparison' | 'placeholder'>
+) {
+  const { t } = useTranslation();
   const [value, setValue] = useState('');
+  let placeholder = props.placeholder;
+  if (!placeholder) {
+    switch (props.comparison) {
+      case 'contains':
+        placeholder = t('contains');
+        break;
+      case 'startsWith':
+        placeholder = t('starts with');
+        break;
+      case 'endsWith':
+        placeholder = t('ends with');
+        break;
+      case 'equals':
+        placeholder = t('equals');
+        break;
+    }
+  }
+
   return (
     <InputGroup>
       <TextInputGroup style={{ minWidth: 220 }}>
@@ -255,7 +314,7 @@ function ToolbarTextFilter(props: {
               setValue('');
             }
           }}
-          placeholder={props.placeholder}
+          placeholder={placeholder}
         />
         {value !== '' && (
           <TextInputGroupUtilities>

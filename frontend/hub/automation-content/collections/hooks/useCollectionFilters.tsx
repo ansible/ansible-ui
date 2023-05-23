@@ -11,14 +11,14 @@ export function useCollectionFilters() {
         label: t('Keywords'),
         type: 'string',
         query: 'keywords',
-        placeholder: t('Enter keywords'),
+        comparison: 'contains',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
         type: 'string',
         query: 'namespace',
-        placeholder: t('Enter namespace'),
+        comparison: 'contains',
       },
       {
         key: 'repository',
@@ -38,7 +38,7 @@ export function useCollectionFilters() {
         label: t('Tags'),
         type: 'string',
         query: 'tags',
-        placeholder: t('Enter tags'),
+        comparison: 'contains',
       },
       {
         key: 'type',

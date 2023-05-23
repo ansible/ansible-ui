@@ -11,7 +11,7 @@ export function useGroupFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: t('starts with'),
+        comparison: 'startsWith',
       },
     ],
     [t]

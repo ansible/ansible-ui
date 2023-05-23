@@ -11,7 +11,7 @@ export function useNamespaceFilters() {
         label: t('Keywords'),
         type: 'string',
         query: 'keywords',
-        placeholder: t('starts with'),
+        comparison: 'startsWith',
       },
     ],
     [t]

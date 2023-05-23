@@ -11,14 +11,14 @@ export function useApprovalFilters() {
         label: t('Collection'),
         type: 'string',
         query: 'name',
-        placeholder: t('Enter collection'),
+        comparison: 'contains',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
         type: 'string',
         query: 'namespace',
-        placeholder: t('Enter namespace'),
+        comparison: 'contains',
       },
       {
         key: 'status',

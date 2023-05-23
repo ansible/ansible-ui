@@ -1,15 +1,18 @@
 /* eslint-disable i18next/no-literal-string */
 import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { useAwxConfig } from '../common/useAwxConfig';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { Job } from '../interfaces/Job';
 import { useAwxView } from '../useAwxView';
+import { WelcomeModal } from './WelcomeModal';
 import { AwxGettingStartedCard } from './cards/AwxGettingStartedCard';
 import { AwxHostsCard } from './cards/AwxHostsCard';
 import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
@@ -17,9 +20,6 @@ import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
 import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
-import { WelcomeModal } from './WelcomeModal';
-import { useEffect } from 'react';
-import { useAwxConfig } from '../common/useAwxConfig';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
@@ -30,6 +30,7 @@ export function AwxDashboard() {
   const [_, setDialog] = usePageDialog();
   const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
+
   useEffect(() => {
     if (config?.ui_next && !hideWelcomeMessage) {
       setDialog(<WelcomeModal />);
