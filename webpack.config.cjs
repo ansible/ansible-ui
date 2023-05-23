@@ -82,7 +82,7 @@ module.exports = function (env, argv) {
           : JSON.stringify('/eda'),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
-      ...['en', 'fr'].map((locale) => {
+      ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {
         return new MergeJsonWebpackPlugin({
           files: [`./locales/${locale}/translation.json`],
           output: {
