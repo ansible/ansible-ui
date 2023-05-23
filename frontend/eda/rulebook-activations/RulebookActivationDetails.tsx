@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -43,14 +43,14 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const restartPolicyHelpBlock = (
-    <Trans i18nKey="restartPolicyHelpBlock">
-      <p>A policy to decide when to restart a rulebook.</p>
+    <>
+      <p>{t('A policy to decide when to restart a rulebook.')}</p>
       <br />
-      <p>Policies:</p>
-      <p>Always: restarts when a rulebook finishes.</p>
-      <p>Never: never restarts a rulebook when it finishes.</p>
-      <p>On failure: only restarts when it fails.</p>
-    </Trans>
+      <p>{t('Policies:')}</p>
+      <p>{t('Always: restarts when a rulebook finishes.')}</p>
+      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
+      <p>{t('On failure: only restarts when it fails.')}</p>
+    </>
   );
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
