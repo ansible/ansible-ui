@@ -94,11 +94,30 @@ declare global {
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /**
+       * Get the list card containing the specified text.
+       * @param name
+       * @param filter
+       */
+      getListCardByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
+        name: string | RegExp,
+        label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /**
+       * Finds a list card containing text and clicks action specified by label.
+       * @param name
+       * @param label
+       * @param filter
+       */
+      clickListCardKebabAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
@@ -431,28 +450,6 @@ declare global {
        * @returns {Chainable<EdaCredential>}
        */
       deleteEdaCredential(credential: EdaCredential): Chainable<void>;
-
-      /**
-       * Some of the Eda roles (Admin, Contributor etc) have resources
-       * with more than 5 set of actions. this command helps in asserting
-       * the actions by chaining of the command.
-       * @param {string} resourceType
-       * @returns {Chainable<JQuery<HTMLElement>>}
-       */
-      checkActionsofResource(resourceType: string): Chainable<JQuery<HTMLElement>>;
-
-      /**
-       * this command asserts the resource array of a particular role has the action
-       * @param {string[]} resourceTypes
-       * @param {string} action
-       */
-      checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
-
-      /**
-       * getEdaRolePermissions returns the permissions of a given role id of a role
-       * @param roleID get
-       */
-      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
 
       getEdaRoles(): Chainable<EdaRole[]>;
       /**

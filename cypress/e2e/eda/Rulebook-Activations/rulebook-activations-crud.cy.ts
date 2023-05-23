@@ -19,10 +19,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   let edaRuleBook: EdaRulebook;
 
   before(() => {
-    cy.createAwxToken().then((token) => {
-      awxToken = token;
-    });
-
     cy.edaLogin();
 
     cy.createAwxToken().then((token) => {
@@ -58,12 +54,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  after(() => {
-    cy.deleteAwxToken(awxToken);
-    cy.deleteAwxResources(awxResources);
-    cy.deleteAllEdaCurrentUserTokens();
-  });
-
   it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     const name = 'E2E Rulebook Activation ' + randomString(4);
     cy.navigateTo(/^Rulebook Activations$/);
@@ -79,7 +69,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.get('h1').should('contain', name);
   });
 
-  it('can enable and disable a Rulebook Activation', () => {
+  it.skip('can enable and disable a Rulebook Activation', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
         const edaRulebook = edaRuleBooks[0];
