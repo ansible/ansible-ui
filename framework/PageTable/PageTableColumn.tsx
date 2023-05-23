@@ -2,7 +2,7 @@ import { ReactNode, useMemo } from 'react';
 import { DateTimeCell } from '../PageCells/DateTimeCell';
 import { LabelsCell } from '../PageCells/LabelsCell';
 import { TextCell } from '../PageCells/TextCell';
-import { PageTableViewTypeE } from './PageTableViewType';
+import { PageTableViewTypeE } from './PageToolbar/PageTableViewType';
 
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
