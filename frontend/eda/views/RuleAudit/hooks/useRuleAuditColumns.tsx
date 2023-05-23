@@ -34,9 +34,9 @@ export function useRuleAuditColumns() {
       {
         header: t('Rulebook activation'),
         cell: (ruleAudit) =>
-          ruleAudit?.activation_instance ? (
+          ruleAudit?.activation_instance?.id ? (
             <TextCell
-              text={ruleAudit?.activation_name}
+              text={ruleAudit?.activation_instance?.name || ''}
               onClick={() =>
                 navigate(
                   RouteObj.EdaRulebookActivationDetails.replace(
