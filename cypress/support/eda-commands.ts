@@ -256,6 +256,17 @@ Cypress.Commands.add('getEdaRoles', () => {
   });
 });
 
+Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
+  cy.requestGet<EdaRole>(`/api/eda/v1/roles/${roleID}`).then((response) => {
+    Cypress.log({
+      displayName: 'EDA PERMS :',
+      message: [response.name],
+    });
+    const edaRolePermissions = response.permissions;
+    return edaRolePermissions;
+  });
+});
+
 Cypress.Commands.add(
   'createEdaUser',
   (user?: SetOptional<EdaUserCreateUpdate, 'username' | 'password'>) => {

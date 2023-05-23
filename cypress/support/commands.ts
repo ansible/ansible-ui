@@ -445,6 +445,12 @@ declare global {
       createEdaCredential(): Chainable<EdaCredential>;
 
       /**
+       * getEdaRolePermissions returns the permissions of a given role id of a role
+       * @param roleID get
+       */
+      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+
+      /**
        * Deletes an EDA credential which is provided.
        *
        * @returns {Chainable<EdaCredential>}
