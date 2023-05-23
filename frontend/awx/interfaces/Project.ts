@@ -7,12 +7,13 @@ import {
   SummaryFieldsOrganization,
 } from './summary-fields/summary-fields';
 
+export type SCMType = '' | 'manual' | 'git' | 'svn' | 'insights' | 'archive' | null;
 export interface Project
   extends Omit<SwaggerProject, 'summary_fields' | 'related' | 'id' | 'name' | 'scm_type'> {
   id: number;
   name: string;
   base_dir: string;
-  scm_type: '' | 'manual' | 'git' | 'svn' | 'insights' | 'archive' | null;
+  scm_type: SCMType;
   summary_fields: {
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
@@ -55,7 +56,5 @@ export interface Project
     last_update?: string;
   };
 }
-
-export type SCMType = '' | 'git' | 'svn' | 'insights' | 'archive' | null;
 
 export type AwxProjectCreate = Omit<Project, 'id' | 'summary_fields' | 'related'>;

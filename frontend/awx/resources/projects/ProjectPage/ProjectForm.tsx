@@ -8,12 +8,12 @@ import {
   PageLayout,
 } from '../../../../../framework';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
-import { Project } from '../../../interfaces/Project';
+import { Project, SCMType } from '../../../interfaces/Project';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { Organization } from '../../../interfaces/Organization';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RouteObj } from '../../../../Routes';
-import { FieldValues, useWatch } from 'react-hook-form';
+import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -28,6 +28,7 @@ import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
 import { InsightsSubForm } from '../ProjectSubForms/InsightsSubForm';
 import { useGet } from '../../../../common/crud/useGet';
 import { requestPatch } from '../../../../common/crud/Data';
+import { useEffect } from 'react';
 
 export interface ProjectFields extends FieldValues {
   project: Omit<Project, 'scm_type'> & {
@@ -37,7 +38,6 @@ export interface ProjectFields extends FieldValues {
 }
 
 const defaultValues: Partial<Project> = {
-  allow_override: false,
   base_dir: '',
   credential: null,
   local_path: '',
@@ -203,7 +203,7 @@ export function EditProject() {
           { label: t('Edit Project') },
         ]}
       />
-      <PageForm
+      <PageForm<ProjectFields>
         submitText={t('Save project')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -217,12 +217,59 @@ export function EditProject() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const scmFormFieldDefaults: { [key: string]: any } = {
+  scm_url: '',
+  scm_branch: '',
+  scm_refspec: '',
+  credential: null,
+  signature_validation_credential: null,
+  scm_clean: false,
+  scm_delete_on_update: false,
+  scm_track_submodules: false,
+  scm_update_on_launch: false,
+  allow_override: false,
+  scm_update_cache_timeout: 0,
+};
+
 function ProjectInputs(props: { project?: Project }) {
   const { t } = useTranslation();
   const org = useWatch({ name: 'project.summary_fields.organization' }) as Organization;
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
   const credentialTypeIDs = useGetCredentialTypeIDs();
+  const scmType = useWatch({ name: 'project.scm_type' }) as SCMType;
+  const { project } = props;
+  const { setValue } = useFormContext();
+
+  // Reset SCM fields when the source control type is changed
+  useEffect(() => {
+    const resetSCMTypeFields = () => {
+      if (project !== undefined && scmType && scmType === project.scm_type) {
+        Object.keys(scmFormFieldDefaults).forEach((field) => {
+          setValue(`project.${field}`, project[field as keyof Project]);
+        });
+        // Reset contents of credential fields
+        setValue(
+          'project.summary_fields.credential.name',
+          project.summary_fields.credential?.name ?? ''
+        );
+        setValue(
+          'project.summary_fields.signature_validation_credential.name',
+          project.summary_fields.signature_validation_credential?.name ?? ''
+        );
+      } else {
+        Object.keys(scmFormFieldDefaults).forEach((field) => {
+          setValue(`project.${field}`, scmFormFieldDefaults[field]);
+        });
+        // Reset contents of credential fields
+        setValue('project.summary_fields.credential.name', '');
+        setValue('project.summary_fields.signature_validation_credential.name', '');
+      }
+    };
+    resetSCMTypeFields();
+  }, [project, props.project, scmType, setValue]);
+
   return (
     <>
       <PageFormTextInput
