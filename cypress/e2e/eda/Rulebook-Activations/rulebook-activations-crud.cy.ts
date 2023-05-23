@@ -47,7 +47,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   after(() => {
     cy.deleteAwxToken(awxToken);
     cy.deleteAwxResources(awxResources);
-    // cy.deleteEdaRulebookActivation(edaRBA);
+    cy.deleteEdaRulebookActivation(edaRBA);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteEdaCurrentUserAwxToken(edaToken);
@@ -98,6 +98,5 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
       expect(deleted?.response?.statusCode).to.eql(204);
       cy.hasTitle(/^Rulebook Activations$/);
     });
-    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
   });
 });
