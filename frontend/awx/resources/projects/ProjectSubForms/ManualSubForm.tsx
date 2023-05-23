@@ -66,7 +66,6 @@ export function ManualSubForm(props: { localPath?: string }) {
           <PageFormSection singleColumn>
             <Alert
               title={t`WARNING: `}
-              // css="grid-column: 1/-1"
               variant="warning"
               isInline
               ouiaId="project-manual-subform-alert"
