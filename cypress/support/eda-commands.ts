@@ -256,6 +256,27 @@ Cypress.Commands.add('getEdaRoles', () => {
   });
 });
 
+Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
+  return cy
+    .contains('dt.pf-c-description-list__term', resourceType)
+    .next()
+    .then((result) => {
+      cy.wrap(result);
+    });
+});
+
+Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
+  resourceTypes.forEach((resource) => {
+    cy.contains('dt.pf-c-description-list__term', resource)
+      .next()
+      .within(() => {
+        actions.forEach((action) => {
+          cy.contains(action);
+        });
+      });
+  });
+});
+
 Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
   cy.requestGet<EdaRole>(`/api/eda/v1/roles/${roleID}`).then((response) => {
     Cypress.log({

@@ -445,6 +445,22 @@ declare global {
       createEdaCredential(): Chainable<EdaCredential>;
 
       /**
+       * Some of the Eda roles (Admin, Contributor etc) have resources
+       * with more than 5 set of actions. this command helps in asserting
+       * the actions by chaining of the command.
+       * @param {string} resourceType
+       * @returns {Chainable<JQuery<HTMLElement>>}
+       */
+      checkActionsofResource(resourceType: string): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * this command asserts the resource array of a particular role has the action
+       * @param {string[]} resourceTypes
+       * @param {string} action
+       */
+      checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
+
+      /**
        * getEdaRolePermissions returns the permissions of a given role id of a role
        * @param roleID get
        */
