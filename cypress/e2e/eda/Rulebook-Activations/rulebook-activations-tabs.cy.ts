@@ -17,6 +17,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   before(() => {
     cy.edaLogin();
+    cy.deleteAllEdaCurrentUserTokens();
 
     cy.createAwxToken().then((token) => {
       awxToken = token;
@@ -48,7 +49,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteEdaCurrentUserAwxToken(edaToken);
-    cy.deleteAllEdaCurrentUserTokens();
   });
 
   it('renders the instances that are related to the rulebook activation', () => {

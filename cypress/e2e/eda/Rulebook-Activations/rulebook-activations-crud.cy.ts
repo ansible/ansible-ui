@@ -20,6 +20,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   before(() => {
     cy.edaLogin();
+    cy.deleteAllEdaCurrentUserTokens();
 
     cy.createAwxToken().then((token) => {
       awxToken = token;
@@ -51,7 +52,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteEdaCurrentUserAwxToken(edaToken);
-    cy.deleteAllEdaCurrentUserTokens();
   });
 
   it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
