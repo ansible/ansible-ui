@@ -23,9 +23,12 @@ const Section = styled(PageSection)`
 `;
 
 export function JobOutput(props: { job: Job }) {
-  const { t } = useTranslation();
   const { job } = props;
-  if (!job) return <Skeleton />;
+  const { t } = useTranslation();
+
+  if (!job) {
+    return <Skeleton />;
+  }
   return (
     <Section variant="light" className="dark-1">
       <JobStatusBar job={job} />
