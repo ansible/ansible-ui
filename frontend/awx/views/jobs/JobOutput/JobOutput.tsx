@@ -9,6 +9,7 @@ import { HostStatusBar } from './HostStatusBar';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobOutputEvents } from './JobOutputEvents';
 import type { IToolbarFilter } from '../../../../../framework';
+import styled from 'styled-components';
 
 const Section = styled(PageSection)`
   display: flex;

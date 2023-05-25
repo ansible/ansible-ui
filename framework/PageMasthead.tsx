@@ -11,6 +11,15 @@ import {
 import { BarsIcon } from '@patternfly/react-icons';
 import { Children, ReactNode } from 'react';
 import { usePageNavSideBar } from './PageNav/PageNavSidebar';
+import styled from 'styled-components';
+
+const ToolbarSpacingDiv = styled.div`
+  flex-grow: 1;
+`;
+
+const StyledDiv = styled.div`
+  padding: 0px;
+`;
 
 export function PageMasthead(props: { title: string; brand?: string; children?: ReactNode }) {
   return (
@@ -21,14 +30,16 @@ export function PageMasthead(props: { title: string; brand?: string; children?: 
           {props.title}
         </Title>
       </MastheadMain>
-      <Toolbar id="toolbar" style={{ padding: 0 }}>
-        <ToolbarContent>
-          <div style={{ flexGrow: 1 }} />
-          {Children.toArray(props.children).map((child, index) => (
-            <ToolbarItem key={index}>{child}</ToolbarItem>
-          ))}
-        </ToolbarContent>
-      </Toolbar>
+      <StyledDiv>
+        <Toolbar id="toolbar">
+          <ToolbarContent>
+            <ToolbarSpacingDiv />
+            {Children.toArray(props.children).map((child, index) => (
+              <ToolbarItem key={index}>{child}</ToolbarItem>
+            ))}
+          </ToolbarContent>
+        </Toolbar>
+      </StyledDiv>
     </Masthead>
   );
 }

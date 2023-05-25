@@ -73,6 +73,10 @@ const TruncateContentSpan = styled.span`
 const ToolbarSpan = styled.span`
   flex-grow: 1;
 `;
+// commented because variables are currectly unused
+// const IconGroupDiv = styled.div`
+//   width: 24px;
+// `;
 
 function isEdaServer(
   server: { type: AutomationServerType; name: string; url: string } | undefined
@@ -180,13 +184,13 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                                     <AppBarDropdown icon={<CogIcon />}>
                                         <DropdownGroup label="Theme">
                                             <DropdownItem
-                                                icon={theme === ThemeE.Light ? <SunIcon /> : <div style={{ width: 24 }} />}
+                                                icon={theme === ThemeE.Light ? <SunIcon /> : <IconGroupDiv />}
                                                 onClick={() => setTheme?.(ThemeE.Light)}
                                             >
                                                 Light
                                             </DropdownItem>
                                             <DropdownItem
-                                                icon={theme === ThemeE.Dark ? <MoonIcon /> : <div style={{ width: 24 }} />}
+                                                icon={theme === ThemeE.Dark ? <MoonIcon /> : <IconGroupDiv />}
                                                 onClick={() => setTheme?.(ThemeE.Dark)}
                                             >
                                                 Dark
