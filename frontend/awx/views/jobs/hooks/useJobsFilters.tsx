@@ -14,14 +14,14 @@ export function useJobsFilters() {
         label: t('ID'),
         type: 'string',
         query: 'id',
-        placeholder: t('equals'),
+        comparison: 'equals',
       },
       {
         key: 'labels__name__icontains',
         label: t('Label name'),
         type: 'string',
         query: 'labels__name__icontains',
-        placeholder: t('contains'),
+        comparison: 'contains',
       },
       {
         key: 'type',
@@ -43,7 +43,7 @@ export function useJobsFilters() {
         label: t('Launched by (Username)'),
         type: 'string',
         query: 'created_by__username__icontains',
-        placeholder: t('contains'),
+        comparison: 'contains',
       },
       {
         key: 'status',
@@ -67,7 +67,7 @@ export function useJobsFilters() {
         label: t('Limit'),
         type: 'string',
         query: 'job__limit',
-        placeholder: t('equals'),
+        comparison: 'equals',
       },
     ],
     [nameToolbarFilter, t]
