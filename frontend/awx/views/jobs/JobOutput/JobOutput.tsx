@@ -32,7 +32,7 @@ export function JobOutput(props: { job: Job }) {
   return (
     <Section variant="light" className="dark-1">
       <JobStatusBar job={job} />
-      <HostStatusBar job={job} />
+      <HostStatusBar counts={job.host_status_counts || {}} />
       <JobOutputToolbar job={job} />
       <Toolbar className="dark-2 border-bottom">
         <ToolbarContent>
@@ -48,7 +48,9 @@ export function JobOutput(props: { job: Job }) {
           </ToolbarItem>
           <ToolbarItem>
             {t('Hosts')}{' '}
-            <Label>{job.host_status_counts?.ok ?? 0 + job.host_status_counts?.failures ?? 0}</Label>
+            <Label>
+              {job.host_status_counts?.ok ?? 0 + (job.host_status_counts?.failures || 0)}
+            </Label>
           </ToolbarItem>
           <ToolbarItem>
             {t('Failed')} <Label>{job.host_status_counts?.failures ?? 0}</Label>

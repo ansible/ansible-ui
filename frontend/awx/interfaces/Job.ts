@@ -9,6 +9,14 @@
 import { JobDetail as SwaggerJobDetail } from './generated-from-swagger/api';
 import { JobSummaryFields } from './summary-fields/summary-fields';
 
+export interface HostStatusCounts {
+  ok?: number;
+  failures?: number;
+  skipped?: number;
+  changed?: number;
+  dark?: number;
+}
+
 export interface Job
   extends Omit<
     SwaggerJobDetail,
@@ -63,9 +71,5 @@ export interface Job
     play_count: number;
     task_count: number;
   };
-  host_status_counts: {
-    ok: number;
-    failures: number;
-    dark?: number;
-  };
+  host_status_counts: HostStatusCounts;
 }
