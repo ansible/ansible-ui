@@ -48,7 +48,7 @@ describe('EDA Decision Environment List', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo(/^Decision Environments$/);
       cy.hasTitle(/^Decision Environments$/);
-      cy.clickTableRowKebabAction(edaDE.name, /^Delete decision-environment$/);
+      cy.clickTableRowKebabAction(edaDE.name, /^Delete decision environment$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
       cy.contains(/^Success$/);
