@@ -84,7 +84,10 @@ export function CreateProject() {
       if (!project.credential || !project.summary_fields.credential.name) {
         project.credential = null;
       }
-      if (!project.signature_validation_credential || !project.summary_fields.credential.name) {
+      if (
+        !project.signature_validation_credential ||
+        !project.summary_fields.signature_validation_credential.name
+      ) {
         project.signature_validation_credential = null;
       }
       if (!project.summary_fields.default_environment.name) {
@@ -161,7 +164,7 @@ export function EditProject() {
       }
       if (
         !editedProject.signature_validation_credential ||
-        !editedProject.summary_fields.credential.name
+        !editedProject.summary_fields.signature_validation_credential.name
       ) {
         editedProject.signature_validation_credential = null;
       }
