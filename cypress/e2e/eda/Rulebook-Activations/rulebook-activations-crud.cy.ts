@@ -5,6 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 describe('EDA rulebook activations- Create, Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
+    cy.ensureEdaCurrentUserAwxToken();
   });
 
   it.skip('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {

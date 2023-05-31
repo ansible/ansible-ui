@@ -4,6 +4,7 @@ import { RestartPolicyEnum } from '../../../../frontend/eda/interfaces/generated
 describe('EDA rulebook activations List', () => {
   before(() => {
     cy.edaLogin();
+    cy.ensureEdaCurrentUserAwxToken();
   });
 
   it.skip('can filter the rulebook activations list based on Name filter option', () => {

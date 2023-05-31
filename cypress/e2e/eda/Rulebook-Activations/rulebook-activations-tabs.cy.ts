@@ -1,6 +1,7 @@
 describe('EDA rulebook activations History Tab', () => {
   before(() => {
     cy.edaLogin();
+    cy.ensureEdaCurrentUserAwxToken();
   });
 
   it.skip('renders the instances that are related to the rulebook activation', () => {
