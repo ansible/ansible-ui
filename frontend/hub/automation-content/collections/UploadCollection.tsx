@@ -47,8 +47,9 @@ export function UploadCollectionByFile() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           onSubmit={(data) => {
+            const namespace = (data.file as File).name.split('-')[0];
             return postRequestFile(
-              `/api/automation-hub/v3/artifacts/collections/`,
+              `/api/automation-hub/content/inbound-${namespace}/v3/artifacts/collections/`,
               data.file as Blob
             ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
           }}
