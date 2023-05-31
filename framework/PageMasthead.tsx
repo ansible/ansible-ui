@@ -17,7 +17,7 @@ const ToolbarSpacingDiv = styled.div`
   flex-grow: 1;
 `;
 
-const StyledDiv = styled.div`
+const StyledToolbar = styled(Toolbar)`
   padding: 0px;
 `;
 
@@ -30,16 +30,14 @@ export function PageMasthead(props: { title: string; brand?: string; children?: 
           {props.title}
         </Title>
       </MastheadMain>
-      <StyledDiv>
-        <Toolbar id="toolbar">
-          <ToolbarContent>
-            <ToolbarSpacingDiv />
-            {Children.toArray(props.children).map((child, index) => (
-              <ToolbarItem key={index}>{child}</ToolbarItem>
-            ))}
-          </ToolbarContent>
-        </Toolbar>
-      </StyledDiv>
+      <StyledToolbar id="toolbar">
+        <ToolbarContent>
+          <ToolbarSpacingDiv />
+          {Children.toArray(props.children).map((child, index) => (
+            <ToolbarItem key={index}>{child}</ToolbarItem>
+          ))}
+        </ToolbarContent>
+      </StyledToolbar>
     </Masthead>
   );
 }
