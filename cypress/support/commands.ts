@@ -248,11 +248,7 @@ declare global {
         organization: Organization;
       }>;
 
-      createAwxJobTemplate(
-        project: Project,
-        inventory: Inventory,
-        jobTemplate?: Partial<JobTemplate>
-      ): Chainable<JobTemplate>;
+      createAwxJobTemplate(): Chainable<JobTemplate>;
       /**
        * This command creates a job template with specific variables that will work in conjunction with
        * an EDA project and rulebook activation.
