@@ -447,7 +447,7 @@ Cypress.Commands.add(
   }
 );
 
-/** Interface for tracking created resources that will need to be delete 
+/** Interface for tracking created resources that will need to be delete
 at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
   jobTemplate?: JobTemplate;
@@ -457,19 +457,20 @@ Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
   if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
 });
 
-Cypress.Commands.add(
-  'createAwxJobTemplate',
-  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
-    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
-      name: 'E2E Job Template ' + randomString(4),
-      playbook: 'hello_world.yml',
-      project: project.id.toString(),
-      inventory: inventory.id,
-      organization: project.organization,
-      ...jobTemplate,
-    }).then((jobTemplate) => jobTemplate);
-  }
-);
+Cypress.Commands.add('createAwxJobTemplate', () => {
+  cy.createAwxOrganization().then((organization) => {
+    cy.createAwxProject({ organization: organization.id }).then((project) => {
+      cy.createAwxInventory().then((inventory) => {
+        cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
+          name: 'E2E Job Template ' + randomString(4),
+          playbook: 'hello_world.yml',
+          project: project.id.toString(),
+          inventory: inventory.id,
+        }).then((jobTemplate) => jobTemplate);
+      });
+    });
+  });
+});
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',

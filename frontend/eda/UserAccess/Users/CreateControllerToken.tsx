@@ -34,6 +34,7 @@ function ControllerTokenInputs() {
       <PageFormTextInput<EdaControllerTokenCreate>
         name="token"
         label={t('Token')}
+        isRequired
         maxLength={150}
         placeholder={t('Enter controller token')}
       />
