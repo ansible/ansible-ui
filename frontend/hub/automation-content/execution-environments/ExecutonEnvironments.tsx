@@ -21,7 +21,12 @@ export function ExecutionEnvironments() {
   const rowActions = useExecutionEnvironmentActions();
   return (
     <PageLayout>
-      <PageHeader title={t('Execution Environments')} />
+      <PageHeader
+        title={t('Execution Environments')}
+        description={t(
+          'An execution environment is a way to run and manage Ansible roles and collections.'
+        )}
+      />
       <PageTable<ExecutionEnvironment>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}

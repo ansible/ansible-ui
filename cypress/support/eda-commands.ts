@@ -337,7 +337,7 @@ Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
         // Do nothing - token exists
         break;
       case 2:
-        for (const token of result.results.slice(1)) {
+        for (const token of result.results?.slice(1) ?? []) {
           cy.deleteEdaCurrentUserAwxToken(token);
         }
         break;
