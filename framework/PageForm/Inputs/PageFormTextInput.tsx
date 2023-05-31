@@ -29,6 +29,7 @@ export type PageFormTextInputProps<
   selectValue?: (selection: TSelection) => FieldPathValue<TSelection, FieldPath<TSelection>>;
   selectOpen?: (callback: (selection: TSelection) => void, title: string) => void;
   button?: ReactElement;
+  min?: string;
 } & Omit<FormGroupTextInputProps, 'onChange' | 'value'>;
 
 /** PatternFly TextInput wrapper for use with react-hook-form */
@@ -50,6 +51,7 @@ export function PageFormTextInput<
     id,
     selectOpen,
     selectValue,
+    min,
     ...rest
   } = props;
   const { label } = props;
@@ -88,6 +90,7 @@ export function PageFormTextInput<
             isReadOnly={isReadOnly || isSubmitting}
             minLength={undefined}
             maxLength={undefined}
+            min={min}
           >
             {selectTitle && (
               <Button
@@ -104,7 +107,7 @@ export function PageFormTextInput<
                   }, selectTitle)
                 }
                 aria-label="Options menu"
-                isDisabled={isSubmitting}
+                isDisabled={props.isDisabled || isSubmitting}
               >
                 <SearchIcon />
               </Button>
