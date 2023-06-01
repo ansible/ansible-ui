@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
@@ -87,14 +87,14 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const restartPolicyHelpBlock = (
-    <Trans i18nKey="restartPolicyHelpBlock">
-      <p>A policy to decide when to restart a rulebook.</p>
+    <>
+      <p>{t('A policy to decide when to restart a rulebook.')}</p>
       <br />
-      <p>Policies:</p>
-      <p>Always: restarts when a rulebook finishes.</p>
-      <p>Never: never restarts a rulebook when it finishes.</p>
-      <p>On failure: only restarts when it fails.</p>
-    </Trans>
+      <p>{t('Policies:')}</p>
+      <p>{t('Always: restarts when a rulebook finishes.')}</p>
+      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
+      <p>{t('On failure: only restarts when it fails.')}</p>
+    </>
   );
   const { data: projects } = useGet<EdaResult<EdaProject>>(
     `${API_PREFIX}/projects/?page=1&page_size=200`

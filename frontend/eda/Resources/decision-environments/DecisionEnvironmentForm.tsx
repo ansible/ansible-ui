@@ -22,12 +22,18 @@ function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const imageHelpBlock = (
-    <Trans i18nKey="imageHelpBlock">
-      <p>The full image location, including the container registry, image name, and version tag.</p>
+    <>
+      <p>
+        {t(
+          'The full image location, including the container registry, image name, and version tag.'
+        )}
+      </p>
       <br />
-      <p>Examples:</p>
-      <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
-    </Trans>
+      <p>{t('Examples:')}</p>
+      <Trans>
+        <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
+      </Trans>
+    </>
   );
   return (
     <>
