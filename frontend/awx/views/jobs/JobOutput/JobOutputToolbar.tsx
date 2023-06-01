@@ -13,7 +13,7 @@ export function JobOutputToolbar(props: IJobOutputToolbarProps) {
   const { toolbarFilters, filters, setFilters } = props;
 
   return (
-    <Toolbar>
+    <Toolbar clearAllFilters={() => setFilters({})}>
       <ToolbarContent>
         <PageToolbarFilters
           toolbarFilters={toolbarFilters}
