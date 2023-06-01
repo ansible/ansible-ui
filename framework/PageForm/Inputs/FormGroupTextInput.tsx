@@ -23,6 +23,7 @@ export type FormGroupTextInputProps = Pick<
 > &
   PageFormGroupProps & {
     children?: ReactNode;
+    min?: string;
   };
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
@@ -49,6 +50,8 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
           validated={props.helperTextInvalid ? 'error' : undefined}
           type={props.type === 'password' ? (showSecret ? 'text' : 'password') : props.type}
           readOnlyVariant={isReadOnly ? 'default' : undefined}
+          isDisabled={props.isDisabled}
+          min={props.min}
         />
         {props.type === 'password' && (
           <Button

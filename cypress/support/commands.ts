@@ -94,11 +94,30 @@ declare global {
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /**
+       * Get the list card containing the specified text.
+       * @param name
+       * @param filter
+       */
+      getListCardByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
+        name: string | RegExp,
+        label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /**
+       * Finds a list card containing text and clicks action specified by label.
+       * @param name
+       * @param label
+       * @param filter
+       */
+      clickListCardKebabAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
@@ -312,6 +331,8 @@ declare global {
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
+      clickEdaPageAction(label: string | RegExp): Chainable<void>;
+
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
        *
@@ -335,6 +356,7 @@ declare global {
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
 
+      edaRuleBookActivationCheckbox(rbaName: string): Chainable<void>;
       /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
@@ -419,13 +441,6 @@ declare global {
       createEdaCredential(): Chainable<EdaCredential>;
 
       /**
-       * Deletes an EDA credential which is provided.
-       *
-       * @returns {Chainable<EdaCredential>}
-       */
-      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
-
-      /**
        * Some of the Eda roles (Admin, Contributor etc) have resources
        * with more than 5 set of actions. this command helps in asserting
        * the actions by chaining of the command.
@@ -446,6 +461,13 @@ declare global {
        * @param roleID get
        */
       getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+
+      /**
+       * Deletes an EDA credential which is provided.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      deleteEdaCredential(credential: EdaCredential): Chainable<void>;
 
       getEdaRoles(): Chainable<EdaRole[]>;
       /**
@@ -478,6 +500,8 @@ declare global {
       addEdaCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
 
       deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
+
+      deleteAllEdaCurrentUserTokens(): Chainable<void>;
 
       /**
        * Creates a DE and returns the same.
