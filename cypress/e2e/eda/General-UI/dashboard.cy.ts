@@ -2,12 +2,11 @@
 //Implementation of Visual Tests makes sense here at some point
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Dashboard', () => {
   let edaProject: EdaProject;
-  let gitHookDeployRuleBook: EdaRulebook;
+  // let gitHookDeployRuleBook: EdaRulebook;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
 
@@ -15,16 +14,16 @@ describe('EDA Dashboard', () => {
     cy.edaLogin();
     cy.createEdaProject().then((project) => {
       edaProject = project;
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        gitHookDeployRuleBook = edaRuleBooksArray[0];
+      cy.getEdaRulebooks(edaProject).then((_edaRuleBooksArray) => {
+        // gitHookDeployRuleBook = edaRuleBooksArray[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
-          }).then((edaRulebookActivation) => {
-            edaRBA = edaRulebookActivation;
-          });
+          // cy.createEdaRulebookActivation({
+          //   rulebook_id: gitHookDeployRuleBook.id,
+          //   decision_environment_id: decisionEnvironment.id,
+          // }).then((edaRulebookActivation) => {
+          //   edaRBA = edaRulebookActivation;
+          // });
         });
       });
     });
