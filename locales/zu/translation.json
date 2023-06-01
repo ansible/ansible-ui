@@ -303,7 +303,7 @@
   "Decision environments": "D_E_C_I_S_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T_S",
   "Decision Environments": "D_E_C_I_S_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T_S",
   "Decision environments are a container image to run Ansible rulebooks.": "D_E_C_I_S_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T_S_ _A_R_E_ _A_ _C_O_N_T_A_I_N_E_R_ _I_M_A_G_E_ _T_O_ _R_U_N_ _A_N_S_I_B_L_E_ _R_U_L_E_B_O_O_K_S_.",
-  "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "D_E_C_I_S_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T_S_ _C_O_N_T_A_I_N_ _A_ _R_U_L_E_B_O_O_K_ _I_M_A_G_E_ _T_H_A_T_ _D_I_C_T_A_T_E_S_ _W_H_E_R_E_ _T_H_E_ _R_U_L_E_B_O_O_K_S_ _W_I_L_L_ _R_U_N_.",
+  "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "D_E_C_I_S_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T_S_ _C_O_N_T_A_I_N_ _A_ _R_U_L_E_B_O_O_K_ _I_M_A_G_E_ _T_H_A_T_ _D_I_C_T_A_T_E_S_ _W_H_E_R_E_ _T_H_E_ _R_U_L_E_B_O_O_K_S_ _W_I_L_L_ _R_U_N_.",
   "Default environment": "D_E_F_A_U_L_T_ _E_N_V_I_R_O_N_M_E_N_T",
   "Default execution environment": "D_E_F_A_U_L_T_ _E_X_E_C_U_T_I_O_N_ _E_N_V_I_R_O_N_M_E_N_T",
   "Define, operate, scale, and delegate automation across your enterprise.": "D_E_F_I_N_E_,_ _O_P_E_R_A_T_E_,_ _S_C_A_L_E_,_ _A_N_D_ _D_E_L_E_G_A_T_E_ _A_U_T_O_M_A_T_I_O_N_ _A_C_R_O_S_S_ _Y_O_U_R_ _E_N_T_E_R_P_R_I_S_E_.",

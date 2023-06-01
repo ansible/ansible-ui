@@ -296,7 +296,7 @@
     "Decision Environment": "決定環境",
     "Decision environments": "決定環境",
     "Decision Environments": "決定環境",
-    "Decision environments contain a rulebook image that dictate where the rulebooks will run.": "決定環境には、ルールブックが実行される場所を指示するルールブックイメージが含まれています。",
+    "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "決定環境には、ルールブックが実行される場所を指示するルールブックイメージが含まれています。",
     "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "決定環境には、ルールブックが実行される場所を指示するルールブックイメージが含まれています。",
     "Default environment": "デフォルト環境",
     "Default execution environment": "Default execution environment",

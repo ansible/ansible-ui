@@ -296,7 +296,7 @@
     "Decision Environment": "Environnement décisionnel",
     "Decision environments": "Environnements décisionnels",
     "Decision Environments": "Environnements décisionnels",
-    "Decision environments contain a rulebook image that dictate where the rulebooks will run.": "Les environnements décisionnels contiennent une image du règlement qui dicte l'endroit où les livres de règles seront exécutés.",
+    "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "Les environnements décisionnels contiennent une image du règlement qui dicte l'endroit où les livres de règles seront exécutés.",
     "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "Les environnements décisionnels contiennent une image de règlement qui dicte où les livres de règles seront exécutés.",
     "Default environment": "Environnement par défaut",
     "Default execution environment": "Environnement d'exécution par défaut",

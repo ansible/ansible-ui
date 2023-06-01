@@ -296,7 +296,7 @@
     "Decision Environment": "决策环境",
     "Decision environments": "决策环境",
     "Decision Environments": "决策环境",
-    "Decision environments contain a rulebook image that dictate where the rulebooks will run.": "决策环境包含一个 rulebook 镜像，它决定 rulebooks 将运行的位置。",
+    "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "决策环境包含一个 rulebook 镜像，它决定 rulebooks 将运行的位置。",
     "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "决策环境包含一个 rulebook 镜像，它决定 rulebooks 将运行的位置。",
     "Default environment": "默认环境",
     "Default execution environment": "默认执行环境",

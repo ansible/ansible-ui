@@ -296,7 +296,7 @@
     "Decision Environment": "의사 결정 환경",
     "Decision environments": "의사 결정 환경",
     "Decision Environments": "의사 결정 환경",
-    "Decision environments contain a rulebook image that dictate where the rulebooks will run.": "의사 결정 환경에는 룰북이 실행되는 위치를 지정하는 룰북 이미지가 포함되어 있습니다.",
+    "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "의사 결정 환경에는 룰북이 실행되는 위치를 지정하는 룰북 이미지가 포함되어 있습니다.",
     "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "의사 결정 환경에는 룰북이 실행되는 위치를 지시하는 룰북 이미지가 포함되어 있습니다.",
     "Default environment": "기본 환경",
     "Default execution environment": "기본 실행 환경",
