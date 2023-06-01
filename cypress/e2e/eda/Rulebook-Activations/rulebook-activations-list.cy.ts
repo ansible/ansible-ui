@@ -18,7 +18,7 @@
 
 //   before(() => {
 //     cy.edaLogin();
-//     cy.deleteAllEdaCurrentUserTokens();
+//     cy.ensureEdaCurrentUserAwxToken();
 
 //     cy.createAwxToken().then((token) => {
 //       awxToken = token;

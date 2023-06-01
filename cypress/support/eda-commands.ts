@@ -338,6 +338,26 @@ Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
   cy.requestGet<EdaResult<EdaControllerToken>>(`/api/eda/v1/users/me/awx-tokens/`);
 });
 
+Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
+  cy.getEdaCurrentUserAwxTokens().then((result) => {
+    switch (result.count) {
+      case 0:
+        cy.createAwxToken().then((awxToken) => {
+          cy.addEdaCurrentUserAwxToken(awxToken.token);
+        });
+        break;
+      case 1:
+        // Do nothing - token exists
+        break;
+      case 2:
+        for (const token of result.results?.slice(1) ?? []) {
+          cy.deleteEdaCurrentUserAwxToken(token);
+        }
+        break;
+    }
+  });
+});
+
 Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
   cy.requestPost<EdaControllerTokenCreate>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
