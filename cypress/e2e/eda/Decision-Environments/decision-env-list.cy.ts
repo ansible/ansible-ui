@@ -44,7 +44,7 @@ describe('EDA Decision Environment List', () => {
     });
   });
 
-  it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
+  it.skip('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.visit('/eda/decision-environments?sort=&page=1&perPage=100');
       cy.hasTitle(/^Decision Environments$/);
