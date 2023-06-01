@@ -164,10 +164,30 @@ Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boole
   cy.contains('tr', name);
 });
 
+Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterTableByText(name);
+  }
+  cy.contains('article', name);
+});
+
 Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
+      cy.get('.pf-c-dropdown__toggle').click();
+      cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'clickListCardKebabAction',
+  (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
+    cy.getListCardByText(name, filter).within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
         .should('not.be.disabled')
