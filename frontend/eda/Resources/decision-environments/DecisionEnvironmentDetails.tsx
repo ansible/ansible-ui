@@ -34,12 +34,18 @@ export function DecisionEnvironmentDetails() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const imageHelpBlock = (
-    <Trans i18nKey="imageHelpBlock">
-      <p>The full image location, including the container registry, image name, and version tag.</p>
+    <>
+      <p>
+        {t(
+          'The full image location, including the container registry, image name, and version tag.'
+        )}
+      </p>
       <br />
-      <p>Examples:</p>
-      <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
-    </Trans>
+      <p>{t('Examples:')}</p>
+      <Trans>
+        <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
+      </Trans>
+    </>
   );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
     `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,

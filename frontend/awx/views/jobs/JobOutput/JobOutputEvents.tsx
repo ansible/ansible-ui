@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Banner } from '@patternfly/react-core';
-import { Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -19,6 +19,7 @@ export interface ICollapsed {
 const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 export function JobOutputEvents(props: { job: Job }) {
+  const { t } = useTranslation();
   const { job } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
@@ -82,12 +83,11 @@ export function JobOutputEvents(props: { job: Job }) {
       <Divider /> */}
       {isJobRunning ? (
         <Banner variant="warning">
-          <Trans>
-            <p>
-              This job is currently running. Live event streaming has not been added yet to the tech
-              preview.
-            </p>
-          </Trans>
+          <p>
+            {t(
+              'This job is currently running. Live event streaming has not been added yet to the tech preview.'
+            )}
+          </p>
         </Banner>
       ) : null}
       <div
