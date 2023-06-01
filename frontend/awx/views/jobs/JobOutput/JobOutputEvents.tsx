@@ -12,6 +12,7 @@ import {
   IJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
+import type { IToolbarFilter } from '../../../../../framework';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
@@ -26,14 +27,29 @@ const ScrollContainer = styled.div`
   border-bottom: 1px solid var(--pf-global--BorderColor--100);
 `;
 
-export function JobOutputEvents(props: { job: Job }) {
+interface IJobOutputEventsProps {
+  job: Job;
+  toolbarFilters: IToolbarFilter[];
+  filters: Record<string, string[]>;
+}
+
+export function JobOutputEvents(props: IJobOutputEventsProps) {
   const { t } = useTranslation();
-  const { job } = props;
+  const { job, toolbarFilters, filters } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
+  const isFiltered = Object.keys(filters).length > 0;
 
-  const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(job, isJobRunning);
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(job, 50);
+  const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
+    job,
+    isJobRunning || isFiltered
+  );
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
+    job,
+    toolbarFilters,
+    filters,
+    50
+  );
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
