@@ -33,7 +33,7 @@ describe('EDA Users List', () => {
     cy.createEdaUser({
       roles: [editorRoleID],
     }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
+      cy.visit('/eda/users?sort=&page=1&perPage=100');
       cy.contains(edaUser.username).click();
       cy.hasTitle(edaUser.username);
       cy.clickButton(/^Details$/);
@@ -49,7 +49,7 @@ describe('EDA Users List', () => {
       cy.createEdaUser({
         roles: [viewerRoleID],
       }).then((viewer) => {
-        cy.navigateTo(/^Users$/);
+        cy.visit('/eda/users?sort=&page=1&perPage=100');
         cy.selectTableRow(auditor.username, false);
         cy.selectTableRow(viewer.username, false);
         cy.clickToolbarKebabAction(/^Delete selected users$/);
@@ -71,7 +71,7 @@ describe('EDA Users List', () => {
     cy.createEdaUser({
       roles: [operatorRoleID],
     }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
+      cy.visit('/eda/users?sort=&page=1&perPage=100');
       cy.selectTableRow(edaUser.username, false);
       cy.clickToolbarKebabAction(/^Delete selected users$/);
       cy.get('#confirm').click();

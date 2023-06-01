@@ -123,9 +123,17 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
 
 function UserCredentialRole() {
   const rolesMetadata = useRolesMetadata();
+  const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'credential'}>
-      <PageFormCredentialSelect name="credentialName" credentialPath="resource" />
+      <PageFormCredentialSelect
+        name="credentialName"
+        credentialPath="resource"
+        label={t('Credentials')}
+        labelHelpTitle={t('Credentials')}
+        labelHelp={t('Choose credentials that will be receiving new roles.')}
+        isMultiple
+      />
       <Permissions roles={rolesMetadata.credential} />
     </PageFormHidden>
   );

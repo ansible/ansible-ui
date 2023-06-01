@@ -5,6 +5,7 @@ import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/Page
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
+import { Tooltip } from '@patternfly/react-core';
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -17,6 +18,8 @@ export function PageFormExecutionEnvironmentSelect<
   additionalControls?: ReactElement;
   isRequired?: boolean;
   label?: string;
+  isDisabled?: boolean;
+  tooltip?: string;
 }) {
   const { name, organizationId, executionEnvironmentIdPath, executionEnvironmentPath, ...rest } =
     props;
@@ -24,36 +27,38 @@ export function PageFormExecutionEnvironmentSelect<
   const selectExecutionEnvironment = useSelectExecutionEnvironments(organizationId ?? undefined);
   const { setValue } = useFormContext();
   return (
-    <PageFormTextInput<TFieldValues, TFieldName, ExecutionEnvironment>
-      {...rest}
-      label={props.label ?? t('Execution environment')}
-      name={name}
-      placeholder={t('Add execution environment')}
-      labelHelpTitle={t('Execution environment')}
-      labelHelp={t('The container image to be used for execution.')}
-      selectTitle={t('Select an execution environment')}
-      selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
-      selectOpen={selectExecutionEnvironment}
-      validate={async (executionEnvironmentName: string) => {
-        if (!executionEnvironmentName && !props.isRequired) {
+    <Tooltip content={props.tooltip} trigger={props.tooltip ? undefined : 'manual'}>
+      <PageFormTextInput<TFieldValues, TFieldName, ExecutionEnvironment>
+        {...rest}
+        label={props.label ?? t('Execution environment')}
+        name={name}
+        placeholder={t('Add execution environment')}
+        labelHelpTitle={t('Execution environment')}
+        labelHelp={t('The container image to be used for execution.')}
+        selectTitle={t('Select an execution environment')}
+        selectValue={(executionEnvironment: ExecutionEnvironment) => executionEnvironment.name}
+        selectOpen={selectExecutionEnvironment}
+        validate={async (executionEnvironmentName: string) => {
+          if (!executionEnvironmentName && !props.isRequired) {
+            return undefined;
+          }
+          try {
+            const itemsResponse = await requestGet<ItemsResponse<ExecutionEnvironment>>(
+              `/api/v2/execution_environments/?name=${executionEnvironmentName}`
+            );
+            if (itemsResponse.results.length === 0) return t('Execution environment not found.');
+            if (executionEnvironmentPath)
+              setValue(executionEnvironmentPath, itemsResponse.results[0]);
+            if (executionEnvironmentIdPath)
+              setValue(executionEnvironmentIdPath, itemsResponse.results[0].id);
+          } catch (err) {
+            if (err instanceof Error) return err.message;
+            else return 'Unknown error';
+          }
           return undefined;
-        }
-        try {
-          const itemsResponse = await requestGet<ItemsResponse<ExecutionEnvironment>>(
-            `/api/v2/execution_environments/?name=${executionEnvironmentName}`
-          );
-          if (itemsResponse.results.length === 0) return t('Execution environment not found.');
-          if (executionEnvironmentPath)
-            setValue(executionEnvironmentPath, itemsResponse.results[0]);
-          if (executionEnvironmentIdPath)
-            setValue(executionEnvironmentIdPath, itemsResponse.results[0].id);
-        } catch (err) {
-          if (err instanceof Error) return err.message;
-          else return 'Unknown error';
-        }
-        return undefined;
-      }}
-      isRequired={props.isRequired}
-    />
+        }}
+        isRequired={props.isRequired}
+      />
+    </Tooltip>
   );
 }

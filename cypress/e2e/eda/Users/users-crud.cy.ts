@@ -28,7 +28,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       Email: 'first.last@redhat.com',
       Password: `${randomString(12)}`,
     };
-    cy.navigateTo(/^Users$/);
+    cy.visit('/eda/users?sort=&page=1&perPage=100');
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
     cy.typeInputByLabel(/^Username$/, userInfo.username);
@@ -54,7 +54,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.createEdaUser({
       roles: [editorRoleID],
     }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
+      cy.visit('/eda/users?sort=&page=1&perPage=100');
       cy.get('h1').should('contain', 'Users');
       cy.clickTableRow(edaUser.username, false);
       cy.contains('button#edit-user', 'Edit user').click();
@@ -82,7 +82,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.createEdaUser({
       roles: [editorRoleID],
     }).then((edaUser) => {
-      cy.navigateTo(/^Users$/);
+      cy.visit('/eda/users?sort=&page=1&perPage=100');
       cy.get('h1').should('contain', 'Users');
       cy.clickTableRow(edaUser.username, false);
       cy.hasTitle(edaUser.username);
@@ -99,7 +99,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
 
   it('can view and select from the list of available roles in the Users create form', () => {
     const userRoles = ['Admin', 'Viewer', 'Operator', 'Contributor', 'Editor', 'Auditor'];
-    cy.navigateTo(/^Users$/);
+    cy.visit('/eda/users?sort=&page=1&perPage=100');
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
     cy.get('button[aria-label="Options menu"]').click();
