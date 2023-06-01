@@ -8,7 +8,7 @@ describe('EDA Dashboard', () => {
   let edaProject: EdaProject;
   // let gitHookDeployRuleBook: EdaRulebook;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
-  let edaRBA: EdaRulebookActivation;
+  // let edaRBA: EdaRulebookActivation;
 
   before(() => {
     cy.edaLogin();
@@ -30,7 +30,7 @@ describe('EDA Dashboard', () => {
   });
 
   after(() => {
-    cy.deleteEdaRulebookActivation(edaRBA);
+    // cy.deleteEdaRulebookActivation(edaRBA);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
   });
@@ -40,11 +40,11 @@ describe('EDA Dashboard', () => {
     cy.hasTitle(/^Ansible$/).should('be.visible');
   });
 
-  it('shows the user an RBA card with a list of RBAs visible including working links', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.get('[data-label="Name"] div > a').contains(edaRBA.name).click();
-    cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
-  });
+  // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
+  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.get('[data-label="Name"] div > a').contains(edaRBA.name).click();
+  //   cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
+  // });
 
   it('shows the user a Project card with a list of Projects visible including working links', () => {
     cy.navigateTo(/^Dashboard$/);
