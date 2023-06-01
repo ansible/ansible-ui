@@ -96,7 +96,7 @@ describe('EDA Dashboard', () => {
             'Create a rulebook activation by clicking the button below.'
           );
           cy.clickButton(/^Create rulebook activation$/);
-          cy.hasTitle(/^Create rulebook activation$/).should('be.visible');
+          cy.hasTitle(/^Create Rulebook Activation$/).should('be.visible');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
