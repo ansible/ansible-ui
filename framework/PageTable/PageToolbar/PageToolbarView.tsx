@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 
 export type PageToolbarViewProps = {
