@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
+import { StatusCell } from '../../../common/StatusCell';
 import { RemoteRegistry } from '../RemoteRegistry';
 
 export function useRemoteRegistriesColumns(_options?: {
@@ -12,15 +13,40 @@ export function useRemoteRegistriesColumns(_options?: {
     () => [
       {
         header: t('Name'),
-        cell: (remoteRegistry) => <TextCell text={remoteRegistry.name} />,
+        type: 'text',
+        value: (remoteRegistry) => remoteRegistry.name,
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('Sync Status'),
+        cell: (remoteRegistry) => <StatusCell status={remoteRegistry.last_sync_task.state} />,
+      },
+      {
+        header: t('Last Sync'),
+        type: 'datetime',
+        value: (remoteRegistry) => remoteRegistry.last_sync_task.finished_at,
+        list: 'secondary',
+      },
+      {
+        header: t('URL'),
+        cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} />,
       },
       {
         header: t('Created'),
-        cell: (remoteRegistry) => <DateTimeCell format="since" value={remoteRegistry.created_at} />,
+        type: 'datetime',
+        value: (remoteRegistry) => remoteRegistry.created_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
       },
       {
-        header: t('Registry URL'),
-        cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} />,
+        header: t('Last Updated'),
+        type: 'datetime',
+        value: (remoteRegistry) => remoteRegistry.updated_at,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
       },
     ],
     [t]

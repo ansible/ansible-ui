@@ -35,6 +35,7 @@ export function RemoteRegistries() {
         errorStateTitle={t('Error loading remote registries')}
         emptyStateTitle={t('No remote registries yet')}
         {...view}
+        defaultSubtitle={t('Remote Registry')}
       />
     </PageLayout>
   );

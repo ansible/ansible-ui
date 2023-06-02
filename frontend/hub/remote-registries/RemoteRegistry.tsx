@@ -1,10 +1,33 @@
 export interface RemoteRegistry {
-  ca_cert: number;
-  client_cert: number;
+  id: string;
+  pulp_href: string;
   name: string;
-  pk: string;
+  url: string;
+  policy: 'immediate';
   created_at: string;
   updated_at: string;
+  tls_validation: boolean;
+  client_cert: number | null;
+  ca_cert: number | null;
+  last_sync_task: {
+    task_id: string;
+    state: 'completed';
+    started_at: string;
+    finished_at: string;
+    error: null;
+  };
   download_concurrency: number | null;
-  url: string;
+  proxy_url: string | null;
+  write_only_fields: {
+    name:
+      | 'client_key'
+      | 'username'
+      | 'password'
+      | 'client_key'
+      | 'proxy_username'
+      | 'proxy_username';
+    is_set: boolean;
+  }[];
+  rate_limit: null;
+  is_indexable: boolean;
 }
