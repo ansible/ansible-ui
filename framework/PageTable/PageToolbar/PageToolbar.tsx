@@ -12,10 +12,10 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
-import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
-import { PageActions } from '../PageActions/PageActions';
-import { BulkSelector } from '../components/BulkSelector';
-import { useBreakpoint } from '../components/useBreakPoint';
+import { IPageAction, PageActionSelection } from '../../PageActions/PageAction';
+import { PageActions } from '../../PageActions/PageActions';
+import { BulkSelector } from '../../components/BulkSelector';
+import { useBreakpoint } from '../../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
 import { IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';

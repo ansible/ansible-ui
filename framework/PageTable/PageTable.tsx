@@ -63,10 +63,10 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
-import { PageTableToolbar } from './PageToolbar';
-import { IToolbarFilter } from './PageToolbarFilter';
-import { usePageToolbarSortOptionsFromColumns } from './PageToolbarSort';
+import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
+import { PageTableToolbar } from './PageToolbar/PageToolbar';
+import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
