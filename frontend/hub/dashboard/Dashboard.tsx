@@ -12,16 +12,16 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, pfSuccess } from '../../../framework';
-import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
+import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
-import { FeaturedCollections } from '../automation-content/collections/FeaturedCollections';
-import { useCollections } from '../automation-content/collections/hooks/useCollections';
-import { useNamespaces } from '../automation-content/namespaces/hooks/useNamespaces';
+import { FeaturedCollections } from '../collections/FeaturedCollections';
+import { useCollections } from '../collections/hooks/useCollections';
+import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 
 export function HubDashboard() {
   const { t } = useTranslation();
-  const namespaces = useNamespaces();
+  const namespaces = useHubNamespaces();
   const collections = useCollections();
 
   if (!namespaces) {

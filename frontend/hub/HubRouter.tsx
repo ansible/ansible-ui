@@ -1,20 +1,21 @@
 import { Route, Routes } from 'react-router-dom';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import { Token } from './access/token/Token';
-import { Approvals } from './administration/approvals/Approvals';
-import { RemoteRegistries } from './administration/remote-registries/RemoteRegistries';
-import { Repositories } from './administration/repositories/Repositories';
-import { TaskDetails } from './administration/tasks/TaskDetails';
-import { Tasks } from './administration/tasks/Tasks';
-import { CollectionDetails } from './automation-content/collections/CollectionDetails';
-import { Collections } from './automation-content/collections/Collections';
-import { UploadCollection } from './automation-content/collections/UploadCollection';
-import { ExecutionEnvironments } from './automation-content/execution-environments/ExecutonEnvironments';
-import { NamespaceDetails } from './automation-content/namespaces/NamespaceDetails';
-import { Namespaces } from './automation-content/namespaces/Namespaces';
-import { SignatureKeys } from './automation-content/signature-keys/SignatureKeys';
+import { AutomationServers } from '../automation-servers/AutomationServers';
+import { Approvals } from './approvals/Approvals';
+import { CollectionDetails } from './collections/CollectionDetails';
+import { Collections } from './collections/Collections';
+import { UploadCollection } from './collections/UploadCollection';
 import { HubDashboard } from './dashboard/Dashboard';
+import { ExecutionEnvironments } from './execution-environments/ExecutonEnvironments';
+import { CreateHubNamespace } from './namespaces/HubNamespaceForm';
+import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
+import { Namespaces } from './namespaces/HubNamespaces';
+import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { Repositories } from './repositories/Repositories';
+import { SignatureKeys } from './signature-keys/SignatureKeys';
+import { TaskDetails } from './tasks/TaskDetails';
+import { Tasks } from './tasks/Tasks';
+import { Token } from './token/Token';
 
 export function HubRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);
@@ -29,6 +30,7 @@ export function HubRouter() {
 
       <Route path={RouteObjWithoutPrefix.Namespaces} element={<Namespaces />} />
       <Route path={RouteObjWithoutPrefix.NamespaceDetails} element={<NamespaceDetails />} />
+      <Route path={RouteObjWithoutPrefix.CreateNamespace} element={<CreateHubNamespace />} />
 
       <Route path={RouteObjWithoutPrefix.Repositories} element={<Repositories />} />
       <Route path={RouteObjWithoutPrefix.Approvals} element={<Approvals />} />
