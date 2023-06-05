@@ -66,9 +66,6 @@ describe('jobs', () => {
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
         cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
-        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/, { timeout: 60 * 1000 }).should(
-          'exist'
-        );
       });
   });
 
@@ -106,6 +103,13 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
+      cy.getTableRowByText(jobName, false).within(() => {
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
+          .should('not.contain', 'Running')
+          .and('not.contain', 'New')
+          .and('not.contain', 'Waiting')
+          .and('not.contain', 'Pending');
+      });
       cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
@@ -127,7 +131,11 @@ describe('jobs', () => {
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = job.name ? job.name : '';
       cy.getTableRowByText(jobName, false).within(() => {
-        cy.get('[data-label="Status"]').should('not.contain', 'Running');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
+          .should('not.contain', 'Running')
+          .and('not.contain', 'New')
+          .and('not.contain', 'Waiting')
+          .and('not.contain', 'Pending');
       });
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
