@@ -1,87 +1,24 @@
 import {
-  Button,
   InputGroup,
   InputGroupText,
-  Select,
   SelectOption,
-  SelectOptionObject,
-  SelectVariant,
   Split,
   SplitItem,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
-import { ArrowRightIcon, FilterIcon, TimesIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { FormGroupSelect } from '../PageForm/Inputs/FormGroupSelect';
-import { useBreakpoint } from '../components/useBreakPoint';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
-
-/** Common Toolbar Filter Properties */
-interface ToolbarFilterCommon {
-  /** The key is use to uniquly identify the filter.
-   * It is used to track state of the filter and to store the filter value in the browser querystring. */
-  key: string;
-
-  /** The label to show for the filter. */
-  label: string;
-
-  /** Indicated if the filter should be pinned outside of the filter select. */
-  isPinned?: boolean;
-
-  /** Query used by the useView hook to perform the filtering. */
-  query: string;
-
-  /** The placeholder for the filter. */
-  placeholder?: string;
-}
-
-/** Filter for filtering by user text input. */
-export interface IToolbarTextFilter extends ToolbarFilterCommon {
-  /** Filter for filtering by user text input. */
-  type: 'string';
-
-  /** The comparison to use when filtering. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
-}
-
-/** Filter for filtering by user selection of option. */
-export interface IToolbarSelectFilter extends ToolbarFilterCommon {
-  /** Filter for filtering by user selection of option. */
-  type: 'select';
-
-  /** The options to show in the select. */
-  options: {
-    /** The label to show for the option. */
-    label: string;
-
-    /** The description to show for the option. */
-    description?: string;
-
-    /** The value to use for the option. */
-    value: string;
-  }[];
-}
-
-// TODO Add support for advanced filter
-/** Filter for advanced combining of filters.
- * Disables the other filters on the toolbar and allows the user to build a complex filter underneath the toolbar */
-// export interface IToolbarAdvancedFilter extends ToolbarFilterCommon {
-//   /** Filter for advanced combining of filters. */
-//   type: 'advanced';
-
-//   /** The operation to use when combining the filters. */
-//   operation: 'and' | 'or';
-
-//   /** The filters to show in the advanced filter. */
-//   filters: IToolbarFilter;
-// }
+import { FilterIcon } from '@patternfly/react-icons';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { FormGroupSelect } from '../../PageForm/Inputs/FormGroupSelect';
+import { useBreakpoint } from '../../components/useBreakPoint';
+import { ToolbarTextFilter, IToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
+import {
+  ToolbarSelectFilter,
+  IToolbarSelectFilter,
+} from './PageToolbarFilterTypes/ToolbarSelectFilter';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 
 export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter;
 
@@ -270,123 +207,4 @@ function ToolbarFilterInput(props: {
       );
   }
   return <></>;
-}
-
-function ToolbarTextFilter(
-  props: {
-    id?: string;
-    addFilter: (value: string) => void;
-  } & Pick<IToolbarTextFilter, 'comparison' | 'placeholder'>
-) {
-  const { t } = useTranslation();
-  const [value, setValue] = useState('');
-  let placeholder = props.placeholder;
-  if (!placeholder) {
-    switch (props.comparison) {
-      case 'contains':
-        placeholder = t('contains');
-        break;
-      case 'startsWith':
-        placeholder = t('starts with');
-        break;
-      case 'endsWith':
-        placeholder = t('ends with');
-        break;
-      case 'equals':
-        placeholder = t('equals');
-        break;
-    }
-  }
-
-  return (
-    <InputGroup>
-      <TextInputGroup style={{ minWidth: 220 }}>
-        <TextInputGroupMain
-          id={props.id}
-          value={value}
-          onChange={(e, v) => {
-            if (typeof e === 'string') setValue(e);
-            else setValue(v);
-          }}
-          onKeyUp={(event) => {
-            if (value && event.key === 'Enter') {
-              props.addFilter(value);
-              setValue('');
-            }
-          }}
-          placeholder={placeholder}
-        />
-        {value !== '' && (
-          <TextInputGroupUtilities>
-            <Button
-              variant="plain"
-              aria-label="clear filter"
-              onClick={() => setValue('')}
-              style={{ opacity: value ? undefined : 0 }}
-              tabIndex={-1}
-            >
-              <TimesIcon />
-            </Button>
-          </TextInputGroupUtilities>
-        )}
-      </TextInputGroup>
-
-      <Button
-        variant={value ? 'primary' : 'control'}
-        aria-label="apply filter"
-        onClick={() => {
-          props.addFilter(value);
-          setValue('');
-        }}
-        tabIndex={-1}
-        isDisabled={!value}
-      >
-        <ArrowRightIcon />
-      </Button>
-    </InputGroup>
-  );
-}
-
-function ToolbarSelectFilter(props: {
-  addFilter: (value: string) => void;
-  removeFilter: (value: string) => void;
-  options: { label: string; value: string }[];
-  values: string[];
-  placeholder?: string;
-}) {
-  const [translations] = useFrameworkTranslations();
-  const { addFilter, removeFilter, options, values } = props;
-  const [open, setOpen] = useState(false);
-  const onSelect = useCallback(
-    (e: unknown, value: string | SelectOptionObject) => {
-      if (values.includes(value.toString())) {
-        removeFilter(value.toString());
-      } else {
-        addFilter(value.toString());
-      }
-    },
-    [addFilter, removeFilter, values]
-  );
-  const selections = values;
-  return (
-    <>
-      <Select
-        variant={SelectVariant.checkbox}
-        isOpen={open}
-        onToggle={setOpen}
-        selections={selections}
-        onSelect={onSelect}
-        placeholderText={values.length ? translations.selectedText : props.placeholder}
-        // ZIndex 400 is needed for PF table stick headers
-        style={{ zIndex: open ? 400 : 0 }}
-        hasPlaceholderStyle
-      >
-        {options.map((option) => (
-          <SelectOption id={option.value} key={option.value} value={option.value}>
-            {option.label}
-          </SelectOption>
-        ))}
-      </Select>
-    </>
-  );
 }

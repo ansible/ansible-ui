@@ -45,6 +45,14 @@ Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   });
 });
 
+Cypress.Commands.add('clickEdaPageAction', (label: string | RegExp) => {
+  cy.get('.pf-c-toolbar__content-section')
+    .eq(1)
+    .within(() => {
+      cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+    });
+});
+
 Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
     .parent()
@@ -54,14 +62,18 @@ Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: s
     });
 });
 
+Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
+  cy.contains('tr', rbaName).within(() => {
+    cy.get('input[type=checkbox]').eq(0).click();
+  });
+});
+
 Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
-    cy.contains('h1', `${action} activation`).should('be.visible');
-    cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
-      matchCase: false,
-    }).should('be.visible');
-    cy.contains('p', rbaName).should('be.visible');
-    cy.contains('button#confirm', action).click();
+    cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to ${action} these`);
+    cy.get('a').should('contain', rbaName);
+    cy.get('input[id="confirm"]').click();
+    cy.get('button').contains('rulebookActivations').click();
   });
 });
 
@@ -192,6 +204,7 @@ Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
 Cypress.Commands.add('pollEdaResults', (url: string) => {
   cy.requestGet<EdaResult<unknown>>(url).then((result) => {
     if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.log('RESULTS', result.results.length);
       cy.wrap(result.results);
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
@@ -236,6 +249,13 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   });
 });
 
+Cypress.Commands.add('getEdaRoles', () => {
+  cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
+    const edaRoles = response.results;
+    return edaRoles;
+  });
+});
+
 Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
   return cy
     .contains('dt.pf-c-description-list__term', resourceType)
@@ -265,13 +285,6 @@ Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
     });
     const edaRolePermissions = response.permissions;
     return edaRolePermissions;
-  });
-});
-
-Cypress.Commands.add('getEdaRoles', () => {
-  cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
-    const edaRoles = response.results;
-    return edaRoles;
   });
 });
 
@@ -337,7 +350,9 @@ Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
         // Do nothing - token exists
         break;
       case 2:
-        // TODO delete some tokens!
+        for (const token of result.results?.slice(1) ?? []) {
+          cy.deleteEdaCurrentUserAwxToken(token);
+        }
         break;
     }
   });
@@ -356,6 +371,31 @@ Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerTok
       displayName: 'EDA CONTROLLER TOKEN DELETION :',
       message: [awxToken.name],
     });
+  });
+});
+
+function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
+  if (!resource.name) return false;
+  if (!resource.name.startsWith(prefix)) return false;
+
+  if (!resource.created_at) return false;
+  const created = new Date(resource.created_at);
+  const beforeTime = new Date(Date.now());
+
+  return created < beforeTime;
+}
+
+Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
+  cy.request<EdaResult<EdaControllerToken>>('/api/eda/v1/users/me/awx-tokens/').then((response) => {
+    const tokens = response.body.results;
+    for (const token of tokens ?? []) {
+      if (isOldResource('E2E Token', token)) {
+        cy.deleteEdaCurrentUserAwxToken(token);
+      }
+      if (isOldResource('AWX ', token)) {
+        cy.deleteEdaCurrentUserAwxToken(token);
+      }
+    }
   });
 });
 
@@ -387,6 +427,7 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
+    //cy.waitEdaDESync(decisionEnvironment);
     cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, true).then(
       () => {
         Cypress.log({
@@ -397,3 +438,22 @@ Cypress.Commands.add(
     );
   }
 );
+
+/*
+  Cypress.Commands.add('waitEdaDESync', (decisionEnvironment) => {
+    cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+      `/api/eda/v1/decision-environments/?name=${decisionEnvironment.name}`
+    ).then((result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        const project = result.results[0];
+        if (project.import_state !== 'completed') {
+          cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+        } else {
+          cy.wrap(project);
+        }
+      } else {
+        cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+      }
+    });
+  });
+  */

@@ -109,32 +109,35 @@ export function ProjectDetails(props: { project: Project }) {
     </span>
   );
   const basePathHelpBlock = (
-    <Trans i18nKey="basePathHelpBlock">
+    <>
       <p>
-        Base path used for locating playbooks. Directories found inside this path will be listed in
-        the playbook directory drop-down. Together the base path and selected playbook directory
-        provide the full path used to locate playbooks.
+        {t(
+          'Base path used for locating playbooks. Directories found inside this path will be listed in the playbook directory drop-down. Together the base path and selected playbook directory provide the full path used to locate playbooks.'
+        )}
       </p>
       <br></br>
       <p>
-        Change PROJECTS_ROOT when deploying {product} {brand} to change this location.
+        <Trans>
+          Change PROJECTS_ROOT when deploying {{ product }} {{ brand }} to change this location.
+        </Trans>
       </p>
-    </Trans>
+    </>
   );
   const scmUrlHelpBlock = (
-    <Trans i18nKey="scmUrlHelpBlock">
-      <p>Example URLs for GIT Source Control include:</p>
-      <code>
-        https://github.com/ansible/ansible.git git@github.com:ansible/ansible.git
-        git://servername.example.com/ansible.git
-      </code>
+    <>
+      <p>{t('Example URLs for GIT Source Control include:')}</p>
+      <Trans>
+        <code>
+          https://github.com/ansible/ansible.git git@github.com:ansible/ansible.git
+          git://servername.example.com/ansible.git
+        </code>
+      </Trans>
       <p>
-        Note: When using SSH protocol for GitHub or Bitbucket, enter an SSH key only, do not enter a
-        username (other than git). Additionally, GitHub and Bitbucket do not support password
-        authentication when using SSH. GIT read only protocol (git://) does not use username or
-        password information.
+        {t(
+          'Note: When using SSH protocol for GitHub or Bitbucket, enter an SSH key only, do not enter a username (other than git). Additionally, GitHub and Bitbucket do not support password authentication when using SSH. GIT read only protocol (git://) does not use username or password information.'
+        )}
       </p>
-    </Trans>
+    </>
   );
   const renderOptions = (options: Project) => (
     <TextList component={TextListVariants.ul}>
@@ -313,13 +316,13 @@ export function ProjectDetails(props: { project: Project }) {
           }
         />
       </PageDetail>
-      {project.scm_clean ||
+      {(project.scm_clean ||
         project.scm_delete_on_update ||
         project.scm_track_submodules ||
         project.scm_update_on_launch ||
-        (project.allow_override && (
-          <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
-        ))}
+        project.allow_override) && (
+        <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
+      )}
     </PageDetails>
   );
 }

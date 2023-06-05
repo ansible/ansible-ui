@@ -25,6 +25,8 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
     () => [
       {
         type: PageActionType.Switch,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
         selection: PageActionSelection.Single,
         isPinned: true,
         onToggle: (instance, enabled) => handleToggleInstance(instance, enabled),

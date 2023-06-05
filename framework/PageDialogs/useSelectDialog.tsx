@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
-import { IToolbarFilter } from '../PageTable/PageToolbarFilter';
+import { IToolbarFilter } from '../PageTable/PageToolbar/PageToolbarFilter';
 import { ISelected } from '../PageTable/useTableItems';
 import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';

@@ -18,8 +18,8 @@ import {
   SortNumericUpIcon,
 } from '@patternfly/react-icons';
 import { useCallback, useMemo, useState } from 'react';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { ITableColumn } from './PageTableColumn';
+import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { ITableColumn } from '../PageTableColumn';
 
 export type PageToolbarSortProps = {
   sort?: string;

@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { TFunction, Trans, useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -32,14 +32,14 @@ import { useDeleteCredentials } from './hooks/useDeleteCredentials';
 export function CredentialDetails() {
   const { t } = useTranslation();
   const credentialTypeHelpBlock = (
-    <Trans i18nKey="credentialTypeHelpBlock">
-      <p>The credential type defines what the credential will be used for.</p>
+    <>
+      <p>{t('The credential type defines what the credential will be used for.')}</p>
       <br />
-      <p>There are three types:</p>
-      <p>GitHub Personal Access Token</p>
-      <p>GitLab Personal Access Token</p>
-      <p>Container Registry</p>
-    </Trans>
+      <p>{t('There are three types:')}</p>
+      <p>{t('GitHub Personal Access Token')}</p>
+      <p>{t('GitLab Personal Access Token')}</p>
+      <p>{t('Container Registry')}</p>
+    </>
   );
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();

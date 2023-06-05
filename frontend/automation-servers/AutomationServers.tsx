@@ -14,7 +14,7 @@ import {
   TextCell,
   useSelected,
 } from '../../framework';
-import { PageTableViewTypeE } from '../../framework/PageTable/PageTableViewType';
+import { PageTableViewTypeE } from '../../framework/PageTable/PageToolbar/PageTableViewType';
 import { useView } from '../../framework/useView';
 import { useLoginModal } from '../common/LoginModal';
 import AwxIcon from '../assets/AWX.svg';
