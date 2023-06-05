@@ -39,12 +39,18 @@ export function AwxSidebar() {
         >
           {t('Schedules')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteObj.ActivityStream, location)}>
-          <Link to={RouteObj.ActivityStream}>Activity stream</Link>
+        <NavItem
+          isActive={isRouteActive(RouteObj.ActivityStream, location)}
+          onClick={() => onClick(RouteObj.ActivityStream)}
+        >
+          {t('Activity Stream')}
         </NavItem>
-        <NavItem isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}>
-          <Link to={RouteObj.WorkflowApprovals}>Workflow approvals</Link>
-        </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}
+          onClick={() => onClick(RouteObj.WorkflowApprovals)}
+        >
+          {t('Workflow Approvals')}
+        </NavItem>
       </NavExpandable>
       <NavExpandable
         key="resources"

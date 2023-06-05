@@ -30,8 +30,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditSchedule: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/schedules/create`,
-  ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
-  WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
+  ActivityStream: `${awxRoutePrefix}/activity_stream`,
+  WorkflowApprovals: `${awxRoutePrefix}/workflow_approvals`,
+  WorkflowApprovalPage: `${awxRoutePrefix}/workflow_approvals/:id/*`,
+  WorkflowApprovalDetails: `${awxRoutePrefix}/workflow_approvals/:id/details`,
   HostMetrics: `${awxRoutePrefix}/host-metrics`,
 
   // Resources

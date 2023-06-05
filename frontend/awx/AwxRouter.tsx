@@ -59,14 +59,17 @@ export function AwxRouter() {
       <Routes>
         <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
-
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
         <Route path={RouteObjWithoutPrefix.CreateSchedule} element={<CreateSchedule />} />
         <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
-
-        {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
-        {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteObjWithoutPrefix.ActivityStream} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.WorkflowApprovalPage} element={<PageNotImplemented />} />
+        <Route
+          path={RouteObjWithoutPrefix.WorkflowApprovalDetails}
+          element={<PageNotImplemented />}
+        />
         <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
