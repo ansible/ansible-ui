@@ -1,0 +1,10 @@
+- hosts: all
+  vars:
+    _fake_execution_time: "{{ fake_execution_time | default('1') }}"
+  tasks:
+    - name: Simulate a task
+      ansible.builtin.command: sleep {{ _fake_execution_time }}
+
+    - name: print success
+      ansible.builtin.debug:
+        msg: basic job completed with {{ _fake_execution_time }} seconds of execution time
