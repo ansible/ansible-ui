@@ -9,6 +9,7 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import {
   InstanceGroup,
   JobTemplate,
@@ -424,6 +425,21 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
   if (organizationId) {
     cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`);
   }
+});
+
+Cypress.Commands.add('createAWXSchedule', () => {
+  cy.requestPost<Schedule>('/api/v2/schedules/', {
+    name: 'E2E Schedule ' + randomString(4),
+    description: 'E2E Schedule Description',
+    enabled: true,
+    rrule: 'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
+    unified_job_template: 1,
+    extra_data: {},
+  }).then((schedule) => schedule);
+});
+
+Cypress.Commands.add('deleteAWXSchedule', (schedule: Schedule) => {
+  cy.requestDelete(`/api/v2/schedules/${schedule.id}/`, true);
 });
 
 Cypress.Commands.add(
