@@ -92,7 +92,11 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditConstructedInventory: `${awxRoutePrefix}/constructed_inventory/:id/edit`,
 
   Hosts: `${awxRoutePrefix}/hosts`,
+  HostPage: `${awxRoutePrefix}/hosts/:id/*`,
   HostDetails: `${awxRoutePrefix}/hosts/:id/details`,
+  HostFacts: `${awxRoutePrefix}/hosts/:id/facts`,
+  HostGroups: `${awxRoutePrefix}/hosts/:id/groups`,
+  HostJobs: `${awxRoutePrefix}/hosts/:id/jobs`,
   CreateHost: `${awxRoutePrefix}/hosts/create`,
   EditHost: `${awxRoutePrefix}/hosts/:id/edit`,
 

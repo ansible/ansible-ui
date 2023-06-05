@@ -44,6 +44,7 @@ import Jobs from './views/jobs/Jobs';
 import HostMetrics from './views/jobs/HostMetrics';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { Schedules } from './views/schedules/Schedules';
+import { HostPage } from './resources/hosts/HostPage/HostPage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -93,6 +94,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.EditInventory} element={<EditInventory />} />
 
         <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
+        <Route path={RouteObjWithoutPrefix.HostPage} element={<HostPage />} />
         <Route path={RouteObjWithoutPrefix.Organizations} element={<Organizations />} />
         <Route path={RouteObjWithoutPrefix.OrganizationPage} element={<OrganizationPage />} />
         <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
