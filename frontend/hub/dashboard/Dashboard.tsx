@@ -11,7 +11,6 @@ import {
 import { PageDashboardDonutCard } from '../../../framework/PageDashboard/PageDonutChart';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
-import { AwxGettingStartedCard } from '../../awx/dashboard/cards/AwxGettingStartedCard';
 import { useCollections } from '../collections/hooks/useCollections';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 
