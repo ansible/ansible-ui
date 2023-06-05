@@ -87,6 +87,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       {
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
         isPinned: true,
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),

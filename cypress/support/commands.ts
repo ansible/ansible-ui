@@ -33,6 +33,7 @@ import './awx-commands';
 import { IAwxResources } from './awx-commands';
 import './eda-commands';
 import './rest-commands';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 
 declare global {
   namespace Cypress {
@@ -266,6 +267,7 @@ declare global {
         jobTemplate: JobTemplate;
         organization: Organization;
       }>;
+      createAWXSchedule(): Chainable<Schedule>;
 
       createAwxJobTemplate(): Chainable<JobTemplate>;
       /**
@@ -289,6 +291,7 @@ declare global {
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
       deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
+      deleteAWXSchedule(schedule: Schedule): Chainable<void>;
       deleteAwxTeam(team: Team): Chainable<void>;
       deleteAwxUser(user: User): Chainable<void>;
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;

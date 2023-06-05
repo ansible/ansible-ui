@@ -203,6 +203,7 @@ export function useTypeColumn<T extends object>(options: {
   url?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
+  sort?: string;
   makeReadable: (item: T) => string;
 }) {
   const { makeReadable } = options ?? {};
@@ -214,8 +215,9 @@ export function useTypeColumn<T extends object>(options: {
       type: 'text',
       card: 'subtitle',
       list: 'subtitle',
+      sort: options?.disableSort ? undefined : options?.sort,
     }),
-    [t, makeReadable]
+    [t, makeReadable, options.disableSort, options.sort]
   );
   return column;
 }

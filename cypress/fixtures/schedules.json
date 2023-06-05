@@ -1,0 +1,145 @@
+{
+  "count": 3,
+  "results": [
+    {
+      "created": "2023-05-08T14:57:05.224768Z",
+      "description": "Automatically Generated Schedule",
+      "diff_mode": null,
+      "related": {
+        "credentials": "/api/v2/schedules/2/credentials/",
+        "instance_groups": "/api/v2/schedules/2/instance_groups/",
+        "labels": "/api/v2/schedules/2/labels/",
+        "modified_by": "/api/v2/users/1/",
+        "unified_job_template": "/api/v2/system_job_templates/2/",
+        "unified_jobs": "/api/v2/schedules/2/jobs/"
+      },
+      "summary_fields": {
+        "modified_by": { "id": 1, "username": "admin", "first_name": "", "last_name": "" },
+
+        "unified_job_template": {
+          "description": "Remove activity stream history",
+          "id": 2,
+          "job_type": "cleanup_activitystream",
+          "name": "Cleanup Activity Stream",
+          "unified_job_type": "system_job"
+        },
+        "user_capabilities": { "edit": true, "delete": true }
+      },
+      "dtend": null,
+      "dtstart": "2023-05-09T14:57:05Z",
+      "enabled": true,
+      "execution_environment": null,
+      "extra_data": { "days": "355" },
+      "forks": null,
+      "id": 2,
+      "inventory": null,
+      "job_slice_count": null,
+      "job_tags": null,
+      "job_type": null,
+      "limit": null,
+      "modified": "2023-05-15T15:41:29.376525Z",
+      "name": "Cleanup Activity Schedule",
+      "next_run": "2023-05-16T14:57:05Z"
+    },
+    {
+      "created": "2023-05-08T14:58:33.558314Z",
+      "description": "Removes expired OAuth 2 access and refresh tokens",
+      "diff_mode": null,
+      "dtend": null,
+      "dtstart": "2023-05-08T14:58:33Z",
+      "enabled": true,
+      "execution_environment": null,
+      "extra_data": {},
+      "forks": null,
+      "id": 5,
+      "inventory": null,
+      "job_slice_count": null,
+      "job_tags": null,
+      "job_type": null,
+      "limit": null,
+      "modified": "2023-05-08T14:58:33.558314Z",
+      "name": "Cleanup Expired OAuth 2 Tokens",
+      "next_run": "2023-05-22T14:58:33Z",
+      "rrule": "DTSTART:20230508T145833Z RRULE:FREQ=WEEKLY;INTERVAL=1",
+      "scm_branch": null,
+      "skip_tags": null,
+      "timeout": null,
+      "timezone": "UTC",
+      "type": "schedule",
+      "unified_job_template": 5,
+      "until": "",
+      "url": "/api/v2/schedules/5/",
+      "verbosity": null,
+      "related": {
+        "credentials": "/api/v2/schedules/5/credentials/",
+        "instance_groups": "/api/v2/schedules/5/instance_groups/",
+        "labels": "/api/v2/schedules/5/labels/",
+        "unified_job_template": "/api/v2/system_job_templates/5/",
+        "unified_jobs": "/api/v2/schedules/5/jobs/"
+      },
+      "summary_fields": {
+        "unified_job_template": {
+          "description": "Cleanup expired OAuth 2 access and refresh tokens",
+          "id": 5,
+          "job_type": "cleanup_tokens",
+          "name": "Cleanup Expired OAuth 2 Tokens",
+          "unified_job_type": "system_job"
+        },
+        "user_capabilities": {
+          "delete": false,
+          "edit": false
+        }
+      }
+    },
+    {
+      "created": "2023-05-08T14:58:33.558314Z",
+      "description": "Removes expired OAuth 2 access and refresh tokens",
+      "diff_mode": null,
+      "dtend": null,
+      "dtstart": "2023-05-08T14:58:33Z",
+      "enabled": true,
+      "execution_environment": null,
+      "extra_data": {},
+      "forks": null,
+      "id": 6,
+      "inventory": null,
+      "job_slice_count": null,
+      "job_tags": null,
+      "job_type": null,
+      "limit": null,
+      "modified": "2023-05-08T14:58:33.558314Z",
+      "name": "Job Template Schedule 1",
+      "next_run": "2023-05-22T14:58:33Z",
+      "rrule": "DTSTART:20230508T145833Z RRULE:FREQ=WEEKLY;INTERVAL=1",
+      "scm_branch": null,
+      "skip_tags": null,
+      "timeout": null,
+      "timezone": "UTC",
+      "type": "schedule",
+      "unified_job_template": 9,
+      "until": "",
+      "url": "/api/v2/schedules/6/",
+      "verbosity": null,
+      "related": {
+        "credentials": "/api/v2/schedules/6/credentials/",
+        "instance_groups": "/api/v2/schedules/6/instance_groups/",
+        "labels": "/api/v2/schedules/6/labels/",
+        "unified_job_template": "/api/v2/system_job_templates/6/",
+        "unified_jobs": "/api/v2/schedules/6/jobs/"
+      },
+      "summary_fields": {
+        "unified_job_template": {
+          "description": "",
+          "id": 9,
+          "job_type": "cleanup_tokens",
+          "name": "Cleanup Expired OAuth 2 Tokens",
+          "unified_job_type": "job"
+        },
+        "user_capabilities": {
+          "delete": true,
+          "edit": true
+        }
+      }
+    }
+  ]
+}

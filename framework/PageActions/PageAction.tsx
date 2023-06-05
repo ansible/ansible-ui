@@ -96,6 +96,7 @@ export interface IPageActionSwitch extends IPageActionNoneCommon {
   isSwitchOn: () => boolean;
   showPinnedLabel?: boolean;
   labelOff?: string;
+  ariaLabel: (isEnabled: boolean) => string;
 }
 
 export interface IPageActionSwitchSingle<T extends object> extends IPageActionSingleCommon<T> {
@@ -104,6 +105,7 @@ export interface IPageActionSwitchSingle<T extends object> extends IPageActionSi
   isSwitchOn: (item: T) => boolean;
   showPinnedLabel?: boolean;
   labelOff?: string;
+  ariaLabel: (isEnabled: boolean) => string;
 }
 
 export interface IPageActionDropdown<T extends object> extends IPageActionNoneCommon {
