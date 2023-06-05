@@ -228,7 +228,10 @@ export interface AuditRule {
   ruleset_uuid?: string | null;
   /** Name of the related ruleset */
   ruleset_name?: string;
-  activation_instance_id: number | null;
+  activation_instance?: {
+    id: number | null;
+    name: string;
+  };
   job_instance_id: number | null;
   definition?: Record<string, any>;
 }
@@ -252,8 +255,10 @@ export interface AuditRuleOut {
    * @format date-time
    */
   created_at: string;
-  /** ID of the related Activation */
-  activation_id: number;
+  activation_instance?: {
+    id: number | null;
+    name: string;
+  };
   /** Name of the related Activation */
   activation_name: string;
 }

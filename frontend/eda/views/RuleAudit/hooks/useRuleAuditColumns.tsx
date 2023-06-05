@@ -34,20 +34,20 @@ export function useRuleAuditColumns() {
       {
         header: t('Rulebook activation'),
         cell: (ruleAudit) =>
-          ruleAudit?.activation_id ? (
+          ruleAudit?.activation_instance?.id ? (
             <TextCell
-              text={ruleAudit?.activation_name}
+              text={ruleAudit?.activation_instance?.name || ''}
               onClick={() =>
                 navigate(
                   RouteObj.EdaRulebookActivationDetails.replace(
                     ':id',
-                    ruleAudit?.activation_id.toString() || ''
+                    ruleAudit?.activation_instance?.id?.toString() || ''
                   )
                 )
               }
             />
           ) : (
-            <TextCell text={ruleAudit?.activation_name || ''} />
+            <TextCell text={ruleAudit?.activation_instance?.name || ''} />
           ),
         modal: ColumnModalOption.Hidden,
       },
