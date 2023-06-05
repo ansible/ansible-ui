@@ -36,8 +36,8 @@ import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
+import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { Templates } from './resources/templates/Templates';
-import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
@@ -74,8 +74,8 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
         <Route
-          path={RouteObjWithoutPrefix.WorkflowJobTemplateDetails}
-          element={<WorkflowJobTemplateDetail />}
+          path={RouteObjWithoutPrefix.WorkflowJobTemplatePage}
+          element={<WorkflowJobTemplatePage />}
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
         <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />

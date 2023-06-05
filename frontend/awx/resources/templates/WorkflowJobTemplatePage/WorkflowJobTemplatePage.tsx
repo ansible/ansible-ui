@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
@@ -9,22 +9,16 @@ import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { useTemplateActions } from '../hooks/useTemplateActions';
-import { TemplateDetails } from './TemplateDetails';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
-export function TemplatePage() {
+export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
     error,
     data: template,
     refresh,
-  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
-  const navigate = useNavigate();
-  const itemActions = useTemplateActions({
-    onTemplatesDeleted: () => navigate(RouteObj.Templates),
-  });
+  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
@@ -35,35 +29,38 @@ export function TemplatePage() {
         title={template?.name}
         breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
         headerActions={
-          <PageActions<JobTemplate>
-            actions={itemActions}
+          <PageActions<WorkflowJobTemplate>
+            actions={[]}
             position={DropdownPosition.right}
             selectedItem={template}
           />
         }
       />
-      <RoutedTabs isLoading={!template} baseUrl={RouteObj.JobTemplatePage}>
+      <RoutedTabs isLoading={!template} baseUrl={RouteObj.WorkflowJobTemplatePage}>
         <PageBackTab
           label={t('Back to Templates')}
           url={RouteObj.Templates}
           persistentFilterKey="templates"
         />
-        <RoutedTab label={t('Details')} url={RouteObj.JobTemplateDetails}>
-          <TemplateDetails template={template} />
+        <RoutedTab label={t('Details')} url={RouteObj.WorkflowJobTemplateDetails}>
+        <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.JobTemplateAccess}>
+        <RoutedTab label={t('Access')} url={RouteObj.WorkflowJobTemplateAccess}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Notifications')} url={RouteObj.JobTemplateNotifications}>
+        <RoutedTab label={t('Notifications')} url={RouteObj.WorkflowJobTemplateNotifications}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Schedules')} url={RouteObj.JobTemplateSchedules}>
+        <RoutedTab label={t('Schedules')} url={RouteObj.WorkflowJobTemplateSchedules}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Jobs')} url={RouteObj.JobTemplateJobs}>
+        <RoutedTab label={t('Jobs')} url={RouteObj.WorkflowJobTemplateJobs}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Survey')} url={RouteObj.JobTemplateSurvey}>
+        <RoutedTab label={t('Survey')} url={RouteObj.WorkflowJobTemplateSurvey}>
+          <PageNotImplemented />
+        </RoutedTab>
+        <RoutedTab label={t('Visualizer')} url={RouteObj.WorkflowJobTemplateVisualizer}>
           <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
