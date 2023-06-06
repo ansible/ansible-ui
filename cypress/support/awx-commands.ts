@@ -7,9 +7,9 @@ import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import {
   InstanceGroup,
   JobTemplate,
@@ -380,7 +380,7 @@ Cypress.Commands.add(
       name: 'EDA Project ' + randomString(4),
       organization: options?.project?.organization ?? null,
       scm_type: 'git',
-      scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample',
+      scm_url: 'https://github.com/ansible/ansible-ui',
     });
   }
 );

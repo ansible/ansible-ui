@@ -14,7 +14,7 @@
 //     });
 
 //     cy.createAwxOrganizationProjectInventoryJobTemplate({
-//       project: { scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample' },
+//       project: { scm_url: 'https://github.com/ansible/ansible-ui' },
 //       jobTemplate: { name: 'run_basic', playbook: 'basic.yml' },
 //     }).then((resources) => (awxResources = resources));
 

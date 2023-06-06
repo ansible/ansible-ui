@@ -18,7 +18,7 @@ describe('EDA Projects List', () => {
       cy.hasTitle(edaProject.name);
       cy.clickButton(/^Details$/);
       cy.get('#name').should('contain', edaProject.name);
-      cy.deleteEdaProject(edaProject);
+      // cy.deleteEdaProject(edaProject);
     });
   });
 
