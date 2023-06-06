@@ -49,6 +49,8 @@ import { CredentialTypePage } from './administration/credential-types/Credential
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
+import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
+import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -117,7 +119,8 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CredentialTypePage} element={<CredentialTypePage />} />
         <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} />
         <Route path={RouteObjWithoutPrefix.NotificationPage} element={<NotificationPage />} />
-        {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
+        <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} />
+        <Route path={RouteObjWithoutPrefix.ManagementJobPage} element={<ManagementJobPage />} />
         <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
         <Route path={RouteObjWithoutPrefix.InstanceGroupDetails} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />

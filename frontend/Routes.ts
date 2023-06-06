@@ -138,7 +138,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   Notifications: `${awxRoutePrefix}/notification_templates`,
   NotificationPage: `${awxRoutePrefix}/notification_templates/:id/*`,
   NotificationDetails: `${awxRoutePrefix}/notification_templates/:id/details`,
-  ManagementJobs: `${awxRoutePrefix}/management-jobs`,
+  ManagementJobs: `${awxRoutePrefix}/management_jobs`,
+  ManagementJobPage: `${awxRoutePrefix}/management_jobs/:id/*`,
+  ManagementJobSchedules: `${awxRoutePrefix}/management_jobs/:id/schedules`,
+  ManagementJobNotifications: `${awxRoutePrefix}/management_jobs/:id/notifications`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
   InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/:id/details`,
