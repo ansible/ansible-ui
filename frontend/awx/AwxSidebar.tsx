@@ -171,9 +171,12 @@ export function AwxSidebar() {
         >
           {t('Instances')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteObj.Applications, location)}>
-                                <Link to={RouteObj.Applications}>Applications</Link>
-                            </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.Applications, location)}
+          onClick={() => onClick(RouteObj.Applications)}
+        >
+          {t('Applications')}
+        </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.ExecutionEnvironments)}

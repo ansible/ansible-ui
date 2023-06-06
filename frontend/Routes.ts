@@ -149,6 +149,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditInstanceGroup: `${awxRoutePrefix}/instance-groups/:id/edit`,
 
   Applications: `${awxRoutePrefix}/applications`,
+  ApplicationPage: `${awxRoutePrefix}/applications/:id/*`,
+  ApplicationDetails: `${awxRoutePrefix}/applications/:id/details`,
+  ApplicationTokens: `${awxRoutePrefix}/applications/:id/tokens`,
 
   Instances: `${awxRoutePrefix}/instances`,
   InstanceDetails: `${awxRoutePrefix}/instances/details/:id`,

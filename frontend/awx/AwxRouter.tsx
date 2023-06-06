@@ -51,6 +51,8 @@ import { NotificationPage } from './administration/notifications/NotificationPag
 import { Notifications } from './administration/notifications/Notifications';
 import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
+import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
+import { Applications } from './administration/applications/Applications';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -126,7 +128,8 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />
         <Route path={RouteObjWithoutPrefix.InstanceDetails} element={<InstanceDetails />} />
         <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
-        {/* <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} /> */}
+        <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} />
+        <Route path={RouteObjWithoutPrefix.ApplicationPage} element={<ApplicationPage />} />
         <Route
           path={RouteObjWithoutPrefix.ExecutionEnvironments}
           element={<ExecutionEnvironments />}
