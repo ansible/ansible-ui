@@ -131,8 +131,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,
 
   // Administration
-  CredentialTypes: `${awxRoutePrefix}/credential-types`,
-  CredentialTypeDetails: `${awxRoutePrefix}/credential-types/:id/details`,
+  CredentialTypes: `${awxRoutePrefix}/credential_types`,
+  CredentialTypePage: `${awxRoutePrefix}/credential_types/:id/*`,
+  CredentialTypeDetails: `${awxRoutePrefix}/credential_types/:id/details`,
 
   Notifications: `${awxRoutePrefix}/notifications`,
   ManagementJobs: `${awxRoutePrefix}/management-jobs`,

@@ -45,6 +45,8 @@ import HostMetrics from './views/jobs/HostMetrics';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { Schedules } from './views/schedules/Schedules';
 import { HostPage } from './resources/hosts/HostPage/HostPage';
+import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -109,7 +111,8 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateTeam} element={<CreateTeam />} />
         <Route path={RouteObjWithoutPrefix.EditTeam} element={<EditTeam />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToTeam} element={<AddRolesToTeam />} />
-        {/* <Route path={RouteObjWithoutPrefix.CredentialTypes} element={<CredentialTypes />} /> */}
+        <Route path={RouteObjWithoutPrefix.CredentialTypes} element={<CredentialTypes />} />
+        <Route path={RouteObjWithoutPrefix.CredentialTypePage} element={<CredentialTypePage />} />
         {/* <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
         <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
