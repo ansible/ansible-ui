@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Toolbar, ToolbarContent } from '@patternfly/react-core';
-import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolbarFilter';
+import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 import { IToolbarFilter } from '../../../../../framework';
 
 interface IJobOutputToolbarProps {

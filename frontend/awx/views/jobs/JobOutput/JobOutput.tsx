@@ -45,6 +45,7 @@ function useOutputFilters() {
         type: 'string',
         query: 'stdout__icontains',
         placeholder: t('Filter by keyword'),
+        comparison: 'contains',
       },
       {
         key: 'event',
