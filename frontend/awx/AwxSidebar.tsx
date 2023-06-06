@@ -147,6 +147,12 @@ export function AwxSidebar() {
         >
           {t('Credential Types')}
         </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.Notifications, location)}
+          onClick={() => onClick(RouteObj.Notifications)}
+        >
+          {t('Notifications')}
+        </NavItem>
         {/* <NavItem isActive={isRouteActive(RouteObj.Notifications, location)}>
                                 <Link to={RouteObj.Notifications}>Notifications</Link>
                             </NavItem> */}

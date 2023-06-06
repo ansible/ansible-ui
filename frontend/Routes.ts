@@ -135,7 +135,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   CredentialTypePage: `${awxRoutePrefix}/credential_types/:id/*`,
   CredentialTypeDetails: `${awxRoutePrefix}/credential_types/:id/details`,
 
-  Notifications: `${awxRoutePrefix}/notifications`,
+  Notifications: `${awxRoutePrefix}/notification_templates`,
+  NotificationPage: `${awxRoutePrefix}/notification_templates/:id/*`,
+  NotificationDetails: `${awxRoutePrefix}/notification_templates/:id/details`,
   ManagementJobs: `${awxRoutePrefix}/management-jobs`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
