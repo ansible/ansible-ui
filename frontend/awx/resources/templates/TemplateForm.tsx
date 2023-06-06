@@ -16,27 +16,67 @@ import { Label } from '../../interfaces/Label';
 import { getAwxError } from '../../useAwxView';
 import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
 import JobTemplateInputs from './JobTemplateInputs';
+import { AwxError } from '../../common/AwxError';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const defaultValues: Partial<JobTemplateForm> = useMemo(
-    () => getJobTemplateDefaultValues(t, {} as JobTemplateForm),
-    [t]
+  const {
+    data: jobtemplate,
+    error: jobTemplateError,
+    refresh: jobTemplateRefresh,
+    isLoading: isJobTemplateLoading,
+  } = useGet<JobTemplate>(`/api/v2/job_templates/${id.toString()}/`);
+  const {
+    data: instanceGroups,
+    error: instanceGroupsError,
+    isLoading: isInstanceGroupsLoading,
+    refresh: instanceGroupRefresh,
+  } = useGet<ItemsResponse<InstanceGroup>>(
+    `/api/v2/job_templates/${id.toString()}/instance_groups/`
   );
 
-  const { data: jobtemplate } = useGet<JobTemplate>(`/api/v2/job_templates/${id.toString()}`);
-
+  const defaultValues: JobTemplateForm = useMemo(
+    () =>
+      getJobTemplateDefaultValues(t, {
+        ...jobtemplate,
+        isProvisioningCallbackEnabled: Boolean(jobtemplate?.related?.callback),
+        isWebhookEnabled: Boolean(jobtemplate?.related?.webhook_receiver),
+        instanceGroups: instanceGroups?.results ?? [],
+        skip_tags: jobtemplate?.skip_tags.split(',').map((tag) => ({ name: tag })),
+        job_tags: jobtemplate?.job_tags.split(',').map((tag) => ({ name: tag })),
+      } as JobTemplateForm),
+    [t, jobtemplate, instanceGroups]
+  );
   const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (
-    values: object,
+    values: JobTemplateForm,
     setError: (message: string) => void
   ) => {
+    const {
+      job_tags,
+      skip_tags,
+      summary_fields: { credentials, labels },
+    } = values;
+
+    const stringifyTags: (tags: { name: string }[] | string) => string = (tags = '') =>
+      typeof tags === 'string' ? tags : tags.map((tag) => tag.name).join(',');
     try {
-      await requestPatch<JobTemplateForm>(`/api/job_templates/${id}`, values);
+      await requestPatch<JobTemplateForm>(`/api/v2/job_templates/${id}/`, {
+        ...values,
+        job_tags: stringifyTags(job_tags),
+        skip_tags: stringifyTags(skip_tags),
+        webhook_credential: values.summary_fields.webhook_credential?.id,
+      });
       (cache as unknown as { clear: () => void }).clear?.();
+      const promises = [];
+
+      promises.push(submitCredentials(jobtemplate as JobTemplate, credentials));
+      promises.push(submitLabels(jobtemplate as JobTemplate, labels?.results));
+      promises.push(submitInstanceGroups(id, values.instanceGroups));
       navigate(RouteObj.JobTemplateDetails.replace(':id', `${id}`.toString()));
     } catch (err) {
       if (err instanceof Error) {
@@ -46,7 +86,16 @@ export function EditJobTemplate() {
       }
     }
   };
-
+  const jobTemplateFormError = jobTemplateError || instanceGroupsError;
+  if (jobTemplateFormError instanceof Error) {
+    return (
+      <AwxError
+        error={jobTemplateFormError}
+        handleRefresh={jobTemplateError ? jobTemplateRefresh : instanceGroupRefresh}
+      />
+    );
+  }
+  if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
   return (
     <PageLayout>
       <PageHeader
@@ -62,7 +111,7 @@ export function EditJobTemplate() {
         onCancel={() => navigate(-1)}
         defaultValue={defaultValues}
       >
-        <JobTemplateInputs jobtemplate={jobtemplate} />
+        <JobTemplateInputs jobtemplate={defaultValues} />
       </PageForm>
     </PageLayout>
   );
@@ -86,7 +135,7 @@ export function CreateJobTemplate() {
     } = values;
 
     try {
-      const template = await postRequest(`/api/v2/job_templates/`, values);
+      const template: JobTemplate = await postRequest(`/api/v2/job_templates/`, values);
       const promises = [];
       if (credentials?.length > 0) {
         promises.push(submitCredentials(template, credentials));
@@ -126,7 +175,10 @@ export function CreateJobTemplate() {
   );
 }
 
-async function submitCredentials(template: JobTemplate, newCredentials: Credential[]) {
+async function submitCredentials(
+  template: JobTemplate,
+  newCredentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[]
+) {
   const { added, removed } = getAddedAndRemoved(
     template?.summary_fields?.credentials ?? ([] as Credential[]),
     newCredentials

@@ -1,5 +1,4 @@
+import { SetRequired } from 'type-fest';
 import { JobEvent as SwaggerJobEvent } from './generated-from-swagger/api';
 
-export interface JobEvent extends Omit<SwaggerJobEvent, 'counter'> {
-  counter: number;
-}
+export type JobEvent = SetRequired<SwaggerJobEvent, 'counter'>;
