@@ -9,7 +9,7 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { swrOptions, useFetcher } from '../common/crud/Data';
+import { useFetcher } from '../common/crud/Data';
 
 export function hubKeyFn(item: { pulp_id: string }) {
   return item.pulp_id;
@@ -100,11 +100,16 @@ export function useHubView<T extends object>(
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher, swrOptions);
+  const response = useSWR<HubItemsResponse<T>>(url, fetcher, {
+    dedupingInterval: 0,
+    refreshInterval: 30000,
+  });
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, swrOptions);
+  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, {
+    dedupingInterval: 0,
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
