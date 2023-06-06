@@ -74,7 +74,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
     return <></>;
   }, [sortDirection, sortType]);
 
-  if (!sortOptions || sortOptions.length <= 1) return <></>;
+  if (!sortOptions || sortOptions.length <= 0) return <></>;
 
   return (
     <ToolbarToggleGroup breakpoint="md" toggleIcon={undefined}>

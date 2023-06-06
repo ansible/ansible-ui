@@ -161,9 +161,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
 
   Namespaces: `${hubRoutePrefix}/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/namespaces/details/:id`,
-  CreateNamespace: `${hubRoutePrefix}/namespaces/create/:id`,
-  EditNamespace: `${hubRoutePrefix}/namespaces/edit/:id`,
+  NamespaceDetails: `${hubRoutePrefix}/namespaces/:id`,
+  CreateNamespace: `${hubRoutePrefix}/namespaces/create`,
+  EditNamespace: `${hubRoutePrefix}/namespaces/:id/edit`,
 
   Approvals: `${hubRoutePrefix}/approvals`,
   ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
