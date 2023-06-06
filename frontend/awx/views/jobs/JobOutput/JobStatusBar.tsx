@@ -99,13 +99,3 @@ const calculateElapsed = (started: string | undefined) => {
 
   return Duration.fromObject({ ...duration }).toFormat('hh:mm:ss');
 };
-
-// function StatusLabel({ props: { status: string, children: ReactNode } }) {
-//   const { status, children } = props;
-
-//   return (
-//     <Label variant="outline" color={'green'}>
-//       {children}
-//     </Label>
-//   );
-// }

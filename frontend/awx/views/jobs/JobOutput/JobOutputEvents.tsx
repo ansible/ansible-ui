@@ -24,7 +24,7 @@ const ScrollContainer = styled.div`
   overflow: auto;
   backgroundcolor: var(--pf-global--BackgroundColor--100);
   font-size: var(--pf-global--FontSize--sm);
-  border-bottom: 1px solid var(--pf-global--BorderColor--100);
+  border-block: 1px solid var(--pf-global--BorderColor--100);
 `;
 
 interface IJobOutputEventsProps {
