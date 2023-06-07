@@ -67,7 +67,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.get('button').contains('rulebook activations').click();
     cy.get('button').contains('Close').click();
     cy.wait('@disable').then((disable) => {
-      expect(disable.response.statusCode).to.eq(204);
+      expect(disable?.response?.statusCode).to.eq(204);
     });
     cy.get('.pf-c-switch__toggle').click();
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
@@ -75,7 +75,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.get('button').contains('rulebookActivations').click();
     cy.get('button').contains('Close').click();
     cy.wait('@enable').then((enable) => {
-      expect(enable.response.statusCode).to.eq(204);
+      expect(enable?.response?.statusCode).to.eq(204);
     });
   });
 
