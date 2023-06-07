@@ -84,14 +84,14 @@ function DashboardInternal() {
   }
 
   const hasInventory = data.inventories.total !== 0;
-  const hasExecutonEnvironment = executionEnvironments.count !== 0;
+  const hasExecutionEnvironment = executionEnvironments.count !== 0;
   const hasJobTemplate = data.job_templates.total !== 0;
 
   return (
     <PageDashboard>
       <AwxGettingStartedCard
         hasInventory={hasInventory}
-        hasExecutonEnvironment={hasExecutonEnvironment}
+        hasExecutionEnvironment={hasExecutionEnvironment}
         hasJobTemplate={hasJobTemplate}
       />
       <AwxInventoriesCard

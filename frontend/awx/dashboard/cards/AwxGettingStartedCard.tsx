@@ -11,11 +11,11 @@ import { RouteObj } from '../../../Routes';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;
-  hasExecutonEnvironment: boolean;
+  hasExecutionEnvironment: boolean;
   hasJobTemplate: boolean;
 }) {
   const { t } = useTranslation();
-  const { hasInventory, hasExecutonEnvironment, hasJobTemplate } = props;
+  const { hasInventory, hasExecutionEnvironment, hasJobTemplate } = props;
 
   const steps = useMemo<PageDashboardGettingStartedStep[]>(
     () => [
@@ -29,7 +29,7 @@ export function AwxGettingStartedCard(props: {
         title: t('Execution Environment'),
         description: t('Create an execution environment.'),
         to: RouteObj.ExecutionEnvironments,
-        isComplete: hasExecutonEnvironment,
+        isComplete: hasExecutionEnvironment,
       },
       {
         title: t('Job Template'),
@@ -38,7 +38,7 @@ export function AwxGettingStartedCard(props: {
         isComplete: hasJobTemplate,
       },
     ],
-    [hasExecutonEnvironment, hasInventory, hasJobTemplate, t]
+    [hasExecutionEnvironment, hasInventory, hasJobTemplate, t]
   );
 
   return (
