@@ -8,33 +8,37 @@ import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
+import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
 import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
+import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
-import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
-import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
   const edaProjectView = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,
+    queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
     url: `${API_PREFIX}/decision-environments/`,
+    queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRuleAuditView = useEdaView<EdaRuleAudit>({
     url: `${API_PREFIX}/audit-rules/`,
+    queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRulebookActivationView = useEdaView<EdaRulebookActivation>({
     url: `${API_PREFIX}/activations/`,
+    queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const hasProject = edaProjectView.itemCount !== 0;
