@@ -43,7 +43,7 @@ export function WorkflowJobTemplatePage() {
           persistentFilterKey="templates"
         />
         <RoutedTab label={t('Details')} url={RouteObj.WorkflowJobTemplateDetails}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Access')} url={RouteObj.WorkflowJobTemplateAccess}>
           <PageNotImplemented />

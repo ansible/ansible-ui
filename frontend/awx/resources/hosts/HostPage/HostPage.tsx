@@ -12,7 +12,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 
 export function HostPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; }>();
+  const params = useParams<{ id: string }>();
   const { error, data: host, refresh } = useGetItem<AwxHost>('/api/v2/hosts', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -22,20 +22,13 @@ export function HostPage() {
     <PageLayout>
       <PageHeader
         title={host?.name}
-        breadcrumbs={[
-          { label: t('Hosts'), to: RouteObj.Hosts },
-          { label: host?.name },
-        ]}
+        breadcrumbs={[{ label: t('Hosts'), to: RouteObj.Hosts }, { label: host?.name }]}
         headerActions={[]}
       />
       <RoutedTabs isLoading={!host} baseUrl={RouteObj.HostPage}>
-        <PageBackTab
-          label={t('Back to Hosts')}
-          url={RouteObj.Hosts}
-          persistentFilterKey="hosts"
-        />
+        <PageBackTab label={t('Back to Hosts')} url={RouteObj.Hosts} persistentFilterKey="hosts" />
         <RoutedTab label={t('Details')} url={RouteObj.HostDetails}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Facts')} url={RouteObj.HostFacts}>
           <PageNotImplemented />

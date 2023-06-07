@@ -12,8 +12,12 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; }>();
-  const { error, data: application, refresh } = useGetItem<Application>('/api/v2/applications', params.id);
+  const params = useParams<{ id: string }>();
+  const {
+    error,
+    data: application,
+    refresh,
+  } = useGetItem<Application>('/api/v2/applications', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!application) return <LoadingPage breadcrumbs tabs />;
@@ -35,10 +39,10 @@ export function ApplicationPage() {
           persistentFilterKey="applications"
         />
         <RoutedTab label={t('Details')} url={RouteObj.ApplicationDetails}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Tokens')} url={RouteObj.ApplicationTokens}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>

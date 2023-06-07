@@ -12,8 +12,12 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; }>();
-  const { error, data: system_job_template, refresh } = useGetItem<SystemJobTemplate>('/api/v2/system_job_templates', params.id);
+  const params = useParams<{ id: string }>();
+  const {
+    error,
+    data: system_job_template,
+    refresh,
+  } = useGetItem<SystemJobTemplate>('/api/v2/system_job_templates', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!system_job_template) return <LoadingPage breadcrumbs tabs />;
@@ -35,10 +39,10 @@ export function ManagementJobPage() {
           persistentFilterKey="management_jobs"
         />
         <RoutedTab label={t('Schedules')} url={RouteObj.ManagementJobSchedules}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Notifications')} url={RouteObj.ManagementJobNotifications}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>

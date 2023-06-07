@@ -12,8 +12,12 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 
 export function NotificationPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; }>();
-  const { error, data: notification_template, refresh } = useGetItem<NotificationTemplate>('/api/v2/notification_templates', params.id);
+  const params = useParams<{ id: string }>();
+  const {
+    error,
+    data: notification_template,
+    refresh,
+  } = useGetItem<NotificationTemplate>('/api/v2/notification_templates', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!notification_template) return <LoadingPage breadcrumbs tabs />;
@@ -35,7 +39,7 @@ export function NotificationPage() {
           persistentFilterKey="notifications"
         />
         <RoutedTab label={t('Details')} url={RouteObj.NotificationDetails}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>

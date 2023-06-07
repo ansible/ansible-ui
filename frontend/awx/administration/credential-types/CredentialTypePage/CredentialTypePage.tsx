@@ -12,8 +12,12 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; }>();
-  const { error, data: credential_type, refresh } = useGetItem<CredentialType>('/api/v2/credential_types', params.id);
+  const params = useParams<{ id: string }>();
+  const {
+    error,
+    data: credential_type,
+    refresh,
+  } = useGetItem<CredentialType>('/api/v2/credential_types', params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!credential_type) return <LoadingPage breadcrumbs tabs />;
@@ -35,7 +39,7 @@ export function CredentialTypePage() {
           persistentFilterKey="credential_types"
         />
         <RoutedTab label={t('Details')} url={RouteObj.CredentialTypeDetails}>
-        <PageNotImplemented />
+          <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>

@@ -6,14 +6,14 @@ export interface NotificationTemplate
   name: string;
   organization: number;
   notification_type:
-  | 'email'
-  | 'grafana'
-  | 'irc'
-  | 'mattermost'
-  | 'pagerduty'
-  | 'rocketchat'
-  | 'slack'
-  | 'twilio'
-  | 'webhook'
-  | null;
+    | 'email'
+    | 'grafana'
+    | 'irc'
+    | 'mattermost'
+    | 'pagerduty'
+    | 'rocketchat'
+    | 'slack'
+    | 'twilio'
+    | 'webhook'
+    | null;
 }
