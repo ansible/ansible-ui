@@ -111,7 +111,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1, 2]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
