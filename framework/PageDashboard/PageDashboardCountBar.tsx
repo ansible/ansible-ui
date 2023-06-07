@@ -28,9 +28,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
               >
                 <FlexItem>
                   <Title headingLevel="h3" size="xl">
-                    {/* <Link to={item.to}> */}
                     {item.title}
-                    {/* </Link> */}
                   </Title>
                 </FlexItem>
                 <FlexItem>
@@ -44,10 +42,6 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
               </Flex>
             </FlexItem>
           ))}
-          {/* <span style={{ fontSize: 'xxx-large', lineHeight: 1 }}>{props.count}</span>
-            <Title headingLevel="h3" size="xl">
-              {title}
-            </Title> */}
         </Flex>
       </CardBody>
     </PageDashboardCard>
