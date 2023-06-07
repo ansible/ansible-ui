@@ -163,7 +163,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/execution-environments/:id/edit`,
 
-  TopologyView: `${awxRoutePrefix}/topology-view`,
+  TopologyView: `${awxRoutePrefix}/topology`,
 
   // Settings
   Settings: `${awxRoutePrefix}/settings`,

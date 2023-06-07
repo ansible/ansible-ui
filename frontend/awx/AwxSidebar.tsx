@@ -183,12 +183,12 @@ export function AwxSidebar() {
         >
           {t('Execution Environments')}
         </NavItem>
-        {/* <NavItem
+        <NavItem
           isActive={isRouteActive(RouteObj.TopologyView, location)}
           onClick={() => onClick(RouteObj.TopologyView)}
         >
-          {t('Topology view')}
-        </NavItem> */}
+          {t('Topology View')}
+        </NavItem>
       </NavExpandable>
       {/* <NavGroup>
                             <NavItem isActive={isRouteActive(RouteObj.Settings, location)}>

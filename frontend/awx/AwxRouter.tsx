@@ -130,6 +130,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
         <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} />
         <Route path={RouteObjWithoutPrefix.ApplicationPage} element={<ApplicationPage />} />
+        <Route path={RouteObjWithoutPrefix.TopologyView} element={<PageNotImplemented />} />
         <Route
           path={RouteObjWithoutPrefix.ExecutionEnvironments}
           element={<ExecutionEnvironments />}
