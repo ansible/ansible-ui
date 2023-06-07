@@ -6,7 +6,7 @@ import { Scrollable } from '../components/Scrollable';
 
 export const PageDashboardContext = createContext({ columns: 1 });
 
-const Divisor = 1662 / 12;
+const Divisor = 1662 / 24;
 
 export function PageDashboard(props: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);

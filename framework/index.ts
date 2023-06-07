@@ -13,6 +13,8 @@ export * from './PageDashboard/PageChartContainer';
 export * from './PageDashboard/PageDashboard';
 export * from './PageDashboard/PageDashboardCard';
 export * from './PageDashboard/PageDashboardChart';
+export * from './PageDashboard/PageDashboardCount';
+export * from './PageDashboard/PageDashboardGettingStarted';
 export * from './PageDashboard/PageDonutChart';
 export * from './PageDetails/PageDetail';
 export * from './PageDetails/PageDetails';

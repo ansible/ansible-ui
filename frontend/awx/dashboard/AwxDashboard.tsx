@@ -84,22 +84,22 @@ function DashboardInternal() {
   }
 
   const hasInventory = data.inventories.total !== 0;
-  const hasExecutonEnvironment = executionEnvironments.count !== 0;
+  const hasExecutionEnvironment = executionEnvironments.count !== 0;
   const hasJobTemplate = data.job_templates.total !== 0;
 
   return (
     <PageDashboard>
+      <AwxGettingStartedCard
+        hasInventory={hasInventory}
+        hasExecutionEnvironment={hasExecutionEnvironment}
+        hasJobTemplate={hasJobTemplate}
+      />
       <AwxInventoriesCard
         total={data.inventories.total}
         failed={data.inventories.inventory_failed}
       />
       <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />
       <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />
-      <AwxGettingStartedCard
-        hasInventory={hasInventory}
-        hasExecutonEnvironment={hasExecutonEnvironment}
-        hasJobTemplate={hasJobTemplate}
-      />
       {recentJobsView.itemCount !== 0 && <AwxJobActivityCard />}
       <AwxRecentJobsCard view={recentJobsView} />
       <AwxRecentProjectsCard />
