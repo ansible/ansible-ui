@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
 import { PageDashboardContext } from './PageDashboard';
 
-export type PageDashboardCardWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export type PageDashboardCardWidth = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 const heightUnit = 90;
@@ -45,25 +45,28 @@ export function PageDashboardCard(props: {
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
-  let colSpan = 4;
+  let colSpan = 8;
   switch (props.width) {
-    case 'xs':
-      colSpan = 2;
-      break;
-    case 'sm':
+    case 'xxs':
       colSpan = 3;
       break;
-    case 'md':
+    case 'xs':
       colSpan = 4;
       break;
-    case 'lg':
+    case 'sm':
       colSpan = 6;
       break;
-    case 'xl':
+    case 'md':
       colSpan = 8;
       break;
-    case 'xxl':
+    case 'lg':
       colSpan = 12;
+      break;
+    case 'xl':
+      colSpan = 16;
+      break;
+    case 'xxl':
+      colSpan = 24;
       break;
   }
 
@@ -133,7 +136,7 @@ export function PageDashboardCard(props: {
         ...props.style,
       }}
     >
-      {props.title && (
+      {(props.title || props.linkText) && (
         <CardHeader>
           <Stack style={{ width: '100%' }}>
             <Flex
