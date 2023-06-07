@@ -294,7 +294,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection>
+      <PageSection style={{ backgroundColor: 'transparent' }}>
         <EmptyStateNoData
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}
