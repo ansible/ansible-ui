@@ -146,8 +146,11 @@ describe('dashboard checks when resources before any resources are created', () 
   // });
 
   it('checks the dashboard landing page titles ', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.hasTitle(/^Welcome to EDA Server$/).should('be.visible');
+    if (Cypress.env('TEST_STANDALONE') === true) {
+      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
+    } else {
+      cy.hasTitle('Welcome to EDA Server').should('be.visible');
+    }
     cy.contains(
       'p span',
       'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
