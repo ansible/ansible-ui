@@ -58,7 +58,6 @@ export function AwxDashboard() {
 }
 
 function DashboardInternal() {
-  const { t } = useTranslation();
   const executionEnvironments = useExecutionEnvironments();
 
   const recentJobsView = useAwxView<Job>({
