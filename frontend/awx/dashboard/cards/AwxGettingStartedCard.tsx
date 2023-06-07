@@ -26,8 +26,8 @@ export function AwxGettingStartedCard(props: {
         isComplete: hasInventory,
       },
       {
-        title: t('Executon Environment'),
-        description: t('Create an executon environment.'),
+        title: t('Execution Environment'),
+        description: t('Create an execution environment.'),
         to: RouteObj.ExecutionEnvironments,
         isComplete: hasExecutonEnvironment,
       },
