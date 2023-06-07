@@ -36,8 +36,12 @@ describe('EDA Dashboard', () => {
   });
 
   it('checks Ansible header title', () => {
-    cy.edaLogin();
-    cy.hasTitle(/^Ansible$/).should('be.visible');
+    cy.visit('/eda/dashboard/');
+    if (Cypress.env('TEST_STANDALONE') === true) {
+      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
+    } else {
+      cy.hasTitle('Welcome to EDA Server').should('be.visible');
+    }
   });
 
   // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -150,8 +154,15 @@ describe('dashboard checks when resources before any resources are created', () 
     ).should('be.visible');
     cy.hasTitle(/^Projects$/).should('be.visible');
     cy.contains('small', 'Recently updated projects').should('be.visible');
-    cy.hasTitle(/^Rulebook Activations$/).should('be.visible');
+    cy.hasTitle(/^Rulebook Activations$/)
+      .scrollIntoView()
+      .should('be.visible');
     cy.contains('small', 'Recently updated activations').should('be.visible');
+    //TO DO: change the title to Rule Audit after fix
+    cy.hasTitle(/^Rule audit$/)
+      .scrollIntoView()
+      .should('be.visible');
+    cy.contains('small', 'Recently fired rules').should('be.visible');
     cy.hasTitle(/^Decision Environments$/).should('be.visible');
     cy.contains('small', 'Recently updated environments').should('be.visible');
   });
