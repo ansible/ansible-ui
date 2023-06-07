@@ -42,15 +42,15 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
-import { EmptyStateNoData } from '../components/EmptyStateNoData';
-import { EmptyStateError } from '../components/EmptyStateError';
-import { Scrollable } from '../components/Scrollable';
-import { useBreakpoint } from '../components/useBreakPoint';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { useColumnModal } from '../PageColumnModal';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { useSettings } from '../Settings';
+import { EmptyStateError } from '../components/EmptyStateError';
+import { EmptyStateNoData } from '../components/EmptyStateNoData';
+import { Scrollable } from '../components/Scrollable';
+import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
@@ -63,10 +63,10 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
-import { PageTableToolbar } from './PageToolbar';
-import { IToolbarFilter } from './PageToolbarFilter';
-import { usePageToolbarSortOptionsFromColumns } from './PageToolbarSort';
+import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
+import { PageTableToolbar } from './PageToolbar/PageToolbar';
+import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -294,7 +294,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
     return (
-      <PageSection>
+      <PageSection style={{ backgroundColor: 'transparent' }}>
         <EmptyStateNoData
           title={props.emptyStateTitle}
           description={props.emptyStateDescription}

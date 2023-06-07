@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
@@ -26,7 +26,11 @@ import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../interfaces/EdaRulebookActivation';
+import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -72,7 +76,7 @@ export function CreateRulebookActivation() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ restart_policy: 'always', is_enabled: true, variables: '' }}
+        defaultValue={{ restart_policy: RestartPolicyEnum.Always, is_enabled: true, variables: '' }}
       >
         <RulebookActivationInputs />
       </PageForm>
@@ -83,14 +87,14 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const restartPolicyHelpBlock = (
-    <Trans i18nKey="restartPolicyHelpBlock">
-      <p>A policy to decide when to restart a rulebook.</p>
+    <>
+      <p>{t('A policy to decide when to restart a rulebook.')}</p>
       <br />
-      <p>Policies:</p>
-      <p>Always: restarts when a rulebook finishes.</p>
-      <p>Never: never restarts a rulebook when it finishes.</p>
-      <p>On failure: only restarts when it fails.</p>
-    </Trans>
+      <p>{t('Policies:')}</p>
+      <p>{t('Always: restarts when a rulebook finishes.')}</p>
+      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
+      <p>{t('On failure: only restarts when it fails.')}</p>
+    </>
   );
   const { data: projects } = useGet<EdaResult<EdaProject>>(
     `${API_PREFIX}/projects/?page=1&page_size=200`
@@ -218,7 +222,7 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = EdaRulebookActivation & {
+type IEdaRulebookActivationInputs = EdaRulebookActivationCreate & {
   rulebook: EdaRulebook;
   variables: string;
 };

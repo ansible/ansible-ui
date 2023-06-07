@@ -38,9 +38,11 @@ export function PageActionSwitch<T extends object>(props: {
         <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <Switch
             id={id}
+            aria-label={action.ariaLabel(isChecked)}
             label={label}
             labelOff={labelOff}
             isChecked={isChecked}
+            isDisabled={isDisabled ? true : false}
             onChange={() => {
               switch (action.selection) {
                 case PageActionSelection.None:

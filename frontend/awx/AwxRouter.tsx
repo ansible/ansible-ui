@@ -34,6 +34,7 @@ import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPa
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate } from './resources/templates/TemplateForm';
+import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
 import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
@@ -41,6 +42,8 @@ import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import HostMetrics from './views/jobs/HostMetrics';
+import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
+import { Schedules } from './views/schedules/Schedules';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -59,8 +62,9 @@ export function AwxRouter() {
 
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
+        <Route path={RouteObjWithoutPrefix.CreateSchedule} element={<CreateSchedule />} />
+        <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
 
-        {/* <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
         {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
         <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
@@ -78,7 +82,8 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.EditCredential} element={<EditCredential />} />
         <Route path={RouteObjWithoutPrefix.Projects} element={<Projects />} />
         <Route path={RouteObjWithoutPrefix.ProjectPage} element={<ProjectPage />} />
-        {/* <Route path={RouteObjWithoutPrefix.ProjectEdit} element={<ProjectEdit />} /> */}
+        <Route path={RouteObjWithoutPrefix.CreateProject} element={<CreateProject />} />
+        <Route path={RouteObjWithoutPrefix.EditProject} element={<EditProject />} />
         <Route path={RouteObjWithoutPrefix.Inventories} element={<Inventories />} />
         <Route path={RouteObjWithoutPrefix.InventoryPage} element={<InventoryPage />} />
         <Route path={RouteObjWithoutPrefix.CreateInventory} element={<CreateInventory />} />

@@ -1,14 +1,24 @@
 import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
-import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import {
+  EdaControllerToken,
+  EdaControllerTokenCreate,
+} from '../../frontend/eda/interfaces/EdaControllerToken';
+import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import {
+  CredentialTypeEnum,
+  RestartPolicyEnum,
+} from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
 import './commands';
 
@@ -35,6 +45,14 @@ Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   });
 });
 
+Cypress.Commands.add('clickEdaPageAction', (label: string | RegExp) => {
+  cy.get('.pf-c-toolbar__content-section')
+    .eq(1)
+    .within(() => {
+      cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+    });
+});
+
 Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
   cy.contains('td[data-label="Name"]', rbaName)
     .parent()
@@ -44,21 +62,25 @@ Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: s
     });
 });
 
+Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
+  cy.contains('tr', rbaName).within(() => {
+    cy.get('input[type=checkbox]').eq(0).click();
+  });
+});
+
 Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
-    cy.contains('h1', `${action} activation`).should('be.visible');
-    cy.contains('p', `Are you sure you want to ${action} the rulebook activation below?`, {
-      matchCase: false,
-    }).should('be.visible');
-    cy.contains('p', rbaName).should('be.visible');
-    cy.contains('button#confirm', action).click();
+    cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to ${action} these`);
+    cy.get('a').should('contain', rbaName);
+    cy.get('input[id="confirm"]').click();
+    cy.get('button').contains('rulebookActivations').click();
   });
 });
 
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>('/api/eda/v1/projects/', {
     name: 'E2E Project ' + randomString(4),
-    url: 'https://github.com/Alex-Izquierdo/eda-sample-project',
+    url: 'https://github.com/ansible/ansible-ui',
   }).then((edaProject) => {
     Cypress.log({
       displayName: 'EDA PROJECT CREATION :',
@@ -68,21 +90,20 @@ Cypress.Commands.add('createEdaProject', () => {
   });
 });
 
-Cypress.Commands.add('getEdaRulebooks', (_edaProject) => {
-  // TODO: Once the API supports it, only get rulebooks for the project
-  // Sometimes it takes a while for the rulebooks to be created.
-  // Poll for EdaRulebooks until some are found.
-  cy.pollEdaResults<EdaRulebook>('/api/eda/v1/rulebooks/').then((edaRulebooks) => {
+Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
+  let url = `/api/eda/v1/rulebooks/?project_id=${edaProject.id}`;
+  if (rulebookName) url = url + `&name=${rulebookName}`;
+  cy.pollEdaResults<EdaRulebook>(url).then((edaRulebooks) => {
     return edaRulebooks;
   });
 });
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>) => {
+  (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
     cy.requestPost<EdaRulebookActivation>(`/api/eda/v1/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
-      restart_policy: 'on-failure',
+      restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
     }).then((edaRulebookActivation) => {
       cy.wrap(edaRulebookActivation)
@@ -183,6 +204,7 @@ Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
 Cypress.Commands.add('pollEdaResults', (url: string) => {
   cy.requestGet<EdaResult<unknown>>(url).then((result) => {
     if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.log('RESULTS', result.results.length);
       cy.wrap(result.results);
     } else {
       cy.wait(100).then(() => cy.pollEdaResults(url));
@@ -191,9 +213,9 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
 });
 
 Cypress.Commands.add('createEdaCredential', () => {
-  cy.requestPost<EdaCredential>('/api/eda/v1/credentials/', {
+  cy.requestPost<EdaCredentialCreate>('/api/eda/v1/credentials/', {
     name: 'E2E Credential ' + randomString(4),
-    credential_type: 'Container Registry',
+    credential_type: CredentialTypeEnum.ContainerRegistry,
     secret: 'test token',
     description: 'This is a container registry credential',
     username: 'admin',
@@ -227,6 +249,13 @@ Cypress.Commands.add('getEdaCredentialByName', (edaCredentialName: string) => {
   });
 });
 
+Cypress.Commands.add('getEdaRoles', () => {
+  cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
+    const edaRoles = response.results;
+    return edaRoles;
+  });
+});
+
 Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
   return cy
     .contains('dt.pf-c-description-list__term', resourceType)
@@ -256,13 +285,6 @@ Cypress.Commands.add('getEdaRolePermissions', (roleID: string) => {
     });
     const edaRolePermissions = response.permissions;
     return edaRolePermissions;
-  });
-});
-
-Cypress.Commands.add('getEdaRoles', () => {
-  cy.requestGet<EdaResult<EdaRole>>('/api/eda/v1/roles/').then((response) => {
-    const edaRoles = response.results;
-    return edaRoles;
   });
 });
 
@@ -312,8 +334,32 @@ Cypress.Commands.add('getEdaActiveUser', () => {
   });
 });
 
+Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
+  cy.requestGet<EdaResult<EdaControllerToken>>(`/api/eda/v1/users/me/awx-tokens/`);
+});
+
+Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
+  cy.getEdaCurrentUserAwxTokens().then((result) => {
+    switch (result.count) {
+      case 0:
+        cy.createAwxToken().then((awxToken) => {
+          cy.addEdaCurrentUserAwxToken(awxToken.token);
+        });
+        break;
+      case 1:
+        // Do nothing - token exists
+        break;
+      case 2:
+        for (const token of result.results?.slice(1) ?? []) {
+          cy.deleteEdaCurrentUserAwxToken(token);
+        }
+        break;
+    }
+  });
+});
+
 Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
-  cy.requestPost<EdaControllerToken>(`/api/eda/v1/users/me/awx-tokens/`, {
+  cy.requestPost<EdaControllerTokenCreate>(`/api/eda/v1/users/me/awx-tokens/`, {
     name: 'AWX Token ' + randomString(4),
     token: awxToken,
   });
@@ -325,6 +371,31 @@ Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerTok
       displayName: 'EDA CONTROLLER TOKEN DELETION :',
       message: [awxToken.name],
     });
+  });
+});
+
+function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
+  if (!resource.name) return false;
+  if (!resource.name.startsWith(prefix)) return false;
+
+  if (!resource.created_at) return false;
+  const created = new Date(resource.created_at);
+  const beforeTime = new Date(Date.now());
+
+  return created < beforeTime;
+}
+
+Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
+  cy.request<EdaResult<EdaControllerToken>>('/api/eda/v1/users/me/awx-tokens/').then((response) => {
+    const tokens = response.body.results;
+    for (const token of tokens ?? []) {
+      if (isOldResource('E2E Token', token)) {
+        cy.deleteEdaCurrentUserAwxToken(token);
+      }
+      if (isOldResource('AWX ', token)) {
+        cy.deleteEdaCurrentUserAwxToken(token);
+      }
+    }
   });
 });
 
@@ -356,6 +427,7 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
+    //cy.waitEdaDESync(decisionEnvironment);
     cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, true).then(
       () => {
         Cypress.log({
@@ -366,3 +438,22 @@ Cypress.Commands.add(
     );
   }
 );
+
+/*
+  Cypress.Commands.add('waitEdaDESync', (decisionEnvironment) => {
+    cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
+      `/api/eda/v1/decision-environments/?name=${decisionEnvironment.name}`
+    ).then((result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        const project = result.results[0];
+        if (project.import_state !== 'completed') {
+          cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+        } else {
+          cy.wrap(project);
+        }
+      } else {
+        cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
+      }
+    });
+  });
+  */

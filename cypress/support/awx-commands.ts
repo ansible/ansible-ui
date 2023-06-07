@@ -7,6 +7,7 @@ import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import {
@@ -164,10 +165,30 @@ Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boole
   cy.contains('tr', name);
 });
 
+Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterTableByText(name);
+  }
+  cy.contains('article', name);
+});
+
 Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
+      cy.get('.pf-c-dropdown__toggle').click();
+      cy.contains('.pf-c-dropdown__menu-item', label)
+        .should('not.be.disabled')
+        .should('not.have.attr', 'aria-disabled', 'true')
+        .click();
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'clickListCardKebabAction',
+  (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
+    cy.getListCardByText(name, filter).within(() => {
       cy.get('.pf-c-dropdown__toggle').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
         .should('not.be.disabled')
@@ -359,7 +380,7 @@ Cypress.Commands.add(
       name: 'EDA Project ' + randomString(4),
       organization: options?.project?.organization ?? null,
       scm_type: 'git',
-      scm_url: 'https://github.com/Alex-Izquierdo/eda-awx-project-sample',
+      scm_url: 'https://github.com/ansible/ansible-ui',
     });
   }
 );
@@ -406,6 +427,21 @@ Cypress.Commands.add('deleteAwxInventory', (inventory: Inventory) => {
   }
 });
 
+Cypress.Commands.add('createAWXSchedule', () => {
+  cy.requestPost<Schedule>('/api/v2/schedules/', {
+    name: 'E2E Schedule ' + randomString(4),
+    description: 'E2E Schedule Description',
+    enabled: true,
+    rrule: 'DTSTART:20201231T000000Z RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
+    unified_job_template: 1,
+    extra_data: {},
+  }).then((schedule) => schedule);
+});
+
+Cypress.Commands.add('deleteAWXSchedule', (schedule: Schedule) => {
+  cy.requestDelete(`/api/v2/schedules/${schedule.id}/`, true);
+});
+
 Cypress.Commands.add(
   'createAwxOrganizationProjectInventoryJobTemplate',
   (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
@@ -427,7 +463,7 @@ Cypress.Commands.add(
   }
 );
 
-/** Interface for tracking created resources that will need to be delete 
+/** Interface for tracking created resources that will need to be delete
 at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
   jobTemplate?: JobTemplate;
@@ -437,19 +473,20 @@ Cypress.Commands.add('deleteAwxResources', (resources?: IAwxResources) => {
   if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
 });
 
-Cypress.Commands.add(
-  'createAwxJobTemplate',
-  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
-    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
-      name: 'E2E Job Template ' + randomString(4),
-      playbook: 'hello_world.yml',
-      project: project.id.toString(),
-      inventory: inventory.id,
-      organization: project.organization,
-      ...jobTemplate,
-    }).then((jobTemplate) => jobTemplate);
-  }
-);
+Cypress.Commands.add('createAwxJobTemplate', () => {
+  cy.createAwxOrganization().then((organization) => {
+    cy.createAwxProject({ organization: organization.id }).then((project) => {
+      cy.createAwxInventory().then((inventory) => {
+        cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
+          name: 'E2E Job Template ' + randomString(4),
+          playbook: 'hello_world.yml',
+          project: project.id.toString(),
+          inventory: inventory.id,
+        }).then((jobTemplate) => jobTemplate);
+      });
+    });
+  });
+});
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',

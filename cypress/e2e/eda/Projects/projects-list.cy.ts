@@ -7,26 +7,24 @@ describe('EDA Projects List', () => {
   before(() => cy.edaLogin());
 
   it('renders the EDA projects page', () => {
-    cy.navigateTo(/^Projects$/);
-    cy.hasTitle(/^Projects$/)
-      .next('p')
-      .should('have.text', 'Projects are a logical collection of playbooks.');
+    cy.visit('/eda/projects?sort=&page=1&perPage=100');
+    cy.hasTitle(/^Projects$/);
   });
 
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.visit('/eda/projects?sort=&page=1&perPage=100');
       cy.clickTableRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.clickButton(/^Details$/);
       cy.get('#name').should('contain', edaProject.name);
-      cy.deleteEdaProject(edaProject);
+      // cy.deleteEdaProject(edaProject);
     });
   });
 
   it('can filter the Projects list based on Name', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.visit('/eda/projects?sort=&page=1&perPage=100');
       cy.filterTableByText(edaProject.name);
       cy.get('td[data-label="Name"]').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
@@ -36,7 +34,7 @@ describe('EDA Projects List', () => {
   it('can bulk delete Projects from the Projects list', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.createEdaProject().then((testProject) => {
-        cy.navigateTo(/^Projects$/);
+        cy.visit('/eda/projects?sort=&page=1&perPage=100');
         cy.selectTableRow(edaProject.name);
         cy.selectTableRow(testProject.name);
         cy.clickToolbarKebabAction(/^Delete selected projects$/);

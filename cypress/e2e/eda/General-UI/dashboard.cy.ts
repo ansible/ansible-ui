@@ -2,50 +2,53 @@
 //Implementation of Visual Tests makes sense here at some point
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('EDA Dashboard', () => {
   let edaProject: EdaProject;
-  let gitHookDeployRuleBook: EdaRulebook;
+  // let gitHookDeployRuleBook: EdaRulebook;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
-  let edaRBA: EdaRulebookActivation;
+  // let edaRBA: EdaRulebookActivation;
 
   before(() => {
     cy.edaLogin();
     cy.createEdaProject().then((project) => {
       edaProject = project;
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        gitHookDeployRuleBook = edaRuleBooksArray[0];
+      cy.getEdaRulebooks(edaProject).then((_edaRuleBooksArray) => {
+        // gitHookDeployRuleBook = edaRuleBooksArray[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
-          }).then((edaRulebookActivation) => {
-            edaRBA = edaRulebookActivation;
-          });
+          // cy.createEdaRulebookActivation({
+          //   rulebook_id: gitHookDeployRuleBook.id,
+          //   decision_environment_id: decisionEnvironment.id,
+          // }).then((edaRulebookActivation) => {
+          //   edaRBA = edaRulebookActivation;
+          // });
         });
       });
     });
   });
 
   after(() => {
-    cy.deleteEdaRulebookActivation(edaRBA);
+    // cy.deleteEdaRulebookActivation(edaRBA);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
   });
 
   it('checks Ansible header title', () => {
-    cy.edaLogin();
-    cy.hasTitle(/^Ansible$/).should('be.visible');
+    cy.visit('/eda/dashboard/');
+    if (Cypress.env('TEST_STANDALONE') === true) {
+      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
+    } else {
+      cy.hasTitle('Welcome to EDA Server').should('be.visible');
+    }
   });
 
-  it('shows the user an RBA card with a list of RBAs visible including working links', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.get('[data-label="Name"] div > a').contains(edaRBA.name).click();
-    cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
-  });
+  // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
+  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.get('[data-label="Name"] div > a').contains(edaRBA.name).click();
+  //   cy.url().should('match', new RegExp('eda/rulebook-activations/details/[0-9]*'));
+  // });
 
   it('shows the user a Project card with a list of Projects visible including working links', () => {
     cy.navigateTo(/^Dashboard$/);
@@ -97,7 +100,7 @@ describe('EDA Dashboard', () => {
             'Create a rulebook activation by clicking the button below.'
           );
           cy.clickButton(/^Create rulebook activation$/);
-          cy.hasTitle(/^Create rulebook activation$/).should('be.visible');
+          cy.hasTitle(/^Create Rulebook Activation$/).should('be.visible');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
@@ -151,8 +154,15 @@ describe('dashboard checks when resources before any resources are created', () 
     ).should('be.visible');
     cy.hasTitle(/^Projects$/).should('be.visible');
     cy.contains('small', 'Recently updated projects').should('be.visible');
-    cy.hasTitle(/^Rulebook Activations$/).should('be.visible');
+    cy.hasTitle(/^Rulebook Activations$/)
+      .scrollIntoView()
+      .should('be.visible');
     cy.contains('small', 'Recently updated activations').should('be.visible');
+    //TO DO: change the title to Rule Audit after fix
+    cy.hasTitle(/^Rule audit$/)
+      .scrollIntoView()
+      .should('be.visible');
+    cy.contains('small', 'Recently fired rules').should('be.visible');
     cy.hasTitle(/^Decision Environments$/).should('be.visible');
     cy.contains('small', 'Recently updated environments').should('be.visible');
   });

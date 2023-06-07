@@ -1,191 +1,102 @@
-//Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
-describe('EDA rulebook activations List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
+// //Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
+// import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
+// import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
+// import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+// import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+// import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+// import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+// import { IAwxResources } from '../../../support/awx-commands';
 
-  it.skip('can filter the rulebook activations list based on Name filter option', () => {
-    cy.createEdaProject().then((edaProject) => {
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        const gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: edaDecisionEnvironment.id,
-          }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook Activations$/);
-            cy.hasTitle(/^Rulebook Activations$/)
-              .next('p')
-              .should(
-                'have.text',
-                'Rulebook activations are rulebooks that have been activated to run.'
-              );
+// describe('EDA rulebook activations- Create, Edit, Delete', () => {
+//   let awxToken: AwxToken;
+//   let awxResources: IAwxResources;
+//   let edaProject: EdaProject;
+//   let edaDecisionEnvironment: EdaDecisionEnvironment;
+//   let edaRBA: EdaRulebookActivation;
+//   let edaToken: EdaControllerToken;
+//   let edaRuleBook: EdaRulebook;
 
-            /*
-            filtering by text doesn't work for rulebook activations
-            cy.filterTableByText(edaRulebookActivation.name);
-            */
-            cy.contains('td[data-label="Name"]', edaRulebookActivation.name).should('be.visible');
-            cy.deleteEdaRulebookActivation(edaRulebookActivation);
-          });
-          cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-        });
-      });
-      cy.deleteEdaProject(edaProject);
-    });
-  });
+//   before(() => {
+//     cy.edaLogin();
+//     cy.ensureEdaCurrentUserAwxToken();
 
-  // TODO enable the test when the restart bug for an activation with no project id is fixed [AAP-11217]
-  it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
-    cy.createEdaProject().then((edaProject) => {
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        const gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: edaDecisionEnvironment.id,
-            restart_policy: 'always',
-          }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook Activations$/);
-            /*
-      filtering by text doesn't work for rulebook activations
-      cy.filterTableByText(edaRulebookActivation.name);
-      */
-            cy.edaRuleBookActivationActions(
-              'Restart rulebook activation',
-              edaRulebookActivation.name
-            );
-            cy.clickModalConfirmCheckbox();
-            cy.clickModalButton('Restart rulebook activations');
-            cy.assertModalSuccess();
-            cy.clickButton(/^Close$/);
-            cy.deleteEdaRulebookActivation(edaRulebookActivation);
-          });
-          cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-        });
-      });
-      cy.deleteEdaProject(edaProject);
-    });
-  });
+//     cy.createAwxToken().then((token) => {
+//       awxToken = token;
+//       cy.addEdaCurrentUserAwxToken(awxToken.token).then((token) => {
+//         edaToken = token;
+//         cy.createEdaProject().then((project) => {
+//           edaProject = project;
+//           cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+//             edaRuleBook = edaRuleBooks[0];
+//             cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
+//               edaDecisionEnvironment = decisionEnvironment;
+//               cy.createEdaRulebookActivation({
+//                 rulebook_id: edaRuleBook.id,
+//                 decision_environment_id: decisionEnvironment.id,
+//               }).then((edaRulebookActivation) => {
+//                 edaRBA = edaRulebookActivation;
+//               });
+//             });
+//           });
+//         });
+//       });
+//     });
+//   });
 
-  // it('can disable a Rulebook Activation from the line item in list view', () => {
-  //   cy.createEdaProject().then((edaProject) => {
-  //     cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-  //       const gitHookDeployRuleBook = edaRuleBooksArray[0];
-  //       cy.createEdaRulebookActivation(gitHookDeployRuleBook).then((edaRulebookActivation) => {
-  //         cy.visit('eda/rulebook-activations');
-  //         /*
-  //     filtering by text doesn't work for rulebook activations
-  //     cy.filterTableByText(edaRulebookActivation.name);
-  //     */
-  //         cy.edaRuleBookActivationActions(
-  //           'Disable rulebook activation',
-  //           edaRulebookActivation.name
-  //         );
-  //         cy.clickModalConfirmCheckbox();
-  //         cy.clickModalButton('Disable rulebook activations');
-  //         cy.assertModalSuccess();
-  //         cy.clickButton(/^Close$/);
-  //       });
-  //     });
-  //     cy.deleteEdaProject(edaProject);
-  //   });
-  // });
+//   after(() => {
+//     cy.deleteAwxToken(awxToken);
+//     cy.deleteAwxResources(awxResources);
+//     cy.deleteEdaRulebookActivation(edaRBA);
+//     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
+//     cy.deleteEdaProject(edaProject);
+//     cy.deleteEdaCurrentUserAwxToken(edaToken);
+//   });
 
-  it.skip('can delete a single Rulebook Activation from the line item on the list view', () => {
-    cy.createEdaProject().then((edaProject) => {
-      cy.getEdaRulebooks(edaProject).then((edaRuleBooksArray) => {
-        const gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: edaDecisionEnvironment.id,
-          }).then((edaRulebookActivation) => {
-            cy.navigateTo(/^Rulebook Activations$/);
-            /*
-      filtering by text doesn't work for rulebook activations
-      cy.filterTableByText(edaRulebookActivation.name);
-      */
-            cy.edaRuleBookActivationActions('Delete', edaRulebookActivation.name);
-            cy.clickModalConfirmCheckbox();
-            cy.clickModalButton('Delete rulebook activations');
-            cy.assertModalSuccess();
-            cy.clickButton(/^Close$/);
-            cy.deleteEdaRulebookActivation(edaRulebookActivation);
-          });
-          cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-        });
-      });
-      cy.deleteEdaProject(edaProject);
-    });
-  });
+//   it('can filter the rulebook activations list based on Name filter option', () => {
+//     cy.navigateTo(/^Rulebook Activations$/);
+//     cy.hasTitle(/^Rulebook Activations$/)
+//       .next('p')
+//       .should('have.text', 'Rulebook activations are rulebooks that have been activated to run.');
+//     cy.contains('td[data-label="Name"]', edaRBA.name).should('be.visible');
+//   });
 
-  it.skip('can bulk delete rulebook activations from the toolbar', () => {
-    cy.createEdaProject().then((edaProject1) => {
-      cy.getEdaRulebooks(edaProject1).then((edaRuleBooksArray) => {
-        const gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-          cy.createEdaRulebookActivation({
-            rulebook_id: gitHookDeployRuleBook.id,
-            decision_environment_id: edaDecisionEnvironment.id,
-          }).then((edaRulebookActivation1) => {
-            cy.createEdaProject().then((edaProject2) => {
-              cy.getEdaRulebooks(edaProject2).then((edaRuleBooksArray) => {
-                const gitHookDeployRuleBook = edaRuleBooksArray[0];
-                cy.createEdaDecisionEnvironment().then((edaDecisionEnvironment) => {
-                  cy.createEdaRulebookActivation({
-                    rulebook_id: gitHookDeployRuleBook.id,
-                    decision_environment_id: edaDecisionEnvironment.id,
-                  }).then((edaRulebookActivation2) => {
-                    cy.intercept(
-                      'DELETE',
-                      `api/eda/v1/activations/${edaRulebookActivation1.id}/`
-                    ).as('edaRulebookActivation1');
-                    cy.intercept(
-                      'DELETE',
-                      `api/eda/v1/activations/${edaRulebookActivation2.id}/`
-                    ).as('edaRulebookActivation2');
-                    cy.navigateTo(/^Rulebook Activations$/);
-                    /*
-            uncomment below when working, within() yields multiple elements as 
-            currently select by name doesn't work as expected for rulebook activations
-            cy.selectTableRow(edaRulebookActivation1.name);
-            cy.selectTableRow(edaRulebookActivation2.name);
-            */
-                    const rulebookActivations = [
-                      edaRulebookActivation1.name,
-                      edaRulebookActivation2.name,
-                    ];
-                    rulebookActivations.forEach((rulebookActivation) => {
-                      cy.contains('td[data-label="Name"]', rulebookActivation)
-                        .prev()
-                        .within(() => {
-                          cy.get('input[type=checkbox]').check();
-                        });
-                    });
-                    cy.clickToolbarKebabAction(/^Delete selected activations$/);
-                    cy.clickModalConfirmCheckbox();
-                    cy.clickModalButton('Delete rulebook activations');
-                    cy.wait(['@edaRulebookActivation1', '@edaRulebookActivation2']).then(
-                      (activationArr) => {
-                        expect(activationArr[0]?.response?.statusCode).to.eql(204);
-                        expect(activationArr[1]?.response?.statusCode).to.eql(204);
-                      }
-                    );
-                    cy.assertModalSuccess();
-                    cy.clickButton(/^Close$/);
-                    cy.contains('h1', 'Rulebook Activations').should('be.visible');
-                  });
-                  cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-                });
-              });
-              cy.deleteEdaProject(edaProject1);
-              cy.deleteEdaProject(edaProject2);
-            });
-            cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-          });
-        });
-      });
-    });
-  });
-});
+//   // TODO enable the test when the restart bug for an activation with no project id is fixed [AAP-11217]
+//   it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
+//     cy.navigateTo(/^Rulebook Activations$/);
+//     cy.edaRuleBookActivationCheckbox(edaRBA.name);
+//     cy.clickEdaPageAction('Enable selected activations');
+//     cy.edaRuleBookActivationActionsModal('enable', edaRBA.name);
+//     cy.clickButton(/^Close$/);
+//     cy.pollEdaResults(`/api/eda/v1/activations/?name=${edaRBA.name}`);
+//   });
+
+//   it('can disable a Rulebook Activation from the line item in list view', () => {
+//     cy.navigateTo(/^Rulebook Activations$/);
+//     cy.edaRuleBookActivationCheckbox(edaRBA.name);
+//     cy.clickEdaPageAction('Disable selected activations');
+//     cy.get('div[role="dialog"]').within(() => {
+//       cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to disable these`);
+//       cy.get('a').should('contain', edaRBA.name);
+//       cy.get('input[id="confirm"]').click();
+//       cy.get('button').contains('Disable rulebook activations').click();
+//     });
+//     cy.clickButton(/^Close$/);
+//   });
+
+//   it('can delete a single Rulebook Activation from the line item on the list view', () => {
+//     cy.navigateTo(/^Rulebook Activations$/);
+//     cy.edaRuleBookActivationCheckbox(edaRBA.name);
+//     cy.clickEdaPageAction('Delete selected activations');
+//     cy.get('div[role="dialog"]').within(() => {
+//       cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to delete these`);
+//       cy.get('a').should('contain', edaRBA.name);
+//       cy.get('input[id="confirm"]').click();
+//       cy.get('button').contains('Delete rulebook activations').click();
+//     });
+//     cy.clickButton(/^Close$/);
+//   });
+
+//   it.skip('can bulk delete rulebook activations from the toolbar', () => {
+//     //rewrite this test when filtering is fixed
+//   });
+// });

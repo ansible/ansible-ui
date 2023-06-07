@@ -41,7 +41,6 @@ export function RuleAuditDetails() {
       <Scrollable>
         <PageDetails>
           <PageDetail label={t('Rule name')}>{ruleAudit?.name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>{ruleAudit?.description || ''}</PageDetail>
           <PageDetail label={t('Status')}>
             <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
@@ -49,17 +48,17 @@ export function RuleAuditDetails() {
             label={t('Rulebook activation')}
             helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
           >
-            {ruleAudit && ruleAudit.activation_id ? (
+            {ruleAudit && ruleAudit.activation_instance?.id ? (
               <Link
                 to={RouteObj.EdaRulebookActivationDetails.replace(
                   ':id',
-                  `${ruleAudit.activation_id || ''}`
+                  `${ruleAudit.activation_instance?.id || ''}`
                 )}
               >
-                {ruleAudit?.activation_name}
+                {ruleAudit?.activation_instance?.name}
               </Link>
             ) : (
-              ruleAudit?.activation_name || ''
+              ruleAudit?.activation_instance?.name || ''
             )}
           </PageDetail>
           <PageDetail label={t('Created')}>

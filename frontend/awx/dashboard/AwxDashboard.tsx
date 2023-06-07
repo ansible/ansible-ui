@@ -30,6 +30,7 @@ export function AwxDashboard() {
   const [_, setDialog] = usePageDialog();
   const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
+
   useEffect(() => {
     if (config?.ui_next && !hideWelcomeMessage) {
       setDialog(<WelcomeModal />);
@@ -40,12 +41,13 @@ export function AwxDashboard() {
     <PageLayout>
       {config?.ui_next && (
         <Banner variant="info">
-          <Trans>
-            <p>
-              <InfoCircleIcon /> You are currently viewing a tech preview of the new {product} user
-              interface. To return to the original interface, click <a href="/">here</a>.
-            </p>
-          </Trans>
+          <p>
+            <InfoCircleIcon />{' '}
+            <Trans>
+              You are currently viewing a tech preview of the new {{ product }} user interface. To
+              return to the original interface, click <a href="/">here</a>.
+            </Trans>
+          </p>
         </Banner>
       )}
       <PageHeader

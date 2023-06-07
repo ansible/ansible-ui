@@ -27,6 +27,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   JobOutput: `${awxRoutePrefix}/jobs/:job_type/:id/output`,
   JobDetails: `${awxRoutePrefix}/jobs/:job_type/:id/details`,
   Schedules: `${awxRoutePrefix}/schedules`,
+  EditSchedule: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/edit`,
+  ScheduleDetails: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/details`,
+  CreateSchedule: `${awxRoutePrefix}/schedules/create`,
   ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
   WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
   HostMetrics: `${awxRoutePrefix}/host-metrics`,
@@ -158,9 +161,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
 
   Namespaces: `${hubRoutePrefix}/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/namespaces/details/:id`,
-  CreateNamespace: `${hubRoutePrefix}/namespaces/create/:id`,
-  EditNamespace: `${hubRoutePrefix}/namespaces/edit/:id`,
+  NamespaceDetails: `${hubRoutePrefix}/namespaces/:id`,
+  CreateNamespace: `${hubRoutePrefix}/namespaces/create`,
+  EditNamespace: `${hubRoutePrefix}/namespaces/:id/edit`,
 
   Approvals: `${hubRoutePrefix}/approvals`,
   ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,

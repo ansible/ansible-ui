@@ -11,6 +11,9 @@ import {
   useNameColumn,
 } from '../../../../common/columns';
 import { Credential } from '../../../interfaces/Credential';
+import { useGet } from '../../../../common/crud/useGet';
+import { ItemsResponse } from '../../../../common/crud/Data';
+import { CredentialType } from '../../../interfaces/CredentialType';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -25,6 +28,19 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
+  const itemsResponse = useGet<ItemsResponse<CredentialType>>(
+    '/api/v2/credential_types/?page=1&page_size=200'
+  );
+  const credentialTypesMap: { [id: number]: string } = useMemo(() => {
+    if (itemsResponse?.data?.results) {
+      return itemsResponse.data.results.reduce((acc, credentialType) => {
+        const { id, name } = credentialType;
+        return { ...acc, [id]: name };
+      });
+    } else {
+      return {};
+    }
+  }, [itemsResponse?.data?.results]);
   const tableColumns = useMemo<ITableColumn<Credential>[]>(
     () => [
       idColumn,
@@ -33,13 +49,9 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       {
         header: t('Credential type'),
         cell: (credential) => {
-          switch (credential.credential_type) {
-            case 1:
-              return t('Machine');
-            case 18:
-              return t('Ansible Galaxy/Automation Hub API Token');
-          }
-          return t('Unknown');
+          return credentialTypesMap && credentialTypesMap[credential.credential_type]
+            ? credentialTypesMap[credential.credential_type]
+            : t('Unknown');
         },
         card: 'subtitle',
         list: 'subtitle',
@@ -47,7 +59,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn, credentialTypesMap]
   );
   return tableColumns;
 }

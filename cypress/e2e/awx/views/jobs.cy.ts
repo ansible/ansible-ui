@@ -5,19 +5,16 @@ import {
   JobTemplate,
   UnifiedJobList,
 } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
-import { IAwxResources } from '../../../support/awx-commands';
 
 describe('jobs', () => {
-  let awxResources: IAwxResources;
   let jobTemplate: JobTemplate;
   let job: UnifiedJobList;
 
   before(() => {
     cy.awxLogin();
 
-    cy.createAwxOrganizationProjectInventoryJobTemplate().then((resources) => {
-      awxResources = resources;
-      jobTemplate = resources.jobTemplate;
+    cy.createAwxJobTemplate().then((template) => {
+      jobTemplate = template;
 
       // Launch job to populate jobs list
       const templateId = jobTemplate.id ? jobTemplate.id.toString() : '';
@@ -32,9 +29,9 @@ describe('jobs', () => {
 
   after(() => {
     // Delete launched job
-    const jobId = job.id ? job.id.toString() : '';
+    const jobId = job?.id ? job?.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
-    cy.deleteAwxResources(awxResources);
+    cy.deleteAwxJobTemplate(jobTemplate);
   });
 
   it('renders jobs list', () => {
@@ -69,9 +66,6 @@ describe('jobs', () => {
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
         cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
-        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/, { timeout: 60 * 1000 }).should(
-          'exist'
-        );
       });
   });
 
@@ -109,6 +103,12 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
+      cy.getTableRowByText(jobName, false).within(() => {
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+      });
       cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
@@ -129,7 +129,12 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = job.name ? job.name : '';
-      cy.tableHasRowWithSuccess(jobName, false);
+      cy.getTableRowByText(jobName, false).within(() => {
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+      });
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();

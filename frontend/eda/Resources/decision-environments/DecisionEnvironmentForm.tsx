@@ -11,23 +11,29 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const imageHelpBlock = (
-    <Trans i18nKey="imageHelpBlock">
-      <p>The full image location, including the container registry, image name, and version tag.</p>
+    <>
+      <p>
+        {t(
+          'The full image location, including the container registry, image name, and version tag.'
+        )}
+      </p>
       <br />
-      <p>Examples:</p>
-      <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
-    </Trans>
+      <p>{t('Examples:')}</p>
+      <Trans>
+        <code>quay.io/ansible/awx-latest repo/project/image-name:tag</code>
+      </Trans>
+    </>
   );
   return (
     <>
@@ -157,7 +163,7 @@ export function EditDecisionEnvironment() {
           onCancel={onCancel}
           defaultValue={{
             ...decisionEnvironment,
-            credential_id: decisionEnvironment?.credential?.id || undefined,
+            credential_id: decisionEnvironment?.credential_id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />
