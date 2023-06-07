@@ -296,7 +296,7 @@
   "Decision Environment": "Beslissingsomgeving",
   "Decision environments": "Beslissingsomgevingen",
   "Decision Environments": "Beslissingsomgevingen",
-  "Decision environments contain a rulebook image that dictate where the rulebooks will run.": "Beslissingsomgevingen bevatten een rulebookafbeelding die dicteren waar de rulebooks worden uitgevoerd.",
+  "Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.": "Beslissingsomgevingen bevatten een rulebookafbeelding die dicteren waar de rulebooks worden uitgevoerd.",
   "Decision environments contain a rulebook image that dictates where the rulebooks will run.": "Beslissingsomgevingen bevatten een rulebookafbeelding die dicteert waar de rulebooks worden uitgevoerd.",
   "Default environment": "Standaardomgeving",
   "Default execution environment": "Standaard uitvoeringsomgeving",

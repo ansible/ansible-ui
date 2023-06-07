@@ -207,7 +207,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                         onClick={() => {
                           open(
                             isEdaServer(automationServer)
-                              ? 'https://www.redhat.com/en/engage/event-driven-ansible-20220907'
+                              ? 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index'
                               : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
                             '_blank'
                           );
