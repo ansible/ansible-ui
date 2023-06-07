@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   ButtonVariant,
   DropdownPosition,
@@ -31,19 +32,34 @@ import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
 import { EdaUserInfo } from '../../../common/Masthead';
 import { ControllerTokens } from './ControllerTokens';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 
-// eslint-disable-next-line react/prop-types
 export function EdaUserDetails({ initialTabIndex = 0 }) {
-  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { data: user } = useGet<EdaUser>(
     `${API_PREFIX}/users/${params.id ?? ''}/`,
     undefined,
     SWR_REFRESH_INTERVAL
   );
+  if (!user) return <LoadingPage breadcrumbs tabs />;
+  return <EdaUserDetailsInternal initialTabIndex={initialTabIndex} user={user} />;
+}
 
-  const me = EdaUserInfo();
+export function EdaMyDetails({ initialTabIndex = 0 }) {
+  const activeUser = EdaUserInfo();
+  if (!activeUser) return <LoadingPage breadcrumbs tabs />;
+  return <EdaUserDetailsInternal initialTabIndex={initialTabIndex} user={activeUser} />;
+}
+
+export function EdaUserDetailsInternal({
+  initialTabIndex,
+  user,
+}: {
+  initialTabIndex: number;
+  user: EdaUser;
+}) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const deleteUsers = useDeleteUsers((deleted) => {
     if (deleted && deleted.length > 0) {
       navigate(RouteObj.EdaUsers);
@@ -101,23 +117,38 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
     [deleteUsers, navigate, t]
   );
 
+  const activeUser = EdaUserInfo();
+  if (!activeUser) return <LoadingPage breadcrumbs tabs />;
+  const isViewingSelf = Number(user.id) === Number(activeUser.id);
+  const canEditUser =
+    activeUser.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
+  const canViewUsers =
+    activeUser.is_superuser ||
+    activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+
   return (
     <PageLayout>
       <PageHeader
         title={user?.username}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: user?.username }]}
+        breadcrumbs={
+          canViewUsers
+            ? [{ label: t('Users'), to: RouteObj.EdaUsers }, { label: user?.username }]
+            : undefined
+        }
         headerActions={
-          <PageActions<EdaUser>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={user}
-          />
+          canEditUser ? (
+            <PageActions<EdaUser>
+              actions={itemActions}
+              position={DropdownPosition.right}
+              selectedItem={user}
+            />
+          ) : null
         }
       />
       {user ? (
         <PageTabs initialTabIndex={initialTabIndex}>
           <PageTab label={t('Details')}>{renderUserDetailsTab(user)}</PageTab>
-          {user.id === me?.id ? (
+          {isViewingSelf ? (
             <PageTab label={t('Controller Tokens')}>
               <ControllerTokens />
             </PageTab>

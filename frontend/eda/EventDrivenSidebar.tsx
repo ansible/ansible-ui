@@ -5,11 +5,18 @@ import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
 import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
+import { EdaUserInfo } from '../common/Masthead';
 
 export function EventDrivenSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
   const onClick = usePageNavBarClick();
+  const activeUser = EdaUserInfo();
+  const canViewAccess =
+    activeUser &&
+    (activeUser.is_superuser ||
+      activeUser.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor'));
+
   return (
     <CommonSidebar>
       <NavItem
@@ -66,25 +73,27 @@ export function EventDrivenSidebar() {
           {t('Credentials')}
         </NavItem>
       </NavExpandable>
-      <NavExpandable
-        key="user"
-        title={t('User Access')}
-        isExpanded
-        isActive={isRouteActive([RouteObj.EdaUsers, RouteObj.EdaRoles], location)}
-      >
-        <NavItem
-          isActive={isRouteActive(RouteObj.EdaUsers, location)}
-          onClick={() => onClick(RouteObj.EdaUsers)}
+      {canViewAccess ? (
+        <NavExpandable
+          key="user"
+          title={t('User Access')}
+          isExpanded
+          isActive={isRouteActive([RouteObj.EdaUsers, RouteObj.EdaRoles], location)}
         >
-          {t('Users')}
-        </NavItem>
-        <NavItem
-          isActive={isRouteActive(RouteObj.EdaRoles, location)}
-          onClick={() => onClick(RouteObj.EdaRoles)}
-        >
-          {t('Roles')}
-        </NavItem>
-      </NavExpandable>
+          <NavItem
+            isActive={isRouteActive(RouteObj.EdaUsers, location)}
+            onClick={() => onClick(RouteObj.EdaUsers)}
+          >
+            {t('Users')}
+          </NavItem>
+          <NavItem
+            isActive={isRouteActive(RouteObj.EdaRoles, location)}
+            onClick={() => onClick(RouteObj.EdaRoles)}
+          >
+            {t('Roles')}
+          </NavItem>
+        </NavExpandable>
+      ) : null}
     </CommonSidebar>
   );
 }
