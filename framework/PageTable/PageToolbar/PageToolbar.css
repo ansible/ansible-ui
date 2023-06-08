@@ -1,8 +1,3 @@
-.pf-c-toolbar__content-section {
-  row-gap: 16px !important;
-  justify-content: end;
-}
-
 .pf-c-toolbar__expandable-content.pf-m-expanded {
   z-index: 400;
 }

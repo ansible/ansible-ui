@@ -8,8 +8,8 @@ export interface IJobOutputChildrenSummary {
   is_tree: boolean;
 }
 
-export function useJobOutputChildrenSummary(job: Job, isJobRunning: boolean) {
-  let isFlatMode = isJobRunning || location.search.length > 1 || job.type !== 'job';
+export function useJobOutputChildrenSummary(job: Job, forceFlatMode: boolean) {
+  let isFlatMode = forceFlatMode || location.search.length > 1 || job.type !== 'job';
   const response = useGet<IJobOutputChildrenSummary>(
     `/api/v2/jobs/${job.id}/job_events/children_summary/`
   );

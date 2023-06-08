@@ -6,7 +6,7 @@ import {
   PaginationVariant,
   Skeleton,
   Toolbar,
-  ToolbarContent,
+  ToolbarContent as PFToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -24,6 +24,13 @@ import { PageToolbarView } from './PageToolbarView';
 
 const FlexGrowDiv = styled.div`
   flex-grow: 1;
+`;
+
+const ToolbarContent = styled(PFToolbarContent)`
+  & > .pf-c-toolbar__content-section {
+    row-gap: 16px;
+    justify-content: end;
+  }
 `;
 
 export type PagetableToolbarProps<T extends object> = {
@@ -144,7 +151,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
     >
-      <ToolbarContent style={{ justifyContent: 'end', justifyItems: 'end' }}>
+      <ToolbarContent>
         {/* Selection */}
         {showSelect && (
           <ToolbarGroup>

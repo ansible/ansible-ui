@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobOutputUrl } from '../jobUtils';
 
