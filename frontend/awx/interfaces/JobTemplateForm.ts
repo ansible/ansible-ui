@@ -42,8 +42,6 @@ export interface JobTemplateForm
     | 'summary_fields'
     | 'related'
     | 'project'
-    | 'skip_tags'
-    | 'job_tags'
     | 'organization'
   > {
   id?: number;
@@ -54,7 +52,7 @@ export interface JobTemplateForm
   related: JobTemplateRelatedFields;
   isWebhookEnabled: boolean;
   isProvisioningCallbackEnabled: boolean;
-  skip_tags: { name: string }[];
-  job_tags: { name: string }[];
+  arrayedSkipTags: { value: string; label: string }[];
+  arrayedJobTags: { value: string; label: string }[];
   project: number | null;
 }

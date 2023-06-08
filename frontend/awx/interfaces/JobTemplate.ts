@@ -110,7 +110,7 @@ export interface JobTemplate
     copy: string;
   };
   summary_fields: {
-    organization: {
+    organization?: {
       id: number;
       name: string;
       description: string;

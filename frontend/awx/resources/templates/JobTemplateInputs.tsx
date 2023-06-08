@@ -243,17 +243,13 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         labelHelp={t(
           'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
         )}
-        name="job_tags"
+        name="arrayedJobTags"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_tags_on_launch" />
         }
         placeholderText={t('Select or create job tags')}
         label={t('Job tags')}
-        options={
-          jobtemplate?.job_tags.map((tag) => ({ value: tag.name, label: tag.name })) ?? [
-            { value: '', label: '' },
-          ]
-        }
+        options={jobtemplate?.arrayedJobTags ?? [{ value: '', label: '' }]}
       />
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Skip tags')}
@@ -263,14 +259,10 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
         }
-        name="skip_tags"
+        name="arrayedSkipTags"
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
-        options={
-          jobtemplate?.skip_tags.map((tag) => ({ value: tag.name, label: tag.name })) ?? [
-            { value: '', label: '' },
-          ]
-        }
+        options={jobtemplate?.arrayedSkipTags ?? [{ value: '', label: '' }]}
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<JobTemplateForm>

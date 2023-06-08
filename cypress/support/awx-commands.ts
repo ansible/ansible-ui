@@ -10,14 +10,14 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  InstanceGroup,
-  JobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
+import { JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { ItemsResponse } from '../../frontend/common/crud/Data';
 import './auth';
 import './commands';
 import './rest-commands';
+import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 
 //  AWX related custom command implementation
 
@@ -50,23 +50,42 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
   cy.getInputByLabel(label).clear().type(text, { delay: 0 });
 });
 
-Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, text: string) => {
-  cy.getFormGroupByLabel(label).within(() => {
-    // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-    cy.get('button[aria-label="Options menu"]').should('be.enabled').click();
+Cypress.Commands.add(
+  'selectDropdownOptionByLabel',
+  (label: string | RegExp, text: string, multiselect?: boolean) => {
+    // Used for Typeahead multiselect components
+    if (multiselect) {
+      cy.contains('.pf-c-form__label-text', label)
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .within(() => {
+          cy.get('button[aria-label="Options menu"]').click();
+          cy.get('.pf-c-select__menu').within(() => {
+            cy.contains('button', text).click();
+          });
+        });
+      return;
+    }
+    cy.getFormGroupByLabel(label).within(() => {
+      // Click button once it is enabled. Async loading of select will make it disabled until loaded.
+      cy.get('button[aria-label="Options menu"]').click();
 
-    // If the select menu contains a serach, then search for the text
-    cy.get('.pf-c-select__menu').then((selectMenu) => {
-      if (selectMenu.find('.pf-m-search').length > 0) {
-        cy.get('.pf-m-search').clear().type(text, { delay: 0 });
-      }
-    });
+      // If the select menu contains a search, then search for the text
 
-    cy.get('.pf-c-select__menu').within(() => {
-      cy.contains('button', text).click();
+      cy.get('.pf-c-select__menu').then((selectMenu) => {
+        if (selectMenu.find('.pf-m-search').length > 0) {
+          cy.get('.pf-m-search').clear().type(text, { delay: 0 });
+        }
+      });
+
+      cy.get('.pf-c-select__menu').within(() => {
+        cy.contains('button', text).click();
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
   cy.get('#filter-form-group').within(() => {
@@ -238,13 +257,31 @@ Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
 
-Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
-  cy.getDialog().within(() => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get('input[type=checkbox]').click();
+Cypress.Commands.add(
+  'selectRowItemInFormGroupLookupModal',
+  (label: string | RegExp, rowItem: string) => {
+    cy.getFormGroupByLabel(label)
+      .within(() => {
+        cy.get('button[aria-label="Options menu"]').click();
+      })
+      .then(() => {
+        cy.selectTableRowInDialog(rowItem, true);
+      });
+
+    cy.clickModalButton('Confirm');
+  }
+);
+
+Cypress.Commands.add(
+  'selectTableRowInDialog',
+  (name: string | RegExp, filter?: boolean, inputType = 'checkbox') => {
+    cy.getDialog().within(() => {
+      cy.getTableRowByText(name, filter).within(() => {
+        cy.get(`input[type=${inputType}]`).click();
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -289,6 +326,18 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
 Cypress.Commands.add('createAwxOrganization', () => {
   cy.awxRequestPost<Pick<Organization, 'name'>, Organization>('/api/v2/organizations/', {
     name: 'E2E Organization ' + randomString(4),
+  });
+});
+
+Cypress.Commands.add('createAWXCredential', (kind, organization, credential_type) => {
+  cy.awxRequestPost<
+    Pick<Credential, 'name' | 'kind' | 'credential_type' | 'organization'>,
+    Credential
+  >('/api/v2/credentials/', {
+    name: 'E2E Credential ' + randomString(4),
+    kind: kind,
+    credential_type: credential_type || 1,
+    organization: organization,
   });
 });
 
@@ -370,6 +419,20 @@ Cypress.Commands.add(
     }).then((project) => {
       waitForProjectToFinishSyncing(project.id);
     });
+  }
+);
+
+Cypress.Commands.add(
+  'createAwxExecutionEnvironment',
+  (execution_environment?: Partial<Omit<ExecutionEnvironment, 'id'>>) => {
+    cy.awxRequestPost<Partial<ExecutionEnvironment>, ExecutionEnvironment>(
+      '/api/v2/execution_environments/',
+      {
+        name: 'E2E Execution Environment ' + randomString(4),
+        image: 'executionenvimage',
+        ...execution_environment,
+      }
+    ).then((executionEnvironment) => executionEnvironment);
   }
 );
 
@@ -591,7 +654,7 @@ Cypress.Commands.add('deleteAwxLabel', (label: Label) => {
 });
 
 Cypress.Commands.add('createAwxInstanceGroup', () => {
-  cy.awxRequestPost<InstanceGroup>('/api/v2/instance_groups/', {
+  cy.awxRequestPost<Partial<InstanceGroup>>('/api/v2/instance_groups/', {
     name: 'E2E Instance Group ' + randomString(4),
   }).then((instanceGroup) => instanceGroup);
 });

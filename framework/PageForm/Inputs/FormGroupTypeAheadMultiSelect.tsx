@@ -90,7 +90,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
         id={id ?? name}
-        selections={value.length ? value : undefined}
+        selections={value?.length ? value : undefined}
         onToggle={() => {
           setIsOpen(!isOpen);
         }}
