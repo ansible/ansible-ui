@@ -1,12 +1,42 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Label, Split, SplitItem } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { useRef } from 'react';
+import styled from 'styled-components';
 import { Ansi } from '../../../../common/Ansi';
 import { JobEvent } from '../../../interfaces/JobEvent';
 import './JobOutput.css';
 import { ICollapsed } from './JobOutputEvents';
+
+const LineNumberGutter = styled.div`
+  position: sticky;
+  left: 0px;
+  display: flex;
+  gap: 8px;
+  padding-block: 2px;
+  padding-inline: 8px;
+  border-right: 1px solid var(--pf-global--BorderColor--100);
+  background-color: var(--pf-global--BackgroundColor--200);
+  z-index: 1;
+
+  .pf-theme-dark & {
+    background-color: var(--pf-global--BackgroundColor--100);
+  }
+`;
+const ExpandButton = styled.button`
+  background-color: unset;
+  border: 0;
+  line-height: 1;
+`;
+const LineNumber = styled.div`
+  flex: 1;
+  text-align: right;
+`;
+const StdOutColumn = styled.div`
+  padding-block: 2px;
+  padding-inline: 16px;
+`;
 
 export function JobOutputRow(props: {
   index: number;
@@ -21,38 +51,29 @@ export function JobOutputRow(props: {
   useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
   const isCollapsed = collapsed[row.uuid ?? ''] === true;
   return (
-    <tr ref={ref}>
-      <td className="expand-column">
-        <div className="expand-div">
-          <Split hasGutter>
-            <SplitItem isFilled>
-              {canCollapseEvents && row.canCollapse && (
-                <button
-                  className={'expand-button'}
-                  onClick={() => setCollapsed(row.uuid, row.counter, !isCollapsed)}
-                >
-                  <AngleRightIcon
-                    style={{
-                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                      transition: 'transform',
-                    }}
-                  />
-                </button>
-              )}
-            </SplitItem>
-            <SplitItem>{row.line}</SplitItem>
-          </Split>
-        </div>
-      </td>
-      <td className="stdout-column">
+    <div ref={ref} className="output-grid-row">
+      <LineNumberGutter>
+        {canCollapseEvents && row.canCollapse && (
+          <ExpandButton onClick={() => setCollapsed(row.uuid, row.counter, !isCollapsed)}>
+            <AngleRightIcon
+              style={{
+                transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                transition: 'transform',
+              }}
+            />
+          </ExpandButton>
+        )}
+        <LineNumber>{row.line}</LineNumber>
+      </LineNumberGutter>
+      <StdOutColumn>
         <Ansi input={row.stdout} />
         {row.isHeaderLine && row.canCollapse && (
           <>
             &nbsp; <Label isCompact>{new Date(row.created ?? '').toLocaleTimeString()}</Label>
           </>
         )}
-      </td>
-    </tr>
+      </StdOutColumn>
+    </div>
   );
 }
 

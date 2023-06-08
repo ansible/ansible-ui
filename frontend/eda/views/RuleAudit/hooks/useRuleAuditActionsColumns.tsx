@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 

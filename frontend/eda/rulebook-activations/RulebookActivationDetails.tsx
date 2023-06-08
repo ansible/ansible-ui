@@ -20,7 +20,7 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
-import { StatusCell } from '../../common/StatusCell';
+import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';

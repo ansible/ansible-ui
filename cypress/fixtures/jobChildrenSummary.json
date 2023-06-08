@@ -1,0 +1,11 @@
+{
+  "children_summary": {
+    "1": { "rowNumber": 0, "numChildren": 8 },
+    "2": { "rowNumber": 1, "numChildren": 6 },
+    "3": { "rowNumber": 2, "numChildren": 2 },
+    "6": { "rowNumber": 5, "numChildren": 2 }
+  },
+  "meta_event_nested_uuid": {},
+  "event_processing_finished": true,
+  "is_tree": true
+}

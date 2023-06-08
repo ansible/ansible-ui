@@ -8,7 +8,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {

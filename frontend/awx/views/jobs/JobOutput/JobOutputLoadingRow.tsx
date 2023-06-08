@@ -8,11 +8,11 @@ export function JobOutputLoadingRow(props: {
 }) {
   useEffect(() => props.queryJobOutputEvent(props.counter), [props]);
   return (
-    <tr>
-      <td className="expand-column"></td>
-      <td className="stdout-column">
+    <div className="output-grid-row">
+      <div className="expand-column"></div>
+      <div className="stdout-column">
         <Skeleton>{`Loading ${props.counter}`}</Skeleton>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }

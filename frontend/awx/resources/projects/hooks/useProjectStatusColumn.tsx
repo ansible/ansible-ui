@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { ITableColumn } from '../../../../../framework';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { RouteObj } from '../../../../Routes';
 
 export function useProjectStatusColumn(options?: {

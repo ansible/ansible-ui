@@ -5,7 +5,7 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
 import { AwxError } from '../../awx/common/AwxError';
-import { StatusCell } from '../../common/StatusCell';
+import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { Task } from './Task';
 

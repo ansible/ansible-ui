@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import {
   useCreatedColumn,
   useDescriptionColumn,

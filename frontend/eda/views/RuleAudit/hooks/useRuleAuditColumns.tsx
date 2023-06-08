@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
 
 export function useRuleAuditColumns() {

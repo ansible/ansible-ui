@@ -12,7 +12,7 @@ import {
 import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
 import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 import { Instance } from '../../../interfaces/Instance';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
