@@ -5,8 +5,8 @@ import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaD
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { IAwxResources } from '../../../support/awx-commands';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA rulebook activations- Create', () => {
   let awxResources: IAwxResources;
@@ -53,6 +53,46 @@ describe('EDA rulebook activations- Create', () => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
       cy.get('h1').should('contain', name);
       cy.wait(20000);
+      cy.deleteEdaRulebookActivation(rbaToBeDeleted);
+    });
+  });
+
+  it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
+    //uncomment this test when rulebook activations are stable enough to test
+    const name = 'E2E Rulebook Activation ' + randomString(4);
+    cy.navigateTo(/^Rulebook Activations$/);
+    cy.clickButton(/^Create rulebook activation$/);
+    cy.get('h1').should('contain', 'Create Rulebook Activation');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
+    cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
+    cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
+    cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
+    cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
+    cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
+    cy.clickButton(/^Create rulebook activation$/);
+    cy.wait('@edaRBA').then((edaRBA) => {
+      const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
+      cy.get('h1').should('contain', name);
+      cy.get('.pf-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
+      cy.filterTableByText(rbaToBeDeleted.name);
+      cy.contains('[data-label="Activation status"]', 'Completed', { timeout: 60000 });
+      cy.get('tbody tr').then(() => {
+        cy.get('.pf-c-dropdown__toggle pf-m-plain toggle-kebab')
+          .click()
+          .then(() => {
+            cy.contains('li', 'Restart rulebook activation').click();
+            cy.intercept('POST', `/api/eda/v1/activations/${rbaToBeDeleted.id}/restart/`).as(
+              'restart'
+            );
+            cy.edaRuleBookActivationActionsModal('restart', rbaToBeDeleted.name);
+            cy.get('button').contains('rulebook activations').click();
+            cy.get('button').contains('Close').click();
+            cy.wait('@restart').then((restart) => {
+              expect(restart?.response?.statusCode).to.eq(204);
+            });
+          });
+      });
       cy.deleteEdaRulebookActivation(rbaToBeDeleted);
     });
   });
@@ -126,6 +166,5 @@ describe('EDA rulebook activations- Edit, Delete', () => {
       expect(deleted?.response?.statusCode).to.eql(204);
       cy.hasTitle(/^Rulebook Activations$/);
     });
-    //create a delete-all-RBAs-command
   });
 });
