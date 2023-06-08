@@ -6,12 +6,12 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { IAwxResources } from '../../../support/awx-commands';
+import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 
 describe('EDA rulebook activations- Create', () => {
   let awxResources: IAwxResources;
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
-  let edaRBA: EdaRulebookActivation;
   let edaRuleBook: EdaRulebook;
 
   before(() => {
@@ -36,7 +36,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it.only('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     const name = 'E2E Rulebook Activation ' + randomString(4);
     cy.navigateTo(/^Rulebook Activations$/);
     cy.clickButton(/^Create rulebook activation$/);
