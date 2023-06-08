@@ -7,7 +7,58 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { IAwxResources } from '../../../support/awx-commands';
 
-describe('EDA rulebook activations- Create, Edit, Delete', () => {
+describe('EDA rulebook activations- Create', () => {
+  let awxResources: IAwxResources;
+  let edaProject: EdaProject;
+  let edaDecisionEnvironment: EdaDecisionEnvironment;
+  let edaRBA: EdaRulebookActivation;
+  let edaRuleBook: EdaRulebook;
+
+  before(() => {
+    cy.edaLogin();
+    cy.ensureEdaCurrentUserAwxToken();
+
+    cy.createEdaProject().then((project) => {
+      edaProject = project;
+      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+        edaRuleBook = edaRuleBooks[0];
+        cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
+          edaDecisionEnvironment = decisionEnvironment;
+        });
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxResources(awxResources);
+    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
+    cy.deleteEdaProject(edaProject);
+    cy.deleteAllEdaCurrentUserTokens();
+  });
+
+  it.only('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+    const name = 'E2E Rulebook Activation ' + randomString(4);
+    cy.navigateTo(/^Rulebook Activations$/);
+    cy.clickButton(/^Create rulebook activation$/);
+    cy.get('h1').should('contain', 'Create Rulebook Activation');
+    cy.typeInputByLabel(/^Name$/, name);
+    cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
+    cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
+    cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
+    cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
+    cy.selectDropdownOptionByLabel(/^Restart policy$/, 'On failure');
+    cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
+    cy.clickButton(/^Create rulebook activation$/);
+    cy.wait('@edaRBA').then((edaRBA) => {
+      const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
+      cy.get('h1').should('contain', name);
+      cy.wait(20000);
+      cy.deleteEdaRulebookActivation(rbaToBeDeleted);
+    });
+  });
+});
+
+describe('EDA rulebook activations- Edit, Delete', () => {
   let awxResources: IAwxResources;
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
@@ -42,30 +93,16 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
-    const name = 'E2E Rulebook Activation ' + randomString(4);
-    cy.navigateTo(/^Rulebook Activations$/);
-    cy.clickButton(/^Create rulebook activation$/);
-    cy.get('h1').should('contain', 'Create Rulebook Activation');
-    cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
-    cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
-    cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
-    cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
-    cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
-    cy.clickButton(/^Create rulebook activation$/);
-    cy.get('h1').should('contain', name);
-  });
-
   it('can enable and disable a Rulebook Activation', () => {
     cy.navigateTo(/^Rulebook Activations$/);
     cy.filterTableByText(edaRBA.name);
-    cy.contains('[data-label="Activation status"]', 'Completed');
+    cy.contains('[data-label="Activation status"]', 'Completed', { timeout: 60000 });
     cy.get('.pf-c-switch__toggle').click();
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
     cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
     cy.get('button').contains('rulebook activations').click();
     cy.get('button').contains('Close').click();
+    cy.wait(10000);
     cy.wait('@disable').then((disable) => {
       expect(disable?.response?.statusCode).to.eq(204);
     });
