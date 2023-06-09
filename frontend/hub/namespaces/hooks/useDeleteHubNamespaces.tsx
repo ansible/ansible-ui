@@ -23,6 +23,7 @@ export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) 
       confirmationColumns,
       actionColumns: confirmationColumns,
       onComplete,
+      alertPrompts: [t('Deleting a namespace will delete all collections in the namespace.')],
       actionFn: (namespace: HubNamespace) =>
         requestDelete(`/api/automation-hub/_ui/v1/namespaces/${namespace.name}/`),
     });
