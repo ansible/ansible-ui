@@ -161,7 +161,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          spec: frontend/awx/**/*.cy.tsx
+          spec: frontend/awx/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
@@ -203,7 +203,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          spec: frontend/eda/**/*.cy.tsx
+          spec: frontend/eda/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_CCT_RECORD_KEY }}
@@ -245,7 +245,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          spec: frontend/hub/**/*.cy.tsx
+          spec: frontend/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_CCT_RECORD_KEY }}
@@ -287,7 +287,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          spec: framework/**/*.cy.tsx
+          spec: framework/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
@@ -336,7 +336,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/awx/**/*.cy.tsx
+          config: specPattern=cypress/e2e/awx/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -395,7 +395,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/eda/**/*.cy.tsx
+          config: specPattern=cypress/e2e/eda/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -457,7 +457,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/hub/**/*.cy.tsx
+          config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
