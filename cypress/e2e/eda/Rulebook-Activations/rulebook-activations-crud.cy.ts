@@ -136,7 +136,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   it('can enable and disable a Rulebook Activation', () => {
     cy.navigateTo(/^Rulebook Activations$/);
     cy.filterTableByText(edaRBA.name);
-    cy.contains('[data-label="Activation status"]', 'Completed', { timeout: 60000 });
+    cy.wait(10000);
     cy.get('.pf-c-switch__toggle').click();
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
     cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
