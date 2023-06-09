@@ -161,7 +161,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/awx/**/*.cy.ts
+          config: specPattern=frontend/awx/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -203,7 +203,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/eda/**/*.cy.ts
+          config: specPattern=frontend/eda/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -245,7 +245,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/hub/**/*.cy.ts
+          config: specPattern=frontend/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -294,7 +294,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/awx/**/*.cy.ts
+          config: specPattern=cypress/e2e/awx/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -353,7 +353,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/eda/**/*.cy.ts
+          config: specPattern=cypress/e2e/eda/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -415,7 +415,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/hub/**/*.cy.ts
+          config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
