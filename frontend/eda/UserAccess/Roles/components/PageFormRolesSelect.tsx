@@ -8,12 +8,7 @@ import { EdaRole } from '../../../interfaces/EdaRole';
 export function PageFormRolesSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: {
-  name: TFieldName;
-  labelHelp: string;
-  additionalControls?: ReactNode;
-  isRequired?: boolean;
-}) {
+>(props: { name: TFieldName; additionalControls?: ReactNode; isRequired?: boolean }) {
   const { t } = useTranslation();
   const selectRoles = useSelectRoles();
 
@@ -22,8 +17,6 @@ export function PageFormRolesSelect<
       {...props}
       name={props.name}
       placeholder={t('Select role(s)')}
-      labelHelpTitle={t('Role(s)')}
-      labelHelp={props.labelHelp}
       label={t('Role(s)')}
       selectTitle={t('Select role(s)')}
       selectOpen={selectRoles}

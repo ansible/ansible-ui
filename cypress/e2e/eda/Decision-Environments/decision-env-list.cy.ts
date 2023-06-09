@@ -12,7 +12,7 @@ describe('EDA Decision Environment List', () => {
         .next('p')
         .should(
           'have.text',
-          'Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.'
+          'Decision environments are a container image to run Ansible rulebooks.'
         );
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
