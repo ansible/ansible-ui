@@ -245,7 +245,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/hub/**/*.cy.tsx
+          working-directory: frontend/hub
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -281,13 +281,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           component: true
           install: false
           record: true
           parallel: true
-          config: specPattern=framework/**/*.cy.tsx
+          working-directory: framework
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
