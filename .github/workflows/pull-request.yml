@@ -46,9 +46,13 @@ jobs:
           paths: frontend/eda cypress/e2e/eda framework
       - name: Outputs
         run: |
-          echo "::set-output awx=${{ steps.changed-awx.outputs.changed == 'true' }}"
-          echo "::set-output hub=${{ steps.changed-hub.outputs.changed == 'true' }}"
-          echo "::set-output eda=${{ steps.changed-eda.outputs.changed == 'true' }}"
+          # echo "::set-output awx=${{ steps.changed-awx.outputs.changed == 'true' }}"
+          # echo "::set-output hub=${{ steps.changed-hub.outputs.changed == 'true' }}"
+          # echo "::set-output eda=${{ steps.changed-eda.outputs.changed == 'true' }}"
+          echo "awx=${{ steps.changed-awx.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
+          echo "hub=${{ steps.changed-hub.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
+          echo "eda=${{ steps.changed-eda.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
+
 
   container-image:
     name: Container Image
