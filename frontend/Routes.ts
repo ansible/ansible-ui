@@ -30,8 +30,10 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditSchedule: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/schedules/create`,
-  ActivityStream: `${awxRoutePrefix}/activity-stream/:type`,
-  WorkflowApprovals: `${awxRoutePrefix}/workflow-approvals`,
+  ActivityStream: `${awxRoutePrefix}/activity_stream`,
+  WorkflowApprovals: `${awxRoutePrefix}/workflow_approvals`,
+  WorkflowApprovalPage: `${awxRoutePrefix}/workflow_approvals/:id/*`,
+  WorkflowApprovalDetails: `${awxRoutePrefix}/workflow_approvals/:id/details`,
   HostMetrics: `${awxRoutePrefix}/host-metrics`,
 
   // Resources
@@ -42,8 +44,15 @@ export const RouteObj: { [key: string]: RouteType } = {
   JobTemplateNotifications: `${awxRoutePrefix}/job_template/:id/notifications`,
   JobTemplateSchedules: `${awxRoutePrefix}/job_template/:id/schedules`,
   JobTemplateJobs: `${awxRoutePrefix}/job_template/:id/jobs`,
-  JobTemplateSurveys: `${awxRoutePrefix}/job_template/:id/surveys`,
+  JobTemplateSurvey: `${awxRoutePrefix}/job_template/:id/survey`,
+  WorkflowJobTemplatePage: `${awxRoutePrefix}/workflow_job_template/:id/*`,
   WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/:id/details`,
+  WorkflowJobTemplateAccess: `${awxRoutePrefix}/workflow_job_template/:id/access`,
+  WorkflowJobTemplateNotifications: `${awxRoutePrefix}/workflow_job_template/:id/notifications`,
+  WorkflowJobTemplateSchedules: `${awxRoutePrefix}/workflow_job_template/:id/schedules`,
+  WorkflowJobTemplateJobs: `${awxRoutePrefix}/workflow_job_template/:id/jobs`,
+  WorkflowJobTemplateSurvey: `${awxRoutePrefix}/workflow_job_template/:id/survey`,
+  WorkflowJobTemplateVisualizer: `${awxRoutePrefix}/workflow_job_template/:id/visualizer`,
   CreateWorkflowJobTemplate: `${awxRoutePrefix}/workflow_job_template/create`,
   CreateJobTemplate: `${awxRoutePrefix}/job_template/create`,
   EditJobTemplate: `${awxRoutePrefix}/job_template/:id/edit`,
@@ -52,6 +61,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   Credentials: `${awxRoutePrefix}/credentials`,
   CredentialPage: `${awxRoutePrefix}/credentials/:id/*`,
   CredentialDetails: `${awxRoutePrefix}/credentials/:id/details`,
+  CredentialAccess: `${awxRoutePrefix}/credentials/:id/access`,
   CreateCredential: `${awxRoutePrefix}/credentials/create`,
   EditCredential: `${awxRoutePrefix}/credentials/:id/edit`,
 
@@ -82,7 +92,11 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditConstructedInventory: `${awxRoutePrefix}/constructed_inventory/:id/edit`,
 
   Hosts: `${awxRoutePrefix}/hosts`,
+  HostPage: `${awxRoutePrefix}/hosts/:id/*`,
   HostDetails: `${awxRoutePrefix}/hosts/:id/details`,
+  HostFacts: `${awxRoutePrefix}/hosts/:id/facts`,
+  HostGroups: `${awxRoutePrefix}/hosts/:id/groups`,
+  HostJobs: `${awxRoutePrefix}/hosts/:id/jobs`,
   CreateHost: `${awxRoutePrefix}/hosts/create`,
   EditHost: `${awxRoutePrefix}/hosts/:id/edit`,
 
@@ -117,11 +131,17 @@ export const RouteObj: { [key: string]: RouteType } = {
   AddRolesToUser: `${awxRoutePrefix}/users/:id/roles/add`,
 
   // Administration
-  CredentialTypes: `${awxRoutePrefix}/credential-types`,
-  CredentialTypeDetails: `${awxRoutePrefix}/credential-types/:id/details`,
+  CredentialTypes: `${awxRoutePrefix}/credential_types`,
+  CredentialTypePage: `${awxRoutePrefix}/credential_types/:id/*`,
+  CredentialTypeDetails: `${awxRoutePrefix}/credential_types/:id/details`,
 
-  Notifications: `${awxRoutePrefix}/notifications`,
-  ManagementJobs: `${awxRoutePrefix}/management-jobs`,
+  Notifications: `${awxRoutePrefix}/notification_templates`,
+  NotificationPage: `${awxRoutePrefix}/notification_templates/:id/*`,
+  NotificationDetails: `${awxRoutePrefix}/notification_templates/:id/details`,
+  ManagementJobs: `${awxRoutePrefix}/management_jobs`,
+  ManagementJobPage: `${awxRoutePrefix}/management_jobs/:id/*`,
+  ManagementJobSchedules: `${awxRoutePrefix}/management_jobs/:id/schedules`,
+  ManagementJobNotifications: `${awxRoutePrefix}/management_jobs/:id/notifications`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
   InstanceGroupDetails: `${awxRoutePrefix}/instance-groups/:id/details`,
@@ -129,6 +149,9 @@ export const RouteObj: { [key: string]: RouteType } = {
   EditInstanceGroup: `${awxRoutePrefix}/instance-groups/:id/edit`,
 
   Applications: `${awxRoutePrefix}/applications`,
+  ApplicationPage: `${awxRoutePrefix}/applications/:id/*`,
+  ApplicationDetails: `${awxRoutePrefix}/applications/:id/details`,
+  ApplicationTokens: `${awxRoutePrefix}/applications/:id/tokens`,
 
   Instances: `${awxRoutePrefix}/instances`,
   InstanceDetails: `${awxRoutePrefix}/instances/details/:id`,
@@ -140,7 +163,7 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/execution-environments/:id/edit`,
 
-  TopologyView: `${awxRoutePrefix}/topology-view`,
+  TopologyView: `${awxRoutePrefix}/topology`,
 
   // Settings
   Settings: `${awxRoutePrefix}/settings`,

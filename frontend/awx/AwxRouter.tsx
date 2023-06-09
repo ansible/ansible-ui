@@ -33,17 +33,26 @@ import { CreateInventory, EditInventory } from './resources/inventories/Inventor
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
-import { CreateJobTemplate } from './resources/templates/TemplateForm';
+import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
+import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { Templates } from './resources/templates/Templates';
-import { WorkflowJobTemplateDetail } from './resources/templates/WorkflowJobTemplateDetail';
 import Settings from './settings/Settings';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import HostMetrics from './views/jobs/HostMetrics';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { Schedules } from './views/schedules/Schedules';
+import { HostPage } from './resources/hosts/HostPage/HostPage';
+import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypes } from './administration/credential-types/CredentialTypes';
+import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
+import { Notifications } from './administration/notifications/Notifications';
+import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
+import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
+import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
+import { Applications } from './administration/applications/Applications';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -59,23 +68,26 @@ export function AwxRouter() {
       <Routes>
         <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
-
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
         <Route path={RouteObjWithoutPrefix.CreateSchedule} element={<CreateSchedule />} />
         <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
-
-        {/* <Route path={RouteObjWithoutPrefix.ActivityStream} element={<ActivityStreeam />} /> */}
-        {/* <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<WorkflowApprovals />} /> */}
+        <Route path={RouteObjWithoutPrefix.ActivityStream} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.WorkflowApprovalPage} element={<PageNotImplemented />} />
+        <Route
+          path={RouteObjWithoutPrefix.WorkflowApprovalDetails}
+          element={<PageNotImplemented />}
+        />
         <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
         <Route
-          path={RouteObjWithoutPrefix.WorkflowJobTemplateDetails}
-          element={<WorkflowJobTemplateDetail />}
+          path={RouteObjWithoutPrefix.WorkflowJobTemplatePage}
+          element={<WorkflowJobTemplatePage />}
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
-        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<EditJobTemplate />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
         <Route path={RouteObjWithoutPrefix.CredentialPage} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
@@ -90,6 +102,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.EditInventory} element={<EditInventory />} />
 
         <Route path={RouteObjWithoutPrefix.Hosts} element={<Hosts />} />
+        <Route path={RouteObjWithoutPrefix.HostPage} element={<HostPage />} />
         <Route path={RouteObjWithoutPrefix.Organizations} element={<Organizations />} />
         <Route path={RouteObjWithoutPrefix.OrganizationPage} element={<OrganizationPage />} />
         <Route path={RouteObjWithoutPrefix.CreateOrganization} element={<CreateOrganization />} />
@@ -104,15 +117,20 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.CreateTeam} element={<CreateTeam />} />
         <Route path={RouteObjWithoutPrefix.EditTeam} element={<EditTeam />} />
         <Route path={RouteObjWithoutPrefix.AddRolesToTeam} element={<AddRolesToTeam />} />
-        {/* <Route path={RouteObjWithoutPrefix.CredentialTypes} element={<CredentialTypes />} /> */}
-        {/* <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} /> */}
-        {/* <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} /> */}
+        <Route path={RouteObjWithoutPrefix.CredentialTypes} element={<CredentialTypes />} />
+        <Route path={RouteObjWithoutPrefix.CredentialTypePage} element={<CredentialTypePage />} />
+        <Route path={RouteObjWithoutPrefix.Notifications} element={<Notifications />} />
+        <Route path={RouteObjWithoutPrefix.NotificationPage} element={<NotificationPage />} />
+        <Route path={RouteObjWithoutPrefix.ManagementJobs} element={<ManagementJobs />} />
+        <Route path={RouteObjWithoutPrefix.ManagementJobPage} element={<ManagementJobPage />} />
         <Route path={RouteObjWithoutPrefix.InstanceGroups} element={<InstanceGroups />} />
         <Route path={RouteObjWithoutPrefix.InstanceGroupDetails} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.Instances} element={<Instances />} />
         <Route path={RouteObjWithoutPrefix.InstanceDetails} element={<InstanceDetails />} />
         <Route path={RouteObjWithoutPrefix.EditInstance} element={<EditInstance />} />
-        {/* <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} /> */}
+        <Route path={RouteObjWithoutPrefix.Applications} element={<Applications />} />
+        <Route path={RouteObjWithoutPrefix.ApplicationPage} element={<ApplicationPage />} />
+        <Route path={RouteObjWithoutPrefix.TopologyView} element={<PageNotImplemented />} />
         <Route
           path={RouteObjWithoutPrefix.ExecutionEnvironments}
           element={<ExecutionEnvironments />}

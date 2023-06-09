@@ -63,7 +63,7 @@ export function TemplatePage() {
         <RoutedTab label={t('Jobs')} url={RouteObj.JobTemplateJobs}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Survey')} url={RouteObj.JobTemplateSurveys}>
+        <RoutedTab label={t('Survey')} url={RouteObj.JobTemplateSurvey}>
           <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>

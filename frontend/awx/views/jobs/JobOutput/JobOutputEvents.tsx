@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Banner } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -11,6 +12,7 @@ import {
   IJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
+import type { IToolbarFilter } from '../../../../../framework';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
@@ -18,14 +20,36 @@ export interface ICollapsed {
 
 const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
-export function JobOutputEvents(props: { job: Job }) {
+const ScrollContainer = styled.div`
+  overflow: auto;
+  backgroundcolor: var(--pf-global--BackgroundColor--100);
+  font-size: var(--pf-global--FontSize--sm);
+  border-block: 1px solid var(--pf-global--BorderColor--100);
+`;
+
+interface IJobOutputEventsProps {
+  job: Job;
+  toolbarFilters: IToolbarFilter[];
+  filters: Record<string, string[]>;
+}
+
+export function JobOutputEvents(props: IJobOutputEventsProps) {
   const { t } = useTranslation();
-  const { job } = props;
+  const { job, toolbarFilters, filters } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
+  const isFiltered = Object.keys(filters).length > 0;
 
-  const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(job, isJobRunning);
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(job, 50);
+  const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
+    job,
+    isJobRunning || isFiltered
+  );
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
+    job,
+    toolbarFilters,
+    filters,
+    50
+  );
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -68,6 +92,8 @@ export function JobOutputEvents(props: { job: Job }) {
   );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;
+  const estimatedMaxLines = jobOutputRows.length * 5;
+  const outputLineChars = String(estimatedMaxLines).length;
 
   return (
     <>
@@ -90,58 +116,43 @@ export function JobOutputEvents(props: { job: Job }) {
           </p>
         </Banner>
       ) : null}
-      <div
+      <ScrollContainer
         ref={containerRef}
-        style={{
-          display: 'flex',
-          overflow: 'auto',
-          flexGrow: 1,
-          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
-        }}
+        tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
       >
-        <pre
-          style={{
-            fontSize: 'smaller',
-            flexGrow: 1,
-          }}
-        >
-          <table style={{ width: '100%', height: '100%', minHeight: '100%' }}>
-            <tbody>
-              <tr style={{ height: beforeRowsHeight }} />
-              {visibleItems.map((row, index) => {
-                if (typeof row === 'number') {
-                  const counter = row as unknown as number;
-                  return (
-                    <JobOutputLoadingRow
-                      key={counter}
-                      counter={counter}
-                      queryJobOutputEvent={queryJobOutputEvent}
-                    />
-                  );
-                }
+        <pre>
+          <div
+            className="output-grid"
+            style={{ '--output-line-chars': outputLineChars } as { [key: string]: string | number }}
+          >
+            <div style={{ height: beforeRowsHeight }} />
+            {visibleItems.map((row, index) => {
+              if (typeof row === 'number') {
+                const counter = row as unknown as number;
                 return (
-                  <JobOutputRow
-                    key={`${row.counter}-${row.eventLine}-${index}`}
-                    index={index}
-                    row={row}
-                    collapsed={collapsed}
-                    setCollapsed={setCollapsed}
-                    setHeight={setRowHeight}
-                    canCollapseEvents={canCollapseEvents}
+                  <JobOutputLoadingRow
+                    key={counter}
+                    counter={counter}
+                    queryJobOutputEvent={queryJobOutputEvent}
                   />
                 );
-              })}
-              <tr style={{ height: afterRowsHeight }} />
-              <tr
-                style={{
-                  height: '100%',
-                  borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-                }}
-              />
-            </tbody>
-          </table>
+              }
+              return (
+                <JobOutputRow
+                  key={`${row.counter}-${row.eventLine}-${index}`}
+                  index={index}
+                  row={row}
+                  collapsed={collapsed}
+                  setCollapsed={setCollapsed}
+                  setHeight={setRowHeight}
+                  canCollapseEvents={canCollapseEvents}
+                />
+              );
+            })}
+            <div style={{ height: afterRowsHeight }} />
+          </div>
         </pre>
-      </div>
+      </ScrollContainer>
     </>
   );
 }
