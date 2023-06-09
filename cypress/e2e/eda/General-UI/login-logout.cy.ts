@@ -9,19 +9,11 @@ describe('EDA Login / Logoff', () => {
 
   it('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
     cy.getEdaActiveUser().then((edaUser) => {
-      if (Cypress.env('TEST_STANDALONE') === true) {
-        cy.intercept('GET', '/api/logout/').as('loggedOut');
-        cy.edaLogout();
-        cy.wait('@loggedOut').then((result) => {
-          expect(result?.response?.statusCode).to.eql(200);
-        });
-      } else {
-        cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('loggedOut');
-        cy.edaLogout();
-        cy.wait('@loggedOut').then((result) => {
-          expect(result?.response?.statusCode).to.eql(204);
-        });
-      }
+      cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('loggedOut');
+      cy.edaLogout();
+      cy.wait('@loggedOut').then((result) => {
+        expect(result?.response?.statusCode).to.eql(204);
+      });
       if (edaUser && Cypress.env('TEST_STANDALONE') === true) {
         cy.typeInputByLabel(/^Username$/, edaUser.username);
         cy.typeInputByLabel(/^Password$/, Cypress.env('EDA_PASSWORD') as string);
