@@ -55,7 +55,7 @@ export function InventoryPage() {
         <RoutedTab label={t('Hosts')} url={RouteObj.InventoryHosts}>
           <PageNotImplemented />
         </RoutedTab>
-        {inventory?.kind !== 'constructed' && (
+        {inventory?.kind === '' && (
           <RoutedTab label={t('Sources')} url={RouteObj.InventorySources}>
             <PageNotImplemented />
           </RoutedTab>

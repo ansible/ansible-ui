@@ -9,6 +9,7 @@ import { RouteObj } from '../../../../Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
 import { CredentialDetails } from './CredentialDetails';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function CredentialPage() {
   const { t } = useTranslation();
@@ -42,6 +43,9 @@ export function CredentialPage() {
         />
         <RoutedTab label={t('Details')} url={RouteObj.CredentialDetails}>
           <CredentialDetails credential={credential!} />
+        </RoutedTab>
+        <RoutedTab label={t('Access')} url={RouteObj.CredentialAccess}>
+          <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>
