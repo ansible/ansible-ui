@@ -142,8 +142,8 @@ jobs:
     steps:
       - id: check
         run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
-      - if: steps.id.outputs.skip == 'true'
-        run: 'echo "No build required"'
+      - if: steps.check.outputs.skip == 'true'
+        run: echo "No build required"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
@@ -232,7 +232,7 @@ jobs:
       matrix:
         containers: [1]
     steps:
-      - run: 'echo "No build required"'
+      - run: echo "No build required"
 
   hub-cct:
     name: HUB CCT
@@ -286,7 +286,7 @@ jobs:
       matrix:
         containers: [1]
     steps:
-      - run: 'echo "No build required"'
+      - run: echo "No build required"
 
   afw-cct:
     name: AFW CCT
@@ -340,7 +340,7 @@ jobs:
       matrix:
         containers: [1]
     steps:
-      - run: 'echo "No build required"'
+      - run: echo "No build required"
 
   awx-e2e:
     name: AWX E2E
@@ -356,8 +356,8 @@ jobs:
     steps:
       - id: check
         run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
-      - if: steps.id.outputs.skip == 'true'
-        run: 'echo "No build required"'
+      - if: steps.check.outputs.skip == 'true'
+        run: echo "No build required"
       - uses: actions/download-artifact@v3
         with:
           name: ansible-ui.tar
@@ -477,7 +477,7 @@ jobs:
       matrix:
         containers: [1]
     steps:
-      - run: 'echo "No build required"'
+      - run: echo "No build required"
 
   hub-e2e:
     name: HUB E2E
@@ -551,4 +551,4 @@ jobs:
       matrix:
         containers: [1]
     steps:
-      - run: 'echo "No build required"'
+      - run: echo "No build required"
