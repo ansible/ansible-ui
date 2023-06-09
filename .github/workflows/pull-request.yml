@@ -53,7 +53,6 @@ jobs:
           echo "hub=${{ steps.changed-hub.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
           echo "eda=${{ steps.changed-eda.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
 
-
   container-image:
     name: Container Image
     runs-on: ubuntu-latest
