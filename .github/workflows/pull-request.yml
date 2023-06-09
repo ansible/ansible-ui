@@ -12,6 +12,10 @@ jobs:
     name: Packages
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
+      hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
+      eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -35,23 +39,15 @@ jobs:
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-awx
         with:
-          paths: frontend/awx cypress/e2e/awx framework
+          paths: frontend/awx cypress/e2e/awx framework cypress/support
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-hub
         with:
-          paths: frontend/hub cypress/e2e/hub framework
+          paths: frontend/hub cypress/e2e/hub framework cypress/support
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-eda
         with:
-          paths: frontend/eda cypress/e2e/eda framework
-      - name: Outputs
-        run: |
-          # echo "::set-output awx=${{ steps.changed-awx.outputs.changed == 'true' }}"
-          # echo "::set-output hub=${{ steps.changed-hub.outputs.changed == 'true' }}"
-          # echo "::set-output eda=${{ steps.changed-eda.outputs.changed == 'true' }}"
-          echo "awx=${{ steps.changed-awx.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
-          echo "hub=${{ steps.changed-hub.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
-          echo "eda=${{ steps.changed-eda.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
+          paths: frontend/eda cypress/e2e/eda framework cypress/support
 
   container-image:
     name: Container Image
@@ -134,7 +130,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
-    if: needs.packages.outputs.awx == 'true'
+    if: ${{ needs.packages.outputs.awx == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -218,7 +214,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
-    if: needs.packages.outputs.hub == 'true'
+    if: ${{ needs.packages.outputs.hub == 'true' }}
     strategy:
       fail-fast: false
       matrix:
