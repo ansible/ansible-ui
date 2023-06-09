@@ -18,7 +18,7 @@ import {
 } from '../../../../../framework';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { CredentialLabel } from '../../../common/CredentialLabel';
