@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -30,14 +32,34 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-awx
+        with:
+          paths: frontend/awx cypress/e2e/awx framework
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-hub
+        with:
+          paths: frontend/hub cypress/e2e/hub framework
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-eda
+        with:
+          paths: frontend/eda cypress/e2e/eda framework
+      - name: Outputs
+        run: |
+          echo "::set-output awx=${{ steps.changed-awx.outputs.changed == 'true' }}"
+          echo "::set-output hub=${{ steps.changed-hub.outputs.changed == 'true' }}"
+          echo "::set-output eda=${{ steps.changed-eda.outputs.changed == 'true' }}"
 
   container-image:
     name: Container Image
     runs-on: ubuntu-latest
     needs: packages
+    if: ${{ needs.packages.outputs.awx == 'true' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
@@ -85,6 +107,8 @@ jobs:
     needs: packages
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -114,6 +138,8 @@ jobs:
         containers: [1, 2]
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -158,6 +184,8 @@ jobs:
           name: ansible-ui.tar
       - run: docker load --input ansible-ui.tar
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -204,6 +232,8 @@ jobs:
         containers: [1]
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Login to Quay
         uses: docker/login-action@v2
         with:
