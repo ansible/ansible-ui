@@ -141,7 +141,7 @@ jobs:
         containers: [1]
     steps:
       - id: check
-        run: echo "skip=${{ needs.packages.outputs.awx == 'true' }}" >> "$GITHUB_OUTPUT"
+        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - if: steps.id.outputs.skip == 'true'
         run: 'echo "No build required"'
       - uses: actions/checkout@v3
@@ -355,7 +355,7 @@ jobs:
         containers: [1, 2]
     steps:
       - id: check
-        run: echo "skip=${{ needs.packages.outputs.awx == 'true' }}" >> "$GITHUB_OUTPUT"
+        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - if: steps.id.outputs.skip == 'true'
         run: 'echo "No build required"'
       - uses: actions/download-artifact@v3
