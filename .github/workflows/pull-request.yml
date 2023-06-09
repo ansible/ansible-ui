@@ -135,20 +135,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
-    if: ${{ needs.packages.outputs.awx == 'true' }}
     strategy:
       fail-fast: false
       matrix:
         containers: [1]
     steps:
+      - id: check
+        run: echo "skip=${{ needs.packages.outputs.awx == 'true' }}" >> "$GITHUB_OUTPUT"
+      - if: steps.id.outputs.skip == 'true'
+        run: 'echo "No build required"'
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
+        if: steps.id.outputs.skip != 'true'
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+        if: steps.id.outputs.skip != 'true'
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
+        if: steps.id.outputs.skip != 'true'
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -157,8 +163,9 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+        if: steps.id.outputs.skip != 'true'
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' && steps.id.outputs.skip != 'true'
         run: npm ci
       - uses: cypress-io/github-action@v5
         with:
@@ -171,18 +178,7 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  awx-cct-skip:
-    name: AWX CCT
-    runs-on: ubuntu-latest
-    needs:
-      - packages
-    if: ${{ needs.packages.outputs.awx != 'true' }}
-    strategy:
-      matrix:
-        containers: [1]
-    steps:
-      - run: 'echo "No build required"'
+        if: steps.id.outputs.skip != 'true'
 
   eda-cct:
     name: EDA CCT
@@ -353,7 +349,6 @@ jobs:
     needs:
       - packages
       - container-image
-    if: ${{ needs.packages.outputs.awx == 'true' }}
     strategy:
       fail-fast: false
       matrix:
