@@ -178,6 +178,17 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
           disableLinks={props.disableLinks}
         />
       );
+    case 'unresponsive':
+      return (
+        <TextCell
+          text={t`Unresponsive`}
+          color={'yellow'}
+          iconColor={'warning'}
+          icon={<ExclamationTriangleIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     default:
       return (
         <TextCell
