@@ -131,10 +131,10 @@ jobs:
 
   awx-component:
     name: AWX Component
-    if: needs.packages.outputs.awx == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
+    if: needs.packages.outputs.awx == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -173,10 +173,10 @@ jobs:
 
   eda-component:
     name: EDA Component
-    if: ${{ needs.packages.outputs.eda == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
+    if: ${{ needs.packages.outputs.eda == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -215,10 +215,10 @@ jobs:
 
   hub-component:
     name: HUB Component
-    if: needs.packages.outputs.hub == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
+    if: needs.packages.outputs.hub == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -257,12 +257,12 @@ jobs:
 
   awx-e2e:
     name: AWX E2E
-    if: ${{ needs.packages.outputs.awx == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
       - packages
       - container-image
+    if: ${{ needs.packages.outputs.awx == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -310,12 +310,12 @@ jobs:
 
   eda-e2e:
     name: EDA E2E
-    if: ${{ needs.packages.outputs.eda == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
       - packages
       - container-image
+    if: ${{ needs.packages.outputs.eda == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -372,12 +372,12 @@ jobs:
 
   hub-e2e:
     name: HUB E2E
-    if: ${{ needs.packages.outputs.hub == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
       - packages
       - container-image
+    if: ${{ needs.packages.outputs.hub == 'true' }}
     strategy:
       fail-fast: false
       matrix:
