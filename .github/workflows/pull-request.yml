@@ -16,6 +16,7 @@ jobs:
       awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
       hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
       eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
+      afw: ${{ steps.changed-afw.outputs.changed == 'true' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -48,6 +49,10 @@ jobs:
         id: changed-eda
         with:
           paths: frontend/eda cypress/e2e/eda framework cypress/support
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-afw
+        with:
+          paths: framework
 
   container-image:
     name: Container Image
@@ -167,6 +172,18 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  awx-cct-skip:
+    name: AWX CCT
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.awx != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
+
   eda-cct:
     name: EDA CCT
     runs-on: ubuntu-latest
@@ -208,6 +225,18 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  eda-cct-skip:
+    name: EDA CCT
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.eda != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
 
   hub-cct:
     name: HUB CCT
@@ -251,12 +280,24 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  hub-cct-skip:
+    name: HUB CCT
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.hub != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
+
   afw-cct:
     name: AFW CCT
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
-    if: ${{ needs.packages.outputs.hub == 'true' }}
+    if: ${{ needs.packages.outputs.afw == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -292,6 +333,18 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  afw-cct-skip:
+    name: AFW CCT
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.afw != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
 
   awx-e2e:
     name: AWX E2E
@@ -345,6 +398,18 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+  awx-e2e-skip:
+    name: AWX E2E
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.awx != 'true' }}
+    strategy:
+      matrix:
+        containers: [2]
+    steps:
+      - run: 'echo "No build required"'
 
   eda-e2e:
     name: EDA E2E
@@ -408,6 +473,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
+  eda-e2e-skip:
+    name: EDA E2E
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.eda != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
+
   hub-e2e:
     name: HUB E2E
     runs-on: ubuntu-latest
@@ -469,3 +546,15 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+  hub-e2e-skip:
+    name: HUB E2E
+    runs-on: ubuntu-latest
+    needs:
+      - packages
+    if: ${{ needs.packages.outputs.hub != 'true' }}
+    strategy:
+      matrix:
+        containers: [1]
+    steps:
+      - run: 'echo "No build required"'
