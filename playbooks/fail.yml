@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+    - name: Fail
+      ansible.builtin.fail:
+        msg: 'I was always going to fail :('

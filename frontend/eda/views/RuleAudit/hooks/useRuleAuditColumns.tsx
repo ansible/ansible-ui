@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { RouteObj } from '../../../../Routes';
+import { StatusCell } from '../../../../common/Status';
 import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
 
 export function useRuleAuditColumns() {
@@ -34,20 +34,20 @@ export function useRuleAuditColumns() {
       {
         header: t('Rulebook activation'),
         cell: (ruleAudit) =>
-          ruleAudit?.activation_id ? (
+          ruleAudit?.activation_instance?.id ? (
             <TextCell
-              text={ruleAudit?.activation_name}
+              text={ruleAudit?.activation_instance?.name || ''}
               onClick={() =>
                 navigate(
                   RouteObj.EdaRulebookActivationDetails.replace(
                     ':id',
-                    ruleAudit?.activation_id || ''
+                    ruleAudit?.activation_instance?.id?.toString() || ''
                   )
                 )
               }
             />
           ) : (
-            <TextCell text={ruleAudit?.activation_name || ''} />
+            <TextCell text={ruleAudit?.activation_instance?.name || ''} />
           ),
         modal: ColumnModalOption.Hidden,
       },

@@ -9,7 +9,6 @@ import {
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   CopyCell,
   DateTimeCell,
@@ -19,24 +18,21 @@ import {
 } from '../../../../../framework';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { RouteObj } from '../../../../Routes';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Project } from '../../../interfaces/Project';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();
   const { project } = props;
   const history = useNavigate();
-  {
-    /* TODO config provider */
-  }
-  const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
-    fetch(url).then((r) => r.json())
-  );
+  const config = useAwxConfig();
   const view = useGet<Project>(`/api/v2/projects/${project.id}/`);
   const { refresh } = view;
   const handleWebSocketMessage = useCallback(
@@ -104,41 +100,44 @@ export function ProjectDetails(props: { project: Project }) {
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={
-          'https://docs.ansible.com/automation-controller/latest/html/userguide/projects.html#manage-playbooks-using-source-control'
-        }
+        href={`${getDocsBaseUrl(
+          config
+        )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
       >
         {t`Documentation.`}
       </a>
     </span>
   );
   const basePathHelpBlock = (
-    <Trans i18nKey="basePathHelpBlock">
+    <>
       <p>
-        Base path used for locating playbooks. Directories found inside this path will be listed in
-        the playbook directory drop-down. Together the base path and selected playbook directory
-        provide the full path used to locate playbooks.
+        {t(
+          'Base path used for locating playbooks. Directories found inside this path will be listed in the playbook directory drop-down. Together the base path and selected playbook directory provide the full path used to locate playbooks.'
+        )}
       </p>
       <br></br>
       <p>
-        Change PROJECTS_ROOT when deploying {product} {brand} to change this location.
+        <Trans>
+          Change PROJECTS_ROOT when deploying {{ product }} {{ brand }} to change this location.
+        </Trans>
       </p>
-    </Trans>
+    </>
   );
   const scmUrlHelpBlock = (
-    <Trans i18nKey="scmUrlHelpBlock">
-      <p>Example URLs for GIT Source Control include:</p>
-      <code>
-        https://github.com/ansible/ansible.git git@github.com:ansible/ansible.git
-        git://servername.example.com/ansible.git
-      </code>
+    <>
+      <p>{t('Example URLs for GIT Source Control include:')}</p>
+      <Trans>
+        <code>
+          https://github.com/ansible/ansible.git git@github.com:ansible/ansible.git
+          git://servername.example.com/ansible.git
+        </code>
+      </Trans>
       <p>
-        Note: When using SSH protocol for GitHub or Bitbucket, enter an SSH key only, do not enter a
-        username (other than git). Additionally, GitHub and Bitbucket do not support password
-        authentication when using SSH. GIT read only protocol (git://) does not use username or
-        password information.
+        {t(
+          'Note: When using SSH protocol for GitHub or Bitbucket, enter an SSH key only, do not enter a username (other than git). Additionally, GitHub and Bitbucket do not support password authentication when using SSH. GIT read only protocol (git://) does not use username or password information.'
+        )}
       </p>
-    </Trans>
+    </>
   );
   const renderOptions = (options: Project) => (
     <TextList component={TextListVariants.ul}>
@@ -199,10 +198,6 @@ export function ProjectDetails(props: { project: Project }) {
       )}
     </TextList>
   );
-
-  interface IConfigData {
-    project_base_dir: string | null;
-  }
 
   return (
     <PageDetails>
@@ -321,13 +316,13 @@ export function ProjectDetails(props: { project: Project }) {
           }
         />
       </PageDetail>
-      {project.scm_clean ||
+      {(project.scm_clean ||
         project.scm_delete_on_update ||
         project.scm_track_submodules ||
         project.scm_update_on_launch ||
-        (project.allow_override && (
-          <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
-        ))}
+        project.allow_override) && (
+        <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
+      )}
     </PageDetails>
   );
 }

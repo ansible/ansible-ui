@@ -11,10 +11,9 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
-  PageTab,
-  PageTabs,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../Routes';
 import { useGetItem } from '../../../../common/crud/useGetItem';
 import { AwxError } from '../../../common/AwxError';
@@ -97,22 +96,30 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();
   return (
-    <PageTabs>
-      <PageTab label={t('Details')}>
+    <RoutedTabs baseUrl={RouteObj.OrganizationPage}>
+      <PageBackTab
+        label={t('Back to Organizations')}
+        url={RouteObj.Organizations}
+        persistentFilterKey="organizations"
+      />
+      <RoutedTab label={t('Details')} url={RouteObj.OrganizationDetails}>
         <OrganizationDetails organization={organization} />
-      </PageTab>
-      <PageTab label={t('Access')}>
+      </RoutedTab>
+      <RoutedTab label={t('Access')} url={RouteObj.OrganizationAccess}>
         <OrganizationAccess organization={organization} />
-      </PageTab>
-      <PageTab label={t('Teams')}>
+      </RoutedTab>
+      <RoutedTab label={t('Teams')} url={RouteObj.OrganizationTeams}>
         <OrganizationTeams organization={organization} />
-      </PageTab>
-      <PageTab label={t('Execution environments')}>
+      </RoutedTab>
+      <RoutedTab
+        label={t('Execution environments')}
+        url={RouteObj.OrganizationExecutionEnvironments}
+      >
         <PageNotImplemented />
-      </PageTab>
-      <PageTab label={t('Notifications')}>
+      </RoutedTab>
+      <RoutedTab label={t('Notifications')} url={RouteObj.OrganizationNotifications}>
         <PageNotImplemented />
-      </PageTab>
-    </PageTabs>
+      </RoutedTab>
+    </RoutedTabs>
   );
 }

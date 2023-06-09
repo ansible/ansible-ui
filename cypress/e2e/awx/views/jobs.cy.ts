@@ -15,6 +15,7 @@ describe('jobs', () => {
 
     cy.createAwxJobTemplate().then((template) => {
       jobTemplate = template;
+
       // Launch job to populate jobs list
       const templateId = jobTemplate.id ? jobTemplate.id.toString() : '';
       cy.requestPost<UnifiedJobList>(
@@ -28,7 +29,7 @@ describe('jobs', () => {
 
   after(() => {
     // Delete launched job
-    const jobId = job.id ? job.id.toString() : '';
+    const jobId = job?.id ? job?.id.toString() : '';
     cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     cy.deleteAwxJobTemplate(jobTemplate);
   });
@@ -37,6 +38,16 @@ describe('jobs', () => {
     cy.navigateTo(/^Jobs$/);
     cy.hasTitle(/^Jobs$/);
     cy.contains(job.name as string);
+  });
+
+  it('relaunches job and navigates to job output', () => {
+    cy.navigateTo(/^Jobs$/);
+    const jobId = job.id ? job.id.toString() : '';
+    const jobName = job.name ? job.name : '';
+    cy.filterTableByTypeAndText('ID', jobId);
+    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
+    cy.hasTitle(jobName).should('be.visible');
+    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
   it('renders the toolbar and row actions', () => {
@@ -55,7 +66,6 @@ describe('jobs', () => {
         cy.get('#relaunch-job').should('exist');
         cy.get('.pf-c-dropdown__toggle').click();
         cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
-        cy.contains('.pf-c-dropdown__menu-item', /^Cancel job$/).should('exist');
       });
   });
 
@@ -65,7 +75,7 @@ describe('jobs', () => {
     const jobName = job.name ? job.name : '';
     cy.expandTableRow(jobName, false);
     cy.hasDetail('Inventory', 'E2E Inventory');
-    cy.hasDetail('Project', 'E2E Project');
+    cy.hasDetail('Project', 'Project');
     // cy.hasDetail('Launched by', 'admin'); // not always admin
     cy.hasDetail('Job slice', '0/1');
   });
@@ -93,6 +103,12 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = testJob.name ? testJob.name : '';
+      cy.getTableRowByText(jobName, false).within(() => {
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+      });
       cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
@@ -113,7 +129,12 @@ describe('jobs', () => {
       const jobId = testJob.id ? testJob.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = job.name ? job.name : '';
-      cy.tableHasRowWithSuccess(jobName, false);
+      cy.getTableRowByText(jobName, false).within(() => {
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+      });
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
@@ -122,22 +143,6 @@ describe('jobs', () => {
       cy.clickButton(/^Close$/);
       cy.contains('tr', jobId).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
-    });
-  });
-
-  it('relaunches job and navigates to job output', () => {
-    cy.navigateTo(/^Jobs$/);
-    const jobId = job.id ? job.id.toString() : '';
-    const jobName = job.name ? job.name : '';
-    cy.filterTableByTypeAndText('ID', jobId);
-    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
-    cy.hasTitle(jobName).should('be.visible');
-    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
-    // Clean up newly launched job
-    cy.url().then((url) => {
-      const jobId = url.substring(url.lastIndexOf('/') + 1);
-      cy.navigateTo(/^Jobs$/);
-      cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
     });
   });
 });

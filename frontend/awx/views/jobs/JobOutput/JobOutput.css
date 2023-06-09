@@ -1,37 +1,19 @@
-.expand-column {
-  position: sticky;
-  left: 0;
-  background-color: var(--pf-global--BackgroundColor--200);
-  width: 1px;
-}
-
-:root:where(.pf-theme-dark) .expand-column {
+.output-grid {
+  --output-line-chars: 3;
+  --output-line-column-width: calc(50px + var(--output-line-chars) * 1ch);
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  overflow-x: auto;
   background-color: var(--pf-global--BackgroundColor--100);
+
+  .pf-theme-dark & {
+    background-color: var(--pf-global--BackgroundColor--200);
+  }
 }
 
-.stdout-column {
-  background-color: var(--pf-global--BackgroundColor--100);
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-:root:where(.pf-theme-dark) .stdout-column {
-  background-color: var(--pf-global--BackgroundColor--200);
-}
-
-.expand-div {
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  border-right: thin solid var(--pf-global--BorderColor--100);
-}
-
-.expand-button {
-  background-color: unset;
-  border: 0;
-  margin-top: -1px;
-  margin-bottom: -1px;
+.output-grid-row {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
+  grid-template-columns: subgrid;
 }

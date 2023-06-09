@@ -1,4 +1,4 @@
-import { TFunction, Trans, useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
@@ -11,10 +11,10 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
-import { EdaCredential } from '../../interfaces/EdaCredential';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
@@ -38,18 +38,18 @@ export function CredentialOptions(t: TFunction<'translation'>) {
 function CredentialInputs() {
   const { t } = useTranslation();
   const credentialTypeHelpBlock = (
-    <Trans i18nKey="credentialTypeHelpBlock">
-      <p>The credential type defines what the credential will be used for.</p>
+    <>
+      <p>{t('The credential type defines what the credential will be used for.')}</p>
       <br />
-      <p>There are three types:</p>
-      <p>GitHub Personal Access Token</p>
-      <p>GitLab Personal Access Token</p>
-      <p>Container Registry</p>
-    </Trans>
+      <p>{t('There are three types:')}</p>
+      <p>{t('GitHub Personal Access Token')}</p>
+      <p>{t('GitLab Personal Access Token')}</p>
+      <p>{t('Container Registry')}</p>
+    </>
   );
   return (
     <>
-      <PageFormTextInput<EdaCredential>
+      <PageFormTextInput<EdaCredentialCreate>
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
@@ -57,13 +57,13 @@ function CredentialInputs() {
         maxLength={150}
         autoComplete="new-name"
       />
-      <PageFormTextInput<EdaCredential>
+      <PageFormTextInput<EdaCredentialCreate>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description ')}
         maxLength={150}
       />
-      <PageFormSelectOption<EdaCredential>
+      <PageFormSelectOption<EdaCredentialCreate>
         name="credential_type"
         label={t('Credential type')}
         isRequired
@@ -72,13 +72,13 @@ function CredentialInputs() {
         labelHelp={credentialTypeHelpBlock}
         labelHelpTitle={t('Credential type')}
       />
-      <PageFormTextInput<EdaCredential>
+      <PageFormTextInput<EdaCredentialCreate>
         name="username"
         label={t('User name')}
         isRequired
         placeholder={t('Enter username')}
       />
-      <PageFormTextInput<EdaCredential>
+      <PageFormTextInput<EdaCredentialCreate>
         name="secret"
         label={t('Token')}
         type="password"
@@ -96,9 +96,9 @@ export function CreateCredential() {
   const navigate = useNavigate();
 
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<Partial<EdaCredential>, EdaCredential>();
+  const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
 
-  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
+  const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
@@ -130,12 +130,14 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<EdaCredential>(`${API_PREFIX}/credentials/${id.toString()}/`);
+  const { data: credential } = useGet<EdaCredentialCreate>(
+    `${API_PREFIX}/credentials/${id.toString()}/`
+  );
 
   const { cache } = useSWRConfig();
-  const patchRequest = usePatchRequest<Partial<EdaCredential>, EdaCredential>();
+  const patchRequest = usePatchRequest<EdaCredentialCreate, EdaCredential>();
 
-  const onSubmit: PageFormSubmitHandler<EdaCredential> = async (credential) => {
+  const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     await patchRequest(`${API_PREFIX}/credentials/${id}/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);

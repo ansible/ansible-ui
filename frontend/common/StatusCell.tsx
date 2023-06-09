@@ -134,6 +134,28 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
           disableLinks={props.disableLinks}
         />
       );
+    case 'stopping':
+      return (
+        <TextCell
+          text={t`Stopping`}
+          color={'grey'}
+          iconColor={'disabled'}
+          icon={<HourglassStartIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
+    case 'stopped':
+      return (
+        <TextCell
+          text={t`Stopped`}
+          color={'grey'}
+          iconColor={'disabled'}
+          icon={<BanIcon />}
+          to={props.to}
+          disableLinks={props.disableLinks}
+        />
+      );
     case 'canceled':
       return (
         <TextCell

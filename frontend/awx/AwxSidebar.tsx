@@ -1,29 +1,20 @@
 import { NavExpandable, NavItem } from '@patternfly/react-core';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useBreakpoint } from '../../framework';
-import { RouteObj, RouteType } from '../Routes';
+import { useLocation } from 'react-router-dom';
+import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
+import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { useActiveUser } from '../common/useActiveUser';
 
-export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boolean) => void }) {
-  const { isNavOpen, setNavOpen } = props;
+export function AwxSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
-  const isXl = useBreakpoint('xl');
-  const onClick = useCallback(
-    (route: RouteType) => {
-      navigate(route);
-      if (!isXl) setNavOpen(false);
-    },
-    [navigate, isXl, setNavOpen]
-  );
+  const onClick = usePageNavBarClick();
   const activeUser = useActiveUser();
+
   return (
-    <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
+    <CommonSidebar>
       <NavExpandable
         key="views"
         title={t('Views')}
@@ -42,15 +33,24 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         >
           {t('Jobs')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteObj.Schedules, location)}>
-          <Link to={RouteObj.Schedules}>Schedules</Link>
+        <NavItem
+          isActive={isRouteActive(RouteObj.Schedules, location)}
+          onClick={() => onClick(RouteObj.Schedules)}
+        >
+          {t('Schedules')}
         </NavItem>
-        <NavItem isActive={isRouteActive(RouteObj.ActivityStream, location)}>
-          <Link to={RouteObj.ActivityStream}>Activity stream</Link>
+        <NavItem
+          isActive={isRouteActive(RouteObj.ActivityStream, location)}
+          onClick={() => onClick(RouteObj.ActivityStream)}
+        >
+          {t('Activity Stream')}
         </NavItem>
-        <NavItem isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}>
-          <Link to={RouteObj.WorkflowApprovals}>Workflow approvals</Link>
-        </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.WorkflowApprovals, location)}
+          onClick={() => onClick(RouteObj.WorkflowApprovals)}
+        >
+          {t('Workflow Approvals')}
+        </NavItem>
       </NavExpandable>
       <NavExpandable
         key="resources"
@@ -141,15 +141,24 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
           location
         )}
       >
-        {/* <NavItem isActive={isRouteActive(RouteObj.CredentialTypes, location)}>
-                                <Link to={RouteObj.CredentialTypes}>Credential types</Link>
-                            </NavItem> */}
-        {/* <NavItem isActive={isRouteActive(RouteObj.Notifications, location)}>
-                                <Link to={RouteObj.Notifications}>Notifications</Link>
-                            </NavItem> */}
-        {/* <NavItem isActive={isRouteActive(RouteObj.ManagementJobs, location)}>
-                                <Link to={RouteObj.ManagementJobs}>Management jobs</Link>
-                            </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.CredentialTypes, location)}
+          onClick={() => onClick(RouteObj.CredentialTypes)}
+        >
+          {t('Credential Types')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.Notifications, location)}
+          onClick={() => onClick(RouteObj.Notifications)}
+        >
+          {t('Notifications')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.ManagementJobs, location)}
+          onClick={() => onClick(RouteObj.ManagementJobs)}
+        >
+          {t('Management Jobs')}
+        </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.InstanceGroups, location)}
           onClick={() => onClick(RouteObj.InstanceGroups)}
@@ -162,21 +171,24 @@ export function AwxSidebar(props: { isNavOpen: boolean; setNavOpen: (open: boole
         >
           {t('Instances')}
         </NavItem>
-        {/* <NavItem isActive={isRouteActive(RouteObj.Applications, location)}>
-                                <Link to={RouteObj.Applications}>Applications</Link>
-                            </NavItem> */}
+        <NavItem
+          isActive={isRouteActive(RouteObj.Applications, location)}
+          onClick={() => onClick(RouteObj.Applications)}
+        >
+          {t('Applications')}
+        </NavItem>
         <NavItem
           isActive={isRouteActive(RouteObj.ExecutionEnvironments, location)}
           onClick={() => onClick(RouteObj.ExecutionEnvironments)}
         >
           {t('Execution Environments')}
         </NavItem>
-        {/* <NavItem
+        <NavItem
           isActive={isRouteActive(RouteObj.TopologyView, location)}
           onClick={() => onClick(RouteObj.TopologyView)}
         >
-          {t('Topology view')}
-        </NavItem> */}
+          {t('Topology View')}
+        </NavItem>
       </NavExpandable>
       {/* <NavGroup>
                             <NavItem isActive={isRouteActive(RouteObj.Settings, location)}>

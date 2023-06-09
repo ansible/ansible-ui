@@ -8,7 +8,7 @@ import {
   TextCell,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {
@@ -56,7 +56,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Fire count'),
         type: 'count',
-        value: (activation) => activation?.fired_count ?? 0,
+        value: (activation) => activation?.rules_fired_count ?? 0,
         modal: ColumnModalOption.Hidden,
       },
       {

@@ -14,14 +14,13 @@ describe('projects', () => {
     cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
-    });
-    cy.createAwxProject().then((proj) => {
-      project = proj;
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
+      });
     });
   });
 
   after(() => {
-    cy.deleteAwxProject(project);
     cy.deleteAwxOrganization(organization).then(() => {
       /**
        * Deleting the organization does not delete the underlying projects.
@@ -44,55 +43,74 @@ describe('projects', () => {
     cy.navigateTo(/^Projects$/);
     cy.hasTitle(/^Projects$/);
   });
-  // it('create project', () => {
-  //   const projectName = 'E2E Project ' + randomString(4);
-  //   cy.navigateTo(/^Projects$/, true);
-  //   cy.clickButton(/^Create project$/);
-  //   cy.typeInputByLabel(/^Name$/, projectName);
-  //   cy.typeInputByLabel(/^Organization$/, 'Default');
-  //   cy.clickButton(/^Create project$/);
-  //   cy.hasTitle(projectName);
-  // });
-  // it('can edit a project from the project details tab', () => {
-  //     cy.navigateTo(/^Projects$/);
-  //     cy.clickTableRow(project.name);
-  //     cy.hasTitle(project.name);
-  //     cy.clickButton(/^Edit project$/);
-  //     cy.hasTitle(/^Edit project$/);
-  //     cy.typeInputByLabel(/^Name$/, 'a');
-  //     cy.clickButton(/^Save project$/);
-  //     cy.hasTitle(`${project.name}a`);
-  // });
+  it('create project', () => {
+    const projectName = 'E2E Project ' + randomString(4);
+    cy.navigateTo(/^Projects$/);
+    cy.clickLink(/^Create project$/);
+    cy.typeInputByLabel(/^Name$/, projectName);
+    cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
+    cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
+    cy.typeInputByLabel(/^Source Control URL$/, 'https://github.com/ansible/ansible-tower-samples');
+    cy.getCheckboxByLabel('Allow Branch Override').click();
+    cy.clickButton(/^Create project$/);
+    cy.hasTitle(projectName);
+    cy.hasDetail(/^Organization$/, organization.name);
+    cy.hasDetail(/^Source control type$/, 'Git');
+    cy.hasDetail(/^Enabled options$/, 'Allow branch override');
+    cy.clickPageAction(/^Delete project/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.hasTitle(/^Projects$/);
+  });
+  it('can edit a project from the project details tab', () => {
+    cy.navigateTo(/^Projects$/);
+    cy.clickTableRow(project.name);
+    cy.hasTitle(project.name);
+    cy.clickPageAction(/^Edit project$/);
+    cy.hasTitle(/^Edit Project$/);
+    cy.typeInputByLabel(/^Name$/, `${project.name} - edited`);
+    cy.typeInputByLabel(/^Source Control Branch\/Tag\/Commit$/, 'foobar');
+    cy.clickButton(/^Save project$/);
+    cy.hasTitle(`${project.name} - edited`);
+    cy.hasDetail(/^Source control branch$/, 'foobar');
+  });
+  it('can edit a project from the project list row action', () => {
+    cy.navigateTo(/^Projects$/);
+    cy.clickTableRowKebabAction(project.name, /^Edit project$/);
+    cy.hasTitle(/^Edit Project$/);
+    cy.clickButton(/^Cancel$/);
+    cy.hasTitle(/^Projects$/);
+  });
   it('can navigate to project details tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
   it('can navigate to project access tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Access$/);
+    cy.clickTab(/^Access$/, true);
   });
   it('can navigate to project job templates tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Job templates$/);
+    cy.clickTab(/^Job templates$/, true);
   });
   it('can navigate to project notifications tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Notifications$/);
+    cy.clickTab(/^Notifications$/, true);
   });
   it('can navigate to project schedules tab', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickTab(/^Schedules$/);
+    cy.clickTab(/^Schedules$/, true);
   });
   it('can copy project from project details page', () => {
     cy.requestPost<Project>('/api/v2/projects/', {

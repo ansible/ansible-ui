@@ -1,7 +1,7 @@
 import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -20,12 +20,15 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../Routes';
-import { StatusCell } from '../../common/StatusCell';
+import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { PageDetailsSection } from '../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { Status7EbEnum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
+import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
 import {
   useDisableRulebookActivations,
@@ -33,8 +36,6 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
-import { PageDetailsSection } from '../common/PageDetailSection';
-import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -42,14 +43,14 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const restartPolicyHelpBlock = (
-    <Trans i18nKey="restartPolicyHelpBlock">
-      <p>A policy to decide when to restart a rulebook.</p>
+    <>
+      <p>{t('A policy to decide when to restart a rulebook.')}</p>
       <br />
-      <p>Policies:</p>
-      <p>Always: restarts when a rulebook finishes.</p>
-      <p>Never: never restarts a rulebook when it finishes.</p>
-      <p>On failure: only restarts when it fails.</p>
-    </Trans>
+      <p>{t('Policies:')}</p>
+      <p>{t('Always: restarts when a rulebook finishes.')}</p>
+      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
+      <p>{t('On failure: only restarts when it fails.')}</p>
+    </>
   );
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
@@ -86,6 +87,8 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       {
         type: PageActionType.Switch,
         selection: PageActionSelection.Single,
+        ariaLabel: (isEnabled) =>
+          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
         isPinned: true,
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
@@ -94,6 +97,10 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           else void disableRulebookActivation([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+        isDisabled: (activation: EdaRulebookActivation) =>
+          activation.status === Status7EbEnum.Stopping
+            ? t('Cannot change activation status while stopping')
+            : undefined,
       },
       {
         type: PageActionType.Button,
@@ -186,11 +193,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Project git hash')}>
               {rulebookActivation?.project?.git_hash || ''}
             </PageDetail>
-            <PageDetail label={t('Last restarted')}>
+            {/* <PageDetail label={t('Last restarted')}>
               {rulebookActivation?.last_restarted
                 ? formatDateString(rulebookActivation.last_restarted)
                 : ''}
-            </PageDetail>
+            </PageDetail> */}
             <PageDetail label={t('Restarted count')}>
               {rulebookActivation?.restart_count || 0}
             </PageDetail>

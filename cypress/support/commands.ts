@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
-import { SetOptional } from 'type-fest';
+import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../frontend/awx/interfaces/Label';
@@ -10,24 +10,28 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  Group,
-  Host,
-  InstanceGroup,
-  JobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRole } from '../../frontend/eda/interfaces/EdaRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
+import {
+  EdaRulebookActivation,
+  EdaRulebookActivationCreate,
+} from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
+import { IAwxResources } from './awx-commands';
 import './eda-commands';
 import './rest-commands';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 
 declare global {
   namespace Cypress {
@@ -67,13 +71,16 @@ declare global {
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByLabel(
         dropdownLabel: string | RegExp,
-        dropdownOptionLabel: string
+        dropdownOptionLabel: string,
+        multiselect?: boolean
       ): Chainable<void>;
 
       // --- TABLE COMMANDS ---
 
       /** Change the current filter type in the table toolbar. */
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
+
+      setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;
@@ -87,11 +94,36 @@ declare global {
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /** Select the create resource option from a toolbar create dropdown button.  ie. AWX template list toolbar **/
+      clickToolbarDropdownCreateButton(
+        createButtonLabel: string | RegExp,
+        createButtonOption: string
+      ): Chainable<void>;
+
+      /**
+       * Get the list card containing the specified text.
+       * @param name
+       * @param filter
+       */
+      getListCardByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       /** Finds a table row containing text and clicks the link inside that row. */
       clickTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
+        name: string | RegExp,
+        label: string | RegExp,
+        filter?: boolean
+      ): Chainable<void>;
+
+      /**
+       * Finds a list card containing text and clicks action specified by label.
+       * @param name
+       * @param label
+       * @param filter
+       */
+      clickListCardKebabAction(
         name: string | RegExp,
         label: string | RegExp,
         filter?: boolean
@@ -125,6 +157,12 @@ declare global {
       /** Get the active modal dialog. */
       getDialog(): Chainable<void>;
 
+      /** Opens a lookup dialaog and selects the desired row item **/
+      selectRowItemInFormGroupLookupModal: (
+        label: string | RegExp,
+        rowItem: string
+      ) => Chainable<void>;
+
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
 
@@ -135,11 +173,15 @@ declare global {
       assertModalSuccess(): Chainable<void>;
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
-      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+      selectTableRowInDialog(
+        name: string | RegExp,
+        filter?: boolean,
+        inputType?: string
+      ): Chainable<void>;
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
-      clickTab(label: string | RegExp): Chainable<void>;
+      clickTab(label: string | RegExp, isLink?: boolean): Chainable<void>;
 
       /**Asserts that a specific detail term (dt) is displayed and contains text fromthe provided detail description (dd)*/
       hasDetail(detailTerm: string | RegExp, detailDescription: string | RegExp): Chainable<void>;
@@ -169,6 +211,42 @@ declare global {
       requestDelete(url: string, ignoreError?: boolean): Chainable;
 
       // --- AWX COMMANDS ---
+
+      /**
+       * This command is written to allow asynchronous resource creation in an AWX build using
+       * a user token as the authentication method.
+       * @param method
+       * @param url
+       * @param body
+       */
+      awxRequest<ResponseT = unknown>(
+        method: string,
+        url: string,
+        body?: Cypress.RequestBody
+      ): Chainable<Cypress.Response<ResponseT>>;
+
+      /**
+       * This command only works for creating a resource in AWX.
+       * @param url
+       * @param body
+       */
+      awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
+        url: string,
+        body: RequestBodyT
+      ): Chainable<ResponseBodyT>;
+
+      /**
+       * This command only works for retrieving a resource in AWX.
+       * @param url
+       */
+      awxRequestGet<ResponseBodyT = unknown>(url: string): Chainable<ResponseBodyT>;
+
+      /**
+       * This command only works for deleting a resource in AWX.
+       * @param url
+       */
+      awxRequestDelete(url: string): Chainable<void>;
+
       createAwxOrganization(): Chainable<Organization>;
 
       /**
@@ -176,9 +254,59 @@ declare global {
        *  with the name `E2E Project` and appends a random string at the end of the name
        * @returns {Chainable<Project>}
        */
-      createAwxProject(): Chainable<Project>;
-      createAwxInventory(): Chainable<Inventory>;
+      createAwxProject(
+        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
+      ): Chainable<Project>;
+
+      /** Create an execution environment in AWX */
+      createAwxExecutionEnvironment(): Chainable<ExecutionEnvironment>;
+
+      /** Creates a credential in AWX */
+      createAWXCredential(
+        kind: string,
+        organization: number,
+        credential_type?: number
+      ): Chainable<Credential>;
+      /**
+       * Creates a project in AWX that is specific to being utilized in an EDA test.
+       */
+      createEdaSpecificAwxProject(options?: {
+        project?: Partial<Omit<Project, 'id'>>;
+      }): Chainable<Project>;
+
+      createAwxInventory(options?: {
+        inventory?: Partial<Omit<Inventory, 'id'>>;
+      }): Chainable<Inventory>;
+
+      /**
+       * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
+       * @param options
+       */
+      createAwxOrganizationProjectInventoryJobTemplate(options?: {
+        project?: Partial<Omit<Project, 'id'>>;
+        jobTemplate?: Partial<JobTemplate>;
+      }): Chainable<{
+        project: Project;
+        inventory: Inventory;
+        jobTemplate: JobTemplate;
+        organization: Organization;
+      }>;
+      createAWXSchedule(): Chainable<Schedule>;
+
       createAwxJobTemplate(): Chainable<JobTemplate>;
+      /**
+       * This command creates a job template with specific variables that will work in conjunction with
+       * an EDA project and rulebook activation.
+       * @param project
+       * @param inventory
+       * @param jobTemplate
+       */
+      createEdaAwxJobTemplate(
+        project: Project,
+        inventory: Inventory,
+        jobTemplate?: Partial<JobTemplate>
+      ): Chainable<JobTemplate>;
+      getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
       createAwxInstanceGroup(): Chainable<InstanceGroup>;
@@ -187,12 +315,29 @@ declare global {
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
       deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
+      deleteAWXSchedule(schedule: Schedule): Chainable<void>;
       deleteAwxTeam(team: Team): Chainable<void>;
       deleteAwxUser(user: User): Chainable<void>;
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
       deleteAwxLabel(label: Label): Chainable<void>;
+
+      /**
+       * This creates a user token in AWX that can be exported as a string and used in EDA.
+       * @param awxToken
+       */
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
+
+      /**
+       * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
+       */
+      getGlobalAwxToken(): Chainable<AwxToken>;
       deleteAwxToken(awxToken: AwxToken): Chainable<void>;
+
+      /**
+       * Command for deleting resources created for testing
+       * @param resources
+       */
+      deleteAwxResources(resources?: IAwxResources): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization
@@ -213,10 +358,7 @@ declare global {
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
-      /**
-       * checks if Ansible logo has loaded successfully
-       */
-      checkLogoSuccess(): Chainable<void>;
+      clickEdaPageAction(label: string | RegExp): Chainable<void>;
 
       /**
        * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
@@ -241,6 +383,7 @@ declare global {
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
 
+      edaRuleBookActivationCheckbox(rbaName: string): Chainable<void>;
       /**
        * `createEdaProject()` creates an EDA Project via API,
        *  with the name `E2E Project` and appends a random string at the end of the name
@@ -250,7 +393,7 @@ declare global {
       createEdaProject(): Chainable<EdaProject>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
-      getEdaRulebooks(edaProject: EdaProject): Chainable<EdaRulebook[]>;
+      getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;
 
       /**Identify a particular project and make it available for use in testing. */
       getEdaRulebookActivation(
@@ -258,6 +401,18 @@ declare global {
       ): Chainable<EdaRulebookActivation | undefined>;
 
       waitEdaProjectSync(edaProject: EdaProject): Chainable<EdaProject>;
+
+      getEdaProjects(page: number, pageSize: number): Chainable<EdaResult<EdaProject>>;
+      getEdaDecisionEnvironments(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaDecisionEnvironment>>;
+      getEdaRulebookActivations(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaRulebookActivation>>;
+      getEdaCredentials(page: number, pageSize: number): Chainable<EdaResult<EdaCredential>>;
+      getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
@@ -272,7 +427,7 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(
-        edaRulebookActivation: SetOptional<Omit<EdaRulebookActivation, 'id'>, 'name'>
+        edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>
       ): Chainable<EdaRulebookActivation>;
 
       /**
@@ -313,6 +468,28 @@ declare global {
       createEdaCredential(): Chainable<EdaCredential>;
 
       /**
+       * Some of the Eda roles (Admin, Contributor etc) have resources
+       * with more than 5 set of actions. this command helps in asserting
+       * the actions by chaining of the command.
+       * @param {string} resourceType
+       * @returns {Chainable<JQuery<HTMLElement>>}
+       */
+      checkActionsofResource(resourceType: string): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * this command asserts the resource array of a particular role has the action
+       * @param {string[]} resourceTypes
+       * @param {string} action
+       */
+      checkResourceNameAndAction(resourceTypes: string[], actions: string[]): Chainable<void>;
+
+      /**
+       * getEdaRolePermissions returns the permissions of a given role id of a role
+       * @param roleID get
+       */
+      getEdaRolePermissions(roleID: string): Chainable<EdaRole[]>;
+
+      /**
        * Deletes an EDA credential which is provided.
        *
        * @returns {Chainable<EdaCredential>}
@@ -343,19 +520,19 @@ declare global {
        */
       getEdaActiveUser(): Chainable<EdaUser>;
 
-      /**
-       * @param name retrieves EDA user when a name is passed
-       */
-      getEdaUserByName(name: string): Chainable<EdaUser | undefined>;
+      getEdaCurrentUserAwxTokens(): Chainable<EdaResult<EdaControllerToken>>;
+
+      ensureEdaCurrentUserAwxToken(): Chainable<void>;
+
+      addEdaCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
+
+      deleteEdaCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
+
+      deleteAllEdaCurrentUserTokens(): Chainable<void>;
 
       /**
        * Creates a DE and returns the same.
        */
-
-      addCurrentUserAwxToken(awxToken: string): Chainable<EdaControllerToken>;
-
-      deleteCurrentUserAwxToken(awxToken: EdaControllerToken): Chainable<void>;
-
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
 
       /**

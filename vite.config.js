@@ -13,6 +13,7 @@ export default defineConfig({
       external: [
         'react',
         'react-dom',
+        'react-router-dom',
         '@patternfly/react-core',
         '@patternfly/react-icons',
         '@patternfly/patternfly',
@@ -24,6 +25,7 @@ export default defineConfig({
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react-router-dom': 'ReactRouterDom',
           '@patternfly/react-core': 'PatternflyReactCore',
           '@patternfly/react-icons': 'PatternflyReactIcons',
           '@patternfly/react-table': 'PatternflyReactTable',

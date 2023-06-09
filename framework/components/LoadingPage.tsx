@@ -1,6 +1,7 @@
-import { Bullseye, Divider, PageSection, Skeleton, Spinner } from '@patternfly/react-core';
+import { Divider, PageSection, Skeleton } from '@patternfly/react-core';
 import { Fragment } from 'react';
 import { PageHeader } from '../PageHeader';
+import { LoadingState } from './LoadingState';
 
 export function LoadingPage(props: { breadcrumbs?: boolean; tabs?: boolean }) {
   return (
@@ -19,11 +20,7 @@ export function LoadingPage(props: { breadcrumbs?: boolean; tabs?: boolean }) {
         </PageSection>
       )}
       <Divider />
-      <PageSection variant="light">
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      </PageSection>
+      <LoadingState />
     </Fragment>
   );
 }

@@ -37,15 +37,21 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
+import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { useSettingsDialog } from '../../framework/Settings';
 import { RouteObj, RouteType } from '../Routes';
+import AwxIcon from '../assets/AWX.svg';
+import EdaIcon from '../assets/EDA.svg';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
+import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
+import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../awx/common/useAwxConfig';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -74,11 +80,7 @@ function isEdaServer(
   return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
 }
 
-export function AnsibleMasthead(props: {
-  isNavOpen: boolean;
-  setNavOpen: (open: boolean) => void;
-  hideLogin?: boolean;
-}) {
+export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   const { hideLogin } = props;
   const isSmallOrLarger = useBreakpoint('sm');
   const { t } = useTranslation();
@@ -88,11 +90,13 @@ export function AnsibleMasthead(props: {
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const { automationServer } = useAutomationServers();
+  const config = useAwxConfig();
+  const navBar = usePageNavSideBar();
 
   return (
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
-        <MastheadToggle onClick={() => props.setNavOpen(!props.isNavOpen)}>
+        <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
           <PageToggleButton variant="plain" aria-label="Global navigation">
             <BarsIcon />
           </PageToggleButton>
@@ -102,12 +106,19 @@ export function AnsibleMasthead(props: {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              <img
-                src="/static/media/brand-logo.svg"
-                alt={t('brand logo')}
-                height="45"
-                style={{ height: '45px' }}
-              />
+              {shouldShowAutmationServers().showAutomationServers ? (
+                <>
+                  {automationServer?.type === AutomationServerType.EDA && <EdaIcon />}
+                  {automationServer?.type === AutomationServerType.AWX && <AwxIcon />}
+                </>
+              ) : (
+                <img
+                  src="/static/media/brand-logo.svg"
+                  alt={t('brand logo')}
+                  height="45"
+                  style={{ height: '45px' }}
+                />
+              )}
               <IconDiv>
                 {brand && (
                   <TruncateContentSpan>
@@ -195,7 +206,9 @@ export function AnsibleMasthead(props: {
                       <DropdownItem
                         onClick={() => {
                           open(
-                            'https://docs.ansible.com/automation-controller/4.2.0/html/userguide/index.html',
+                            isEdaServer(automationServer)
+                              ? 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index'
+                              : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
                             '_blank'
                           );
                         }}

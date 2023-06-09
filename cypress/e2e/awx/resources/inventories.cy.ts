@@ -3,7 +3,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 
 describe('inventories', () => {
   let organization: Organization;
@@ -32,7 +32,6 @@ describe('inventories', () => {
 
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxLabel(label);
     cy.deleteAwxOrganization(organization);
     cy.deleteAwxInventory(inventory);
   });

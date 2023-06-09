@@ -1,30 +1,17 @@
 import { NavExpandable, NavItem } from '@patternfly/react-core';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useBreakpoint } from '../../framework';
-import { RouteObj, RouteType } from '../Routes';
+import { useLocation } from 'react-router-dom';
+import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
+import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 
-export function EventDrivenSidebar(props: {
-  isNavOpen: boolean;
-  setNavOpen: (open: boolean) => void;
-}) {
-  const { isNavOpen, setNavOpen } = props;
+export function EventDrivenSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
-  const isXl = useBreakpoint('xl');
-  const onClick = useCallback(
-    (route: RouteType) => {
-      navigate(route);
-      if (!isXl) setNavOpen(false);
-    },
-    [navigate, isXl, setNavOpen]
-  );
+  const onClick = usePageNavBarClick();
   return (
-    <CommonSidebar isNavOpen={isNavOpen} setNavOpen={setNavOpen}>
+    <CommonSidebar>
       <NavItem
         isActive={isRouteActive(RouteObj.EdaDashboard, location)}
         onClick={() => onClick(RouteObj.EdaDashboard)}

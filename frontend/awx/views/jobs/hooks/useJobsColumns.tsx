@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
-import { StatusCell } from '../../../../common/StatusCell';
+import { StatusCell } from '../../../../common/Status';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobOutputUrl } from '../jobUtils';
 
@@ -53,13 +53,13 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           return <TextCell text={jobTypes[job.type]} />;
         },
         sort: 'type',
-        card: 'description',
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('Duration'),
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
-        list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
       {

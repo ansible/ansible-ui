@@ -1,9 +1,8 @@
-import { Button, FormSection } from '@patternfly/react-core';
-import { SyncAltIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useState } from 'react';
+import { FormSection } from '@patternfly/react-core';
+
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { PageFormDataEditor, PageFormSelectOption } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
@@ -13,54 +12,46 @@ import { requestGet } from '../../../common/crud/Data';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
-import { JobTemplate } from '../../interfaces/JobTemplate';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { WebhookSubForm } from './components/WebhookSubForm';
 
-function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate }) {
+function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
+  const { setValue } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
-  const project = useWatch({ name: 'project' }) as number;
-  const projectName = useWatch({ name: 'summary_fields.project.name' }) as string;
+  const project = useWatch<JobTemplateForm>({ name: 'project' });
   const projectPath = useWatch({
     name: 'summay_fields.project',
   }) as Project;
-  const isProvisioningCallbackEnabled = useWatch({ name: 'enableHostConfig' }) as boolean;
-  const isWebhookEnabled = useWatch({ name: 'isWebhookEnabled' }) as boolean;
-  const hasWebhookService = useWatch({ name: 'webhook_service ' }) as boolean;
-  const isInventoryPrompted = useWatch({ name: 'ask_inventory_on_launch' }) as boolean;
-  const askJobTypeOnLaunch = useWatch({ name: 'ask_job_type_on_launch' }) as boolean;
-  const { setValue } = useFormContext();
+  const isProvisioningCallbackEnabled = useWatch<JobTemplateForm>({
+    name: 'isProvisioningCallbackEnabled',
+  });
+  const isWebhookEnabled = useWatch<JobTemplateForm>({ name: 'isWebhookEnabled' });
+  const isInventoryPrompted = useWatch<JobTemplateForm>({
+    name: 'ask_inventory_on_launch',
+  });
+  const askJobTypeOnLaunch = useWatch<JobTemplateForm>({
+    name: 'ask_job_type_on_launch',
+  });
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
       if (project) {
-        const playbooks = await requestGet<string[]>(`/api/v2/projects/${project}/playbooks/`);
+        const playbooks = await requestGet<string[]>(
+          `/api/v2/projects/${project.toString()}/playbooks/`
+        );
         return setPlaybookOptions(playbooks);
       }
     }
     handleFetchPlaybooks().catch(() => 'there was an error');
-  }, [project, projectName, setValue]);
+  }, [project, setValue]);
 
-  const handleFetchWebhookKey = useCallback(async () => {
-    if (isWebhookEnabled && params.id) {
-      const webhookKey = await requestGet<string>(
-        '/api/v2/job_template/job_template_id/webhook_key'
-      );
-      setValue('wehbook_key', webhookKey);
-      return;
-    }
-  }, [isWebhookEnabled, setValue, params]);
-
-  useEffect(() => {
-    handleFetchWebhookKey().catch(() => t('There was an error fetching webhook key'));
-  }, [isWebhookEnabled, handleFetchWebhookKey, t]);
   return (
     <>
       <PageFormTextInput<JobTemplateForm>
@@ -146,6 +137,13 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_credential_on_launch" />
         }
+        label={t('Credentials')}
+        placeholder={t('Add credentials')}
+        labelHelpTitle={t('Credentials')}
+        labelHelp={t(
+          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+        )}
+        isMultiple
       />
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
@@ -245,17 +243,13 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         labelHelp={t(
           'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
         )}
-        name="job_tags"
+        name="arrayedJobTags"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_tags_on_launch" />
         }
         placeholderText={t('Select or create job tags')}
         label={t('Job tags')}
-        options={
-          jobtemplate?.job_tags.split(',').map((tag) => ({ value: tag, label: tag })) ?? [
-            { label: '', value: '' },
-          ]
-        }
+        options={jobtemplate?.arrayedJobTags ?? [{ value: '', label: '' }]}
       />
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Skip tags')}
@@ -265,19 +259,28 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
         }
-        name="skip_tags"
+        name="arrayedSkipTags"
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
-        options={
-          jobtemplate?.skip_tags.split(',').map((tag) => ({ value: tag, label: tag })) ?? [
-            { label: '', value: '' },
-          ]
-        }
+        options={jobtemplate?.arrayedSkipTags ?? [{ value: '', label: '' }]}
       />
+      <PageFormSection singleColumn>
+        <PageFormDataEditor<JobTemplateForm>
+          additionalControls={
+            <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
+          }
+          labelHelpTitle={t('Extra Variables')}
+          labelHelp={t(`Optional extra variables to be applied to job template`)}
+          toggleLanguages={['yaml', 'json']}
+          label={t('Extra Variables')}
+          name="extra_vars"
+          isExpandable
+        />
+      </PageFormSection>
       <PageFormCheckbox<JobTemplateForm> label={t('Privilege escalation')} name="become_enabled" />
-      <PageFormCheckbox<{ enableHostConfig: boolean }>
+      <PageFormCheckbox<JobTemplateForm>
         label={t('Provisioning callback')}
-        name="enableHostConfig"
+        name="isProvisioningCallbackEnabled"
       />
       <PageFormCheckbox<{ isWebhookEnabled: boolean }>
         label={t('Enable webhook')}
@@ -307,55 +310,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm | JobTemplate 
           />
         </FormSection>
       ) : null}
-      {isWebhookEnabled ? (
-        <FormSection title={t('Webhook details')}>
-          <PageFormSelectOption<JobTemplateForm>
-            name="webhook_service"
-            label={t('Webhook service')}
-            options={[
-              { label: 'GitHub', value: 'github' },
-              { label: 'GitLab', value: 'gitlab' },
-            ]}
-            isRequired={isWebhookEnabled}
-            placeholderText={t('Select a webhook service')}
-          />
-          <PageFormTextInput<JobTemplateForm>
-            name="related.webhook_receiver"
-            isDisabled={!jobtemplate?.id || !hasWebhookService}
-            label={t('Webhook URL')}
-          />
-          <PageFormTextInput<JobTemplateForm>
-            name="related.webhook_key"
-            label={t('Webhook key')}
-            button={
-              <Button
-                ouiaId="update-webhook-key-button"
-                isDisabled={!jobtemplate?.id || !hasWebhookService}
-                variant="tertiary"
-                aria-label={t`Update webhook key`}
-                onClick={() => {
-                  void handleFetchWebhookKey();
-                }}
-              >
-                <SyncAltIcon />
-              </Button>
-            }
-          />
-        </FormSection>
-      ) : null}
-      <PageFormSection singleColumn>
-        <PageFormDataEditor<JobTemplateForm>
-          additionalControls={
-            <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
-          }
-          labelHelpTitle={t('Extra Variables')}
-          labelHelp={t(`Optional extra variables to be applied to job template`)}
-          toggleLanguages={['yaml', 'json']}
-          label={t('Extra Variables')}
-          name="extra_vars"
-          isExpandable
-        />
-      </PageFormSection>
+      {isWebhookEnabled ? <WebhookSubForm /> : null}
     </>
   );
 }

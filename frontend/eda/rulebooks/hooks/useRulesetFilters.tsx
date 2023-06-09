@@ -11,7 +11,7 @@ export function useRulesetFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        placeholder: t('starts with'),
+        comparison: 'startsWith',
       },
     ],
     [t]

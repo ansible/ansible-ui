@@ -290,8 +290,14 @@ export function useColumnsToTableCardFn<T extends object>(
 
   return useMemo<(item: T) => IPageTableCard>(() => {
     return (item: T) => {
-      const hasDescription =
-        descriptionColumn && (!descriptionColumn.value || descriptionColumn.value(item));
+      let hasDescription = !!descriptionColumn;
+      if (descriptionColumn?.value && !descriptionColumn.value(item)) {
+        hasDescription = false;
+      }
+
+      const visibleCardColumns = cardColumns.filter(
+        (column) => !column.value || column.value(item)
+      );
 
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
@@ -303,7 +309,7 @@ export function useColumnsToTableCardFn<T extends object>(
         cardBody: (
           <CardBody>
             <DescriptionList isCompact>
-              {hasDescription && (
+              {hasDescription && descriptionColumn && (
                 <PageDetail key={descriptionColumn.id}>
                   {descriptionColumn.type === 'description' ? (
                     <div>{descriptionColumn.value(item)}</div>
@@ -312,13 +318,11 @@ export function useColumnsToTableCardFn<T extends object>(
                   )}
                 </PageDetail>
               )}
-              {cardColumns
-                .filter((column) => !column.value || column.value(item))
-                .map((column) => (
-                  <PageDetail key={column.id} label={column.header}>
-                    <TableColumnCell column={column} item={item} />
-                  </PageDetail>
-                ))}
+              {visibleCardColumns.map((column) => (
+                <PageDetail key={column.id} label={column.header}>
+                  <TableColumnCell column={column} item={item} />
+                </PageDetail>
+              ))}
               {countColumns.length > 0 && (
                 <PageDetail>
                   <PageDetailDiv>
@@ -336,7 +340,7 @@ export function useColumnsToTableCardFn<T extends object>(
         ),
         labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
       };
-      if (!hasDescription && cardColumns.length === 0 && countColumns.length === 0) {
+      if (!hasDescription && visibleCardColumns.length === 0 && countColumns.length === 0) {
         pageTableCard.cardBody = undefined;
       }
       return pageTableCard;
