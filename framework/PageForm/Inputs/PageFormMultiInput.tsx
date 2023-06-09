@@ -39,6 +39,7 @@ export type PageFormMultiInputProps<
   pattern?: ValidationRule<RegExp>;
   validate?: Validate<T[], TFieldValues>;
   selectTitle?: string;
+  isDisabled?: boolean;
   selectOpen?: (callback: (selection: T[]) => void, title: string) => void;
 } & Omit<PageFormGroupProps, 'onChange' | 'value'> &
   ChipGroupProps;
@@ -53,7 +54,7 @@ export function PageFormMultiInput<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
-  const { label, name, isRequired, minLength, maxLength, pattern } = props;
+  const { label, name, isRequired, minLength, maxLength, pattern, isDisabled } = props;
   const {
     control,
     setValue,
@@ -79,7 +80,7 @@ export function PageFormMultiInput<
           >
             <InputGroup>
               {value?.length ? (
-                <ChipHolder isDisabled={isSubmitting} className="pf-c-form-control">
+                <ChipHolder isDisabled={isSubmitting || isDisabled} className="pf-c-form-control">
                   <ChipGroup
                     numChips={5}
                     expandedText={translations.showLess}
@@ -109,7 +110,7 @@ export function PageFormMultiInput<
                     }, props.selectTitle as string)
                   }
                   aria-label="Options menu"
-                  isDisabled={isSubmitting}
+                  isDisabled={isSubmitting || isDisabled}
                 >
                   <SearchIcon />
                 </Button>

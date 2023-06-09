@@ -23,6 +23,7 @@ export function PageFormCredentialSelect<
   selectTitle?: string;
   isMultiple?: boolean;
   credentialType?: number;
+  isDisabled?: boolean;
 }) {
   const { t } = useTranslation();
   const multiSelectelectCredential = useMultiSelectCredential(true, props.credentialType);

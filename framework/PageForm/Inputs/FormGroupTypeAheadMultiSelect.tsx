@@ -63,9 +63,10 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
     if (!value) {
       return;
     }
+    const trimmedValues = value.filter((v) => v.name && v.name.trim() !== '');
     return (
       <ChipGroup>
-        {value.map((v) => (
+        {trimmedValues.map((v) => (
           <Chip
             key={v.name}
             onClick={() => {
@@ -89,15 +90,13 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
         id={id ?? name}
-        selections={value}
+        selections={value?.length ? value : undefined}
         onToggle={() => {
           setIsOpen(!isOpen);
         }}
         onSelect={(_, v) => {
-          if (typeof v === 'string') {
-            return onHandleSelection({ name: v });
-          }
-          onHandleSelection(v);
+          setIsOpen(!isOpen);
+          onHandleSelection(typeof v === 'string' ? { name: v } : v);
         }}
         isDisabled={isReadOnly || isSubmitting}
       >

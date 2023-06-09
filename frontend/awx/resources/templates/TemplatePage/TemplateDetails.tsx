@@ -16,6 +16,7 @@ import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -126,19 +127,11 @@ export function TemplateDetails(props: { template: JobTemplate }) {
       <PageDetail label={t('Webhook service')} isEmpty={!template.webhook_service}>
         {template.webhook_service === 'github' ? t('GitHub') : t('GitLab')}
       </PageDetail>
-      <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
-        <Link
-          to={RouteObj.CredentialDetails.replace(
-            ':id',
-            summaryFields.webhook_credential?.id?.toString() as string
-          )}
-        >
-          {summaryFields.webhook_credential?.name}
-        </Link>
-      </PageDetail>
-      <PageDetail label={t('Prevent instance group fallback')}>
-        {template.prevent_instance_group_fallback ? t`On` : ''}
-      </PageDetail>
+      {summaryFields.webhook_credential && (
+        <PageDetail label={t('Webhook credential')} isEmpty={!summaryFields.webhook_credential}>
+          <CredentialLabel credential={summaryFields?.webhook_credential} />
+        </PageDetail>
+      )}
       <UserDateDetail
         label={t('Created')}
         date={template.created}
@@ -149,6 +142,28 @@ export function TemplateDetails(props: { template: JobTemplate }) {
         date={template.modified}
         user={template.summary_fields.modified_by}
       />
+      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
+        <LabelGroup>
+          {summaryFields.labels.results.map((label) => (
+            <Label key={label.id}>{label.name}</Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags}>
+        <LabelGroup>
+          {template.job_tags.split(',').map((tag) => (
+            <Label key={tag}>{tag}</Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags}>
+        <LabelGroup>
+          {template.skip_tags.split(',').map((tag) => (
+            <Label key={tag}>{tag}</Label>
+          ))}
+        </LabelGroup>
+      </PageDetail>
+      <PageDetailCodeEditor label={t('Extra vars')} value={template.extra_vars} />
       <PageDetail label={t('Enabled options')} isEmpty={!showOptionsField}>
         <TextList component={TextListVariants.ul}>
           {template.become_enabled && (
@@ -176,27 +191,6 @@ export function TemplateDetails(props: { template: JobTemplate }) {
             </TextListItem>
           )}
         </TextList>
-      </PageDetail>
-      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
-        <LabelGroup>
-          {summaryFields.labels.results.map((label) => (
-            <Label key={label.id}>{label.name}</Label>
-          ))}
-        </LabelGroup>
-      </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags}>
-        <LabelGroup>
-          {template.job_tags.split(',').map((tag) => (
-            <Label key={tag}>{tag}</Label>
-          ))}
-        </LabelGroup>
-      </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags}>
-        <LabelGroup>
-          {template.skip_tags.split(',').map((tag) => (
-            <Label key={tag}>{tag}</Label>
-          ))}
-        </LabelGroup>
       </PageDetail>
     </PageDetails>
   );

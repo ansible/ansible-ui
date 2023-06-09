@@ -10,12 +10,10 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  Group,
-  Host,
-  InstanceGroup,
-  JobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
+import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -73,7 +71,8 @@ declare global {
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByLabel(
         dropdownLabel: string | RegExp,
-        dropdownOptionLabel: string
+        dropdownOptionLabel: string,
+        multiselect?: boolean
       ): Chainable<void>;
 
       // --- TABLE COMMANDS ---
@@ -94,6 +93,12 @@ declare global {
 
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
+      /** Select the create resource option from a toolbar create dropdown button.  ie. AWX template list toolbar **/
+      clickToolbarDropdownCreateButton(
+        createButtonLabel: string | RegExp,
+        createButtonOption: string
+      ): Chainable<void>;
 
       /**
        * Get the list card containing the specified text.
@@ -152,6 +157,12 @@ declare global {
       /** Get the active modal dialog. */
       getDialog(): Chainable<void>;
 
+      /** Opens a lookup dialaog and selects the desired row item **/
+      selectRowItemInFormGroupLookupModal: (
+        label: string | RegExp,
+        rowItem: string
+      ) => Chainable<void>;
+
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
 
@@ -162,7 +173,11 @@ declare global {
       assertModalSuccess(): Chainable<void>;
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
-      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
+      selectTableRowInDialog(
+        name: string | RegExp,
+        filter?: boolean,
+        inputType?: string
+      ): Chainable<void>;
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
@@ -243,6 +258,15 @@ declare global {
         project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
       ): Chainable<Project>;
 
+      /** Create an execution environment in AWX */
+      createAwxExecutionEnvironment(): Chainable<ExecutionEnvironment>;
+
+      /** Creates a credential in AWX */
+      createAWXCredential(
+        kind: string,
+        organization: number,
+        credential_type?: number
+      ): Chainable<Credential>;
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
        */
