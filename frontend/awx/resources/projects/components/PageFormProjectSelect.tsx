@@ -31,7 +31,7 @@ export function PageFormProjectSelect<
       name={name}
       label={t('Project')}
       placeholder={t('Add project')}
-      selectTitle={t('Select an project')}
+      selectTitle={t('Select a project')}
       labelHelpTitle={t('Project')}
       labelHelp={t('Select the project containing the playbook you want this job to execute.')}
       selectValue={(project: Project) => project.name}

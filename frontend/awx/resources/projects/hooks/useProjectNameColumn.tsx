@@ -1,16 +1,16 @@
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn } from '../../../../../framework';
 import { IconWrapper } from '../../../../../framework/components/IconWrapper';
-import { usePageNavigate } from '../../../../../framework/components/usePageNavigate';
 import { RouteObj } from '../../../../Routes';
 import { Project } from '../../../interfaces/Project';
 
-export function useProjectNameColumn() {
+export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = usePageNavigate();
+  const { disableLinks } = options ?? {};
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Name'),
@@ -26,15 +26,13 @@ export function useProjectNameColumn() {
                   overflow: 'hidden',
                 }}
               >
-                <a
-                  href={RouteObj.ProjectDetails.replace(':id', project.id.toString())}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString()));
-                  }}
-                >
-                  {project.name}
-                </a>
+                {disableLinks ? (
+                  project.name
+                ) : (
+                  <Link to={RouteObj.ProjectDetails.replace(':id', project.id.toString())}>
+                    {project.name}
+                  </Link>
+                )}
               </div>
             </SplitItem>
             <SplitItem>
@@ -57,15 +55,13 @@ export function useProjectNameColumn() {
               overflow: 'hidden',
             }}
           >
-            <a
-              href={RouteObj.ProjectDetails.replace(':id', project.id.toString())}
-              onClick={(e) => {
-                e.preventDefault();
-                navigate(RouteObj.ProjectDetails.replace(':id', project.id.toString()));
-              }}
-            >
-              {project.name}
-            </a>
+            {disableLinks ? (
+              project.name
+            ) : (
+              <Link to={RouteObj.ProjectDetails.replace(':id', project.id.toString())}>
+                {project.name}
+              </Link>
+            )}
           </div>
         ),
       sort: 'name',
@@ -73,7 +69,7 @@ export function useProjectNameColumn() {
       list: 'name',
       defaultSort: true,
     }),
-    [navigate, t]
+    [t, disableLinks]
   );
   return column;
 }
