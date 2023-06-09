@@ -161,7 +161,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/awx/**/*.cy.tsx
+          working-directory: frontend/awx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -203,7 +203,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=frontend/eda/**/*.cy.tsx
+          working-directory: frontend/eda
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
