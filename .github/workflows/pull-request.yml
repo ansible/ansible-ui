@@ -125,8 +125,8 @@ jobs:
         run: npm ci
       - run: npm run checks
 
-  awx-component:
-    name: AWX Component
+  awx-cct:
+    name: AWX CCT
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
@@ -163,12 +163,12 @@ jobs:
           parallel: true
           spec: frontend/awx/**/*.cy.tsx
         env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  eda-component:
-    name: EDA Component
+  eda-cct:
+    name: EDA CCT
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
@@ -205,12 +205,12 @@ jobs:
           parallel: true
           spec: frontend/eda/**/*.cy.tsx
         env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  hub-component:
-    name: HUB Component
+  hub-cct:
+    name: HUB CCT
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
@@ -247,12 +247,12 @@ jobs:
           parallel: true
           spec: frontend/hub/**/*.cy.tsx
         env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_CCT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  framework-component:
-    name: Framework Component
+  afw-cct:
+    name: AFW CCT
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
@@ -289,8 +289,8 @@ jobs:
           parallel: true
           spec: framework/**/*.cy.tsx
         env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   awx-e2e:
@@ -341,8 +341,8 @@ jobs:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AWX_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AWX_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
@@ -403,8 +403,8 @@ jobs:
           CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
           CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
           CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
@@ -465,7 +465,7 @@ jobs:
           CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
           CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
           CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
