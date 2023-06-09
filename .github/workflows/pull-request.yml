@@ -215,7 +215,7 @@ jobs:
 
   hub-component:
     name: HUB Component
-    if: ${{ needs.packages.outputs.hub == 'true' }}
+    if: needs.packages.outputs.hub == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
