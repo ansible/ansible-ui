@@ -126,12 +126,12 @@ jobs:
         run: npm ci
       - run: npm run checks
 
-  component-tests:
-    name: Component Tests
+  awx-component:
+    name: AWX Component
+    if: ${{ needs.packages.outputs.awx == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: packages
-    if: ${{ needs.packages.outputs.awx == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -162,6 +162,91 @@ jobs:
           install: false
           record: true
           parallel: true
+          config: specPattern=frontend/awx/**/*.cy.ts
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  eda-component:
+    name: EDA Component
+    if: ${{ needs.packages.outputs.eda == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: cypress-io/github-action@v4
+        with:
+          component: true
+          install: false
+          record: true
+          parallel: true
+          config: specPattern=frontend/eda/**/*.cy.ts
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  hub-component:
+    name: HUB Component
+    if: ${{ needs.packages.outputs.hub == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: cypress-io/github-action@v4
+        with:
+          component: true
+          install: false
+          record: true
+          parallel: true
+          config: specPattern=frontend/hub/**/*.cy.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -169,6 +254,7 @@ jobs:
 
   awx-e2e:
     name: AWX E2E
+    if: ${{ needs.packages.outputs.awx == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
@@ -221,6 +307,7 @@ jobs:
 
   eda-e2e:
     name: EDA E2E
+    if: ${{ needs.packages.outputs.eda == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
