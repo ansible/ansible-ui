@@ -369,7 +369,7 @@ jobs:
 
   hub-e2e:
     name: HUB E2E
-    if: ${{ needs.packages.outputs.eda == 'true' }}
+    if: ${{ needs.packages.outputs.hub == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
