@@ -131,7 +131,7 @@ jobs:
 
   awx-component:
     name: AWX Component
-    if: ${{ needs.packages.outputs.awx == 'true' }}
+    if: needs.packages.outputs.awx == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 14
     needs: packages
