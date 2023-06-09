@@ -155,13 +155,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           component: true
           install: false
           record: true
           parallel: true
-          working-directory: frontend/awx
+          spec: frontend/awx/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -197,13 +197,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           component: true
           install: false
           record: true
           parallel: true
-          working-directory: frontend/eda
+          spec: frontend/eda/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -239,13 +239,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           component: true
           install: false
           record: true
           parallel: true
-          working-directory: frontend/hub
+          spec: frontend/hub/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -287,7 +287,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          working-directory: framework
+          spec: framework/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -329,7 +329,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           install: false
           start: npm run docker:run
@@ -388,7 +388,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           install: false
           start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 ansible-ui
@@ -450,7 +450,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           install: false
           start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 ansible-ui
