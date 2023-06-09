@@ -73,7 +73,6 @@ Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaNa
     cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to ${action} these`);
     cy.get('a').should('contain', rbaName);
     cy.get('input[id="confirm"]').click();
-    cy.get('button').contains('rulebookActivations').click();
   });
 });
 
