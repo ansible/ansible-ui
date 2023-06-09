@@ -43,6 +43,7 @@ export function useGet<T>(
       data: response.data,
       error: response.isLoading ? undefined : error,
       refresh,
+      isLoading: response.isLoading,
     }),
     [response.data, response.isLoading, error, refresh]
   );

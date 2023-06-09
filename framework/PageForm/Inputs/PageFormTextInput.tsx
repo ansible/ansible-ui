@@ -112,6 +112,7 @@ export function PageFormTextInput<
                 <SearchIcon />
               </Button>
             )}
+            {button && button}
           </FormGroupTextInput>
         );
       }}

@@ -33,7 +33,7 @@ import { CreateInventory, EditInventory } from './resources/inventories/Inventor
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
-import { CreateJobTemplate } from './resources/templates/TemplateForm';
+import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
@@ -75,7 +75,7 @@ export function AwxRouter() {
           element={<WorkflowJobTemplateDetail />}
         />
         <Route path={RouteObjWithoutPrefix.CreateJobTemplate} element={<CreateJobTemplate />} />
-        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<PageNotImplemented />} />
+        <Route path={RouteObjWithoutPrefix.EditJobTemplate} element={<EditJobTemplate />} />
         <Route path={RouteObjWithoutPrefix.Credentials} element={<Credentials />} />
         <Route path={RouteObjWithoutPrefix.CredentialPage} element={<CredentialPage />} />
         <Route path={RouteObjWithoutPrefix.CreateCredential} element={<CreateCredential />} />
