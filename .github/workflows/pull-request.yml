@@ -161,7 +161,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=../frontend/awx/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=frontend/awx/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -203,7 +203,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=../frontend/eda/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=frontend/eda/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -245,7 +245,49 @@ jobs:
           install: false
           record: true
           parallel: true
-          config: specPattern=../frontend/hub/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=frontend/hub/**/*.cy.tsx
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  framework-component:
+    name: Framework Component
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    needs: packages
+    if: ${{ needs.packages.outputs.hub == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: cypress-io/github-action@v4
+        with:
+          component: true
+          install: false
+          record: true
+          parallel: true
+          config: specPattern=framework/**/*.cy.tsx
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_COMPONENT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_COMPONENT_RECORD_KEY }}
@@ -294,7 +336,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/awx/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=cypress/e2e/awx/**/*.cy.tsx
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -353,7 +395,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/eda/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=cypress/e2e/eda/**/*.cy.tsx
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
@@ -415,7 +457,7 @@ jobs:
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
-          config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
+          config: specPattern=cypress/e2e/hub/**/*.cy.tsx
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
