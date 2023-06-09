@@ -130,12 +130,12 @@ jobs:
     name: AWX Component
     if: ${{ needs.packages.outputs.awx == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 14
     needs: packages
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -172,12 +172,12 @@ jobs:
     name: EDA Component
     if: ${{ needs.packages.outputs.eda == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 14
     needs: packages
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -214,12 +214,12 @@ jobs:
     name: HUB Component
     if: ${{ needs.packages.outputs.hub == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 14
     needs: packages
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -355,6 +355,68 @@ jobs:
           record: true
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.ts
+        env:
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
+          CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
+          CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_EDA_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_EDA_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+  hub-e2e:
+    name: HUB E2E
+    if: ${{ needs.packages.outputs.eda == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - packages
+      - container-image
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: ansible-ui.tar
+      - run: docker load --input ansible-ui.tar
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 ansible-ui
+          wait-on: 'https://localhost:3002'
+          record: true
+          parallel: true
+          config: specPattern=cypress/e2e/hub/**/*.cy.ts
         env:
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
