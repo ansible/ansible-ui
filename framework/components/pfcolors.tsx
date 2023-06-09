@@ -7,6 +7,7 @@ export enum PFColorE {
   Red = 'red',
   Danger = 'danger',
   Yellow = 'yellow',
+  Orange = 'orange',
   Warning = 'warning',
   Grey = 'grey',
   Disabled = 'disabled',
@@ -21,6 +22,7 @@ export type PFColor =
   | 'red'
   | 'danger'
   | 'yellow'
+  | 'orange'
   | 'warning'
   | 'grey'
   | 'disabled';
@@ -36,6 +38,7 @@ export function getPatternflyColor(color: PFColor) {
     case 'danger':
       return pfDanger;
     case 'yellow':
+    case 'orange':
     case 'warning':
       return pfWarning;
     case 'blue':

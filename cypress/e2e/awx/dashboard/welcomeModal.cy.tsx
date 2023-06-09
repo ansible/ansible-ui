@@ -27,4 +27,32 @@ describe('dashboard: Welcome modal', () => {
     cy.reload();
     cy.contains('Welcome to the new Ansible user interface').should('not.exist');
   });
+
+  it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
+    cy.visit(`/ui_next/dashboard`);
+    if (Cypress.env('TEST_STANDALONE') === true) {
+      cy.get('div.pf-c-banner.pf-m-info p')
+        .should(
+          'have.text',
+          ' You are currently viewing a tech preview of the new Ansible Automation Platform user interface. To return to the original interface, click here.'
+        )
+        .should('be.visible');
+      cy.contains('div.pf-c-banner.pf-m-info a', 'here').click();
+      cy.url().should('not.include', '/ui_next');
+      cy.contains(
+        'div.pf-c-banner.pf-m-info p',
+        'A tech preview of the new Ansible Automation Platform user interface can be found here.'
+      ).should('be.visible');
+      cy.contains('h2', 'Dashboard').should('be.visible');
+    } else {
+      cy.get('div.pf-c-banner.pf-m-info p')
+        .should(
+          'have.text',
+          ' You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
+        )
+        .should('be.visible');
+      cy.contains('div.pf-c-banner.pf-m-info a', 'here').click();
+      cy.url().should('include', '/');
+    }
+  });
 });
