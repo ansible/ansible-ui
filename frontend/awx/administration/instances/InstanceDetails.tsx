@@ -24,7 +24,7 @@ import {
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGetItem';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';

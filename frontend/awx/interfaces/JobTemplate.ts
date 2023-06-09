@@ -1,7 +1,9 @@
 import { JobTemplate as SwaggerJobTemplate } from './generated-from-swagger/api';
 import { Label } from './Label';
+import { Project } from './Project';
+import { SummaryFieldCredential } from './summary-fields/summary-fields';
 
-interface RecentJob {
+export interface RecentJob {
   id: number;
   status: string;
   finished: string;
@@ -9,13 +11,6 @@ interface RecentJob {
   type: string;
 }
 
-interface Credential {
-  id: number;
-  name: string;
-  description: string;
-  kind: string;
-  cloud: boolean;
-}
 export interface JobTemplate
   extends Omit<
     SwaggerJobTemplate,
@@ -29,9 +24,53 @@ export interface JobTemplate
     | 'job_tags'
     | 'skip_tags'
     | 'project'
+    | 'allow_simultaneous'
+    | 'ask_credential_on_launch'
+    | 'ask_diff_mode_on_launch'
+    | 'ask_evecution_environment_on_launch'
+    | 'ask_forks_on_launch'
+    | 'ask_instance_groups_on_launch'
+    | 'ask_inventory_on_launch'
+    | 'ask_job_slice_count_on_launch'
+    | 'ask_job_type_on_launch'
+    | 'ask_labels_on_launch'
+    | 'ask_limit_on_launch'
+    | 'ask_scm_branch_on_launch'
+    | 'ask_skip_tags_on_launch'
+    | 'ask_tags_on_launch'
+    | 'ask_timeout_on_launch'
+    | 'ask_variables_on_launch'
+    | 'ask_verbosity_on_launch'
+    | 'become_enabled'
+    | 'diff_mode'
+    | 'forks'
+    | 'host_config_key'
+    | 'webhook_credential'
   > {
   id: number;
+  host_config_key?: string;
+  description?: string;
   extra_vars: string;
+  diff_mode: boolean;
+  forks: number;
+  become_enabled: boolean;
+  ask_variables_on_launch: boolean;
+  ask_verbosity_on_launch: boolean;
+  ask_scm_branch_on_launch: boolean;
+  ask_skip_tags_on_launch: boolean;
+  ask_timeout_on_launch: boolean;
+  ask_tags_on_launch: boolean;
+  allow_simultaneous: boolean;
+  ask_labels_on_launch: boolean;
+  ask_limit_on_launch: boolean;
+  ask_job_slice_count_on_launch: boolean;
+  ask_job_type_on_launch: boolean;
+  ask_credential_on_launch: boolean;
+  ask_diff_mode_on_launch: boolean;
+  ask_forks_on_launch: boolean;
+  ask_instance_groups_on_launch: boolean;
+  ask_execution_environment_on_launch: boolean;
+  ask_inventory_on_launch: boolean;
   type: 'job_template';
   job_type: 'run' | 'check';
   url: string;
@@ -40,8 +79,8 @@ export interface JobTemplate
   name: string;
   status: string;
   verbosity: 0 | 1 | 2 | 3 | 4 | 5;
-  job_tags: string | '';
-  skip_tags: string | '';
+  job_tags: string;
+  skip_tags: string;
   execution_environment?: number;
   related: {
     callback: string;
@@ -71,7 +110,7 @@ export interface JobTemplate
     copy: string;
   };
   summary_fields: {
-    organization: {
+    organization?: {
       id: number;
       name: string;
       description: string;
@@ -90,14 +129,7 @@ export interface JobTemplate
       organization_id: number;
       kind: string;
     };
-    project: {
-      id: number;
-      name: string;
-      description: string;
-      status: string;
-      scm_type: string;
-      allow_override: boolean;
-    };
+    project: Pick<Project, 'id' | 'name'>;
     execution_environment?: { id: number; name: string };
     last_job: {
       id: number;
@@ -161,13 +193,10 @@ export interface JobTemplate
       image: string;
     };
     recent_jobs: RecentJob[];
-    credentials: Credential[];
-    webhook_credential?: {
-      id: number;
-      name: string;
-    };
+    credentials: SummaryFieldCredential[] | [];
+    webhook_credential?: SummaryFieldCredential;
   };
-  webhook_credential?: number;
+  webhook_credential: number | null;
   webhook_url: string;
   webhook_key: string;
   webhook_service?: 'github' | 'gitlab';
