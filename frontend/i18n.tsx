@@ -3,14 +3,37 @@ import detector from 'i18next-browser-languagedetector';
 import backend from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
 
+const params = new URLSearchParams(window.location.search);
+const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+
 void i18n
+  .use({
+    type: 'postProcessor',
+    name: 'pseudolocalization',
+    process: function (value: string | string[]) {
+      if (!pseudolocalizationEnabled) {
+        return value;
+      }
+      if (Array.isArray(value)) {
+        return ['»', ...value, '«'];
+      } else {
+        return `»${value}«`;
+      }
+    },
+  })
   .use(backend)
   .use(detector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
+    detection: {
+      lookupQuerystring: 'lang',
+      lookupCookie: 'lang',
+      lookupLocalStorage: 'lang',
+    },
     fallbackLng: 'en', // use en if detected lng is not available
     supportedLngs: ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'],
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     },
+    postProcess: ['pseudolocalization'],
   });
