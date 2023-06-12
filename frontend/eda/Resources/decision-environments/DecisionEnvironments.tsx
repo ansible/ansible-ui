@@ -27,9 +27,7 @@ export function DecisionEnvironments() {
     <PageLayout>
       <PageHeader
         title={t('Decision Environments')}
-        description={t(
-          'Decision environments contain an ansible-rulebook image that dictates where the rulebooks will run.'
-        )}
+        description={t('Decision environments are a container image to run Ansible rulebooks.')}
       />
       <PageTable
         tableColumns={tableColumns}
