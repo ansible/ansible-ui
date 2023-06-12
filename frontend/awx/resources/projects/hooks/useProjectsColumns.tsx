@@ -16,7 +16,7 @@ import { useProjectNameColumn } from './useProjectNameColumn';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const nameColumn = useProjectNameColumn();
+  const nameColumn = useProjectNameColumn({ disableLinks: options?.disableLinks });
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);

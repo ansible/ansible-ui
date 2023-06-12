@@ -25,7 +25,13 @@ const LoginModalDiv = styled.div`
 export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
-  const onClose = () => setDialog(undefined);
+  const navigate = useNavigate();
+  const onClose = () => {
+    if (process.env.EDA === 'true') {
+      navigate(-1);
+    }
+    setDialog(undefined);
+  };
   return (
     <Modal
       header={
