@@ -13,7 +13,8 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -283,8 +284,9 @@ declare global {
        * @param options
        */
       createAwxOrganizationProjectInventoryJobTemplate(options?: {
-        project?: Partial<Omit<Project, 'id'>>;
-        jobTemplate?: Partial<JobTemplate>;
+        project: Pick<Project, 'name' | 'id'>;
+        inventory: Pick<Inventory, 'name' | 'id' | 'organization'>;
+        jobTemplate?: JobTemplate;
       }): Chainable<{
         project: Project;
         inventory: Inventory;
@@ -302,8 +304,8 @@ declare global {
        * @param jobTemplate
        */
       createEdaAwxJobTemplate(
-        project: Project,
-        inventory: Inventory,
+        project: Pick<Project, 'name' | 'id'>,
+        inventory: Pick<Inventory, 'name' | 'id' | 'organization'>,
         jobTemplate?: Partial<JobTemplate>
       ): Chainable<JobTemplate>;
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;

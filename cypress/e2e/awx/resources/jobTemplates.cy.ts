@@ -35,10 +35,10 @@ describe('Job templates form', () => {
   let credential: Credential;
   let label: Label;
   let instanceGroup: InstanceGroup;
-  let jtName: string;
 
-  before(() => {
+  beforeEach(() => {
     cy.awxLogin();
+
     cy.createAwxOrganization().then((org) => {
       cy.createAwxProject().then((p) => (project = p));
       cy.createAwxInventory().then((i) => (inventory = i));
@@ -60,7 +60,7 @@ describe('Job templates form', () => {
     });
   });
 
-  after(() => {
+  afterEach(() => {
     cy.awxRequestDelete(`/api/v2/projects/${project.id}/`);
     cy.awxRequestDelete(`/api/v2/inventories/${inventory.id}/`);
     cy.awxRequestDelete(`/api/v2/execution_environments/${executionEnvironment.id}/`);
@@ -69,7 +69,7 @@ describe('Job templates form', () => {
   });
 
   it('Should create job template with all fields except for prompt on launch values', () => {
-    jtName = 'test job template' + randomString(4);
+    const jtName = 'test job template' + randomString(4);
     cy.navigateTo(/^Templates$/);
 
     cy.clickButton(/^Create template$/);
@@ -202,23 +202,25 @@ describe('Job templates form', () => {
     cy.hasTitle(jtName);
   });
 
-  it('Should edit and then delete the job template just created above', () => {
-    const newJTName = jtName + 'new random string' + randomString(4);
-    cy.navigateTo(/^Templates$/);
-    cy.clickTableRowKebabAction(jtName, /^Edit template$/);
+  it('Should edit and then delete a job template', () => {
+    cy.createAwxJobTemplate().then((jobtemplate) => {
+      cy.navigateTo(/^Templates$/);
 
-    cy.typeInputByLabel(/^Name$/, newJTName);
-    cy.typeInputByLabel(/^Description$/, 'this is a new description');
+      cy.clickTableRowKebabAction(jobtemplate.name, /^Edit template$/);
 
-    cy.clickButton(/^Save job template$/);
-    cy.hasTitle(newJTName);
+      cy.typeInputByLabel(/^Name$/, `${jobtemplate.name} + edited`);
+      cy.typeInputByLabel(/^Description$/, 'this is a new description');
 
-    cy.navigateTo(/^Templates$/);
-    cy.clickTableRowKebabAction(jtName, /^Delete template$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete template/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+      cy.clickButton(/^Save job template$/);
+      cy.hasTitle(`${jobtemplate.name} + edited`);
+
+      cy.navigateTo(/^Templates$/);
+      cy.clickTableRowKebabAction(jobtemplate.name, /^Delete template$/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete template/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
+    });
   });
 });

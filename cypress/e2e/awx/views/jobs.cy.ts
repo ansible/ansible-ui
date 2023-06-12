@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
-import {
-  JobTemplate,
-  UnifiedJobList,
-} from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 describe('jobs', () => {
   let jobTemplate: JobTemplate;

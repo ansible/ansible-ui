@@ -12,7 +12,7 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
-import { JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { ItemsResponse } from '../../frontend/common/crud/Data';
 import './auth';
 import './commands';
@@ -509,7 +509,7 @@ Cypress.Commands.add('deleteAWXSchedule', (schedule: Schedule) => {
 
 Cypress.Commands.add(
   'createAwxOrganizationProjectInventoryJobTemplate',
-  (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
+  (options?: { project?: Pick<Project, 'id' | 'name'>; jobTemplate?: JobTemplate }) => {
     cy.createAwxOrganization().then((organization) => {
       cy.createAwxInventory({ inventory: { organization: organization.id } }).then((inventory) => {
         cy.createEdaSpecificAwxProject({ project: { organization: organization.id } }).then(
@@ -545,7 +545,7 @@ Cypress.Commands.add('createAwxJobTemplate', () => {
         cy.requestPost<JobTemplate>('/api/v2/job_templates/', {
           name: 'E2E Job Template ' + randomString(4),
           playbook: 'hello_world.yml',
-          project: project.id.toString(),
+          project: project.id,
           inventory: inventory.id,
         }).then((jobTemplate) => jobTemplate);
       });
@@ -555,11 +555,15 @@ Cypress.Commands.add('createAwxJobTemplate', () => {
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',
-  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
-    cy.awxRequestPost<JobTemplate>('/api/v2/job_templates/', {
+  (
+    project: Pick<Project, 'name' | 'id'>,
+    inventory: Pick<Inventory, 'name' | 'id' | 'organization'>,
+    jobTemplate?: Partial<JobTemplate>
+  ) => {
+    cy.awxRequestPost<Partial<JobTemplate>>('/api/v2/job_templates/', {
       name: 'run_basic',
       playbook: 'basic.yml',
-      project: project.id.toString(),
+      project: project.id,
       inventory: inventory.id,
       organization: inventory.organization,
       ...jobTemplate,

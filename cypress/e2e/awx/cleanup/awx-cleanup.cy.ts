@@ -3,7 +3,7 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { User } from '../../../../frontend/awx/interfaces/User';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
