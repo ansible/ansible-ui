@@ -12,31 +12,22 @@ import {
   PageTable,
   TextCell,
 } from '../../../framework';
-import { useInMemoryView } from '../../../framework/useInMemoryView';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
-import { useGet } from '../../common/crud/useGet';
 import { pulpHRefKeyFn } from '../useHubView';
-import { getIdFromPulpHref } from '../usePulpView';
+import { getIdFromPulpHref, usePulpView } from '../usePulpView';
 import { Task } from './Task';
 
 export function Tasks() {
   const { t } = useTranslation();
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
-  const { data: tasks } = useGet<{ results: Task[] }>('/api/automation-hub/pulp/api/v3/tasks/');
-  const view = useInMemoryView<Task>({
-    items: tasks?.results,
-    keyFn: pulpHRefKeyFn,
-    tableColumns,
+  const view = usePulpView<Task>(
+    '/api/automation-hub/pulp/api/v3/tasks/',
+    pulpHRefKeyFn,
     toolbarFilters,
-  });
-  // const view = usePulpView<Task>(
-  //   '/api/automation-hub/pulp/api/v3/tasks/',
-  //   pulpHRefKeyFn,
-  //   toolbarFilters,
-  //   tableColumns
-  // )
+    tableColumns
+  );
   return (
     <PageLayout>
       <PageHeader title={t('Tasks')} />
