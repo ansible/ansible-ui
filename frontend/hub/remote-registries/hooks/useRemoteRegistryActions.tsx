@@ -11,11 +11,10 @@ export function useRemoteRegistryActions() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit'),
-        onClick: () => {
-          /**/
-        },
+        onClick: () => alert('TODO'),
       },
     ],
     [t]
