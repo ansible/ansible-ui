@@ -2,7 +2,6 @@ import { PageCarouselCardPage } from './PageCarouselCardPage';
 import { PageCarouselNav } from './PageCarouselNav';
 import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useLayoutEffect, useRef, useState, Children, useMemo } from 'react';
-import SwipeableViews from 'react-swipeable-views-react-18-fix';
 
 const CardSpan = (1662 - 59) / 4;
 
@@ -24,30 +23,29 @@ export function PageCarousel(props: { children: ReactNode }) {
     setVisibleCardsPerPage(Math.max(1, Math.floor((entry.contentRect.width ?? 0) / CardSpan)));
   });
 
-  const pagesOfCards = useMemo(() => {
-    const pages = [];
+  const carouselPages = useMemo(() => {
+    const pagesOfCards = [];
     for (let i = 0; i < Children.toArray(props.children).length; i = i + visibleCardsPerPage) {
       const page = Children.toArray(props.children).slice(i, i + visibleCardsPerPage);
-      pages.push(page);
+      pagesOfCards.push(page);
     }
-    return pages;
+
+    return pagesOfCards.map((pageOfCards, index) => {
+      return (
+        <PageCarouselCardPage key={index} visibleCardsPerPage={visibleCardsPerPage}>
+          {pageOfCards}
+        </PageCarouselCardPage>
+      );
+    });
   }, [props.children, visibleCardsPerPage]);
 
   return (
     <>
-      <SwipeableViews enableMouseEvents index={pageIndex}>
-        {pagesOfCards.map((pageOfCards, index) => {
-          return (
-            <PageCarouselCardPage key={index} ref={ref} visibleCardsPerPage={visibleCardsPerPage}>
-              {pageOfCards}
-            </PageCarouselCardPage>
-          );
-        })}
-      </SwipeableViews>
+      <div ref={ref}>{carouselPages[pageIndex]}</div>
       <PageCarouselNav
         setPage={setPageIndex}
         currentPage={pageIndex}
-        totalPages={pagesOfCards.length}
+        totalPages={carouselPages.length}
       />
     </>
   );
