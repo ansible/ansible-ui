@@ -7,7 +7,6 @@ import {
   PageActionType,
   PageActions,
   PageDashboard,
-  PageDashboardCard,
   PageHeader,
   PageLayout,
 } from '../../../framework';
@@ -79,38 +78,8 @@ export function HubDashboard() {
             },
           ]}
         />
-        <PageDashboardCard title="Featured Collections" linkText="Goto Collections" width="xxl">
-          <CardBody>
-            <Gallery hasGutter>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-            </Gallery>
-          </CardBody>
-        </PageDashboardCard>
-        <PageDashboardCard title="My Collections" linkText="Goto Collections" width="xxl">
-          <CardBody>
-            <Gallery hasGutter>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-            </Gallery>
-          </CardBody>
-        </PageDashboardCard>
         <PageDashboardCarousel
-          title="Carousel Dashboard Card"
+          title="Featured Collections"
           linkText="Go to Collections"
           width="xxl"
         >
@@ -148,18 +117,17 @@ export function HubDashboard() {
             <CardBody>Card 11</CardBody>
           </Card>
         </PageDashboardCarousel>
-        <PageDashboardDonutCard
-          title={t('Collections')}
-          items={[{ label: t('Collections'), count: collections?.length ?? 0, color: pfSuccess }]}
-          linkText={t('Go to Collections')}
-          to={RouteObj.Collections}
-        />
-        <PageDashboardDonutCard
-          title={t('Namespaces')}
-          linkText={t('Go to Namespaces')}
-          items={[{ label: t('Namespaces'), count: namespaces?.length ?? 0, color: pfSuccess }]}
-          to={RouteObj.Namespaces}
-        />
+        <PageDashboardCarousel title="My Collections" linkText="Go to Collections" width="xxl">
+          <Card isFlat>
+            <CardBody>Card 1</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 2</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 3</CardBody>
+          </Card>
+        </PageDashboardCarousel>
       </PageDashboard>
     </PageLayout>
   );
