@@ -18,6 +18,7 @@ import { useCollections } from '../collections/hooks/useCollections';
 import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
+import { PageCarousel } from '../../../framework/PageCarousel/PageCarousel';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -106,6 +107,39 @@ export function HubDashboard() {
                 <CardBody>Card</CardBody>
               </Card>
             </Gallery>
+          </CardBody>
+        </PageDashboardCard>
+        <PageDashboardCard title="Carousel Dashboard Card" linkText="Go to Collections" width="xxl">
+          <CardBody>
+            <PageCarousel>
+              <Card isRounded isFlat>
+                <CardBody>Card 1</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 2</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 3</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 4</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 5</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 6</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 7</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 8</CardBody>
+              </Card>
+              <Card isRounded isFlat>
+                <CardBody>Card 9</CardBody>
+              </Card>
+            </PageCarousel>
           </CardBody>
         </PageDashboardCard>
       </PageDashboard>

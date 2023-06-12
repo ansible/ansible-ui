@@ -34,6 +34,7 @@
     "cypress.config.ts",
     "cypress.eda.ts",
     "cypress.d.ts",
-    "i18next-parser.config.cjs"
+    "i18next-parser.config.cjs",
+    "react-swipeable-views-react-18-fix.d.ts"
   ]
 }
