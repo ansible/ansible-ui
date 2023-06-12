@@ -70,7 +70,9 @@ Cypress.Commands.add('selectDropdownOptionByLabel', (label: string | RegExp, tex
 
 Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
   cy.get('#filter-form-group').within(() => {
-    cy.get('.pf-c-select').should('not.be.disabled').click();
+    cy.get('.pf-c-select button').as('filterTypeBtn');
+    cy.get('@filterTypeBtn').should('not.be.disabled');
+    cy.get('@filterTypeBtn').click();
     cy.get('.pf-c-select__menu').within(() => {
       cy.clickButton(text);
     });
