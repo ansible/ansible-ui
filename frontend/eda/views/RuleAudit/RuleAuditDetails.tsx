@@ -50,7 +50,7 @@ export function RuleAuditDetails() {
           >
             {ruleAudit && ruleAudit.activation_instance?.id ? (
               <Link
-                to={RouteObj.EdaRulebookActivationDetails.replace(
+                to={RouteObj.EdaActivationInstanceDetails.replace(
                   ':id',
                   `${ruleAudit.activation_instance?.id || ''}`
                 )}
