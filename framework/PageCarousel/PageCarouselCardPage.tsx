@@ -15,11 +15,6 @@ type PageCarouselCardPageProps = {
  */
 export const PageCarouselCardPage = forwardRef<HTMLDivElement, PageCarouselCardPageProps>(
   function PageCarouselCardPage(props, ref) {
-    console.log(
-      '🚀 ~ PageCarouselCardPage ~ props.visibleCardsPerPage:',
-      props.visibleCardsPerPage
-    );
-
     return (
       <div
         id="page-carousel-cards"
@@ -28,6 +23,8 @@ export const PageCarouselCardPage = forwardRef<HTMLDivElement, PageCarouselCardP
           display: 'grid',
           gap: 16,
           gridTemplateColumns: `repeat(${props.visibleCardsPerPage}, 1fr)`,
+          marginBottom: 'var(--pf-global--spacer--lg',
+          paddingRight: 8,
         }}
       >
         {props.children}

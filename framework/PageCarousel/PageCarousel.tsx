@@ -4,25 +4,12 @@ import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useLayoutEffect, useRef, useState, Children, useMemo } from 'react';
 import SwipeableViews from 'react-swipeable-views-react-18-fix';
 
-const CardSpan = (1662 - 50.5) / 4;
+const CardSpan = (1662 - 59) / 4;
 
-const styles = {
-  slide: {
-    padding: 15,
-    minHeight: 100,
-    color: '#fff',
-  },
-  slide1: {
-    background: '#FEA900',
-  },
-  slide2: {
-    background: '#B3DC4A',
-  },
-  slide3: {
-    background: '#6AC0FF',
-  },
-};
-
+/**
+ * A carousel component that displays children (eg. page cards) within it and switches
+ * between pages of cards using smooth animation.
+ */
 export function PageCarousel(props: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
@@ -45,7 +32,6 @@ export function PageCarousel(props: { children: ReactNode }) {
     }
     return pages;
   }, [props.children, visibleCardsPerPage]);
-  console.log('🚀 ~ file: PageCarousel.tsx:30 ~ pagesOfCards ~ pagesOfCards:', pagesOfCards);
 
   return (
     <>

@@ -18,7 +18,7 @@ import { useCollections } from '../collections/hooks/useCollections';
 import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
-import { PageCarousel } from '../../../framework/PageCarousel/PageCarousel';
+import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -109,39 +109,57 @@ export function HubDashboard() {
             </Gallery>
           </CardBody>
         </PageDashboardCard>
-        <PageDashboardCard title="Carousel Dashboard Card" linkText="Go to Collections" width="xxl">
-          <CardBody>
-            <PageCarousel>
-              <Card isRounded isFlat>
-                <CardBody>Card 1</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 2</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 3</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 4</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 5</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 6</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 7</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 8</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card 9</CardBody>
-              </Card>
-            </PageCarousel>
-          </CardBody>
-        </PageDashboardCard>
+        <PageDashboardCarousel
+          title="Carousel Dashboard Card"
+          linkText="Go to Collections"
+          width="xxl"
+        >
+          <Card isFlat>
+            <CardBody>Card 1</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 2</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 3</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 4</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 5</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 6</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 7</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 8</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 9</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 10</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 11</CardBody>
+          </Card>
+        </PageDashboardCarousel>
+        <PageDashboardDonutCard
+          title={t('Collections')}
+          items={[{ label: t('Collections'), count: collections?.length ?? 0, color: pfSuccess }]}
+          linkText={t('Go to Collections')}
+          to={RouteObj.Collections}
+        />
+        <PageDashboardDonutCard
+          title={t('Namespaces')}
+          linkText={t('Go to Namespaces')}
+          items={[{ label: t('Namespaces'), count: namespaces?.length ?? 0, color: pfSuccess }]}
+          to={RouteObj.Namespaces}
+        />
       </PageDashboard>
     </PageLayout>
   );
