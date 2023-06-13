@@ -69,12 +69,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          patternfly: [
-            '@patternfly/react-charts',
-            '@patternfly/react-core',
-            '@patternfly/react-icons',
-            '@patternfly/react-table',
-          ],
           monaco: ['monaco-editor', 'monaco-yaml'],
         },
       },
