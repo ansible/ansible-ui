@@ -70,11 +70,13 @@ export function PageCarousel(props: { children: ReactNode }) {
           );
         })}
       </SlideContainer>
-      <PageCarouselNav
-        setPage={setPageIndex}
-        currentPage={pageIndex}
-        totalPages={pagesOfCards.length}
-      />
+      {pagesOfCards.length > 1 ? (
+        <PageCarouselNav
+          setPage={setPageIndex}
+          currentPage={pageIndex}
+          totalPages={pagesOfCards.length}
+        />
+      ) : null}
     </>
   );
 }
