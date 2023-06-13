@@ -1,12 +1,12 @@
-import { useCallback, useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
-import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
-import { requestPatch } from '../../../../common/crud/Data';
-import { RouteObj } from '../../../../Routes';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
+import { requestPatch } from '../../../../common/crud/Data';
+import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {
@@ -52,6 +52,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
+        isPinned: true,
         label: t('Edit instance'),
         onClick: (instance) =>
           navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),

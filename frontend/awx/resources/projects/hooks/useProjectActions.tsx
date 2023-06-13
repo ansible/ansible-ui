@@ -64,14 +64,6 @@ export function useProjectActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
-        label: t('Edit project'),
-        isDisabled: (project: Project) => cannotEditProject(project),
-        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         isPinned: true,
         variant: ButtonVariant.secondary,
         icon: MinusCircleIcon,
@@ -107,6 +99,15 @@ export function useProjectActions(
               });
             });
         },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: EditIcon,
+        label: t('Edit project'),
+        isDisabled: (project: Project) => cannotEditProject(project),
+        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
       },
       {
         type: PageActionType.Button,

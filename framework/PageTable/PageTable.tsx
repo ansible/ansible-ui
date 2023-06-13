@@ -806,7 +806,7 @@ function TableCells<T extends object>(props: {
           style={{
             right: 0,
             padding: 0,
-            paddingRight: 0,
+            paddingRight: 8,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}

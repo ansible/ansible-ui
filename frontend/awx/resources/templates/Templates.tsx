@@ -28,12 +28,12 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -91,9 +91,30 @@ export function Templates() {
 
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
     () => [
+      // TODO: Launch template
+      // {
+      //   type: PageActionType.Button,
+      //   selection: PageActionSelection.Single,
+      //   icon: RocketIcon,
+      //   isPinned: true,
+      //   label: t('Launch template'),
+      //   onClick: async (template) => {
+      //     // try {
+      //     //   const job = await handleLaunch(template?.type as string, template?.id);
+      //     //   if (job) {
+      //     //     navigate(getJobOutputUrl(job));
+      //     //   }
+      //     // } catch {
+      //     //   // handle error
+      //     // }
+      //   },
+      //   ouiaId: 'job-template-detail-launch-button',
+      //   isDanger: false,
+      // },
       {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
+        isPinned: true,
         icon: EditIcon,
         label: t(`Edit template`),
         href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),

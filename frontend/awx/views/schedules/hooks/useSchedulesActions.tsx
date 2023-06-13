@@ -2,13 +2,13 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { Schedule } from '../../../interfaces/Schedule';
-import { useDeleteSchedules } from './useDeleteSchedules';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { getScheduleResourceUrl } from './getScheduleResourceUrl';
 import { requestPatch } from '../../../../common/crud/Data';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { Schedule } from '../../../interfaces/Schedule';
+import { getScheduleResourceUrl } from './getScheduleResourceUrl';
+import { useDeleteSchedules } from './useDeleteSchedules';
 
 export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted: () => void }) {
   const { t } = useTranslation();
@@ -25,14 +25,6 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
       {
-        type: PageActionType.Link,
-        selection: PageActionSelection.Single,
-        icon: EditIcon,
-        label: t(`Edit schedule`),
-        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: (schedule) => getScheduleResourceUrl(schedule),
-      },
-      {
         isPinned: true,
         ariaLabel: (isEnabled) =>
           isEnabled ? t('Click to disable schedule') : t('Click to enable schedule'),
@@ -43,6 +35,15 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),
         isSwitchOn: (schedule) => schedule.enabled,
+      },
+      {
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
+        icon: EditIcon,
+        isPinned: true,
+        label: t(`Edit schedule`),
+        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
+        href: (schedule) => getScheduleResourceUrl(schedule),
       },
       { type: PageActionType.Seperator },
       {
