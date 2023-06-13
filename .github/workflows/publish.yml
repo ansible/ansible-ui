@@ -40,7 +40,9 @@ jobs:
 
       - name: Publish Framework
         run: |
-          ./node_modules/.bin/vite build
+          pushd framework
+          ../node_modules/.bin/vite build
+          popd
           ./node_modules/.bin/tsc --emitDeclarationOnly
           cp -f LICENSE.md publish
           cp -fR build/framework/ publish/

@@ -2,11 +2,15 @@
 
 import { useMemo } from 'react';
 
-const awxRoutePrefix: string = process.env.AWX_ROUTE_PREFIX
-  ? process.env.AWX_ROUTE_PREFIX
+const awxRoutePrefix: string = process.env.VITE_AWX_ROUTE_PREFIX
+  ? process.env.VITE_AWX_ROUTE_PREFIX
   : '/ui_next';
-const hubRoutePrefix: string = process.env.HUB_ROUTE_PREFIX ? process.env.HUB_ROUTE_PREFIX : '/hub';
-const edaRoutePrefix: string = process.env.EDA_ROUTE_PREFIX ? process.env.EDA_ROUTE_PREFIX : '/eda';
+const hubRoutePrefix: string = process.env.VITE_HUB_ROUTE_PREFIX
+  ? process.env.VITE_HUB_ROUTE_PREFIX
+  : '/hub';
+const edaRoutePrefix: string = process.env.VITE_EDA_ROUTE_PREFIX
+  ? process.env.VITE_EDA_ROUTE_PREFIX
+  : '/eda';
 
 export const RouteObj = {
   Login: '/login',
