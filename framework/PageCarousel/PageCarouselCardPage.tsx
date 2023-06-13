@@ -13,22 +13,19 @@ type PageCarouselCardPageProps = {
  * Component representing a page/view of cards.
  * A page of cards could be of size 4 cards, 3 cards, 2 cards or 1 card depending on the screen size.
  */
-export const PageCarouselCardPage = forwardRef<HTMLDivElement, PageCarouselCardPageProps>(
-  function PageCarouselCardPage(props, ref) {
-    return (
-      <div
-        id="page-carousel-cards"
-        ref={ref}
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: `repeat(${props.visibleCardsPerPage}, 1fr)`,
-          marginBottom: 'var(--pf-global--spacer--lg',
-          paddingRight: 8,
-        }}
-      >
-        {props.children}
-      </div>
-    );
-  }
-);
+export function PageCarouselCardPage(props: PageCarouselCardPageProps) {
+  return (
+    <div
+      id="page-carousel-cards"
+      style={{
+        display: 'grid',
+        gap: 16,
+        gridTemplateColumns: `repeat(${props.visibleCardsPerPage}, 1fr)`,
+        marginBottom: 'var(--pf-global--spacer--lg',
+        paddingRight: 8,
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
