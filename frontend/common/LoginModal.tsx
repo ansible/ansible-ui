@@ -27,9 +27,7 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
   const [_, setDialog] = usePageDialog();
   const navigate = useNavigate();
   const onClose = () => {
-    if (process.env.EDA === 'true') {
-      navigate(-1);
-    }
+    navigate(-1);
     setDialog(undefined);
   };
   return (
@@ -38,13 +36,13 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
         <Stack style={{ paddingBottom: 8 }}>
           {t('Welcome to')}
           <Title headingLevel="h1" size={TitleSizes['2xl']}>
-            {process.env.PRODUCT ?? t('Ansible')}
+            {import.meta.env.VITE_PRODUCT ?? t('Ansible')}
           </Title>
         </Stack>
       }
       isOpen
       onClose={onClose}
-      showClose={process.env.EDA !== 'true'}
+      showClose={import.meta.env.VITE_EDA !== 'true'}
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
@@ -87,11 +85,11 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
     async (data, setError) => {
       try {
         let automationServer: AutomationServer | undefined;
-        if (process.env.AWX === 'true') {
+        if (import.meta.env.VITE_AAP_MODE === 'AWX') {
           automationServer = { name: '', url: '', type: AutomationServerType.AWX };
-        } else if (process.env.HUB === 'true') {
+        } else if (import.meta.env.VITE_AAP_MODE === 'HUB') {
           automationServer = { name: '', url: '', type: AutomationServerType.HUB };
-        } else if (process.env.EDA === 'true') {
+        } else if (import.meta.env.VITE_AAP_MODE === 'EDA') {
           automationServer = { name: '', url: '', type: AutomationServerType.EDA };
         } else {
           automationServer = automationServers.find((server) => server.url === data.server);
@@ -185,7 +183,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       isVertical
       singleColumn
       defaultValue={
-        process.env.EDA === 'true'
+        import.meta.env.VITE_AAP_MODE === 'EDA'
           ? {}
           : {
               server: automationServers.find((automationServer) =>
@@ -199,7 +197,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       disablePadding
       disableScrolling
     >
-      {process.env.AWX !== 'true' && process.env.HUB !== 'true' && process.env.EDA !== 'true' && (
+      {import.meta.env.VITE_AAP_MODE === 'AAP' && (
         <PageFormSelectOption
           name="server"
           label={t('Automation server')}

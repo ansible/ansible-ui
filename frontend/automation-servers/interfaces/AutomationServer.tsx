@@ -7,5 +7,5 @@ export interface AutomationServer {
 }
 
 export function automationServerKeyFn(automationServer: AutomationServer) {
-  return automationServer.name;
+  return automationServer.url;
 }

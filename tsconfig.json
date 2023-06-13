@@ -15,7 +15,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "outDir": "./build",
+    "outDir": "./dist",
     // "noImplicitUseStrict": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -34,6 +34,7 @@
     "cypress.config.ts",
     "cypress.eda.ts",
     "cypress.d.ts",
-    "i18next-parser.config.cjs"
+    "i18next-parser.config.cjs",
+    "vite.config.ts"
   ]
 }

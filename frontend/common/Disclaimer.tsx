@@ -15,7 +15,8 @@ import { Fragment, ReactNode, useCallback, useState } from 'react';
 
 export function Disclaimer(props: { children: ReactNode }) {
   const [acceptedDisclaimer, setAcceptedDisclaimerState] = useState(
-    () => process.env.DISCLAIMER !== 'true' || localStorage.getItem('disclaimer') === 'true'
+    () =>
+      import.meta.env.VITE_DISCLAIMER !== 'true' || localStorage.getItem('disclaimer') === 'true'
   );
   const setAcceptedDisclaimer = useCallback(() => {
     localStorage.setItem('disclaimer', 'true');

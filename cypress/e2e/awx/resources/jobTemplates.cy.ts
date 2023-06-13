@@ -205,7 +205,7 @@ describe('Job templates form', () => {
   it('Should edit and then delete the job template just created above', () => {
     const newJTName = jtName + 'new random string' + randomString(4);
     cy.navigateTo(/^Templates$/);
-    cy.clickTableRowKebabAction(jtName, /^Edit template$/);
+    cy.clickTableRowKebabAction(jtName, /^Edit template$/, false);
 
     cy.typeInputByLabel(/^Name$/, newJTName);
     cy.typeInputByLabel(/^Description$/, 'this is a new description');

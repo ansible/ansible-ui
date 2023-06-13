@@ -1,32 +1,33 @@
 import { RouteObj } from '../../../../Routes';
-import * as useOptions from '../../../../common/crud/useOptions';
-import * as useAwxConfig from '../../../common/useAwxConfig';
 import { CreateProject, EditProject } from './ProjectForm';
 
 describe('ProjectForm.cy.ts', () => {
   beforeEach(() => {
-    cy.stub(useOptions, 'useOptions').callsFake(() => ({
-      data: {
-        actions: {
-          GET: {
-            scm_type: {
-              type: 'choice',
-              label: 'SCM Type',
-              help_text: 'Specifies the source control system used to store the project.',
-              filterable: true,
-              choices: [
-                ['', 'Manual'],
-                ['git', 'Git'],
-                ['svn', 'Subversion'],
-                ['insights', 'Red Hat Insights'],
-                ['archive', 'Remote Archive'],
-              ],
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/v2/projects' },
+      {
+        statusCode: 200,
+        body: {
+          actions: {
+            GET: {
+              scm_type: {
+                type: 'choice',
+                label: 'SCM Type',
+                help_text: 'Specifies the source control system used to store the project.',
+                filterable: true,
+                choices: [
+                  ['', 'Manual'],
+                  ['git', 'Git'],
+                  ['svn', 'Subversion'],
+                  ['insights', 'Red Hat Insights'],
+                  ['archive', 'Remote Archive'],
+                ],
+              },
             },
           },
         },
-      },
-    }));
-    cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => null);
+      }
+    );
     cy.intercept(
       { method: 'GET', url: '/api/v2/organizations/*' },
       { fixture: 'organizations.json' }

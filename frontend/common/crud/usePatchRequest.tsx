@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { AnsibleError } from './ansible-error';
 import { getCookie } from './cookie';
-import { Delay } from './delay';
 
 export function usePatchRequest<RequestBody, ResponseBody>() {
   const navigate = useNavigate();
@@ -16,8 +15,6 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
   }, []);
 
   return async (url: string, body: RequestBody) => {
-    await Delay();
-
     const response = await fetch(url, {
       method: 'PATCH',
       body: JSON.stringify(body),

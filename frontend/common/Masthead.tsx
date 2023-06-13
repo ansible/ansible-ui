@@ -44,14 +44,14 @@ import AwxIcon from '../assets/AWX.svg';
 import EdaIcon from '../assets/EDA.svg';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { useAwxConfig } from '../awx/common/useAwxConfig';
+import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
-import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../awx/common/useAwxConfig';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -77,7 +77,10 @@ const ToolbarSpan = styled.span`
 function isEdaServer(
   server: { type: AutomationServerType; name: string; url: string } | undefined
 ): boolean {
-  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
+  return (
+    (server?.type && server.type === AutomationServerType.EDA) ||
+    import.meta.env.VITE_AAP_MODE === 'EDA'
+  );
 }
 
 export function AnsibleMasthead(props: { hideLogin?: boolean }) {
@@ -87,8 +90,8 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   const openSettings = useSettingsDialog(t);
   const openAnsibleAboutModal = useAnsibleAboutModal();
 
-  const brand: string = process.env.BRAND ?? '';
-  const product: string = process.env.PRODUCT ?? t('Ansible');
+  const brand: string = import.meta.env.VITE_BRAND ?? '';
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('Ansible');
   const { automationServer } = useAutomationServers();
   const config = useAwxConfig();
   const navBar = usePageNavSideBar();

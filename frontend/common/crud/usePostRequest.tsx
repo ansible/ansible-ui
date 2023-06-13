@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { AnsibleError } from './ansible-error';
 import { getCookie } from './cookie';
-import { Delay } from './delay';
 
 export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
@@ -16,8 +15,6 @@ export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>
   }, []);
 
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
-    await Delay();
-
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),

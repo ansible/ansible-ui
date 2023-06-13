@@ -1,4 +1,3 @@
-import * as useOptions from '../../../common/crud/useOptions';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
 
@@ -41,11 +40,10 @@ describe('Inventories.cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
     it('disable "create inventory" toolbar action if the user does not have permissions', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/inventories' },
+        { statusCode: 200, body: { actions: {} } }
+      );
       cy.mount(<Inventories />);
       cy.contains('button', /^Create inventory$/).as('createButton');
       cy.get('@createButton').should('have.attr', 'disabled');
@@ -144,22 +142,26 @@ describe('Inventories.cy.ts', () => {
       ).as('emptyList');
     });
     it('display Empty State and create button for user with permission to create inventories', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this team.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/inventories' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this team.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.mount(<Inventories />);
       cy.contains(/^There are currently no inventories added.$/);
       cy.contains(/^Please create an inventory by using the button below.$/);
@@ -176,11 +178,10 @@ describe('Inventories.cy.ts', () => {
         .should('exist');
     });
     it('display Empty state for user without permission to create teams', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/inventories' },
+        { statusCode: 200, body: { actions: {} } }
+      );
       cy.mount(<Inventories />);
       cy.contains(/^You do not have permission to create an inventory.$/);
       cy.contains(

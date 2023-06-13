@@ -16,9 +16,9 @@ import {
 } from '../../framework';
 import { PageTableViewTypeE } from '../../framework/PageTable/PageToolbar/PageTableViewType';
 import { useView } from '../../framework/useView';
-import { useLoginModal } from '../common/LoginModal';
 import AwxIcon from '../assets/AWX.svg';
 import EdaIcon from '../assets/EDA.svg';
+import { useLoginModal } from '../common/LoginModal';
 import { useAutomationServers } from './contexts/AutomationServerProvider';
 import { useAddAutomationServer } from './hooks/useAddAutomationServer';
 import { useRemoveAutomationServers } from './hooks/useRemoveAutomationServers';

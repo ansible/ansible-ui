@@ -218,7 +218,7 @@ export function AwxSidebar() {
           </NavItem>
         </NavExpandable>
       )}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.VITE_DEV && (
         <NavItem
           isActive={isRouteActive(RouteObj.AwxDebug, location)}
           onClick={() => onClick(RouteObj.AwxDebug)}

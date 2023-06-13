@@ -58,9 +58,6 @@ async function requestCommon<ResponseBody>(
   options: Options,
   methodFn: (input: Input, options: Options) => ResponsePromise
 ) {
-  if (process.env.DELAY)
-    await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)));
-
   try {
     const result = await methodFn(url, {
       ...options,

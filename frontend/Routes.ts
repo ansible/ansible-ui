@@ -4,15 +4,15 @@ import { useMemo } from 'react';
 
 export type RouteType = `/${string}`;
 
-const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
-  ? (process.env.AWX_ROUTE_PREFIX as RouteType)
+const awxRoutePrefix: RouteType = import.meta.env.VITE_AWX_ROUTE_PREFIX
+  ? (import.meta.env.VITE_AWX_ROUTE_PREFIX as RouteType)
   : '/ui_next';
 
-const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
-  ? (process.env.HUB_ROUTE_PREFIX as RouteType)
+const hubRoutePrefix: RouteType = import.meta.env.VITE_HUB_ROUTE_PREFIX
+  ? (import.meta.env.VITE_HUB_ROUTE_PREFIX as RouteType)
   : '/hub';
-const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
-  ? (process.env.EDA_ROUTE_PREFIX as RouteType)
+const edaRoutePrefix: RouteType = import.meta.env.VITE_EDA_ROUTE_PREFIX
+  ? (import.meta.env.VITE_EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
 
 export const RouteObj: { [key: string]: RouteType } = {

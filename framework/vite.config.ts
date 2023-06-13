@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       name: '@ansible/ansible-ui-framework',
-      entry: resolve(__dirname, 'framework/index.ts'),
+      entry: resolve(__dirname, 'index.ts'),
       fileName: 'index',
     },
     rollupOptions: {

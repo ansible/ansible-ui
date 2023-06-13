@@ -3,18 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { Credential } from '../../interfaces/Credential';
 import { useAwxView } from '../../useAwxView';
 import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Credentials() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   usePersistentFilters('credentials');
   const toolbarFilters = useCredentialsFilters();

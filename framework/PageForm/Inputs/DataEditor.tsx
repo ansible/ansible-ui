@@ -5,6 +5,25 @@ import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
 
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+import yamlWorker from 'monaco-yaml/yaml.worker?worker';
+
+window.MonacoEnvironment = {
+  getWorker(_moduleId, label) {
+    switch (label) {
+      case 'editorWorkerService':
+        return new editorWorker();
+      case 'json':
+        return new jsonWorker();
+      case 'yaml':
+        return new yamlWorker();
+      default:
+        throw new Error(`Unknown label ${label}`);
+    }
+  },
+};
+
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -87,37 +106,6 @@ export function DataEditor<
       editorRef.current.editor = editor;
     }
 
-    window.MonacoEnvironment = {
-      getWorker(moduleId, label) {
-        switch (label) {
-          case 'editorWorkerService':
-            return new Worker(
-              new URL(
-                '../../../node_modules/monaco-editor/esm/vs/editor/editor.worker',
-                import.meta.url
-              ),
-              { type: 'module' }
-            );
-          case 'json':
-            return new Worker(
-              new URL(
-                '../../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
-                import.meta.url
-              ),
-              { type: 'module' }
-            );
-          case 'yaml':
-            return new Worker(
-              new URL('../../../node_modules/monaco-yaml/yaml.worker', import.meta.url),
-              {
-                type: 'module',
-              }
-            );
-          default:
-            throw new Error(`Unknown label ${label}`);
-        }
-      },
-    };
     return () => {
       editor.dispose();
     };
