@@ -34,5 +34,4 @@ ENV NODE_ENV production
 ENV VERSION $VERSION
 COPY --chown=node /build/ ./
 COPY --chown=node /dist/ ./public
-COPY --chown=node /locales/ ./public/locales
 CMD ["node", "proxy.mjs"]

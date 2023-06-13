@@ -15,9 +15,9 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
       manifest: {
-        name: 'Ansible Framework Example',
-        short_name: 'Example',
-        description: 'Ansible Framework Example',
+        name: 'Ansible',
+        short_name: 'Ansible',
+        description: 'Ansible',
         theme_color: '#000000',
         icons: [
           {
