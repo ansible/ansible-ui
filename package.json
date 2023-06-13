@@ -60,6 +60,7 @@
     "@patternfly/react-table": "4.113.2",
     "@react-hook/resize-observer": "1.2.6",
     "@rollup/plugin-commonjs": "25.0.1",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "15.1.0",
     "@rollup/plugin-replace": "5.0.2",
     "@rollup/plugin-strip": "3.0.2",
