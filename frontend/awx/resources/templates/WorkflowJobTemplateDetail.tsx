@@ -27,12 +27,12 @@ import {
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
+import { PageNotImplemented } from '../../../common/PageNotImplemented';
 import { useGetItem } from '../../../common/crud/useGetItem';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import { PageNotImplemented } from '../../../common/PageNotImplemented';
 
 export function WorkflowJobTemplateDetail() {
   const { t } = useTranslation();
@@ -60,7 +60,7 @@ export function WorkflowJobTemplateDetail() {
         icon: EditIcon,
         label: t('Edit workflow template'),
         onClick: (template) =>
-          history(RouteObj.EditTemplate.replace(':id', template?.id.toString() ?? '')),
+          history(RouteObj.EditJobTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
         type: PageActionType.Button,

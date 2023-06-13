@@ -2,11 +2,13 @@
 
 import { useMemo } from 'react';
 
-const awxRoutePrefix = '/ui_next';
-const hubRoutePrefix = '/hub';
-const edaRoutePrefix = '/eda';
+const awxRoutePrefix: string = process.env.AWX_ROUTE_PREFIX
+  ? process.env.AWX_ROUTE_PREFIX
+  : '/ui_next';
+const hubRoutePrefix: string = process.env.HUB_ROUTE_PREFIX ? process.env.HUB_ROUTE_PREFIX : '/hub';
+const edaRoutePrefix: string = process.env.EDA_ROUTE_PREFIX ? process.env.EDA_ROUTE_PREFIX : '/eda';
 
-export const RouteObj: { [key: string]: string } = {
+export const RouteObj = {
   Login: '/login',
 
   AWX: `${awxRoutePrefix}`,
@@ -263,8 +265,9 @@ export function useRoutesWithoutPrefix(prefix: string) {
   const routesWithoutPrefix: { [key: string]: string } = useMemo(() => {
     const routes: { [key: string]: string } = {};
     for (const route in RouteObj) {
-      if (RouteObj[route].startsWith(prefix)) {
-        routes[route] = RouteObj[route].replace(prefix, '');
+      const routePath = (RouteObj as Record<string, string>)[route];
+      if (routePath.startsWith(prefix)) {
+        routes[route] = routePath.replace(prefix, '');
       }
     }
     return routes;

@@ -11,7 +11,7 @@ import {
 import { TrashIcon } from '@patternfly/react-icons';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -25,7 +25,6 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
@@ -35,7 +34,7 @@ import { useDeleteInventories } from './hooks/useDeleteInventories';
 export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { data: inventory } = useGet<EdaInventory>(
     `${API_PREFIX}/inventory/${params.id ?? ''}/`,
     undefined,
@@ -54,7 +53,7 @@ export function InventoryDetails() {
 
   const deleteInventories = useDeleteInventories((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaInventories);
+      // navigate(RouteObj.EdaInventories);
     }
   });
   const itemActions = useMemo<IPageAction<EdaInventory>[]>(
@@ -121,7 +120,7 @@ export function InventoryDetails() {
       <PageHeader
         title={inventory?.name}
         breadcrumbs={[
-          { label: t('Inventories'), to: RouteObj.EdaInventories },
+          // { label: t('Inventories'), to: RouteObj.EdaInventories },
           { label: inventory?.name },
         ]}
         headerActions={

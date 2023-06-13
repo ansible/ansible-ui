@@ -50,7 +50,6 @@ export default defineConfig({
   ],
   server: {
     open: true,
-    https: true,
     port: 3002,
     cors: false,
     proxy: {
