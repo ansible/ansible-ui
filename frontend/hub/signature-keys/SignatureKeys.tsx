@@ -106,7 +106,7 @@ export function useSignatureKeyFilters() {
         label: t('Name'),
         type: 'string',
         query: 'name',
-        comparison: 'startsWith',
+        comparison: 'equals',
       },
     ],
     [t]
