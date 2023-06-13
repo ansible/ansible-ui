@@ -13,7 +13,7 @@ export type PageDashboardCountBarProps = {
 
 export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
   return (
-    <PageDashboardCard width="xxl">
+    <PageDashboardCard width="xxl" isCompact>
       <CardBody>
         <Flex
           spaceItems={{ default: 'spaceItems2xl' }}
