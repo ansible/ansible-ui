@@ -3,12 +3,6 @@ import { AngleLeftIcon, AngleRightIcon } from '@patternfly/react-icons';
 import { CSSProperties, useEffect } from 'react';
 import { useMemo } from 'react';
 
-/**
- * Component for navigating across pages of cards in a carousel
- * The navigation elements comprise of previous and next arrow buttons surrounding one or more
- * interactible dots where each dot represents a page of cards
- */
-
 const pageDotStyle: CSSProperties = {
   height: 10,
   width: 10,
@@ -19,6 +13,11 @@ const pageDotStyle: CSSProperties = {
   marginRight: 10,
 };
 
+/**
+ * Component for navigating across pages of cards in a carousel
+ * The navigation elements comprise of previous and next arrow buttons surrounding one or more
+ * interactible dots where each dot represents a page of cards
+ */
 export function PageCarouselNav(props: {
   setPage: (value: number) => void;
   currentPage: number;

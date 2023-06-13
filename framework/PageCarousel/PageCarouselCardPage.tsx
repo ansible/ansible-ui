@@ -1,12 +1,27 @@
-import React, { ReactNode, forwardRef } from 'react';
+import React, { ReactNode } from 'react';
+import styled, { css } from 'styled-components';
+
+const CardPageContainer = styled.div`
+  display: grid;
+  gap: 30px;
+  margin-bottom: var(--pf-global--spacer--lg);
+  padding-right: 8;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  ${(props: { visibleCardsPerPage: number }) =>
+    props.visibleCardsPerPage &&
+    css`
+      grid-template-columns: repeat(${props.visibleCardsPerPage}, 1fr);
+    `}
+`;
 
 type PageCarouselCardPageProps = {
   /** The cards to be displayed within a page */
   children: ReactNode;
   /** The number of cards visible per page */
   visibleCardsPerPage: number;
-  /** The index of the current active page */
-  currentPage?: number;
+  /** The index of the page */
+  pageIndex: number;
 };
 
 /**
@@ -15,17 +30,11 @@ type PageCarouselCardPageProps = {
  */
 export function PageCarouselCardPage(props: PageCarouselCardPageProps) {
   return (
-    <div
-      id="page-carousel-cards"
-      style={{
-        display: 'grid',
-        gap: 16,
-        gridTemplateColumns: `repeat(${props.visibleCardsPerPage}, 1fr)`,
-        marginBottom: 'var(--pf-global--spacer--lg',
-        paddingRight: 8,
-      }}
+    <CardPageContainer
+      visibleCardsPerPage={props.visibleCardsPerPage}
+      id={`page-carousel-cards-${props.pageIndex}`}
     >
       {props.children}
-    </div>
+    </CardPageContainer>
   );
 }
