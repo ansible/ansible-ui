@@ -558,7 +558,7 @@ Cypress.Commands.add(
       JobTemplate
     >('/api/v2/job_templates/', {
       name: 'E2E Job Template ' + randomString(4),
-      playbook: 'playbooks/basic.yml',
+      playbook: 'playbooks/hello_world.yml',
       ...jobTemplate,
     });
   }
