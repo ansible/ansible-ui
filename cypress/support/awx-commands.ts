@@ -614,20 +614,20 @@ Cypress.Commands.add('waitAwxProjectSync', (project: Project) => {
 
 // Polling to wait till a project is synced
 function waitForProjectToFinishSyncing(projectId: number, requestCount?: number) {
-  requestCount = requestCount ?? 1;
+  let count = requestCount ?? 1;
   cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
     // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > 300) {
-      if (requestCount > 300) {
+    if (project.status === 'successful' || count > 300) {
+      if (count > 300) {
         cy.log('Reached maximum number of requests for reading project status');
       }
       // Reset request count
-      requestCount = 1;
+      count = 1;
       return;
     }
-    requestCount++;
+    count++;
     cy.wait(1000);
-    waitForProjectToFinishSyncing(projectId, requestCount);
+    waitForProjectToFinishSyncing(projectId, count);
   });
 }
 
