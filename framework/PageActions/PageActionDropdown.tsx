@@ -28,6 +28,12 @@ const StyledDropdownItem = styled.div<{ hasSwitches: boolean; isDanger: boolean 
     isDanger ? 'var(--pf-global--danger-color--100)' : undefined};
 `;
 
+const ActionSwitchDiv = styled.div`
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+`;
+
 interface PageActionDropdownProps<T extends object> {
   actions: IPageAction<T>[];
   icon?: ComponentClass | FunctionComponent;
@@ -260,9 +266,9 @@ function PageDropdownActionItem<T extends object>(props: {
 
     case PageActionType.Switch: {
       return (
-        <div style={{ marginLeft: 16, marginRight: 16, marginBottom: 16 }}>
+        <ActionSwitchDiv>
           <PageActionSwitch action={action} selectedItem={selectedItem} />
-        </div>
+        </ActionSwitchDiv>
       );
     }
 
