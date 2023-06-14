@@ -425,7 +425,7 @@ Cypress.Commands.add(
       ...project,
     }).then((project) => {
       if (!skipSync) {
-        waitForProjectToFinishSyncing(project.id);
+        cy.waitAwxProjectSync(project);
       } else {
         cy.wrap(project);
       }
@@ -608,10 +608,13 @@ Cypress.Commands.add('deleteAwxJobTemplate', (jobTemplate: JobTemplate) => {
   }
 });
 
-let requestCount = 1;
+Cypress.Commands.add('waitAwxProjectSync', (project: Project) => {
+  waitForProjectToFinishSyncing(project.id);
+});
 
 // Polling to wait till a project is synced
-function waitForProjectToFinishSyncing(projectId: number) {
+function waitForProjectToFinishSyncing(projectId: number, requestCount?: number) {
+  requestCount = requestCount ?? 1;
   cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
     // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
     if (project.status === 'successful' || requestCount > 300) {
@@ -624,7 +627,7 @@ function waitForProjectToFinishSyncing(projectId: number) {
     }
     requestCount++;
     cy.wait(1000);
-    waitForProjectToFinishSyncing(projectId);
+    waitForProjectToFinishSyncing(projectId, requestCount);
   });
 }
 
@@ -715,5 +718,7 @@ let globalAwxToken: AwxToken | undefined;
 
 after(() => {
   // Delete the token if it was created
-  if (globalAwxToken) cy.deleteAwxToken(globalAwxToken);
+  if (globalAwxToken) {
+    cy.deleteAwxToken(globalAwxToken);
+  }
 });

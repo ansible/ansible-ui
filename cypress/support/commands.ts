@@ -260,6 +260,8 @@ declare global {
         skipSync?: boolean
       ): Chainable<Project>;
 
+      waitAwxProjectSync(project: Project): Chainable<Project>;
+
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(
         executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>

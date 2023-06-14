@@ -23,40 +23,42 @@ describe('Job templates form', () => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
 
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
+      cy.createAwxProject({ organization: organization.id }, false).then((p) => {
         project = p;
-      });
 
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-      });
+        cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          inventory = i;
+        });
 
-      cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-        executionEnvironment = ee;
-      });
+        cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
+          executionEnvironment = ee;
+        });
 
-      // cy.createAWXCredential({
-      //   kind: 'github_token',
-      //   organization: organization.id,
-      //   credential_type: 11,
-      // }).then((cred) => {
-      //   githubTokenCrendential = cred;
-      // });
+        // cy.createAWXCredential({
+        //   kind: 'github_token',
+        //   organization: organization.id,
+        //   credential_type: 11,
+        // }).then((cred) => {
+        //   githubTokenCrendential = cred;
+        // });
 
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: organization.id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+        });
 
-      cy.createAwxInstanceGroup().then((ig) => {
-        instanceGroup = ig;
-      });
+        cy.createAwxInstanceGroup().then((ig) => {
+          instanceGroup = ig;
+        });
 
-      cy.createAwxLabel({ organization: organization.id }).then((l) => {
-        label = l;
+        cy.createAwxLabel({ organization: organization.id }).then((l) => {
+          label = l;
+        });
+
+        cy.waitAwxProjectSync(project);
       });
     });
   });
