@@ -16,6 +16,8 @@ const CardPageContainer = styled.div`
 `;
 
 type PageCarouselCardPageProps = {
+  /** Unique id for the carousel component */
+  carouselId: string;
   /** The cards to be displayed within a page */
   children: ReactNode;
   /** The number of cards visible per page */
@@ -32,7 +34,7 @@ export function PageCarouselCardPage(props: PageCarouselCardPageProps) {
   return (
     <CardPageContainer
       visibleCardsPerPage={props.visibleCardsPerPage}
-      id={`page-carousel-cards-${props.pageIndex}`}
+      id={`page-carousel-cards-${props.carouselId}-${props.pageIndex}`}
     >
       {props.children}
     </CardPageContainer>

@@ -4,7 +4,7 @@ import { PageCarousel } from '../PageCarousel/PageCarousel';
 import { ReactNode } from 'react';
 
 export function PageDashboardCarousel(props: {
-  title?: string;
+  title: string;
   linkText?: string;
   width?: PageDashboardCardWidth;
   children: ReactNode;
@@ -12,7 +12,9 @@ export function PageDashboardCarousel(props: {
   return (
     <PageDashboardCard title={props.title} linkText={props.linkText} width={props.width}>
       <CardBody>
-        <PageCarousel>{props.children}</PageCarousel>
+        <PageCarousel carouselId={props.title.replace(/\s+/g, '-').toLowerCase()}>
+          {props.children}
+        </PageCarousel>
       </CardBody>
     </PageDashboardCard>
   );

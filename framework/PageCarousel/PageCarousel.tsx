@@ -23,7 +23,7 @@ const SlideContainer = styled.div`
  * A carousel component that displays children (eg. page cards) within it and switches
  * between pages of cards using smooth animation.
  */
-export function PageCarousel(props: { children: ReactNode }) {
+export function PageCarousel(props: { children: ReactNode; carouselId: string }) {
   const slideContainerRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -49,11 +49,13 @@ export function PageCarousel(props: { children: ReactNode }) {
   }, [props.children, visibleCardsPerPage]);
 
   useEffect(() => {
-    const cardPage = document.getElementById(`page-carousel-cards-${pageIndex}`);
+    const cardPage = document.getElementById(
+      `page-carousel-cards-${props.carouselId}-${pageIndex}`
+    );
     if (cardPage) {
       cardPage.scrollIntoView();
     }
-  }, [pageIndex]);
+  }, [pageIndex, props.carouselId]);
 
   return (
     <>
@@ -64,6 +66,7 @@ export function PageCarousel(props: { children: ReactNode }) {
               pageIndex={index}
               key={index}
               visibleCardsPerPage={visibleCardsPerPage}
+              carouselId={props.carouselId}
             >
               {pageOfCards}
             </PageCarouselCardPage>
