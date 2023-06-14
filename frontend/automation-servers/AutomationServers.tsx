@@ -24,6 +24,11 @@ import { useAddAutomationServer } from './hooks/useAddAutomationServer';
 import { useRemoveAutomationServers } from './hooks/useRemoveAutomationServers';
 import { AutomationServer, automationServerKeyFn } from './interfaces/AutomationServer';
 import { AutomationServerType } from './interfaces/AutomationServerType';
+import styled from 'styled-components';
+
+const HubIconDiv = styled.div`
+  font-size: xx-large;
+`;
 
 export function AutomationServers() {
   const { t } = useTranslation();
@@ -128,7 +133,7 @@ export function useAutomationServersColumns(_options?: {
             case AutomationServerType.EDA:
               return <EdaIcon />;
             case AutomationServerType.HUB:
-              return <div style={{ fontSize: 'xx-large' }}>HUB</div>;
+              return <HubIconDiv>HUB</HubIconDiv>;
           }
         },
       },

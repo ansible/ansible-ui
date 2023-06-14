@@ -4,6 +4,11 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
+import styled from 'styled-components';
+
+const FormDiv = styled.div`
+  padding: var(--pf-global--spacer--lg);
+`;
 
 export interface Settings {
   theme?: 'system' | 'light' | 'dark';
@@ -139,7 +144,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       ]}
       hasNoBodyWrapper
     >
-      <div style={{ padding: 'var(--pf-global--spacer--lg)' }}>
+      <FormDiv>
         <Form isHorizontal={settings.formLayout === 'horizontal'}>
           <FormGroupSelect
             id="theme"
@@ -200,7 +205,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
             <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
           </FormGroupSelect>
         </Form>
-      </div>
+      </FormDiv>
     </Modal>
   );
 }
