@@ -52,7 +52,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
       cy.get('h1').should('contain', name);
-      cy.wait(20000);
+      cy.navigateTo(/^Rulebook Activations$/);
       cy.deleteEdaRulebookActivation(rbaToBeDeleted);
     });
   });
@@ -136,17 +136,20 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   it('can enable and disable a Rulebook Activation', () => {
     cy.navigateTo(/^Rulebook Activations$/);
     cy.filterTableByText(edaRBA.name);
-    cy.wait(10000);
-    cy.get('.pf-c-switch__toggle').click();
-    cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
+    cy.getTableRowByText(edaRBA.name).within(() => {
+      cy.get('.pf-c-switch__toggle').click();
+      cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
+    });
     cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
     cy.get('button').contains('rulebook activations').click();
     cy.get('button').contains('Close').click();
-    cy.wait(10000);
     cy.wait('@disable').then((disable) => {
       expect(disable?.response?.statusCode).to.eq(204);
     });
-    cy.get('.pf-c-switch__toggle').click();
+    cy.getTableRowByText(edaRBA.name).within(() => {
+      cy.get('.pf-c-switch').get('input').should('not.have.attr', 'checked');
+      cy.get('.pf-c-switch__toggle').click();
+    });
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
     cy.edaRuleBookActivationActionsModal('enable', edaRBA.name);
     cy.get('button').contains('rulebookActivations').click();

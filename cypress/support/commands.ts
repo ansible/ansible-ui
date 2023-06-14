@@ -430,6 +430,10 @@ declare global {
         edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>
       ): Chainable<EdaRulebookActivation>;
 
+      waitForRulebookActionStatus(
+        edaRulebookActivation: EdaRulebookActivation
+      ): Chainable<EdaRulebookActivation>;
+
       /**
        * `deleteEdaProject(projectName: Project)`
        * deletes an EDA project via API,
