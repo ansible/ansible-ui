@@ -42,6 +42,8 @@ export function PageDashboardCard(props: {
   helpTitle?: string;
   helpDocLink?: string;
   headerControls?: ReactNode;
+
+  isCompact?: boolean;
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
@@ -135,6 +137,7 @@ export function PageDashboardCard(props: {
         maxHeight: height,
         ...props.style,
       }}
+      isCompact={props.isCompact}
     >
       {(props.title || props.linkText) && (
         <CardHeader>

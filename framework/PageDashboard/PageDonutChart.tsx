@@ -3,6 +3,17 @@ import { CardBody, Flex, FlexItem, Skeleton, Split, SplitItem } from '@patternfl
 import { Fragment } from 'react';
 import { PageChartContainer } from './PageChartContainer';
 import { PageDashboardCard } from './PageDashboardCard';
+import styled from 'styled-components';
+
+const FlexItemDiv = styled.div`
+  width: 12px;
+  height: 12px;
+`;
+
+const DonutChartDiv = styled.div`
+  width: 100px;
+  height: 100px;
+`;
 
 export function PageDonutChart(props: Omit<ChartDonutProps, 'width' | 'height'>) {
   return (
@@ -48,9 +59,9 @@ export function PageDashboardDonutCard(props: {
                   <FlexItem key={item.label}>
                     <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                       <FlexItem>
-                        <div style={{ width: 12, height: 12 }}>
+                        <FlexItemDiv>
                           <Skeleton shape="square" width="12" height="12" />
-                        </div>
+                        </FlexItemDiv>
                       </FlexItem>
                       <FlexItem grow={{ default: 'grow' }}>
                         <Skeleton shape="square" width="70px" height="14px" />
@@ -64,7 +75,7 @@ export function PageDashboardDonutCard(props: {
         ) : (
           <Split hasGutter>
             <SplitItem>
-              <div style={{ width: '100px', height: '100px' }}>
+              <DonutChartDiv>
                 <PageDonutChart
                   ariaDesc="Average number of pets"
                   ariaTitle="Donut chart example"
@@ -74,7 +85,7 @@ export function PageDashboardDonutCard(props: {
                   colorScale={items.map((item) => item.color)}
                   padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
                 />
-              </div>
+              </DonutChartDiv>
             </SplitItem>
             <SplitItem style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
