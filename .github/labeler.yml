@@ -10,12 +10,12 @@ HUB:
   - frontend/hub/**/*
   - cypress/hub/awx/**/*
 
-e2e:
+E2E:
   - cypress/e2e/**
 
-component:
+CCT:
   - framework/**/*.cy.*
   - frontend/**/*.cy.*
 
-framework:
+AFW:
   - framework/**/*
