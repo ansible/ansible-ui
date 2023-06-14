@@ -4,16 +4,18 @@
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
+import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Credential } from '../../frontend/awx/interfaces/Credential';
-import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -31,7 +33,6 @@ import './awx-commands';
 import { IAwxResources } from './awx-commands';
 import './eda-commands';
 import './rest-commands';
-import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 
 declare global {
   namespace Cypress {
@@ -255,17 +256,21 @@ declare global {
        * @returns {Chainable<Project>}
        */
       createAwxProject(
-        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
+        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+        skipSync?: boolean
       ): Chainable<Project>;
 
       /** Create an execution environment in AWX */
-      createAwxExecutionEnvironment(): Chainable<ExecutionEnvironment>;
+      createAwxExecutionEnvironment(
+        executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>
+      ): Chainable<ExecutionEnvironment>;
 
       /** Creates a credential in AWX */
       createAWXCredential(
-        kind: string,
-        organization: number,
-        credential_type?: number
+        credential: SetRequired<
+          Partial<Omit<Credential, 'id'>>,
+          'organization' | 'kind' | 'credential_type'
+        >
       ): Chainable<Credential>;
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
@@ -274,9 +279,7 @@ declare global {
         project?: Partial<Omit<Project, 'id'>>;
       }): Chainable<Project>;
 
-      createAwxInventory(options?: {
-        inventory?: Partial<Omit<Inventory, 'id'>>;
-      }): Chainable<Inventory>;
+      createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
@@ -293,7 +296,13 @@ declare global {
       }>;
       createAWXSchedule(): Chainable<Schedule>;
 
-      createAwxJobTemplate(): Chainable<JobTemplate>;
+      createAwxJobTemplate(
+        jobTemplate: SetRequired<
+          Partial<Omit<JobTemplate, 'id'>>,
+          'organization' | 'project' | 'inventory'
+        >
+      ): Chainable<JobTemplate>;
+
       /**
        * This command creates a job template with specific variables that will work in conjunction with
        * an EDA project and rulebook activation.
@@ -309,8 +318,12 @@ declare global {
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
-      createAwxInstanceGroup(): Chainable<InstanceGroup>;
-      createAwxLabel(organization: Organization): Chainable<Label>;
+      createAwxInstanceGroup(
+        instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
+      ): Chainable<InstanceGroup>;
+
+      createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
+
       deleteAwxOrganization(organization: Organization): Chainable<void>;
       deleteAwxProject(project: Project): Chainable<void>;
       deleteAwxInventory(inventory: Inventory): Chainable<void>;
@@ -319,7 +332,7 @@ declare global {
       deleteAwxTeam(team: Team): Chainable<void>;
       deleteAwxUser(user: User): Chainable<void>;
       deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
-      deleteAwxLabel(label: Label): Chainable<void>;
+      deleteAwxLabel(label?: Label): Chainable<void>;
 
       /**
        * This creates a user token in AWX that can be exported as a string and used in EDA.
