@@ -268,13 +268,12 @@ describe('projects.cy.ts', () => {
       cy.contains('td', ' Project 1 Org 0')
         .parent()
         .within(() => {
+          cy.contains(/^Edit project$/).should('have.attr', 'aria-disabled', 'true');
+
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__toggle').click();
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Copy project$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit project$/)
             .should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete project$/)

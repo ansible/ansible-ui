@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
+import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Schedules } from './Schedules';
-import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {
@@ -133,11 +133,10 @@ describe('schedules .cy.ts', () => {
       cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
         .parent()
         .within(() => {
+          cy.contains(/^Edit schedule$/).should('have.attr', 'aria-disabled', 'true');
+
           cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
           cy.get('.pf-c-dropdown__toggle').click();
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete schedule$/)
             .should('have.attr', 'aria-disabled', 'true');
