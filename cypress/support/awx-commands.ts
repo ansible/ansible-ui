@@ -417,14 +417,17 @@ Cypress.Commands.add('deleteAwxUser', (user: User) => {
 
 Cypress.Commands.add(
   'createAwxProject',
-  (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>, skipSync?: boolean) => {
+  (
+    project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+    options?: { skipSync?: boolean }
+  ) => {
     cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
       scm_type: 'git',
       scm_url: 'https://github.com/ansible/ansible-ui',
       ...project,
     }).then((project) => {
-      if (!skipSync) {
+      if (!options?.skipSync) {
         cy.waitAwxProjectSync(project);
       } else {
         cy.wrap(project);

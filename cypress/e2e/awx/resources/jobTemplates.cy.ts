@@ -23,7 +23,7 @@ describe('Job templates form', () => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
 
-      cy.createAwxProject({ organization: organization.id }, true).then((p) => {
+      cy.createAwxProject({ organization: organization.id }, { skipSync: true }).then((p) => {
         project = p;
 
         cy.createAwxInventory({ organization: organization.id }).then((i) => {

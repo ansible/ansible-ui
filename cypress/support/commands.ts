@@ -257,7 +257,7 @@ declare global {
        */
       createAwxProject(
         project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
-        skipSync?: boolean
+        options?: { skipSync?: boolean }
       ): Chainable<Project>;
 
       waitAwxProjectSync(project: Project): Chainable<Project>;
