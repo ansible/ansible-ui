@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
+import { FieldPath, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
@@ -18,13 +18,22 @@ export function PageFormProjectSelect<
     view: { pageItems },
   } = useSelectProject(true);
   const { setValue } = useFormContext();
+  const id = useWatch({ name: 'project' }) as number;
+
   useEffect(() => {
+    let selectedProject;
+    if (!id && pageItems?.length !== 1) return;
     if (pageItems?.length === 1) {
-      setValue(name as string, pageItems[0]?.name);
-      setValue(projectPath as string, pageItems[0]);
-      setValue(project as string, pageItems[0].id);
+      selectedProject = pageItems[0];
     }
-  }, [projectPath, project, pageItems, name, setValue]);
+    if (id) {
+      selectedProject = pageItems?.find((item) => item.id === id);
+    }
+
+    setValue(name as string, selectedProject?.name);
+    setValue(projectPath as string, selectedProject);
+    setValue(project as string, selectedProject?.id);
+  }, [projectPath, project, id, pageItems, name, setValue]);
   return (
     <PageFormTextInput<TFieldValues, TFieldName, Project>
       {...rest}

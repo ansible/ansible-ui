@@ -48,6 +48,7 @@ export function getJobTemplateDefaultValues(
       project: {
         name: template?.summary_fields?.project?.name || '',
         id: template?.summary_fields?.project?.id,
+        organization: template?.summary_fields?.project?.organization,
       },
       execution_environment: {
         name: template?.summary_fields?.execution_environment?.name || '',
@@ -56,6 +57,7 @@ export function getJobTemplateDefaultValues(
       webhook_credential: template?.summary_fields?.webhook_credential || undefined,
     },
     description: template?.description || '',
+    organization: template?.organization || undefined,
     diff_mode: template?.diff_mode || false,
     extra_vars: template?.extra_vars || '---\n',
     forks: template?.forks || 0,
