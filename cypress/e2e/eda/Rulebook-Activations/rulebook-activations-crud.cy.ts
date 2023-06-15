@@ -17,7 +17,6 @@ describe('EDA rulebook activations- Create', () => {
   before(() => {
     cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
-
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
@@ -53,6 +52,7 @@ describe('EDA rulebook activations- Create', () => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
       cy.get('h1').should('contain', name);
       cy.wait(20000);
+      cy.navigateTo(/^Rulebook Activations$/);
       cy.deleteEdaRulebookActivation(rbaToBeDeleted);
     });
   });
@@ -108,7 +108,6 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
-
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
@@ -139,6 +138,10 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.wait(10000);
     cy.get('.pf-c-switch__toggle').click();
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
+    cy.getTableRowByText(edaRBA.name).within(() => {
+      cy.get('.pf-c-switch__toggle').click();
+      cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
+    });
     cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
     cy.get('button').contains('rulebook activations').click();
     cy.get('button').contains('Close').click();
@@ -147,6 +150,10 @@ describe('EDA rulebook activations- Edit, Delete', () => {
       expect(disable?.response?.statusCode).to.eq(204);
     });
     cy.get('.pf-c-switch__toggle').click();
+    cy.getTableRowByText(edaRBA.name).within(() => {
+      cy.get('.pf-c-switch').get('input').should('not.have.attr', 'checked');
+      cy.get('.pf-c-switch__toggle').click();
+    });
     cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
     cy.edaRuleBookActivationActionsModal('enable', edaRBA.name);
     cy.get('button').contains('rulebookActivations').click();
