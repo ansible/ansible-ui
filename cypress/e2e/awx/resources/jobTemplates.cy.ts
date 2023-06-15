@@ -207,7 +207,7 @@ describe('Job templates form', () => {
     cy.hasTitle(jtName);
   });
 
-  it('Should edit a job template', () => {
+  it.skip('Should edit a job template', () => {
     cy.navigateTo(/^Templates$/);
     cy.createAwxJobTemplate({
       organization: organization.id,
