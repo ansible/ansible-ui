@@ -1,18 +1,28 @@
 import { Button, Bullseye, ButtonVariant } from '@patternfly/react-core';
 import { AngleLeftIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { CSSProperties, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useMemo } from 'react';
+import styled, { css } from 'styled-components';
 
-const pageDotStyle: CSSProperties = {
-  height: 10,
-  width: 10,
-  borderRadius: '50%',
-  backgroundColor: 'var(--pf-global--primary-color--100)',
-  padding: 0,
-  marginLeft: 10,
-  marginRight: 10,
-};
-
+const PageNavDotButton = styled(Button)`
+  && {
+    background-color: blue;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    padding: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    ${(props: { isCurrentPage: boolean }) =>
+      props.isCurrentPage
+        ? css`
+            background-color: var(--pf-global--primary-color--100);
+          `
+        : css`
+            background-color: var(--pf-global--disabled-color--200);
+          `}
+  }
+`;
 /**
  * Component for navigating across pages of cards in a carousel
  * The navigation elements comprise of previous and next arrow buttons surrounding one or more
@@ -36,21 +46,14 @@ export function PageCarouselNav(props: {
     const dots = [];
     for (let i = 0; i < totalPages; i++) {
       dots.push(
-        <Button
+        <PageNavDotButton
           key={i}
           variant={ButtonVariant.plain}
           onClick={() => {
             setPage(i);
           }}
-          style={
-            i === currentPage
-              ? { ...pageDotStyle }
-              : {
-                  ...pageDotStyle,
-                  backgroundColor: 'var(--pf-global--disabled-color--200)',
-                }
-          }
-        ></Button>
+          isCurrentPage={i === currentPage}
+        ></PageNavDotButton>
       );
     }
     return dots;
