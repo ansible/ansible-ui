@@ -42,7 +42,7 @@ export function Namespaces() {
 }
 
 export function AllNamespaces() {
-  return <CommonNamespaces url="/api/automation-hub/_ui/v1/namespaces/" />;
+  return <CommonNamespaces url="/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/" />;
 }
 
 export function MyNamespaces() {
