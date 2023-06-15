@@ -17,6 +17,7 @@ describe('EDA rulebook activations- Create', () => {
   before(() => {
     cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
+
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
@@ -107,6 +108,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
+
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
