@@ -31,7 +31,11 @@ Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
     .invoke('attr', 'for')
     .then((id: string | undefined) => {
       if (id) {
-        cy.get('#' + id).should('be.enabled');
+        cy.get('#' + id + ':not(:disabled):not(:hidden)').should(
+          'not.have.attr',
+          'aria-disabled',
+          'true'
+        );
       }
     });
 });
@@ -76,7 +80,10 @@ Cypress.Commands.add(
 
       cy.get('.pf-c-select__menu').then((selectMenu) => {
         if (selectMenu.find('.pf-m-search').length > 0) {
-          cy.get('.pf-m-search').clear().type(text, { delay: 0 });
+          cy.get('.pf-m-search:not(:disabled):not(:hidden)')
+            .should('not.have.attr', 'aria-disabled', 'true')
+            .clear()
+            .type(text, { delay: 0 });
         }
       });
 
@@ -122,7 +129,9 @@ Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, 
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label).click();
+  cy.contains('a:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .click();
 });
 
 Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
