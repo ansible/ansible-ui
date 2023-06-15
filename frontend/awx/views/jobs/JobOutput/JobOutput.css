@@ -5,10 +5,10 @@
   grid-template-columns: minmax(var(--output-line-column-width), auto) 1fr;
   overflow-x: auto;
   background-color: var(--pf-global--BackgroundColor--100);
+}
 
-  .pf-theme-dark & {
-    background-color: var(--pf-global--BackgroundColor--200);
-  }
+.pf-theme-dark .output-grid {
+  background-color: var(--pf-global--BackgroundColor--200);
 }
 
 .output-grid-row {

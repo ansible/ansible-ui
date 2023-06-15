@@ -13,7 +13,7 @@ import type { HostStatusCounts } from '../../../interfaces/Job';
 const BarWrapper = styled.div`
   background-color: var(--pf-global--Color--light-300);
   display: flex;
-  height: 7px;
+  min-height: 7px;
   margin-top: 16px;
   margin-bottom: 8px;
   width: 100%;
