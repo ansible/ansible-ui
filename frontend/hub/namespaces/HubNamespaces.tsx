@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { idKeyFn, useHubView } from '../useHubView';
+import { idKeyFn, usePulpView } from '../usePulpView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
@@ -56,7 +56,7 @@ export function CommonNamespaces(props: { url: string }) {
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
-  const view = useHubView<HubNamespace>(props.url, idKeyFn, toolbarFilters, tableColumns);
+  const view = usePulpView<HubNamespace>(props.url, idKeyFn, toolbarFilters, tableColumns);
   return (
     <PageTable<HubNamespace>
       toolbarFilters={toolbarFilters}
