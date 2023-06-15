@@ -4,9 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { useOptions } from '../../../common/crud/useOptions';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
@@ -14,12 +16,10 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectsFilters } from './hooks/useProjectsFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Projects() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns();

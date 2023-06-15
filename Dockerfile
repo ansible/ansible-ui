@@ -5,7 +5,7 @@ ARG NGINX_CONFIGURATION_PATH=/etc/nginx/nginx.conf
 ENV DIST_UI="/opt/app-root/ui/eda"
 COPY ${NGINX_CONF} ${NGINX_CONFIGURATION_PATH}
 RUN mkdir -p ${DIST_UI}/
-COPY /build/eda/ ${DIST_UI}
+COPY /dist/eda/ ${DIST_UI}
 ARG USER_ID=${USER_ID:-1001}
 RUN adduser -S eda -u "$USER_ID" -G root
 USER 0
@@ -33,4 +33,5 @@ WORKDIR /home/node
 ENV NODE_ENV production
 ENV VERSION $VERSION
 COPY --chown=node /build/ ./
+COPY --chown=node /dist/ ./public
 CMD ["node", "proxy.mjs"]

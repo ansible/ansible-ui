@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
+import { RouteObj } from '../../../../Routes';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
 import { getScheduleResourceUrl } from './getScheduleResourceUrl';
-import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../../../Routes';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -16,9 +16,9 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
   };
   const jobTypeLabels: JobTypeLabel = useMemo(
     () => ({
-      inventory_update: { name: t('Inventory Sync'), route: RouteObj.InventoriesSourcesDetails },
+      inventory_update: { name: t('Inventory Sync'), route: RouteObj.InventorySources },
       job: { name: t('Playbook Run'), route: RouteObj.JobTemplateDetails },
-      project_update: { name: t('Source Control Update'), route: RouteObj.ProjectsDetails },
+      project_update: { name: t('Source Control Update'), route: RouteObj.ProjectDetails },
       system_job: { name: t('Management Job'), route: RouteObj.ManagementJobs },
       workflow_job: { name: t('Workflow Job'), route: RouteObj.WorkflowJobTemplateDetails },
     }),

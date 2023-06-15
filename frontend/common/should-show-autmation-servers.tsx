@@ -1,13 +1,13 @@
 export function shouldShowAutmationServers() {
   let count = 0;
 
-  let showAWX = process.env.AWX === 'true';
+  let showAWX = import.meta.env.VITE_AAP_MODE === 'AWX';
   if (showAWX) count++;
 
-  let showHub = process.env.HUB === 'true';
+  let showHub = import.meta.env.VITE_AAP_MODE === 'HUB';
   if (showHub) count++;
 
-  let showEda = process.env.EDA === 'true';
+  let showEda = import.meta.env.VITE_AAP_MODE === 'EDA';
   if (showEda) count++;
 
   const showAutomationServers = count !== 1;

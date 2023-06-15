@@ -1,4 +1,3 @@
-import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
 describe('Teams.cy.ts', () => {
@@ -58,22 +57,26 @@ describe('Teams.cy.ts', () => {
     });
 
     it('Create Team button is enabled if the user has permission to create teams', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this team.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/teams' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this team.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
@@ -82,22 +85,26 @@ describe('Teams.cy.ts', () => {
 
   describe('Empty list', () => {
     it('Empty state is displayed correctly for user with permission to create teams', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this team.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/teams' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this team.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^There are currently no teams added to your organization.$/);
@@ -106,7 +113,10 @@ describe('Teams.cy.ts', () => {
     });
 
     it('Empty state is displayed correctly for user without permission to create teams', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({ data: { actions: {} } }));
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/teams' },
+        { statusCode: 200, body: { actions: {} } }
+      );
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^You do not have permission to create a team$/);

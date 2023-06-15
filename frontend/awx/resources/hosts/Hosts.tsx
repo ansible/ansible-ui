@@ -26,15 +26,15 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Hosts() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();

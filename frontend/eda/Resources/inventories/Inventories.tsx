@@ -1,18 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { API_PREFIX } from '../../constants';
 import { EdaInventory } from '../../interfaces/EdaInventory';
+import { useEdaView } from '../../useEventDrivenView';
 import { useInventoriesColumns } from './hooks/useInventoryColumns';
 import { useInventoriesFilters } from './hooks/useInventoryFilters';
 import { useInventoryRowActions } from './hooks/useInventoryRowActions';
 import { useInventoriesToolbarActions } from './hooks/useInventoryToolbarActions';
-import { API_PREFIX } from '../../constants';
-import { useEdaView } from '../../useEventDrivenView';
 
 export function Inventories() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useEdaView<EdaInventory>({
@@ -34,7 +32,7 @@ export function Inventories() {
         emptyStateTitle={t('No inventories yet')}
         emptyStateDescription={t('To get started, create a inventory.')}
         emptyStateButtonText={t('Create inventory')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaInventory)}
+        // emptyStateButtonClick={() => navigate(RouteObj.createE)}
         {...view}
         defaultSubtitle={t('Inventory')}
       />

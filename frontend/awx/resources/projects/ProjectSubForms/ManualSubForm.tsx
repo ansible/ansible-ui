@@ -1,9 +1,9 @@
+import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import useSWR from 'swr';
+import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { Alert } from '@patternfly/react-core';
-import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
-import useSWR from 'swr';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
 
 interface IConfigData {
@@ -16,8 +16,8 @@ export function ManualSubForm(props: { localPath?: string }) {
   const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
-  const brand: string = process.env.BRAND ?? 'AWX';
-  const product: string = process.env.PRODUCT ?? t('Ansible');
+  const brand: string = import.meta.env.VITE_BRAND ?? 'AWX';
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('Ansible');
   const basePathHelpBlock = (
     <Trans i18nKey="basePathHelpBlock">
       <p>

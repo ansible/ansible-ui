@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { AnsibleError } from './ansible-error';
 import { getCookie } from './cookie';
-import { Delay } from './delay';
 
 export function useDeleteRequest() {
   const navigate = useNavigate();
@@ -16,8 +15,6 @@ export function useDeleteRequest() {
   }, []);
 
   return async (url: string) => {
-    await Delay();
-
     const response = await fetch(url, {
       method: 'DELETE',
       credentials: 'include',

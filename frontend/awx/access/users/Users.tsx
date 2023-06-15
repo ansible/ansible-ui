@@ -19,9 +19,11 @@ import {
   PageTable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
@@ -32,12 +34,10 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Users() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('AWX');
   const navigate = useNavigate();
   usePersistentFilters('users');
   const config = useAwxConfig();

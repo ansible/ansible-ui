@@ -25,7 +25,7 @@ const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
 export function AwxDashboard() {
   const { t } = useTranslation();
-  const product: string = process.env.PRODUCT ?? t('AWX');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('AWX');
   const config = useAwxConfig();
   const [_, setDialog] = usePageDialog();
   const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);

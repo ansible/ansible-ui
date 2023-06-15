@@ -20,12 +20,12 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
       brandImageSrc="/static/media/brand-logo.svg"
       brandImageAlt={t('Brand Logo')}
-      productName={process.env.PRODUCT ?? t('AWX')}
+      productName={import.meta.env.VITE_PRODUCT ?? t('AWX')}
     >
       <TextContent>
         <TextList component="dl">
           <TextListItem component="dt">{t('Version')}</TextListItem>
-          <TextListItem component="dd">{process.env.VERSION}</TextListItem>
+          <TextListItem component="dd">{import.meta.env.VITE_VERSION}</TextListItem>
         </TextList>
       </TextContent>
     </AboutModal>

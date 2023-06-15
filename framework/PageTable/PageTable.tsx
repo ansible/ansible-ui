@@ -253,7 +253,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
     const newExpandedRow = (item: T) => (
       <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
+        {expandedRowFunctions.map((fn, index) => (
+          <Fragment key={index}>{fn(item)}</Fragment>
+        ))}
       </Stack>
     );
 

@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
 import { AnsibleError } from './ansible-error';
-import { Delay } from './delay';
 
 export function useGetRequest<ResponseBody>() {
   const navigate = useNavigate();
@@ -25,8 +24,6 @@ export function useGetRequest<ResponseBody>() {
       );
       url += '?' + new URLSearchParams(normalizedQuery).toString();
     }
-
-    await Delay();
 
     const response = await fetch(url, {
       credentials: 'include',

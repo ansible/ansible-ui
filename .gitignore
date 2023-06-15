@@ -2,8 +2,10 @@
 /build
 /certs
 /coverage
+/dist
 /node_modules
 /publish
 .DS_Store
 /storybook-static
 .vscode
+*.local

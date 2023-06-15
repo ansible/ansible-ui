@@ -23,10 +23,10 @@ import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { Project } from '../../../interfaces/Project';
 import { useAwxConfig } from '../../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
+import { Project } from '../../../interfaces/Project';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();
@@ -56,8 +56,8 @@ export function ProjectDetails(props: { project: Project }) {
     handleWebSocketMessage as (data: unknown) => void
   );
 
-  const brand: string = process.env.BRAND ?? 'AWX';
-  const product: string = process.env.PRODUCT ?? t('Ansible');
+  const brand: string = import.meta.env.VITE_BRAND ?? 'AWX';
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('Ansible');
   const signatureValidationHelpText = t`Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.`;
   const playbookDirectoryHelpText = t`Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks`;
   const cacheTimeoutHelpText = t`Time in seconds to consider a project

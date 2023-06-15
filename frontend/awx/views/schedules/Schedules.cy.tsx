@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import * as useOptions from '../../../common/crud/useOptions';
+import { ItemsResponse } from '../../../common/crud/Data';
+import { Schedule } from '../../interfaces/Schedule';
 import { Schedules } from './Schedules';
-import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {
@@ -40,6 +40,7 @@ describe('schedules .cy.ts', () => {
       cy.hasTitle(/^Schedules$/);
       cy.get('table').find('tr').should('have.length', 4);
     });
+
     it('Schedules list has filters for Name, and Description,', () => {
       cy.mount(<Schedules />);
       cy.hasTitle(/^Schedules$/);
@@ -49,6 +50,7 @@ describe('schedules .cy.ts', () => {
         cy.contains(/^Description$/).should('be.visible');
       });
     });
+
     it('Filter schedules by name', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?name__icontains=Template*').as('nameFilterRequest');
@@ -61,6 +63,7 @@ describe('schedules .cy.ts', () => {
       cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Filter schedules by description', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?description__icontains=bar*').as('descriptionFilterRequest');
@@ -76,148 +79,156 @@ describe('schedules .cy.ts', () => {
       cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Disabled schedule renders switch properly, with proper aria-label', () => {
-      mockSchedulesList.results[2].enabled = false;
-      cy.intercept('GET', '/api/v2/schedules/*', {
-        statusCode: 200,
-        body: mockSchedulesList,
-      }).as('scheduleList');
-      cy.mount(<Schedules />);
-      cy.contains('td', 'Job Template Schedule 1')
-        .parent()
-        .within(() => {
-          cy.get('input.pf-c-switch__input').should(
-            'have.attr',
-            'aria-label',
-            'Click to enable schedule'
-          );
-        });
+      cy.fixture('schedules.json').then((mockSchedulesList: ItemsResponse<Schedule>) => {
+        mockSchedulesList.results[2].enabled = false;
+        cy.intercept(
+          { method: 'GET', url: '/api/v2/schedules/*' },
+          { statusCode: 200, body: mockSchedulesList }
+        ).as('scheduleList');
+        cy.mount(<Schedules />);
+        cy.contains('td', 'Job Template Schedule 1')
+          .parent()
+          .within(() => {
+            cy.get('input.pf-c-switch__input').should(
+              'have.attr',
+              'aria-label',
+              'Click to enable schedule'
+            );
+          });
+      });
     });
+
     it('Create Schedule button is disabled if the user does not have permission to create schedules ', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            GET: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this schedule.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              GET: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this schedule.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
 
       cy.mount(<Schedules />);
       cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
     });
-    it('Edit, Delete Schedule button is disabled if the user does not have permission(s)', () => {
-      mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
-      mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
-      mockSchedulesList.results[2].enabled = true;
 
-      cy.intercept('GET', '/api/v2/schedules/*', {
-        statusCode: 200,
-        body: mockSchedulesList,
-      }).as('scheduleList');
-      cy.intercept('OPTIONS', '/api/v2/schedules/*', {
-        actions: {
-          GET: {},
-          POST: {},
-        },
+    it('Edit, Delete Schedule button is disabled if the user does not have permission(s)', () => {
+      cy.fixture('schedules.json').then((mockSchedulesList: ItemsResponse<Schedule>) => {
+        mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
+        mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
+        mockSchedulesList.results[2].enabled = true;
+
+        cy.intercept('/api/v2/schedules/*', { statusCode: 200, body: mockSchedulesList }).as(
+          'scheduleList'
+        );
+        cy.intercept(
+          { method: 'OPTIONS', url: '/api/v2/schedules/*' },
+          { statusCode: 200, body: { actions: { GET: {}, POST: {} } } }
+        );
+        cy.mount(<Schedules />);
+        cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
+          .parent()
+          .within(() => {
+            cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
+            cy.get('.pf-c-dropdown__toggle').click();
+            cy.get('.pf-c-dropdown__menu-item')
+              .contains(/^Edit schedule$/)
+              .should('have.attr', 'aria-disabled', 'true');
+            cy.get('.pf-c-dropdown__menu-item')
+              .contains(/^Delete schedule$/)
+              .should('have.attr', 'aria-disabled', 'true');
+          });
       });
-      cy.mount(<Schedules />);
-      cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
-        .parent()
-        .within(() => {
-          cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
-          cy.get('.pf-c-dropdown__toggle').click();
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Delete schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
-        });
     });
 
     it('Create Schedule button is enabled if the user has permission to create schedules ', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this schedule.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this schedule.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.mount(<Schedules />);
       cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'false');
     });
+
     it('Displays error if schedules are not successfully loaded', () => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/schedules/*',
-        },
-        {
-          statusCode: 500,
-        }
-      ).as('schedulesError');
+      cy.intercept({ method: 'GET', url: '/api/v2/schedules/*' }, { statusCode: 500 }).as(
+        'schedulesError'
+      );
       cy.mount(<Schedules />);
       cy.contains('Error loading schedules');
     });
   });
+
   describe('Empty list', () => {
     beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/schedules/*',
-        },
-        {
-          fixture: 'emptyList.json',
-        }
-      ).as('emptyList');
+      cy.intercept({ method: 'GET', url: '/api/v2/schedules/*' }, { fixture: 'emptyList.json' }).as(
+        'emptyList'
+      );
     });
+
     it('Empty state is displayed correctly for user with permission to create schedules ', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this schedule.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this schedule.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
+
       cy.mount(<Schedules />);
       cy.contains(/^No schedules yet$/);
       cy.contains(/^Please create a schedule by using the button below.$/);
       cy.contains('button', /^Create schedule$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create schedules ', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/schedules' },
+        { statusCode: 200, body: { actions: {} } }
+      );
       cy.mount(<Schedules />);
       cy.contains(/^You do not have permission to create a schedule$/);
       cy.contains(

@@ -310,7 +310,7 @@ export function useColumnsToTableCardFn<T extends object>(
           <CardBody>
             <DescriptionList isCompact>
               {hasDescription && descriptionColumn && (
-                <PageDetail key={descriptionColumn.id}>
+                <PageDetail key={descriptionColumn.id ?? 'description-card'}>
                   {descriptionColumn.type === 'description' ? (
                     <div>{descriptionColumn.value(item)}</div>
                   ) : (
@@ -318,13 +318,13 @@ export function useColumnsToTableCardFn<T extends object>(
                   )}
                 </PageDetail>
               )}
-              {visibleCardColumns.map((column) => (
-                <PageDetail key={column.id} label={column.header}>
+              {visibleCardColumns.map((column, index) => (
+                <PageDetail key={column.id ?? `vivile-card-${index}`} label={column.header}>
                   <TableColumnCell column={column} item={item} />
                 </PageDetail>
               ))}
               {countColumns.length > 0 && (
-                <PageDetail>
+                <PageDetail key={'count-details'}>
                   <PageDetailDiv>
                     {countColumns.map((column, i) => (
                       <ColumnsDiv key={i}>

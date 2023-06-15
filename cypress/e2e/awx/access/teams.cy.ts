@@ -93,12 +93,14 @@ describe('teams', () => {
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/, true);
     // Add users to team -> TODO: Replace with Wizard when it is ready
-    cy.clickButton(/^Add users$/);
+    cy.clickButton(/^Add user/);
     cy.selectTableRowInDialog(user1.username);
     cy.selectTableRowInDialog(user2.username);
-    cy.clickButton(/^Add/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
+    cy.getDialog().within(() => {
+      cy.clickButton(/^Add user/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+    });
     cy.getTableRowByText(user1.username).should('be.visible');
     cy.getTableRowByText(user2.username).should('be.visible');
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {

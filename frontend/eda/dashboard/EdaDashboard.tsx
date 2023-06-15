@@ -44,7 +44,7 @@ export function EdaDashboard() {
   const hasProject = edaProjectView.itemCount !== 0;
   const hasDecisionEnvironment = edaDecisionEnvironmentView.itemCount !== 0;
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
-  const product: string = process.env.PRODUCT ?? t('EDA Server');
+  const product: string = import.meta.env.VITE_PRODUCT ?? t('EDA Server');
   return (
     <>
       <PageHeader

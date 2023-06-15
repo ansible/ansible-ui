@@ -2,20 +2,21 @@
 
 import { useMemo } from 'react';
 
-export type RouteType = `/${string}`;
+// const awxRoutePrefix: string = process.env.VITE_AWX_ROUTE_PREFIX
+//   ? process.env.VITE_AWX_ROUTE_PREFIX
+//   : '/ui_next';
+// const hubRoutePrefix: string = process.env.VITE_HUB_ROUTE_PREFIX
+//   ? process.env.VITE_HUB_ROUTE_PREFIX
+//   : '/hub';
+// const edaRoutePrefix: string = process.env.VITE_EDA_ROUTE_PREFIX
+//   ? process.env.VITE_EDA_ROUTE_PREFIX
+//   : '/eda';
 
-const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
-  ? (process.env.AWX_ROUTE_PREFIX as RouteType)
-  : '/ui_next';
+const awxRoutePrefix = '/ui_next';
+const hubRoutePrefix = '/hub';
+const edaRoutePrefix = '/eda';
 
-const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
-  ? (process.env.HUB_ROUTE_PREFIX as RouteType)
-  : '/hub';
-const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
-  ? (process.env.EDA_ROUTE_PREFIX as RouteType)
-  : '/eda';
-
-export const RouteObj: { [key: string]: RouteType } = {
+export const RouteObj = {
   Login: '/login',
 
   AWX: `${awxRoutePrefix}`,
@@ -268,12 +269,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
 };
 
-export function useRoutesWithoutPrefix(prefix: RouteType) {
-  const routesWithoutPrefix: { [key: string]: RouteType } = useMemo(() => {
-    const routes: { [key: string]: RouteType } = {};
+export function useRoutesWithoutPrefix(prefix: string) {
+  const routesWithoutPrefix: { [key: string]: string } = useMemo(() => {
+    const routes: { [key: string]: string } = {};
     for (const route in RouteObj) {
-      if (RouteObj[route].startsWith(prefix)) {
-        routes[route] = RouteObj[route].replace(prefix, '') as RouteType;
+      const routePath = (RouteObj as Record<string, string>)[route];
+      if (routePath.startsWith(prefix)) {
+        routes[route] = routePath.replace(prefix, '');
       }
     }
     return routes;

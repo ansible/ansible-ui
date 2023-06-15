@@ -27,7 +27,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
   const project = useWatch<JobTemplateForm>({ name: 'project' });
   const projectPath = useWatch({
-    name: 'summay_fields.project',
+    name: 'summary_fields.project',
   }) as Project;
   const isProvisioningCallbackEnabled = useWatch<JobTemplateForm>({
     name: 'isProvisioningCallbackEnabled',
@@ -39,6 +39,10 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const askJobTypeOnLaunch = useWatch<JobTemplateForm>({
     name: 'ask_job_type_on_launch',
   });
+
+  const organization = useWatch<JobTemplateForm>({ name: 'organization' });
+  const organizationId: string | undefined =
+    organization?.toString() ?? projectPath?.organization?.toString();
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
@@ -130,7 +134,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         }
         name="summary_fields.execution_environment.name"
         executionEnvironmentIdPath="execution_environment"
-        organizationId={jobtemplate?.organization?.toString() ?? ''}
+        organizationId={organizationId ?? ''}
       />
       <PageFormCredentialSelect<JobTemplateForm>
         name="summary_fields.credentials"

@@ -1,4 +1,3 @@
-import * as useOptions from '../../../common/crud/useOptions';
 import { Projects } from './Projects';
 
 /*
@@ -322,22 +321,26 @@ describe('projects.cy.ts', () => {
         .should('be.visible');
     });
     it('Create Project button is enabled if the user has permission to create projects', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this project.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/projects' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this project.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.mount(<Projects />);
       cy.contains('a', /^Create project$/).should('have.attr', 'aria-disabled', 'false');
     });
@@ -368,33 +371,36 @@ describe('projects.cy.ts', () => {
       ).as('emptyList');
     });
     it('Empty state is displayed correctly for user with permission to create projects', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: 'string',
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this project.',
-                filterable: true,
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/projects' },
+        {
+          statusCode: 200,
+          body: {
+            actions: {
+              POST: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this project.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }
+      );
       cy.mount(<Projects />);
       cy.contains(/^There are currently no projects added to your organization.$/);
       cy.contains(/^Please create a project by using the button below.$/);
       cy.contains('button', /^Create project$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create projects', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/projects' },
+        { statusCode: 200, body: { actions: {} } }
+      );
       cy.mount(<Projects />);
       cy.contains(/^You do not have permission to create a project$/);
       cy.contains(
