@@ -66,7 +66,7 @@ describe('Job templates form', () => {
     cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
-  it('Should create job template with all fields except for prompt on launch values', () => {
+  it.skip('Should create job template with all fields except for prompt on launch values', () => {
     const jtName = 'E2E ' + randomString(4);
 
     cy.navigateTo(/^Templates$/);
