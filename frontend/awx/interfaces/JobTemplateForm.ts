@@ -20,7 +20,7 @@ export interface JobTemplateSummaryFields
     | 'organization'
   > {
   inventory?: { name?: string; id?: number } | null;
-  project?: { id?: number; name?: string };
+  project?: { id?: number; name?: string; organization?: number };
   execution_environment?: { id?: number; name?: string };
 }
 
