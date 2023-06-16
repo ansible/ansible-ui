@@ -22,12 +22,7 @@ export function Tasks() {
   const { t } = useTranslation();
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
-  const view = usePulpView<Task>(
-    `/api/automation-hub/pulp/api/v3/tasks/`,
-    pulpHRefKeyFn,
-    toolbarFilters,
-    tableColumns
-  );
+  const view = usePulpView<Task>(pulpAPI`/tasks/`, pulpHRefKeyFn, toolbarFilters, tableColumns);
   return (
     <PageLayout>
       <PageHeader title={t('Tasks')} />
