@@ -17,6 +17,7 @@ import { AutomationServer } from '../automation-servers/interfaces/AutomationSer
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+import { hubAPI } from '../hub/api';
 
 const LoginModalDiv = styled.div`
   padding: 24px;
