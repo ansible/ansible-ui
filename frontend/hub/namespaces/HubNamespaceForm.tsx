@@ -12,6 +12,7 @@ import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubNamespace } from './HubNamespace';
+import { hubAPI } from '../api';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();

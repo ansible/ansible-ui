@@ -6,6 +6,7 @@ import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
+import { hubAPI } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();

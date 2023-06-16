@@ -18,6 +18,7 @@ import {
 import { RouteObj } from '../../Routes';
 import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
+import { hubAPI } from '../api';
 
 export function Repositories() {
   const { t } = useTranslation();

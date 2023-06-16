@@ -1,6 +1,7 @@
 import { useGet } from '../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { hubAPI } from '../../api';
 
 export function useExecutionEnvironments() {
   const t = useGet<HubItemsResponse<ExecutionEnvironment>>(

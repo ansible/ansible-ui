@@ -33,6 +33,7 @@ import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
+import { hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();

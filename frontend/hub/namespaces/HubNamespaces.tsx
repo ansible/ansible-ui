@@ -8,6 +8,7 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
+import { hubAPI } from '../api';
 
 export function Namespaces() {
   const { t } = useTranslation();

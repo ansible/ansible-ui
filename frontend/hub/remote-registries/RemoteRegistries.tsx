@@ -6,6 +6,7 @@ import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
+import { hubAPI } from '../api';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();

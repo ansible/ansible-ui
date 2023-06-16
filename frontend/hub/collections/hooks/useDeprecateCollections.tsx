@@ -5,6 +5,7 @@ import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../useHubView';
 import { Collection } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
+import { hubAPI } from '../../api';
 
 export function useDeleteCollections(onComplete?: (collections: Collection[]) => void) {
   const { t } = useTranslation();

@@ -6,6 +6,7 @@ import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentA
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { hubAPI } from '../api';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();

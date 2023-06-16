@@ -54,6 +54,7 @@ import { HubItemsResponse } from '../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { hubAPI } from '../api';
 
 export function CollectionDetails() {
   const { t } = useTranslation();

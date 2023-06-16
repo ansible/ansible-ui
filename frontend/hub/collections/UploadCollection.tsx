@@ -10,6 +10,7 @@ import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
+import { hubAPI } from '../api';
 
 interface UploadData {
   file: unknown;

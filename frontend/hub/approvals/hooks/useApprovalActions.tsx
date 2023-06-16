@@ -10,6 +10,7 @@ import {
 } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { Approval } from '../Approval';
+import { hubAPI } from '../../api';
 
 export function useApprovalActions(callback: (approval: Approval[]) => void) {
   const { t } = useTranslation();

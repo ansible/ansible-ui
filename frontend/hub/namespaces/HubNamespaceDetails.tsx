@@ -9,6 +9,7 @@ import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
 import { DropdownPosition } from '@patternfly/react-core';
+import { hubAPI } from '../api';
 
 export function NamespaceDetails() {
   const { t } = useTranslation();

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CopyCell, PageHeader, PageLayout } from '../../../framework';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { hubAPI } from '../api';
 
 export function Token() {
   const { t } = useTranslation();

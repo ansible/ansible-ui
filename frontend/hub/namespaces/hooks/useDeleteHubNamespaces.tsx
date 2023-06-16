@@ -4,6 +4,7 @@ import { requestDelete } from '../../../common/crud/Data';
 import { nameKeyFn } from '../../usePulpView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
+import { hubAPI } from '../../api';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();
