@@ -12,7 +12,7 @@ export function RemoteRegistries() {
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
   const view = useHubView<RemoteRegistry>(
-    `/api/automation-hub/_ui/v1/execution-environments/registries/`,
+    hubAPI`/_ui/v1/execution-environments/registries/`,
     pulpHRefKeyFn,
     toolbarFilters,
     tableColumns

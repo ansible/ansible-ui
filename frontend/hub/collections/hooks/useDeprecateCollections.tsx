@@ -27,7 +27,7 @@ export function useDeleteCollections(onComplete?: (collections: Collection[]) =>
         onComplete,
         actionFn: (collection: Collection) =>
           requestDelete(
-            `/api/automation-hub/v3/plugin/ansible/content/published/collections/index/${collection.namespace.name}/${collection.name}/`
+            hubAPI`/v3/plugin/ansible/content/published/collections/index/${collection.namespace.name}/${collection.name}/`
           ),
       });
     },

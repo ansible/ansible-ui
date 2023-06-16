@@ -59,7 +59,7 @@ export function CollectionDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data, refresh } = useGet<HubItemsResponse<Collection>>(
-    `/api/automation-hub/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
+    hubAPI`/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
   );
   let collection: Collection | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
@@ -147,7 +147,7 @@ function CollectionDocumentationTab(props: { collection?: Collection }) {
   const [content, setContent] = useState<IContents>();
 
   const { data } = useGet<CollectionDocs>(
-    `/api/automation-hub/_ui/v1/repo/published/${collection?.namespace.name ?? ''}/${
+    hubAPI`/_ui/v1/repo/published/${collection?.namespace.name ?? ''}/${
       collection?.name ?? ''
     }/?include_related=my_permissions`
   );
@@ -399,13 +399,13 @@ function CollectionImportLogTab(props: { collection?: Collection }) {
   const { t } = useTranslation();
   const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
     collection
-      ? `/api/automation-hub/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
+      ? hubAPI`/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
       : ''
   );
 
   const { data: collectionImport } = useGet<CollectionImport>(
     collectionImportsResponse && collectionImportsResponse.data.length
-      ? `/api/automation-hub/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
+      ? hubAPI`/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
       : ''
   );
   // http://ec2-54-147-146-116.compute-1.amazonaws.com:8002/api/automation-hub/_ui/v1/imports/collections/ef7849bd-17f5-434f-b35a-3c1877884d12/

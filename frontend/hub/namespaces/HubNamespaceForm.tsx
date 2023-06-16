@@ -18,7 +18,7 @@ export function CreateHubNamespace() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    const createdNamespace = await postRequest(`/api/automation-hub/_ui/v1/namespaces/`, namespace);
+    const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
     navigate(RouteObj.NamespaceDetails.replace(':id', createdNamespace.name.toString()));
   };
   return (
@@ -47,12 +47,10 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace } = useGet<HubNamespace>(
-    `/api/automation-hub/_ui/v1/namespaces/${name ?? ''}/`
-  );
+  const { data: namespace } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(`/api/automation-hub/_ui/v1/namespaces/`, namespace);
+    await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
     navigate(-1);
   };
   if (!namespace) {

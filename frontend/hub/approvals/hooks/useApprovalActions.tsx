@@ -26,7 +26,7 @@ export function useApprovalActions(callback: (approval: Approval[]) => void) {
         label: t('Approve'),
         onClick: (approval) =>
           void postRequest(
-            `/api/automation-hub/v3/collections/${approval.namespace}/${approval.name}/versions/${approval.version}/move/staging/published/`,
+            hubAPI`/v3/collections/${approval.namespace}/${approval.name}/versions/${approval.version}/move/staging/published/`,
             {}
           ).then(() => {
             alertToaster.addAlert({ title: t(`Collection "${approval.name}" approved.`) });
