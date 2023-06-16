@@ -12,7 +12,7 @@ export function Approvals() {
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
   const view = useHubView<Approval>(
-    '/api/automation-hub/_ui/v1/collection-versions/',
+    `/api/automation-hub/_ui/v1/collection-versions/`,
     idKeyFn,
     toolbarFilters,
     tableColumns

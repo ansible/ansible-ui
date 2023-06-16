@@ -25,7 +25,7 @@ export function SignatureKeys() {
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
   const view = usePulpView<SignatureKey>(
-    '/api/automation-hub/pulp/api/v3/signing-services/',
+    `/api/automation-hub/pulp/api/v3/signing-services/`,
     pulpHRefKeyFn,
     toolbarFilters,
     tableColumns

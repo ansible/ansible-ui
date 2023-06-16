@@ -104,7 +104,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             loginPageUrl = '/api/login/';
             break;
           case AutomationServerType.HUB:
-            loginPageUrl = '/api/automation-hub/_ui/v1/auth/login/';
+            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
             break;
           case AutomationServerType.EDA:
             loginPageUrl = '/api/eda/v1/auth/session/login/';

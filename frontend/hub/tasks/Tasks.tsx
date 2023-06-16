@@ -23,7 +23,7 @@ export function Tasks() {
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
   const view = usePulpView<Task>(
-    '/api/automation-hub/pulp/api/v3/tasks/',
+    `/api/automation-hub/pulp/api/v3/tasks/`,
     pulpHRefKeyFn,
     toolbarFilters,
     tableColumns

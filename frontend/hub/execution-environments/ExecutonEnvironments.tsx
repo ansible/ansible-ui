@@ -12,7 +12,7 @@ export function ExecutionEnvironments() {
   const toolbarFilters = useExecutionEnvironmentFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
   const view = useHubView<ExecutionEnvironment>(
-    '/api/automation-hub/v3/plugin/execution-environments/repositories/',
+    `/api/automation-hub/v3/plugin/execution-environments/repositories/`,
     idKeyFn,
     toolbarFilters,
     tableColumns

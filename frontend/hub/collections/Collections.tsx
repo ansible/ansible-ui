@@ -40,7 +40,7 @@ export function Collections() {
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<Collection>(
-    '/api/automation-hub/_ui/v1/repo/published/',
+    `/api/automation-hub/_ui/v1/repo/published/`,
     idKeyFn,
     toolbarFilters
   );

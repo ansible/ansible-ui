@@ -46,7 +46,7 @@ export function LocalRepositories() {
   // const navigate = useNavigate()
   const tableColumns = useLocalRepositoriesColumns();
   const view = useHubView<Repository>(
-    '/api/automation-hub/_ui/v1/distributions/',
+    `/api/automation-hub/_ui/v1/distributions/`,
     hubKeyFn,
     undefined,
     tableColumns
@@ -101,7 +101,7 @@ export function RemoteRepositories() {
   const navigate = useNavigate();
   const tableColumns = useRemoteRepositoriesColumns();
   const view = useHubView<RemoteRepository>(
-    '/api/automation-hub/_ui/v1/remotes/',
+    `/api/automation-hub/_ui/v1/remotes/`,
     pulpHRefKeyFn,
     undefined,
     tableColumns

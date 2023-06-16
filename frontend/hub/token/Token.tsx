@@ -16,7 +16,7 @@ export function Token() {
     try {
       setWorking(true);
       setError('');
-      const result = await postRequest('/api/automation-hub/v3/auth/token/', {});
+      const result = await postRequest(`/api/automation-hub/v3/auth/token/`, {});
       setToken(result.token);
     } catch (err) {
       if (err instanceof Error) {
