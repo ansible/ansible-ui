@@ -19,6 +19,7 @@ import { downloadTextFile } from '../../../framework/utils/download-file';
 import { pulpHRefKeyFn } from '../useHubView';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
+import { pulpAPI } from '../api';
 
 export function SignatureKeys() {
   const { t } = useTranslation();

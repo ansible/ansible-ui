@@ -17,6 +17,7 @@ import { StatusCell } from '../../common/Status';
 import { pulpHRefKeyFn } from '../useHubView';
 import { getIdFromPulpHref, usePulpView } from '../usePulpView';
 import { Task } from './Task';
+import { pulpAPI } from '../api';
 
 export function Tasks() {
   const { t } = useTranslation();
