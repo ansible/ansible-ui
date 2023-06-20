@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { ButtonVariant, Card, CardBody, DropdownPosition, Gallery } from '@patternfly/react-core';
+import { ButtonVariant, Card, CardBody, DropdownPosition } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,7 +7,6 @@ import {
   PageActionType,
   PageActions,
   PageDashboard,
-  PageDashboardCard,
   PageHeader,
   PageLayout,
 } from '../../../framework';
@@ -18,6 +17,7 @@ import { useCollections } from '../collections/hooks/useCollections';
 import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
+import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -78,36 +78,56 @@ export function HubDashboard() {
             },
           ]}
         />
-        <PageDashboardCard title="Featured Collections" linkText="Goto Collections" width="xxl">
-          <CardBody>
-            <Gallery hasGutter>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-            </Gallery>
-          </CardBody>
-        </PageDashboardCard>
-        <PageDashboardCard title="My Collections" linkText="Goto Collections" width="xxl">
-          <CardBody>
-            <Gallery hasGutter>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-              <Card isRounded isFlat>
-                <CardBody>Card</CardBody>
-              </Card>
-            </Gallery>
-          </CardBody>
-        </PageDashboardCard>
+        <PageDashboardCarousel
+          title="Featured Collections"
+          linkText="Go to Collections"
+          width="xxl"
+        >
+          <Card isFlat>
+            <CardBody>Card 1</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 2</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 3</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 4</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 5</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 6</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 7</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 8</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 9</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 10</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 11</CardBody>
+          </Card>
+        </PageDashboardCarousel>
+        <PageDashboardCarousel title="My Collections" linkText="Go to Collections" width="xxl">
+          <Card isFlat>
+            <CardBody>Card 1</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 2</CardBody>
+          </Card>
+          <Card isRounded isFlat>
+            <CardBody>Card 3</CardBody>
+          </Card>
+        </PageDashboardCarousel>
       </PageDashboard>
     </PageLayout>
   );
