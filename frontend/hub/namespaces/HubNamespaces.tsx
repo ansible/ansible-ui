@@ -46,7 +46,9 @@ export function AllNamespaces() {
 }
 
 export function MyNamespaces() {
-  return <CommonNamespaces url="/api/automation-hub/_ui/v1/my-namespaces/" />;
+  return (
+    <CommonNamespaces url="/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/?my_permissions=ansible.change_ansiblenamespace" />
+  );
 }
 
 export function CommonNamespaces(props: { url: string }) {
