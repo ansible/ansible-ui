@@ -149,8 +149,8 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.getTableRowByText(edaRBA.name).within(() => {
       cy.get('.pf-c-switch').get('input').should('not.have.attr', 'checked');
       cy.get('.pf-c-switch__toggle').click();
+      cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
     });
-    cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
     cy.edaRuleBookActivationActionsModal('enable', edaRBA.name);
     cy.get('button').contains('rulebookActivations').click();
     cy.get('button').contains('Close').click();
