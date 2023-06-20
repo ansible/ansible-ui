@@ -691,13 +691,12 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
   const username = Cypress.env('AWX_USERNAME') as string;
   const password = Cypress.env('AWX_PASSWORD') as string;
-  const authorization = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
-  cy.request<AwxToken>({
-    method: 'POST',
-    url: `${awxServer}/api/v2/tokens/`,
-    body: { description: 'E2E-' + randomString(4), ...awxToken },
-    headers: { authorization },
-  }).then((response) => response.body);
+  cy.exec(
+    `curl -d '${JSON.stringify({
+      description: 'E2E-' + randomString(4),
+      ...awxToken,
+    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}/api/v2/tokens/'`
+  ).then((result) => JSON.parse(result.stdout) as AwxToken);
 });
 
 Cypress.Commands.add('getGlobalAwxToken', () => {
