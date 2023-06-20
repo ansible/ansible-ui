@@ -412,6 +412,7 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/awx/**/*.cy.{js,jsx,ts,tsx}
         env:
+          CYPRESS_BASE_URL: https://localhost:3002
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
@@ -482,6 +483,7 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/eda/**/*.cy.{js,jsx,ts,tsx}
         env:
+          CYPRESS_BASE_URL: https://localhost:3002
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
@@ -555,6 +557,7 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
+          CYPRESS_BASE_URL: https://localhost:3002
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

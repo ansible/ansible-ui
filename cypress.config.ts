@@ -14,7 +14,7 @@ export default defineConfig({
       //   codeCoverage(on, config);
       return config;
     },
-    baseUrl: 'https://localhost:3002/',
+    baseUrl: 'http://localhost:3002/',
   },
   component: {
     setupNodeEvents(on, config) {
