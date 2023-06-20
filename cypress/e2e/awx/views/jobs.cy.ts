@@ -40,7 +40,7 @@ describe('jobs', () => {
   after(() => {
     // Delete launched job
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.requestDelete(`/api/v2/jobs/${jobId}/`, true);
+    cy.requestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization);
   });
 
