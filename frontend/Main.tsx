@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PageFramework } from '../framework';
 import ErrorBoundary from '../framework/components/ErrorBoundary';
+import { RouteObj } from './Routes';
 import { AutomationServersRoute } from './automation-servers/AutomationServersRoute';
 import { AutomationServersProvider } from './automation-servers/contexts/AutomationServerProvider';
+import { AWX } from './awx/Awx';
 import { Disclaimer } from './common/Disclaimer';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
 import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
-import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
-import { RouteObj } from './Routes';
 
 export default function Main() {
   const { t } = useTranslation();

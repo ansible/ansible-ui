@@ -270,12 +270,12 @@ export const RouteObj = {
 };
 
 export function useRoutesWithoutPrefix(prefix: string) {
-  const routesWithoutPrefix: { [key: string]: string } = useMemo(() => {
-    const routes: { [key: string]: string } = {};
+  const routesWithoutPrefix = useMemo(() => {
+    const routes = { ...RouteObj };
     for (const route in RouteObj) {
       const routePath = (RouteObj as Record<string, string>)[route];
       if (routePath.startsWith(prefix)) {
-        routes[route] = routePath.replace(prefix, '');
+        (routes as Record<string, string>)[route] = routePath.replace(prefix, '');
       }
     }
     return routes;
