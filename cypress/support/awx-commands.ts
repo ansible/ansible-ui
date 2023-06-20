@@ -485,15 +485,13 @@ Cypress.Commands.add(
     // Delete sync job related to project
     if (project && project.related && typeof project.related.last_job === 'string') {
       const projectUpdateEndpoint: string = project.related.last_job;
-      cy.awxRequestDelete(projectUpdateEndpoint);
+      cy.awxRequestDelete(projectUpdateEndpoint, options);
     }
     // Delete project
     cy.awxRequestDelete(`/api/v2/projects/${project.id}/`, options);
     // Delete organization for the project
     if (organizationId) {
-      cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, {
-        failOnStatusCode: false,
-      });
+      cy.requestDelete(`/api/v2/organizations/${organizationId.toString()}/`, options);
     }
   }
 );
@@ -540,9 +538,7 @@ Cypress.Commands.add('createAWXSchedule', () => {
 Cypress.Commands.add(
   'deleteAWXSchedule',
   (schedule: Schedule, options?: { failOnStatusCode?: boolean }) => {
-    cy.requestDelete(`/api/v2/schedules/${schedule.id}/`, {
-      failOnStatusCode: false,
-    });
+    cy.requestDelete(`/api/v2/schedules/${schedule.id}/`, options);
   }
 );
 
@@ -576,7 +572,7 @@ export interface IAwxResources {
 Cypress.Commands.add(
   'deleteAwxResources',
   (resources?: IAwxResources, options?: { failOnStatusCode?: boolean }) => {
-    if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate);
+    if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate, options);
   }
 );
 
