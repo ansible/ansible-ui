@@ -1,5 +1,6 @@
 import {
   ButtonVariant,
+  ClipboardCopy,
   DropdownPosition,
   PageSection,
   Skeleton,
@@ -117,7 +118,11 @@ export function ProjectDetails() {
         >
           {project?.url || ''}
         </PageDetail>
-        <PageDetail label={t('Git hash')}>{project?.git_hash || ''}</PageDetail>
+        <PageDetail label={t('Git hash')}>
+          <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact">
+            {project?.git_hash || ''}
+          </ClipboardCopy>
+        </PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />
         </PageDetail>

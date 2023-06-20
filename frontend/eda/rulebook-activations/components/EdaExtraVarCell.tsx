@@ -1,9 +1,14 @@
-import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import useSWR from 'swr';
 import { useFetcher } from '../../../common/crud/Data';
 import { EdaExtraVars } from '../../interfaces/EdaExtraVars';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
-export function EdaExtraVarsCell(props: { id?: number | null; disableLink?: boolean }) {
+export function EdaExtraVarsCell(props: {
+  id?: number | null;
+  disableLink?: boolean;
+  label?: string;
+  helpText?: string;
+}) {
   const fetcher = useFetcher();
   const { data } = useSWR<EdaExtraVars>(
     props.id ? `/api/eda/v1/extra-vars/${props.id}/` : undefined,
@@ -21,15 +26,11 @@ export function EdaExtraVarsCell(props: { id?: number | null; disableLink?: bool
     return <></>;
   }
   return (
-    <CodeBlock>
-      <CodeBlockCode
-        style={{
-          minHeight: '150px',
-        }}
-        id="code-content"
-      >
-        {JSON.stringify(data?.extra_var)}
-      </CodeBlockCode>
-    </CodeBlock>
+    <PageDetailCodeEditor
+      value={JSON.stringify(data?.extra_var)}
+      showCopyToClipboard={true}
+      label={props.label}
+      helpText={props.helpText}
+    />
   );
 }

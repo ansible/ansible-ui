@@ -1,10 +1,11 @@
-import { Button, CodeBlock, CodeBlockCode, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../../framework';
 import { PageDetailsSection } from '../../common/PageDetailSection';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 import { useEffect, useState } from 'react';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 
 export interface EventPayloadModalProps {
   event?: EdaRuleAuditEvent;
@@ -39,18 +40,11 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
         </PageDetails>
         {props?.event?.payload && (
           <PageDetailsSection>
-            <PageDetail label={t('Event log')}>
-              <CodeBlock>
-                <CodeBlockCode
-                  style={{
-                    minHeight: '150px',
-                  }}
-                  id="code-content"
-                >
-                  {JSON.stringify(props?.event?.payload || '')}
-                </CodeBlockCode>
-              </CodeBlock>
-            </PageDetail>
+            <PageDetailCodeEditor
+              label={t('Event log')}
+              value={JSON.stringify(props?.event?.payload)}
+              showCopyToClipboard={true}
+            />
           </PageDetailsSection>
         )}
       </Scrollable>

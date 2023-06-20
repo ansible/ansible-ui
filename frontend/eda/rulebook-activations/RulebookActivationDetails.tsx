@@ -214,14 +214,13 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetails>
           {rulebookActivation?.extra_var?.id && (
             <PageDetailsSection>
-              <PageDetail
+              <EdaExtraVarsCell
                 label={t('Variables')}
                 helpText={t(
                   'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
                 )}
-              >
-                <EdaExtraVarsCell id={rulebookActivation.extra_var.id} />
-              </PageDetail>
+                id={rulebookActivation.extra_var.id}
+              />
             </PageDetailsSection>
           )}
         </PageSection>
