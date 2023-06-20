@@ -3,8 +3,9 @@ import { ToolbarToggleGroup } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 
 import { optionsForCategories } from './constants';
-import { FilterCategoriesGroup, QuickDateGroup, SortByGroup } from './Groups';
+import { FilterCategoriesGroup, SortByGroup } from './Groups';
 import { ApiOptionsType, AttributeType, SetValues } from './types';
+import { ToolbarDateFilter } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarDateFilter';
 
 interface Props {
   categories: ApiOptionsType;
@@ -54,7 +55,7 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
         />
       )}
       {(quick_date_range || granularity) && (
-        <QuickDateGroup
+        <ToolbarDateFilter
           filters={filters}
           values={{ quick_date_range, granularity }}
           setFilters={setFilters}
