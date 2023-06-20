@@ -129,9 +129,12 @@ Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, 
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label)
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .click();
+  cy.contains('a:not(:disabled):not(:hidden)', label).should(
+    'not.have.attr',
+    'aria-disabled',
+    'true'
+  );
+  cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
 Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
