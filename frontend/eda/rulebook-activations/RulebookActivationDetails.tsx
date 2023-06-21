@@ -193,12 +193,13 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <PageDetail label={t('Project git hash')}>
               {rulebookActivation?.project?.git_hash || ''}
             </PageDetail>
-            {/* <PageDetail label={t('Last restarted')}>
-              {rulebookActivation?.last_restarted
-                ? formatDateString(rulebookActivation.last_restarted)
-                : ''}
-            </PageDetail> */}
-            <PageDetail label={t('Restarted count')}>
+            <PageDetail label={t('Number of rules')}>
+              {rulebookActivation?.rules_count || 0}
+            </PageDetail>
+            <PageDetail label={t('Fire count')}>
+              {rulebookActivation?.rules_fired_count || 0}
+            </PageDetail>
+            <PageDetail label={t('Restart count')}>
               {rulebookActivation?.restart_count || 0}
             </PageDetail>
             <PageDetail label={t('Created')}>

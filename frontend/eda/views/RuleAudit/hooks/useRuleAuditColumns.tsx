@@ -39,7 +39,7 @@ export function useRuleAuditColumns() {
               text={ruleAudit?.activation_instance?.name || ''}
               onClick={() =>
                 navigate(
-                  RouteObj.EdaRulebookActivationDetails.replace(
+                  RouteObj.EdaActivationInstanceDetails.replace(
                     ':id',
                     ruleAudit?.activation_instance?.id?.toString() || ''
                   )
