@@ -17,6 +17,7 @@ import { AutomationServer } from '../automation-servers/interfaces/AutomationSer
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
+import { hubAPI } from '../hub/api';
 
 const LoginModalDiv = styled.div`
   padding: 24px;
@@ -104,7 +105,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             loginPageUrl = '/api/login/';
             break;
           case AutomationServerType.HUB:
-            loginPageUrl = '/api/automation-hub/_ui/v1/auth/login/';
+            loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
             break;
           case AutomationServerType.EDA:
             loginPageUrl = '/api/eda/v1/auth/session/login/';

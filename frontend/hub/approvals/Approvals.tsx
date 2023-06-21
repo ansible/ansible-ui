@@ -6,13 +6,14 @@ import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
+import { hubAPI } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
   const view = useHubView<Approval>(
-    '/api/automation-hub/_ui/v1/collection-versions/',
+    hubAPI`/_ui/v1/collection-versions/`,
     idKeyFn,
     toolbarFilters,
     tableColumns

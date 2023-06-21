@@ -6,13 +6,14 @@ import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentA
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { hubAPI } from '../api';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
   const view = useHubView<ExecutionEnvironment>(
-    '/api/automation-hub/v3/plugin/execution-environments/repositories/',
+    hubAPI`/v3/plugin/execution-environments/repositories/`,
     idKeyFn,
     toolbarFilters,
     tableColumns
