@@ -6,13 +6,14 @@ import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
+import { hubAPI } from '../api';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
   const view = useHubView<RemoteRegistry>(
-    '/api/automation-hub/_ui/v1/execution-environments/registries/',
+    hubAPI`/_ui/v1/execution-environments/registries/`,
     pulpHRefKeyFn,
     toolbarFilters,
     tableColumns

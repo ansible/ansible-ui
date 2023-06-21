@@ -9,12 +9,13 @@ import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
 import { DropdownPosition } from '@patternfly/react-core';
+import { hubAPI } from '../api';
 
 export function NamespaceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data } = useGet<HubItemsResponse<HubNamespace>>(
-    `/api/automation-hub/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
+    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
   let namespace: HubNamespace | undefined = undefined;
   if (data && data.data && data.data.length > 0) {

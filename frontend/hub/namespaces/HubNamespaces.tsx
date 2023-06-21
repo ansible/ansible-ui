@@ -8,6 +8,7 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
+import { hubAPI } from '../api';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -42,11 +43,11 @@ export function Namespaces() {
 }
 
 export function AllNamespaces() {
-  return <CommonNamespaces url="/api/automation-hub/_ui/v1/namespaces/" />;
+  return <CommonNamespaces url={hubAPI`/_ui/v1/namespaces/`} />;
 }
 
 export function MyNamespaces() {
-  return <CommonNamespaces url="/api/automation-hub/_ui/v1/my-namespaces/" />;
+  return <CommonNamespaces url={hubAPI`/_ui/v1/my-namespaces/`} />;
 }
 
 export function CommonNamespaces(props: { url: string }) {

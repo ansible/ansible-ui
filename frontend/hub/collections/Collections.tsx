@@ -33,17 +33,14 @@ import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
+import { hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>(
-    '/api/automation-hub/_ui/v1/repo/published/',
-    idKeyFn,
-    toolbarFilters
-  );
+  const view = useHubView<Collection>(hubAPI`/_ui/v1/repo/published/`, idKeyFn, toolbarFilters);
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;
