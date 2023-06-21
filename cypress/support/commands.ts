@@ -449,6 +449,10 @@ declare global {
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
 
+      waitForRulebookActionStatus(
+        edaRulebookActivation: EdaRulebookActivation
+      ): Chainable<EdaRulebookActivation>;
+
       /**Identify a particular EDA credential and make it available for use in testing. */
       getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;
 

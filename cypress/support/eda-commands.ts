@@ -127,6 +127,7 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
 });
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
+  cy.waitForRulebookActionStatus(edaRulebookActivation);
   cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, {
     failOnStatusCode: false,
   }).then(() => {
@@ -136,6 +137,25 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
     });
   });
 });
+
+Cypress.Commands.add(
+  'waitForRulebookActionStatus',
+  (edaRulebookActivation: EdaRulebookActivation) => {
+    cy.requestGet<EdaRulebookActivation>(
+      `/api/eda/v1/activations/${edaRulebookActivation.id}`
+    ).then((rba) => {
+      switch (rba.status) {
+        case 'failed':
+        case 'completed':
+          cy.wrap(rba);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForRulebookActionStatus(edaRulebookActivation));
+          break;
+      }
+    });
+  }
+);
 
 Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
