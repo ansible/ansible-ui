@@ -51,7 +51,8 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).clear().type(text, { delay: 0 });
+  cy.getInputByLabel(label).clear();
+  cy.getInputByLabel(label).type(text, { delay: 0 });
 });
 
 Cypress.Commands.add(
