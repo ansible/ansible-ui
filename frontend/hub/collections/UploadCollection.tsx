@@ -48,7 +48,7 @@ export function UploadCollectionByFile() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           onSubmit={(data) => {
-            return postRequestFile(hubAPI`/v3/artifacts/collections/`, data.file as Blob).then(() =>
+            return postRequestFile(hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`, data.file as Blob).then(() =>
               navigate(RouteObj.Approvals + '?status=staging')
             );
           }}
