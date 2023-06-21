@@ -1,4 +1,4 @@
-import { Alert } from '@patternfly/react-core';
+import { Alert, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageDetails, PageForm, PageHeader, PageLayout } from '../../../framework';
@@ -11,6 +11,8 @@ import { postRequestFile } from '../../common/crud/Data';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { hubAPI } from '../api';
+import { useState, useEffect } from 'react';
+
 
 interface UploadData {
   file: unknown;
@@ -38,6 +40,38 @@ export function UploadCollectionByFile() {
   const repositories = useRepositories();
   const navigate = useNavigate();
   const onCancel = () => navigate(-1);
+  const [onlyStaging, setOnlyStaging] = useState(true);
+
+  function renderRepoSelector() {
+    return (
+      <>
+        <Radio
+          isChecked={onlyStaging}
+          name="radio-1"
+          onChange={(val) => {
+            setOnlyStaging(val);
+          }}
+          label={t`Staging Repos`}
+          id="radio-staging"
+        ></Radio>
+        <Radio
+          isChecked={!onlyStaging}
+          name="radio-2"
+          onChange={(val) => {
+            setOnlyStaging(!val);
+          }}
+          label={t`All Repos`}
+          id="radio-all"
+        ></Radio>
+        <div>
+          {!onlyStaging && (
+            <>{t`Please note that those repositories are not filtered by permission, if operation fail, you don't have it.`}</>
+          )}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       {namespaces === undefined || repositories === undefined ? (
@@ -52,8 +86,10 @@ export function UploadCollectionByFile() {
               navigate(RouteObj.Approvals + '?status=staging')
             );
           }}
+          singleColumn={true}
         >
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+          {renderRepoSelector()}
           <PageFormWatch<File | undefined> watch="file">
             {(file) => {
               const namespace = file?.name.split('-')[0] ?? '';
