@@ -109,8 +109,8 @@ export function EdaDashboard() {
         <RuleAuditChart />
         <EdaRecentProjectsCard view={edaProjectView} />
         <EdaDecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
-        <EdaRuleAuditCard view={edaRuleAuditView} />
         <EdaRulebookActivationsCard view={edaRulebookActivationView} />
+        <EdaRuleAuditCard view={edaRuleAuditView} />
       </PageDashboard>
     </>
   );

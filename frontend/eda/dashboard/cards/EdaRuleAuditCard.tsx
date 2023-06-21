@@ -21,7 +21,7 @@ export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAudit> }) {
   columns = useColumnsWithoutExpandedRow(columns);
   return (
     <PageDashboardCard
-      title={t('Rule audit')}
+      title={t('Rule Audit')}
       subtitle={t('Recently fired rules')}
       height="md"
       linkText={t('Go to Rule Audit')}
