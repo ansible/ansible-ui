@@ -12,6 +12,7 @@ import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { hubAPI } from '../api';
 import { useState, useEffect } from 'react';
+import { MultipleRepoSelector } from './MultipleRepoSelector';
 
 
 interface UploadData {
@@ -42,6 +43,10 @@ export function UploadCollectionByFile() {
   const onCancel = () => navigate(-1);
   const [onlyStaging, setOnlyStaging] = useState(true);
 
+  const [allRepos, setAllRepos] = useState([]);
+  const [fixedRepos, setFixedRepos] = useState([]);
+  const [selectedRepos, setSelectedRepos] = useState([]);
+
   function renderRepoSelector() {
     return (
       <>
@@ -68,6 +73,7 @@ export function UploadCollectionByFile() {
             <>{t`Please note that those repositories are not filtered by permission, if operation fail, you don't have it.`}</>
           )}
         </div>
+        <MultipleRepoSelector />
       </>
     );
   }
