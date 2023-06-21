@@ -162,7 +162,7 @@ describe('dashboard checks when resources before any resources are created', () 
       .should('be.visible');
     cy.contains('small', 'Recently updated activations').should('be.visible');
     //TO DO: change the title to Rule Audit after fix
-    cy.hasTitle(/^Rule audit$/)
+    cy.hasTitle(/^Rule Audit$/)
       .scrollIntoView()
       .should('be.visible');
     cy.contains('small', 'Recently fired rules').should('be.visible');
