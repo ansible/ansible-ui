@@ -35,7 +35,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   after(() => {
     cy.deleteAwxResources(awxResources);
-    cy.deleteEdaRulebookActivation(edaRBA);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteAllEdaCurrentUserTokens();
