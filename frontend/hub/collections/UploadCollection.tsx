@@ -10,6 +10,7 @@ import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
+import { hubAPI } from '../api';
 
 interface UploadData {
   file: unknown;
@@ -47,10 +48,9 @@ export function UploadCollectionByFile() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           onSubmit={(data) => {
-            return postRequestFile(
-              `/api/automation-hub/v3/artifacts/collections/`,
-              data.file as Blob
-            ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
+            return postRequestFile(hubAPI`/v3/artifacts/collections/`, data.file as Blob).then(() =>
+              navigate(RouteObj.Approvals + '?status=staging')
+            );
           }}
         >
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CopyCell, PageHeader, PageLayout } from '../../../framework';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { hubAPI } from '../api';
 
 export function Token() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function Token() {
     try {
       setWorking(true);
       setError('');
-      const result = await postRequest('/api/automation-hub/v3/auth/token/', {});
+      const result = await postRequest(hubAPI`/v3/auth/token/`, {});
       setToken(result.token);
     } catch (err) {
       if (err instanceof Error) {
