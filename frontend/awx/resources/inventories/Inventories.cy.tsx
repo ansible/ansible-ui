@@ -5,20 +5,21 @@ describe('Inventories.cy.ts', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/inventories/*',
-        },
-        {
-          fixture: 'inventories.json',
-        }
+        { method: 'OPTIONS', url: '/api/v2/inventories/' },
+        { statusCode: 200, body: {} }
+      ).as('inventoriesList');
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/inventories/*' },
+        { fixture: 'inventories.json' }
       ).as('inventoriesList');
     });
+
     it('should render inventory list', () => {
       cy.mount(<Inventories />);
       cy.hasTitle(/^Inventories$/);
       cy.get('table').find('tr').should('have.length', 10);
     });
+
     it('should have filters for Name, Description, Type, Organization, Created By and Modified By', () => {
       cy.mount(<Inventories />);
       cy.intercept('/api/v2/inventories/?organization__name__icontains=Organization%200*').as(
@@ -39,6 +40,7 @@ describe('Inventories.cy.ts', () => {
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('disable "create inventory" toolbar action if the user does not have permissions', () => {
       cy.intercept(
         { method: 'OPTIONS', url: '/api/v2/inventories' },
@@ -52,6 +54,7 @@ describe('Inventories.cy.ts', () => {
         /^You do not have permission to create an inventory. Please contact your organization administrator if there is an issue with your access.$/
       );
     });
+
     it('disable delete row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -71,6 +74,7 @@ describe('Inventories.cy.ts', () => {
           cy.hasTooltip('The inventory cannot be deleted due to insufficient permission');
         });
     });
+
     it('disable edit row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -88,6 +92,7 @@ describe('Inventories.cy.ts', () => {
           );
         });
     });
+
     it('disable copy row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -109,6 +114,7 @@ describe('Inventories.cy.ts', () => {
           );
         });
     });
+
     it('disable copy row action if the inventory has inventory sources', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')

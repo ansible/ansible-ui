@@ -49,7 +49,6 @@ export default defineConfig({
     // }),
   ],
   server: {
-    open: true,
     port: 3002,
     cors: false,
     proxy: {

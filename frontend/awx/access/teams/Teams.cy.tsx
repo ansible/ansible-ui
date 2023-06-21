@@ -1,6 +1,14 @@
 import { Teams } from './Teams';
 
 describe('Teams.cy.ts', () => {
+  beforeEach(() => {
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/v2/teams' },
+      { statusCode: 200, body: { actions: {} } }
+    );
+    cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+  });
+
   describe('Error list', () => {
     it('Displays error if teams are not successfully loaded', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { statusCode: 500 });
@@ -11,14 +19,12 @@ describe('Teams.cy.ts', () => {
 
   describe('Non-empty list', () => {
     it('Component renders', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.hasTitle(/^Teams$/);
       cy.get('table').find('tr').should('have.length', 4);
     });
 
     it('List has filters for Name, Organization, Created By and Modified By', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
         'orgFilterRequest'
@@ -41,7 +47,6 @@ describe('Teams.cy.ts', () => {
 
     it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
       // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.get('[type="checkbox"][id="select-all"]').check();
       cy.clickToolbarKebabAction(/^Delete selected teams$/);
@@ -51,7 +56,6 @@ describe('Teams.cy.ts', () => {
     });
 
     it('Create Team button is disabled if the user does not have permission to create teams', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
@@ -77,7 +81,6 @@ describe('Teams.cy.ts', () => {
           },
         }
       );
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
     });
@@ -113,10 +116,6 @@ describe('Teams.cy.ts', () => {
     });
 
     it('Empty state is displayed correctly for user without permission to create teams', () => {
-      cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/teams' },
-        { statusCode: 200, body: { actions: {} } }
-      );
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^You do not have permission to create a team$/);
