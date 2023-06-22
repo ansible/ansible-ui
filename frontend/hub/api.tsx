@@ -21,3 +21,13 @@ export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
 export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
   return process.env.HUB_API_BASE_PATH + '/pulp/api/v3' + apiTag(strings, ...values);
 }
+
+export type QueryParams = {
+  [key: string]: string;
+};
+
+export function getQueryString(queryParams: QueryParams) {
+  return Object.entries(queryParams)
+    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+}

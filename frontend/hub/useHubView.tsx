@@ -9,6 +9,7 @@ import {
   useSelected,
   useView,
 } from '../../framework';
+import { QueryParams, getQueryString } from './api';
 import { useFetcher } from '../common/crud/Data';
 
 export function hubKeyFn(item: { pulp_id: string }) {
@@ -48,16 +49,6 @@ export type IHubView<T extends object> = IView &
     refresh: () => Promise<HubItemsResponse<T> | undefined>;
     unselectItemsAndRefresh: (items: T[]) => void;
   };
-
-export type QueryParams = {
-  [key: string]: string;
-};
-
-function getQueryString(queryParams: QueryParams) {
-  return Object.entries(queryParams)
-    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-}
 
 export function useHubView<T extends object>(
   url: string,

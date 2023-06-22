@@ -9,6 +9,7 @@ import {
   useSelected,
   useView,
 } from '../../framework';
+import { QueryParams, getQueryString } from './api';
 import { useFetcher } from '../common/crud/Data';
 
 export function hubKeyFn(item: { pulp_id: string }) {
@@ -48,7 +49,8 @@ export function usePulpView<T extends object>(
   keyFn: (item: T) => string | number,
   toolbarFilters?: IToolbarFilter[],
   tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean
+  disableQueryString?: boolean,
+  queryParams?: QueryParams
 ): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
@@ -58,7 +60,7 @@ export function usePulpView<T extends object>(
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
