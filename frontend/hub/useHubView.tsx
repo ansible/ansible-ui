@@ -49,12 +49,23 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
+export type QueryParams = {
+  [key: string]: string;
+};
+
+function getQueryString(queryParams: QueryParams) {
+  return Object.entries(queryParams)
+    .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+}
+
 export function useHubView<T extends object>(
   url: string,
   keyFn: (item: T) => string | number,
   toolbarFilters?: IToolbarFilter[],
   tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean
+  disableQueryString?: boolean,
+  queryParams?: QueryParams
 ): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
@@ -64,7 +75,7 @@ export function useHubView<T extends object>(
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
