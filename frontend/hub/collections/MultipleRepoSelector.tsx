@@ -38,7 +38,7 @@ export const MultipleRepoSelector = (props: IProps) => {
   const view = usePulpView<Repository>(
     '/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/',
     nameKeyFn,
-    undefined,
+    toolbarFilters,
     tableColumns
   );
 
@@ -78,11 +78,11 @@ export function useRepoFilters() {
   return useMemo<IToolbarFilter[]>(
     () => [
       {
-        key: 'keywords',
+        key: 'name',
         label: t('Name'),
         type: 'string',
-        query: 'keywords',
-        comparison: 'contains',
+        query: 'name',
+        comparison: 'startsWith',
       },
     ],
     [t]
