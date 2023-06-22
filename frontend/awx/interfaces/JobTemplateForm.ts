@@ -20,7 +20,7 @@ export interface JobTemplateSummaryFields
     | 'organization'
   > {
   inventory?: { name?: string; id?: number } | null;
-  project?: { id?: number; name?: string; organization?: number };
+  project: { id?: number; name?: string; organization?: number } | null;
   execution_environment?: { id?: number; name?: string };
 }
 
@@ -54,5 +54,5 @@ export interface JobTemplateForm
   isProvisioningCallbackEnabled: boolean;
   arrayedSkipTags: { value: string; label: string }[];
   arrayedJobTags: { value: string; label: string }[];
-  project: number | null;
+  project: number | undefined;
 }
