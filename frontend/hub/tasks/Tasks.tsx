@@ -15,9 +15,9 @@ import {
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
 import { pulpHRefKeyFn } from '../useHubView';
-import { getIdFromPulpHref, usePulpView } from '../usePulpView';
+import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
-import { pulpAPI } from '../api';
+import { parsePulpIDFromURL, pulpAPI } from '../api';
 
 export function Tasks() {
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              navigate(RouteObj.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href)))
+              navigate(RouteObj.TaskDetails.replace(':id', parsePulpIDFromURL(task.pulp_href) || ''))
             }
           />
         ),
