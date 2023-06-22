@@ -38,12 +38,19 @@ export type IHubView<T extends object> = IView &
   };
 
 export function usePulpView<T extends object>({
-  url: string,
-  keyFn: (item: T) => string | number,
-  toolbarFilters?: IToolbarFilter[],
-  tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean,
-  queryParams?: QueryParams,
+  url,
+  keyFn,
+  toolbarFilters,
+  tableColumns,
+  disableQueryString,
+  queryParams,
+}: {
+  url: string;
+  keyFn: (item: T) => string | number;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  disableQueryString?: boolean;
+  queryParams?: QueryParams;
 }): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
