@@ -49,7 +49,7 @@ export const MultipleRepoSelector = (props: IProps) => {
       errorStateTitle={t('Error loading repositories')}
       emptyStateTitle={t('No repositories yet')}
       emptyStateDescription={t('To get started, create an repository.')}
-      defaultTableView="list"
+      defaultTableView="table"
       {...view}
     />
   );
@@ -60,6 +60,7 @@ export function useRepositoriesColumns() {
     () => [
       {
         header: '',
+        sort: 'name',
         cell: (repository) => (
           <>
             <TextCell text={repository.name} />
