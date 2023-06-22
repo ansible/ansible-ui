@@ -50,14 +50,14 @@ export function MyNamespaces() {
   return <CommonNamespaces url={hubAPI`/_ui/v1/my-namespaces/`} />;
 }
 
-export function CommonNamespaces(props: { url: string }) {
+export function CommonNamespaces({ url }: { url: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
-  const view = useHubView<HubNamespace>(props.url, idKeyFn, toolbarFilters, tableColumns);
+  const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
       toolbarFilters={toolbarFilters}

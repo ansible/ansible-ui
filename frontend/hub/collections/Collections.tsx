@@ -40,7 +40,11 @@ export function Collections() {
   const navigate = useNavigate();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>(hubAPI`/_ui/v1/repo/published/`, idKeyFn, toolbarFilters);
+  const view = useHubView<Collection>({
+    url: hubAPI`/_ui/v1/repo/published/`,
+    keyFn: idKeyFn,
+    toolbarFilters,
+  });
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;

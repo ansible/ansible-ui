@@ -12,12 +12,12 @@ export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
-  const view = useHubView<Approval>(
-    hubAPI`/_ui/v1/collection-versions/`,
-    idKeyFn,
+  const view = useHubView<Approval>({
+    url: hubAPI`/_ui/v1/collection-versions/`,
+    keyFn: idKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const toolbarActions = useApprovalsActions();
   const rowActions = useApprovalActions(() => void view.refresh());
   return (

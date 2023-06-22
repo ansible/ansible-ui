@@ -12,12 +12,12 @@ export function ExecutionEnvironments() {
   const { t } = useTranslation();
   const toolbarFilters = useExecutionEnvironmentFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
-  const view = useHubView<ExecutionEnvironment>(
-    hubAPI`/v3/plugin/execution-environments/repositories/`,
-    idKeyFn,
+  const view = useHubView<ExecutionEnvironment>({
+    url: hubAPI`/v3/plugin/execution-environments/repositories/`,
+    keyFn: idKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const toolbarActions = useExecutionEnvironmentsActions();
   const rowActions = useExecutionEnvironmentActions();
   return (

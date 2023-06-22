@@ -12,12 +12,12 @@ export function RemoteRegistries() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
-  const view = useHubView<RemoteRegistry>(
-    hubAPI`/_ui/v1/execution-environments/registries/`,
-    pulpHRefKeyFn,
+  const view = useHubView<RemoteRegistry>({
+    url: hubAPI`/_ui/v1/execution-environments/registries/`,
+    keyFn: pulpHRefKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const toolbarActions = useRemoteRegistriesActions();
   const rowActions = useRemoteRegistryActions();
   return (
