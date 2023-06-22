@@ -3,8 +3,9 @@ import { ToolbarToggleGroup } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 
 import { optionsForCategories } from './constants';
-import { FilterCategoriesGroup, QuickDateGroup, SortByGroup } from './Groups';
+import { FilterCategoriesGroup, SortByGroup } from './Groups';
 import { ApiOptionsType, AttributeType, SetValues } from './types';
+import { ToolbarDateFilterWithOptions } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarDateFilterWithOptions';
 
 interface Props {
   categories: ApiOptionsType;
@@ -42,6 +43,15 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
   const setFilters = (key: string | undefined, value: AttributeType | undefined) => {
     setQueryParams(key, value);
   };
+  // TODO make sure this is fixed on API once UI is ready
+  const quickDateRangeModified = quick_date_range?.map(
+    (item: { key: string; value: AttributeType }) => {
+      return { value: item.key, label: item.value.toString() };
+    }
+  );
+  const granularityModified = granularity?.map((item: { key: string; value: AttributeType }) => {
+    return { value: item.key, label: item.value.toString() };
+  });
 
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
@@ -54,9 +64,9 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
         />
       )}
       {(quick_date_range || granularity) && (
-        <QuickDateGroup
+        <ToolbarDateFilterWithOptions
           filters={filters}
-          values={{ quick_date_range, granularity }}
+          values={{ quick_date_range: quickDateRangeModified, granularity: granularityModified }}
           setFilters={setFilters}
         />
       )}
