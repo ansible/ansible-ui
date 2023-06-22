@@ -25,12 +25,12 @@ export function SignatureKeys() {
   const { t } = useTranslation();
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
-  const view = usePulpView<SignatureKey>(
-    pulpAPI`/signing-services/`,
-    pulpHRefKeyFn,
+  const view = usePulpView<SignatureKey>({
+    url: pulpAPI`/signing-services/`,
+    keyFn: pulpHRefKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
