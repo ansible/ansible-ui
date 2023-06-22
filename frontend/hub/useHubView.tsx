@@ -50,14 +50,14 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>(
+export function useHubView<T extends object>({
   url: string,
   keyFn: (item: T) => string | number,
   toolbarFilters?: IToolbarFilter[],
   tableColumns?: ITableColumn<T>[],
   disableQueryString?: boolean,
-  queryParams?: QueryParams
-): IHubView<T> {
+  queryParams?: QueryParams,
+}): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString
