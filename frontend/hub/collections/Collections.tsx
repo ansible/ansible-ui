@@ -27,20 +27,24 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { idKeyFn, useHubView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
-import { hubAPI } from '../api';
+import { idKeyFn, hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>(hubAPI`/_ui/v1/repo/published/`, idKeyFn, toolbarFilters);
+  const view = useHubView<Collection>({
+    url: hubAPI`/_ui/v1/repo/published/`,
+    keyFn: idKeyFn,
+    toolbarFilters,
+  });
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;

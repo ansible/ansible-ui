@@ -14,16 +14,21 @@ import {
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
-import { pulpHRefKeyFn } from '../useHubView';
-import { getIdFromPulpHref, usePulpView } from '../usePulpView';
+import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
-import { pulpAPI } from '../api';
+import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function Tasks() {
   const { t } = useTranslation();
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
-  const view = usePulpView<Task>(pulpAPI`/tasks/`, pulpHRefKeyFn, toolbarFilters, tableColumns);
+  const view = usePulpView<Task>({
+    url: pulpAPI`/tasks/`,
+    keyFn: pulpHrefKeyFn,
+    toolbarFilters,
+    tableColumns,
+  });
+
   return (
     <PageLayout>
       <PageHeader title={t('Tasks')} />
@@ -50,7 +55,9 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              navigate(RouteObj.TaskDetails.replace(':id', getIdFromPulpHref(task.pulp_href)))
+              navigate(
+                RouteObj.TaskDetails.replace(':id', parsePulpIDFromURL(task.pulp_href) || '')
+              )
             }
           />
         ),

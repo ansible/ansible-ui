@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
-import { idKeyFn } from '../../useHubView';
+import { idKeyFn } from '../../api';
 import { Collection } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { hubAPI } from '../../api';
