@@ -52,7 +52,7 @@ export function useRuleAuditColumns() {
         modal: ColumnModalOption.Hidden,
       },
       {
-        header: t('Last fired date'),
+        header: t('Fired date'),
         cell: (ruleAudit) => (
           <TextCell
             text={ruleAudit?.fired_at ? formatDateString(new Date(ruleAudit.fired_at)) : ''}
