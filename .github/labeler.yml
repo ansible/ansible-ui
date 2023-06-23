@@ -5,7 +5,7 @@ AWX:
 EDA:
   - frontend/eda/**/*
   - cypress/eda/awx/**/*
-  
+
 HUB:
   - frontend/hub/**/*
   - cypress/hub/awx/**/*

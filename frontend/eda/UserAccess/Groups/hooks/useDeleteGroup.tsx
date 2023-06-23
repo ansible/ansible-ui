@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
-import { idKeyFn } from '../../../../hub/useHubView';
+import { idKeyFn } from '../../../../hub/api';
 import { API_PREFIX } from '../../../constants';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { useGroupColumns } from './useGroupColumns';

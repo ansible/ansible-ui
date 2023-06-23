@@ -16,9 +16,9 @@ import {
   TextCell,
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { hubKeyFn, pulpHRefKeyFn, useHubView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
-import { hubAPI } from '../api';
+import { hubAPI, pulpIdKeyFn, pulpHrefKeyFn } from '../api';
 
 export function Repositories() {
   const { t } = useTranslation();
@@ -46,12 +46,11 @@ export function LocalRepositories() {
   const { t } = useTranslation();
   // const navigate = useNavigate()
   const tableColumns = useLocalRepositoriesColumns();
-  const view = useHubView<Repository>(
-    hubAPI`/_ui/v1/distributions/`,
-    hubKeyFn,
-    undefined,
-    tableColumns
-  );
+  const view = useHubView<Repository>({
+    url: hubAPI`/_ui/v1/distributions/`,
+    keyFn: pulpIdKeyFn,
+    tableColumns,
+  });
   return (
     <PageTable<Repository>
       // toolbarFilters={toolbarFilters}
@@ -101,12 +100,11 @@ export function RemoteRepositories() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const tableColumns = useRemoteRepositoriesColumns();
-  const view = useHubView<RemoteRepository>(
-    hubAPI`/_ui/v1/remotes/`,
-    pulpHRefKeyFn,
-    undefined,
-    tableColumns
-  );
+  const view = useHubView<RemoteRepository>({
+    url: hubAPI`/_ui/v1/remotes/`,
+    keyFn: pulpHrefKeyFn,
+    tableColumns,
+  });
   const rowActions = useMemo<IPageAction<RemoteRepository>[]>(
     () => [
       {

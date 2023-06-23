@@ -16,21 +16,20 @@ import {
   TextCell,
 } from '../../../framework';
 import { downloadTextFile } from '../../../framework/utils/download-file';
-import { pulpHRefKeyFn } from '../useHubView';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
-import { pulpAPI } from '../api';
+import { pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
-  const view = usePulpView<SignatureKey>(
-    pulpAPI`/signing-services/`,
-    pulpHRefKeyFn,
+  const view = usePulpView<SignatureKey>({
+    url: pulpAPI`/signing-services/`,
+    keyFn: pulpHrefKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
