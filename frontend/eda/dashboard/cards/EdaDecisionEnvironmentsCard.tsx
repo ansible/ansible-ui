@@ -25,7 +25,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
     () => [
       ...columns,
       {
-        header: t('Modified'),
+        header: t('Last modified'),
         cell: (project) =>
           project.modified_at && <DateTimeCell format="date-time" value={project.modified_at} />,
       },
