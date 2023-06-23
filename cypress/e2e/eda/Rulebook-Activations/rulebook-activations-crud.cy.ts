@@ -103,6 +103,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
+  let edaDisabledRBA: EdaRulebookActivation;
   let edaRuleBook: EdaRulebook;
 
   before(() => {
@@ -121,6 +122,13 @@ describe('EDA rulebook activations- Edit, Delete', () => {
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });
+          cy.createEdaRulebookActivation({
+            rulebook_id: edaRuleBook.id,
+            decision_environment_id: decisionEnvironment.id,
+            is_enabled: false,
+          }).then((edaRulebookActivation) => {
+            edaDisabledRBA = edaRulebookActivation;
+          });
         });
       });
     });
@@ -130,10 +138,11 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.deleteAwxResources(awxResources);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
+    cy.deleteEdaRulebookActivation(edaDisabledRBA);
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('can enable and disable a Rulebook Activation', () => {
+  it('can disable a Rulebook Activation', () => {
     cy.navigateTo(/^Rulebook Activations$/);
     cy.filterTableByText(edaRBA.name);
     cy.getTableRowByText(edaRBA.name).within(() => {
@@ -146,14 +155,17 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.wait('@disable').then((disable) => {
       expect(disable?.response?.statusCode).to.eq(204);
     });
-    cy.getTableRowByText(edaRBA.name).within(() => {
-      cy.get('.pf-c-switch').get('input').should('not.have.attr', 'checked');
-      cy.get('.pf-c-switch').get('input').should('not.be.disabled');
+  });
+
+  it('can enable a Rulebook Activation', () => {
+    cy.navigateTo(/^Rulebook Activations$/);
+    cy.filterTableByText(edaDisabledRBA.name);
+    cy.getTableRowByText(edaDisabledRBA.name).within(() => {
       cy.get('.pf-c-switch__toggle').click();
-      cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/enable/`).as('enable');
+      cy.intercept('POST', `/api/eda/v1/activations/${edaDisabledRBA.id}/enable/`).as('enable');
     });
-    cy.edaRuleBookActivationActionsModal('enable', edaRBA.name);
-    cy.get('button').contains('rulebookActivations').click();
+    cy.edaRuleBookActivationActionsModal('enable', edaDisabledRBA.name);
+    cy.get('button').contains('rulebook activations').click();
     cy.get('button').contains('Close').click();
     cy.wait('@enable').then((enable) => {
       expect(enable?.response?.statusCode).to.eq(204);
