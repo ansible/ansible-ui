@@ -43,3 +43,19 @@ export function parsePulpIDFromURL(url: string): string {
 
   return null;
 }
+
+export function pulpIdKeyFn(item: { pulp_id: string }) {
+  return item.pulp_id;
+}
+
+export function pulpHrefKeyFn(item: { pulp_href: string }) {
+  return item.pulp_href;
+}
+
+export function nameKeyFn(item: { name: string }) {
+  return item.name;
+}
+
+export function idKeyFn(item: { id: number | string }) {
+  return item.id;
+}

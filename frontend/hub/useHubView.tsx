@@ -12,26 +12,6 @@ import {
 import { QueryParams, getQueryString } from './api';
 import { useFetcher } from '../common/crud/Data';
 
-export function hubKeyFn(item: { pulp_id: string }) {
-  return item.pulp_id;
-}
-
-export function pulpHRefKeyFn(item: { pulp_href: string }) {
-  return item.pulp_href;
-}
-
-export function nameKeyFn(item: { name: string }) {
-  return item.name;
-}
-
-export function idKeyFn(item: { id: number | string }) {
-  return item.id;
-}
-
-export function pkKeyFn(item: { pk: number | string }) {
-  return item.pk;
-}
-
 export interface HubItemsResponse<T extends object> {
   meta: {
     count: number;

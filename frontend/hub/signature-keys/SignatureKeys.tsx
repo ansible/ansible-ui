@@ -16,10 +16,9 @@ import {
   TextCell,
 } from '../../../framework';
 import { downloadTextFile } from '../../../framework/utils/download-file';
-import { pulpHRefKeyFn } from '../useHubView';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
-import { pulpAPI } from '../api';
+import { pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
@@ -27,7 +26,7 @@ export function SignatureKeys() {
   const tableColumns = useSignatureKeysColumns();
   const view = usePulpView<SignatureKey>({
     url: pulpAPI`/signing-services/`,
-    keyFn: pulpHRefKeyFn,
+    keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
   });

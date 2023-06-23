@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { idKeyFn, useHubView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { Approval } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
-import { hubAPI } from '../api';
+import { idKeyFn, hubAPI } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();

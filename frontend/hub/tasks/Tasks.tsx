@@ -14,10 +14,9 @@ import {
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
-import { pulpHRefKeyFn } from '../useHubView';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
-import { parsePulpIDFromURL, pulpAPI } from '../api';
+import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function Tasks() {
   const { t } = useTranslation();
@@ -25,7 +24,7 @@ export function Tasks() {
   const tableColumns = useTasksColumns();
   const view = usePulpView<Task>({
     url: pulpAPI`/tasks/`,
-    keyFn: pulpHRefKeyFn,
+    keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
   });

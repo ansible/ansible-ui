@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { idKeyFn, useHubView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { hubAPI } from '../api';
+import { idKeyFn, hubAPI } from '../api';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
