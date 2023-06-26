@@ -8,7 +8,7 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { idKeyFn } from '../api';
+import { idKeyFn, pulpAPI } from '../api';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -48,7 +48,9 @@ export function AllNamespaces() {
 
 export function MyNamespaces() {
   return (
-    <CommonNamespaces url="/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/?my_permissions=ansible.change_ansiblenamespace" />
+    <CommonNamespaces
+      url={pulpAPI`pulp_ansible/namespaces/?my_permissions=ansible.change_ansiblenamespace`}
+    />
   );
 }
 
