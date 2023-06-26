@@ -7,10 +7,10 @@ export function useHubNamespaceFilters() {
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
-        key: 'keywords',
+        key: 'name__icontains',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
-        query: 'keywords',
+        type: 'string',
+        query: 'name__icontains',
         comparison: 'contains',
       },
     ],
