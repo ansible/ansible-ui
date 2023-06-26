@@ -11,7 +11,7 @@ import { postRequestFile } from '../../common/crud/Data';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { hubAPI } from '../api';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MultipleRepoSelector } from './MultipleRepoSelector';
 
 interface UploadData {
@@ -41,10 +41,6 @@ export function UploadCollectionByFile() {
   const navigate = useNavigate();
   const onCancel = () => navigate(-1);
   const [onlyStaging, setOnlyStaging] = useState(true);
-
-  const [allRepos, setAllRepos] = useState([]);
-  const [fixedRepos, setFixedRepos] = useState([]);
-  const [selectedRepos, setSelectedRepos] = useState([]);
 
   function renderRepoSelector() {
     return (
@@ -96,6 +92,7 @@ export function UploadCollectionByFile() {
         >
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
           {renderRepoSelector()}
+
           <PageFormWatch<File | undefined> watch="file">
             {(file) => {
               const namespace = file?.name.split('-')[0] ?? '';

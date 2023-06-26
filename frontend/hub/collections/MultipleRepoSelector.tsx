@@ -45,6 +45,9 @@ export const MultipleRepoSelector = (props: IProps) => {
 
   return (
     <PageTable<Repository>
+      disableColumnManagement={true}
+      disableListView={true}
+      disableCardView={true}
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       errorStateTitle={t('Error loading repositories')}
