@@ -14,7 +14,6 @@ import { hubAPI } from '../api';
 import { useState, useEffect } from 'react';
 import { MultipleRepoSelector } from './MultipleRepoSelector';
 
-
 interface UploadData {
   file: unknown;
 }
@@ -88,9 +87,10 @@ export function UploadCollectionByFile() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           onSubmit={(data) => {
-            return postRequestFile(hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`, data.file as Blob).then(() =>
-              navigate(RouteObj.Approvals + '?status=staging')
-            );
+            return postRequestFile(
+              hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`,
+              data.file as Blob
+            ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
           }}
           singleColumn={true}
         >

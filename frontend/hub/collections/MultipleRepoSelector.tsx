@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { nameKeyFn, usePulpView } from '../usePulpView';
+import { usePulpView } from '../usePulpView';
 import { IToolbarFilter } from '../../../framework';
+import { nameKeyFn } from '../api';
 
 import {
   DateTimeCell,
@@ -35,12 +36,12 @@ export const MultipleRepoSelector = (props: IProps) => {
 
   // const navigate = useNavigate()
   const tableColumns = useRepositoriesColumns();
-  const view = usePulpView<Repository>(
-    '/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/',
-    nameKeyFn,
+  const view = usePulpView<Repository>({
+    url: '/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/',
+    keyFn: nameKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
 
   return (
     <PageTable<Repository>
@@ -56,14 +57,23 @@ export const MultipleRepoSelector = (props: IProps) => {
 };
 
 export function useRepositoriesColumns() {
+  const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
       {
-        header: '',
+        header: t('Name'),
         sort: 'name',
         cell: (repository) => (
           <>
             <TextCell text={repository.name} />
+          </>
+        ),
+      },
+
+      {
+        header: t('Description'),
+        cell: (repository) => (
+          <>
             <TextCell text={repository.description} />
           </>
         ),
