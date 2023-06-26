@@ -12,6 +12,7 @@ import { idKeyFn, pulpAPI } from '../api';
 
 export function Namespaces() {
   const { t } = useTranslation();
+
   return (
     <PageLayout>
       <PageHeader
@@ -43,26 +44,42 @@ export function Namespaces() {
 }
 
 export function AllNamespaces() {
-  return <CommonNamespaces url={pulpAPI`pulp_ansible/namespaces/`} />;
+  return <CommonNamespaces url={pulpAPI`/pulp_ansible/namespaces/`} queryParams={undefined} />;
 }
 
 export function MyNamespaces() {
   return (
     <CommonNamespaces
-      url={pulpAPI`pulp_ansible/namespaces/?my_permissions=ansible.change_ansiblenamespace`}
+      url={pulpAPI`/pulp_ansible/namespaces/`}
+      queryParams={{ my_permissions: 'ansible.change_ansiblenamespace' }}
     />
   );
 }
 
-export function CommonNamespaces({ url }: { url: string }) {
+export function CommonNamespaces({
+  url,
+  queryParams,
+}: {
+  url: string;
+  queryParams:
+    | {
+        [key: string]: string;
+      }
+    | undefined;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const view = usePulpView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
+  const view = usePulpView<HubNamespace>({
+    url,
+    keyFn: idKeyFn,
+    toolbarFilters,
+    tableColumns,
+    queryParams,
+  });
   return (
     <PageTable<HubNamespace>
       toolbarFilters={toolbarFilters}
