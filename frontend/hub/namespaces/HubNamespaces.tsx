@@ -2,13 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { useHubView } from '../useHubView';
+import { idKeyFn, usePulpView } from '../usePulpView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { hubAPI } from '../api/utils';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
 
 export function Namespaces() {
@@ -44,11 +43,13 @@ export function Namespaces() {
 }
 
 export function AllNamespaces() {
-  return <CommonNamespaces url={hubAPI`/_ui/v1/namespaces/`} />;
+  return <CommonNamespaces url="/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/" />;
 }
 
 export function MyNamespaces() {
-  return <CommonNamespaces url={hubAPI`/_ui/v1/my-namespaces/`} />;
+  return (
+    <CommonNamespaces url="/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/?my_permissions=ansible.change_ansiblenamespace" />
+  );
 }
 
 export function CommonNamespaces({ url }: { url: string }) {
@@ -58,7 +59,7 @@ export function CommonNamespaces({ url }: { url: string }) {
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
-  const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
+  const view = usePulpView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
       toolbarFilters={toolbarFilters}
