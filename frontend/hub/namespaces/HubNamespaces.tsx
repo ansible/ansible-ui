@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { idKeyFn, usePulpView } from '../usePulpView';
+import { usePulpView } from '../usePulpView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
@@ -59,6 +59,7 @@ export function CommonNamespaces({ url }: { url: string }) {
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const view = usePulpView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
