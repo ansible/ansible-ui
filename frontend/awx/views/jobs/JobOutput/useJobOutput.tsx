@@ -72,11 +72,12 @@ export function useJobOutput(
   const batchTimeout = useRef(undefined as ReturnType<typeof setTimeout> | undefined);
   const addBatchedEvents = useCallback(() => {
     if (isFiltered) {
-      console.log('is filtered');
       return;
     }
-    console.log('adding', batchedEvents.current);
-    const newCount = jobEventCount + batchedEvents.current.length;
+    const maxCounter = batchedEvents.current.reduce(
+      (max, event) => Math.max(max, event.counter),
+      jobEventCount
+    );
     setJobEvents((jobEvents) => {
       batchedEvents.current.forEach((message: JobEvent) => {
         jobEvents[message.counter] = message;
@@ -84,7 +85,7 @@ export function useJobOutput(
       batchedEvents.current = [];
       return jobEvents;
     });
-    setJobEventCount(newCount);
+    setJobEventCount(maxCounter);
   }, [isFiltered, jobEventCount]);
 
   const eventGroup = `${job.type}_events`;
@@ -92,22 +93,9 @@ export function useJobOutput(
     (message?: WebSocketMessage) => {
       if (message?.group_name === eventGroup) {
         const jobEvent = message as JobEvent;
-        // setJobEvents((jobEvents) => {
-        //   jobEvents = { ...jobEvents };
-        //   let i = Object.keys(jobEvents).length + 1;
-        //   if (isFiltered) {
-        //     jobEvents[i] = jobEvent;
-        //     i++;
-        //   } else {
-        //     jobEvents[jobEvent.counter] = jobEvent;
-        //   }
-        //   return jobEvents;
-        // });
-        // setJobEventCount((jobEventCount) => Math.max(jobEventCount, jobEvent.counter));
         batchedEvents.current.push(jobEvent);
         clearTimeout(batchTimeout.current);
         if (batchedEvents.current.length >= 10) {
-          console.log('10 events batched, adding...');
           addBatchedEvents();
         } else {
           batchTimeout.current = setTimeout(addBatchedEvents, 500);

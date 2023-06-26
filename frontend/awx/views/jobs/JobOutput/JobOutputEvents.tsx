@@ -1,6 +1,4 @@
 import { useMemo, useRef, useState } from 'react';
-import { Banner } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
@@ -34,7 +32,6 @@ interface IJobOutputEventsProps {
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { t } = useTranslation();
   const { job, toolbarFilters, filters } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
@@ -97,25 +94,6 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
 
   return (
     <>
-      {/* <PageSection variant="light">
-        <LabelGroup numLabels={999}>
-          <Label variant="outline">Event Count: {jobEventCount}</Label>
-          <Label variant="outline">Row Count: {jobOutputRows.length}</Label>
-          <Label variant="outline">Visible Row Count: {visibleItems.length}</Label>
-          <Label variant="outline">Before Spacing: {beforeRowsHeight}px</Label>
-          <Label variant="outline">After Spacing: {afterRowsHeight}px</Label>
-        </LabelGroup>
-      </PageSection>
-      <Divider /> */}
-      {isJobRunning ? (
-        <Banner variant="warning">
-          <p>
-            {t(
-              'This job is currently running. Live event streaming has not been added yet to the tech preview.'
-            )}
-          </p>
-        </Banner>
-      ) : null}
       <ScrollContainer
         ref={containerRef}
         tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
