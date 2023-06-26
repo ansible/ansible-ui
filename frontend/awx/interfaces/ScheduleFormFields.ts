@@ -1,14 +1,20 @@
+import { RegularInventory } from './Inventory';
+import { InventorySource } from './InventorySource';
+import { JobTemplate } from './JobTemplate';
+import { Project } from './Project';
 import { Schedule } from './Schedule';
+import { WorkflowJobTemplate } from './WorkflowJobTemplate';
 
-export interface ScheduleFormFields extends Omit<Schedule, 'timezone'> {
-  unified_job_template: number;
+export interface ScheduleFormFields
+  extends Omit<Schedule, 'unified_job_template' | 'timezone' | 'inventory'> {
+  unified_job_template: JobTemplate | WorkflowJobTemplate | Project | InventorySource;
   resourceName: string;
   name: string;
   description?: string;
   resource_type: string;
   startDateTime: { startDate: string; startTime: string };
   timezone: string;
-  inventory: number | null;
+  inventory: RegularInventory | null;
   frequencies: string[];
   freq: number;
   interval: number;

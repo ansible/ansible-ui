@@ -12,40 +12,33 @@ export function PageFormInventorySourceSelect<
 >(props: {
   name: TFieldName;
   isRequired?: boolean;
-  inventorySourceIdPath?: string;
+  inventorySourceIdPath: string;
   inventoryId: number;
 }) {
   const { t } = useTranslation();
-  const { clearErrors, setError, getFieldState, formState } = useFormContext();
   const openSelectDialog = useSelectInventorySource();
+  const { setValue } = useFormContext();
   const query = useCallback(async () => {
-    const { error } = getFieldState(props.name, formState);
-    if (error) {
-      clearErrors(props.name);
-    }
     const response = await requestGet<ItemsResponse<InventorySource>>(
       `/api/v2/inventories/${props.inventoryId.toString()}/inventory_sources/?page_size=200`
     );
-
-    if (response.count === 0)
-      setError(props.name, {
-        message: t(
-          'The selected inventory has no inventory sources associated with it.  Select an inventory with inventory sources.'
-        ),
-      });
-
+    if (response.count === 1) {
+      setValue(props.inventorySourceIdPath, response.results[0]);
+    }
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
     });
-  }, [props.inventoryId, t, props.name, setError, formState, clearErrors, getFieldState]);
+  }, [props.inventoryId, props.inventorySourceIdPath, setValue]);
 
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
       label={t('Inventory source')}
       query={query}
-      valueToString={(value) => (value as InventorySource)?.name ?? ''}
+      valueToString={(value) => {
+        return (value as InventorySource)?.name ?? '';
+      }}
       placeholder={t('Select inventory source')}
       loadingPlaceholder={t('Loading inventory sources...')}
       loadingErrorText={t('Error loading inventory sources')}

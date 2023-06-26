@@ -6,16 +6,20 @@ import { DateTime } from 'luxon';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { useGet } from '../../../common/crud/useGet';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { getAwxError } from '../../useAwxView';
-import { useNavigate } from 'react-router-dom';
-import { postRequest } from '../../../common/crud/Data';
+import { useNavigate, useParams } from 'react-router-dom';
+import { postRequest, requestGet } from '../../../common/crud/Data';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
+import { Project } from '../../interfaces/Project';
+import { InventorySource } from '../../interfaces/InventorySource';
 
 const urls: { [key: string]: string } = {
   inventory: '/api/v2/inventories/',
-  project: '/api/v2/projects/',
+  projects: '/api/v2/projects/',
   job_template: '/api/v2/job_templates/',
   workflow_job_template: '/api/v2/workflow_job_templates/',
 };
@@ -30,13 +34,33 @@ const routes: { [key: string]: string } = {
 export function CreateSchedule() {
   const { t } = useTranslation();
   const now = DateTime.now();
-
+  const [resourceForSchedule, setResourceForSchedule] = useState<
+    JobTemplate | WorkflowJobTemplate | Project | InventorySource
+  >();
+  const params: { [string: string]: string } = useParams<{ id: string; source_id?: string }>();
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
   );
+
   const navigate = useNavigate();
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
+
+  useEffect(() => {
+    const resource = async () => {
+      if (!params.id) return;
+      try {
+        const response = await requestGet<
+          Project | JobTemplate | WorkflowJobTemplate | InventorySource
+        >(`${urls[params['*'].split('/')[0]]}${params.id}/`);
+        setResourceForSchedule(response);
+      } catch {
+        // handle error
+      }
+    };
+    void resource();
+  }, [params]);
+
   const onSubmit: PageFormSubmitHandler<ScheduleFormFields> = async (values, setError) => {
     const { name, unified_job_template, resource_type, inventory } = values;
     const ruleSet = buildScheduleContainer(values);
@@ -48,22 +72,22 @@ export function CreateSchedule() {
     try {
       if (resource_type === 'inventory' && inventory) {
         const response = await postRequest<ScheduleFormFields>(
-          `/api/v2/inventories/${inventory}/${unified_job_template?.toString()}/schedules/`,
+          `/api/v2/inventories/${inventory.id}/${unified_job_template?.id?.toString()}/schedules/`,
           requestData
         );
         navigate(
           RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.toString())
-            .replace(':source_id', unified_job_template.toString())
+            .replace(':source_id', unified_job_template?.id?.toString())
             .replace(':schedule_id', response?.id?.toString())
         );
       } else {
         const response = await postRequest<ScheduleFormFields>(
-          `${urls[resource_type]}${unified_job_template.toString()}/schedules/`,
+          `${urls[resource_type]}${unified_job_template?.id?.toString()}/schedules/`,
           requestData
         );
         navigate(
           routes[resource_type]
-            .replace(':id', unified_job_template.toString())
+            .replace(':id', unified_job_template?.id?.toString())
             .replace(':schedule_id', response.id.toString())
         );
       }
@@ -99,7 +123,8 @@ export function CreateSchedule() {
       />
       <PageForm<ScheduleFormFields>
         defaultValue={{
-          resource_type: '',
+          resource_type: resourceForSchedule?.type || '',
+          unified_job_template: resourceForSchedule,
           inventory: null,
           resourceName: '',
           name: '',
@@ -111,18 +136,22 @@ export function CreateSchedule() {
           byweekday: [], //iCalendar RFC's equivalent to the byday keyword
           byweekno: [],
           bymonth: [],
-          endDate: DateTime.now() as unknown as string,
+          endDate: DateTime.now().toFormat('yyyy-LL-dd'),
           endTime: time,
           count: 1,
           endingType: 'never',
-          timezone: now.get('zoneName') as unknown as string,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           startDateTime: { startDate: currentDate, startTime: time },
         }}
         submitText={t('Submit schedule')}
         onSubmit={onSubmit}
         onCancel={onCancel}
       >
-        <ScheduleInputs timeZones={timeZones} zoneLinks={data?.links} />
+        <ScheduleInputs
+          timeZones={timeZones}
+          resourceForSchedule={resourceForSchedule}
+          zoneLinks={data?.links}
+        />
       </PageForm>
     </PageLayout>
   );
