@@ -31,18 +31,23 @@ import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 //import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
-//import { useCollectionFilters } from './hooks/useCollectionFilters';
+import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
 import { hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  //const toolbarFilters = useCollectionFilters();
+  const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
     keyFn: (item) => item.collection_version.pulp_href,
+    queryParams: {
+      is_deprecated: 'false',
+      repository_label: '!hide_from_search',
+      is_highest: 'true',
+    },
   });
 
   //const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
@@ -62,6 +67,7 @@ export function Collections() {
       />
 
       <PageTable<CollectionVersionSearch>
+        toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}

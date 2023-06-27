@@ -13,6 +13,23 @@ export function useCollectionFilters() {
         query: 'keywords',
         comparison: 'equals',
       },
+    ],
+    [t]
+  );
+}
+
+/*
+export function useCollectionFilters() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter[]>(
+    () => [
+      {
+        key: 'keywords',
+        label: t('Name'),
+        type: 'string',
+        query: 'keywords',
+        comparison: 'equals',
+      },
       {
         key: 'namespace',
         label: t('Namespace'),
@@ -66,3 +83,4 @@ export function useCollectionFilters() {
     [t]
   );
 }
+*/
