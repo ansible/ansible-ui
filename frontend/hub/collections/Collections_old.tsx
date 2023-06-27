@@ -1,3 +1,5 @@
+
+/*
 import {
   Button,
   Card,
@@ -158,3 +160,4 @@ function FeaturedCollections(props: { collectionCount?: number }) {
     </>
   );
 }
+*/

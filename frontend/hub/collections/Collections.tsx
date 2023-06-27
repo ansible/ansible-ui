@@ -28,26 +28,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useHubView } from '../useHubView';
-import { Collection } from './Collection';
-import { useCollectionActions } from './hooks/useCollectionActions';
+import { CollectionVersionSearch } from './Collection';
+//import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
-import { useCollectionFilters } from './hooks/useCollectionFilters';
+//import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
-import { idKeyFn, hubAPI } from '../api';
+import { hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const toolbarFilters = useCollectionFilters();
+  //const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>({
-    url: hubAPI`/_ui/v1/repo/published/`,
-    keyFn: idKeyFn,
-    toolbarFilters,
+  const view = useHubView<CollectionVersionSearch>({
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+    keyFn: (item) => item.collection_version.pulp_href,
   });
-  const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
-  const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
-  const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;
+
+  //const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
+  //const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   return (
     <PageLayout>
       <PageHeader
@@ -61,12 +60,9 @@ export function Collections() {
         )}
         titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
       />
-      {showFeaturedCollections && <FeaturedCollections />}
-      <PageTable<Collection>
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
+    
+      <PageTable<CollectionVersionSearch>
         tableColumns={tableColumns}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
@@ -77,84 +73,5 @@ export function Collections() {
         defaultSubtitle={t('Collection')}
       />
     </PageLayout>
-  );
-}
-
-function FeaturedCollections(props: { collectionCount?: number }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageSection>
-        <Card isFlat isRounded isLarge>
-          <CardHeader>
-            <CardTitle>{t('Featured collections')}</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <Grid hasGutter span={12} sm={12} md={12} lg={6} xl={6} xl2={4}>
-              {new Array(3).fill(0).map((_, index) => (
-                <GridItem key={index}>
-                  <Card isFlat isRounded isLarge>
-                    <CardHeader>
-                      <Stack hasGutter style={{ width: '100%' }}>
-                        <Split hasGutter>
-                          <SplitItem isFilled>
-                            <CardHeaderMain>
-                              <RedhatIcon size="xl" />
-                            </CardHeaderMain>
-                          </SplitItem>
-                          <SplitItem>
-                            <Button variant="secondary">{t('Sync')}</Button>
-                          </SplitItem>
-                        </Split>
-                        <Split hasGutter>
-                          <CardTitle>
-                            <Button component={Link} variant="link" isInline>
-                              {t('Amazing Collection')}
-                            </Button>
-                          </CardTitle>
-                        </Split>
-                      </Stack>
-                    </CardHeader>
-                    <CardBody>{t('This is the description of the collection.')}</CardBody>
-                    <CardFooter>
-                      <LabelGroup>
-                        <Label icon={<CircleIcon />} color="blue" isCompact>
-                          {t('Certified')}
-                        </Label>
-                        <Label icon={<CheckCircleIcon />} color="green" isCompact>
-                          {t('Signed')}
-                        </Label>
-                        <Label color="grey" isCompact>
-                          {t('Unsynced')}
-                        </Label>
-                      </LabelGroup>
-                    </CardFooter>
-                  </Card>
-                </GridItem>
-              ))}
-            </Grid>
-          </CardBody>
-          <CardFooter>
-            <Split>
-              <SplitItem isFilled />
-              <Button
-                icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
-                component={(props: { children: ReactNode }) => (
-                  <a href="https://galaxy.ansible.com/" target="_blank" rel="noreferrer" {...props}>
-                    {props.children}
-                  </a>
-                )}
-                variant="link"
-                isInline
-              >
-                {t('Browse all certified collections')}
-              </Button>
-            </Split>
-          </CardFooter>
-        </Card>
-      </PageSection>
-      {props.collectionCount !== 0 && <Divider />}
-    </>
   );
 }
