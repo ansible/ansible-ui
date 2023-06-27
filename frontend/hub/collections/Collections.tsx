@@ -60,7 +60,7 @@ export function Collections() {
         )}
         titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
       />
-    
+
       <PageTable<CollectionVersionSearch>
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading collections')}
