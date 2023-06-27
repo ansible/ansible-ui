@@ -12,6 +12,8 @@ type WebSocketMessage = {
   inventory_id?: number;
 };
 
+const WS_EVENTS_BATCH_SIZE = 15;
+
 export function useJobOutput(
   job: Job,
   toolbarFilters: IToolbarFilter[],
@@ -28,41 +30,42 @@ export function useJobOutput(
   const queryJobOutputEvent = useCallback(
     (counter: number) => {
       const jobEvent = jobEvents[counter + 1];
-      if (!jobEvent && !isQuerying.current.querying) {
-        isQuerying.current.querying = true;
-
-        const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
-
-        const page = Math.floor((counter + 1) / pageSize) + 1;
-        const filterString = getFiltersQueryString(toolbarFilters, filters);
-        const qsParts = ['order_by=counter', `page=${page}`, `page_size=${pageSize}`];
-        if (filterString) {
-          qsParts.push(filterString);
-        }
-        requestGet<ItemsResponse<JobEvent>>(
-          `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
-        )
-          .then((itemsResponse) => {
-            setJobEventCount(itemsResponse.count);
-            setJobEvents((jobEvents) => {
-              jobEvents = { ...jobEvents };
-              let i = Object.keys(jobEvents).length + 1;
-              for (const jobEvent of itemsResponse.results) {
-                if (isFiltered) {
-                  jobEvents[i] = jobEvent;
-                  i++;
-                } else {
-                  jobEvents[jobEvent.counter] = jobEvent;
-                }
-              }
-              return jobEvents;
-            });
-          })
-          .catch()
-          .finally(() => {
-            isQuerying.current.querying = false;
-          });
+      if (jobEvent || isQuerying.current.querying) {
+        return jobEvent;
       }
+      isQuerying.current.querying = true;
+
+      const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+
+      const page = Math.floor((counter + 1) / pageSize) + 1;
+      const filterString = getFiltersQueryString(toolbarFilters, filters);
+      const qsParts = ['order_by=counter', `page=${page}`, `page_size=${pageSize}`];
+      if (filterString) {
+        qsParts.push(filterString);
+      }
+      requestGet<ItemsResponse<JobEvent>>(
+        `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
+      )
+        .then((itemsResponse) => {
+          setJobEventCount(itemsResponse.count);
+          setJobEvents((jobEvents) => {
+            jobEvents = { ...jobEvents };
+            let i = Object.keys(jobEvents).length + 1;
+            for (const jobEvent of itemsResponse.results) {
+              if (isFiltered) {
+                jobEvents[i] = jobEvent;
+                i++;
+              } else {
+                jobEvents[jobEvent.counter] = jobEvent;
+              }
+            }
+            return jobEvents;
+          });
+        })
+        .catch()
+        .finally(() => {
+          isQuerying.current.querying = false;
+        });
       return jobEvent;
     },
     [job.id, job.type, jobEvents, pageSize, filters, toolbarFilters, isFiltered]
@@ -95,7 +98,7 @@ export function useJobOutput(
         const jobEvent = message as JobEvent;
         batchedEvents.current.push(jobEvent);
         clearTimeout(batchTimeout.current);
-        if (batchedEvents.current.length >= 10) {
+        if (batchedEvents.current.length >= WS_EVENTS_BATCH_SIZE) {
           addBatchedEvents();
         } else {
           batchTimeout.current = setTimeout(addBatchedEvents, 500);
