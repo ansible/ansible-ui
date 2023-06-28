@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { idKeyFn, useHubView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { hubAPI } from '../api';
+import { idKeyFn, hubAPI } from '../api';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -50,14 +50,14 @@ export function MyNamespaces() {
   return <CommonNamespaces url={hubAPI`/_ui/v1/my-namespaces/`} />;
 }
 
-export function CommonNamespaces(props: { url: string }) {
+export function CommonNamespaces({ url }: { url: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
   const rowActions = useHubNamespaceActions();
-  const view = useHubView<HubNamespace>(props.url, idKeyFn, toolbarFilters, tableColumns);
+  const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
       toolbarFilters={toolbarFilters}

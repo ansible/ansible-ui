@@ -6,7 +6,7 @@ import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
 import { HubDashboard } from './dashboard/Dashboard';
-import { ExecutionEnvironments } from './execution-environments/ExecutonEnvironments';
+import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { Namespaces } from './namespaces/HubNamespaces';

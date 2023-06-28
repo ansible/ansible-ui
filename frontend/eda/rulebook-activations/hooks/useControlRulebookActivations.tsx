@@ -24,7 +24,7 @@ export function useEnableRulebookActivations(
             count: rulebookActivations.length,
           }
         ),
-        actionButtonText: t('Enable rulebookActivations', { count: rulebookActivations.length }),
+        actionButtonText: t('Enable rulebook activations', { count: rulebookActivations.length }),
         items: rulebookActivations.sort((l, r) => compareStrings(l.name, r.name)),
         keyFn: (item) => item?.id,
         confirmationColumns,
