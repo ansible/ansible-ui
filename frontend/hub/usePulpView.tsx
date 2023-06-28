@@ -9,7 +9,7 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { QueryParams, getQueryString } from './api';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
 
 interface PulpItemsResponse<T extends object> {
@@ -91,7 +91,8 @@ export function usePulpView<T extends object>({
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<PulpItemsResponse<T>>(data?.next, fetcher, {
+  const nextPage = serverlessURL(data?.next);
+  useSWR<PulpItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 

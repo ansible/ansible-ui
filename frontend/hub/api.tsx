@@ -44,6 +44,18 @@ export function parsePulpIDFromURL(url: string): string | null {
   return null;
 }
 
+// pulp next links currently include full url - with the wrong server
+// "http://localhost:5001/api/page/next?what#ever" -> "/api/page/next?what#ever"
+// also has to handle hub links (starting with /api/) and undefined
+export function serverlessURL(url?: string) {
+  if (!url || url.startsWith('/')) {
+    return url;
+  }
+
+  const u = new URL(url);
+  return `${u.pathname}${u.search}${u.hash}`;
+}
+
 export function pulpIdKeyFn(item: { pulp_id: string }) {
   return item.pulp_id;
 }
