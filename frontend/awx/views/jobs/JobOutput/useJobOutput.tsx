@@ -13,6 +13,7 @@ type WebSocketMessage = {
 };
 
 const WS_EVENTS_BATCH_SIZE = 15;
+const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 export function useJobOutput(
   job: Job,
@@ -21,16 +22,50 @@ export function useJobOutput(
   pageSize: number
 ) {
   const isQuerying = useRef({ querying: false });
+  const toQuery = useRef({} as { [key: number]: boolean });
+  const queryTimeout = useRef(undefined as ReturnType<typeof setTimeout> | undefined);
   const [jobEventCount, setJobEventCount] = useState(1);
   const [jobEvents, setJobEvents] = useState<Record<number, JobEvent>>({});
 
   const getJobOutputEvent = useCallback((counter: number) => jobEvents[counter + 1], [jobEvents]);
 
   const isFiltered = Object.keys(filters).length > 0;
+  const isJobRunning = !job.status || runningJobTypes.includes(job.status);
   const queryJobOutputEvent = useCallback(
     (counter: number) => {
       const jobEvent = jobEvents[counter + 1];
       if (jobEvent || isQuerying.current.querying) {
+        return jobEvent;
+      }
+      if (isJobRunning) {
+        toQuery.current[counter + 1] = true;
+        if (!queryTimeout.current) {
+          queryTimeout.current = setTimeout(() => {
+            const qsParts = [
+              'order_by=counter',
+              `counter__in=${Object.keys(toQuery.current).join(',')}`,
+            ];
+            toQuery.current = {};
+            queryTimeout.current = undefined;
+            const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+            requestGet<ItemsResponse<JobEvent>>(
+              `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
+            )
+              .then((itemsResponse) => {
+                setJobEvents((jobEvents) => {
+                  jobEvents = { ...jobEvents };
+                  for (const jobEvent of itemsResponse.results) {
+                    jobEvents[jobEvent.counter] = jobEvent;
+                  }
+                  return jobEvents;
+                });
+              })
+              .catch()
+              .finally(() => {
+                isQuerying.current.querying = false;
+              });
+          }, 2500);
+        }
         return jobEvent;
       }
       isQuerying.current.querying = true;
@@ -68,7 +103,7 @@ export function useJobOutput(
         });
       return jobEvent;
     },
-    [job.id, job.type, jobEvents, pageSize, filters, toolbarFilters, isFiltered]
+    [job.id, job.type, jobEvents, pageSize, filters, toolbarFilters, isFiltered, isJobRunning]
   );
 
   const batchedEvents = useRef([] as JobEvent[]);
@@ -137,7 +172,6 @@ function getFiltersQueryString(
     if (toolbarFilter) {
       const values = filters[key];
       if (values.length > 0) {
-        // queryString ? (queryString += '&') : (queryString += '?');
         if (values.length > 1) {
           parts.push(values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&'));
         } else {
