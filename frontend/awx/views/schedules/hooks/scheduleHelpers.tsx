@@ -8,6 +8,13 @@ const createRoutes: { [key: string]: string } = {
   projects: RouteObj.ProjectSchedulesCreate,
 };
 
+export const detailRoutes: { [key: string]: string } = {
+  inventory: RouteObj.InventorySourceScheduleDetails,
+  job_template: RouteObj.JobTemplateScheduleDetails,
+  workflow_job_template: RouteObj.WorkflowJobTemplateScheduleDetails,
+  projects: RouteObj.ProjectScheduleDetails,
+};
+
 export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   const params = useParams<{ id: string; schedule_id?: string }>();
   if (!sublistEndPoint) return RouteObj.CreateSchedule;

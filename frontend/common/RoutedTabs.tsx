@@ -164,6 +164,7 @@ export function RoutedTabs(props: {
       <Routes>
         {children.map((child, index) => {
           const { label, url = '', children } = child.props;
+
           return (
             <Route
               key={label ?? index}

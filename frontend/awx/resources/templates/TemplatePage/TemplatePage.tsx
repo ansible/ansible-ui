@@ -13,6 +13,7 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { TemplateDetails } from './TemplateDetails';
 import { Schedules } from '../../../views/schedules/Schedules';
+import { SchedulePage } from '../../../views/schedules/SchedulePage/SchedulePage';
 
 export function TemplatePage() {
   const { t } = useTranslation();
@@ -58,7 +59,9 @@ export function TemplatePage() {
         <RoutedTab label={t('Notifications')} url={RouteObj.JobTemplateNotifications}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Schedules')} url={RouteObj.JobTemplateSchedules}>
+
+        <RoutedTab label={t('Schedules')} url={RouteObj.JobTemplateSchedulePage}>
+          <SchedulePage />
           <Schedules sublistEndpoint={`/api/v2/job_templates/${template.id}/schedules/`} />
         </RoutedTab>
         <RoutedTab label={t('Jobs')} url={RouteObj.JobTemplateJobs}>
