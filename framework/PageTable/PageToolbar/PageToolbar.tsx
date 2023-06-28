@@ -43,7 +43,9 @@ export type PagetableToolbarProps<T extends object> = {
 
   toolbarFilters?: IToolbarFilter[];
   filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  setFilters?: (
+    value: Record<string, string[]>
+  ) => void | Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters?: () => void;
 
   page: number;
@@ -205,7 +207,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
 
         {/* Pagination */}
         <ToolbarItem
-          visibility={{ default: 'hidden', '2xl': 'visible' }}
+          visibility={{ default: 'visible', '2xl': 'visible' }}
           style={{ marginLeft: 24 }}
         >
           <Pagination

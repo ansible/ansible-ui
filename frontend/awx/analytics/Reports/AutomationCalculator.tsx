@@ -36,7 +36,9 @@ import { useTranslation } from 'react-i18next';
 import { ChartSchemaElement, ChartLegendEntry } from 'react-json-chart-builder';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 import { AnalyticsErrorState } from './ErrorStates';
-import { Scrollable } from '../../../../framework';
+import { PageTableToolbar, Scrollable } from '../../../../framework';
+import { IToolbarSelectFilter } from '../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarSelectFilter';
+import { optionsForCategories } from '../components/Toolbar/constants';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -114,9 +116,9 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     group_by_time: false,
   };
 
-  const getParams = (): Record<string, AttributeType> => {
+  const getParams = (): Record<string, string[]> => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const params: Record<string, AttributeType> = JSON.parse(JSON.stringify(defaultParams));
+    const params: Record<string, string[]> = JSON.parse(JSON.stringify(defaultParams));
     Object.keys(defaultParams).forEach((key) => {
       const value = [
         'job_type',
@@ -159,6 +161,45 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         updatedSearchParams.set(key, value.toString());
       }
     }
+    setSearchParams(updatedSearchParams.toString());
+  };
+
+  const updateSearchParamsFromFramework = (o: Record<string, string[]>) => {
+    if (typeof o === 'function') {
+      //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const newParams: Record<string, string[]> = o(getParams());
+      updateSearchParamsFromFramework(newParams);
+      return;
+    }
+    const updatedSearchParams = new URLSearchParams(searchParams.toString());
+    const keys = Object.keys(getParams()).filter(
+      (key) =>
+        ![
+          'sort_options',
+          'sort_by',
+          'meta',
+          'quick_date_range',
+          'template_weigh_in',
+          'parent_workflow',
+          'manual_effort_reviewed',
+          'attributes',
+        ].includes(key)
+    );
+    keys.forEach((key) => {
+      const value = o[key];
+      if (!value) {
+        updatedSearchParams.delete(key);
+      } else {
+        if (value.length === 0) {
+          updatedSearchParams.delete(key);
+        } else {
+          updatedSearchParams.delete(key);
+          if (Array.isArray(value)) {
+            value.forEach((v) => updatedSearchParams.append(key, v.toString()));
+          }
+        }
+      }
+    });
     setSearchParams(updatedSearchParams.toString());
   };
 
@@ -321,6 +362,50 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       </StackItem>
     </Stack>
   );
+  // TODO mapping from AA to framework -> to be replaced by API fix
+  const redoOptionValues = (option: { value: AttributeType; key: string }[]) => {
+    return option.map((option) => {
+      return { label: option.value.toString(), value: option.key };
+    });
+  };
+
+  const sortOptions = !!options?.sort_options && redoOptionValues(options?.sort_options);
+  const filterOptions: IToolbarSelectFilter[] = [];
+  // TODO get nicer label
+  Object.keys(options || {}).forEach((key) => {
+    if (
+      ![
+        'sort_options',
+        'sort_by',
+        'meta',
+        'quick_date_range',
+        'template_weigh_in',
+        'parent_workflow',
+        'manual_effort_reviewed',
+      ].includes(key) &&
+      !!options
+    ) {
+      filterOptions.push({
+        key: key,
+        label: optionsForCategories[key].name,
+        placeholder: optionsForCategories[key].placeholder,
+        type: 'select',
+        options: redoOptionValues(options[key]),
+        hasSearch: true,
+        query: '',
+      });
+    }
+  });
+  /* TODO add quick_date_range
+  filterOptions.push({
+    key: 'quick_date_range',
+    label: optionsForCategories['quick_date_range'].name,
+    placeholder: optionsForCategories['quick_date_range'].placeholder,
+    type: 'dateWithOptions',
+    options: redoOptionValues(options['quick_date_range']),
+  });
+   */
+
   return !!error || !!optionsError || !!specificError ? (
     <AnalyticsErrorState error={specificError} />
   ) : (
@@ -360,6 +445,41 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
+      <PageTableToolbar
+        itemCount={data?.meta.count}
+        perPage={parseInt(searchParams.get('limit') || '20')}
+        page={parseInt(searchParams.get('offset') || '1')}
+        setPage={(page: number) => {
+          updateSearchParams('offset', page.toString());
+        }}
+        setPerPage={(perPage: number) => {
+          updateSearchParams('limit', perPage.toString());
+        }}
+        // perPageOptions TODO add this as AC is not allowing 50 and 100
+
+        sort={searchParams.get('sort_options') || 'successful_hosts_savings'}
+        setSort={(sort: string) => {
+          updateSearchParams('sort_options', sort);
+        }}
+        sortDirection={searchParams.get('sort_order')?.toString() === 'asc' ? 'asc' : 'desc'}
+        setSortDirection={(sortDirection: 'asc' | 'desc') =>
+          updateSearchParams('sort_order', sortDirection)
+        }
+        sortOptions={sortOptions || []}
+        toolbarFilters={filterOptions}
+        // TODO all three need fixing to correct one
+        filters={getParams()}
+        // TODO easier way to do it? Add possibility of different approach to framework?
+        setFilters={(label: Record<string, string[]>) => updateSearchParamsFromFramework(label)}
+        clearAllFilters={() => updateSearchParams(undefined, undefined)}
+        viewType={'cards'}
+        setViewType={() => 'cards'} // TODO not needed
+        keyFn={(t) => t.toString()}
+        disableCardView
+        disableColumnManagement
+        disableListView
+        disableTableView
+      />
       <Scrollable>
         <PageSection>
           <Card>

@@ -28,7 +28,9 @@ export type IFilterState = Record<string, string[] | undefined>;
 export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
   filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  setFilters?: (
+    value: Record<string, string[]>
+  ) => void | Dispatch<SetStateAction<Record<string, string[]>>>;
 };
 
 function ToolbarContent(props: PageToolbarFiltersProps) {
@@ -151,12 +153,14 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   : value;
               })}
               deleteChip={(_group, value) => {
+                /* eslint-disable */
                 setFilters?.((filters) => {
                   //TODO bug here where value is actually select filter option label... need to map
                   const newState = { ...filters };
                   value = typeof value === 'string' ? value : value.key;
                   let values = filters[filter.key];
                   if (values) {
+                    /* eslint-disable */
                     values = values.filter((v) => v !== value);
                     if (values.length === 0) {
                       delete newState[filter.key];
@@ -168,6 +172,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                 });
               }}
               deleteChipGroup={() => {
+                /* eslint-disable */
                 setFilters?.((filters) => {
                   const newState = { ...filters };
                   delete newState[filter.key];
@@ -204,7 +209,7 @@ function ToolbarFilterInput(props: {
       );
     case 'select':
       return (
-        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
+        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} hasSearch={filter.hasSearch} />
       );
   }
   return <></>;

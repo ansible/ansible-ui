@@ -17,6 +17,8 @@ export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user selection of option. */
   type: 'select';
 
+  hasSearch?: boolean;
+
   /** The options to show in the select. */
   options: IToolbarSelectFilterOption[];
 }
