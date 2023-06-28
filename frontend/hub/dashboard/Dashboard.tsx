@@ -7,6 +7,7 @@ import {
   PageActionType,
   PageActions,
   PageDashboard,
+  PageDashboardCard,
   PageHeader,
   PageLayout,
 } from '../../../framework';
@@ -18,6 +19,7 @@ import { useExecutionEnvironments } from '../execution-environments/hooks/useExe
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
 import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
+import { ReorderItems } from '../../../framework/components/ReorderItems';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -32,6 +34,49 @@ export function HubDashboard() {
   const hasCollection = (collections?.length ?? 0) > 0;
   const hasExecutionEnvironment = (environments?.length ?? 0) > 0;
   const hasNamespace = (namespaces?.length ?? 0) > 0;
+
+  type Item = { [key: string]: string };
+  const columns = [
+    {
+      header: 'IDs',
+      cell: (item: Item) => item.id,
+    },
+    {
+      header: 'Repositories',
+      cell: (item: Item) => item.repository,
+    },
+    {
+      header: 'Branches',
+      cell: (item: Item) => item.branch,
+    },
+  ];
+  const items: Item[] = [
+    {
+      id: 'row1',
+      repository: 'one',
+      branch: 'two',
+    },
+    {
+      id: 'row2',
+      repository: 'one -2',
+      branch: 'two',
+    },
+    {
+      id: 'row3',
+      repository: 'one - 3',
+      branch: 'two - 3',
+    },
+    {
+      id: 'row4',
+      repository: 'one - 4',
+      branch: 'two - 4',
+    },
+    {
+      id: 'row5',
+      repository: 'one - 5',
+      branch: 'two - 5',
+    },
+  ];
 
   return (
     <PageLayout>
@@ -128,6 +173,11 @@ export function HubDashboard() {
             <CardBody>Card 3</CardBody>
           </Card>
         </PageDashboardCarousel>
+        <PageDashboardCard title="Reorder" width="xxl">
+          <CardBody>
+            <ReorderItems columns={columns} items={items} />
+          </CardBody>
+        </PageDashboardCard>
       </PageDashboard>
     </PageLayout>
   );
