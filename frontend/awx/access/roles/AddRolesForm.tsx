@@ -163,7 +163,7 @@ function UserInventoryRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'inventory'}>
-      <PageFormInventorySelect name="inventoryName" inventoryPath="resource" />
+      <PageFormInventorySelect name="inventoryName" />
       <Permissions roles={rolesMetadata.inventory} />
     </PageFormHidden>
   );

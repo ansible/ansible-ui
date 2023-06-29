@@ -111,21 +111,9 @@ describe('Create job template ', () => {
     cy.typeInputByLabel(/^Name$/, 'Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
-    cy.typeInputByLabel(/^Inventory$/, 'Demo Inventory');
-    cy.contains('.pf-c-form__label-text', /^Project$/)
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').as('projectField');
-        cy.get('@projectField').click();
-        cy.get('.pf-c-select__menu').within(() => {
-          cy.contains('button', 'Demo Project').click();
-        });
-      });
-
-    cy.get('button[aria-describedby="playbook-form-group"]').click();
-    cy.clickButton(/^hello_world.yml$/);
+    cy.selectDropdownOptionByLabel(/^Inventory$/, 'Demo Inventory', true);
+    cy.selectDropdownOptionByLabel(/^Project$/, 'Demo Project').as('ProjectInput');
+    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml', false);
     cy.clickButton('Create job template');
 
     cy.intercept('POST', '/api/v2/job_templates/', (req) => {

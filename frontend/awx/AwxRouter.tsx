@@ -70,7 +70,14 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
-        <Route path={RouteObjWithoutPrefix.CreateSchedule} element={<CreateSchedule />} />
+        {[
+          RouteObjWithoutPrefix.JobTemplateSchedulesCreate,
+          RouteObjWithoutPrefix.WorkflowJobTemplateSchedulesCreate,
+          RouteObjWithoutPrefix.ProjectSchedulesCreate,
+          RouteObjWithoutPrefix.CreateSchedule,
+        ].map((path) => {
+          return <Route path={path} key={path} element={<CreateSchedule />} />;
+        })}
         <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
         <Route path={RouteObjWithoutPrefix.ActivityStream} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<PageNotImplemented />} />

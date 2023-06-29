@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { Schedule } from '../../interfaces/Schedule';
 import { useAwxView } from '../../useAwxView';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
@@ -11,21 +10,28 @@ import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { CubesIcon } from '@patternfly/react-icons';
+import { useGetSchedulCreateUrl } from './hooks/scheduleHelpers';
 
-export function Schedules() {
+export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
   const view = useAwxView<Schedule>({
-    url: '/api/v2/schedules/',
+    url: props.sublistEndpoint ?? '/api/v2/schedules/',
     toolbarFilters,
     tableColumns,
   });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    props.sublistEndpoint ?? '/api/v2/schedules/'
+  );
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
-  const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh);
+  const createUrl = useGetSchedulCreateUrl(props?.sublistEndpoint);
+  const toolbarActions = useScheduleToolbarActions(
+    view.unselectItemsAndRefresh,
+    props?.sublistEndpoint
+  );
   const rowActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => void view.refresh(),
   });
@@ -62,9 +68,7 @@ export function Schedules() {
         }
         emptyStateIcon={canCreateSchedule ? undefined : CubesIcon}
         emptyStateButtonText={canCreateSchedule ? t('Create schedule') : undefined}
-        emptyStateButtonClick={
-          canCreateSchedule ? () => navigate(RouteObj.CreateSchedule) : undefined
-        }
+        emptyStateButtonClick={canCreateSchedule ? () => navigate(createUrl) : undefined}
         {...view}
       />
     </PageLayout>

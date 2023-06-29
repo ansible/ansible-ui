@@ -12,6 +12,7 @@ import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
+import { Schedules } from '../../../views/schedules/Schedules';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ export function ProjectPage() {
           <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Schedules')} url={RouteObj.ProjectSchedules}>
-          <PageNotImplemented />
+          <Schedules sublistEndpoint={`/api/v2/projects/${project.id}/schedules/`} />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>
