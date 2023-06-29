@@ -28,6 +28,11 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         icon: () => <AnsibleTowerIcon />,
       },
       {
+        header: t('Repository'),
+        type: 'text',
+        value: (collection) => collection.repository.name,
+      },
+      {
         header: t('Namespace'),
         type: 'text',
         value: (collection) => collection.collection_version.namespace,
