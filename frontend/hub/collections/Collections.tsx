@@ -48,6 +48,7 @@ export function Collections() {
       repository_label: '!hide_from_search',
       is_highest: 'true',
     },
+    toolbarFilters,
   });
 
   //const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
