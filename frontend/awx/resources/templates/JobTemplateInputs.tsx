@@ -89,8 +89,6 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
         name="summary_fields.inventory.name"
-        inventoryIdPath="inventory"
-        inventoryPath="summary_fields.inventory"
         isRequired={!isInventoryPrompted}
       />
       <PageFormProjectSelect<JobTemplateForm>
