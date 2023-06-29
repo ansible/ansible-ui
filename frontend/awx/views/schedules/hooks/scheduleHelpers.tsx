@@ -20,3 +20,10 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   }
   return createUrl;
 }
+
+export const resourceEndPoints: { [key: string]: string } = {
+  inventory: '/api/v2/inventories/',
+  projects: '/api/v2/projects/',
+  job_template: '/api/v2/job_templates/',
+  workflow_job_template: '/api/v2/workflow_job_templates/',
+};

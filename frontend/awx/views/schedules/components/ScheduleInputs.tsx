@@ -81,17 +81,9 @@ export function ScheduleInputs(props: {
 
           {resourceType &&
             {
-              job_template: (
-                <PageFormJobTemplateSelect
-                  name="resourceName"
-                  jobTemplateIdPath="unified_job_template"
-                />
-              ),
+              job_template: <PageFormJobTemplateSelect name="unified_job_template" />,
               workflow_job_template: (
-                <PageFormWorkflowJobTemplateSelect
-                  name="resourceName"
-                  workflowJobTemplateIdPath="unified_job_template"
-                />
+                <PageFormWorkflowJobTemplateSelect name="unified_job_template" />
               ),
               inventory_source: (
                 <>
@@ -107,12 +99,11 @@ export function ScheduleInputs(props: {
                       inventoryId={inventory?.id}
                       isRequired
                       name="unified_job_template"
-                      inventorySourceIdPath="unified_job_template"
                     />
                   )}
                 </>
               ),
-              project: <PageFormProjectSelect name="resourceName" project="unified_job_template" />,
+              project: <PageFormProjectSelect name="unified_job_template" />,
             }[resourceType]}
         </>
       ) : null}

@@ -16,13 +16,7 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { Project } from '../../interfaces/Project';
 import { InventorySource } from '../../interfaces/InventorySource';
-
-const urls: { [key: string]: string } = {
-  inventory: '/api/v2/inventories/',
-  projects: '/api/v2/projects/',
-  job_template: '/api/v2/job_templates/',
-  workflow_job_template: '/api/v2/workflow_job_templates/',
-};
+import { resourceEndPoints } from './hooks/scheduleHelpers';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,
@@ -52,7 +46,7 @@ export function CreateSchedule() {
       try {
         const response = await requestGet<
           Project | JobTemplate | WorkflowJobTemplate | InventorySource
-        >(`${urls[params['*'].split('/')[0]]}${params.id}/`);
+        >(`${resourceEndPoints[params['*'].split('/')[0]]}${params.id}/`);
         setResourceForSchedule(response);
       } catch {
         // handle error
@@ -66,28 +60,24 @@ export function CreateSchedule() {
     const ruleSet = buildScheduleContainer(values);
     const requestData = {
       name,
-      unified_job_template,
+      unified_job_template: values.unified_job_template.id,
       rrule: ruleSet.toString().replace(/\n/g, ' '),
     };
     try {
-      if (resource_type === 'inventory' && inventory) {
-        const response = await postRequest<ScheduleFormFields>(
-          `/api/v2/inventories/${inventory.id}/${unified_job_template?.id?.toString()}/schedules/`,
-          requestData
-        );
+      const response = await postRequest<ScheduleFormFields>(
+        `${unified_job_template?.related.schedules}`,
+        requestData
+      );
+      if (resource_type === 'inventory_source' && inventory) {
         navigate(
-          RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.toString())
-            .replace(':source_id', unified_job_template?.id?.toString())
+          RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.id.toString())
+            .replace(':source_id', unified_job_template.id?.toString())
             .replace(':schedule_id', response?.id?.toString())
         );
       } else {
-        const response = await postRequest<ScheduleFormFields>(
-          `${urls[resource_type]}${unified_job_template?.id?.toString()}/schedules/`,
-          requestData
-        );
         navigate(
           routes[resource_type]
-            .replace(':id', unified_job_template?.id?.toString())
+            .replace(':id', unified_job_template.id?.toString())
             .replace(':schedule_id', response.id.toString())
         );
       }
