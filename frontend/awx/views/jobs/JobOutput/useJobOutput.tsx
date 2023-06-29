@@ -22,7 +22,7 @@ export function useJobOutput(
   pageSize: number
 ) {
   const isQuerying = useRef({ querying: false });
-  const toQuery = useRef({} as { [key: number]: boolean });
+  const missingEvents = useRef({} as { [key: number]: boolean });
   const queryTimeout = useRef(undefined as ReturnType<typeof setTimeout> | undefined);
   const [jobEventCount, setJobEventCount] = useState(1);
   const [jobEvents, setJobEvents] = useState<Record<number, JobEvent>>({});
@@ -31,58 +31,19 @@ export function useJobOutput(
 
   const isFiltered = Object.keys(filters).length > 0;
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
-  const queryJobOutputEvent = useCallback(
-    (counter: number) => {
-      const jobEvent = jobEvents[counter + 1];
-      if (jobEvent || isQuerying.current.querying) {
-        return jobEvent;
-      }
-      if (isJobRunning) {
-        toQuery.current[counter + 1] = true;
-        if (!queryTimeout.current) {
-          queryTimeout.current = setTimeout(() => {
-            const qsParts = [
-              'order_by=counter',
-              `counter__in=${Object.keys(toQuery.current).join(',')}`,
-            ];
-            toQuery.current = {};
-            queryTimeout.current = undefined;
-            const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
-            requestGet<ItemsResponse<JobEvent>>(
-              `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
-            )
-              .then((itemsResponse) => {
-                setJobEvents((jobEvents) => {
-                  jobEvents = { ...jobEvents };
-                  for (const jobEvent of itemsResponse.results) {
-                    jobEvents[jobEvent.counter] = jobEvent;
-                  }
-                  return jobEvents;
-                });
-              })
-              .catch()
-              .finally(() => {
-                isQuerying.current.querying = false;
-              });
-          }, 2500);
-        }
-        return jobEvent;
-      }
+
+  const fetchEvents = useCallback(
+    (qsParts: string[]) => {
+      const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
       isQuerying.current.querying = true;
 
-      const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
-
-      const page = Math.floor((counter + 1) / pageSize) + 1;
-      const filterString = getFiltersQueryString(toolbarFilters, filters);
-      const qsParts = ['order_by=counter', `page=${page}`, `page_size=${pageSize}`];
-      if (filterString) {
-        qsParts.push(filterString);
-      }
       requestGet<ItemsResponse<JobEvent>>(
         `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
       )
         .then((itemsResponse) => {
-          setJobEventCount(itemsResponse.count);
+          if (!isJobRunning) {
+            setJobEventCount(itemsResponse.count);
+          }
           setJobEvents((jobEvents) => {
             jobEvents = { ...jobEvents };
             let i = Object.keys(jobEvents).length + 1;
@@ -101,9 +62,42 @@ export function useJobOutput(
         .finally(() => {
           isQuerying.current.querying = false;
         });
+    },
+    [job.id, job.type, isJobRunning, isFiltered]
+  );
+
+  const queryJobOutputEvent = useCallback(
+    (counter: number) => {
+      const jobEvent = jobEvents[counter + 1];
+      if (jobEvent || isQuerying.current.querying) {
+        return jobEvent;
+      }
+      if (isJobRunning) {
+        missingEvents.current[counter + 1] = true;
+        if (!queryTimeout.current) {
+          queryTimeout.current = setTimeout(() => {
+            const eventCounters = Object.keys(missingEvents.current).filter((counter) => {
+              return !jobEvents[Number(counter)];
+            });
+            const qsParts = ['order_by=counter', `counter__in=${eventCounters.join(',')}`];
+            missingEvents.current = {};
+            queryTimeout.current = undefined;
+            fetchEvents(qsParts);
+          }, 2500);
+        }
+        return jobEvent;
+      }
+
+      const page = Math.floor((counter + 1) / pageSize) + 1;
+      const filterString = getFiltersQueryString(toolbarFilters, filters);
+      const qsParts = ['order_by=counter', `page=${page}`, `page_size=${pageSize}`];
+      if (filterString) {
+        qsParts.push(filterString);
+      }
+      fetchEvents(qsParts);
       return jobEvent;
     },
-    [job.id, job.type, jobEvents, pageSize, filters, toolbarFilters, isFiltered, isJobRunning]
+    [jobEvents, pageSize, filters, toolbarFilters, isJobRunning, fetchEvents]
   );
 
   const batchedEvents = useRef([] as JobEvent[]);
