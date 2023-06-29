@@ -28,6 +28,7 @@ export interface PageFormAsyncSelectProps<
 > {
   id?: string;
   name: TFieldName;
+  variant?: 'single' | 'typeahead' | 'typeaheadMulti';
   label: string;
   labelHelp?: string | ReactNode;
   labelHelpTitle?: string;
@@ -115,6 +116,7 @@ export function PageFormAsyncSelect<
           >
             <AsyncSelect<SelectionType>
               id={id}
+              variant={props.variant}
               query={queryHandler}
               valueToString={valueToString}
               valueToDescription={valueToDescription}
@@ -154,6 +156,7 @@ export interface AsyncSelectProps<SelectionType> {
   onSelect: (value: SelectionType | undefined) => void;
   query: (pageSize: number) => Promise<{ total: number; values: SelectionType[] }>;
   placeholder: string;
+  variant?: 'single' | 'typeahead' | 'typeaheadMulti';
   loadingPlaceholder: string;
   labeledBy?: string;
   isReadOnly?: boolean;
@@ -180,6 +183,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
     placeholder,
     query,
     validated,
+    variant,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -256,7 +260,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
       <Select
         toggleId={id}
         aria-labelledby={labeledBy}
-        variant={SelectVariant.single}
+        variant={variant ? SelectVariant[`${variant}`] : SelectVariant.single}
         hasPlaceholderStyle
         placeholderText={
           loadingError

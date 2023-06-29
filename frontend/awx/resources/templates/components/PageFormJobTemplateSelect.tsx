@@ -1,42 +1,51 @@
-import { useFormContext } from 'react-hook-form';
+import { useCallback } from 'react';
+import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useSelectJobTemplate } from '../hooks/useSelectJobTemplate';
+import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 
-export function PageFormJobTemplateSelect(props: {
-  name: string;
+export function PageFormJobTemplateSelect<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: {
+  name: TFieldName;
+  isRequired?: boolean;
   jobTemplatePath?: string;
-  jobTemplateIdPath?: string;
+  templateId?: number;
 }) {
   const { t } = useTranslation();
-  const selectJobTemplate = useSelectJobTemplate();
-  const { setValue } = useFormContext();
+
+  const openSelectDialog = useSelectJobTemplate();
+  const query = useCallback(async () => {
+    const response = await requestGet<ItemsResponse<JobTemplate>>(
+      `/api/v2/job_templates/?page_size=200`
+    );
+
+    return Promise.resolve({
+      total: response.count,
+      values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
+    });
+  }, []);
+
   return (
-    <PageFormTextInput
+    <PageFormAsyncSelect<TFieldValues>
       name={props.name}
-      label={t('Job template')}
-      placeholder={t('Enter job template')}
-      selectTitle={t('Select a job template')}
-      selectValue={(jobTemplate: JobTemplate) => jobTemplate.name}
-      selectOpen={selectJobTemplate}
-      validate={async (jobTemplateName: string) => {
-        try {
-          const itemsResponse = await requestGet<ItemsResponse<JobTemplate>>(
-            `/api/v2/job_templates/?name=${jobTemplateName}`
-          );
-          if (itemsResponse.results.length === 0) return t('Job template not found.');
-          if (props.jobTemplatePath) setValue(props.jobTemplatePath, itemsResponse.results[0]);
-          if (props.jobTemplateIdPath)
-            setValue(props.jobTemplateIdPath, itemsResponse.results[0].id);
-        } catch (err) {
-          if (err instanceof Error) return err.message;
-          else return 'Unknown error';
+      label={t('Job Template')}
+      query={query}
+      valueToString={(value) => {
+        if (value && typeof value === 'string') {
+          return value;
         }
-        return undefined;
+        return (value as JobTemplate)?.name ?? '';
       }}
-      isRequired
+      placeholder={t('Select job template')}
+      loadingPlaceholder={t('Loading job templates...')}
+      loadingErrorText={t('Error loading job templates')}
+      isRequired={props.isRequired}
+      limit={200}
+      openSelectDialog={openSelectDialog}
     />
   );
 }

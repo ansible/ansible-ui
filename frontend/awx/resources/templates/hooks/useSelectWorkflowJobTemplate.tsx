@@ -1,25 +1,42 @@
 import { useTranslation } from 'react-i18next';
-import { useSelectDialog } from '../../../../../framework';
+import { usePageDialog } from '../../../../../framework';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../../useAwxView';
-import { useTemplateFilters, useTemplatesColumns } from '../Templates';
+import { useTemplateColumns } from './useTemplateColumns';
+import { useTemplateFilters } from './useTemplateFilters';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { useCallback } from 'react';
 
-export function useSelectWorkflowJobTemplate() {
-  const { t } = useTranslation();
+function SelectWorkflowJobTemplate(props: {
+  title: string;
+  onSelect: (template: WorkflowJobTemplate) => void;
+}) {
   const toolbarFilters = useTemplateFilters();
-  const tableColumns = useTemplatesColumns({ disableLinks: true });
+  const tableColumns = useTemplateColumns({ disableLinks: true });
   const view = useAwxView<WorkflowJobTemplate>({
-    url: '/api/v2/workflow_job_templates/',
+    url: '/api/v2/job_templates/',
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
   });
-  return useSelectDialog<WorkflowJobTemplate>({
-    toolbarFilters,
-    tableColumns,
-    view,
-    confirm: t('Confirm'),
-    cancel: t('Cancel'),
-    selected: t('Selected'),
-  });
+  return (
+    <SelectSingleDialog<WorkflowJobTemplate>
+      {...props}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      view={view}
+    />
+  );
+}
+
+export function useSelectWorkflowJobTemplate() {
+  const [_, setDialog] = usePageDialog();
+  const { t } = useTranslation();
+  const openSelectInventory = useCallback(
+    (onSelect: (template: WorkflowJobTemplate) => void) => {
+      setDialog(<SelectWorkflowJobTemplate title={t('Select job template')} onSelect={onSelect} />);
+    },
+    [setDialog, t]
+  );
+  return openSelectInventory;
 }
