@@ -13,6 +13,24 @@ export function useCollectionFilters() {
         query: 'keywords',
         comparison: 'equals',
       },
+      {
+        key: 'namespace',
+        label: t('Namespace'),
+        type: 'string',
+        query: 'namespace',
+        comparison: 'equals',
+      },
+      {
+        key: 'is_signed',
+        label: t('Signature'),
+        type: 'select',
+        query: 'is_signed',
+        options: [
+          { label: t('Signed'), value: 'true' },
+          { label: t('Unsigned'), value: 'false' },
+        ],
+        placeholder: t('Select signatures'),
+      },
     ],
     [t]
   );
