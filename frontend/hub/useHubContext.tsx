@@ -73,22 +73,23 @@ type HubUser = {
 };
 
 export type HubContext = {
+  errors: string[];
   featureFlags: HubFeatureFlags;
   hasPermission: (name: string) => boolean;
   settings: HubSettings;
   user: HubUser;
 };
 
-const HubContext = createContext<HubContext>(null);
+const HubContext = createContext<HubContext | null>(null);
 
-export const useHubContext = (): HubContext => useContext(HubContext);
+export const useHubContext = (): HubContext => useContext(HubContext) as HubContext;
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const getFeatureFlags = useGet(hubAPI`/_ui/v1/feature-flags/`);
-  const getSettings = useGet(hubAPI`/_ui/v1/settings/`);
-  const getUser = useGet(hubAPI`/_ui/v1/me/`);
+  const getFeatureFlags = useGet<HubFeatureFlags>(hubAPI`/_ui/v1/feature-flags/`);
+  const getSettings = useGet<HubSettings>(hubAPI`/_ui/v1/settings/`);
+  const getUser = useGet<HubUser>(hubAPI`/_ui/v1/me/`);
 
-  const [context, setContext] = useState<HubContext>(null);
+  const [context, setContext] = useState<HubContext | null>(null);
 
   useEffect(() => {
     if (getFeatureFlags.isLoading || getSettings.isLoading || getUser.isLoading) {
@@ -101,12 +102,22 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         getSettings.error,
         getUser.error,
         ...(getFeatureFlags.data?._messages || []),
-      ].filter(Boolean),
-      feature_flags: getFeatureFlags.data,
-      settings: getSettings.data,
-      user: getUser.data,
-    });
-  }, [getFeatureFlags.isLoading, getSettings.isLoading, getUser.isLoading]);
+      ].filter(Boolean) as string[],
+      featureFlags: getFeatureFlags.data as HubFeatureFlags,
+      settings: getSettings.data as HubSettings,
+      user: getUser.data as HubUser,
+    } as HubContext);
+  }, [
+    getFeatureFlags.isLoading,
+    getFeatureFlags.data,
+    getFeatureFlags.error,
+    getSettings.isLoading,
+    getSettings.data,
+    getSettings.error,
+    getUser.isLoading,
+    getUser.data,
+    getUser.error,
+  ]);
 
   return context ? (
     <HubContext.Provider
@@ -124,12 +135,13 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
 const hasPermission =
   ({ user }: HubContext) =>
-  (name) => {
+  (name: string) => {
     if (!user?.model_permissions) {
       return false;
     }
 
     if (!user.model_permissions[name]) {
+      // eslint-disable-next-line no-console
       console.error(`Unknown permission ${name}`);
       return !!user.is_superuser;
     }
