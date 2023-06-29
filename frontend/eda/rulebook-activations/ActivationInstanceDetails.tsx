@@ -59,7 +59,7 @@ export function ActivationInstanceDetails() {
           <PageDetail label={t('Name')}>
             {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
-          <PageDetail label={t('Activation status')}>{activationInstance?.status || ''}</PageDetail>
+          <PageDetail label={t('Status')}>{activationInstance?.status || ''}</PageDetail>
           <PageDetail label={t('Start date')}>
             {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
           </PageDetail>
