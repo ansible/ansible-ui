@@ -5,13 +5,13 @@ import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useTemplatesColumns } from '../Templates';
+import { useTemplateColumns } from './useTemplateColumns';
 
 export function useDeleteTemplates(
   onComplete: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useTemplatesColumns({ disableLinks: true, disableSort: true });
+  const confirmationColumns = useTemplateColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useBulkConfirmation<JobTemplate | WorkflowJobTemplate>();
