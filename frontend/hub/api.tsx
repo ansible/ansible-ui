@@ -52,8 +52,8 @@ export function serverlessURL(url?: string) {
     return url;
   }
 
-  const u = new URL(url);
-  return `${u.pathname}${u.search}${u.hash}`;
+  const { pathname, search, hash } = new URL(url);
+  return `${pathname}${search}${hash}`;
 }
 
 export function pulpIdKeyFn(item: { pulp_id: string }) {
