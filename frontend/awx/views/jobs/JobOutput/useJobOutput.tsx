@@ -79,10 +79,12 @@ export function useJobOutput(
             const eventCounters = Object.keys(missingEvents.current).filter((counter) => {
               return !jobEvents[Number(counter)];
             });
-            const qsParts = ['order_by=counter', `counter__in=${eventCounters.join(',')}`];
+            if (eventCounters.length > 0) {
+              const qsParts = ['order_by=counter', `counter__in=${eventCounters.join(',')}`];
+              fetchEvents(qsParts);
+            }
             missingEvents.current = {};
             queryTimeout.current = undefined;
-            fetchEvents(qsParts);
           }, 2500);
         }
         return jobEvent;
