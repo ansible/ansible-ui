@@ -73,6 +73,7 @@ export function useCollectionFilters() {
           return { label: repo.name, value: repo.name };
         }),
         placeholder: t('Select repositories'),
+        hasSearch : true,
       },
     ],
     [t, repoList]
