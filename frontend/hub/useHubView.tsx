@@ -9,7 +9,7 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { QueryParams, getQueryString } from './api';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
 
 export interface HubItemsResponse<T extends object> {
@@ -96,7 +96,8 @@ export function useHubView<T extends object>({
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, {
+  const nextPage = serverlessURL(data?.links?.next);
+  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 
