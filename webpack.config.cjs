@@ -163,6 +163,10 @@ module.exports = function (env, argv) {
       },
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
+    watchOptions: {
+      // ignore editor files when watching
+      ignored: ['**/.*.sw[po]'],
+    },
   };
   return config;
 };
