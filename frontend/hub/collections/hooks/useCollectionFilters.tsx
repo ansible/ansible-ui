@@ -1,9 +1,20 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
+import { usePulpView } from '../../usePulpView';
+import { pulpAPI } from '../../api';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
+
+  const repositories = usePulpView<Repository>({
+    url: pulpAPI`/repositories/ansible/ansible/`,
+    keyFn: (item) => item.name,
+    queryParams: {
+      pulp_label_select: '!hide_from_search',
+    },
+  });
+
   return useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -25,14 +36,13 @@ export function useCollectionFilters() {
         label: t('Repository'),
         type: 'select',
         query: 'repository',
-        options: [
-          { label: t('Published'), value: 'published' },
-          { label: t('Red Hat certified'), value: 'rh-certified' },
-          { label: t('Community'), value: 'community' },
-          { label: t('Validated'), value: 'validated' },
-        ],
+        options: repositories.pageItems
+          ? repositories.pageItems.map((repo) => {
+              return { label: repo.name, value: repo.name };
+            })
+          : [],
         placeholder: t('Select repositories'),
-        hasSearch : true,
+        hasSearch: true,
       },
       {
         key: 'tags',
@@ -64,6 +74,10 @@ export function useCollectionFilters() {
         placeholder: t('Select signatures'),
       },
     ],
-    [t]
+    [t, repositories.pageItems]
   );
+}
+
+interface Repository {
+  name: string;
 }

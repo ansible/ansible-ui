@@ -20,7 +20,7 @@ export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   /** The options to show in the select. */
   options: IToolbarSelectFilterOption[];
 
-  hasSearch? : boolean;
+  hasSearch?: boolean;
 }
 
 export function ToolbarSelectFilter(props: {
