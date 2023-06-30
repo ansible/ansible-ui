@@ -21,6 +21,8 @@ export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   options: IToolbarSelectFilterOption[];
 
   hasSearch?: boolean;
+
+  onSearchTextChange?: (searchText: string) => void;
 }
 
 export function ToolbarSelectFilter(props: {
@@ -31,6 +33,7 @@ export function ToolbarSelectFilter(props: {
   placeholder?: string;
   hasSearch?: boolean;
   variant?: SelectVariant;
+  onSearchTextChange?: (text: string) => void;
 }) {
   const [translations] = useFrameworkTranslations();
   const { addFilter, removeFilter, options, values, variant } = props;
@@ -46,6 +49,7 @@ export function ToolbarSelectFilter(props: {
     [addFilter, removeFilter, values]
   );
   const onFilter = (_: unknown, textInput: string) => {
+    props.onSearchTextChange?.(textInput);
     if (textInput === '') return renderValues(options);
     return renderValues(
       options.filter((option) =>
