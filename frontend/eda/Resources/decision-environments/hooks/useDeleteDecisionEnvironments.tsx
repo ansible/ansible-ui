@@ -21,7 +21,7 @@ export function useDeleteDecisionEnvironments(
           count: decisionEnvironments.length,
         }),
         confirmText: t(
-          'Yes, I confirm that I want to delete these {{count}} decisionEnvironments.',
+          'Yes, I confirm that I want to delete these {{count}} decision environments.',
           {
             count: decisionEnvironments.length,
           }
