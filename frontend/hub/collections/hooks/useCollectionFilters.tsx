@@ -32,6 +32,7 @@ export function useCollectionFilters() {
           { label: t('Validated'), value: 'validated' },
         ],
         placeholder: t('Select repositories'),
+        hasSearch : true,
       },
       {
         key: 'tags',
