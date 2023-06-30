@@ -41,7 +41,8 @@ function ProjectCreateInputs() {
       />
       <PageFormTextInput
         name="type"
-        isReadOnly={true}
+        aria-disabled={true}
+        isDisabled={true}
         label={t('SCM type')}
         placeholder={t('Git')}
         labelHelpTitle={t('SCM type')}
@@ -98,7 +99,8 @@ function ProjectEditInputs() {
       />
       <PageFormTextInput
         name="type"
-        isReadOnly={true}
+        aria-disabled={true}
+        isDisabled={true}
         label={t('SCM type')}
         placeholder={t('Git')}
       />
