@@ -1,19 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
-import { usePulpView } from '../../usePulpView';
 import { pulpAPI } from '../../api';
+import { useGet } from '../../../common/crud/useGet';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
+  const [searchText, setSearchText] = useState('');
 
-  const repositories = usePulpView<Repository>({
-    url: pulpAPI`/repositories/ansible/ansible/`,
-    keyFn: (item) => item.name,
-    queryParams: {
-      pulp_label_select: '!hide_from_search',
-    },
-  });
+  const repositories: any = useGet<Repository[]>(
+    pulpAPI`/repositories/ansible/ansible/?limit=10&name__contains=${searchText}`
+  );
 
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -36,13 +33,15 @@ export function useCollectionFilters() {
         label: t('Repository'),
         type: 'select',
         query: 'repository',
-        options: repositories.pageItems
-          ? repositories.pageItems.map((repo) => {
-              return { label: repo.name, value: repo.name };
-            })
-          : [],
+        options:
+          repositories.data?.results?.map((repo: any) => {
+            return { value: repo.name, label: repo.name };
+          }) || [],
         placeholder: t('Select repositories'),
         hasSearch: true,
+        onSearchTextChange: (text) => {
+          setSearchText(text);
+        },
       },
       {
         key: 'tags',
@@ -74,7 +73,7 @@ export function useCollectionFilters() {
         placeholder: t('Select signatures'),
       },
     ],
-    [t, repositories.pageItems]
+    [t, repositories.data]
   );
 }
 

@@ -209,6 +209,7 @@ function ToolbarFilterInput(props: {
           options={filter.options}
           placeholder={filter.placeholder}
           hasSearch={filter.hasSearch}
+          onSearchTextChange={filter.onSearchTextChange}
         />
       );
   }
