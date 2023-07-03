@@ -20,7 +20,7 @@ import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { hubAPI } from '../api';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import { usePulpView } from '../usePulpView';
 import { IToolbarFilter } from '../../../framework';
@@ -73,8 +73,12 @@ export function UploadCollectionByFile() {
     tableColumns,
   });
 
+  useEffect(() => {
+    setSelectedRepo({ name: 'staging' });
+  }, []);
+
   const [onlyStaging, setOnlyStaging] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<Repository | null>(null);
+  const [selectedRepo, setSelectedRepo] = useState<{ name: string } | null>(null);
 
   function renderRepoSelector() {
     return (
@@ -104,8 +108,8 @@ export function UploadCollectionByFile() {
         </div>
 
         <PageTable<Repository>
-          onSelect={(item) => {
-            setSelectedItem(item);
+          onSelect={(repo) => {
+            setSelectedRepo(repo);
           }}
           disableColumnManagement={true}
           disableListView={true}
@@ -133,7 +137,7 @@ export function UploadCollectionByFile() {
           onCancel={onCancel}
           onSubmit={(data) => {
             return postRequestFile(
-              hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`,
+              hubAPI`/v3/plugin/ansible/content/${selectedRepo?.name || ''}/collections/artifacts/`,
               data.file as Blob
             ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
           }}
