@@ -66,19 +66,24 @@ export function UploadCollectionByFile() {
 
   // const navigate = useNavigate()
   const tableColumns = useRepositoriesColumns();
+  const [onlyStaging, setOnlyStaging] = useState(true);
+  const [selectedRepo, setSelectedRepo] = useState<{ name: string } | null>(null);
+
   const view = usePulpView<Repository>({
     url: '/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/',
     keyFn: nameKeyFn,
     toolbarFilters,
     tableColumns,
+    queryParams: onlyStaging
+      ? {
+          pulp_label_select: 'pipeline=staging',
+        }
+      : null,
   });
 
   useEffect(() => {
     setSelectedRepo({ name: 'staging' });
   }, []);
-
-  const [onlyStaging, setOnlyStaging] = useState(true);
-  const [selectedRepo, setSelectedRepo] = useState<{ name: string } | null>(null);
 
   function renderRepoSelector() {
     return (

@@ -38,7 +38,7 @@ export function usePulpView<T extends object>({
   toolbarFilters?: IToolbarFilter[];
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
-  queryParams?: QueryParams;
+  queryParams?: QueryParams | null;
 }): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
