@@ -74,7 +74,7 @@ export function UploadCollectionByFile() {
   });
 
   const [onlyStaging, setOnlyStaging] = useState(true);
-  //const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Repository | null>(null);
 
   function renderRepoSelector() {
     return (
@@ -104,8 +104,9 @@ export function UploadCollectionByFile() {
         </div>
 
         <PageTable<Repository>
-          isSelectMultiple={false}
-          showSelect={true}
+          onSelect={(item) => {
+            setSelectedItem(item);
+          }}
           disableColumnManagement={true}
           disableListView={true}
           disableCardView={true}
