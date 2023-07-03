@@ -1,22 +1,23 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
 import { pulpAPI } from '../../api';
-import { useGet } from '../../../common/crud/useGet';
+import { useGetRequest } from '../../../common/crud/useGetRequest';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const [repositories, setRepositories] = useState([]);
 
-  const repos: any = useGet<Repository[]>(
-    pulpAPI`/repositories/ansible/ansible/?limit=10&name__contains=${searchText}`
-  );
+  const request = useGetRequest();
 
-  if (!repos.isLoading) {
-    console.log(JSON.stringify(repos, null, 2));
-    setRepositories(repos.data.results);
-  }
+  useEffect(() => {
+    request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`).then(
+      (result: any) => {
+        setRepositories(result.results);
+      }
+    );
+  }, [searchText]);
 
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -40,7 +41,7 @@ export function useCollectionFilters() {
         type: 'select',
         query: 'repository',
         options:
-          repositories.map((repo: any) => {
+          repositories?.map((repo: any) => {
             return { value: repo.name, label: repo.name };
           }) || [],
         placeholder: t('Select repositories'),
