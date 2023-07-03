@@ -41,7 +41,6 @@ module.exports = function (env, argv) {
           test: /\.(ts|tsx|js|jsx)$/,
           exclude: /node_modules/,
           use: [
-            isDevelopment && 'coverage-istanbul-loader',
             {
               loader: 'babel-loader',
               options: {
