@@ -74,7 +74,7 @@ function CredentialInputs() {
       />
       <PageFormTextInput<EdaCredentialCreate>
         name="username"
-        label={t('User name')}
+        label={t('Username')}
         isRequired
         placeholder={t('Enter username')}
       />

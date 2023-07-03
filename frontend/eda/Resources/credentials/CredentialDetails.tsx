@@ -90,10 +90,10 @@ export function CredentialDetails() {
       <PageDetails>
         <PageDetail label={t('Name')}>{credential?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{credential?.description || ''}</PageDetail>
-        <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
         <PageDetail label={t('Credential type')} helpText={credentialTypeHelpBlock}>
           {credentialOption ? credentialOption?.label : credential?.credential_type}
         </PageDetail>
+        <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
         <PageDetail label={t('Created')}>
           {credential?.created_at ? formatDateString(credential.created_at) : ''}
         </PageDetail>
