@@ -7,10 +7,16 @@ import { useGet } from '../../../common/crud/useGet';
 export function useCollectionFilters() {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
+  const [repositories, setRepositories] = useState([]);
 
-  const repositories: any = useGet<Repository[]>(
+  const repos: any = useGet<Repository[]>(
     pulpAPI`/repositories/ansible/ansible/?limit=10&name__contains=${searchText}`
   );
+
+  if (!repos.isLoading) {
+    console.log(JSON.stringify(repos, null, 2));
+    setRepositories(repos.data.results);
+  }
 
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -34,7 +40,7 @@ export function useCollectionFilters() {
         type: 'select',
         query: 'repository',
         options:
-          repositories.data?.results?.map((repo: any) => {
+          repositories.map((repo: any) => {
             return { value: repo.name, label: repo.name };
           }) || [],
         placeholder: t('Select repositories'),
@@ -73,7 +79,7 @@ export function useCollectionFilters() {
         placeholder: t('Select signatures'),
       },
     ],
-    [t, repositories.data]
+    [t, repositories]
   );
 }
 
