@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
 import { pulpAPI } from '../../api';
@@ -9,7 +9,7 @@ export function useCollectionFilters() {
   const [searchText, setSearchText] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const request = useGetRequest<{ results: Repository[] }>();
+  const request = useCallback(useGetRequest<{ results: Repository[] }>(), []);
 
   useEffect(() => {
     request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`)
@@ -19,7 +19,7 @@ export function useCollectionFilters() {
       .catch((ex) => {
         // TODO - how to handle errors here?
       });
-  }, [searchText]);
+  }, [searchText, request]);
 
   return useMemo<IToolbarFilter[]>(
     () => [
