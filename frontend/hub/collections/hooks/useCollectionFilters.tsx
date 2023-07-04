@@ -83,7 +83,3 @@ export function useCollectionFilters() {
     [t, repositories]
   );
 }
-
-interface Repository {
-  name: string;
-}
