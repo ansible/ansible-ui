@@ -7,16 +7,18 @@ import { useGetRequest } from '../../../common/crud/useGetRequest';
 export function useCollectionFilters() {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
-  const [repositories, setRepositories] = useState([]);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const request = useGetRequest();
+  const request = useGetRequest<{ results: Repository[] }>();
 
   useEffect(() => {
-    request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`).then(
-      (result: any) => {
-        setRepositories(result.results);
-      }
-    );
+    request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`)
+      .then((data) => {
+        setRepositories(data?.results || []);
+      })
+      .catch((ex) => {
+        // TODO - how to handle errors here?
+      });
   }, [searchText]);
 
   return useMemo<IToolbarFilter[]>(
@@ -41,7 +43,7 @@ export function useCollectionFilters() {
         type: 'select',
         query: 'repository',
         options:
-          repositories?.map((repo: any) => {
+          repositories?.map((repo: Repository) => {
             return { value: repo.name, label: repo.name };
           }) || [],
         placeholder: t('Select repositories'),
@@ -82,4 +84,8 @@ export function useCollectionFilters() {
     ],
     [t, repositories]
   );
+}
+
+interface Repository {
+  name: string;
 }
