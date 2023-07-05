@@ -22,10 +22,10 @@ export function useInventorySourceColumns(options?: {
   const nameClick = useCallback(
     (inventorySource: InventorySource) => {
       return navigate(
-        RouteObj.InventorySourceDetails.replace(
-          ':id',
-          inventorySource.inventory.toString()
-        ).replace(':source_id', inventorySource.id.toString())
+        RouteObj.InventoryDetails.replace(':id', inventorySource.inventory.toString()).replace(
+          ':source_id',
+          inventorySource.id.toString()
+        )
       );
     },
     [navigate]
