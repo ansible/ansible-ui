@@ -209,7 +209,7 @@ declare global {
       requestGet<T>(url: string): Chainable<T>;
 
       /** Sends a request to the API to delete a particular resource. */
-      requestDelete(url: string, ignoreError?: boolean): Chainable;
+      requestDelete(url: string, options?: { failOnStatusCode?: boolean }): Chainable;
 
       // --- AWX COMMANDS ---
 
@@ -223,7 +223,8 @@ declare global {
       awxRequest<ResponseT = unknown>(
         method: string,
         url: string,
-        body?: Cypress.RequestBody
+        body?: Cypress.RequestBody,
+        failOnStatusCode?: boolean
       ): Chainable<Cypress.Response<ResponseT>>;
 
       /**
@@ -246,7 +247,7 @@ declare global {
        * This command only works for deleting a resource in AWX.
        * @param url
        */
-      awxRequestDelete(url: string): Chainable<void>;
+      awxRequestDelete(url: string, options?: { failOnStatusCode?: boolean }): Chainable<void>;
 
       createAwxOrganization(): Chainable<Organization>;
 
@@ -324,15 +325,30 @@ declare global {
 
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
 
-      deleteAwxOrganization(organization: Organization): Chainable<void>;
-      deleteAwxProject(project: Project): Chainable<void>;
-      deleteAwxInventory(inventory: Inventory): Chainable<void>;
-      deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
-      deleteAWXSchedule(schedule: Schedule): Chainable<void>;
-      deleteAwxTeam(team: Team): Chainable<void>;
-      deleteAwxUser(user: User): Chainable<void>;
-      deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
-      deleteAwxLabel(label?: Label): Chainable<void>;
+      deleteAwxOrganization(
+        organization: Organization,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
+      deleteAwxProject(project: Project, options?: { failOnStatusCode?: boolean }): Chainable<void>;
+      deleteAwxInventory(
+        inventory: Inventory,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
+      deleteAwxJobTemplate(
+        jobTemplate: JobTemplate,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
+      deleteAWXSchedule(
+        schedule: Schedule,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
+      deleteAwxTeam(team: Team, options?: { failOnStatusCode?: boolean }): Chainable<void>;
+      deleteAwxUser(user: User, options?: { failOnStatusCode?: boolean }): Chainable<void>;
+      deleteAwxInstanceGroup(
+        instanceGroup: InstanceGroup,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
+      deleteAwxLabel(label?: Label, options?: { failOnStatusCode?: boolean }): Chainable<void>;
 
       /**
        * This creates a user token in AWX that can be exported as a string and used in EDA.
@@ -344,13 +360,16 @@ declare global {
        * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
        */
       getGlobalAwxToken(): Chainable<AwxToken>;
-      deleteAwxToken(awxToken: AwxToken): Chainable<void>;
+      deleteAwxToken(awxToken: AwxToken, options?: { failOnStatusCode?: boolean }): Chainable<void>;
 
       /**
        * Command for deleting resources created for testing
        * @param resources
        */
-      deleteAwxResources(resources?: IAwxResources): Chainable<void>;
+      deleteAwxResources(
+        resources?: IAwxResources,
+        options?: { failOnStatusCode?: boolean }
+      ): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization
