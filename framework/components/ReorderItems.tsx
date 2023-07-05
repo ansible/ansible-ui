@@ -22,7 +22,7 @@ type ReorderItemsProps<T extends object> = {
   /** A function that gets a unique key for each item */
   keyFn: (item: T) => string | number;
   /** Callback function to process items with the updated order */
-  onSave?: (items: string[]) => void;
+  onSave: (items: T[]) => void;
   /** Setting to show the table with the `compact` variant and without borders for rows */
   isCompactBorderless?: boolean;
   /** Setting to hide column headers */
@@ -33,7 +33,7 @@ type ReorderItemsProps<T extends object> = {
  * Component to reorder items in a list by dragging items to a desired position
  */
 export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
-  const { columns, items, isCompactBorderless, hideColumnHeaders, keyFn } = props;
+  const { columns, items, isCompactBorderless, hideColumnHeaders, keyFn, onSave } = props;
   const [listItems, setListItems] = useState([...items]);
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
@@ -90,6 +90,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
         const tempItemOrder = moveItem([...listItems], draggedItemId, newDraggedItemIndex);
         setListItems(tempItemOrder);
+        onSave(tempItemOrder);
       }
     }
     return null;

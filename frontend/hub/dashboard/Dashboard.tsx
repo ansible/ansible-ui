@@ -7,9 +7,9 @@ import {
   PageActionType,
   PageActions,
   PageDashboard,
-  PageDashboardCard,
   PageHeader,
   PageLayout,
+  usePageDialog,
 } from '../../../framework';
 import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
@@ -19,13 +19,14 @@ import { useExecutionEnvironments } from '../execution-environments/hooks/useExe
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
 import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
-import { ReorderItems } from '../../../framework/components/ReorderItems';
+import { ManageView } from './ManageView';
 
 export function HubDashboard() {
   const { t } = useTranslation();
   const namespaces = useHubNamespaces();
   const collections = useCollections();
   const environments = useExecutionEnvironments();
+  const [_, setDialog] = usePageDialog();
 
   if (!namespaces) {
     return <LoadingPage />;
@@ -34,52 +35,6 @@ export function HubDashboard() {
   const hasCollection = (collections?.length ?? 0) > 0;
   const hasExecutionEnvironment = (environments?.length ?? 0) > 0;
   const hasNamespace = (namespaces?.length ?? 0) > 0;
-
-  type Item = { [key: string]: string };
-  const columns = [
-    {
-      header: 'IDs',
-      cell: (item: Item) => item.id,
-    },
-    {
-      header: 'Repositories',
-      cell: (item: Item) => item.repository,
-    },
-    {
-      header: 'Branches',
-      cell: (item: Item) => item.branch,
-    },
-  ];
-  const items: Item[] = [
-    {
-      id: 'row1',
-      repository: 'one',
-      branch: 'two',
-    },
-    {
-      id: 'row2',
-      repository: 'one -2',
-      branch: 'two',
-    },
-    {
-      id: 'row3',
-      repository: 'one - 3',
-      branch: 'two - 3',
-    },
-    {
-      id: 'row4',
-      repository: 'one - 4',
-      branch: 'two - 4',
-    },
-    {
-      id: 'row5',
-      repository: 'one - 5',
-      branch: 'two - 5',
-    },
-  ];
-  const getItemKey = (item: Item) => {
-    return item.id.toString();
-  };
 
   return (
     <PageLayout>
@@ -102,7 +57,9 @@ export function HubDashboard() {
                 label: 'Manage View',
                 type: PageActionType.Button,
                 selection: PageActionSelection.None,
-                onClick: () => alert('TODO'),
+                onClick: () => {
+                  setDialog(<ManageView />);
+                },
               },
             ]}
             position={DropdownPosition.right}
@@ -176,11 +133,6 @@ export function HubDashboard() {
             <CardBody>Card 3</CardBody>
           </Card>
         </PageDashboardCarousel>
-        <PageDashboardCard title="Reorder" width="xxl">
-          <CardBody>
-            <ReorderItems columns={columns} items={items} keyFn={getItemKey} />
-          </CardBody>
-        </PageDashboardCard>
       </PageDashboard>
     </PageLayout>
   );
