@@ -17,6 +17,7 @@ export function useRuleAuditActionsColumns() {
             <TextCell
               text={ruleAuditAction?.name}
               icon={<ExternalLinkAltIcon />}
+              iconAlign={'right'}
               onClick={() => {
                 open(ruleAuditAction?.url, '_blank');
               }}
