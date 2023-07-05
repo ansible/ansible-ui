@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import React, { ReactNode, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type ReorderItemsProps<T extends object> = {
   /** Array of columns */
@@ -38,6 +39,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const { t } = useTranslation();
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -139,7 +141,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
 
   return (
     <TableComposable
-      // aria-label="Draggable table"
+      aria-label={t(`Table with draggable rows`)}
       className={isDragging ? styles.modifiers.dragOver : ''}
       variant={isCompactBorderless ? 'compact' : undefined}
       borders={!isCompactBorderless}
