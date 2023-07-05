@@ -362,21 +362,28 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('awxRequest', function awxRequest<
-  T
->(method: string, url: string, body?: Cypress.RequestBody, failOnStatusCode?: boolean) {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  cy.getGlobalAwxToken().then((awxToken) => {
-    cy.request<T>({
-      method,
-      url: awxServer + url,
-      body,
-      headers: { Authorization: 'Bearer ' + awxToken.token },
-      failOnStatusCode,
+Cypress.Commands.add(
+  'awxRequest',
+  function awxRequest<T>(
+    method: string,
+    url: string,
+    body?: Cypress.RequestBody,
+    /** Whether to fail on response codes other than 2xx and 3xx */
+    failOnStatusCode?: boolean
+  ) {
+    let awxServer = Cypress.env('AWX_SERVER') as string;
+    if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
+    cy.getGlobalAwxToken().then((awxToken) => {
+      cy.request<T>({
+        method,
+        url: awxServer + url,
+        body,
+        headers: { Authorization: 'Bearer ' + awxToken.token },
+        failOnStatusCode,
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
@@ -391,14 +398,26 @@ Cypress.Commands.add('awxRequestGet', function awxRequestGet<ResponseBodyT = unk
 
 Cypress.Commands.add(
   'awxRequestDelete',
-  function awxRequestDelete(url: string, options?: { failOnStatusCode?: boolean }) {
+  function awxRequestDelete(
+    url: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) {
     cy.awxRequest('DELETE', url, undefined, options?.failOnStatusCode);
   }
 );
 
 Cypress.Commands.add(
   'deleteAwxOrganization',
-  (organization: Organization, options?: { failOnStatusCode?: boolean }) => {
+  (
+    organization: Organization,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     cy.awxRequestDelete(`/api/v2/organizations/${organization.id}/`, options);
   }
 );
@@ -410,11 +429,20 @@ Cypress.Commands.add('createAwxTeam', (organization: Organization) => {
   });
 });
 
-Cypress.Commands.add('deleteAwxTeam', (team: Team, options?: { failOnStatusCode?: boolean }) => {
-  if (team.id) {
-    cy.awxRequestDelete(`/api/v2/teams/${team.id.toString()}/`, options);
+Cypress.Commands.add(
+  'deleteAwxTeam',
+  (
+    team: Team,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (team.id) {
+      cy.awxRequestDelete(`/api/v2/teams/${team.id.toString()}/`, options);
+    }
   }
-});
+);
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
   cy.awxRequestPost<Omit<User, 'id' | 'auth' | 'summary_fields'>, User>(
@@ -429,11 +457,20 @@ Cypress.Commands.add('createAwxUser', (organization: Organization) => {
   ).then((user) => user);
 });
 
-Cypress.Commands.add('deleteAwxUser', (user: User, options?: { failOnStatusCode?: boolean }) => {
-  if (user.id) {
-    cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
+Cypress.Commands.add(
+  'deleteAwxUser',
+  (
+    user: User,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (user.id) {
+      cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
+    }
   }
-});
+);
 
 Cypress.Commands.add(
   'createAwxProject',
@@ -481,7 +518,13 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'deleteAwxProject',
-  (project: Project, options?: { failOnStatusCode?: boolean }) => {
+  (
+    project: Project,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     const organizationId = project.organization;
     // Delete sync job related to project
     if (project && project.related && typeof project.related.last_job === 'string') {
@@ -516,7 +559,13 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
 
 Cypress.Commands.add(
   'deleteAwxInventory',
-  (inventory: Inventory, options?: { failOnStatusCode?: boolean }) => {
+  (
+    inventory: Inventory,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     const organizationId = inventory.organization;
     // Delete organization created for this inventory (this will also delete the inventory)
     if (organizationId) {
@@ -538,7 +587,14 @@ Cypress.Commands.add('createAWXSchedule', () => {
 
 Cypress.Commands.add(
   'deleteAWXSchedule',
-  (schedule: Schedule, options?: { failOnStatusCode?: boolean }) => {
+  (
+    schedule: Schedule,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     cy.requestDelete(`/api/v2/schedules/${schedule.id}/`, options);
   }
 );
@@ -572,7 +628,14 @@ export interface IAwxResources {
 
 Cypress.Commands.add(
   'deleteAwxResources',
-  (resources?: IAwxResources, options?: { failOnStatusCode?: boolean }) => {
+  (
+    resources?: IAwxResources,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     if (resources?.jobTemplate) cy.deleteAwxJobTemplate(resources.jobTemplate, options);
   }
 );
@@ -627,7 +690,13 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
 
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
-  (jobTemplate: JobTemplate, options?: { failOnStatusCode?: boolean }) => {
+  (
+    jobTemplate: JobTemplate,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     const projectId = jobTemplate.project;
 
     if (jobTemplate.id) {
@@ -696,7 +765,13 @@ Cypress.Commands.add('createAwxLabel', (label: Partial<Omit<Label, 'id'>>) => {
 
 Cypress.Commands.add(
   'deleteAwxLabel',
-  (label?: Label, options?: { failOnStatusCode?: boolean }) => {
+  (
+    label?: Label,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     const labelId = label?.id;
     if (labelId) {
       cy.awxRequestDelete(`/api/v2/labels/${labelId.toString()}/`, options);
@@ -719,7 +794,13 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'deleteAwxInstanceGroup',
-  (instanceGroup: InstanceGroup, options?: { failOnStatusCode?: boolean }) => {
+  (
+    instanceGroup: InstanceGroup,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     const instanceGroupId = instanceGroup.id;
     if (instanceGroupId) {
       cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, options);
@@ -747,7 +828,13 @@ Cypress.Commands.add('getGlobalAwxToken', () => {
 
 Cypress.Commands.add(
   'deleteAwxToken',
-  (awxToken: AwxToken, options?: { failOnStatusCode?: boolean }) => {
+  (
+    awxToken: AwxToken,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
     cy.awxRequestDelete(`/api/v2/tokens/${awxToken.id}/`, options);
   }
 );

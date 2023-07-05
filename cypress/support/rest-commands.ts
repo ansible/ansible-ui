@@ -26,7 +26,13 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
 
 Cypress.Commands.add(
   'requestDelete',
-  function deleteFn(url: string, options?: { failOnStatusCode?: boolean }) {
+  function deleteFn(
+    url: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) {
     cy.getCookie('csrftoken').then((cookie) =>
       cy.request({
         method: 'Delete',
