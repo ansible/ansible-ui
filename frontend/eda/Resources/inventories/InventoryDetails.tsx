@@ -34,7 +34,6 @@ import { useDeleteInventories } from './hooks/useDeleteInventories';
 export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  // const navigate = useNavigate();
   const { data: inventory } = useGet<EdaInventory>(
     `${API_PREFIX}/inventory/${params.id ?? ''}/`,
     undefined,
@@ -120,7 +119,10 @@ export function InventoryDetails() {
       <PageHeader
         title={inventory?.name}
         breadcrumbs={[
-          // { label: t('Inventories'), to: RouteObj.EdaInventories },
+          {
+            label: t('Inventories'),
+            // to: RouteObj.EdaInventories
+          },
           { label: inventory?.name },
         ]}
         headerActions={

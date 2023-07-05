@@ -5,7 +5,6 @@ import { EdaInventory } from '../../../interfaces/EdaInventory';
 
 export function useInventoriesColumns() {
   const { t } = useTranslation();
-  // const navigate = useNavigate();
   const tableColumns = useMemo<ITableColumn<EdaInventory>[]>(
     () => [
       {
@@ -14,19 +13,19 @@ export function useInventoriesColumns() {
         card: 'hidden',
         list: 'hidden',
       },
-      // {
-      //   header: t('Name'),
-      //   cell: (inventory) => (
-      //     <TextCell
-      //       text={inventory.name}
-      //       onClick={() =>
-      //         navigate(RouteObj.EdaInventoryDetails.replace(':id', inventory.id.toString()))
-      //       }
-      //     />
-      //   ),
-      //   card: 'name',
-      //   list: 'name',
-      // },
+      {
+        header: t('Name'),
+        cell: (inventory) => (
+          <TextCell
+            text={inventory.name}
+            // onClick={() =>
+            //   navigate(RouteObj.EdaInventoryDetails.replace(':id', inventory.id.toString()))
+            // }
+          />
+        ),
+        card: 'name',
+        list: 'name',
+      },
       {
         header: t('Description'),
         type: 'description',

@@ -97,7 +97,7 @@ describe('teams', () => {
     cy.selectTableRowInDialog(user1.username);
     cy.selectTableRowInDialog(user2.username);
     cy.getDialog().within(() => {
-      cy.clickButton(/^Add user/);
+      cy.clickButton(/^Add/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
     });

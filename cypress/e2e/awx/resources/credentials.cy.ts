@@ -18,9 +18,7 @@ describe('credentials', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
   });
 
   beforeEach(() => {
@@ -33,9 +31,7 @@ describe('credentials', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/credentials/${credential.id}/`, {
-      failOnStatusCode: false,
-    });
+    cy.requestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
   });
 
   it('credentials page', () => {

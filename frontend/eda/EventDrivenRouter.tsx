@@ -99,9 +99,9 @@ export function EventDrivenRouter() {
         element={<ActivationInstanceDetails />}
       />
 
-      {/* <Route path={RouteObjWithoutPrefix.CreateEdaActivity} element={<UnderDevelopment />} /> */}
-      {/* <Route path={RouteObjWithoutPrefix.EditEdaActivity} element={<UnderDevelopment />} /> */}
-      {/* <Route path={RouteObjWithoutPrefix.EdaActivityDetails} element={<UnderDevelopment />} /> */}
+      {/* <Route path={RouteObjWithoutPrefix.CreateEdaActivity} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EditEdaActivity} element={<UnderDevelopment />} />
+      <Route path={RouteObjWithoutPrefix.EdaActivityDetails} element={<UnderDevelopment />} /> */}
       <Route path={RouteObjWithoutPrefix.EdaRulebookDetails} element={<RulebookDetails />} />
       <Route path={RouteObjWithoutPrefix.EdaRulebooks} element={<Rulebooks />} />
 

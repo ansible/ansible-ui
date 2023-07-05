@@ -10,7 +10,6 @@ import { useInventoriesToolbarActions } from './hooks/useInventoryToolbarActions
 
 export function Inventories() {
   const { t } = useTranslation();
-  // const navigate = useNavigate();
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useEdaView<EdaInventory>({
@@ -32,7 +31,7 @@ export function Inventories() {
         emptyStateTitle={t('No inventories yet')}
         emptyStateDescription={t('To get started, create a inventory.')}
         emptyStateButtonText={t('Create inventory')}
-        // emptyStateButtonClick={() => navigate(RouteObj.createE)}
+        // emptyStateButtonClick={() => navigate(RouteObj.CreateEdaInventory)}
         {...view}
         defaultSubtitle={t('Inventory')}
       />

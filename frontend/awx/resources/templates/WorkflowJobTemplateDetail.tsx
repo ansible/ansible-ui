@@ -60,7 +60,7 @@ export function WorkflowJobTemplateDetail() {
         icon: EditIcon,
         label: t('Edit workflow template'),
         onClick: (template) =>
-          history(RouteObj.EditJobTemplate.replace(':id', template?.id.toString() ?? '')),
+          history(RouteObj.EditWorkflowJobTemplate.replace(':id', template?.id.toString() ?? '')),
       },
       {
         type: PageActionType.Button,

@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import { useMemo } from 'react';
 
 // const awxRoutePrefix: string = process.env.VITE_AWX_ROUTE_PREFIX
