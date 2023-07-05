@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import { useMemo } from 'react';
 
 export type RouteType = `/${string}`;
@@ -15,7 +13,7 @@ const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
   ? (process.env.EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
 
-export const RouteObj: { [key: string]: RouteType } = {
+export const RouteObj = {
   Login: '/login',
 
   AWX: `${awxRoutePrefix}`,
@@ -278,12 +276,13 @@ export const RouteObj: { [key: string]: RouteType } = {
   CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
 };
 
-export function useRoutesWithoutPrefix(prefix: RouteType) {
-  const routesWithoutPrefix: { [key: string]: RouteType } = useMemo(() => {
-    const routes: { [key: string]: RouteType } = {};
+export function useRoutesWithoutPrefix(prefix: string) {
+  const routesWithoutPrefix = useMemo(() => {
+    const routes = { ...RouteObj };
     for (const route in RouteObj) {
-      if (RouteObj[route].startsWith(prefix)) {
-        routes[route] = RouteObj[route].replace(prefix, '') as RouteType;
+      const routePath = (RouteObj as Record<string, string>)[route];
+      if (routePath.startsWith(prefix)) {
+        (routes as Record<string, string>)[route] = routePath.replace(prefix, '');
       }
     }
     return routes;

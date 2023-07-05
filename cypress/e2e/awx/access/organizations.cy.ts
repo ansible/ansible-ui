@@ -26,7 +26,9 @@ describe('organizations', () => {
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {
-        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
+          failOnStatusCode: false,
+        });
       }
     });
   });

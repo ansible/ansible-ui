@@ -24,13 +24,22 @@ Cypress.Commands.add('requestGet', function requestGet<T>(url: string) {
   return cy.request<T>({ method: 'GET', url }).then((response) => response.body);
 });
 
-Cypress.Commands.add('requestDelete', function deleteFn(url: string, ignoreError?: boolean) {
-  cy.getCookie('csrftoken').then((cookie) =>
-    cy.request({
-      method: 'Delete',
-      url,
-      failOnStatusCode: ignoreError ? false : true,
-      headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
-    })
-  );
-});
+Cypress.Commands.add(
+  'requestDelete',
+  function deleteFn(
+    url: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) {
+    cy.getCookie('csrftoken').then((cookie) =>
+      cy.request({
+        method: 'Delete',
+        url,
+        failOnStatusCode: options?.failOnStatusCode,
+        headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
+      })
+    );
+  }
+);

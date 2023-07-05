@@ -15,7 +15,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/projects?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.deleteAwxProject(resource);
+        cy.deleteAwxProject(resource, { failOnStatusCode: false });
       }
     });
   });
@@ -25,7 +25,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/inventories?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.deleteAwxInventory(resource);
+        cy.deleteAwxInventory(resource, { failOnStatusCode: false });
       }
     });
   });
@@ -35,7 +35,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.deleteAwxOrganization(resource);
+        cy.deleteAwxOrganization(resource, { failOnStatusCode: false });
       }
     });
   });
@@ -45,7 +45,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/users?username__startswith=e2e&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.deleteAwxUser(resource);
+        cy.deleteAwxUser(resource, { failOnStatusCode: false });
       }
     });
   });
@@ -55,7 +55,7 @@ describe('AWX Cleanup', () => {
       `/api/v2/unified_job_templates/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.deleteAwxJobTemplate(resource);
+        cy.deleteAwxJobTemplate(resource, { failOnStatusCode: false });
       }
     });
   });
@@ -66,7 +66,7 @@ describe('AWX Cleanup', () => {
     ).then((result) => {
       for (const resource of result.results ?? []) {
         const url = getJobsAPIUrl(resource.job_type ?? '');
-        cy.awxRequestDelete(`${url}${resource.id}/`);
+        cy.awxRequestDelete(`${url}${resource.id}/`, { failOnStatusCode: false });
       }
     });
   });
