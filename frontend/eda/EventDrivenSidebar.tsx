@@ -53,16 +53,17 @@ export function EventDrivenSidebar() {
           {t('Projects')}
         </NavItem>
         <NavItem
-          isActive={isRouteActive(RouteObj.EdaCredentials, location)}
-          onClick={() => onClick(RouteObj.EdaCredentials)}
-        >
-          {t('Credentials')}
-        </NavItem>
-        <NavItem
           isActive={isRouteActive(RouteObj.EdaDecisionEnvironments, location)}
           onClick={() => onClick(RouteObj.EdaDecisionEnvironments)}
         >
           {t('Decision Environments')}
+        </NavItem>
+
+        <NavItem
+          isActive={isRouteActive(RouteObj.EdaCredentials, location)}
+          onClick={() => onClick(RouteObj.EdaCredentials)}
+        >
+          {t('Credentials')}
         </NavItem>
       </NavExpandable>
       <NavExpandable
