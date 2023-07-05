@@ -10,7 +10,6 @@ import {
 } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import React, { ReactNode, useRef, useState } from 'react';
-import { idKeyFn } from '../../frontend/hub/api';
 
 type ReorderItemsProps<T extends object> = {
   /** Array of columns */
@@ -18,20 +17,23 @@ type ReorderItemsProps<T extends object> = {
     header: string;
     cell: (item: T) => ReactNode | string;
   }[];
-  /** Array of items */
+  /** Array of items that can be reordered */
   items: T[];
-  /** A function that gets a unique key for each item. */
+  /** A function that gets a unique key for each item */
   keyFn: (item: T) => string | number;
+  /** Callback function to process items with the updated order */
   onSave?: (items: string[]) => void;
+  /** Setting to show the table with the `compact` variant and without borders for rows */
   isCompactBorderless?: boolean;
-  isSingleColumnList?: boolean;
+  /** Setting to hide column headers */
+  hideColumnHeaders?: boolean;
 };
 
 /**
  * Component to reorder items in a list by dragging items to a desired position
  */
 export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
-  const { columns, items, isCompactBorderless, isSingleColumnList, keyFn } = props;
+  const { columns, items, isCompactBorderless, hideColumnHeaders, keyFn } = props;
   const [listItems, setListItems] = useState([...items]);
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
@@ -141,7 +143,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       variant={isCompactBorderless ? 'compact' : undefined}
       borders={!isCompactBorderless}
     >
-      {isSingleColumnList ? null : (
+      {hideColumnHeaders ? null : (
         <Thead>
           <Tr>
             <Th />
