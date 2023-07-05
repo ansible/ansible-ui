@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
@@ -71,6 +71,7 @@ function ProjectCreateInputs() {
               }))
             : []
         }
+        footer={<Link to={RouteObj.CreateCredential}>Create credential</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
@@ -116,6 +117,7 @@ function ProjectEditInputs() {
               }))
             : []
         }
+        footer={<Link to={RouteObj.CreateCredential}>Create credential</Link>}
       />
     </>
   );
