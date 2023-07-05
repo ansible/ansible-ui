@@ -1,4 +1,4 @@
-import { CodeBlock, CodeBlockCode, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -19,6 +19,7 @@ import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ export function ActivationInstanceDetails() {
           <PageDetail label={t('Name')}>
             {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
-          <PageDetail label={t('Activation status')}>{activationInstance?.status || ''}</PageDetail>
+          <PageDetail label={t('Status')}>{activationInstance?.status || ''}</PageDetail>
           <PageDetail label={t('Start date')}>
             {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
           </PageDetail>
@@ -68,18 +69,11 @@ export function ActivationInstanceDetails() {
         </PageDetails>
         <PageDetailsSection>
           {activationInstanceLog?.results?.length ? (
-            <PageDetail label={t('Output')}>
-              <CodeBlock>
-                <CodeBlockCode
-                  style={{
-                    minHeight: '150px',
-                  }}
-                  id="code-content"
-                >
-                  {activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
-                </CodeBlockCode>
-              </CodeBlock>
-            </PageDetail>
+            <PageDetailCodeEditor
+              label={t('Output')}
+              value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
+              showCopyToClipboard={true}
+            />
           ) : null}
         </PageDetailsSection>
       </Scrollable>

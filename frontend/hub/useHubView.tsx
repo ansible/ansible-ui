@@ -9,27 +9,8 @@ import {
   useSelected,
   useView,
 } from '../../framework';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
-
-export function hubKeyFn(item: { pulp_id: string }) {
-  return item.pulp_id;
-}
-
-export function pulpHRefKeyFn(item: { pulp_href: string }) {
-  return item.pulp_href;
-}
-
-export function nameKeyFn(item: { name: string }) {
-  return item.name;
-}
-
-export function idKeyFn(item: { id: number | string }) {
-  return item.id;
-}
-
-export function pkKeyFn(item: { pk: number | string }) {
-  return item.pk;
-}
 
 export interface HubItemsResponse<T extends object> {
   meta: {
@@ -49,13 +30,21 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>(
-  url: string,
-  keyFn: (item: T) => string | number,
-  toolbarFilters?: IToolbarFilter[],
-  tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean
-): IHubView<T> {
+export function useHubView<T extends object>({
+  url,
+  keyFn,
+  toolbarFilters,
+  tableColumns,
+  disableQueryString,
+  queryParams,
+}: {
+  url: string;
+  keyFn: (item: T) => string | number;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  disableQueryString?: boolean;
+  queryParams?: QueryParams;
+}): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString
@@ -64,7 +53,7 @@ export function useHubView<T extends object>(
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
@@ -107,7 +96,8 @@ export function useHubView<T extends object>(
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, {
+  const nextPage = serverlessURL(data?.links?.next);
+  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 

@@ -16,11 +16,19 @@ import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
+import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
   const edaProjectView = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,
+    queryParams: { page: '1', page_size: '10' },
+    disableQueryString: true,
+    defaultSort: 'modified_at',
+    defaultSortDirection: 'desc',
+  });
+  const edaControllerTokenView = useEdaView<EdaControllerToken>({
+    url: `${API_PREFIX}/users/me/awx-tokens/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
@@ -42,6 +50,7 @@ export function EdaDashboard() {
     disableQueryString: true,
   });
   const hasProject = edaProjectView.itemCount !== 0;
+  const hasControllerToken = edaControllerTokenView.itemCount !== 0;
   const hasDecisionEnvironment = edaDecisionEnvironmentView.itemCount !== 0;
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
   const product: string = import.meta.env.VITE_PRODUCT ?? t('EDA Server');
@@ -54,7 +63,7 @@ export function EdaDashboard() {
         )}
       />
       <PageDashboard>
-        {(!hasProject || !hasRulebookActivation) && (
+        {(!hasProject || !hasRulebookActivation || !hasControllerToken) && (
           <PageDashboardCard
             title={t('Getting Started')}
             description={t(
@@ -75,6 +84,12 @@ export function EdaDashboard() {
                   {t(', or follow the steps below.')}
                 </Text>
                 <ProgressStepper>
+                  <ProgressStep
+                    variant={hasControllerToken ? 'success' : 'info'}
+                    description={t('Create a Controller token.')}
+                  >
+                    <Link to={RouteObj.CreateEdaControllerToken}>{t('Controller Token')}</Link>
+                  </ProgressStep>
                   <ProgressStep
                     variant={hasProject ? 'success' : 'info'}
                     description={t('Create a project.')}
@@ -109,8 +124,8 @@ export function EdaDashboard() {
         <RuleAuditChart />
         <EdaRecentProjectsCard view={edaProjectView} />
         <EdaDecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
-        <EdaRuleAuditCard view={edaRuleAuditView} />
         <EdaRulebookActivationsCard view={edaRulebookActivationView} />
+        <EdaRuleAuditCard view={edaRuleAuditView} />
       </PageDashboard>
     </>
   );

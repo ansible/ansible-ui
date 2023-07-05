@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
-import { idKeyFn } from '../../../../hub/useHubView';
+import { idKeyFn } from '../../../../hub/api';
 import { API_PREFIX } from '../../../constants';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { useDecisionEnvironmentColumns } from './useDecisionEnvironmentColumns';
@@ -21,7 +21,7 @@ export function useDeleteDecisionEnvironments(
           count: decisionEnvironments.length,
         }),
         confirmText: t(
-          'Yes, I confirm that I want to delete these {{count}} decisionEnvironments.',
+          'Yes, I confirm that I want to delete these {{count}} decision environments.',
           {
             count: decisionEnvironments.length,
           }

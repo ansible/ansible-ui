@@ -28,9 +28,10 @@ export function ToolbarSelectFilter(props: {
   values: string[];
   placeholder?: string;
   hasSearch?: boolean;
+  variant?: SelectVariant;
 }) {
   const [translations] = useFrameworkTranslations();
-  const { addFilter, removeFilter, options, values } = props;
+  const { addFilter, removeFilter, options, values, variant } = props;
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(
     (e: unknown, value: string | SelectOptionObject) => {
@@ -61,7 +62,7 @@ export function ToolbarSelectFilter(props: {
   return (
     <>
       <Select
-        variant={SelectVariant.checkbox}
+        variant={variant ? variant : SelectVariant.checkbox}
         isOpen={open}
         onToggle={setOpen}
         selections={selections}

@@ -1,43 +1,51 @@
-import { useFormContext } from 'react-hook-form';
+import { useCallback } from 'react';
+import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTemplate';
+import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 
-export function PageFormWorkflowJobTemplateSelect(props: {
-  name: string;
+export function PageFormWorkflowJobTemplateSelect<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: {
+  name: TFieldName;
+  isRequired?: boolean;
   workflowJobTemplatePath?: string;
-  workflowJobTemplateIdPath?: string;
+  templateId?: number;
 }) {
   const { t } = useTranslation();
-  const selectWorkflowJobTemplate = useSelectWorkflowJobTemplate();
-  const { setValue } = useFormContext();
+
+  const openSelectDialog = useSelectWorkflowJobTemplate();
+  const query = useCallback(async () => {
+    const response = await requestGet<ItemsResponse<WorkflowJobTemplate>>(
+      `/api/v2/workflow_job_templates/?page_size=200`
+    );
+
+    return Promise.resolve({
+      total: response.count,
+      values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
+    });
+  }, []);
+
   return (
-    <PageFormTextInput
+    <PageFormAsyncSelect<TFieldValues>
       name={props.name}
-      label={t('Workflow job template')}
-      placeholder={t('Enter workflow job template')}
-      selectTitle={t('Select a workflow job template')}
-      selectValue={(workflowJobTemplate: WorkflowJobTemplate) => workflowJobTemplate.name}
-      selectOpen={selectWorkflowJobTemplate}
-      validate={async (workflowJobTemplateName: string) => {
-        try {
-          const itemsResponse = await requestGet<ItemsResponse<WorkflowJobTemplate>>(
-            `/api/v2/workflow_job_templates/?name=${workflowJobTemplateName}`
-          );
-          if (itemsResponse.results.length === 0) return t('Workflow job template not found.');
-          if (props.workflowJobTemplatePath)
-            setValue(props.workflowJobTemplatePath, itemsResponse.results[0]);
-          if (props.workflowJobTemplateIdPath)
-            setValue(props.workflowJobTemplateIdPath, itemsResponse.results[0].id);
-        } catch (err) {
-          if (err instanceof Error) return err.message;
-          else return 'Unknown error';
+      label={t('Job Template')}
+      query={query}
+      valueToString={(value) => {
+        if (value && typeof value === 'string') {
+          return value;
         }
-        return undefined;
+        return (value as WorkflowJobTemplate)?.name ?? '';
       }}
-      isRequired
+      placeholder={t('Select job template')}
+      loadingPlaceholder={t('Loading job templates...')}
+      loadingErrorText={t('Error loading job templates')}
+      isRequired={props.isRequired}
+      limit={200}
+      openSelectDialog={openSelectDialog}
     />
   );
 }

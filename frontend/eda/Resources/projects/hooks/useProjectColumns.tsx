@@ -47,7 +47,6 @@ export function useProjectColumns() {
         header: t('Git hash'),
         cell: (project) => <CopyCell text={project?.git_hash ? project.git_hash : ''} />,
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),

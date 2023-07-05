@@ -9,26 +9,8 @@ import {
   useSelected,
   useView,
 } from '../../framework';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
-
-export function hubKeyFn(item: { pulp_id: string }) {
-  return item.pulp_id;
-}
-
-export function nameKeyFn(item: { name: string }) {
-  return item.name;
-}
-
-export function idKeyFn(item: { id: number }) {
-  return item.id;
-}
-
-export function getIdFromPulpHref(pulp_href?: string) {
-  if (!pulp_href) return '';
-  const parts = pulp_href.split('/');
-  parts.pop();
-  return parts.pop() ?? '';
-}
 
 interface PulpItemsResponse<T extends object> {
   count: number;
@@ -43,13 +25,21 @@ export type IHubView<T extends object> = IView &
     refresh: () => Promise<PulpItemsResponse<T> | undefined>;
   };
 
-export function usePulpView<T extends object>(
-  url: string,
-  keyFn: (item: T) => string | number,
-  toolbarFilters?: IToolbarFilter[],
-  tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean
-): IHubView<T> {
+export function usePulpView<T extends object>({
+  url,
+  keyFn,
+  toolbarFilters,
+  tableColumns,
+  disableQueryString,
+  queryParams,
+}: {
+  url: string;
+  keyFn: (item: T) => string | number;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  disableQueryString?: boolean;
+  queryParams?: QueryParams;
+}): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString
@@ -58,7 +48,7 @@ export function usePulpView<T extends object>(
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
@@ -101,7 +91,8 @@ export function usePulpView<T extends object>(
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<PulpItemsResponse<T>>(data?.next, fetcher, {
+  const nextPage = serverlessURL(data?.next);
+  useSWR<PulpItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 

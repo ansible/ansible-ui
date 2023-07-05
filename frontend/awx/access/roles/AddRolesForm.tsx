@@ -13,7 +13,7 @@ import { PageFormInventorySelect } from '../../resources/inventories/components/
 import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
-import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { IRoles, useRolesMetadata } from './useRoleMetadata';
 
 interface UserRole {
@@ -143,7 +143,7 @@ function UserJobTemplateRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'job_template'}>
-      <PageFormJobTemplateSelect name="jobTemplateName" jobTemplatePath="resource" />
+      <PageFormJobTemplateSelect name="resource" />
       <Permissions roles={rolesMetadata.job_template} />
     </PageFormHidden>
   );
@@ -153,10 +153,7 @@ function UserWorkflowJobTemplateRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'workflow_job_template'}>
-      <PageFormWorkflowJobTemplateSelect
-        name="workflowJobTemplateName"
-        workflowJobTemplatePath="resource"
-      />
+      <PageFormWorkflowJobTemplateSelect name="resource" />
       <Permissions roles={rolesMetadata.workflow_job_template} />
     </PageFormHidden>
   );
@@ -166,7 +163,7 @@ function UserInventoryRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'inventory'}>
-      <PageFormInventorySelect name="inventoryName" inventoryPath="resource" />
+      <PageFormInventorySelect name="inventoryName" />
       <Permissions roles={rolesMetadata.inventory} />
     </PageFormHidden>
   );
@@ -176,7 +173,7 @@ function UserProjectRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'project'}>
-      <PageFormProjectSelect name="projectName" projectPath="resource" />
+      <PageFormProjectSelect name="resource" />
       <Permissions roles={rolesMetadata.project} />
     </PageFormHidden>
   );
@@ -186,7 +183,7 @@ function UserOrganizationRole() {
   const rolesMetadata = useRolesMetadata();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'organization'}>
-      <PageFormOrganizationSelect name="organizationName" organizationPath="resource" isRequired />
+      <PageFormSelectOrganization name="resource" isRequired />
       <Permissions roles={rolesMetadata.organization} />
     </PageFormHidden>
   );

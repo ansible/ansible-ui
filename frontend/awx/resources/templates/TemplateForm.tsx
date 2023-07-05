@@ -70,6 +70,7 @@ export function EditJobTemplate() {
       arrayedSkipTags,
       summary_fields: { credentials, labels },
     } = values;
+    values.project = values.summary_fields.project?.id;
     let jobTags = '';
     let skipTags = '';
     if (arrayedJobTags?.length) {
@@ -145,7 +146,7 @@ export function CreateJobTemplate() {
       arrayedSkipTags,
       summary_fields: { credentials = [], labels, webhook_credential },
     } = values;
-
+    values.project = values?.summary_fields?.project?.id;
     let jobTags = '';
     let skipTags = '';
     if (values?.arrayedJobTags?.length) {

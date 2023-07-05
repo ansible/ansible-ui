@@ -18,9 +18,10 @@ import {
   ToolbarSelectFilter,
   IToolbarSelectFilter,
 } from './PageToolbarFilterTypes/ToolbarSelectFilter';
+import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 
-export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter;
+export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter | IToolbarDateFilter;
 
 export type IFilterState = Record<string, string[] | undefined>;
 

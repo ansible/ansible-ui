@@ -25,7 +25,6 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { t } = useTranslation();
   const { setValue } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
-  const project = useWatch<JobTemplateForm>({ name: 'project' });
   const projectPath = useWatch({
     name: 'summary_fields.project',
   }) as Project;
@@ -46,15 +45,15 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
-      if (project) {
+      if (projectPath) {
         const playbooks = await requestGet<string[]>(
-          `/api/v2/projects/${project.toString()}/playbooks/`
+          `/api/v2/projects/${projectPath.id.toString()}/playbooks/`
         );
         return setPlaybookOptions(playbooks);
       }
     }
     handleFetchPlaybooks().catch(() => 'there was an error');
-  }, [project, setValue]);
+  }, [projectPath, setValue]);
 
   return (
     <>
@@ -90,14 +89,12 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
         name="summary_fields.inventory.name"
-        inventoryIdPath="inventory"
-        inventoryPath="summary_fields.inventory"
         isRequired={!isInventoryPrompted}
       />
       <PageFormProjectSelect<JobTemplateForm>
-        name="summary_fields.project.name"
+        name="summary_fields.project"
         project="project"
-        projectPath="summary_fields.project"
+        isRequired
       />
 
       <PageFormSelectOption<JobTemplateForm>
