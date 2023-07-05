@@ -77,6 +77,9 @@ export function HubDashboard() {
       branch: 'two - 5',
     },
   ];
+  const getItemKey = (item: Item) => {
+    return item.id.toString();
+  };
 
   return (
     <PageLayout>
@@ -175,7 +178,7 @@ export function HubDashboard() {
         </PageDashboardCarousel>
         <PageDashboardCard title="Reorder" width="xxl">
           <CardBody>
-            <ReorderItems columns={columns} items={items} />
+            <ReorderItems columns={columns} items={items} keyFn={getItemKey} />
           </CardBody>
         </PageDashboardCard>
       </PageDashboard>

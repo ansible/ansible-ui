@@ -8,11 +8,11 @@ import {
   TbodyProps,
   TrProps,
 } from '@patternfly/react-table';
-import { v4 } from 'uuid';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import React, { ReactNode, useRef, useState } from 'react';
+import { idKeyFn } from '../../frontend/hub/api';
 
-type ReorderItemsProps<T extends { uuid?: string }> = {
+type ReorderItemsProps<T extends object> = {
   /** Array of columns */
   columns: {
     header: string;
@@ -20,8 +20,8 @@ type ReorderItemsProps<T extends { uuid?: string }> = {
   }[];
   /** Array of items */
   items: T[];
-  // /** A function that gets a unique key for each item. */
-  // keyFn: (item: T) => string | number;
+  /** A function that gets a unique key for each item. */
+  keyFn: (item: T) => string | number;
   onSave?: (items: string[]) => void;
   isCompactBorderless?: boolean;
   isSingleColumnList?: boolean;
@@ -30,21 +30,12 @@ type ReorderItemsProps<T extends { uuid?: string }> = {
 /**
  * Component to reorder items in a list by dragging items to a desired position
  */
-export function ReorderItems<T extends { uuid?: string }>(props: ReorderItemsProps<T>) {
-  const { columns, items, isCompactBorderless, isSingleColumnList } = props;
+export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
+  const { columns, items, isCompactBorderless, isSingleColumnList, keyFn } = props;
   const [listItems, setListItems] = useState([...items]);
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-
-  const addUUIDToRows = (allData: T[]) => {
-    return allData.map((item) => ({ ...item, uuid: v4() }));
-  };
-
-  React.useEffect(() => {
-    setListItems(addUUIDToRows(listItems));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -103,7 +94,7 @@ export function ReorderItems<T extends { uuid?: string }>(props: ReorderItemsPro
   };
 
   const moveItem = (arr: T[], itemId: string, toIndex: number) => {
-    const fromIndex = arr.findIndex((item) => item.uuid === itemId);
+    const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
 
     if (fromIndex === toIndex) {
       return arr;
@@ -163,8 +154,8 @@ export function ReorderItems<T extends { uuid?: string }>(props: ReorderItemsPro
       <Tbody ref={bodyRef} onDragOver={onDragOver} onDragLeave={onDragLeave}>
         {listItems.map((listItem) => (
           <Tr
-            key={listItem.uuid}
-            id={listItem.uuid}
+            key={keyFn(listItem)}
+            id={keyFn(listItem) as string}
             draggable
             onDrop={onDrop}
             onDragEnd={onDragEnd}
@@ -172,11 +163,11 @@ export function ReorderItems<T extends { uuid?: string }>(props: ReorderItemsPro
           >
             <Td
               draggableRow={{
-                id: `draggable-row-${listItem.uuid as string}`,
+                id: `draggable-row-${keyFn(listItem) as string}`,
               }}
             />
             {columns.map((column, columnIndex) => (
-              <Td key={`${listItem.uuid as string}_${columnIndex}`}>{column.cell(listItem)}</Td>
+              <Td key={`${keyFn(listItem) as string}_${columnIndex}`}>{column.cell(listItem)}</Td>
             ))}
           </Tr>
         ))}
