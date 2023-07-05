@@ -39,19 +39,19 @@ import useSWR, { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
 import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { useSettingsDialog } from '../../framework/Settings';
-import { RouteObj, RouteType } from '../Routes';
+import { RouteObj } from '../Routes';
 import AwxIcon from '../assets/AWX.svg';
 import EdaIcon from '../assets/EDA.svg';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { useAwxConfig } from '../awx/common/useAwxConfig';
+import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
-import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../awx/common/useAwxConfig';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -238,7 +238,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
   );
 }
 
-export function isRouteActive(route: RouteType | RouteType[], location: { pathname: string }) {
+export function isRouteActive(route: string | string[], location: { pathname: string }) {
   if (Array.isArray(route)) {
     for (const r of route) {
       if (location.pathname.startsWith(r)) return true;

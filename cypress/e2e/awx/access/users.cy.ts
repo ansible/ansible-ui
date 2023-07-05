@@ -18,7 +18,9 @@ describe('Users List Actions', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   beforeEach(() => {
@@ -91,7 +93,9 @@ describe('Users Delete Actions', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   beforeEach(() => {
