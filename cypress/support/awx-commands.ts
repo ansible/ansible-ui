@@ -814,7 +814,7 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   const username = Cypress.env('AWX_USERNAME') as string;
   const password = Cypress.env('AWX_PASSWORD') as string;
   cy.exec(
-    `curl -d '${JSON.stringify({
+    `curl --insecure -d '${JSON.stringify({
       description: 'E2E-' + randomString(4),
       ...awxToken,
     })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}/api/v2/tokens/'`
