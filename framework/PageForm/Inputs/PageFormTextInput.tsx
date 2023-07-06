@@ -1,6 +1,6 @@
-import { Button } from '@patternfly/react-core';
-import { SearchIcon } from '@patternfly/react-icons';
-import { ReactElement, ReactNode } from 'react';
+import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core';
+import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
+import { ReactElement, ReactNode, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -11,9 +11,9 @@ import {
   ValidationRule,
   useFormContext,
 } from 'react-hook-form';
+import { Help } from '../../components/Help';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
-import { FormGroupTextInput } from './FormGroupTextInput';
 
 export type PageFormTextInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -83,6 +83,8 @@ export type PageFormTextInputProps<
    * An input group groups multiple related controls or inputs together so they appear as one control.
    */
   button?: ReactElement;
+
+  helperText?: string;
 
   /**
    * When present, it specifies that the <input> element should be disabled.
@@ -182,7 +184,6 @@ export function PageFormTextInput<
   TSelection extends FieldValues = FieldValues
 >(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection>) {
   const {
-    id,
     type,
     name,
     label,
@@ -191,6 +192,8 @@ export function PageFormTextInput<
     additionalControls,
     placeholder,
     button,
+    helperText,
+    isDisabled,
     isReadOnly,
     isRequired,
     validate,
@@ -206,12 +209,15 @@ export function PageFormTextInput<
     autoComplete,
   } = props;
 
+  const id = props.id ?? name.split('.').join('-');
+
   const {
     control,
     setValue,
-    trigger,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
+
+  const [showSecret, setShowSecret] = useState(false);
 
   const [translations] = useFrameworkTranslations();
 
@@ -221,59 +227,73 @@ export function PageFormTextInput<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+        const helperTextInvalid = error?.message
+          ? validate && isValidating
+            ? translations.validating
+            : error?.message
+          : undefined;
+
         function onChangeHandler(value: string) {
           onChange(value.trimStart());
         }
         return (
-          <FormGroupTextInput
-            id={id ?? name.split('.').join('-')}
-            type={type}
+          <FormGroup
+            id={`${id ?? ''}-form-group`}
+            fieldId={id}
             label={label}
-            labelHelpTitle={labelHelpTitle}
-            labelHelp={labelHelp}
-            placeholder={placeholder}
-            additionalControls={additionalControls}
-            onBlur={() => trigger(name) as unknown as () => void}
+            helperText={helperText}
+            helperTextInvalid={helperTextInvalid}
+            validated={helperTextInvalid ? 'error' : undefined}
             isRequired={isRequired}
-            value={value}
-            onChange={onChangeHandler}
-            helperTextInvalid={
-              error?.message
-                ? validate && isValidating
-                  ? translations.validating
-                  : error?.message
-                : undefined
-            }
-            isReadOnly={isReadOnly || isSubmitting}
-            minLength={undefined}
-            maxLength={undefined}
-            min={min}
-            max={max}
-            autoFocus={autoFocus}
-            autoComplete={autoComplete}
+            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+            labelInfo={additionalControls}
           >
-            {selectTitle && (
-              <Button
-                ouiaId={`lookup-${name}-button`}
-                variant="control"
-                onClick={() =>
-                  selectOpen?.((item: TSelection) => {
-                    if (selectValue) {
-                      const value = selectValue(item);
-                      setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
-                        shouldValidate: true,
-                      });
-                    }
-                  }, selectTitle)
-                }
-                aria-label="Options menu"
-                isDisabled={props.isDisabled || isSubmitting}
-              >
-                <SearchIcon />
-              </Button>
-            )}
-            {button && button}
-          </FormGroupTextInput>
+            <InputGroup>
+              <TextInput
+                id={id}
+                placeholder={placeholder}
+                onChange={onChangeHandler}
+                value={value}
+                aria-describedby={id ? `${id}-form-group` : undefined}
+                validated={helperTextInvalid ? 'error' : undefined}
+                type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
+                readOnlyVariant={isReadOnly ? 'default' : undefined}
+                isDisabled={isDisabled}
+                autoFocus={autoFocus}
+                autoComplete={autoComplete}
+              />
+              {type === 'password' && (
+                <Button
+                  variant="control"
+                  onClick={() => setShowSecret(!showSecret)}
+                  isDisabled={isDisabled || isReadOnly}
+                >
+                  {showSecret ? <EyeIcon /> : <EyeSlashIcon />}
+                </Button>
+              )}
+              {selectTitle && (
+                <Button
+                  ouiaId={`lookup-${name}-button`}
+                  variant="control"
+                  onClick={() =>
+                    selectOpen?.((item: TSelection) => {
+                      if (selectValue) {
+                        const value = selectValue(item);
+                        setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
+                          shouldValidate: true,
+                        });
+                      }
+                    }, selectTitle)
+                  }
+                  aria-label="Options menu"
+                  isDisabled={isDisabled || isSubmitting}
+                >
+                  <SearchIcon />
+                </Button>
+              )}
+              {button && button}
+            </InputGroup>
+          </FormGroup>
         );
       }}
       rules={{
@@ -307,11 +327,8 @@ export function PageFormTextInput<
               }
             : maxLength,
 
-        // TODO - max might be a string
-        // - if type is date - parse string to date
-        // - if type is number - parse string to number
         min:
-          typeof label === 'string' && typeof min === 'number'
+          typeof label === 'string' && (typeof min === 'number' || typeof min === 'string')
             ? {
                 value: min,
                 message: `${capitalizeFirstLetter(
@@ -320,11 +337,8 @@ export function PageFormTextInput<
               }
             : minLength,
 
-        // TODO - max might be a string
-        // - if type is date - parse string to date
-        // - if type is number - parse string to number
         max:
-          typeof label === 'string' && typeof max === 'number'
+          typeof label === 'string' && (typeof max === 'number' || typeof max === 'string')
             ? {
                 value: max,
                 message: `${capitalizeFirstLetter(
