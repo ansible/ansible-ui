@@ -23,7 +23,7 @@ export type PageFormTextInputProps<
   /**
    * The id attribute specifies a unique id for an HTML element. The value of the id attribute must be unique within the HTML document.
    *
-   * The id attribute is used to point to a specific style declaration in a style sheet. It is also used by JavaScript to access and manipulate the element with the specific id.
+   * It is also used by JavaScript to access and manipulate the element with the specific id.
    */
   id?: string;
 
@@ -31,8 +31,6 @@ export type PageFormTextInputProps<
    * The name attribute specifies the name of an <input> element.
    *
    * The name attribute is used to reference elements in a JavaScript, or to reference form data after a form is submitted.
-   *
-   * Note: Only form elements with a name attribute will have their values passed when submitting a form.
    */
   name: TFieldName;
 
@@ -96,21 +94,15 @@ export type PageFormTextInputProps<
   isDisabled?: boolean;
 
   /**
-   * The readonly attribute is a boolean attribute.
-   *
    * When present, it specifies that an input field is read-only.
    *
    * A read-only input field cannot be modified (however, a user can tab to it, highlight it, and copy the text from it).
    *
    * The readonly attribute can be set to keep a user from changing the value until some other conditions have been met (like selecting a checkbox, etc.). Then, a JavaScript can remove the readonly value, and make the input field editable.
-   *
-   * Note: A form will still submit an input field that is readonly, but will not submit an input field that is disabled!
    */
   isReadOnly?: boolean;
 
   /**
-   * The required attribute is a boolean attribute.
-   *
    * When present, it specifies that an input field must be filled out before submitting the form.
    *
    * Note: The required attribute works with the following input types: text, search, url, tel, email, password, date pickers, number, checkbox, radio, and file.
@@ -119,8 +111,6 @@ export type PageFormTextInputProps<
 
   /**
    * You can pass a callback function as the argument to validate, or you can pass an object of callback functions to validate all of them. This function will be executed on its own without depending on other validation rules included in the required attribute.
-   *
-   * Note: for object or array input data, it's recommended to use the validate function for validation as the other rules mostly apply to string, string[], number and boolean data types.
    */
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
 
@@ -167,8 +157,6 @@ export type PageFormTextInputProps<
   selectOpen?: (callback: (selection: TSelection) => void, title: string) => void;
 
   /**
-   * The autofocus attribute is a boolean attribute.
-   *
    * When present, it specifies that an <input> element should automatically get focus when the page loads.
    */
   autoFocus?: boolean;
@@ -183,7 +171,11 @@ export type PageFormTextInputProps<
   autoComplete?: string;
 };
 
-/** PatternFly TextInput wrapper for use with react-hook-form */
+/**
+ * TextInput component that is used to render a text input field in a PageForm.
+ *
+ * It leverages `react-hook-form` to register itself to the parent form and to perform validation.
+ */
 export function PageFormTextInput<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
