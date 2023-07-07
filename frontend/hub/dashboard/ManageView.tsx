@@ -45,6 +45,7 @@ export function ManageView() {
     },
   ];
   const [updatedOrder, setUpdatedOrder] = useState<Category[]>(collectionCategories);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
   const onClose = useCallback(() => {
     setDialog(undefined);
@@ -58,8 +59,13 @@ export function ManageView() {
     // TODO: Update order in which panels show up in the dashboard UI using updatedOrder
     // TODO: Update order in browser's local storage
     // eslint-disable-next-line no-console
-    console.log('updatedOrder: ', updatedOrder);
+    console.log('🚀 ~ file: ManageView.tsx: updatedOrder: ', updatedOrder);
+    // eslint-disable-next-line no-console
+    console.log('🚀 ~ file: ManageView.tsx: selectedCategories: ', selectedCategories);
+    onClose();
   };
+
+  // const ref = useRef();
 
   return (
     <Modal
@@ -84,14 +90,17 @@ export function ManageView() {
     >
       <ContainerDiv>
         <ReorderItems
+          // ref={ref}
           columns={columns}
           items={collectionCategories}
           keyFn={getItemKey}
-          onSave={(reorderedItems) => {
+          onSave={(reorderedItems, selectedItems) => {
             setUpdatedOrder(reorderedItems);
+            setSelectedCategories(selectedItems);
           }}
           isCompactBorderless
           hideColumnHeaders
+          isSelectableWithCheckbox
         />
       </ContainerDiv>
     </Modal>

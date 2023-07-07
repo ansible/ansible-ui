@@ -23,23 +23,54 @@ type ReorderItemsProps<T extends object> = {
   /** A function that gets a unique key for each item */
   keyFn: (item: T) => string | number;
   /** Callback function to process items with the updated order */
-  onSave: (items: T[]) => void;
+  onSave: (items: T[], selectedItems: T[]) => void;
   /** Setting to show the table with the `compact` variant and without borders for rows */
   isCompactBorderless?: boolean;
   /** Setting to hide column headers */
   hideColumnHeaders?: boolean;
+  /** Setting to include a column of checkboxes to enable selection of rows */
+  isSelectableWithCheckbox?: boolean;
+  /** Initial selection of rows */
+  defaultSelection?: T[];
+};
+
+export type ReorderItemsRef<T extends object> = {
+  // Get the current state of reordered and selected items
+  getReorderedAndSelectedItems: () => { reorderedItems: T[]; selectedItems: T[] };
 };
 
 /**
- * Component to reorder items in a list by dragging items to a desired position
+ * Component to reorder items in a list by dragging items to a desired position.
+ * [Optionally allows selecting items from the list using checkboxes.]
  */
 export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
-  const { columns, items, isCompactBorderless, hideColumnHeaders, keyFn, onSave } = props;
+  const {
+    columns,
+    items,
+    isCompactBorderless,
+    hideColumnHeaders,
+    keyFn,
+    onSave,
+    isSelectableWithCheckbox,
+    defaultSelection,
+  } = props;
   const [listItems, setListItems] = useState([...items]);
+  const [selectedItems, setSelectedItems] = useState([
+    ...(defaultSelection ? defaultSelection : []),
+  ]);
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { t } = useTranslation();
+
+  // useImperativeHandle<ReorderItemsRef<T>, ReorderItemsRef<T>>(ref, () => ({
+  //   getReorderedAndSelectedItems() {
+  //     return {
+  //       reorderedItems: listItems,
+  //       selectedItems,
+  //     };
+  //   },
+  // }));
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -92,7 +123,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
         const tempItemOrder = moveItem([...listItems], draggedItemId, newDraggedItemIndex);
         setListItems(tempItemOrder);
-        onSave(tempItemOrder);
+        onSave(tempItemOrder, selectedItems);
       }
     }
     return null;
@@ -139,6 +170,17 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     }
   };
 
+  const onSelect = (isSelected: boolean, listItem: T) => {
+    setSelectedItems((prevSelected) => {
+      const otherSelectedItems = prevSelected.filter((item) => item !== listItem);
+      return isSelected ? [...otherSelectedItems, listItem] : otherSelectedItems;
+    });
+  };
+
+  const isItemSelected = (item: T) => {
+    return selectedItems.includes(item);
+  };
+
   return (
     <TableComposable
       aria-label={t(`Table with draggable rows`)}
@@ -157,7 +199,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
         </Thead>
       )}
       <Tbody ref={bodyRef} onDragOver={onDragOver} onDragLeave={onDragLeave}>
-        {listItems.map((listItem) => (
+        {listItems.map((listItem, rowIndex) => (
           <Tr
             key={keyFn(listItem)}
             id={keyFn(listItem) as string}
@@ -170,6 +212,18 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
               draggableRow={{
                 id: `draggable-row-${keyFn(listItem) as string}`,
               }}
+            />
+            <Td
+              select={
+                isSelectableWithCheckbox
+                  ? {
+                      rowIndex,
+                      variant: 'checkbox',
+                      onSelect: (_event, isSelected) => onSelect(isSelected, listItem),
+                      isSelected: isItemSelected(listItem),
+                    }
+                  : undefined
+              }
             />
             {columns.map((column, columnIndex) => (
               <Td key={`${keyFn(listItem) as string}_${columnIndex}`}>{column.cell(listItem)}</Td>
