@@ -69,7 +69,7 @@ function ProjectCreateInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateCredential}>Create credential</Link>}
+        footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
