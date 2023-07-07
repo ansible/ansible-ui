@@ -29,10 +29,8 @@ import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
-//import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
-import { useCollectionsActions } from './hooks/useCollectionsActions';
 import { hubAPI } from '../api';
 
 export function Collections() {
