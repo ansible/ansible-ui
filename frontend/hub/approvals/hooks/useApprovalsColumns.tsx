@@ -61,6 +61,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         ),
         card: 'hidden',
         list: 'secondary',
+        sort: 'pulp_created',
       },
     ],
     [t]

@@ -12,7 +12,7 @@ export function Approvals() {
   const tableColumns = useApprovalsColumns();
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
-    keyFn: (item) => item.collection_version.pulp_href,
+    keyFn: (item) => item.collection_version.pulp_href + ':' + item.repository.name,
     tableColumns,
     sortKey: 'order_by',
   });
@@ -20,9 +20,6 @@ export function Approvals() {
   return (
     <PageLayout>
       <PageHeader title={t('Collection Approvals')} />
-      {view.pageItems?.map((item, index) => (
-        <>{item.collection_version.version + ',  '}</>
-      ))}
       <PageTable<CollectionVersionSearch>
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading approvals')}
