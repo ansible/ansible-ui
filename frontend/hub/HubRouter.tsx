@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import { AutomationServers } from '../automation-servers/AutomationServers';
 import { Approvals } from './approvals/Approvals';
-import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
 import { HubDashboard } from './dashboard/Dashboard';
@@ -26,7 +25,6 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.HubDashboard} element={<HubDashboard />} />
       <Route path={RouteObjWithoutPrefix.Collections} element={<Collections />} />
       <Route path={RouteObjWithoutPrefix.UploadCollection} element={<UploadCollection />} />
-      <Route path={RouteObjWithoutPrefix.CollectionDetails} element={<CollectionDetails />} />
 
       <Route path={RouteObjWithoutPrefix.Namespaces} element={<Namespaces />} />
       <Route path={RouteObjWithoutPrefix.CreateNamespace} element={<CreateHubNamespace />} />
