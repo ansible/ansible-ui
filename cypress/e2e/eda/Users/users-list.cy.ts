@@ -1,7 +1,7 @@
 //Tests a user's ability to perform certain actions on the Users list in the EDA UI.
 
 describe('EDA Users List', () => {
-  let roleIDs: string[];
+  let roleIDs: { [key: string]: string };
   let editorRoleID: string;
   let _contributorRoleID: string;
   let auditorRoleID: string;
@@ -10,12 +10,16 @@ describe('EDA Users List', () => {
   before(() => {
     cy.edaLogin();
     cy.getEdaRoles().then((rolesArray) => {
-      roleIDs = rolesArray.map((role) => role.id);
-      _contributorRoleID = roleIDs[0];
-      viewerRoleID = roleIDs[1];
-      editorRoleID = roleIDs[2];
-      auditorRoleID = roleIDs[4];
-      operatorRoleID = roleIDs[5];
+      roleIDs = rolesArray.reduce((acc, role) => {
+        const { name, id } = role;
+        return { ...acc, [name]: id };
+      }, {});
+
+      _contributorRoleID = roleIDs.Contributor;
+      viewerRoleID = roleIDs.Viewer;
+      editorRoleID = roleIDs.Editor;
+      auditorRoleID = roleIDs.Auditor;
+      operatorRoleID = roleIDs.Operator;
     });
   });
 

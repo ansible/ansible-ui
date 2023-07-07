@@ -274,6 +274,9 @@ export const RouteObj = {
   EdaRoleDetails: `${edaRoutePrefix}/roles/details/:id`,
   EditEdaRole: `${edaRoutePrefix}/roles/edit/:id`,
   CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
+
+  EdaMyDetails: `${edaRoutePrefix}/users/me`,
+  EdaMyTokens: `${edaRoutePrefix}/users/me/tokens`,
 };
 
 export function useRoutesWithoutPrefix(prefix: string) {
