@@ -11,17 +11,20 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
       {
         header: t('Namespace'),
         cell: (approval) => <TextCell text={approval.namespace_metadata?.name} />,
+        sort: 'namespace',
       },
       {
         header: t('Collection'),
         cell: (approval) => <TextCell text={approval.collection_version.name} />,
         card: 'name',
         list: 'name',
+        sort: 'name',
       },
       {
         header: t('Version'),
         cell: (approval) => <TextCell text={approval.collection_version.version} />,
         list: 'secondary',
+        sort: 'version',
       },
       {
         header: t('Repository'),

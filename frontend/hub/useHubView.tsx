@@ -37,6 +37,7 @@ export function useHubView<T extends object>({
   tableColumns,
   disableQueryString,
   queryParams,
+  sortKey,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -44,6 +45,7 @@ export function useHubView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
+  sortKey?: string;
 }): IHubView<T> {
   const view = useView(
     { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
@@ -73,11 +75,14 @@ export function useHubView<T extends object>({
   }
 
   if (sort) {
+    if (!sortKey) {
+      sortKey = 'sort';
+    }
     queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `sort=-${sort}`;
+      queryString += `${sortKey}=-${sort}`;
     } else {
-      queryString += `sort=${sort}`;
+      queryString += `${sortKey}=${sort}`;
     }
   }
 

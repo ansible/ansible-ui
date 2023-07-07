@@ -14,11 +14,15 @@ export function Approvals() {
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: (item) => item.collection_version.pulp_href,
     tableColumns,
+    sortKey: 'order_by',
   });
 
   return (
     <PageLayout>
       <PageHeader title={t('Collection Approvals')} />
+      {view.pageItems?.map((item, index) => (
+        <>{item.collection_version.version + ',  '}</>
+      ))}
       <PageTable<CollectionVersionSearch>
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading approvals')}
