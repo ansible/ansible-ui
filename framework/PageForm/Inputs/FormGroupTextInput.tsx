@@ -20,10 +20,11 @@ export type FormGroupTextInputProps = Pick<
   | 'minLength'
   | 'maxLength'
   | 'onBlur'
+  | 'min'
+  | 'max'
 > &
   PageFormGroupProps & {
     children?: ReactNode;
-    min?: string;
   };
 
 /** A PatternFly FormGroup with a PatternFly TextInput */
