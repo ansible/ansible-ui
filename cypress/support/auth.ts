@@ -1,3 +1,5 @@
+import { SERVER_TYPES } from './constants';
+
 Cypress.Commands.add(
   'login',
   (server: string, username: string, password: string, serverType: string) => {
@@ -5,7 +7,17 @@ Cypress.Commands.add(
     window.localStorage.setItem('disclaimer', 'true');
 
     if (Cypress.env('TEST_STANDALONE') === true) {
-      if (serverType === 'EDA server') {
+      if (serverType === SERVER_TYPES.HUB_SERVER) {
+        cy.visit(`/`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+        cy.typeInputByLabel(/^Username$/, username);
+        cy.typeInputByLabel(/^Password$/, password);
+        cy.get('button[type=submit]').click();
+        return;
+      }
+      if (serverType === SERVER_TYPES.EDA_SERVER) {
         // Standalone EDA login
         cy.visit(`/login`, {
           retryOnStatusCodeFailure: true,
@@ -15,7 +27,7 @@ Cypress.Commands.add(
         cy.typeInputByLabel(/^Password$/, password);
         cy.get('button[type=submit]').click();
         return;
-      } else if (serverType === 'AWX Ansible server') {
+      } else if (serverType === SERVER_TYPES.AWX_SERVER) {
         // Standalone AWX login
         cy.visit(`/ui_next`, {
           retryOnStatusCodeFailure: true,
@@ -65,7 +77,7 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_SERVER') as string,
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string,
-        'AWX Ansible server'
+        SERVER_TYPES.AWX_SERVER
       );
       cy.hasTitle('Welcome to');
     },
@@ -87,7 +99,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_SERVER') as string,
         Cypress.env('EDA_USERNAME') as string,
         Cypress.env('EDA_PASSWORD') as string,
-        'EDA server'
+        SERVER_TYPES.EDA_SERVER
       );
       cy.hasTitle('Welcome to');
     },
@@ -99,4 +111,26 @@ Cypress.Commands.add('edaLogin', () => {
     }
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('hubLogin', () => {
+  cy.session(
+    'HUB',
+    () => {
+      cy.login(
+        Cypress.env('HUB_SERVER') as string,
+        Cypress.env('HUB_USERNAME') as string,
+        Cypress.env('HUB_PASSWORD') as string,
+        SERVER_TYPES.HUB_SERVER
+      );
+      cy.hasTitle('Welcome to');
+    },
+    {
+      cacheAcrossSpecs: true,
+      validate: () => {
+        cy.request({ method: 'GET', url: 'api/automation-hub/_ui/v1/me/' });
+      },
+    }
+  );
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
