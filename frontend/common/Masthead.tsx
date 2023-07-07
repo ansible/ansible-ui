@@ -52,6 +52,7 @@ import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
+import { EdaUser } from '../eda/interfaces/EdaUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -290,11 +291,7 @@ function AccountDropdown() {
 
 export function EdaUserInfo() {
   const fetcher = useFetcher();
-  const meResponse = useSWR<{ id: number; username: string }>(
-    `${API_PREFIX}/users/me/`,
-    fetcher,
-    swrOptions
-  );
+  const meResponse = useSWR<EdaUser>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
   return meResponse?.data;
 }
 
@@ -348,11 +345,7 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             isEdaServer(automationServer)
-              ? history(
-                  edaActiveUser
-                    ? RouteObj.EdaUserDetails.replace(':id', `${edaActiveUser?.id || ''}`)
-                    : RouteObj.EdaUsers
-                )
+              ? history(edaActiveUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
               : history(
                   activeUser
                     ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())

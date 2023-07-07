@@ -20,7 +20,7 @@ import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
-import { EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
+import { EdaUserDetails, EdaMyDetails } from './UserAccess/Users/EdaUserDetails';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
@@ -125,6 +125,11 @@ export function EventDrivenRouter() {
       <Route
         path={RouteObjWithoutPrefix.EdaUserDetailsTokens}
         element={<EdaUserDetails initialTabIndex={1} />}
+      />
+      <Route path={RouteObjWithoutPrefix.EdaMyDetails} element={<EdaMyDetails />} />
+      <Route
+        path={RouteObjWithoutPrefix.EdaMyTokens}
+        element={<EdaMyDetails initialTabIndex={1} />}
       />
 
       <Route path={RouteObjWithoutPrefix.EdaGroups} element={<Groups />} />
