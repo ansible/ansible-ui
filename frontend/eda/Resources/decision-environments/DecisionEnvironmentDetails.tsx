@@ -26,8 +26,8 @@ import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
-import { useDeleteDecisionEnvironments } from './hooks/useDeleteDecisionEnvironments';
+import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
+import { useDeleteDecisionEnvironment } from './hooks/useDeleteDecisionEnvironments';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -47,23 +47,23 @@ export function DecisionEnvironmentDetails() {
       </Trans>
     </>
   );
-  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
+  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
     undefined,
     SWR_REFRESH_INTERVAL
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential_id ?? ''}/`
+    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
   );
 
-  const deleteDecisionEnvironments = useDeleteDecisionEnvironments((deleted) => {
+  const deleteDecisionEnvironment = useDeleteDecisionEnvironment((deleted) => {
     if (deleted.length > 0) {
       navigate(RouteObj.EdaDecisionEnvironments);
     }
   });
 
-  const itemActions = useMemo<IPageAction<EdaDecisionEnvironment>[]>(
+  const itemActions = useMemo<IPageAction<EdaDecisionEnvironmentRead>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -72,7 +72,7 @@ export function DecisionEnvironmentDetails() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit decision environment'),
-        onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
+        onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           navigate(
             RouteObj.EditEdaDecisionEnvironment.replace(':id', `${decisionEnvironment?.id || ''}`)
           ),
@@ -82,16 +82,16 @@ export function DecisionEnvironmentDetails() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision environment'),
-        onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
-          deleteDecisionEnvironments([decisionEnvironment]),
+        onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
+          deleteDecisionEnvironment([decisionEnvironment]),
         isDanger: true,
       },
     ],
-    [deleteDecisionEnvironments, navigate, t]
+    [deleteDecisionEnvironment, navigate, t]
   );
 
   const renderDecisionEnvironmentDetailsTab = (
-    decisionEnvironment: EdaDecisionEnvironment | undefined
+    decisionEnvironment: EdaDecisionEnvironmentRead | undefined
   ): JSX.Element => {
     return (
       <PageDetails>
@@ -104,11 +104,11 @@ export function DecisionEnvironmentDetails() {
           label={t('Credential')}
           helpText={t('The token needed to utilize the Decision environment image.')}
         >
-          {decisionEnvironment && decisionEnvironment.credential_id ? (
+          {decisionEnvironment && decisionEnvironment.credential?.id ? (
             <Link
               to={RouteObj.EdaCredentialDetails.replace(
                 ':id',
-                `${decisionEnvironment?.credential_id || ''}`
+                `${decisionEnvironment?.credential?.id || ''}`
               )}
             >
               {credential?.name}
@@ -136,7 +136,7 @@ export function DecisionEnvironmentDetails() {
           { label: decisionEnvironment?.name },
         ]}
         headerActions={
-          <PageActions<EdaDecisionEnvironment>
+          <PageActions<EdaDecisionEnvironmentRead>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={decisionEnvironment}
