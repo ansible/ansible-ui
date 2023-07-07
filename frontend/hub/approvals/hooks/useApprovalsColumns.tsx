@@ -9,10 +9,23 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
+        header: t('Namespace'),
+        cell: (approval) => <TextCell text={approval.namespace_metadata?.name} />,
+      },
+      {
         header: t('Collection'),
         cell: (approval) => <TextCell text={approval.collection_version.name} />,
         card: 'name',
         list: 'name',
+      },
+      {
+        header: t('Version'),
+        cell: (approval) => <TextCell text={approval.collection_version.version} />,
+        list: 'secondary',
+      },
+      {
+        header: t('Repository'),
+        cell: (approval) => <TextCell text={approval.repository.name} />,
       },
       {
         header: t('Status'),
@@ -37,15 +50,6 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             return <TextCell icon={<ThumbsUpIcon />} text={t('Rejected')} color={PFColorE.Red} />;
           }
         },
-      },
-      {
-        header: t('Namespace'),
-        cell: (approval) => <TextCell text={approval.namespace_metadata?.name} />,
-      },
-      {
-        header: t('Version'),
-        cell: (approval) => <TextCell text={approval.collection_version.version} />,
-        list: 'secondary',
       },
       {
         header: t('Created'),
