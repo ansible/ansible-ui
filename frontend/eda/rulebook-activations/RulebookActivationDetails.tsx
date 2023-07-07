@@ -149,6 +149,29 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               {rulebookActivation?.description || ''}
             </PageDetail>
             <PageDetail
+              label={t('Project')}
+              helpText={t('Projects are a logical collection of rulebooks.')}
+            >
+              {rulebookActivation && rulebookActivation.project?.id ? (
+                <Link
+                  to={RouteObj.EdaProjectDetails.replace(
+                    ':id',
+                    `${rulebookActivation.project?.id || ''}`
+                  )}
+                >
+                  {rulebookActivation?.project?.name}
+                </Link>
+              ) : (
+                rulebookActivation?.project?.name || ''
+              )}
+            </PageDetail>
+            <PageDetail
+              label={t('Rulebook')}
+              helpText={t('Rulebooks will be shown according to the project selected.')}
+            >
+              {rulebookActivation?.rulebook?.name || ''}
+            </PageDetail>
+            <PageDetail
               label={t('Decision environment')}
               helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
             >
@@ -165,33 +188,10 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
                 rulebookActivation?.decision_environment?.name || ''
               )}
             </PageDetail>
-            <PageDetail
-              label={t('Rulebook')}
-              helpText={t('Rulebooks will be shown according to the project selected.')}
-            >
-              {rulebookActivation?.rulebook?.name || ''}
-            </PageDetail>
             <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
               {rulebookActivation?.restart_policy
                 ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
                 : ''}
-            </PageDetail>
-            <PageDetail
-              label={t('Project')}
-              helpText={t('Projects are a logical collection of rulebooks.')}
-            >
-              {rulebookActivation && rulebookActivation.project?.id ? (
-                <Link
-                  to={RouteObj.EdaProjectDetails.replace(
-                    ':id',
-                    `${rulebookActivation.project?.id || ''}`
-                  )}
-                >
-                  {rulebookActivation?.project?.name}
-                </Link>
-              ) : (
-                rulebookActivation?.project?.name || ''
-              )}
             </PageDetail>
             <PageDetail label={t('Activation status')}>
               <StatusCell status={rulebookActivation?.status || ''} />
