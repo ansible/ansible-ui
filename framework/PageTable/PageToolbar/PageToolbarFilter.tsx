@@ -204,7 +204,12 @@ function ToolbarFilterInput(props: {
       );
     case 'select':
       return (
-        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} hasSearch={filter.hasSearch}/>
+        <ToolbarSelectFilter
+          {...props}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          hasSearch={filter.hasSearch}
+        />
       );
   }
   return <></>;
