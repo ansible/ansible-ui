@@ -72,7 +72,7 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateCredential}>Create credential</Link>}
+        footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
         labelHelp={t('The token needed to utilize the Decision environment image.')}
         labelHelpTitle={t('Credential')}
       />
