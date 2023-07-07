@@ -55,9 +55,7 @@ function ProjectCreateInputs() {
         placeholder={t('Enter SCM URL')}
         validate={isValidUrl}
         labelHelpTitle={t('SCM URL')}
-        labelHelp={t(
-          'A URL to a remote archive, such as a Github Release or a build artifact stored in Artifactory and unpacks it into the project path for use.'
-        )}
+        labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       />
       <PageFormSelectOption
         name={'credential_id'}
