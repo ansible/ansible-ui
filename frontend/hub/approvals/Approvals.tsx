@@ -1,33 +1,30 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { useHubView } from '../useHubView';
-import { Approval } from './Approval';
+import { CollectionVersionSearch } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
-import { idKeyFn, hubAPI } from '../api';
+import { hubAPI } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();
-  const toolbarFilters = useApprovalFilters();
+  //const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
-  const view = useHubView<Approval>({
-    url: hubAPI`/_ui/v1/collection-versions/`,
-    keyFn: idKeyFn,
-    toolbarFilters,
+  const view = useHubView<CollectionVersionSearch>({
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    keyFn: (item) => item.collection_version.pulp_href,
     tableColumns,
   });
-  const toolbarActions = useApprovalsActions();
-  const rowActions = useApprovalActions(() => void view.refresh());
+  //const toolbarActions = useApprovalsActions();
+  //const rowActions = useApprovalActions(() => void view.refresh());
+
   return (
     <PageLayout>
       <PageHeader title={t('Collection Approvals')} />
-      <PageTable<Approval>
-        toolbarFilters={toolbarFilters}
+      <PageTable<CollectionVersionSearch>
         tableColumns={tableColumns}
-        toolbarActions={toolbarActions}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading approvals')}
         emptyStateTitle={t('No approvals yet')}
         {...view}

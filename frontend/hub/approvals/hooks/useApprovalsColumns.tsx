@@ -2,22 +2,22 @@ import { ExclamationTriangleIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, PFColorE, TextCell } from '../../../../framework';
-import { Approval } from '../Approval';
+import { CollectionVersionSearch } from '../Approval';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const tableColumns = useMemo<ITableColumn<Approval>[]>(
+  const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
         header: t('Collection'),
-        cell: (approval) => <TextCell text={approval.name} />,
+        cell: (approval) => <TextCell text={approval.collection_version.name} />,
         card: 'name',
         list: 'name',
       },
       {
         header: t('Status'),
         cell: (approval) => {
-          if (approval.repository_list.includes('staging')) {
+          if (approval.repository.pulp_labels.pipeline == 'staging') {
             return (
               <TextCell
                 icon={<ExclamationTriangleIcon />}
@@ -25,25 +25,33 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
                 color={PFColorE.Warning}
               />
             );
-          } else {
+          }
+
+          if (approval.repository.pulp_labels.pipeline == 'approved') {
             return (
               <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
             );
+          }
+
+          if (approval.repository.pulp_labels.pipeline == 'rejected') {
+            return <TextCell icon={<ThumbsUpIcon />} text={t('Rejected')} color={PFColorE.Red} />;
           }
         },
       },
       {
         header: t('Namespace'),
-        cell: (approval) => <TextCell text={approval.namespace} />,
+        cell: (approval) => <TextCell text={approval.namespace_metadata?.name} />,
       },
       {
         header: t('Version'),
-        cell: (approval) => <TextCell text={approval.version} />,
+        cell: (approval) => <TextCell text={approval.collection_version.version} />,
         list: 'secondary',
       },
       {
         header: t('Created'),
-        cell: (approval) => <DateTimeCell format="since" value={approval.created_at} />,
+        cell: (approval) => (
+          <DateTimeCell format="since" value={approval.collection_version.pulp_created} />
+        ),
         card: 'hidden',
         list: 'secondary',
       },
