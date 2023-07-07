@@ -16,7 +16,7 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaProject, EdaProjectCreate } from '../../interfaces/EdaProject';
+import { EdaProject, EdaProjectRead, EdaProjectCreate } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function ProjectCreateInputs() {
@@ -160,7 +160,7 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${id.toString()}/`);
+  const { data: project } = useGet<EdaProjectRead>(`${API_PREFIX}/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
@@ -198,7 +198,7 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, credential_id: project?.credential_id }}
+          defaultValue={{ ...project, credential_id: project?.credential?.id }}
         >
           <ProjectEditInputs />
         </PageForm>
