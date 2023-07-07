@@ -10,7 +10,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
     () => [
       {
         header: t('Namespace'),
-        cell: (approval) => <TextCell text={approval.namespace_metadata?.name} />,
+        cell: (approval) => <TextCell text={approval.collection_version?.namespace} />,
         sort: 'namespace',
       },
       {
