@@ -15,7 +15,10 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
@@ -123,7 +126,7 @@ export function EditDecisionEnvironment() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
+  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     `${API_PREFIX}/decision-environments/${id.toString()}/`
   );
   const { cache } = useSWRConfig();
@@ -164,7 +167,7 @@ export function EditDecisionEnvironment() {
           onCancel={onCancel}
           defaultValue={{
             ...decisionEnvironment,
-            credential_id: decisionEnvironment?.credential_id || undefined,
+            credential_id: decisionEnvironment?.credential?.id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />
