@@ -9,7 +9,7 @@ import {
   TrProps,
 } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ReorderItemsProps<T extends object> = {
@@ -22,8 +22,8 @@ type ReorderItemsProps<T extends object> = {
   items: T[];
   /** A function that gets a unique key for each item */
   keyFn: (item: T) => string | number;
-  /** Callback function to process items with the updated order */
-  onSave: (items: T[], selectedItems: T[]) => void;
+  /** Callback function to retrieve items with the updated order, selected items */
+  onChange: (items: T[], selectedItems: T[]) => void;
   /** Setting to show the table with the `compact` variant and without borders for rows */
   isCompactBorderless?: boolean;
   /** Setting to hide column headers */
@@ -50,7 +50,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     isCompactBorderless,
     hideColumnHeaders,
     keyFn,
-    onSave,
+    onChange,
     isSelectableWithCheckbox,
     defaultSelection,
   } = props;
@@ -63,14 +63,9 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   const [isDragging, setIsDragging] = useState(false);
   const { t } = useTranslation();
 
-  // useImperativeHandle<ReorderItemsRef<T>, ReorderItemsRef<T>>(ref, () => ({
-  //   getReorderedAndSelectedItems() {
-  //     return {
-  //       reorderedItems: listItems,
-  //       selectedItems,
-  //     };
-  //   },
-  // }));
+  useEffect(() => {
+    onChange(listItems, selectedItems);
+  }, [listItems, onChange, selectedItems]);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -123,7 +118,6 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
         const tempItemOrder = moveItem([...listItems], draggedItemId, newDraggedItemIndex);
         setListItems(tempItemOrder);
-        onSave(tempItemOrder, selectedItems);
       }
     }
     return null;
@@ -170,16 +164,22 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     }
   };
 
-  const onSelect = (isSelected: boolean, listItem: T) => {
+  const onSelectItem = (isSelected: boolean, listItem: T) => {
     setSelectedItems((prevSelected) => {
       const otherSelectedItems = prevSelected.filter((item) => item !== listItem);
       return isSelected ? [...otherSelectedItems, listItem] : otherSelectedItems;
     });
   };
 
+  const onSelectAllItems = (isSelected: boolean) => {
+    setSelectedItems(isSelected ? listItems : []);
+  };
+
   const isItemSelected = (item: T) => {
     return selectedItems.includes(item);
   };
+
+  const areAllItemsSelected = selectedItems.length === listItems.length;
 
   return (
     <TableComposable
@@ -192,6 +192,14 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
         <Thead>
           <Tr>
             <Th />
+            {isSelectableWithCheckbox && !hideColumnHeaders ? (
+              <Th
+                select={{
+                  onSelect: (_event, isSelected) => onSelectAllItems(isSelected),
+                  isSelected: areAllItemsSelected,
+                }}
+              />
+            ) : null}
             {columns.map((column, columnIndex) => (
               <Th key={columnIndex}>{column.header}</Th>
             ))}
@@ -219,7 +227,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
                   ? {
                       rowIndex,
                       variant: 'checkbox',
-                      onSelect: (_event, isSelected) => onSelect(isSelected, listItem),
+                      onSelect: (_event, isSelected) => onSelectItem(isSelected, listItem),
                       isSelected: isItemSelected(listItem),
                     }
                   : undefined

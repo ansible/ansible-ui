@@ -13,7 +13,7 @@ export function ManageView() {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   /** TODO: Since this is mock data for demonstration purposes, we will need to update the columns
-   * and collectionCategories when the API for fetching collection-categories becomes available.
+   * collectionCategories, and defaultSelection when the API for fetching collection-categories becomes available.
    */
   type Category = { id: string; name: string };
   const columns = [
@@ -44,6 +44,7 @@ export function ManageView() {
       name: t('System collections'),
     },
   ];
+  const defaultSelection = collectionCategories.slice(0, 2);
   const [updatedOrder, setUpdatedOrder] = useState<Category[]>(collectionCategories);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
@@ -64,8 +65,6 @@ export function ManageView() {
     console.log('🚀 ~ file: ManageView.tsx: selectedCategories: ', selectedCategories);
     onClose();
   };
-
-  // const ref = useRef();
 
   return (
     <Modal
@@ -90,17 +89,17 @@ export function ManageView() {
     >
       <ContainerDiv>
         <ReorderItems
-          // ref={ref}
           columns={columns}
           items={collectionCategories}
           keyFn={getItemKey}
-          onSave={(reorderedItems, selectedItems) => {
+          onChange={(reorderedItems, selectedItems) => {
             setUpdatedOrder(reorderedItems);
             setSelectedCategories(selectedItems);
           }}
           isCompactBorderless
           hideColumnHeaders
           isSelectableWithCheckbox
+          defaultSelection={defaultSelection}
         />
       </ContainerDiv>
     </Modal>
