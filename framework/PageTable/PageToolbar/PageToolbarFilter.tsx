@@ -8,6 +8,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
+  SelectVariant,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -193,6 +194,7 @@ function ToolbarFilterInput(props: {
   removeFilter: (value: string) => void;
 }) {
   const { filter } = props;
+
   switch (filter?.type) {
     case 'string':
       return (
@@ -210,6 +212,7 @@ function ToolbarFilterInput(props: {
           placeholder={filter.placeholder}
           hasSearch={filter.hasSearch}
           onSearchTextChange={filter.onSearchTextChange}
+          variant={filter?.variant}
         />
       );
   }

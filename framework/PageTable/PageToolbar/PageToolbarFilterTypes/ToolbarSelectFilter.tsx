@@ -23,6 +23,8 @@ export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   hasSearch?: boolean;
 
   onSearchTextChange?: (searchText: string) => void;
+
+  variant?: SelectVariant;
 }
 
 export function ToolbarSelectFilter(props: {

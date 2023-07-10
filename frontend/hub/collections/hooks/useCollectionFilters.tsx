@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
 import { pulpAPI } from '../../api';
 import { useGetRequest } from '../../../common/crud/useGetRequest';
+import { SelectVariant } from '@patternfly/react-core';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ export function useCollectionFilters() {
         label: t('Repository'),
         type: 'select',
         query: 'repository',
+        variant: SelectVariant.single,
         options:
           repositories?.map((repo: Repository) => {
             return { value: repo.name, label: repo.name };
