@@ -1,6 +1,6 @@
 import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
-import { ReactElement, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -82,7 +82,7 @@ export type PageFormTextInputProps<
    *
    * An input group groups multiple related controls or inputs together so they appear as one control.
    */
-  button?: ReactElement;
+  button?: ReactNode;
 
   helperText?: string;
 
