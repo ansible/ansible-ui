@@ -171,7 +171,7 @@ export function PageFormSelectOption<
               placeholderText={placeholderText}
               variant="single"
               aria-describedby={id ? `${id}-form-group` : undefined}
-              selections={selected}
+              selections={selected?.label}
               onSelect={onSelectHandler}
               isOpen={open}
               onToggle={onToggle}
