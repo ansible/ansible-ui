@@ -16,6 +16,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { Remotes } from './remotes/Remotes';
 
 export function HubRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);
@@ -44,6 +45,7 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.TaskDetails} element={<TaskDetails />} />
       <Route path={RouteObjWithoutPrefix.SignatureKeys} element={<SignatureKeys />} />
       <Route path={RouteObjWithoutPrefix.APIToken} element={<Token />} />
+      <Route path={RouteObjWithoutPrefix.Remotes} element={<Remotes />} />
     </Routes>
   );
 }
