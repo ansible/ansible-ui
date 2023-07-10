@@ -1,4 +1,3 @@
-import { HelperText } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
