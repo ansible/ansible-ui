@@ -4,20 +4,15 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  PageForm,
-  PageFormSelectOption,
-  PageFormSubmitHandler,
-  usePageDialog,
-} from '../../framework';
+import { PageForm, PageFormSelect, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { RouteObj } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { hubAPI } from '../hub/api';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
-import { hubAPI } from '../hub/api';
 
 const LoginModalDiv = styled.div`
   padding: 24px;
@@ -201,7 +196,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       disableScrolling
     >
       {process.env.AWX !== 'true' && process.env.HUB !== 'true' && process.env.EDA !== 'true' && (
-        <PageFormSelectOption
+        <PageFormSelect
           name="server"
           label={t('Automation server')}
           placeholderText={t('Select automation server')}

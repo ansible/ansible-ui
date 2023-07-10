@@ -1,9 +1,10 @@
+import { HelperText } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -16,7 +17,7 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaProject, EdaProjectRead, EdaProjectCreate } from '../../interfaces/EdaProject';
+import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function ProjectCreateInputs() {
@@ -57,7 +58,7 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('SCM URL')}
         labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
@@ -103,7 +104,7 @@ function ProjectEditInputs() {
         label={t('SCM type')}
         placeholder={t('Git')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}

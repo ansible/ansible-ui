@@ -3,11 +3,12 @@ import { FormSection } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormDataEditor, PageFormSelectOption } from '../../../../framework';
+import { PageFormDataEditor, PageFormSelect } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../common/crud/Data';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
@@ -17,7 +18,6 @@ import { Project } from '../../interfaces/Project';
 import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
 function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
@@ -68,7 +68,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Description')}
         placeholder={t('Add a description for this job template')}
       />
-      <PageFormSelectOption<JobTemplateForm>
+      <PageFormSelect<JobTemplateForm>
         isRequired={!askJobTypeOnLaunch}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_job_type_on_launch" />
@@ -97,7 +97,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         isRequired
       />
 
-      <PageFormSelectOption<JobTemplateForm>
+      <PageFormSelect<JobTemplateForm>
         name="playbook"
         labelHelpTitle={t('Playbook')}
         labelHelp={t('Select the playbook to be executed by this job.')}

@@ -1,15 +1,15 @@
 import { Button, FormSection } from '@patternfly/react-core';
-import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
-import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
-import { useTranslation } from 'react-i18next';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { CredentialType } from '../../../interfaces/CredentialType';
+import { useCallback, useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router-dom';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
-import { useParams, useLocation } from 'react-router-dom';
-import { useFormContext } from 'react-hook-form';
-import { useCallback, useEffect } from 'react';
+import { CredentialType } from '../../../interfaces/CredentialType';
+import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ export function WebhookSubForm() {
     pathname.endsWith('/add') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
   return (
     <FormSection title={t('Webhook details')}>
-      <PageFormSelectOption<JobTemplateForm>
+      <PageFormSelect<JobTemplateForm>
         name="webhook_service"
         label={t('Webhook service')}
         options={[

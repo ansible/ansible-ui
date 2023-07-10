@@ -1,34 +1,34 @@
+import { useEffect } from 'react';
+import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
   PageLayout,
 } from '../../../../../framework';
-import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
-import { Project, SCMType } from '../../../interfaces/Project';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
-import { Organization } from '../../../interfaces/Organization';
-import { useNavigate, useParams } from 'react-router-dom';
 import { RouteObj } from '../../../../Routes';
-import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
-import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { getAwxError } from '../../../useAwxView';
-import { ManualSubForm } from '../ProjectSubForms/ManualSubForm';
-import { GitSubForm } from '../ProjectSubForms/GitSubForm';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
-import { SvnSubForm } from '../ProjectSubForms/SvnSubForm';
-import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
-import { InsightsSubForm } from '../ProjectSubForms/InsightsSubForm';
-import { useGet } from '../../../../common/crud/useGet';
 import { requestPatch } from '../../../../common/crud/Data';
-import { useEffect } from 'react';
+import { useGet } from '../../../../common/crud/useGet';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
+import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
+import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { Organization } from '../../../interfaces/Organization';
+import { Project, SCMType } from '../../../interfaces/Project';
+import { getAwxError } from '../../../useAwxView';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
+import { GitSubForm } from '../ProjectSubForms/GitSubForm';
+import { InsightsSubForm } from '../ProjectSubForms/InsightsSubForm';
+import { ManualSubForm } from '../ProjectSubForms/ManualSubForm';
+import { SvnSubForm } from '../ProjectSubForms/SvnSubForm';
+import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 
 export interface ProjectFields extends FieldValues {
   project: Omit<Project, 'scm_type'> & {
@@ -300,7 +300,7 @@ function ProjectInputs(props: { project?: Project }) {
           org ? '' : t(`Select an organization before editing the default execution environment.`)
         }
       />
-      <PageFormSelectOption<ProjectFields>
+      <PageFormSelect<ProjectFields>
         isRequired
         name="project.scm_type"
         id="source_control_type"

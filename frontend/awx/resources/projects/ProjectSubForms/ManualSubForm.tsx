@@ -1,9 +1,9 @@
+import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import useSWR from 'swr';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { Alert } from '@patternfly/react-core';
-import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
-import useSWR from 'swr';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
 
 interface IConfigData {
@@ -82,7 +82,7 @@ export function ManualSubForm(props: { localPath?: string }) {
           labelHelp={basePathHelpBlock}
           isReadOnly
         />
-        <PageFormSelectOption<ProjectFields>
+        <PageFormSelect<ProjectFields>
           isRequired
           name="project.local_path"
           id="project_local_path"

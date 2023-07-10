@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -63,7 +63,7 @@ function DecisionEnvironmentInputs() {
         labelHelp={imageHelpBlock}
         labelHelpTitle={t('Image')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -63,7 +63,7 @@ function CredentialInputs() {
         placeholder={t('Enter description ')}
         maxLength={150}
       />
-      <PageFormSelectOption<EdaCredentialCreate>
+      <PageFormSelect<EdaCredentialCreate>
         name="credential_type"
         label={t('Credential type')}
         isRequired

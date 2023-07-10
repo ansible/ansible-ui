@@ -1,20 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  compareStrings,
-  PageFormSelectOption,
-  PageHeader,
-  PageLayout,
-} from '../../../../framework';
+import { PageFormSelect, PageHeader, PageLayout, compareStrings } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { RouteObj } from '../../../Routes';
 import { ItemsResponse, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { RouteObj } from '../../../Routes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { Credential } from '../../interfaces/Credential';
@@ -146,7 +141,7 @@ function CredentialInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormSelectOption<Credential>
+      <PageFormSelect<Credential>
         label={t('Credential type')}
         placeholderText={t('Select credential type')}
         name="credential_type"
