@@ -12,7 +12,7 @@ import {
 import { PageDetailsFromColumns } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
-import { HubItemsResponse } from '../useHubView';
+import { HubNamespaceResponse } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
 import { useHubView } from '../useHubView';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
@@ -29,17 +29,11 @@ import { DropdownPosition } from '@patternfly/react-core';
 export function NamespaceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data } = useGet<HubItemsResponse<HubNamespace>>(
+  const { data } = useGet<HubNamespaceResponse<HubNamespace>>(
     `/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/?limit=1&name=${params.id ?? ''}`
   );
   let namespace: HubNamespace | undefined = undefined;
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   if (data && data.results && data.count > 0) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     namespace = data.results[0];
   }
 
