@@ -197,6 +197,15 @@ export function RulebookActivationInputs() {
         labelHelp={restartPolicyHelpBlock}
         labelHelpTitle={t('Restart policy')}
       />
+      <PageFormSwitch<IEdaRulebookActivationInputs>
+        id="rulebook-activation"
+        name="is_enabled"
+        formLabel={t('Rulebook activation enabled?')}
+        label={t('Enabled')}
+        labelOff={t('Disabled')}
+        labelHelp={t('Automatically enable this rulebook activation to run.')}
+        labelHelpTitle={t('Rulebook activation enabled')}
+      />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="variables"
@@ -209,15 +218,6 @@ export function RulebookActivationInputs() {
           labelHelpTitle={t('Variables')}
         />
       </PageFormSection>
-      <PageFormSwitch<IEdaRulebookActivationInputs>
-        id="rulebook-activation"
-        name="is_enabled"
-        formLabel={t('Rulebook activation enabled?')}
-        label={t('Enabled')}
-        labelOff={t('Disabled')}
-        labelHelp={t('Automatically enable this rulebook activation to run.')}
-        labelHelpTitle={t('Rulebook activation enabled')}
-      />
     </>
   );
 }
