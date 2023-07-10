@@ -11,6 +11,7 @@ export interface IView {
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
   filters: Record<string, string[]>;
+  defaultFilters?: Record<string, string[]>;
   setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters: () => void;
 }
@@ -74,7 +75,12 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
   });
 
   const [filters, setFilters] = useState<Record<string, string[]>>(() => {
-    const filters: Record<string, string[]> = {};
+    let filters: Record<string, string[]> = {};
+
+    if (view?.defaultFilters) {
+      filters = view.defaultFilters;
+    }
+
     for (const key of searchParams.keys()) {
       switch (key) {
         case 'sort':
