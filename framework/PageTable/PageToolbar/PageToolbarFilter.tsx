@@ -29,7 +29,8 @@ export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter | IToolba
  */
 export type FilterState = Record<string, string[]>;
 
-/** Function to set the filters using an update function that takes in the current filters and returns the new filter state. */
+/** Function to set the filters using an update function that takes in the current filters and returns the new filter state.
+ * This follows the pattern of react useState setter functions so that it can be used with the useState hook. */
 export type SetFilterState = (updateFilters: (currentFilters: FilterState) => FilterState) => void;
 
 export type PageToolbarFiltersProps = {
