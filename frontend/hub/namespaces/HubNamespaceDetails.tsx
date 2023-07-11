@@ -21,8 +21,8 @@ import { useCollectionFilters } from '../collections/hooks/useCollectionFilters'
 import { useCollectionsActions } from '../collections/hooks/useCollectionsActions';
 import { useCollectionColumns } from '../collections/hooks/useCollectionColumns';
 import { useCollectionActions } from '../collections/hooks/useCollectionActions';
-import { Collection } from '../collections/Collection';
-import { idKeyFn, hubAPI } from '../api';
+import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { hubAPI } from '../api';
 
 import { DropdownPosition } from '@patternfly/react-core';
 
@@ -73,9 +73,9 @@ function CollectionsTab(props: { namespace?: HubNamespace }) {
   const { t } = useTranslation();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
-  const view = useHubView<Collection>({
-    url: hubAPI`/_ui/v1/repo/published/`,
-    keyFn: idKeyFn,
+  const view = useHubView<CollectionVersionSearch>({
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    keyFn: (item) => item.collection_version.pulp_href + ':' + item.repository.name,
     toolbarFilters,
     tableColumns,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -88,7 +88,7 @@ function CollectionsTab(props: { namespace?: HubNamespace }) {
 
   return (
     <PageLayout>
-      <PageTable<Collection>
+      <PageTable<CollectionVersionSearch>
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
