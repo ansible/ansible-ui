@@ -26,9 +26,9 @@ export function useApprovalFilters() {
         type: 'select',
         query: 'repository_label',
         options: [
-          { label: t('Needs review'), value: encodeURI(`pipeline=staging`) },
-          { label: t('Approved'), value: encodeURI(`pipeline=approved`) },
-          { label: t('Rejected'), value: encodeURI(`pipeline=rejected`) },
+          { label: t('Needs review'), value: `pipeline=staging` },
+          { label: t('Approved'), value: `pipeline=approved` },
+          { label: t('Rejected'), value: `pipeline=rejected` },
         ],
         placeholder: t('Select statuses'),
       },
