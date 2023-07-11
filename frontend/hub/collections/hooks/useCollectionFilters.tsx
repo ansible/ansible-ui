@@ -17,7 +17,7 @@ export function useCollectionFilters() {
       .then((data) => {
         setRepositories(data?.results || []);
       })
-      .catch((ex) => {
+      .catch(() => {
         // TODO - how to handle errors here?
       });
   }, [searchText, request]);

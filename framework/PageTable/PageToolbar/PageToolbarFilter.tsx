@@ -8,7 +8,6 @@ import {
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
-  SelectVariant,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
