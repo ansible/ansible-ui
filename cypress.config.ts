@@ -20,6 +20,7 @@ export default defineConfig({
       return config;
     },
     baseUrl: 'https://localhost:3002/',
+    retries: { runMode: 2, openMode: 0 },
   },
   component: {
     setupNodeEvents(on, config) {
@@ -28,6 +29,7 @@ export default defineConfig({
       codeCoverage(on, config);
       return config;
     },
+    retries: { runMode: 2, openMode: 0 },
     devServer: {
       framework: 'react',
       bundler: 'webpack',
