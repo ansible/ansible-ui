@@ -9,6 +9,7 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
+  usePageDialog,
 } from '../../../framework';
 import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
@@ -18,12 +19,14 @@ import { useExecutionEnvironments } from '../execution-environments/hooks/useExe
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
 import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
+import { ManageView } from './ManageView';
 
 export function HubDashboard() {
   const { t } = useTranslation();
   const namespaces = useHubNamespaces();
   const collections = useCollections();
   const environments = useExecutionEnvironments();
+  const [_, setDialog] = usePageDialog();
 
   if (!namespaces) {
     return <LoadingPage />;
@@ -54,7 +57,9 @@ export function HubDashboard() {
                 label: 'Manage View',
                 type: PageActionType.Button,
                 selection: PageActionSelection.None,
-                onClick: () => alert('TODO'),
+                onClick: () => {
+                  setDialog(<ManageView />);
+                },
               },
             ]}
             position={DropdownPosition.right}
