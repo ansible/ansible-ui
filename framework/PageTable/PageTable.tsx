@@ -28,11 +28,9 @@ import {
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base';
 import useResizeObserver from '@react-hook/resize-observer';
 import {
-  Dispatch,
   Fragment,
   MouseEvent,
   ReactNode,
-  SetStateAction,
   UIEvent,
   useCallback,
   useEffect,
@@ -65,7 +63,7 @@ import {
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
 import { PageTableToolbar } from './PageToolbar/PageToolbar';
-import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
+import { FilterState, IToolbarFilter, SetFilterState } from './PageToolbar/PageToolbarFilter';
 import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
@@ -103,8 +101,8 @@ export type PageTableProps<T extends object> = {
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filters?: FilterState;
+  setFilters?: SetFilterState;
   clearAllFilters?: () => void;
 
   sort?: string;

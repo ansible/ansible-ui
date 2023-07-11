@@ -10,27 +10,32 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { FormGroupSelect } from '../../PageForm/Inputs/FormGroupSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
-import { ToolbarTextFilter, IToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
-import {
-  ToolbarSelectFilter,
-  IToolbarSelectFilter,
-} from './PageToolbarFilterTypes/ToolbarSelectFilter';
-import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
+import {
+  IToolbarSelectFilter,
+  ToolbarSelectFilter,
+} from './PageToolbarFilterTypes/ToolbarSelectFilter';
+import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
 
 export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter | IToolbarDateFilter;
 
-export type IFilterState = Record<string, string[] | undefined>;
+/**
+ * The filter state is a record of filter keys to an array of filter values.
+ * The values are an array because a filter can have multiple values as shown by the PatternFly filter chips.
+ */
+export type FilterState = Record<string, string[]>;
+
+/** Function to set the filters using an update function that takes in the current filters and returns the new filter state. */
+export type SetFilterState = (updateFilters: (currentFilters: FilterState) => FilterState) => void;
 
 export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: (
-    value: Record<string, string[]>
-  ) => void | Dispatch<SetStateAction<Record<string, string[]>>>;
+  filters?: FilterState;
+  setFilters?: SetFilterState;
 };
 
 function ToolbarContent(props: PageToolbarFiltersProps) {
@@ -99,16 +104,26 @@ function ToolbarContent(props: PageToolbarFiltersProps) {
               id="filter-input"
               filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
               addFilter={(value: string) => {
-                let values = filters?.[selectedFilter];
-                if (!values) values = [];
-                if (!values.includes(value)) values.push(value);
-                setFilters?.({ ...filters, [selectedFilter]: values });
+                const selectedFilterCurrentValue = filters?.[selectedFilter];
+                const newFilterValue = selectedFilterCurrentValue
+                  ? [...selectedFilterCurrentValue]
+                  : [];
+                if (!newFilterValue.includes(value)) newFilterValue.push(value);
+                setFilters?.((currentFilters) => ({
+                  ...currentFilters,
+                  [selectedFilter]: newFilterValue,
+                }));
               }}
               removeFilter={(value: string) => {
-                let values = filters?.[selectedFilter];
-                if (!values) values = [];
-                values = values.filter((v) => v !== value);
-                setFilters?.({ ...filters, [selectedFilter]: values });
+                const selectedFilterCurrentValue = filters?.[selectedFilter];
+                let newFilterValue = selectedFilterCurrentValue
+                  ? [...selectedFilterCurrentValue]
+                  : [];
+                newFilterValue = newFilterValue.filter((v) => v !== value);
+                setFilters?.((currentFilters) => ({
+                  ...currentFilters,
+                  [selectedFilter]: newFilterValue,
+                }));
               }}
               values={filters?.[selectedFilter] ?? []}
             />
@@ -209,7 +224,12 @@ function ToolbarFilterInput(props: {
       );
     case 'select':
       return (
-        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} hasSearch={filter.hasSearch} />
+        <ToolbarSelectFilter
+          {...props}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          hasSearch={filter.hasSearch}
+        />
       );
   }
   return <></>;

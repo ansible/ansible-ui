@@ -1,19 +1,22 @@
-import { Dispatch, SetStateAction } from 'react';
 import { Toolbar, ToolbarContent } from '@patternfly/react-core';
-import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 import { IToolbarFilter } from '../../../../../framework';
+import {
+  FilterState,
+  PageToolbarFilters,
+  SetFilterState,
+} from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 
 interface IJobOutputToolbarProps {
   toolbarFilters: IToolbarFilter[];
-  filters: Record<string, string[]>;
-  setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filters: FilterState;
+  setFilters: SetFilterState;
 }
 
 export function JobOutputToolbar(props: IJobOutputToolbarProps) {
   const { toolbarFilters, filters, setFilters } = props;
 
   return (
-    <Toolbar clearAllFilters={() => setFilters({})}>
+    <Toolbar clearAllFilters={() => setFilters(() => ({}))}>
       <ToolbarContent>
         <PageToolbarFilters
           toolbarFilters={toolbarFilters}

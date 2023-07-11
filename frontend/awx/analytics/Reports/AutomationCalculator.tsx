@@ -1,11 +1,15 @@
 import {
+  Bullseye,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
   Grid,
   GridItem,
+  PageSection,
+  Pagination,
+  PaginationVariant,
   Spinner,
   Stack,
   StackItem,
@@ -13,32 +17,28 @@ import {
   ToolbarContent,
   ToolbarItem,
   ToolbarItemVariant,
-  Pagination,
-  PageSection,
-  PaginationVariant,
-  Bullseye,
 } from '@patternfly/react-core';
-import useSWR from 'swr';
-import { postRequest as requestPost } from '../../../common/crud/Data';
-import styled from 'styled-components';
-import TotalSavings from './TotalSavings';
-import CalculationCost from './CalculationCost';
-import AutomationFormula from './AutomationFormula';
-import TemplatesTable from './TemplatesTable';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ChartLegendEntry, ChartSchemaElement } from 'react-json-chart-builder';
 import { useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
+import useSWR from 'swr';
+import { FilterState, PageTableToolbar, Scrollable } from '../../../../framework';
+import { IToolbarSelectFilter } from '../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarSelectFilter';
+import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
+import { postRequest as requestPost } from '../../../common/crud/Data';
 import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
 import FilterableToolbarItem from '../components/Toolbar/Toolbar';
-import currencyFormatter from '../utilities/currencyFormatter';
-import React, { useEffect, useState } from 'react';
-import { ApiOptionsType, AttributeType } from '../components/Toolbar/types';
-import { useTranslation } from 'react-i18next';
-import { ChartSchemaElement, ChartLegendEntry } from 'react-json-chart-builder';
-import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
-import { AnalyticsErrorState } from './ErrorStates';
-import { PageTableToolbar, Scrollable } from '../../../../framework';
-import { IToolbarSelectFilter } from '../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarSelectFilter';
 import { optionsForCategories } from '../components/Toolbar/constants';
+import { ApiOptionsType, AttributeType } from '../components/Toolbar/types';
+import currencyFormatter from '../utilities/currencyFormatter';
+import AutomationFormula from './AutomationFormula';
+import CalculationCost from './CalculationCost';
+import { AnalyticsErrorState } from './ErrorStates';
+import TemplatesTable from './TemplatesTable';
+import TotalSavings from './TotalSavings';
 
 const SpinnerDiv = styled.div`
   height: 400px;
@@ -116,9 +116,9 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     group_by_time: false,
   };
 
-  const getParams = (): Record<string, string[]> => {
+  const getParams = () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const params: Record<string, string[]> = JSON.parse(JSON.stringify(defaultParams));
+    const params: Record<string, string[] | string> = JSON.parse(JSON.stringify(defaultParams));
     Object.keys(defaultParams).forEach((key) => {
       const value = [
         'job_type',
@@ -136,6 +136,18 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     });
     return params;
   };
+
+  function paramsToFilterState(params: Record<string, string[] | string>): FilterState {
+    const filterState: FilterState = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (Array.isArray(value)) {
+        filterState[key] = value;
+      } else {
+        filterState[key] = [value];
+      }
+    }
+    return filterState;
+  }
 
   const updateSearchParams = (
     key: string | undefined,
@@ -164,13 +176,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     setSearchParams(updatedSearchParams.toString());
   };
 
-  const updateSearchParamsFromFramework = (o: Record<string, string[]>) => {
-    if (typeof o === 'function') {
-      //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const newParams: Record<string, string[]> = o(getParams());
-      updateSearchParamsFromFramework(newParams);
-      return;
-    }
+  const updateSearchParamsFromFramework = (currentFilters: FilterState) => {
     const updatedSearchParams = new URLSearchParams(searchParams.toString());
     const keys = Object.keys(getParams()).filter(
       (key) =>
@@ -186,7 +192,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         ].includes(key)
     );
     keys.forEach((key) => {
-      const value = o[key];
+      const value = currentFilters[key];
       if (!value) {
         updatedSearchParams.delete(key);
       } else {
@@ -201,6 +207,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       }
     });
     setSearchParams(updatedSearchParams.toString());
+    return currentFilters;
   };
 
   const getOffset = (page: string, perPage: string | AttributeType): number => {
@@ -468,9 +475,11 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         sortOptions={sortOptions || []}
         toolbarFilters={filterOptions}
         // TODO all three need fixing to correct one
-        filters={getParams()}
-        // TODO easier way to do it? Add possibility of different approach to framework?
-        setFilters={(label: Record<string, string[]>) => updateSearchParamsFromFramework(label)}
+        filters={paramsToFilterState(getParams())}
+        // setFilters is a function that returns a function that takes a FilterState and returns a new FilterState
+        // this follows the pattern of react useState setter functions
+        setFilters={() => (currentFilters: FilterState) =>
+          updateSearchParamsFromFramework(currentFilters)}
         clearAllFilters={() => updateSearchParams(undefined, undefined)}
         viewType={'cards'}
         setViewType={() => 'cards'} // TODO not needed

@@ -2,15 +2,15 @@ import {
   Flex,
   OnPerPageSelect,
   OnSetPage,
+  ToolbarContent as PFToolbarContent,
   Pagination,
   PaginationVariant,
   Skeleton,
   Toolbar,
-  ToolbarContent as PFToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../../PageActions/PageAction';
 import { PageActions } from '../../PageActions/PageActions';
@@ -18,7 +18,12 @@ import { BulkSelector } from '../../components/BulkSelector';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
-import { IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
+import {
+  FilterState,
+  IToolbarFilter,
+  PageToolbarFilters,
+  SetFilterState,
+} from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
 
@@ -42,10 +47,10 @@ export type PagetableToolbarProps<T extends object> = {
   toolbarActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: (
-    value: Record<string, string[]>
-  ) => void | Dispatch<SetStateAction<Record<string, string[]>>>;
+  filters?: FilterState;
+
+  setFilters?: SetFilterState;
+
   clearAllFilters?: () => void;
 
   page: number;

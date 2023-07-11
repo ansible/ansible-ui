@@ -1,13 +1,13 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FilterState, IToolbarFilter } from '../../../../../framework';
 import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';
-import type { IToolbarFilter } from '../../../../../framework';
 
 export function useJobOutput(
   job: Job,
   toolbarFilters: IToolbarFilter[],
-  filters: Record<string, string[]>,
+  filters: FilterState,
   pageSize: number
 ) {
   const isQuerying = useRef({ querying: false });
@@ -68,10 +68,7 @@ export function useJobOutput(
   return { jobEventCount, getJobOutputEvent, queryJobOutputEvent };
 }
 
-function getFiltersQueryString(
-  toolbarFilters: IToolbarFilter[],
-  filters: Record<string, string[]>
-) {
+function getFiltersQueryString(toolbarFilters: IToolbarFilter[], filters: FilterState) {
   if (!filters) {
     return '';
   }

@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FilterState, SetFilterState } from './PageTable/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from './components/useSearchParams';
 
 export interface IView {
@@ -10,8 +11,8 @@ export interface IView {
   setSort: (sort: string) => void;
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
-  filters: Record<string, string[]>;
-  setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filters: FilterState;
+  setFilters: SetFilterState;
   clearAllFilters: () => void;
 }
 
@@ -74,7 +75,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
   });
 
   const [filters, setFilters] = useState<Record<string, string[]>>(() => {
-    const filters: Record<string, string[]> = {};
+    const filters: FilterState = {};
     for (const key of searchParams.keys()) {
       switch (key) {
         case 'sort':

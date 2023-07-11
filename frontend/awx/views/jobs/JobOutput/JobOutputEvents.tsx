@@ -1,18 +1,18 @@
-import { useMemo, useRef, useState } from 'react';
 import { Banner } from '@patternfly/react-core';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import type { FilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
-import { IJobOutputRow, jobEventToRows, tracebackToRows, JobOutputRow } from './JobOutputRow';
+import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
 import {
-  useJobOutputChildrenSummary,
   IJobOutputChildrenSummary,
+  useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
-import type { IToolbarFilter } from '../../../../../framework';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
@@ -30,7 +30,7 @@ const ScrollContainer = styled.div`
 interface IJobOutputEventsProps {
   job: Job;
   toolbarFilters: IToolbarFilter[];
-  filters: Record<string, string[]>;
+  filters: FilterState;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
