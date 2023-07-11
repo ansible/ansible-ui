@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -14,7 +13,6 @@ import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function useProjectColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
@@ -22,9 +20,7 @@ export function useProjectColumns() {
         cell: (project) => (
           <TextCell
             text={project.name}
-            onClick={() =>
-              navigate(RouteObj.EdaProjectDetails.replace(':id', project.id.toString()))
-            }
+            to={RouteObj.EdaProjectDetails.replace(':id', project.id.toString())}
           />
         ),
         card: 'name',
@@ -68,6 +64,6 @@ export function useProjectColumns() {
       },
     ],
 
-    [navigate, t]
+    [t]
   );
 }

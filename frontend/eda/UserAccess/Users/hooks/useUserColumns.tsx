@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -13,7 +12,6 @@ import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function useUserColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaUser>[]>(
     () => [
       {
@@ -21,7 +19,7 @@ export function useUserColumns() {
         cell: (user) => (
           <TextCell
             text={user.username}
-            onClick={() => navigate(RouteObj.EdaUserDetails.replace(':id', user.id.toString()))}
+            to={RouteObj.EdaUserDetails.replace(':id', user.id.toString())}
           />
         ),
         card: 'name',
@@ -46,6 +44,6 @@ export function useUserColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [navigate, t]
+    [t]
   );
 }

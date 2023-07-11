@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -16,7 +15,6 @@ import { EdaCredentialCell } from '../../credentials/components/EdaCredentialCel
 
 export function useDecisionEnvironmentsColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
     () => [
       {
@@ -24,14 +22,10 @@ export function useDecisionEnvironmentsColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            onClick={() =>
-              navigate(
-                RouteObj.EdaDecisionEnvironmentDetails.replace(
-                  ':id',
-                  decisionEnvironment.id.toString()
-                )
-              )
-            }
+            to={RouteObj.EdaDecisionEnvironmentDetails.replace(
+              ':id',
+              decisionEnvironment.id.toString()
+            )}
           />
         ),
         card: 'name',
@@ -79,13 +73,12 @@ export function useDecisionEnvironmentsColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [navigate, t]
+    [t]
   );
 }
 
 export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaDecisionEnvironmentRead>[]>(
     () => [
       {
@@ -93,14 +86,10 @@ export function useDecisionEnvironmentColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            onClick={() =>
-              navigate(
-                RouteObj.EdaDecisionEnvironmentDetails.replace(
-                  ':id',
-                  decisionEnvironment.id.toString()
-                )
-              )
-            }
+            to={RouteObj.EdaDecisionEnvironmentDetails.replace(
+              ':id',
+              decisionEnvironment.id.toString()
+            )}
           />
         ),
         card: 'name',
@@ -150,6 +139,6 @@ export function useDecisionEnvironmentColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [navigate, t]
+    [t]
   );
 }

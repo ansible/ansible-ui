@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 
 export function useCredentialColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaCredential>[]>(
     () => [
       {
@@ -15,9 +13,7 @@ export function useCredentialColumns() {
         cell: (credential) => (
           <TextCell
             text={credential.name}
-            onClick={() =>
-              navigate(RouteObj.EdaCredentialDetails.replace(':id', credential.id.toString()))
-            }
+            to={RouteObj.EdaCredentialDetails.replace(':id', credential.id.toString())}
           />
         ),
         card: 'name',
@@ -53,6 +49,6 @@ export function useCredentialColumns() {
       },
     ],
 
-    [navigate, t]
+    [t]
   );
 }
