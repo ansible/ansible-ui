@@ -6,7 +6,10 @@ export function JobOutputLoadingRow(props: {
   counter: number;
   queryJobOutputEvent: (counter: number) => void;
 }) {
-  useEffect(() => props.queryJobOutputEvent(props.counter), [props]);
+  useEffect(() => {
+    props.queryJobOutputEvent(props.counter);
+  }, [props]);
+
   return (
     <div className="output-grid-row">
       <div className="expand-column"></div>

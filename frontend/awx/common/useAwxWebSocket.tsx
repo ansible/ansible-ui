@@ -80,7 +80,7 @@ export function WebSocketProvider(props: { children?: ReactNode }) {
 }
 
 export function useAwxWebSocketSubscription(
-  events: { [group: string]: string[] },
+  events: { [group: string]: string[] | number[] },
   onMessage: (message: unknown) => void
 ) {
   const [evts] = useState(() => events);
