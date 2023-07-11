@@ -10,7 +10,7 @@ export function useCollectionFilters() {
   const [searchText, setSearchText] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const request = useCallback(useGetRequest<{ results: Repository[] }>(), []);
+  const request = useCallback(useGetRequest<{ results: Repository[] }>(), [searchText]);
 
   useEffect(() => {
     request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`)
