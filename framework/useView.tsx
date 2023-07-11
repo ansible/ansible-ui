@@ -75,7 +75,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
   });
 
   const [filters, setFilters] = useState<Record<string, string[]>>(() => {
-    let filters: Record<string, string[]> = view?.defaultFilters ? view.defaultFilters : {};
+    const filters: Record<string, string[]> = view?.defaultFilters ? view.defaultFilters : {};
 
     for (const key of searchParams.keys()) {
       switch (key) {
