@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { CollectionVersionSearch } from '../Collection';
+import { CollectionVersionSearch } from '../CollectionVersionSearch';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -16,19 +16,11 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
     () => [
       {
         header: t('Name'),
-        value: (collection) => collection.collection_version.name,
+        value: (collection) => collection.collection_version?.name,
         cell: (collection) => (
           <TextCell
-            text={collection.collection_version.name}
-            to={
-              RouteObj.CollectionDetails +
-              '?name=' +
-              collection.collection_version.name +
-              '&namespace=' +
-              collection.collection_version.namespace +
-              '&repository=' +
-              collection.repository.name
-            }
+            text={collection.collection_version?.name}
+            to={RouteObj.CollectionDetails.replace(':id', collection.collection_version?.name)}
           />
         ),
         card: 'name',
@@ -45,7 +37,6 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Namespace'),
         type: 'text',
         value: (collection) => collection.collection_version.namespace,
-        sort: 'namespace',
       },
       {
         header: t('Description'),
@@ -59,6 +50,23 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         type: 'count',
         value: (collection) =>
           collection.collection_version.contents.filter((c) => c.content_type === 'module').length,
+      },
+      {
+        header: t('Roles'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version.contents.filter((c) => c.content_type === 'TODO').length,
+      },
+      {
+        header: t('Plugins'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version.contents.filter((c) => c.content_type === 'TODO').length,
+      },
+      {
+        header: t('Dependencies'),
+        type: 'count',
+        value: (collection) => Object.keys(collection.collection_version.dependencies).length,
       },
       {
         header: t('Updated'),
@@ -78,14 +86,14 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Signed state'),
         cell: (collection) => {
-          switch (collection.is_signed) {
-            case true:
+          switch (collection.collection_version.is_signed) {
+            case 'true':
               return (
                 <Label icon={<CheckCircleIcon />} variant="outline" color="green">
                   {t('Signed')}
                 </Label>
               );
-            case false:
+            case 'false':
               return (
                 <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
                   {t('Unsigned')}
@@ -95,6 +103,11 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         },
         list: 'secondary',
         value: (collection) => collection.is_signed,
+      },
+      {
+        header: t('Tags'),
+        type: 'labels',
+        value: (collection) => collection.collection_version.tags.sort(),
       },
     ],
     [t]
