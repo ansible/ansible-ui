@@ -41,7 +41,7 @@ export function useCollectionFilters() {
       {
         key: 'repository',
         label: t('Repository'),
-        type: 'select',
+        type: 'selectTypeAhead',
         query: 'repository',
         variant: SelectVariant.single,
         options:

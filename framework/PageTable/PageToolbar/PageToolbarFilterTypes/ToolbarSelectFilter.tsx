@@ -15,13 +15,14 @@ export interface IToolbarSelectFilterOption {
 /** Filter for filtering by user selection of option. */
 export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user selection of option. */
-  type: 'select';
+  type: 'select' | 'selectTypeAhead';
 
   /** The options to show in the select. */
   options: IToolbarSelectFilterOption[];
 
   hasSearch?: boolean;
 
+  /** This event will fire when text in search is changed. Works only when type is selectTypeAhead. */
   onSearchTextChange?: (searchText: string) => void;
 
   variant?: SelectVariant;
