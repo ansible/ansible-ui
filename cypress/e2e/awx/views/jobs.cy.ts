@@ -47,7 +47,10 @@ describe('jobs', () => {
   it('renders jobs list', () => {
     cy.navigateTo(/^Jobs$/);
     cy.hasTitle(/^Jobs$/);
-    cy.contains(jobList.name as string);
+    const jobId = jobList.id ? jobList.id.toString() : '';
+    const jobName = jobList.name ? jobList.name : '';
+    cy.filterTableByTypeAndText('ID', jobId);
+    cy.contains(jobName);
   });
 
   it('relaunches job and navigates to job output', () => {
