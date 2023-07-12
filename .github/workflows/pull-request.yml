@@ -155,10 +155,6 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
-      - name: 'Configure oci_env'
-        working-directory: 'oci_env'
-        run: |
-          pip install --editable ./client/
       - name: 'Checkout galaxy_ng'
         uses: actions/checkout@v3
         with:
@@ -169,6 +165,10 @@ jobs:
         with:
           repository: 'pulp/oci_env'
           path: 'oci_env'
+      - name: 'Configure oci_env'
+        working-directory: 'oci_env'
+        run: |
+          pip install -e client
       - name: Create Config File
         run: |
           echo 'COMPOSE_PROFILE=galaxy_ng/base' >> compose.env
