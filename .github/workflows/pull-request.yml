@@ -493,6 +493,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
+  # SEE: https://github.com/ansible/ansible-hub-ui/blob/master/.github/workflows/cypress.yml
   hub-e2e:
     name: HUB E2E
     runs-on: ubuntu-latest
@@ -544,6 +545,34 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
+      - name: 'Checkout galaxy_ng'
+        uses: actions/checkout@v3
+        with:
+          repository: 'ansible/galaxy_ng'
+          path: 'galaxy_ng'
+      - name: 'Checkout oci_env'
+        uses: actions/checkout@v3
+        with:
+          repository: 'pulp/oci_env'
+          path: 'oci_env'
+      - name: 'Configure oci_env'
+        working-directory: 'oci_env'
+        run: pip install -e client
+      - name: Create compose.env
+        working-directory: 'oci_env'
+        run: |
+          echo 'COMPOSE_PROFILE=galaxy_ng/base' >> compose.env
+          echo 'DEV_SOURCE_PATH=galaxy_ng' >> compose.env
+          echo 'COMPOSE_BINARY=docker' >> compose.env
+          echo 'API_HOST=localhost' >> compose.env
+          echo 'API_PORT=5001' >> compose.env
+          echo 'API_PROTOCOL=http' >> compose.env
+      - name: 'oci-env compose build'
+        working-directory: 'oci_env'
+        run: oci-env compose build
+      - name: 'oci-env compose up'
+        working-directory: 'oci_env'
+        run: oci-env compose up -d
       - name: Cypress
         if: steps.check.outputs.skip != 'true'
         uses: cypress-io/github-action@v5
@@ -555,7 +584,13 @@ jobs:
           parallel: true
           config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
+          CYPRESS_HUB_SERVER: http://localhost:5001
+          CYPRESS_HUB_USERNAME: admin
+          CYPRESS_HUB_PASSWORD: password
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+      - name: 'oci-env compose down'
+        working-directory: 'oci_env'
+        run: oci-env compose down --volumes
