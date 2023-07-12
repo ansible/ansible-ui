@@ -40,15 +40,15 @@ jobs:
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-awx
         with:
-          paths: frontend/awx cypress/e2e/awx framework cypress/support
+          paths: frontend/awx frontend/common cypress/e2e/awx framework cypress/support
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-hub
         with:
-          paths: frontend/hub cypress/e2e/hub framework cypress/support
+          paths: frontend/hub frontend/common cypress/e2e/hub framework cypress/support
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-eda
         with:
-          paths: frontend/eda cypress/e2e/eda framework cypress/support
+          paths: frontend/eda frontend/common cypress/e2e/eda framework cypress/support
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-afw
         with:
