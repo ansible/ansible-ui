@@ -167,9 +167,9 @@ jobs:
           path: 'oci_env'
       - name: 'Configure oci_env'
         working-directory: 'oci_env'
-        run: |
-          pip install -e client
-      - name: Create Config File
+        run: pip install -e client
+      - name: Create compose.env
+        working-directory: 'oci_env'
         run: |
           echo 'COMPOSE_PROFILE=galaxy_ng/base' >> compose.env
           echo 'DEV_SOURCE_PATH=galaxy_ng' >> compose.env
@@ -179,11 +179,12 @@ jobs:
           echo 'API_HOST=localhost' >> compose.env
           echo 'API_PORT=5001' >> compose.env
           echo 'API_PROTOCOL=http' >> compose.env
-      - name: 'oci-env compose'
+      - name: 'oci-env compose build'
         working-directory: 'oci_env'
-        run: |
-          oci-env compose build
-          oci-env compose up &
+        run: oci-env compose build
+      - name: 'oci-env compose up'
+        working-directory: 'oci_env'
+        run: oci-env compose up -d
       - name: Cypress
         if: steps.check.outputs.skip != 'true'
         uses: cypress-io/github-action@v5
@@ -199,3 +200,6 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+      - name: 'oci-env compose down'
+        working-directory: 'oci_env'
+        run: oci-env compose down --volumnes
