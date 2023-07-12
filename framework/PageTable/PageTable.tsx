@@ -86,7 +86,12 @@ const ColumnCellDiv = styled.div`
   padding-top: 5px;
   padding-bottom: 5px;
 `;
-
+export type IPaginationRelatedProps = {
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
+};
 export type PageTableProps<T extends object> = {
   // TODO table id to save table settings
   // id: string
@@ -106,17 +111,12 @@ export type PageTableProps<T extends object> = {
   filters?: Record<string, string[]>;
   setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters?: () => void;
-
+  pagination?: IPaginationRelatedProps;
   sort?: string;
   setSort?: (sort: string) => void;
   sortDirection?: 'asc' | 'desc';
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   compact?: boolean;
-
-  page: number;
-  perPage: number;
-  setPage: (page: number) => void;
-  setPerPage: (perPage: number) => void;
 
   /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
@@ -175,7 +175,7 @@ export type PageTableProps<T extends object> = {
    */
   // TODO - There is a request to add a user setting to allow users to turn off padding.
   disableBodyPadding?: boolean;
-
+  disablePagination?: boolean;
   /**
    * Default subtitle is used in list and card views as the default subtitle if there is no subtitle column.
    * Example is team card that has the work 'team' under the team name. Makes the card feel polished.
@@ -208,7 +208,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
+  const { toolbarActions, filters, error, itemCount, disableBodyPadding, pagination } = props;
 
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const tableColumns = useVisibleTableColumns(managedColumns);
@@ -283,7 +283,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
-
+  const needsPagination = !props.disablePagination && pagination;
   if (error) {
     return (
       <ErrorStateDiv>
@@ -343,7 +343,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} tableColumns={tableColumns} expandedRow={expandedRow} />
+          <PageTableView
+            {...props}
+            {...pagination}
+            tableColumns={tableColumns}
+            expandedRow={expandedRow}
+          />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
@@ -369,9 +374,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <PageTableCards {...props} showSelect={showSelect} />
         </Scrollable>
       )}
-      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-        <PagePagination {...props} topBorder />
-      )}
+      {needsPagination &&
+        (!props.autoHidePagination ||
+          (pagination.perPage && (props.itemCount ?? 0) > pagination.perPage)) && (
+          <PagePagination {...props} {...pagination} topBorder />
+        )}
       {columnModal}
     </>
   );
@@ -389,7 +396,6 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     rowActions,
     toolbarActions,
     itemCount,
-    perPage,
     clearAllFilters,
     onSelect,
     unselectAll,
@@ -462,7 +468,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         )}
         <Tbody>
           {itemCount === undefined
-            ? new Array(perPage).fill(0).map((_, index) => (
+            ? new Array(10).fill(0).map((_, index) => (
                 <Tr key={index}>
                   <Td>
                     <TableCellDiv>
@@ -472,7 +478,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 </Tr>
               ))
             : pageItems === undefined
-            ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
+            ? new Array(Math.min(10, itemCount)).fill(0).map((_, index) => (
                 <Tr key={index}>
                   {showSelect && <Td></Td>}
                   <Td colSpan={tableColumns.length}>
