@@ -1,30 +1,5 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  CardHeaderMain,
-  CardTitle,
-  Divider,
-  Grid,
-  GridItem,
-  Label,
-  LabelGroup,
-  PageSection,
-  Split,
-  SplitItem,
-  Stack,
-} from '@patternfly/react-core';
-import {
-  CheckCircleIcon,
-  CircleIcon,
-  ExternalLinkAltIcon,
-  RedhatIcon,
-} from '@patternfly/react-icons';
-import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useHubView } from '../useHubView';
