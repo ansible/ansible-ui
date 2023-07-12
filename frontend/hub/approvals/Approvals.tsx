@@ -16,7 +16,7 @@ export function Approvals() {
     tableColumns,
     toolbarFilters,
     sortKey: 'order_by',
-    defaultFilters: { status: [encodeURI('pipeline=staging')] },
+    defaultFilters: { status: ['pipeline=staging'] },
   });
 
   return (
