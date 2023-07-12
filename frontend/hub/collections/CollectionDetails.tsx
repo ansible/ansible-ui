@@ -52,7 +52,6 @@ import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { HubItemsResponse } from '../useHubView';
 import { Collection } from './Collection';
-import { CollectionVersionSearch } from './CollectionVersionSearch';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { hubAPI } from '../api';
@@ -63,7 +62,7 @@ export function CollectionDetails() {
   const { data, refresh } = useGet<HubItemsResponse<Collection>>(
     hubAPI`/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
   );
-  let collection: CollectionVersionSearch | undefined = undefined;
+  let collection: Collection | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
     collection = data.data[0];
   }
@@ -71,10 +70,10 @@ export function CollectionDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.collection_version.name}
+        title={collection?.name}
         breadcrumbs={[
           { label: t('Collections'), to: RouteObj.Collections },
-          { label: collection?.collection_version.name },
+          { label: collection?.name },
         ]}
         headerActions={
           <PageActions<Collection>
@@ -108,7 +107,7 @@ export function CollectionDetails() {
   );
 }
 
-function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionDetailsTab(props: { collection?: Collection }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
