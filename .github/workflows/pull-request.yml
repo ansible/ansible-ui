@@ -155,10 +155,10 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
-      - name: 'Install galaxykit dependency'
+      - name: 'Configure oci_env'
+        working-directory: 'oci_env'
         run: |
-          # pip install git+https://github.com/ansible/galaxykit.git@branch_name
-          pip install git+https://github.com/ansible/galaxykit.git
+          pip install --editable ./client/
       - name: 'Checkout galaxy_ng'
         uses: actions/checkout@v3
         with:
