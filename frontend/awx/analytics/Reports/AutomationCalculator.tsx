@@ -18,7 +18,7 @@ import {
   ToolbarItem,
   ToolbarItemVariant,
 } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChartLegendEntry, ChartSchemaElement } from 'react-json-chart-builder';
 import { useSearchParams } from 'react-router-dom';
@@ -87,36 +87,39 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
 
   const [specificError, setSpecificError] = useState<string>('');
 
-  const defaultParams: ParamsType = {
-    status: ['successful'],
-    org_id: [],
-    cluster_id: [],
-    template_id: [],
-    inventory_id: [],
-    quick_date_range: 'roi_last_year',
-    job_type: ['job'],
-    sort_options: 'successful_hosts_savings',
-    sort_order: 'desc',
-    start_date: undefined,
-    end_date: undefined,
-    limit: '6',
-    offset: '0',
-    only_root_workflows_and_standalone_jobs: true,
-    template_weigh_in: undefined,
-    attributes: [
-      'elapsed',
-      'host_count',
-      'total_count',
-      'total_org_count',
-      'total_cluster_count',
-      'successful_hosts_total',
-      'successful_elapsed_total',
-    ],
-    group_by: 'template',
-    group_by_time: false,
-  };
+  const defaultParams: ParamsType = useMemo(
+    () => ({
+      status: ['successful'],
+      org_id: [],
+      cluster_id: [],
+      template_id: [],
+      inventory_id: [],
+      quick_date_range: 'roi_last_year',
+      job_type: ['job'],
+      sort_options: 'successful_hosts_savings',
+      sort_order: 'desc',
+      start_date: undefined,
+      end_date: undefined,
+      limit: '6',
+      offset: '0',
+      only_root_workflows_and_standalone_jobs: true,
+      template_weigh_in: undefined,
+      attributes: [
+        'elapsed',
+        'host_count',
+        'total_count',
+        'total_org_count',
+        'total_cluster_count',
+        'successful_hosts_total',
+        'successful_elapsed_total',
+      ],
+      group_by: 'template',
+      group_by_time: false,
+    }),
+    []
+  );
 
-  const getParams = () => {
+  const getParams = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const params: Record<string, string[] | string> = JSON.parse(JSON.stringify(defaultParams));
     Object.keys(defaultParams).forEach((key) => {
@@ -135,7 +138,7 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       }
     });
     return params;
-  };
+  }, [defaultParams, searchParams]);
 
   function paramsToFilterState(params: Record<string, string[] | string>): FilterState {
     const filterState: FilterState = {};
@@ -174,40 +177,6 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
       }
     }
     setSearchParams(updatedSearchParams.toString());
-  };
-
-  const updateSearchParamsFromFramework = (currentFilters: FilterState) => {
-    const updatedSearchParams = new URLSearchParams(searchParams.toString());
-    const keys = Object.keys(getParams()).filter(
-      (key) =>
-        ![
-          'sort_options',
-          'sort_by',
-          'meta',
-          'quick_date_range',
-          'template_weigh_in',
-          'parent_workflow',
-          'manual_effort_reviewed',
-          'attributes',
-        ].includes(key)
-    );
-    keys.forEach((key) => {
-      const value = currentFilters[key];
-      if (!value) {
-        updatedSearchParams.delete(key);
-      } else {
-        if (value.length === 0) {
-          updatedSearchParams.delete(key);
-        } else {
-          updatedSearchParams.delete(key);
-          if (Array.isArray(value)) {
-            value.forEach((v) => updatedSearchParams.append(key, v.toString()));
-          }
-        }
-      }
-    });
-    setSearchParams(updatedSearchParams.toString());
-    return currentFilters;
   };
 
   const getOffset = (page: string, perPage: string | AttributeType): number => {
@@ -260,6 +229,57 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
     { title: '20', value: 20 },
     { title: '25', value: 25 },
   ];
+
+  // Active filters state - initial state is based on URL search params
+  const [filterState, setFilterState] = useState<FilterState>(() =>
+    paramsToFilterState(getParams())
+  );
+
+  // When filterState changes, update the URL search params
+  useEffect(() => {
+    // we use the search params setter function with previous value to update the URL search params
+    // this allows us to update the URL search params without requiring the search params to be in the dependency array
+    // which keeps the state from causing an infinite loop
+    setSearchParams((searchParams) => {
+      // Make a copy of the current search params so that we can modify it
+      const updatedSearchParams = new URLSearchParams(searchParams.toString());
+
+      // Get the current search params keys so that we can remove any that are no longer in the filter state
+      const filterKeys: string[] = [];
+      for (const key of updatedSearchParams.keys()) {
+        filterKeys.push(key);
+      }
+      // Only remove keys that are not in the filter state and are not part of the default params
+      filterKeys.filter(
+        (key) =>
+          ![
+            'sort_options',
+            'sort_by',
+            'meta',
+            'quick_date_range',
+            'template_weigh_in',
+            'parent_workflow',
+            'manual_effort_reviewed',
+            'attributes',
+          ].includes(key)
+      );
+      // Remove any search params that are no longer in the filter state
+      for (const key of filterKeys) {
+        if (!filterState[key]) {
+          updatedSearchParams.delete(key);
+        }
+      }
+
+      // Update the search params with the new filter state
+      for (const [key, value] of Object.entries(filterState)) {
+        updatedSearchParams.delete(key);
+        value?.forEach((v) => updatedSearchParams.append(key, v.toString()));
+      }
+
+      // Return the updated search params
+      return updatedSearchParams;
+    });
+  }, [filterState, setSearchParams]);
 
   if (isLoading || optionsIsLoading)
     return (
@@ -475,11 +495,8 @@ export default function AutomationCalculator(props: { schema: ChartSchemaElement
         sortOptions={sortOptions || []}
         toolbarFilters={filterOptions}
         // TODO all three need fixing to correct one
-        filters={paramsToFilterState(getParams())}
-        // setFilters is a function that returns a function that takes a FilterState and returns a new FilterState
-        // this follows the pattern of react useState setter functions
-        setFilters={() => (currentFilters: FilterState) =>
-          updateSearchParamsFromFramework(currentFilters)}
+        filters={filterState}
+        setFilters={setFilterState}
         clearAllFilters={() => updateSearchParams(undefined, undefined)}
         viewType={'cards'}
         setViewType={() => 'cards'} // TODO not needed
