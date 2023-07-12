@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 
 export function useRoleColumns(withLinks: boolean) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRole>[]>(
     () => [
       {
@@ -16,7 +14,7 @@ export function useRoleColumns(withLinks: boolean) {
           withLinks ? (
             <TextCell
               text={role.name}
-              onClick={() => navigate(RouteObj.EdaRoleDetails.replace(':id', role.id.toString()))}
+              to={RouteObj.EdaRoleDetails.replace(':id', role.id.toString())}
             />
           ) : (
             <TextCell text={role.name} />
@@ -31,6 +29,6 @@ export function useRoleColumns(withLinks: boolean) {
         list: 'description',
       },
     ],
-    [navigate, withLinks, t]
+    [withLinks, t]
   );
 }
