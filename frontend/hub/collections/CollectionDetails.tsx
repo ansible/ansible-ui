@@ -52,7 +52,7 @@ import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
-import { CollectionVersionSearch } from './Collection';
+import { CollectionVersionSearch } from './CollectionVersionSearch';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 
@@ -312,7 +312,11 @@ function CollectionDocumentationTabContent(props: {
                       <div>{option.name}</div>
                       <small style={{ opacity: 0.7 }}>{option.type}</small>
                     </Td>
-                    <Td>{option.choices?.map((choice) => <p key={choice}>{choice}</p>)}</Td>
+                    <Td>
+                      {option.choices?.map((choice) => (
+                        <p key={choice}>{choice}</p>
+                      ))}
+                    </Td>
                     <Td>{option.description}</Td>
                   </Tr>
                 ))}
@@ -325,7 +329,9 @@ function CollectionDocumentationTabContent(props: {
         <PageSection variant="light">
           <Stack hasGutter>
             <Title headingLevel="h2">{t('Notes')}</Title>
-            {content?.doc_strings?.doc.notes?.map((note, index) => <p key={index}>{note}</p>)}
+            {content?.doc_strings?.doc.notes?.map((note, index) => (
+              <p key={index}>{note}</p>
+            ))}
           </Stack>
         </PageSection>
       )}
@@ -428,9 +434,9 @@ function CollectionImportLogTab(props: { collection?: CollectionVersionSearch })
               variant="danger"
               title={
                 <Stack>
-                  {collectionImport?.error?.description
-                    .split('\n')
-                    .map((line, index) => <StackItem key={index}>{line}</StackItem>)}
+                  {collectionImport?.error?.description.split('\n').map((line, index) => (
+                    <StackItem key={index}>{line}</StackItem>
+                  ))}
                 </Stack>
               }
               isInline
