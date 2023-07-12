@@ -546,19 +546,23 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
       - name: 'Checkout galaxy_ng'
+        if: steps.check.outputs.skip != 'true'
         uses: actions/checkout@v3
         with:
           repository: 'ansible/galaxy_ng'
           path: 'galaxy_ng'
       - name: 'Checkout oci_env'
+        if: steps.check.outputs.skip != 'true'
         uses: actions/checkout@v3
         with:
           repository: 'pulp/oci_env'
           path: 'oci_env'
       - name: 'Configure oci_env'
+        if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: pip install -e client
       - name: Create compose.env
+        if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: |
           echo 'COMPOSE_PROFILE=galaxy_ng/base' >> compose.env
@@ -568,9 +572,11 @@ jobs:
           echo 'API_PORT=5001' >> compose.env
           echo 'API_PROTOCOL=http' >> compose.env
       - name: 'oci-env compose build'
+        if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: oci-env compose build
       - name: 'oci-env compose up'
+        if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: oci-env compose up -d
       - name: Cypress
@@ -592,5 +598,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
       - name: 'oci-env compose down'
+        if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: oci-env compose down --volumes
