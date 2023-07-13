@@ -1,4 +1,4 @@
-import { ItemsResponse } from '../../../common/crud/Data';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { getJobsAPIUrl, getRelaunchEndpoint } from './jobUtils';
 
@@ -9,7 +9,7 @@ describe('jobUtils', () => {
   });
 
   it('Returns correct relaunch endpoint based on job type', () => {
-    cy.fixture('jobs.json').then((response: ItemsResponse<UnifiedJob>) => {
+    cy.fixture('jobs.json').then((response: AwxItemsResponse<UnifiedJob>) => {
       const endpoint = getRelaunchEndpoint(response.results[0]);
       expect(endpoint).to.equal('/api/v2/workflow_jobs/491/relaunch/');
     });

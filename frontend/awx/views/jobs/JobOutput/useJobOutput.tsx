@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { IToolbarFilter } from '../../../../../framework';
+import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';
-import type { IToolbarFilter } from '../../../../../framework';
 
 type WebSocketMessage = {
   group_name?: string;
@@ -37,7 +38,7 @@ export function useJobOutput(
       const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
       isQuerying.current.querying = true;
 
-      requestGet<ItemsResponse<JobEvent>>(
+      requestGet<AwxItemsResponse<JobEvent>>(
         `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
       )
         .then((itemsResponse) => {

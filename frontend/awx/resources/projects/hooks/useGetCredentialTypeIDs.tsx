@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
-import { ItemsResponse } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { CredentialType } from '../../../interfaces/CredentialType';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 /**
  * Returns an object that maps credential types (scm, Insights, cryptography) to their IDs
  */
 export function useGetCredentialTypeIDs() {
-  const scmCredentialTypeResponse = useGet<ItemsResponse<CredentialType>>(
+  const scmCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?kind=scm'
   );
-  const insightsCredentialTypeResponse = useGet<ItemsResponse<CredentialType>>(
+  const insightsCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?name=Insights'
   );
-  const cryptoCredentialTypeResponse = useGet<ItemsResponse<CredentialType>>(
+  const cryptoCredentialTypeResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?kind=cryptography'
   );
   const credentialTypeIDs: { [key: string]: number } = useMemo(() => {

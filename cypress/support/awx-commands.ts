@@ -1,6 +1,7 @@
 import '@cypress/code-coverage/support';
 import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
@@ -14,7 +15,6 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { ItemsResponse } from '../../frontend/common/crud/Data';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -674,7 +674,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => {
-  cy.awxRequestGet<ItemsResponse<JobTemplate>>(
+  cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
     `/api/v2/job_templates/?name=${awxJobTemplateName}`
   ).then((result) => {
     cy.log('RESULT RESULT', result);
