@@ -102,17 +102,17 @@ function HubNamespaceInputs() {
         isRequired
       />
       <PageFormTextInput<HubNamespace>
-        name="description"
+        name="latest_metadata.description"
         label={t('Description')}
         placeholder={t('Enter description')}
       />
       <PageFormTextInput<HubNamespace>
-        name="company"
+        name="latest_metadata.company"
         label={t('Company')}
         placeholder={t('Enter company')}
       />
       <PageFormTextInput<HubNamespace>
-        name="avatar_url"
+        name="latest_metadata.avatar_url"
         label={t('Logo URL')}
         placeholder={t('Enter logo URL')}
       />

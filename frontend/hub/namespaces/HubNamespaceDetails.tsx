@@ -23,7 +23,7 @@ import { useCollectionsActions } from '../collections/hooks/useCollectionsAction
 import { useCollectionColumns } from '../collections/hooks/useCollectionColumns';
 import { useCollectionActions } from '../collections/hooks/useCollectionActions';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { hubAPI } from '../api';
+import { hubAPI, idKeyFn } from '../api';
 
 import { DropdownPosition } from '@patternfly/react-core';
 
@@ -75,12 +75,9 @@ function CollectionsTab(props: { namespace?: HubNamespace }) {
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
-    keyFn: (item) => item.collection_version.pulp_href + ':' + item.repository.name,
-    toolbarFilters,
+    url: hubAPI`/_ui/v1/repo/published/`,
+    keyFn: idKeyFn,
     tableColumns,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     queryParams: { namespace: props?.namespace?.name },
   });
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
