@@ -12,14 +12,14 @@ import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubNamespace } from './HubNamespace';
-import { hubAPI } from '../api';
+import { hubAPI, pulpAPI } from '../api';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
+    const createdNamespace = await postRequest(pulpAPI`/pulp_ansible/namespaces/`, namespace);
     navigate(RouteObj.NamespaceDetails.replace(':id', createdNamespace.name.toString()));
   };
   return (
@@ -35,7 +35,9 @@ export function CreateHubNamespace() {
         submitText={t('Create namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{ groups: [] }}
+        defaultValue={{
+          latest_metadata: { groups: [] },
+        }}
       >
         <HubNamespaceInputs />
       </PageForm>
