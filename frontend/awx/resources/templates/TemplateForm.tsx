@@ -9,6 +9,7 @@ import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
@@ -19,7 +20,6 @@ import { Organization } from '../../interfaces/Organization';
 import { getAwxError } from '../../useAwxView';
 import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
 import JobTemplateInputs from './JobTemplateInputs';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 
 const stringifyTags: (tags: { value: string }[]) => string = (tags) => {
   const stringifiedTags = tags.filter((tag) => {
