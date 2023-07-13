@@ -4,7 +4,7 @@ import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Approval';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
-import { hubAPI } from '../api';
+import { hubAPI, collectionKeyFn } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();
@@ -12,7 +12,7 @@ export function Approvals() {
   const tableColumns = useApprovalsColumns();
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
-    keyFn: (item) => item.collection_version.pulp_href + ':' + item.repository.name,
+    keyFn: collectionKeyFn,
     tableColumns,
     toolbarFilters,
     sortKey: 'order_by',
