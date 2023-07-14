@@ -118,6 +118,13 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
         const tempItemOrder = moveItem([...listItems], draggedItemId, newDraggedItemIndex);
         setListItems(tempItemOrder);
+
+        setSelectedItems((prevSelected) => {
+          prevSelected.sort(function (a, b) {
+            return tempItemOrder.indexOf(a) - tempItemOrder.indexOf(b);
+          });
+          return [...prevSelected];
+        });
       }
     }
     return null;
