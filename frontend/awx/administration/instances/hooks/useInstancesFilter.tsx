@@ -16,7 +16,7 @@ export function useInstancesFilters() {
       {
         key: 'type',
         label: t('Node type'),
-        type: 'select',
+        type: 'multiselect',
         query: 'node_type',
         options: [
           { label: t('Hybrid'), value: 'hybrid' },

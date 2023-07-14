@@ -1,14 +1,14 @@
-import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
-import styled from 'styled-components';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Job } from '../../../interfaces/Job';
-import './JobOutput.css';
-import { JobStatusBar } from './JobStatusBar';
-import { HostStatusBar } from './HostStatusBar';
-import { JobOutputToolbar } from './JobOutputToolbar';
-import { JobOutputEvents } from './JobOutputEvents';
+import styled from 'styled-components';
 import type { IToolbarFilter } from '../../../../../framework';
+import { Job } from '../../../interfaces/Job';
+import { HostStatusBar } from './HostStatusBar';
+import './JobOutput.css';
+import { JobOutputEvents } from './JobOutputEvents';
+import { JobOutputToolbar } from './JobOutputToolbar';
+import { JobStatusBar } from './JobStatusBar';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -50,7 +50,7 @@ function useOutputFilters() {
       {
         key: 'event',
         label: t('Event'),
-        type: 'select',
+        type: 'multiselect',
         query: 'event',
         placeholder: t('Select event type'),
         options: [

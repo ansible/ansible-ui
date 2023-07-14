@@ -2,6 +2,7 @@ import {
   InputGroup,
   InputGroupText,
   SelectOption,
+  SelectVariant,
   Split,
   SplitItem,
   ToolbarFilter,
@@ -13,15 +14,20 @@ import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormGroupSelect } from '../../PageForm/Inputs/FormGroupSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
-import { ToolbarTextFilter, IToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
-import {
-  ToolbarSelectFilter,
-  IToolbarSelectFilter,
-} from './PageToolbarFilterTypes/ToolbarSelectFilter';
-import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
+import {
+  IToolbarMultiSelectFilter,
+  IToolbarSelectFilter,
+  ToolbarSelectFilter,
+} from './PageToolbarFilterTypes/ToolbarSelectFilter';
+import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
 
-export type IToolbarFilter = IToolbarTextFilter | IToolbarSelectFilter | IToolbarDateFilter;
+export type IToolbarFilter =
+  | IToolbarTextFilter
+  | IToolbarSelectFilter
+  | IToolbarMultiSelectFilter
+  | IToolbarDateFilter;
 
 export type IFilterState = Record<string, string[] | undefined>;
 
@@ -47,48 +53,23 @@ function ToolbarContent(props: PageToolbarFiltersProps) {
           <SplitItem>
             <InputGroup>
               {toolbarFilters.length === 1 ? (
-                <>
-                  <InputGroupText
-                    style={{
-                      border: 0,
-                      paddingLeft: 12,
-                      paddingRight: 2,
-                      color: 'inherit',
-                      borderRadius: '4px 0px 0px 4px',
-                    }}
-                  >
-                    <FilterIcon />
-                  </InputGroupText>
-                  <InputGroupText style={{ border: 0, padding: '6px 8px', color: 'inherit' }}>
-                    {toolbarFilters[0].label}
-                  </InputGroupText>
-                </>
+                <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
+                  {toolbarFilters[0].label}
+                </InputGroupText>
               ) : (
-                <>
-                  <InputGroupText
-                    style={{
-                      border: 0,
-                      paddingLeft: 12,
-                      paddingRight: 12,
-                      color: 'inherit',
-                      borderRadius: '4px 0px 0px 4px',
-                    }}
-                  >
-                    <FilterIcon />
-                  </InputGroupText>
-                  <FormGroupSelect
-                    id="filter"
-                    onSelect={(_, v) => setSeletedFilter(v.toString())}
-                    value={selectedFilter}
-                    placeholderText=""
-                  >
-                    {toolbarFilters.map((filter) => (
-                      <SelectOption key={filter.key} value={filter.key}>
-                        {filter.label}
-                      </SelectOption>
-                    ))}
-                  </FormGroupSelect>
-                </>
+                <FormGroupSelect
+                  id="filter"
+                  onSelect={(_, v) => setSeletedFilter(v.toString())}
+                  value={selectedFilter}
+                  placeholderText=""
+                  selectedIcon={<FilterIcon />}
+                >
+                  {toolbarFilters.map((filter) => (
+                    <SelectOption key={filter.key} value={filter.key}>
+                      {filter.label}
+                    </SelectOption>
+                  ))}
+                </FormGroupSelect>
               )}
             </InputGroup>
           </SplitItem>
@@ -97,16 +78,20 @@ function ToolbarContent(props: PageToolbarFiltersProps) {
               id="filter-input"
               filter={toolbarFilters.find((filter) => filter.key === selectedFilter)}
               addFilter={(value: string) => {
-                let values = filters?.[selectedFilter];
-                if (!values) values = [];
-                if (!values.includes(value)) values.push(value);
-                setFilters?.({ ...filters, [selectedFilter]: values });
+                setFilters?.((filters) => {
+                  let values = filters?.[selectedFilter];
+                  if (!values) values = [];
+                  if (!values.includes(value)) values.push(value);
+                  return { ...filters, [selectedFilter]: values };
+                });
               }}
               removeFilter={(value: string) => {
-                let values = filters?.[selectedFilter];
-                if (!values) values = [];
-                values = values.filter((v) => v !== value);
-                setFilters?.({ ...filters, [selectedFilter]: values });
+                setFilters?.((filters) => {
+                  let values = filters?.[selectedFilter];
+                  if (!values) values = [];
+                  values = values.filter((v) => v !== value);
+                  return { ...filters, [selectedFilter]: values };
+                });
               }}
               values={filters?.[selectedFilter] ?? []}
             />
@@ -135,10 +120,13 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-      <ToolbarGroup variant="filter-group">
+      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 16 }}>
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <ToolbarContent {...{ toolbarFilters: groupedFilters, setFilters, filters }} />
-        <ToolbarContent {...{ toolbarFilters: pinnedFilters, setFilters, filters }} />
+        {pinnedFilters?.map((filter) => (
+          <ToolbarContent key={filter.key} {...{ toolbarFilters: [filter], setFilters, filters }} />
+        ))}
+
         {toolbarFilters?.map((filter) => {
           const values = filters?.[filter.key] || [];
           return (
@@ -152,9 +140,11 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
               })}
               deleteChip={(_group, value) => {
                 setFilters?.((filters) => {
-                  //TODO bug here where value is actually select filter option label... need to map
                   const newState = { ...filters };
                   value = typeof value === 'string' ? value : value.key;
+                  if ('options' in filter) {
+                    value = filter.options.find((o) => o.label === value)?.value ?? value;
+                  }
                   let values = filters[filter.key];
                   if (values) {
                     values = values.filter((v) => v !== value);
@@ -188,11 +178,11 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 function ToolbarFilterInput(props: {
   id?: string;
   filter?: IToolbarFilter;
-  addFilter: (value: string) => void;
   values: string[];
+  addFilter: (value: string) => void;
   removeFilter: (value: string) => void;
 }) {
-  const { filter } = props;
+  const { filter, values, addFilter, removeFilter } = props;
   switch (filter?.type) {
     case 'string':
       return (
@@ -204,7 +194,27 @@ function ToolbarFilterInput(props: {
       );
     case 'select':
       return (
-        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
+        <ToolbarSelectFilter
+          id={props.id ?? filter.key}
+          values={values}
+          addFilter={addFilter}
+          removeFilter={removeFilter}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          variant={SelectVariant.single}
+        />
+      );
+    case 'multiselect':
+      return (
+        <ToolbarSelectFilter
+          id={props.id ?? filter.key}
+          values={values}
+          addFilter={addFilter}
+          removeFilter={removeFilter}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          variant={SelectVariant.checkbox}
+        />
       );
   }
   return <></>;

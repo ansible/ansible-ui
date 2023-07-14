@@ -9,7 +9,7 @@ export function useActivationHistoryFilters() {
       {
         key: 'status',
         label: t('Status'),
-        type: 'select',
+        type: 'multiselect',
         query: 'status',
         options: [
           { label: t('New'), value: 'new' },

@@ -23,7 +23,7 @@ export function useCollectionFilters() {
       {
         key: 'repository',
         label: t('Repository'),
-        type: 'select',
+        type: 'multiselect',
         query: 'repository',
         options: [
           { label: t('Published'), value: 'published' },
@@ -43,7 +43,7 @@ export function useCollectionFilters() {
       {
         key: 'type',
         label: t('Type'),
-        type: 'select',
+        type: 'multiselect',
         query: 'type',
         options: [
           { label: t('Synced'), value: 'synced' },
@@ -54,7 +54,7 @@ export function useCollectionFilters() {
       {
         key: 'signature',
         label: t('Signature'),
-        type: 'select',
+        type: 'multiselect',
         query: 'sign_state',
         options: [
           { label: t('Signed'), value: 'signed' },

@@ -134,7 +134,7 @@ export function useInventoryTypeToolbarFilter() {
     () => ({
       key: 'kind',
       label: t('Inventory type'),
-      type: 'select',
+      type: 'multiselect',
       query: 'or__kind',
       options: [
         { label: t('Inventory'), value: '' },

@@ -23,7 +23,7 @@ export function useApprovalFilters() {
       {
         key: 'status',
         label: t('Status'),
-        type: 'select',
+        type: 'multiselect',
         query: 'repository',
         options: [
           { label: t('Needs review'), value: 'staging' },

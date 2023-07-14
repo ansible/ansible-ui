@@ -1,12 +1,11 @@
 import {
-  Flex,
   OnPerPageSelect,
   OnSetPage,
+  ToolbarContent as PFToolbarContent,
   Pagination,
   PaginationVariant,
   Skeleton,
   Toolbar,
-  ToolbarContent as PFToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -23,7 +22,10 @@ import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
 
 const FlexGrowDiv = styled.div`
+  display: flex;
   flex-grow: 1;
+  justify-content: end;
+  flex-wrap: wrap;
 `;
 
 const ToolbarContent = styled(PFToolbarContent)`
@@ -181,11 +183,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           />
         </ToolbarGroup>
 
-        {/* Spacing */}
-        <FlexGrowDiv />
-
         {/* The flex below is needed to make the toolbar wrap elements properly */}
-        <Flex>
+        <FlexGrowDiv>
           {/* Sort */}
           <PageToolbarSort
             sort={sort}
@@ -207,26 +206,26 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
               openColumnModal={openColumnModal}
             />
           )}
-        </Flex>
 
-        {/* Pagination */}
-        {!props.disablePagination && (
-          <ToolbarItem
-            visibility={{ default: 'hidden', '2xl': 'visible' }}
-            style={{ marginLeft: 24 }}
-          >
-            <Pagination
-              variant={PaginationVariant.top}
-              isCompact
-              itemCount={itemCount}
-              perPage={perPage}
-              page={page}
-              onSetPage={onSetPage}
-              onPerPageSelect={onPerPageSelect}
-              style={{ marginTop: -8, marginBottom: -8 }}
-            />
-          </ToolbarItem>
-        )}
+          {/* Pagination */}
+          {!props.disablePagination && (
+            <ToolbarItem
+              visibility={{ default: 'hidden', '2xl': 'visible' }}
+              style={{ marginLeft: 24 }}
+            >
+              <Pagination
+                variant={PaginationVariant.top}
+                isCompact
+                itemCount={itemCount}
+                perPage={perPage}
+                page={page}
+                onSetPage={onSetPage}
+                onPerPageSelect={onPerPageSelect}
+                style={{ marginTop: -8, marginBottom: -8 }}
+              />
+            </ToolbarItem>
+          )}
+        </FlexGrowDiv>
       </ToolbarContent>
     </Toolbar>
   );
