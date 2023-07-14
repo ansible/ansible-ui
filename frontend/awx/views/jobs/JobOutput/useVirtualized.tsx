@@ -1,11 +1,16 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import { RefObject, useCallback, useEffect, useState } from 'react';
 
-export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, items: T[]) {
+export function useVirtualizedList<T>(
+  containerRef: RefObject<HTMLElement>,
+  items: T[],
+  isFollowModeEnabled: boolean
+) {
   const scrollBuffer = 400;
 
   const [scrollTop, setScrollTop] = useState(0);
   const onScroll = useCallback(() => {
+    console.log('onScroll');
     if (!containerRef.current) return;
     setScrollTop(containerRef.current.scrollTop);
     setContainerHeight(containerRef.current.clientHeight);
@@ -17,6 +22,7 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
 
   const [containerHeight, setContainerHeight] = useState(0);
   const onResize = useCallback(() => {
+    console.log('onResize');
     if (!containerRef.current) return;
     setContainerHeight(containerRef.current.clientHeight);
   }, [containerRef]);
@@ -26,6 +32,7 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
   const [minRowHeight, setMinRowHeight] = useState(24);
   const setRowHeight = useCallback(
     (index: number, height: number) => {
+      console.log('setRowHeights');
       setRowHeights((heights) => {
         const existingHeight = heights[index];
         if (existingHeight === height) return heights;
@@ -34,9 +41,20 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
         newHeights[index] = height;
         return newHeights;
       });
+      if (isFollowModeEnabled && containerRef.current) {
+        console.log('B');
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      }
     },
-    [minRowHeight]
+    [minRowHeight, containerRef, isFollowModeEnabled]
   );
+
+  useEffect(() => {
+    if (isFollowModeEnabled && containerRef.current) {
+      console.log('A');
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [isFollowModeEnabled, containerRef]);
 
   const totalRowCount = items.length;
 

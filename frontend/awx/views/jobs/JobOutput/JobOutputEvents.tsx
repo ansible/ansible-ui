@@ -11,12 +11,11 @@ import {
   useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
+import { isJobRunning } from './util';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
 }
-
-const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 const ScrollContainer = styled.div`
   overflow: auto;
@@ -29,17 +28,17 @@ interface IJobOutputEventsProps {
   job: Job;
   toolbarFilters: IToolbarFilter[];
   filterState: IFilterState;
+  isFollowModeEnabled: boolean;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { job, toolbarFilters, filterState } = props;
+  const { job, toolbarFilters, filterState, isFollowModeEnabled } = props;
   // TODO set job status on ws event change
-  const isJobRunning = !job.status || runningJobTypes.includes(job.status);
   const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
-    isJobRunning || isFiltered
+    isJobRunning(job.status) || isFiltered
   );
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
     job,
@@ -85,7 +84,8 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
     containerRef,
-    nonCollapsedRows
+    nonCollapsedRows,
+    isFollowModeEnabled
   );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;

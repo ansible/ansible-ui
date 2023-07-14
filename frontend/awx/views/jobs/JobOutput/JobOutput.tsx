@@ -9,6 +9,7 @@ import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
+import { isJobRunning } from './util';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -20,6 +21,7 @@ export function JobOutput(props: { job: Job }) {
   const { job } = props;
   const toolbarFilters = useOutputFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});
+  const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isJobRunning(job.status));
 
   if (!job) {
     return <Skeleton />;
@@ -32,8 +34,16 @@ export function JobOutput(props: { job: Job }) {
         toolbarFilters={toolbarFilters}
         filterState={filterState}
         setFilterState={setFilterState}
+        jobStatus={job.status}
+        isFollowModeEnabled={isFollowModeEnabled}
+        setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
-      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filterState={filterState} />
+      <JobOutputEvents
+        job={job}
+        toolbarFilters={toolbarFilters}
+        filterState={filterState}
+        isFollowModeEnabled={isFollowModeEnabled}
+      />
     </Section>
   );
 }
