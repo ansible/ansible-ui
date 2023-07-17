@@ -27,8 +27,8 @@ export function PageFormDateTimePicker<
             <FormGroupDateTimePicker
               {...props}
               id="startDateTime"
-              dateValue={field.value.startDate as string}
-              timeValue={field.value.startTime as string}
+              dateValue={field?.value?.startDate as string}
+              timeValue={field?.value?.startTime as string}
               onDateChange={(value: string) => field.onChange({ ...field.value, startDate: value })}
               datePlaceHolder={props.datePlaceHolder}
               onTimeChange={(event: React.FormEvent<HTMLInputElement>, time: string) =>
