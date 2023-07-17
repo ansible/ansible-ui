@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
 import { pulpAPI } from '../../api';
-import { useGetRequest } from '../../../common/crud/useGetRequest';
+import { useGet } from '../../../common/crud/useGet';
 import { SelectVariant } from '@patternfly/react-core';
 
 export function useCollectionFilters() {
@@ -10,17 +10,14 @@ export function useCollectionFilters() {
   const [searchText, setSearchText] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const request = useGetRequest<{ results: Repository[] }>();
-
+  const { data, isLoading } = useGet<{ results: Repository[] }>(
+    pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`
+  );
   useEffect(() => {
-    request(pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`)
-      .then((data) => {
-        setRepositories(data?.results || []);
-      })
-      .catch(() => {
-        // TODO - how to handle errors here?
-      });
-  }, [searchText, request]);
+    if (!isLoading) {
+      setRepositories(data?.results || []);
+    }
+  }, [data?.results]);
 
   return useMemo<IToolbarFilter[]>(
     () => [
