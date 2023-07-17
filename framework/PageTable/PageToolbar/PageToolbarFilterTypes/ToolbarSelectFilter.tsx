@@ -15,10 +15,17 @@ export interface IToolbarSelectFilterOption {
 /** Filter for filtering by user selection of option. */
 export interface IToolbarSelectFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user selection of option. */
-  type: 'select';
+  type: 'select' | 'selectTypeAhead';
 
   /** The options to show in the select. */
   options: IToolbarSelectFilterOption[];
+
+  hasSearch?: boolean;
+
+  /** This event will fire when text in search is changed. Works only when type is selectTypeAhead. */
+  onSearchTextChange?: (searchText: string) => void;
+
+  variant?: SelectVariant;
 }
 
 export function ToolbarSelectFilter(props: {
@@ -29,6 +36,7 @@ export function ToolbarSelectFilter(props: {
   placeholder?: string;
   hasSearch?: boolean;
   variant?: SelectVariant;
+  onSearchTextChange?: (text: string) => void;
 }) {
   const [translations] = useFrameworkTranslations();
   const { addFilter, removeFilter, options, values, variant } = props;
@@ -44,6 +52,7 @@ export function ToolbarSelectFilter(props: {
     [addFilter, removeFilter, values]
   );
   const onFilter = (_: unknown, textInput: string) => {
+    props.onSearchTextChange?.(textInput);
     if (textInput === '') return renderValues(options);
     return renderValues(
       options.filter((option) =>

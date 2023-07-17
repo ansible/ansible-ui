@@ -193,6 +193,7 @@ function ToolbarFilterInput(props: {
   removeFilter: (value: string) => void;
 }) {
   const { filter } = props;
+
   switch (filter?.type) {
     case 'string':
       return (
@@ -204,7 +205,25 @@ function ToolbarFilterInput(props: {
       );
     case 'select':
       return (
-        <ToolbarSelectFilter {...props} options={filter.options} placeholder={filter.placeholder} />
+        <ToolbarSelectFilter
+          {...props}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          hasSearch={filter.hasSearch}
+          variant={filter?.variant}
+        />
+      );
+
+    case 'selectTypeAhead':
+      return (
+        <ToolbarSelectFilter
+          {...props}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          hasSearch={filter.hasSearch}
+          onSearchTextChange={filter.onSearchTextChange}
+          variant={filter?.variant}
+        />
       );
   }
   return <></>;
