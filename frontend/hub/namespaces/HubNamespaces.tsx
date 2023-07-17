@@ -8,7 +8,7 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { idKeyFn } from '../../common/utils/nameKeyFn';
+import { nameKeyFn } from '../../common/utils/nameKeyFn';
 import { pulpAPI } from '../api/utils';
 
 export function Namespaces() {
@@ -76,7 +76,7 @@ export function CommonNamespaces({
   const rowActions = useHubNamespaceActions();
   const view = usePulpView<HubNamespace>({
     url,
-    keyFn: idKeyFn,
+    keyFn: nameKeyFn,
     toolbarFilters,
     tableColumns,
     queryParams,

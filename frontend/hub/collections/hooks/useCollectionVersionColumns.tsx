@@ -10,10 +10,7 @@ import { ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { CollectionVersionSearch } from '../CollectionVersionSearch';
 
-export function useCollectionVersionColumns(_options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-}) {
+export function useCollectionVersionColumns() {
   const { t } = useTranslation();
   return useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
