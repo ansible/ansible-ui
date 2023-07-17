@@ -18,12 +18,9 @@ import { useHubView } from '../useHubView';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
 import { useCollectionFilters } from '../collections/hooks/useCollectionFilters';
-import { useCollectionsActions } from '../collections/hooks/useCollectionsActions';
-import { useCollectionColumns } from '../collections/hooks/useCollectionColumns';
-import { useCollectionActions } from '../collections/hooks/useCollectionActions';
+import { useCollectionVersionColumns } from '../collections/hooks/useCollectionVersionColumns';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { hubAPI, idKeyFn } from '../api';
-
+import { hubAPI } from '../api';
 import { DropdownPosition } from '@patternfly/react-core';
 
 export function NamespaceDetails() {
@@ -65,6 +62,7 @@ export function NamespaceDetails() {
 
 function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   const { namespace } = props;
+  // eslint-disable-next-line no-console
   const tableColumns = useHubNamespacesColumns();
   return <PageDetailsFromColumns item={namespace} columns={tableColumns} />;
 }
@@ -72,24 +70,20 @@ function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
 function CollectionsTab(props: { namespace?: HubNamespace }) {
   const { t } = useTranslation();
   const toolbarFilters = useCollectionFilters();
-  const tableColumns = useCollectionColumns();
+  const tableColumns = useCollectionVersionColumns();
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/_ui/v1/repo/published/`,
-    keyFn: idKeyFn,
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    keyFn: (item) => item.collection_version.pulp_href + ':' + item.repository.name,
     tableColumns,
     queryParams: { namespace: props?.namespace?.name },
   });
-  const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
-  const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
   const navigate = useNavigate();
 
   return (
     <PageLayout>
       <PageTable<CollectionVersionSearch>
         toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
         tableColumns={tableColumns}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading collections')}
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
