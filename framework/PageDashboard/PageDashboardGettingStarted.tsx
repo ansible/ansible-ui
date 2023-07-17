@@ -29,6 +29,8 @@ export function PageDashboardGettingStarted(props: {
             {steps.map((step, index) => (
               <ProgressStep
                 key={index}
+                titleId={`${step.title}-${index}`}
+                id={`${step.title}-${index}`}
                 variant={step.isComplete ? 'success' : 'info'}
                 description={step.description}
               >
