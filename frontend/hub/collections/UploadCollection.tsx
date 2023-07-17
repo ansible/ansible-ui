@@ -113,7 +113,7 @@ export function UploadCollectionByFile() {
 
         <PageTable<Repository>
           onSelect={(repo) => {
-            setSelectedRepo(repo);
+            setSelectedRepo( { name : repo.name });
           }}
           disableColumnManagement={true}
           disableListView={true}
