@@ -2,7 +2,7 @@ import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import type { IToolbarFilter } from '../../../../../framework';
+import { ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import { HostStatusBar } from './HostStatusBar';
 import './JobOutput.css';
@@ -42,7 +42,7 @@ function useOutputFilters() {
       {
         key: 'stdout',
         label: t('Search output'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'stdout__icontains',
         placeholder: t('Filter by keyword'),
         comparison: 'contains',
@@ -50,7 +50,7 @@ function useOutputFilters() {
       {
         key: 'event',
         label: t('Event'),
-        type: 'multiselect',
+        type: ToolbarFilterType.MultiSelect,
         query: 'event',
         placeholder: t('Select event type'),
         options: [

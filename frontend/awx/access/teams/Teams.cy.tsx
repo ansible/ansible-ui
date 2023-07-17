@@ -1,3 +1,4 @@
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
@@ -63,7 +64,7 @@ describe('Teams.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -87,7 +88,7 @@ describe('Teams.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

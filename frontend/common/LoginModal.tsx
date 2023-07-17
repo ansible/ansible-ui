@@ -44,6 +44,8 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
         </Stack>
       }
       isOpen
+      title={t('Login')}
+      aria-label={t('Login')}
       onClose={onClose}
       showClose={process.env.EDA !== 'true'}
       variant={ModalVariant.small}

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useNameToolbarFilter } from '../../../common/awx-toolbar-filters';
 
 export function useJobsFilters() {
@@ -12,21 +12,21 @@ export function useJobsFilters() {
       {
         key: 'id',
         label: t('ID'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'id',
         comparison: 'equals',
       },
       {
         key: 'labels__name__icontains',
         label: t('Label name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'labels__name__icontains',
         comparison: 'contains',
       },
       {
         key: 'type',
         label: t('Job type'),
-        type: 'multiselect',
+        type: ToolbarFilterType.MultiSelect,
         query: 'type',
         options: [
           { label: t('Source control update'), value: 'project_update' },
@@ -41,14 +41,14 @@ export function useJobsFilters() {
       {
         key: 'created_by__username__icontains',
         label: t('Launched by (Username)'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'created_by__username__icontains',
         comparison: 'contains',
       },
       {
         key: 'status',
         label: t('Status'),
-        type: 'select',
+        type: ToolbarFilterType.SingleSelect,
         query: 'status',
         options: [
           { label: t('New'), value: 'new' },
@@ -65,7 +65,7 @@ export function useJobsFilters() {
       {
         key: 'job__limit',
         label: t('Limit'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'job__limit',
         comparison: 'equals',
       },

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useInstancesFilters() {
   const { t } = useTranslation();
@@ -9,14 +9,14 @@ export function useInstancesFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'hostname__icontains',
         comparison: 'contains',
       },
       {
         key: 'type',
         label: t('Node type'),
-        type: 'multiselect',
+        type: ToolbarFilterType.MultiSelect,
         query: 'node_type',
         options: [
           { label: t('Hybrid'), value: 'hybrid' },

@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
+import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Schedules } from './Schedules';
-import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {
@@ -28,7 +29,7 @@ describe('schedules .cy.ts', () => {
               help_text: 'A value representing the schedules iCal recurrence rule.',
               label: 'Rrule',
               required: true,
-              type: 'string',
+              type: ToolbarFilterType.Text,
             },
           },
         },
@@ -99,7 +100,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             GET: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -150,7 +151,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -196,7 +197,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

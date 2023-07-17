@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
 
 export function useNameToolbarFilter() {
   const { t } = useTranslation();
@@ -8,7 +8,7 @@ export function useNameToolbarFilter() {
     () => ({
       key: 'name',
       label: t('Name'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'name__icontains',
       comparison: 'contains',
     }),
@@ -22,7 +22,7 @@ export function useDescriptionToolbarFilter() {
     () => ({
       key: 'description',
       label: t('Description'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'description__icontains',
       comparison: 'contains',
     }),
@@ -36,7 +36,7 @@ export function useOrganizationToolbarFilter() {
     () => ({
       key: 'organization',
       label: t('Organization'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'organization__name__icontains',
       comparison: 'contains',
     }),
@@ -50,7 +50,7 @@ export function useCreatedByToolbarFilter() {
     () => ({
       key: 'created-by',
       label: t('Created by'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'created_by__username__icontains',
       comparison: 'contains',
     }),
@@ -64,7 +64,7 @@ export function useModifiedByToolbarFilter() {
     () => ({
       key: 'modified-by',
       label: t('Modified by'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'modified_by__username__icontains',
       comparison: 'contains',
     }),
@@ -78,7 +78,7 @@ export function useUsernameToolbarFilter() {
     () => ({
       key: 'username',
       label: t('Username'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'username__icontains',
       comparison: 'contains',
     }),
@@ -92,7 +92,7 @@ export function useFirstNameToolbarFilter() {
     () => ({
       key: 'firstname',
       label: t('First name'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'first_name__icontains',
       comparison: 'contains',
     }),
@@ -106,7 +106,7 @@ export function useLastNameToolbarFilter() {
     () => ({
       key: 'lastname',
       label: t('Last name'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'last_name__icontains',
       comparison: 'contains',
     }),
@@ -120,7 +120,7 @@ export function useEmailToolbarFilter() {
     () => ({
       key: 'email',
       label: t('Email'),
-      type: 'string',
+      type: ToolbarFilterType.Text,
       query: 'email__icontains',
       comparison: 'contains',
     }),
@@ -134,7 +134,7 @@ export function useInventoryTypeToolbarFilter() {
     () => ({
       key: 'kind',
       label: t('Inventory type'),
-      type: 'multiselect',
+      type: ToolbarFilterType.MultiSelect,
       query: 'or__kind',
       options: [
         { label: t('Inventory'), value: '' },

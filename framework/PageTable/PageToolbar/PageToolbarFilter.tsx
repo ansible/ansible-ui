@@ -18,14 +18,21 @@ import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
 import {
   IToolbarMultiSelectFilter,
-  IToolbarSelectFilter,
+  IToolbarSingleSelectFilter,
   ToolbarSelectFilter,
 } from './PageToolbarFilterTypes/ToolbarSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
 
+export enum ToolbarFilterType {
+  Text = 'text',
+  SingleSelect = 'singleselect',
+  MultiSelect = 'multiselect',
+  Date = 'date',
+}
+
 export type IToolbarFilter =
   | IToolbarTextFilter
-  | IToolbarSelectFilter
+  | IToolbarSingleSelectFilter
   | IToolbarMultiSelectFilter
   | IToolbarDateFilter;
 
@@ -184,7 +191,7 @@ function ToolbarFilterInput(props: {
 }) {
   const { filter, values, addFilter, removeFilter } = props;
   switch (filter?.type) {
-    case 'string':
+    case ToolbarFilterType.Text:
       return (
         <ToolbarTextFilter
           {...props}
@@ -192,7 +199,7 @@ function ToolbarFilterInput(props: {
           placeholder={filter.placeholder}
         />
       );
-    case 'select':
+    case ToolbarFilterType.SingleSelect:
       return (
         <ToolbarSelectFilter
           id={props.id ?? filter.key}
@@ -202,9 +209,11 @@ function ToolbarFilterInput(props: {
           options={filter.options}
           placeholder={filter.placeholder}
           variant={SelectVariant.single}
+          hasSearch={filter.hasSearch}
+          onSearchTextChange={filter.onSearchTextChange}
         />
       );
-    case 'multiselect':
+    case ToolbarFilterType.MultiSelect:
       return (
         <ToolbarSelectFilter
           id={props.id ?? filter.key}
@@ -214,6 +223,8 @@ function ToolbarFilterInput(props: {
           options={filter.options}
           placeholder={filter.placeholder}
           variant={SelectVariant.checkbox}
+          hasSearch={filter.hasSearch}
+          onSearchTextChange={filter.onSearchTextChange}
         />
       );
   }

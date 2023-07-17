@@ -1,16 +1,23 @@
 import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useFrameworkTranslations } from '../../../useFrameworkTranslations';
+import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
-export interface IToolbarSelectFilter extends ToolbarFilterCommon {
-  type: 'select';
+/** A filter that allows the user to select a single option from a list of options. */
+export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
+  type: ToolbarFilterType.SingleSelect;
   options: IToolbarFilterOption[];
+  hasSearch?: boolean;
+  onSearchTextChange?: (searchText: string) => void;
 }
 
+/** A filter that allows the user to select multiple options from a list of options. */
 export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
-  type: 'multiselect';
+  type: ToolbarFilterType.MultiSelect;
   options: IToolbarFilterOption[];
+  hasSearch?: boolean;
+  onSearchTextChange?: (searchText: string) => void;
 }
 
 export interface IToolbarFilterOption {
@@ -33,6 +40,7 @@ export function ToolbarSelectFilter(props: {
   placeholder?: string;
   hasSearch?: boolean;
   variant?: SelectVariant;
+  onSearchTextChange?: (text: string) => void;
 }) {
   const [translations] = useFrameworkTranslations();
   const { addFilter, removeFilter, options, values, variant } = props;
