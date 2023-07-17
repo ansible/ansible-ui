@@ -13,11 +13,12 @@ export function useCollectionFilters() {
   const { data, isLoading } = useGet<{ results: Repository[] }>(
     pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`
   );
+
   useEffect(() => {
     if (!isLoading) {
       setRepositories(data?.results || []);
     }
-  }, [data?.results]);
+  }, [data?.results, isLoading]);
 
   return useMemo<IToolbarFilter[]>(
     () => [
