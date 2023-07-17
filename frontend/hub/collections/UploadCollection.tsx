@@ -216,7 +216,7 @@ export function useRepoFilters() {
         key: 'name',
         label: t('Name'),
         type: 'string',
-        query: 'name',
+        query: 'name__icontains',
         comparison: 'startsWith',
       },
     ],
