@@ -35,7 +35,7 @@ const ToolbarContent = styled(PFToolbarContent)`
   }
 `;
 
-export type PagetableToolbarProps<T extends object> = {
+export type PageTableToolbarProps<T extends object> = {
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -79,7 +79,7 @@ export type PagetableToolbarProps<T extends object> = {
   sortOptions?: PageTableSortOption[];
 };
 
-export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
+export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<T>) {
   const {
     itemCount,
     page,

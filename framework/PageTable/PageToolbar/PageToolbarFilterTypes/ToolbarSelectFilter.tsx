@@ -1,6 +1,5 @@
 import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useFrameworkTranslations } from '../../../useFrameworkTranslations';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
@@ -41,8 +40,9 @@ export function ToolbarSelectFilter(props: {
   hasSearch?: boolean;
   variant?: SelectVariant;
   onSearchTextChange?: (text: string) => void;
+  label?: string;
+  hasClear?: boolean;
 }) {
-  const [translations] = useFrameworkTranslations();
   const { addFilter, removeFilter, options, values, variant } = props;
   const [open, setOpen] = useState(false);
 
@@ -76,6 +76,7 @@ export function ToolbarSelectFilter(props: {
     ));
 
   const onFilter = (_: unknown, filterText: string) => {
+    props.onSearchTextChange?.(filterText);
     if (filterText === '') return renderOptions(options);
     const lowercaseFilterText = filterText.toLowerCase();
     return renderOptions(
@@ -83,14 +84,31 @@ export function ToolbarSelectFilter(props: {
     );
   };
 
-  let selections: string | string[] = values;
+  let selections: string | string[] | undefined = values;
   if (props.variant === SelectVariant.single) {
     if (values.length > 0) {
       selections = values[0];
     } else {
-      selections = '';
+      selections = undefined;
     }
   }
+
+  // The placeholder test will show the label if the label is defined and there are values selected, otherwise it will show the placeholder
+  const placeholderText = props.label
+    ? values.length
+      ? props.label
+      : props.placeholder
+    : values.length
+    ? undefined
+    : props.placeholder;
+
+  const onClear = props.hasClear
+    ? () => {
+        for (const value of values) {
+          removeFilter(value);
+        }
+      }
+    : undefined;
 
   return (
     <Select
@@ -100,10 +118,11 @@ export function ToolbarSelectFilter(props: {
       selections={selections}
       onSelect={onSelect}
       hasPlaceholderStyle
-      placeholderText={values.length ? translations.selectedText : props.placeholder}
-      hasInlineFilter={props.hasSearch ?? props.options.length > 10}
+      placeholderText={placeholderText}
+      hasInlineFilter={props.hasSearch ?? props.options.length > 4}
       onFilter={onFilter}
-      style={{ zIndex: open ? 400 : 0 }} // ZIndex 400 is needed for PF table stick headers
+      style={{ zIndex: open ? 400 : 0, minWidth: 200 }} // ZIndex 400 is needed for PF table stick headers
+      onClear={onClear}
     >
       {renderOptions(options)}
     </Select>

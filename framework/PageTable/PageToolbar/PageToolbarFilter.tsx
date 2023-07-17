@@ -60,9 +60,16 @@ function ToolbarContent(props: PageToolbarFiltersProps) {
           <SplitItem>
             <InputGroup>
               {toolbarFilters.length === 1 ? (
-                <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
-                  {toolbarFilters[0].label}
-                </InputGroupText>
+                <>
+                  {toolbarFilters[0].type === ToolbarFilterType.MultiSelect &&
+                  toolbarFilters[0].isPinned ? (
+                    <></> // When a multi-select filter is pinned, it's label is shown in the select dropdown
+                  ) : (
+                    <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
+                      {toolbarFilters[0].label}
+                    </InputGroupText>
+                  )}
+                </>
               ) : (
                 <FormGroupSelect
                   id="filter"
@@ -136,6 +143,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
         {toolbarFilters?.map((filter) => {
           const values = filters?.[filter.key] || [];
+          if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return <></>;
           return (
             <ToolbarFilter
               key={filter.label}
@@ -199,6 +207,7 @@ function ToolbarFilterInput(props: {
           placeholder={filter.placeholder}
         />
       );
+
     case ToolbarFilterType.SingleSelect:
       return (
         <ToolbarSelectFilter
@@ -211,8 +220,10 @@ function ToolbarFilterInput(props: {
           variant={SelectVariant.single}
           hasSearch={filter.hasSearch}
           onSearchTextChange={filter.onSearchTextChange}
+          hasClear={filter.isPinned}
         />
       );
+
     case ToolbarFilterType.MultiSelect:
       return (
         <ToolbarSelectFilter
@@ -225,8 +236,10 @@ function ToolbarFilterInput(props: {
           variant={SelectVariant.checkbox}
           hasSearch={filter.hasSearch}
           onSearchTextChange={filter.onSearchTextChange}
+          label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
         />
       );
   }
+
   return <></>;
 }

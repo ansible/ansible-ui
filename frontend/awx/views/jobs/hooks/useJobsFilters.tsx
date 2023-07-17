@@ -26,7 +26,7 @@ export function useJobsFilters() {
       {
         key: 'type',
         label: t('Job type'),
-        type: ToolbarFilterType.MultiSelect,
+        type: ToolbarFilterType.SingleSelect,
         query: 'type',
         options: [
           { label: t('Source control update'), value: 'project_update' },
@@ -36,7 +36,7 @@ export function useJobsFilters() {
           { label: t('Management job'), value: 'system_job' },
           { label: t('Workflow job'), value: 'workflow_job' },
         ],
-        placeholder: t('Select types'),
+        placeholder: t('Filter by job type'),
       },
       {
         key: 'created_by__username__icontains',
@@ -48,7 +48,7 @@ export function useJobsFilters() {
       {
         key: 'status',
         label: t('Status'),
-        type: ToolbarFilterType.SingleSelect,
+        type: ToolbarFilterType.MultiSelect,
         query: 'status',
         options: [
           { label: t('New'), value: 'new' },
@@ -60,7 +60,7 @@ export function useJobsFilters() {
           { label: t('Error'), value: 'error' },
           { label: t('Canceled'), value: 'canceled' },
         ],
-        placeholder: t('Select statuses'),
+        placeholder: t('Filter by status'),
       },
       {
         key: 'job__limit',
