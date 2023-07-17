@@ -1,9 +1,25 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter } from '../../../../framework';
+import { pulpAPI } from '../../api';
+import { useGet } from '../../../common/crud/useGet';
+import { SelectVariant } from '@patternfly/react-core';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
+  const [searchText, setSearchText] = useState('');
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+
+  const { data, isLoading } = useGet<{ results: Repository[] }>(
+    pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`
+  );
+
+  useEffect(() => {
+    if (!isLoading) {
+      setRepositories(data?.results || []);
+    }
+  }, [data?.results, isLoading]);
+
   return useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -23,15 +39,18 @@ export function useCollectionFilters() {
       {
         key: 'repository',
         label: t('Repository'),
-        type: 'select',
+        type: 'selectTypeAhead',
         query: 'repository',
-        options: [
-          { label: t('Published'), value: 'published' },
-          { label: t('Red Hat certified'), value: 'rh-certified' },
-          { label: t('Community'), value: 'community' },
-          { label: t('Validated'), value: 'validated' },
-        ],
+        variant: SelectVariant.single,
+        options:
+          repositories?.map((repo: Repository) => {
+            return { value: repo.name, label: repo.name };
+          }) || [],
         placeholder: t('Select repositories'),
+        hasSearch: true,
+        onSearchTextChange: (text) => {
+          setSearchText(text);
+        },
       },
       {
         key: 'tags',
@@ -63,6 +82,10 @@ export function useCollectionFilters() {
         placeholder: t('Select signatures'),
       },
     ],
-    [t]
+    [t, repositories]
   );
+}
+
+interface Repository {
+  name: string;
 }
