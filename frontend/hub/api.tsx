@@ -23,7 +23,7 @@ export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export type QueryParams = {
-  [key: string]: string;
+  [key: string]: string | undefined;
 };
 
 export function getQueryString(queryParams: QueryParams) {

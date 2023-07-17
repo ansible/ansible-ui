@@ -19,6 +19,8 @@ export interface LatestMetadataType {
 }
 
 export interface HubNamespace {
+  description?: string;
+  company?: string;
   pulp_href: string;
   pulp_created: string;
   name: string;
