@@ -78,7 +78,9 @@ export function UploadCollectionByFile() {
       ? {
           pulp_label_select: 'pipeline=staging',
         }
-      : null,
+      : {
+          pulp_label_select: '!pipeline',
+        },
   });
 
   useEffect(() => {
@@ -103,8 +105,8 @@ export function UploadCollectionByFile() {
           onChange={(val) => {
             setOnlyStaging(!val);
           }}
-          label={t`All Repos`}
-          id="radio-all"
+          label={t`Repositories without pipeline`}
+          id="radio-non-pipeline"
         ></Radio>
         <div>
           {!onlyStaging && (
@@ -204,7 +206,7 @@ export function useRepositoriesColumns() {
         ),
       },
     ],
-    []
+    [t]
   );
   return tableColumns;
 }
