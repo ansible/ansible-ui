@@ -16,9 +16,10 @@ import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
+import { useGetRequest } from '../../common/crud/useGetRequest';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
-import { hubAPI } from '../api';
+import { hubAPI, pulpAPI } from '../api';
 
 import { useState, useMemo, useEffect } from 'react';
 
@@ -34,9 +35,14 @@ export interface Repository {
   name: string;
   description?: string;
   pulp_id: string;
+  pulp_href: string;
   pulp_last_updated: string;
   content_count: number;
   gpgkey: string | null;
+}
+
+export interface Distribution {
+  base_path: string;
 }
 
 export function UploadCollection() {
@@ -64,10 +70,13 @@ export function UploadCollectionByFile() {
   const toolbarFilters = useRepoFilters();
   const tableColumns = useRepositoriesColumns();
   const [onlyStaging, setOnlyStaging] = useState(true);
-  const [selectedRepo, setSelectedRepo] = useState<{ name: string } | null>(null);
+  const [selectedRepo, setSelectedRepo] = useState<{ name: string; pulp_href: string } | null>(
+    null
+  );
+  const distroGetRequest = useGetRequest<{ results: Distribution[] }>();
 
   const view = usePulpView<Repository>({
-    url: '/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/',
+    url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: nameKeyFn,
     toolbarFilters,
     tableColumns,
@@ -79,10 +88,6 @@ export function UploadCollectionByFile() {
           pulp_label_select: '!pipeline',
         },
   });
-
-  useEffect(() => {
-    setSelectedRepo({ name: 'staging' });
-  }, []);
 
   function renderRepoSelector() {
     return (
@@ -113,7 +118,7 @@ export function UploadCollectionByFile() {
 
         <PageTable<Repository>
           onSelect={(repo) => {
-            setSelectedRepo({ name: repo.name });
+            setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
           }}
           disableColumnManagement={true}
           disableListView={true}
@@ -130,6 +135,18 @@ export function UploadCollectionByFile() {
     );
   }
 
+  async function submitData(data: UploadData) {
+    const list = await distroGetRequest(
+      pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
+    );
+    const base_path = list?.results[0]?.base_path;
+
+    return postRequestFile(
+      hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
+      data.file as Blob
+    ).then(() => navigate(RouteObj.Approvals));
+  }
+
   return (
     <>
       {namespaces === undefined || repositories === undefined ? (
@@ -140,10 +157,7 @@ export function UploadCollectionByFile() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           onSubmit={(data) => {
-            return postRequestFile(
-              hubAPI`/v3/plugin/ansible/content/${selectedRepo?.name || ''}/collections/artifacts/`,
-              data.file as Blob
-            ).then(() => navigate(RouteObj.Approvals + '?status=staging'));
+            return submitData(data);
           }}
           singleColumn={true}
         >
