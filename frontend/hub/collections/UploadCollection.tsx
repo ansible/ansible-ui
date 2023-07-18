@@ -113,7 +113,7 @@ export function UploadCollectionByFile() {
 
         <PageTable<Repository>
           onSelect={(repo) => {
-            setSelectedRepo( { name : repo.name });
+            setSelectedRepo({ name: repo.name });
           }}
           disableColumnManagement={true}
           disableListView={true}
@@ -188,19 +188,11 @@ export function useRepositoriesColumns() {
       {
         header: t('Name'),
         sort: 'name',
-        cell: (repository) => (
-          <>
-            <TextCell text={repository.name} />
-          </>
-        ),
+        cell: (repository) => <TextCell text={repository.name} />,
       },
       {
         header: t('Description'),
-        cell: (repository) => (
-          <>
-            <TextCell text={repository.description} />
-          </>
-        ),
+        cell: (repository) => <TextCell text={repository.description} />,
       },
     ],
     [t]
