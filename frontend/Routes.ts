@@ -202,6 +202,8 @@ export const RouteObj = {
   HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
   HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
 
+  Remotes: `${hubRoutePrefix}/remotes`,
+
   RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
 
   Tasks: `${hubRoutePrefix}/tasks`,

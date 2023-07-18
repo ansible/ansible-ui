@@ -57,7 +57,7 @@ export function HubSidebar() {
         title={t('Administration')}
         isExpanded
         isActive={isRouteActive(
-          [RouteObj.HubExecutionEnvironments, RouteObj.RemoteRegistries],
+          [RouteObj.HubExecutionEnvironments, RouteObj.RemoteRegistries, RouteObj.Remotes],
           location
         )}
       >
@@ -84,6 +84,12 @@ export function HubSidebar() {
           onClick={() => onClick(RouteObj.Approvals)}
         >
           {t('Approvals')}
+        </NavItem>
+        <NavItem
+          isActive={isRouteActive(RouteObj.Remotes, location)}
+          onClick={() => onClick(RouteObj.Remotes)}
+        >
+          {t('Remotes')}
         </NavItem>
       </NavExpandable>
 
