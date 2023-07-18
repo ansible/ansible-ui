@@ -1,17 +1,17 @@
 import { NavExpandable, NavItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
+import { usePageNavBarClick } from '../../framework';
 import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
-import { EdaUserInfo } from '../common/Masthead';
+import { useEdaActiveUser } from '../common/useActiveUser';
 
 export function EventDrivenSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
   const onClick = usePageNavBarClick();
-  const activeUser = EdaUserInfo();
+  const activeUser = useEdaActiveUser();
   const canViewAccess =
     activeUser &&
     (activeUser.is_superuser ||

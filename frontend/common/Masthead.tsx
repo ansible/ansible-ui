@@ -35,10 +35,10 @@ import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState }
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR, { mutate } from 'swr';
+import { mutate } from 'swr';
 import { useBreakpoint } from '../../framework';
-import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
-import { useSettingsDialog } from '../../framework/Settings';
+import { usePageNavSideBar } from '../../framework';
+import { useSettingsDialog } from '../../framework';
 import { RouteObj } from '../Routes';
 import AwxIcon from '../assets/AWX.svg';
 import EdaIcon from '../assets/EDA.svg';
@@ -48,11 +48,9 @@ import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
-import { swrOptions, useFetcher } from './crud/Data';
 import { postRequest } from './crud/usePostRequest';
 import { shouldShowAutmationServers } from './should-show-autmation-servers';
 import { useActiveUser } from './useActiveUser';
-import { EdaUser } from '../eda/interfaces/EdaUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -289,28 +287,9 @@ function AccountDropdown() {
   );
 }
 
-export function EdaUserInfo() {
-  const fetcher = useFetcher();
-  const meResponse = useSWR<EdaUser>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
-  return meResponse?.data;
-}
-
-function UserInfo() {
-  const { automationServer } = useAutomationServers();
-  const fetcher = useFetcher();
-  const meResponse = useSWR<{ results: { username: string }[] }>(
-    automationServer ? '/api/v2/me/' : undefined,
-    fetcher,
-    swrOptions
-  );
-  return meResponse.data?.results?.[0];
-}
-
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
   const { automationServer } = useAutomationServers();
-  const edaActiveUser = isEdaServer(automationServer) ? EdaUserInfo() : undefined;
-  const userInfo = isEdaServer(automationServer) ? edaActiveUser : UserInfo();
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -334,7 +313,7 @@ function AccountDropdownInternal() {
             <FlexItem>
               <UserCircleIcon size="md" />
             </FlexItem>
-            {isSmallOrLarger && <FlexItem wrap="nowrap">{userInfo?.username}</FlexItem>}
+            {isSmallOrLarger && <FlexItem wrap="nowrap">{activeUser?.username}</FlexItem>}
           </Flex>
         </DropdownToggle>
       }
@@ -345,7 +324,7 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             isEdaServer(automationServer)
-              ? history(edaActiveUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
+              ? history(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
               : history(
                   activeUser
                     ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
