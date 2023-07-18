@@ -6,8 +6,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { ItemsResponse } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { Job } from '../interfaces/Job';
@@ -198,7 +198,7 @@ function useAwxItemsResponse<T>(options: {
   query?: Record<string, string | number | boolean>;
 }) {
   const { url, query } = options;
-  const response = useGet<ItemsResponse<T>>(url, query);
+  const response = useGet<AwxItemsResponse<T>>(url, query);
   return {
     ...response.data,
     loading: !response.data && !response.error,

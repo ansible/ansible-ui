@@ -1,25 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  compareStrings,
   PageFormSelectOption,
   PageHeader,
   PageLayout,
+  compareStrings,
 } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { ItemsResponse, requestPatch } from '../../../common/crud/Data';
+import { RouteObj } from '../../../Routes';
+import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
-import { RouteObj } from '../../../Routes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { getAwxError } from '../../useAwxView';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -135,7 +136,7 @@ export function EditCredential() {
 
 function CredentialInputs() {
   const { t } = useTranslation();
-  const itemsResponse = useGet<ItemsResponse<CredentialType>>(
+  const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?page=1&page_size=200'
   );
   return (

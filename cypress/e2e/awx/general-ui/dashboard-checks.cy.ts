@@ -1,4 +1,4 @@
-import { ItemsResponse } from '../../../../frontend/common/crud/Data';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
@@ -84,7 +84,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
-      .then((results: ItemsResponse<Job>) => {
+      .then((results: AwxItemsResponse<Job>) => {
         if (results.count === 0) {
           cy.log('empty state check');
           cy.hasTitle(/^There are currently no jobs$/).should('be.visible');
@@ -113,7 +113,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
-      .then((results: ItemsResponse<Project>) => {
+      .then((results: AwxItemsResponse<Project>) => {
         if (results.count === 0) {
           cy.log('empty state check');
           cy.hasTitle(/^There are currently no projects$/).should('be.visible');
