@@ -99,7 +99,7 @@ export function UploadCollectionByFile() {
       setSelectedRepo({ name: 'staging', pulp_href: item.pulp_href });
       view.selectItem(item);
     }
-  }, [view.pageItems]);
+  }, [view.pageItems, selectedRepo, view]);
 
   function renderRepoSelector() {
     return (
