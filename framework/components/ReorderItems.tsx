@@ -174,7 +174,11 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   const onSelectItem = (isSelected: boolean, listItem: T) => {
     setSelectedItems((prevSelected) => {
       const otherSelectedItems = prevSelected.filter((item) => item !== listItem);
-      return isSelected ? [...otherSelectedItems, listItem] : otherSelectedItems;
+      const selectedItems = isSelected ? [...otherSelectedItems, listItem] : otherSelectedItems;
+      selectedItems.sort(function (a, b) {
+        return listItems.indexOf(a) - listItems.indexOf(b);
+      });
+      return [...selectedItems];
     });
   };
 
