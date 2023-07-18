@@ -1,12 +1,12 @@
-import useSWRInfinite from 'swr/infinite';
 import { useCallback, useMemo } from 'react';
-import { ItemsResponse } from './Data';
+import useSWRInfinite from 'swr/infinite';
+import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
 import { useGetRequest } from './useGetRequest';
 
 export function useGetAllPagesAWX<T extends object>(url: string) {
-  const getRequest = useGetRequest<ItemsResponse<T>>();
+  const getRequest = useGetRequest<AwxItemsResponse<T>>();
   const getKey = useCallback(
-    (pageIndex: number, previousPageData: ItemsResponse<T>) => {
+    (pageIndex: number, previousPageData: AwxItemsResponse<T>) => {
       if (previousPageData && !previousPageData.next) return null;
 
       return `${url}?page=${pageIndex + 1}&page_size=200`;
@@ -14,7 +14,7 @@ export function useGetAllPagesAWX<T extends object>(url: string) {
     [url]
   );
 
-  const { data, error, isLoading, mutate } = useSWRInfinite<ItemsResponse<T>, Error>(
+  const { data, error, isLoading, mutate } = useSWRInfinite<AwxItemsResponse<T>, Error>(
     getKey,
     getRequest,
     {
@@ -23,7 +23,7 @@ export function useGetAllPagesAWX<T extends object>(url: string) {
   );
 
   const items = useMemo(() => {
-    return data?.reduce((items: T[], page: ItemsResponse<T>) => {
+    return data?.reduce((items: T[], page: AwxItemsResponse<T>) => {
       if (Array.isArray(page.results)) {
         return [...items, ...page.results];
       }

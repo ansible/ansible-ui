@@ -2,9 +2,9 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('projects', () => {
   let organization: Organization;
@@ -29,7 +29,7 @@ describe('projects', () => {
        * This also cleans up projects that were syncing and could not be deleted by other runs,
        * making a self cleaning E2E system for the live server.
        */
-      cy.requestGet<ItemsResponse<Project>>(
+      cy.requestGet<AwxItemsResponse<Project>>(
         `/api/v2/projects/?page_size=100&organization=null`
       ).then((itemsResponse) => {
         for (const project of itemsResponse.results) {

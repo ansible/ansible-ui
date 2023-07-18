@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { requestGet } from '../../../../common/crud/Data';
 import { Project } from '../../../interfaces/Project';
 import { useSelectProject } from '../hooks/useSelectProject';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormProjectSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -14,7 +15,7 @@ export function PageFormProjectSelect<
 
   const openSelectDialog = useSelectProject();
   const query = useCallback(async () => {
-    const response = await requestGet<ItemsResponse<Project>>('/api/v2/projects/?page_size=200');
+    const response = await requestGet<AwxItemsResponse<Project>>('/api/v2/projects/?page_size=200');
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],

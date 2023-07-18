@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { requestGet } from '../../../../common/crud/Data';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useSelectJobTemplate } from '../hooks/useSelectJobTemplate';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormJobTemplateSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -19,7 +20,7 @@ export function PageFormJobTemplateSelect<
 
   const openSelectDialog = useSelectJobTemplate();
   const query = useCallback(async () => {
-    const response = await requestGet<ItemsResponse<JobTemplate>>(
+    const response = await requestGet<AwxItemsResponse<JobTemplate>>(
       `/api/v2/job_templates/?page_size=200`
     );
 

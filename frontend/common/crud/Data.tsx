@@ -113,13 +113,6 @@ export function useFetcher() {
   return requestGet;
 }
 
-export interface ItemsResponse<T> {
-  count: number;
-  next?: string | null;
-  previous?: string | null;
-  results: T[];
-}
-
 export function getItemKey(item: { id: number | string }) {
   return item.id.toString();
 }

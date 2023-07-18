@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
 import { User } from '../awx/interfaces/User';
-import { ItemsResponse } from './crud/Data';
 import { useGet } from './crud/useGet';
 
 const ActiveUserContext = createContext<User | null | undefined>(undefined);
@@ -15,7 +15,7 @@ export function useActiveUser() {
 
 export function ActiveUserProvider(props: { children?: ReactNode }) {
   const [activeUser, setActiveUser] = useState<User | null | undefined>(undefined);
-  const userResponse = useGet<ItemsResponse<User>>('/api/v2/me/');
+  const userResponse = useGet<AwxItemsResponse<User>>('/api/v2/me/');
   useEffect(() => {
     if (
       userResponse.data &&
