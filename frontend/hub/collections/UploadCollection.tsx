@@ -89,6 +89,18 @@ export function UploadCollectionByFile() {
         },
   });
 
+  useEffect(() => {
+    if (selectedRepo) {
+      return;
+    }
+
+    const item = view.pageItems?.find((item) => item.name == 'staging');
+    if (item) {
+      setSelectedRepo({ name: 'staging', pulp_href: item.pulp_href });
+      view.selectItem(item);
+    }
+  }, [view.pageItems]);
+
   function renderRepoSelector() {
     return (
       <>
