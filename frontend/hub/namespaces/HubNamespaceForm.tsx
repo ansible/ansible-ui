@@ -12,7 +12,7 @@ import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubNamespace } from './HubNamespace';
-import { hubAPI, pulpAPI } from '../api';
+import { pulpAPI } from '../api';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function CreateHubNamespace() {
           latest_metadata: { groups: [] },
         }}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isEditing={false} />
       </PageForm>
     </PageLayout>
   );
@@ -50,10 +50,12 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
+  const { data: namespace } = useGet<HubNamespace>(
+    pulpAPI`/pulp_ansible/namespaces/?name=${name ?? ''}/`
+  );
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
+    await patchRequest(pulpAPI`/pulp_ansible/namespaces/`, namespace);
     navigate(-1);
   };
   if (!namespace) {
@@ -63,6 +65,7 @@ export function EditHubNamespace() {
           breadcrumbs={[
             { label: t('Namespaces'), to: RouteObj.Namespaces },
             { label: t('Edit Namespace') },
+            { label: params.id },
           ]}
         />
       </PageLayout>
@@ -75,6 +78,7 @@ export function EditHubNamespace() {
         breadcrumbs={[
           { label: t('Namespaces'), to: RouteObj.Namespaces },
           { label: t('Edit Namespace') },
+          { label: params.id },
         ]}
       />
 
