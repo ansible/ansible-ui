@@ -51,7 +51,7 @@ export function EditHubNamespace() {
   const params = useParams<{ id?: string }>();
   const name = params.id;
   const { data: namespace } = useGet<HubNamespace>(
-    pulpAPI`/pulp_ansible/namespaces/?name=${name ?? ''}/`
+    pulpAPI`/pulp_ansible/namespaces/?name=${name ?? ''}`
   );
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
