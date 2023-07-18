@@ -1,5 +1,5 @@
 import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
@@ -7,6 +7,8 @@ import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleSelect;
   options: IToolbarFilterOption[];
+  isRequired?: boolean; // Some pinned filters can be required such as a date range
+  defaultValue?: string; // For required filters, the default value to use, otherwise, the first option is used
   hasSearch?: boolean;
   onSearchTextChange?: (searchText: string) => void;
 }
@@ -42,6 +44,8 @@ export function ToolbarSelectFilter(props: {
   onSearchTextChange?: (text: string) => void;
   label?: string;
   hasClear?: boolean;
+  isRequired?: boolean;
+  defaultValue?: string;
 }) {
   const { addFilter, removeFilter, options, values, variant } = props;
   const [open, setOpen] = useState(false);
@@ -93,6 +97,16 @@ export function ToolbarSelectFilter(props: {
     }
   }
 
+  useEffect(() => {
+    if (props.isRequired && values.length === 0) {
+      if (props.defaultValue) {
+        addFilter(props.defaultValue);
+      } else {
+        addFilter(options[0].value);
+      }
+    }
+  }, [addFilter, options, props.defaultValue, props.isRequired, values.length]);
+
   // The placeholder test will show the label if the label is defined and there are values selected, otherwise it will show the placeholder
   const placeholderText = props.label
     ? values.length
@@ -102,13 +116,14 @@ export function ToolbarSelectFilter(props: {
     ? undefined
     : props.placeholder;
 
-  const onClear = props.hasClear
-    ? () => {
-        for (const value of values) {
-          removeFilter(value);
+  const onClear =
+    !props.isRequired && props.hasClear
+      ? () => {
+          for (const value of values) {
+            removeFilter(value);
+          }
         }
-      }
-    : undefined;
+      : undefined;
 
   return (
     <Select

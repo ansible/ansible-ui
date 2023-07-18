@@ -168,11 +168,13 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
         )}
 
         {/* Filters */}
-        <PageToolbarFilters
-          toolbarFilters={toolbarFilters}
-          filters={filters}
-          setFilters={setFilters}
-        />
+        {filters && (
+          <PageToolbarFilters
+            toolbarFilters={toolbarFilters}
+            filterState={filters}
+            setFilterState={setFilters}
+          />
+        )}
 
         {/* Actions */}
         <ToolbarGroup variant="button-group">
