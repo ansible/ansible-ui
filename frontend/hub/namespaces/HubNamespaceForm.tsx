@@ -13,6 +13,7 @@ import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubNamespace } from './HubNamespace';
 import { pulpAPI } from '../api';
+import { ItemsResponse } from '../../common/crud/Data';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -50,7 +51,7 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace } = useGet<HubNamespace>(
+  const { data: namespacesResponse } = useGet<ItemsResponse<HubNamespace>>(
     pulpAPI`/pulp_ansible/namespaces/?name=${name ?? ''}`
   );
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
@@ -58,7 +59,7 @@ export function EditHubNamespace() {
     await patchRequest(pulpAPI`/pulp_ansible/namespaces/`, namespace);
     navigate(-1);
   };
-  if (!namespace) {
+  if (!namespacesResponse || namespacesResponse.results.length === 0) {
     return (
       <PageLayout>
         <PageHeader
@@ -86,7 +87,7 @@ export function EditHubNamespace() {
         submitText={t('Save namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={namespace}
+        defaultValue={namespacesResponse.results[0]}
       >
         <HubNamespaceInputs />
       </PageForm>
