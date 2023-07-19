@@ -3,7 +3,8 @@ import { FieldPath, FieldPathValue, FieldValues, Path, useFormContext } from 're
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelectOrganization';
 
@@ -25,7 +26,7 @@ export function PageFormOrganizationSelect<
       validate={async (organizationName: string) => {
         if (!props.isRequired && !organizationName) return;
         try {
-          const itemsResponse = await requestGet<ItemsResponse<Organization>>(
+          const itemsResponse = await requestGet<AwxItemsResponse<Organization>>(
             `/api/v2/organizations/?name=${organizationName}`
           );
           if (itemsResponse.results.length === 0) return t('Organization not found.');
@@ -51,7 +52,7 @@ export function PageFormSelectOrganization<
   const { t } = useTranslation();
   const openSelectDialog = useSelectOrganization2();
   const query = useCallback(async () => {
-    const response = await requestGet<ItemsResponse<Organization>>(
+    const response = await requestGet<AwxItemsResponse<Organization>>(
       `/api/v2/organizations/?page_size=200`
     );
     return Promise.resolve({

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../Routes';
@@ -10,7 +9,6 @@ import { EdaRulebookCell } from '../../rulebooks/components/EdaRulebookCell';
 
 export function useRuleColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return useMemo<ITableColumn<EdaRule>[]>(
     () => [
@@ -19,7 +17,7 @@ export function useRuleColumns() {
         cell: (rule) => (
           <TextCell
             text={rule.name}
-            onClick={() => navigate(RouteObj.EdaRuleDetails.replace(':id', rule.id.toString()))}
+            to={RouteObj.EdaRuleDetails.replace(':id', rule.id.toString())}
           />
         ),
         card: 'name',
@@ -59,6 +57,6 @@ export function useRuleColumns() {
         ),
       },
     ],
-    [navigate, t]
+    [t]
   );
 }

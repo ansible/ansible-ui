@@ -1,11 +1,12 @@
 import { ReactElement } from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '../../../../common/crud/Data';
 import { Credential } from '../../../interfaces/Credential';
 import { useMultiSelectCredential, useSingleSelectCredential } from '../hooks/useSelectCredential';
-import { PageFormTextInput } from '../../../../../framework';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -42,7 +43,7 @@ export function PageFormCredentialSelect<
           return;
         }
         try {
-          const itemsResponse = await requestGet<ItemsResponse<Credential>>(
+          const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
             `/api/v2/credentials/?name=${credentials[0].name}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
@@ -74,7 +75,7 @@ export function PageFormCredentialSelect<
           return;
         }
         try {
-          const itemsResponse = await requestGet<ItemsResponse<Credential>>(
+          const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
             `/api/v2/credentials/?name=${credentialName}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');

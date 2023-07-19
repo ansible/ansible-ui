@@ -6,12 +6,13 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../Routes';
-import { ItemsResponse, requestPatch } from '../../../common/crud/Data';
+import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { getAwxError } from '../../useAwxView';
@@ -130,7 +131,7 @@ export function EditCredential() {
 
 function CredentialInputs() {
   const { t } = useTranslation();
-  const itemsResponse = useGet<ItemsResponse<CredentialType>>(
+  const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?page=1&page_size=200'
   );
   return (

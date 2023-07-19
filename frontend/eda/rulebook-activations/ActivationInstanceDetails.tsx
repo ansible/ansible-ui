@@ -10,16 +10,16 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
-import { ItemsResponse } from '../../common/crud/Data';
+import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -30,13 +30,13 @@ export function ActivationInstanceDetails() {
     SWR_REFRESH_INTERVAL
   );
 
-  const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
     undefined,
     SWR_REFRESH_INTERVAL
   );
 
-  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count || 10
     }`,

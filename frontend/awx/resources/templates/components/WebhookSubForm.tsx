@@ -5,8 +5,9 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
@@ -21,7 +22,7 @@ export function WebhookSubForm() {
 
   const { pathname } = useLocation();
 
-  const { data: webhookCredentialType } = useGet<ItemsResponse<CredentialType>>(
+  const { data: webhookCredentialType } = useGet<AwxItemsResponse<CredentialType>>(
     `/api/v2/credential_types/`,
     {
       namespace: `${webhookService as string}_token`,
@@ -36,7 +37,7 @@ export function WebhookSubForm() {
     }
   }, [isWebhookEnabled, setValue, params]);
 
-  useGet<ItemsResponse<CredentialType>>(
+  useGet<AwxItemsResponse<CredentialType>>(
     `/api/v2/credential_types/?namespace=${webhookService as string}_token`
   );
 

@@ -46,10 +46,10 @@ export type PagetableToolbarProps<T extends object> = {
   setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters?: () => void;
 
-  page: number;
-  perPage: number;
-  setPage: (page: number) => void;
-  setPerPage: (perPage: number) => void;
+  page?: number;
+  perPage?: number;
+  setPage?: (page: number) => void;
+  setPerPage?: (perPage: number) => void;
 
   isSelected?: (item: T) => boolean;
   selectedItems?: T[];
@@ -65,13 +65,14 @@ export type PagetableToolbarProps<T extends object> = {
   sortDirection?: 'asc' | 'desc';
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
 
-  viewType: PageTableViewType;
-  setViewType: (viewType: PageTableViewType) => void;
+  viewType?: PageTableViewType;
+  setViewType?: (viewType: PageTableViewType) => void;
 
   disableTableView?: boolean;
   disableListView?: boolean;
   disableCardView?: boolean;
   disableColumnManagement?: boolean;
+  disablePagination?: boolean;
   bottomBorder?: boolean;
   sortOptions?: PageTableSortOption[];
 };
@@ -103,9 +104,12 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
   let { toolbarActions } = props;
   toolbarActions = toolbarActions ?? [];
 
-  const onSetPage = useCallback<OnSetPage>((_event, page) => setPage(page), [setPage]);
+  const onSetPage = useCallback<OnSetPage>(
+    (_event, page) => (setPage ? setPage(page) : null),
+    [setPage]
+  );
   const onPerPageSelect = useCallback<OnPerPageSelect>(
-    (_event, perPage) => setPerPage(perPage),
+    (_event, perPage) => (setPerPage ? setPerPage(perPage) : null),
     [setPerPage]
   );
 
@@ -192,33 +196,37 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           />
 
           {/* View */}
-          <PageToolbarView
-            disableTableView={props.disableTableView}
-            disableListView={props.disableListView}
-            disableCardView={props.disableCardView}
-            disableColumnManagement={props.disableColumnManagement}
-            viewType={viewType}
-            setViewType={setViewType}
-            openColumnModal={openColumnModal}
-          />
+          {viewType && setViewType && (
+            <PageToolbarView
+              disableTableView={props.disableTableView}
+              disableListView={props.disableListView}
+              disableCardView={props.disableCardView}
+              disableColumnManagement={props.disableColumnManagement}
+              viewType={viewType}
+              setViewType={setViewType}
+              openColumnModal={openColumnModal}
+            />
+          )}
         </Flex>
 
         {/* Pagination */}
-        <ToolbarItem
-          visibility={{ default: 'hidden', '2xl': 'visible' }}
-          style={{ marginLeft: 24 }}
-        >
-          <Pagination
-            variant={PaginationVariant.top}
-            isCompact
-            itemCount={itemCount}
-            perPage={perPage}
-            page={page}
-            onSetPage={onSetPage}
-            onPerPageSelect={onPerPageSelect}
-            style={{ marginTop: -8, marginBottom: -8 }}
-          />
-        </ToolbarItem>
+        {!props.disablePagination && (
+          <ToolbarItem
+            visibility={{ default: 'hidden', '2xl': 'visible' }}
+            style={{ marginLeft: 24 }}
+          >
+            <Pagination
+              variant={PaginationVariant.top}
+              isCompact
+              itemCount={itemCount}
+              perPage={perPage}
+              page={page}
+              onSetPage={onSetPage}
+              onPerPageSelect={onPerPageSelect}
+              style={{ marginTop: -8, marginBottom: -8 }}
+            />
+          </ToolbarItem>
+        )}
       </ToolbarContent>
     </Toolbar>
   );
