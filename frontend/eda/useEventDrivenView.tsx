@@ -51,10 +51,10 @@ export function useEdaView<T extends { id: number | string }>(options: {
     defaultSortDirection = defaultSortColumn?.defaultSortDirection;
   }
 
-  const view = useView(
-    { sort: defaultSort, sortDirection: defaultSortDirection },
-    disableQueryString
-  );
+  const view = useView({
+    defaultValues: { sort: defaultSort, sortDirection: defaultSortDirection },
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const { page, perPage, sort, sortDirection, filters } = view;
