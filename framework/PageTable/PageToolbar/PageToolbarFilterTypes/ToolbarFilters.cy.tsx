@@ -112,9 +112,9 @@ const toolbarFilters: IToolbarFilter[] = [
 describe('PageToolbarFilters', () => {
   it('should render pinned items', () => {
     cy.mount(<ToolbarFiltersTest toolbarFilters={toolbarFilters} />);
+    cy.contains('Filter by namespace');
     cy.contains('Filter by status');
-    cy.contains('Filter by date');
     cy.contains('Filter by role');
-    cy.contains('Ny Server 1');
+    cy.contains('My Server 1');
   });
 });
