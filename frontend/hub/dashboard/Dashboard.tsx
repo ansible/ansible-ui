@@ -19,6 +19,9 @@ import { useExecutionEnvironments } from '../execution-environments/hooks/useExe
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
 import { useManageHubDashboard } from './useManageHubDashboard';
+import { useState } from 'react';
+import { CategorizedCollections, CollectionCategory } from './CollectionCategory';
+import { useCategorizeCollections } from './hooks/useCategorizeCollections';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -27,6 +30,12 @@ export function HubDashboard() {
   const environments = useExecutionEnvironments();
 
   const { openManageDashboard, managedCategories } = useManageHubDashboard();
+  /** Data for collection category carousels */
+  const [collectionCategories, setCollectionCategories] = useState<CollectionCategory[]>([]);
+  const [categorizedCollections, setCategorizedCollections] = useState<CategorizedCollections>({});
+
+  /** Retrieve and set categories of collections and map categories to collections */
+  useCategorizeCollections(setCollectionCategories, setCategorizedCollections);
 
   if (!namespaces) {
     return <LoadingPage />;
