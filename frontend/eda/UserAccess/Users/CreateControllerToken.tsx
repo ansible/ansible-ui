@@ -8,10 +8,10 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaUserInfo } from '../../../common/Masthead';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
+import { useEdaActiveUser } from '../../../common/useActiveUser';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export function CreateControllerToken() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<EdaControllerTokenCreate, EdaControllerToken>();
-  const user = EdaUserInfo();
+  const user = useEdaActiveUser();
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(`${API_PREFIX}/users/me/awx-tokens/`, token);

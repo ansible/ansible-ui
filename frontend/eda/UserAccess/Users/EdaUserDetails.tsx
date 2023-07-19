@@ -30,9 +30,9 @@ import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useDeleteUsers } from './hooks/useDeleteUser';
-import { EdaUserInfo } from '../../../common/Masthead';
 import { ControllerTokens } from './ControllerTokens';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { useEdaActiveUser } from '../../../common/useActiveUser';
 
 export function EdaUserDetails({ initialTabIndex = 0 }) {
   const params = useParams<{ id: string }>();
@@ -46,7 +46,7 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
 }
 
 export function EdaMyDetails({ initialTabIndex = 0 }) {
-  const activeUser = EdaUserInfo();
+  const activeUser = useEdaActiveUser();
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
   return <EdaUserDetailsInternal initialTabIndex={initialTabIndex} user={activeUser} />;
 }
@@ -117,7 +117,7 @@ export function EdaUserDetailsInternal({
     [deleteUsers, navigate, t]
   );
 
-  const activeUser = EdaUserInfo();
+  const activeUser = useEdaActiveUser();
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
   const isViewingSelf = Number(user.id) === Number(activeUser.id);
   const canEditUser =
