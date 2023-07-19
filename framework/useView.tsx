@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { useIsMountedRef } from './components/useIsMounted';
+import { useSearchParams } from './components/useSearchParams';
+import { useWindowLocation } from './components/useWindowLocation';
 
 /**
  * The IView interface defines the state for a table.
@@ -140,34 +141,34 @@ export function useView(options: {
 
   const clearAllFilters = useCallback(() => setFilters({}), [setFilters]);
 
+  const location = useWindowLocation();
+
   useEffect(() => {
     if (disableQueryString) return;
-    setSearchParams((searchParams: URLSearchParams) => {
-      if (!mountedRef.current.isMounted) return searchParams;
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set('page', page.toString());
-      newSearchParams.set('perPage', perPage.toString());
-      newSearchParams.set('sort', sortDirection === 'asc' ? sort : `-${sort}`);
+    const newSearchParams = new URLSearchParams(location.location?.search ?? '/');
+    newSearchParams.set('page', page.toString());
+    newSearchParams.set('perPage', perPage.toString());
+    newSearchParams.set('sort', sortDirection === 'asc' ? sort : `-${sort}`);
 
-      // Remove all query string keys that are for filters
-      for (const key of searchParams.keys()) {
-        if (defaultIgnoreQueryStringKeys.includes(key)) continue;
-        if (ignoreQueryStringKeys?.includes(key)) continue;
-        if (filterQueryStringKeys) {
-          if (filterQueryStringKeys.includes(key)) {
-            newSearchParams.delete(key);
-          }
-          continue;
+    // Remove all query string keys that are for filters
+    for (const key of searchParams.keys()) {
+      if (defaultIgnoreQueryStringKeys.includes(key)) continue;
+      if (ignoreQueryStringKeys?.includes(key)) continue;
+      if (filterQueryStringKeys) {
+        if (filterQueryStringKeys.includes(key)) {
+          newSearchParams.delete(key);
         }
-        newSearchParams.delete(key);
+        continue;
       }
+      newSearchParams.delete(key);
+    }
 
-      // For each filter with value, add it to the query string
-      for (const filter in filters) {
-        newSearchParams.set(filter, filters[filter].join(','));
-      }
-      return newSearchParams;
-    });
+    // For each filter with value, add it to the query string
+    for (const filter in filters) {
+      newSearchParams.set(filter, filters[filter].join(','));
+    }
+
+    setSearchParams(newSearchParams);
   }, [
     sort,
     sortDirection,
@@ -179,6 +180,8 @@ export function useView(options: {
     ignoreQueryStringKeys,
     filterQueryStringKeys,
     mountedRef,
+    searchParams,
+    location.location?.search,
   ]);
 
   useEffect(() => {
