@@ -24,7 +24,7 @@ export interface IView {
 }
 
 /**
- * The useView hook magages the state for tables.
+ * The useView hook manages the state for tables.
  *
  * This includes:
  * - page
