@@ -79,12 +79,10 @@ export function UploadCollectionByFile() {
   const [namespaceParams, setNamespaceParams] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const ns = searchParams.get('namespace');
-    if (ns && namespaceParams != ns) {
-      setNamespaceParams(ns);
-    }
-  }, []);
+  const ns = searchParams.get('namespace');
+  if (ns && namespaceParams != ns) {
+    setNamespaceParams(ns);
+  }
 
   const view = usePulpView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
