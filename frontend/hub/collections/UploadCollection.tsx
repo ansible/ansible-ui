@@ -20,6 +20,7 @@ import { useGetRequest } from '../../common/crud/useGetRequest';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { hubAPI, pulpAPI } from '../api';
+import { PulpItemsResponse } from '../usePulpView';
 
 import { useState, useMemo, useEffect } from 'react';
 
@@ -73,7 +74,7 @@ export function UploadCollectionByFile() {
   const [selectedRepo, setSelectedRepo] = useState<{ name: string; pulp_href: string } | null>(
     null
   );
-  const distroGetRequest = useGetRequest<{ results: Distribution[] }>();
+  const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution[]>>();
 
   const view = usePulpView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
