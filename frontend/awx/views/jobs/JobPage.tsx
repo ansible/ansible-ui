@@ -13,7 +13,7 @@ import { WorkflowOutput } from './WorkflowOutput';
 export function JobPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; job_type: string }>();
-  const job = useGetJob(params.id, params.job_type);
+  const { job, refreshJob } = useGetJob(params.id, params.job_type);
   // TODO handle 404/no job
   return (
     <PageLayout>
@@ -24,7 +24,11 @@ export function JobPage() {
       <RoutedTabs isLoading={!job} baseUrl={RouteObj.JobPage}>
         <PageBackTab label={t('Back to Jobs')} url={RouteObj.Jobs} persistentFilterKey="jobs" />
         <RoutedTab label={t('Output')} url={RouteObj.JobOutput}>
-          {job?.type === 'workflow_job' ? <WorkflowOutput job={job} /> : <JobOutput job={job!} />}
+          {job?.type === 'workflow_job' ? (
+            <WorkflowOutput job={job} />
+          ) : (
+            <JobOutput job={job!} reloadJob={refreshJob} />
+          )}
         </RoutedTab>
         <RoutedTab label={t('Details')} url={RouteObj.JobDetails}>
           <JobDetails job={job!} />
@@ -44,6 +48,10 @@ function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const { data: job } = useGet<Job>(id ? `/api/v2/${path}/${id}/` : '');
-  return job;
+  const { data: job, refresh: refreshJob } = useGet<Job>(
+    id ? `/api/v2/${path}/${id}/` : '',
+    undefined,
+    0
+  );
+  return { job, refreshJob };
 }

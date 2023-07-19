@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
@@ -26,14 +26,14 @@ const ScrollContainer = styled.div`
 
 interface IJobOutputEventsProps {
   job: Job;
+  reloadJob: () => void;
   toolbarFilters: IToolbarFilter[];
   filterState: IFilterState;
   isFollowModeEnabled: boolean;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { job, toolbarFilters, filterState, isFollowModeEnabled } = props;
-  // TODO set job status on ws event change
+  const { job, reloadJob, toolbarFilters, filterState, isFollowModeEnabled } = props;
   const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
@@ -42,10 +42,12 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   );
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
     job,
+    reloadJob,
     toolbarFilters,
     filterState,
     50
   );
+  const [isScrolledToEnd, setIsScrolledToEnd] = useState(isFollowModeEnabled);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -92,6 +94,15 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const estimatedMaxLines = jobOutputRows.length * 5;
   const outputLineChars = String(estimatedMaxLines).length;
 
+  const outputEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    console.log({ isFollowModeEnabled, numRows: jobOutputRows.length, isScrolledToEnd });
+    if (isFollowModeEnabled || isScrolledToEnd) {
+      outputEndRef.current?.scrollIntoView();
+      setIsScrolledToEnd(true);
+    }
+  }, [isFollowModeEnabled, isScrolledToEnd, jobOutputRows.length]);
+
   return (
     <>
       <ScrollContainer
@@ -128,6 +139,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
               );
             })}
             <div style={{ height: afterRowsHeight }} />
+            <div ref={outputEndRef} />
           </div>
         </pre>
       </ScrollContainer>

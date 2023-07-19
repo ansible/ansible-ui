@@ -1,5 +1,5 @@
+import { useState, useEffect, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
-import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
@@ -17,11 +17,30 @@ const Section = styled(PageSection)`
   height: calc(100vh - 204px);
 `;
 
-export function JobOutput(props: { job: Job }) {
-  const { job } = props;
+export function JobOutput(props: { job: Job; reloadJob: () => void }) {
+  const { job, reloadJob } = props;
   const toolbarFilters = useOutputFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});
-  const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isJobRunning(job.status));
+  const isRunning = isJobRunning(job.status);
+  const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
+
+  useEffect(() => {
+    if (!isRunning && isFollowModeEnabled) {
+      setIsFollowModeEnabled(false);
+    }
+  }, [isRunning, isFollowModeEnabled]);
+  // useEffect(() => {
+  //   if (!isRunning && isFollowModeEnabled) {
+  //     console.log('useEffect not isRunning', job);
+  //     setTimeout(() => {
+  //       console.log('A turning off follow mode');
+  //       setTimeout(() => {
+  //         console.log('B turning off follow mode');
+  //         setIsFollowModeEnabled(false);
+  //       }, 500);
+  //     }, 500);
+  //   }
+  // }, [isRunning]);
 
   if (!job) {
     return <Skeleton />;
@@ -40,6 +59,7 @@ export function JobOutput(props: { job: Job }) {
       />
       <JobOutputEvents
         job={job}
+        reloadJob={reloadJob}
         toolbarFilters={toolbarFilters}
         filterState={filterState}
         isFollowModeEnabled={isFollowModeEnabled}
