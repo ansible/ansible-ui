@@ -190,6 +190,23 @@ export function UploadCollectionByFile() {
           <PageFormWatch<File | undefined> watch="file">
             {(file) => {
               const namespace = file?.name.split('-')[0] ?? '';
+              if (namespaceParams) {
+                if (namespaceParams != namespace) {
+                  return (
+                    <Alert
+                      variant="danger"
+                      isInline
+                      title={t(
+                        `Namespace "${namespace}" do not match namespace "${namespaceParams}"`
+                      )}
+                    >
+                      {t(
+                        `The collection cannot be imported. Please select collection that belongs to namespace "${namespaceParams}".`
+                      )}
+                    </Alert>
+                  );
+                }
+              }
               return (
                 <>
                   {namespace && !namespaces.find((ns) => ns.name === namespace) && (
