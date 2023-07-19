@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useIsMountedRef } from './components/useIsMounted';
 
 /**
  * The IView interface defines the state for a table.
@@ -64,6 +65,8 @@ export function useView(options: {
 }): IView {
   const { defaultValues, disableQueryString, ignoreQueryStringKeys, filterQueryStringKeys } =
     options;
+
+  const mountedRef = useIsMountedRef();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -140,6 +143,7 @@ export function useView(options: {
   useEffect(() => {
     if (disableQueryString) return;
     setSearchParams((searchParams: URLSearchParams) => {
+      if (!mountedRef.current.isMounted) return searchParams;
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set('page', page.toString());
       newSearchParams.set('perPage', perPage.toString());
@@ -174,6 +178,7 @@ export function useView(options: {
     filters,
     ignoreQueryStringKeys,
     filterQueryStringKeys,
+    mountedRef,
   ]);
 
   useEffect(() => {
