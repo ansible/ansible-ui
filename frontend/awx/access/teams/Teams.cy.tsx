@@ -25,9 +25,7 @@ describe('Teams.cy.ts', () => {
       cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
         'orgFilterRequest'
       );
-      cy.hasTitle(/^Teams$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Organization$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');

@@ -44,8 +44,7 @@ describe('schedules .cy.ts', () => {
     it('Schedules list has filters for Name, and Description,', () => {
       cy.mount(<Schedules />);
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
       });
@@ -54,8 +53,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?name__icontains=Template*').as('nameFilterRequest');
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.filterTableByText('Template');
+      cy.filterTableByTypeAndText(/^Name$/, 'Template');
       // A network request is made based on the filter selected on the UI
       cy.wait('@nameFilterRequest');
       // Clear filter
@@ -66,11 +64,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?description__icontains=bar*').as('descriptionFilterRequest');
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Description$/).click();
-      });
-      cy.filterTableByText('bar');
+      cy.filterTableByTypeAndText(/^Description$/, 'bar');
       // A network request is made based on the filter selected on the UI
       cy.wait('@descriptionFilterRequest');
       // Clear filter

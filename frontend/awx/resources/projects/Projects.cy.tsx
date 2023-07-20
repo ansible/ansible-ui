@@ -47,25 +47,16 @@ describe('projects.cy.ts', () => {
     it('Filter projects by name', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?name__icontains=foo*').as('nameFilterRequest');
-      cy.hasTitle(/^Projects$/);
       cy.filterTableByTypeAndText(/^Name$/, 'foo');
-      // A network request is made based on the filter selected on the UI
       cy.wait('@nameFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
 
     it('Filter projects by description', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?description__icontains=bar*').as('descriptionFilterRequest');
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
       cy.filterTableByTypeAndText(/^Description$/, 'bar');
-      // A network request is made based on the filter selected on the UI
       cy.wait('@descriptionFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
 
@@ -74,12 +65,8 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?created_by__username__icontains=baz*').as(
         'createdByFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
       cy.filterTableByTypeAndText(/^Created by$/, 'baz');
-      // A network request is made based on the filter selected on the UI
       cy.wait('@createdByFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
 
@@ -88,12 +75,8 @@ describe('projects.cy.ts', () => {
       cy.intercept('api/v2/projects/?modified_by__username__icontains=qux*').as(
         'modifiedByFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
       cy.filterTableByTypeAndText(/^Modified by$/, 'qux');
-      // A network request is made based on the filter selected on the UI
       cy.wait('@modifiedByFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
 

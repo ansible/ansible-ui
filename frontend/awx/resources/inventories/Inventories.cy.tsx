@@ -27,8 +27,7 @@ describe('Inventories.cy.ts', () => {
         'orgFilterRequest'
       );
       cy.hasTitle(/^Inventories$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
         cy.contains(/^Inventory type$/).should('be.visible');
