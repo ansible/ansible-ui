@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { idKeyFn } from '../../../../frontend/hub/api';
 import { PageTableToolbar } from '../PageToolbar';
 import { IToolbarFilter, PageToolbarFiltersProps, ToolbarFilterType } from '../PageToolbarFilter';
+import { IToolbarDateRangeFilter } from './ToolbarDateRangeFilter';
 import { IToolbarMultiSelectFilter, IToolbarSingleSelectFilter } from './ToolbarSelectFilter';
 
 function ToolbarFiltersTest(props: Omit<PageToolbarFiltersProps, 'filterState'>) {
@@ -45,7 +46,7 @@ const stateFilter: IToolbarSingleSelectFilter = {
   placeholder: 'Filter by state',
 };
 
-const dateFilter: IToolbarSingleSelectFilter = {
+const serverFilter: IToolbarSingleSelectFilter = {
   type: ToolbarFilterType.SingleSelect,
   key: 'server',
   query: 'server',
@@ -101,12 +102,30 @@ const statusFilter: IToolbarMultiSelectFilter = {
   isPinned: true,
 };
 
+const dateRangeFilter: IToolbarDateRangeFilter = {
+  type: ToolbarFilterType.DateRange,
+  key: 'date',
+  query: 'date',
+  label: 'Date Range',
+  options: [
+    { value: 'last7days', label: 'Last 7 days' },
+    { value: 'last30days', label: 'Last 30 days' },
+    { value: 'last90days', label: 'Last 90 days' },
+    { value: '', label: 'Custom', isCustom: true },
+  ],
+  placeholder: 'Filter by date range',
+  isPinned: true,
+  isRequired: true,
+  defaultValue: 'last7days',
+};
+
 const toolbarFilters: IToolbarFilter[] = [
   namespaceFilter,
   stateFilter,
   statusFilter,
   roleFilter,
-  dateFilter,
+  serverFilter,
+  dateRangeFilter,
 ];
 
 describe('PageToolbarFilters', () => {

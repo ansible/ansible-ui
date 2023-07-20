@@ -1,12 +1,7 @@
 import { SelectOptionObject, Split, SplitItem, ToolbarGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ToolbarFilterType } from '../PageToolbarFilter';
 import DateInput from './Date';
-import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
-export interface IToolbarDateFilter extends ToolbarFilterCommon {
-  type: ToolbarFilterType.Date;
-}
 const today = (days = 0): Date => {
   const date = new Date();
   date.setDate(date.getDate() + days);

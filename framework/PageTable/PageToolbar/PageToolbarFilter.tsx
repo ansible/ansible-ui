@@ -15,7 +15,10 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { FormGroupSelect } from '../../PageForm/Inputs/FormGroupSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { IToolbarDateFilter } from './PageToolbarFilterTypes/ToolbarDateFilter';
+import {
+  IToolbarDateRangeFilter,
+  ToolbarDateRangeFilter,
+} from './PageToolbarFilterTypes/ToolbarDateRangeFilter';
 import {
   IToolbarMultiSelectFilter,
   IToolbarSingleSelectFilter,
@@ -28,7 +31,7 @@ export enum ToolbarFilterType {
   Text = 'text',
   SingleSelect = 'singleselect',
   MultiSelect = 'multiselect',
-  Date = 'date',
+  DateRange = 'daterange',
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
@@ -36,7 +39,7 @@ export type IToolbarFilter =
   | IToolbarTextFilter
   | IToolbarSingleSelectFilter
   | IToolbarMultiSelectFilter
-  | IToolbarDateFilter;
+  | IToolbarDateRangeFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[]>;
@@ -74,6 +77,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
     // Do not show the label if the pinned filter does not have a value
     showLabel = false;
   }
+
   return (
     <ToolbarItem>
       <Split style={{ zIndex: 400 }}>
@@ -179,6 +183,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
           // If the filter is pinned and is a single select filter, don't render the chip
           // this is because the value of the single select filter is already shown in the filter component
           if (filter.isPinned && filter.type === ToolbarFilterType.SingleSelect) return <></>;
+          if (filter.isPinned && filter.type === ToolbarFilterType.DateRange) return <></>;
 
           return (
             <ToolbarFilter
@@ -281,7 +286,23 @@ function ToolbarFilterComponent(props: {
         />
       );
 
-    case ToolbarFilterType.Date:
-      return <>TODO</>;
+    case ToolbarFilterType.DateRange:
+      return (
+        <ToolbarDateRangeFilter
+          id={props.id ?? filter.key}
+          label={filter.label}
+          placeholder={filter.placeholder}
+          value={values.length > 0 ? values[0] : ''}
+          setValue={(value) => {
+            for (const value of values) {
+              removeFilter(value);
+            }
+            addFilter(value);
+          }}
+          options={filter.options}
+          isRequired={filter.isRequired}
+          defaultValue={filter.defaultValue}
+        />
+      );
   }
 }
