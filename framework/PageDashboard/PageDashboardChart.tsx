@@ -21,6 +21,13 @@ export function PageDashboardChart(props: {
     yLabel?: string; // TODO allow more options
     xLabel?: string; // TODO allow more options
     allowZero?: boolean;
+    legendData?: {
+      name?: string;
+      symbol?: {
+        fill?: string;
+        type?: string;
+      };
+    }[];
   };
 }) {
   let { groups } = props;
@@ -41,9 +48,12 @@ export function PageDashboardChart(props: {
         <Chart
           padding={{ bottom: 60, left: 60, right: 40, top: 16 }}
           colorScale={groups.map((group) => group.color)}
-          width={size.width}
+          width={settings && settings.legendData ? size.width - 100 : size.width} // TODO fix
           height={size.height}
           minDomain={settings && settings.minDomain}
+          legendData={settings && settings.legendData}
+          legendOrientation={'vertical'}
+          legendAllowWrap={true}
           containerComponent={
             <ChartVoronoiContainer
               labels={(point: { datum: { x: string | number; y: string | number } }) => {
