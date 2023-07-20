@@ -22,6 +22,11 @@ export interface HubItemsResponse<T extends object> {
   };
 }
 
+export interface HubNamespaceResponse<T extends object> {
+  count: number;
+  results: T[];
+}
+
 export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
