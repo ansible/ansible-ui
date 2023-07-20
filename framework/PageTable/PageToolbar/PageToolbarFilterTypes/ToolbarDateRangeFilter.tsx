@@ -142,9 +142,7 @@ export function DateRange(props: {
         <Button
           variant="control"
           style={{ alignSelf: 'flex-start' }}
-          onClick={() => {
-            setTo('');
-          }}
+          onClick={() => setTo(undefined)}
         >
           <TimesCircleIcon />
         </Button>
