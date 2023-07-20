@@ -16,8 +16,14 @@ export function PageDashboardChart(props: {
       value: number;
     }[];
   }[];
+  settings?: {
+    minDomain?: number | { x?: number; y?: number };
+    yLabel?: string; // TODO allow more options
+    xLabel?: string; // TODO allow more options
+  };
 }) {
   let { groups } = props;
+  const { settings } = props;
 
   groups = groups.filter((group) => {
     for (const value of group.values) {
@@ -34,6 +40,7 @@ export function PageDashboardChart(props: {
           colorScale={groups.map((group) => group.color)}
           width={size.width}
           height={size.height}
+          minDomain={settings && settings.minDomain}
           containerComponent={
             <ChartVoronoiContainer
               labels={(point: { datum: { x: string | number; y: string | number } }) => {
@@ -47,8 +54,9 @@ export function PageDashboardChart(props: {
             fixLabelOverlap
             // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
             //  tickFormat={(n) => `${Math.round(n)}`}
+            label={settings && settings.xLabel}
           />
-          <ChartAxis dependentAxis showGrid />
+          <ChartAxis dependentAxis showGrid label={settings && settings.yLabel} />
           <ChartStack>
             {groups.map((group, index) => (
               <ChartArea
