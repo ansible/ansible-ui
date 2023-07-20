@@ -2,6 +2,8 @@ import {
   Chart,
   ChartArea,
   ChartAxis,
+  ChartLegend,
+  ChartLine,
   ChartStack,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
@@ -17,12 +19,19 @@ export function PageDashboardChart(props: {
     }[];
   }[];
   settings?: {
+    // minimal shown value
     minDomain?: number | { x?: number; y?: number };
-    yLabel?: string; // TODO allow more options
-    xLabel?: string; // TODO allow more options
+    // label for x ax
+    yLabel?: string;
+    // label for y ax
+    xLabel?: string;
+    // prevents filtering of zero values
     allowZero?: boolean;
+    // chart will have lines instead of area
+    useLines?: boolean;
+    // data to be shown in the legend
     legendData?: {
-      name?: string;
+      name: string;
       symbol?: {
         fill?: string;
         type?: string;
@@ -48,12 +57,19 @@ export function PageDashboardChart(props: {
         <Chart
           padding={{ bottom: 60, left: 60, right: 40, top: 16 }}
           colorScale={groups.map((group) => group.color)}
-          width={settings && settings.legendData ? size.width - 100 : size.width} // TODO fix
+          width={settings && settings.legendData ? size.width * 0.9 : size.width}
           height={size.height}
           minDomain={settings && settings.minDomain}
-          legendData={settings && settings.legendData}
-          legendOrientation={'vertical'}
-          legendAllowWrap={true}
+          legendComponent={
+            settings &&
+            settings.legendData && (
+              <ChartLegend
+                width={size.width * 0.1}
+                data={settings.legendData}
+                orientation={'vertical'}
+              />
+            )
+          }
           containerComponent={
             <ChartVoronoiContainer
               labels={(point: { datum: { x: string | number; y: string | number } }) => {
@@ -71,13 +87,22 @@ export function PageDashboardChart(props: {
           />
           <ChartAxis dependentAxis showGrid label={settings && settings.yLabel} />
           <ChartStack>
-            {groups.map((group, index) => (
-              <ChartArea
-                key={index}
-                data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                interpolation="monotoneX"
-              />
-            ))}
+            {groups.map((group, index) =>
+              settings && settings.useLines ? (
+                <ChartLine
+                  style={{ data: { strokeWidth: 4.5 } }}
+                  key={index}
+                  data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                  interpolation="monotoneX"
+                />
+              ) : (
+                <ChartArea
+                  key={index}
+                  data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                  interpolation="monotoneX"
+                />
+              )
+            )}
           </ChartStack>
         </Chart>
       )}
