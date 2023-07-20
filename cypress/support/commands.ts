@@ -84,17 +84,29 @@ declare global {
 
       setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
 
+      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+
       /**
        * Find the toolbar filter select, click it and returns the opened menu element.
        *
        * @example
        * ```
-       * cy.openToolbarFilterSelect().within(() => {
+       * cy.openToolbarFilterTypeSelect().within(() => {
        *   cy.contains(/^Name$/).should('be.visible');
        * });
        * ```
        */
-      openToolbarFilterSelect(): Chainable<JQuery<HTMLElement>>;
+      openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
+
+      filterBySingleSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
+
+      filterByMultiSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;
