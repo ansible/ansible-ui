@@ -1,6 +1,4 @@
 import {
-  InputGroup,
-  InputGroupText,
   SelectVariant,
   ToolbarFilter,
   ToolbarGroup,
@@ -78,24 +76,36 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   }
 
   return (
-    <ToolbarItem>
-      <InputGroup>
-        {toolbarFilters.length === 1 ? (
-          <>
-            {showLabel && (
-              <InputGroupText
-                style={{
-                  border: 0,
-                  padding: 6,
-                  color: 'inherit',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                {toolbarFilters[0].label}
-              </InputGroupText>
-            )}
-          </>
-        ) : (
+    <>
+      {toolbarFilters.length === 1 ? (
+        <>
+          {showLabel && <ToolbarItem variant="label">{toolbarFilters[0].label}</ToolbarItem>}
+          <ToolbarItem>
+            <ToolbarFilterComponent
+              id="filter-input"
+              filter={selectedFilter}
+              addFilter={(value: string) => {
+                setFilters?.((filters) => {
+                  let values = filters?.[selectedFilterKey];
+                  if (!values) values = [];
+                  if (!values.includes(value)) values.push(value);
+                  return { ...filters, [selectedFilterKey]: values };
+                });
+              }}
+              removeFilter={(value: string) => {
+                setFilters?.((filters) => {
+                  let values = filters?.[selectedFilterKey];
+                  if (!values) values = [];
+                  values = values.filter((v) => v !== value);
+                  return { ...filters, [selectedFilterKey]: values };
+                });
+              }}
+              values={filters?.[selectedFilterKey] ?? []}
+            />
+          </ToolbarItem>
+        </>
+      ) : (
+        <ToolbarItem>
           <PageSingleSelect
             id="filter"
             value={selectedFilterKey}
@@ -108,30 +118,30 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               </SelectOption>
             ))}
           </PageSingleSelect>
-        )}
-      </InputGroup>
-      <ToolbarFilterComponent
-        id="filter-input"
-        filter={selectedFilter}
-        addFilter={(value: string) => {
-          setFilters?.((filters) => {
-            let values = filters?.[selectedFilterKey];
-            if (!values) values = [];
-            if (!values.includes(value)) values.push(value);
-            return { ...filters, [selectedFilterKey]: values };
-          });
-        }}
-        removeFilter={(value: string) => {
-          setFilters?.((filters) => {
-            let values = filters?.[selectedFilterKey];
-            if (!values) values = [];
-            values = values.filter((v) => v !== value);
-            return { ...filters, [selectedFilterKey]: values };
-          });
-        }}
-        values={filters?.[selectedFilterKey] ?? []}
-      />
-    </ToolbarItem>
+          <ToolbarFilterComponent
+            id="filter-input"
+            filter={selectedFilter}
+            addFilter={(value: string) => {
+              setFilters?.((filters) => {
+                let values = filters?.[selectedFilterKey];
+                if (!values) values = [];
+                if (!values.includes(value)) values.push(value);
+                return { ...filters, [selectedFilterKey]: values };
+              });
+            }}
+            removeFilter={(value: string) => {
+              setFilters?.((filters) => {
+                let values = filters?.[selectedFilterKey];
+                if (!values) values = [];
+                values = values.filter((v) => v !== value);
+                return { ...filters, [selectedFilterKey]: values };
+              });
+            }}
+            values={filters?.[selectedFilterKey] ?? []}
+          />
+        </ToolbarItem>
+      )}
+    </>
   );
 }
 

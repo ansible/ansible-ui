@@ -31,19 +31,19 @@ export function PageSingleSelect(props: {
 
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      id={props.id}
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
       style={{ width: 200 }}
     >
-      {props.icon && <span style={{ paddingRight: 6 }}>{props.icon}</span>}
+      {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
       {selectedText ?? placeholder}
     </MenuToggle>
   );
 
   return (
     <Select
-      id={props.id}
       selected={value}
       onSelect={(_, value: string | number | undefined) => {
         onChange(value as string);

@@ -96,7 +96,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
-  cy.get('#filter-form-group').within(() => {
+  cy.get('#filter').within(() => {
     cy.get('.pf-c-select button').as('filterTypeBtn');
     cy.get('@filterTypeBtn').should('not.be.disabled');
     cy.get('@filterTypeBtn').click();

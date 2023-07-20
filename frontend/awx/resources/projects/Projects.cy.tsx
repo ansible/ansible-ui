@@ -33,8 +33,7 @@ describe('projects.cy.ts', () => {
     it('Projects list has filters for Name, Description, Type, Created By, and Modified By', () => {
       cy.mount(<Projects />);
       cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
         cy.contains(/^Type$/).should('be.visible');
