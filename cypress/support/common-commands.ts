@@ -32,14 +32,10 @@ Cypress.Commands.add(
   'filterBySingleSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.get('#filter')
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-select').click();
-        cy.contains(selectLabel).click();
-      });
+    cy.getFiltersToolbarItem().within(() => {
+      cy.get('.pf-c-select').click();
+      cy.contains(selectLabel).click();
+    });
   }
 );
 
@@ -47,14 +43,10 @@ Cypress.Commands.add(
   'filterByMultiSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.get('#filter')
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-select').click();
-        cy.contains(selectLabel).click();
-      });
+    cy.getFiltersToolbarItem().within(() => {
+      cy.get('.pf-c-select').click();
+      cy.contains(selectLabel).click();
+    });
     cy.get('tbody').click();
   }
 );
