@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
@@ -6,11 +6,13 @@ import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
+import { PageControls } from './PageControls';
 import {
   IJobOutputChildrenSummary,
   useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
+import { useScrollControls } from './useScrollControls';
 import { isJobRunning } from './util';
 
 export interface ICollapsed {
@@ -21,7 +23,7 @@ const ScrollContainer = styled.div`
   overflow: auto;
   backgroundcolor: var(--pf-global--BackgroundColor--100);
   font-size: var(--pf-global--FontSize--sm);
-  border-block: 1px solid var(--pf-global--BorderColor--100);
+  border-bottom: 1px solid var(--pf-global--BorderColor--100);
 `;
 
 interface IJobOutputEventsProps {
@@ -30,10 +32,18 @@ interface IJobOutputEventsProps {
   toolbarFilters: IToolbarFilter[];
   filterState: IFilterState;
   isFollowModeEnabled: boolean;
+  setIsFollowModeEnabled: (isFollowModeEnabled: boolean) => void;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { job, reloadJob, toolbarFilters, filterState, isFollowModeEnabled } = props;
+  const {
+    job,
+    reloadJob,
+    toolbarFilters,
+    filterState,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+  } = props;
   const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
@@ -47,7 +57,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     filterState,
     50
   );
-  const [isScrolledToEnd, setIsScrolledToEnd] = useState(isFollowModeEnabled);
+  // const [isScrolledToEnd, setIsScrolledToEnd] = useState(isFollowModeEnabled);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -86,25 +96,32 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
     containerRef,
-    nonCollapsedRows,
-    isFollowModeEnabled
+    nonCollapsedRows
   );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;
   const estimatedMaxLines = jobOutputRows.length * 5;
   const outputLineChars = String(estimatedMaxLines).length;
 
-  const outputEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    console.log({ isFollowModeEnabled, numRows: jobOutputRows.length, isScrolledToEnd });
-    if (isFollowModeEnabled || isScrolledToEnd) {
-      outputEndRef.current?.scrollIntoView();
-      setIsScrolledToEnd(true);
-    }
-  }, [isFollowModeEnabled, isScrolledToEnd, jobOutputRows.length]);
+  const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
+    containerRef,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+    jobOutputRows.length
+  );
 
   return (
     <>
+      <PageControls
+        onScrollFirst={scrollToTop}
+        onScrollLast={scrollToBottom}
+        onScrollNext={scrollPageDown}
+        onScrollPrevious={scrollPageUp}
+        toggleExpandCollapseAll={() => null}
+        isFlatMode={isFlatMode}
+        isTemplateJob={job.type === 'job'}
+        isAllCollapsed={false}
+      />
       <ScrollContainer
         ref={containerRef}
         tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
@@ -139,7 +156,6 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
               );
             })}
             <div style={{ height: afterRowsHeight }} />
-            <div ref={outputEndRef} />
           </div>
         </pre>
       </ScrollContainer>

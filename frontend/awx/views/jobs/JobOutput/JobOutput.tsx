@@ -63,6 +63,7 @@ export function JobOutput(props: { job: Job; reloadJob: () => void }) {
         toolbarFilters={toolbarFilters}
         filterState={filterState}
         isFollowModeEnabled={isFollowModeEnabled}
+        setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
     </Section>
   );

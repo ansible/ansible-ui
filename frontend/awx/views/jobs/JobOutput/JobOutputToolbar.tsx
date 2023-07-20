@@ -45,7 +45,7 @@ export function JobOutputToolbar(props: IJobOutputToolbarProps) {
           filterState={filterState}
           setFilterState={setFilterState}
         />
-        {isJobRunning(jobStatus) || true ? (
+        {isJobRunning(jobStatus) ? (
           <Button
             variant={isFollowModeEnabled ? 'secondary' : 'primary'}
             onClick={handleFollowToggle}
