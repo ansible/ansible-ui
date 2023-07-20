@@ -1,0 +1,41 @@
+export interface Settings {
+  id: number;
+  ACTIVITY_STREAM_ENABLED: boolean;
+  ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC: boolean;
+  ORG_ADMINS_CAN_SEE_ALL_USERS: boolean;
+  MANAGE_ORGANIZATION_AUTH: boolean;
+  TOWER_URL_BASE: string;
+  REMOTE_HOST_HEADERS: [];
+  PROXY_IP_ALLOWED_LIST: [];
+  LICENSE: {
+    instance_count: number;
+    license_date: string;
+    license_type: string;
+    subscription_name: string;
+    sku: string;
+    support_level: null;
+    product_name: string;
+    valid_key: boolean;
+    pool_id: string;
+    satellite: boolean;
+  };
+  REDHAT_USERNAME: string;
+  REDHAT_PASSWORD: string;
+  SUBSCRIPTIONS_USERNAME: string;
+  SUBSCRIPTIONS_PASSWORD: string;
+  AUTOMATION_ANALYTICS_URL: string;
+  INSTALL_UUID: string;
+  DEFAULT_CONTROL_PLANE_QUEUE_NAME: string;
+  DEFAULT_EXECUTION_QUEUE_NAME: string;
+  DEFAULT_EXECUTION_ENVIRONMENT: null;
+  CUSTOM_VENV_PATHS: [];
+  INSIGHTS_TRACKING_STATE: boolean;
+  AUTOMATION_ANALYTICS_LAST_GATHER: null;
+  AUTOMATION_ANALYTICS_LAST_ENTRIES: string;
+  AUTOMATION_ANALYTICS_GATHER_INTERVAL: number;
+  IS_K8S: boolean;
+  UI_NEXT: boolean;
+  SUBSCRIPTION_USAGE_MODEL: string;
+  CLEANUP_HOST_METRICS_LAST_TS: string;
+  HOST_METRIC_SUMMARY_TASK_LAST_TS: string;
+}

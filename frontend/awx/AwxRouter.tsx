@@ -53,6 +53,7 @@ import { ManagementJobPage } from './administration/management-jobs/ManagementJo
 import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
+import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -147,6 +148,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
         <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
+        <Route path={RouteObjWithoutPrefix.SubscriptionUsage} element={<SubscriptionUsage />} />
       </Routes>
     </Suspense>
   );

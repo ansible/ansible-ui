@@ -216,6 +216,13 @@ export function AwxSidebar() {
           >
             {t('Host Metrics')}
           </NavItem>
+
+          <NavItem
+            isActive={isRouteActive(RouteObj.SubscriptionUsage, location)}
+            onClick={() => onClick(RouteObj.SubscriptionUsage)}
+          >
+            {t('Subscription Usage')}
+          </NavItem>
         </NavExpandable>
       )}
       {process.env.NODE_ENV === 'development' && (
