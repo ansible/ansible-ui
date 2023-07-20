@@ -20,17 +20,20 @@ export function PageDashboardChart(props: {
     minDomain?: number | { x?: number; y?: number };
     yLabel?: string; // TODO allow more options
     xLabel?: string; // TODO allow more options
+    allowZero?: boolean;
   };
 }) {
   let { groups } = props;
   const { settings } = props;
 
-  groups = groups.filter((group) => {
-    for (const value of group.values) {
-      if (value.value !== 0) return true;
-    }
-    return false;
-  });
+  groups = settings?.allowZero
+    ? groups
+    : groups.filter((group) => {
+        for (const value of group.values) {
+          if (value.value !== 0) return true;
+        }
+        return false;
+      });
 
   return (
     <PageChartContainer className="page-chart">
