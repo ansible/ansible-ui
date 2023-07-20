@@ -1,23 +1,10 @@
-import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  IToolbarFilter,
-  PageHeader,
-  PageLayout,
-  PageTableToolbar,
-  PageToolbarFiltersProps,
-  ToolbarFilterType,
-} from '../../../../framework';
-import { IToolbarDateRangeFilter } from '../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarDateRangeFilter';
-import {
-  IToolbarMultiSelectFilter,
-  IToolbarSingleSelectFilter,
-} from '../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarSelectFilter';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
-import { idKeyFn } from '../../../hub/api';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -27,11 +14,12 @@ import { AccessNav } from '../common/AccessNav';
 import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
+import { useTeamsFilters } from './hooks/useTeamsFilters';
 
 export function Teams() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  // const toolbarFilters = useTeamsFilters();
+  const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
@@ -63,128 +51,30 @@ export function Teams() {
         )}
         navigation={<AccessNav active="teams" />}
       />
-      <ToolbarFiltersTest toolbarFilters={toolbarFilters} />
-    </PageLayout>
-  );
-}
-
-const stateFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'state',
-  query: 'state',
-  label: 'State',
-  options: [
-    { label: 'Online', value: 'online' },
-    { label: 'Offline', value: 'offline' },
-  ],
-  placeholder: 'Filter by state',
-};
-
-const serverFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'server',
-  query: 'server',
-  label: 'Server',
-  options: [
-    { label: 'My Server 1', value: 'server1' },
-    { label: 'My Server 2', value: 'server2' },
-    { label: 'My Server 3', value: 'server3' },
-    { label: 'My Server 4', value: 'server4' },
-  ],
-  placeholder: 'Filter by server',
-  isPinned: true,
-  isRequired: true,
-};
-
-const roleFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'role',
-  query: 'role',
-  label: 'Role',
-  options: [
-    { label: 'Admin', value: 'admin' },
-    { label: 'User', value: 'user' },
-  ],
-  placeholder: 'Filter by role',
-  isPinned: true,
-};
-
-const namespaceFilter: IToolbarMultiSelectFilter = {
-  type: ToolbarFilterType.MultiSelect,
-  key: 'namespace',
-  query: 'namespace',
-  label: 'Namespace',
-  options: [
-    { value: '1', label: 'Namespace 1' },
-    { value: '2', label: 'Namespace 2' },
-    { value: '3', label: 'Namespace 3' },
-  ],
-  placeholder: 'Filter by namespace',
-};
-
-const statusFilter: IToolbarMultiSelectFilter = {
-  type: ToolbarFilterType.MultiSelect,
-  key: 'multiselectpinned',
-  query: 'multiselectpinned',
-  label: 'Status',
-  options: [
-    { value: 'running', label: 'Running' },
-    { value: 'failed', label: 'Failed' },
-    { value: 'pending', label: 'Pending' },
-  ],
-  placeholder: 'Filter by status',
-  isPinned: true,
-};
-
-const dateRangeFilter: IToolbarDateRangeFilter = {
-  type: ToolbarFilterType.DateRange,
-  key: 'date',
-  query: 'date',
-  label: 'Date Range',
-  options: [
-    { value: 'last7days', label: 'Last 7 days' },
-    { value: 'last30days', label: 'Last 30 days' },
-    { value: 'last90days', label: 'Last 90 days' },
-    { value: '', label: 'Custom', isCustom: true },
-  ],
-  placeholder: 'Filter by date range',
-  isPinned: true,
-  isRequired: true,
-  defaultValue: 'last7days',
-};
-
-const toolbarFilters: IToolbarFilter[] = [
-  namespaceFilter,
-  stateFilter,
-  statusFilter,
-  roleFilter,
-  serverFilter,
-  dateRangeFilter,
-];
-
-function ToolbarFiltersTest(props: Omit<PageToolbarFiltersProps, 'filterState'>) {
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
-  const clearAllFilters = () =>
-    setFilters((_filters) => ({
-      // date: filters.date
-    }));
-  return (
-    <>
-      <PageTableToolbar
-        keyFn={idKeyFn}
-        itemCount={1}
-        page={1}
-        perPage={10}
-        filters={filters}
-        setFilters={setFilters}
-        {...props}
-        disablePagination
-        clearAllFilters={clearAllFilters}
+      <PageTable<Team>
+        toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
+        tableColumns={tableColumns}
+        rowActions={rowActions}
+        errorStateTitle={t('Error loading teams')}
+        emptyStateTitle={
+          canCreateTeam
+            ? t('There are currently no teams added to your organization.')
+            : t('You do not have permission to create a team')
+        }
+        emptyStateDescription={
+          canCreateTeam
+            ? t('Please create a team by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
+        emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
+        emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
+        {...view}
+        defaultSubtitle={t('Team')}
       />
-      <PageSection>
-        Filter State:
-        <pre>{JSON.stringify(filters, undefined, '  ')}</pre>
-      </PageSection>
-    </>
+    </PageLayout>
   );
 }

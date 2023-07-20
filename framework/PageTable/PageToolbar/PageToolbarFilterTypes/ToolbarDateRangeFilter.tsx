@@ -1,6 +1,8 @@
-import { DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
+import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
 import { SelectOption } from '@patternfly/react-core/next';
+import { TimesCircleIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageSingleSelect } from '../../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
@@ -24,33 +26,55 @@ export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
   placeholder?: string;
-  value: string;
-  setValue: (value: string) => void;
+  values: string[];
+  setValues: (values: string[]) => void;
   options: IToolbarDateFilterOption[];
   isRequired?: boolean;
   defaultValue?: string;
 }
 
 export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
-  const { value, setValue, placeholder } = props;
-  let selectedOption = props.options.find((option) => option.value === value);
-  if (!selectedOption) selectedOption = props.options.find((option) => option.isCustom);
+  const { values, setValues, placeholder, isRequired, defaultValue } = props;
 
-  useEffect(() => {
-    if (props.isRequired && !value) {
-      setValue(props.defaultValue || props.options[0].value);
-    }
-  }, [props.isRequired, props.defaultValue, props.options, setValue, value]);
+  const selectedValue = values.length > 0 ? values[0] : undefined;
+  const selectedOption = props.options.find((option) => option.value === selectedValue);
+
+  if (isRequired && !selectedOption) {
+    setValues([defaultValue ?? props.options[0].value]);
+  }
 
   function onSelectChange(value: string) {
     const option = props.options.find((option) => option.value === value);
     if (option) {
-      setValue(value);
+      setValues([value]);
     }
   }
 
+  const [from, setFrom] = useState<string | undefined>(() => {
+    if (values.length > 1) return values[1];
+    return undefined;
+  });
+
+  const [to, setTo] = useState<string | undefined>(() => {
+    if (values.length > 2) return values[2];
+    return undefined;
+  });
+
+  useEffect(() => {
+    if (selectedOption && selectedOption.isCustom) {
+      const newValues = [selectedOption.value];
+      if (from) {
+        newValues.push(from);
+        if (to) {
+          newValues.push(to);
+        }
+      }
+      setValues(newValues);
+    }
+  }, [selectedOption, from, to, setValues]);
+
   return (
-    <ToolbarItem style={{}}>
+    <ToolbarItem>
       <PageSingleSelect
         value={selectedOption?.value ?? ''}
         onChange={onSelectChange}
@@ -63,64 +87,68 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
         ))}
       </PageSingleSelect>
       {selectedOption && selectedOption.isCustom && (
-        <DateRange value={props.value} setValue={setValue} />
+        <DateRange to={to} setTo={setTo} from={from} setFrom={setFrom} />
       )}
     </ToolbarItem>
   );
 }
 
-export function DateRange(props: { value: string; setValue: (value: string) => void }) {
-  const { value, setValue } = props;
-
-  const [from, setFrom] = useState<string>('');
-  const [to, setTo] = useState<string>('');
-
-  useEffect(() => {
-    let [from, to] = value.split(',');
-    if (!from) from = '';
-    if (!to) to = '';
-    setFrom(from);
-    setTo(to);
-  }, [value]);
-
-  useEffect(() => setValue(`${from},${to}`), [from, setValue, to]);
+export function DateRange(props: {
+  to?: string;
+  setTo: (value?: string) => void;
+  from?: string;
+  setFrom: (value?: string) => void;
+}) {
+  const { to, setTo, from, setFrom } = props;
+  const { t } = useTranslation();
 
   const onFromChange = (_event: unknown, from: string) => {
     setFrom(from);
-    // if (from && isValidDate(new Date(from))) {
-    //   setTo(new Date(from.getDate() + 1));
-    // } else {
-    //   setTo(undefined);
-    // }
   };
 
   const onToChange = (_event: unknown, to: string) => {
     setTo(to);
   };
 
-  const fromDate = new Date(from);
+  const fromDate = from ? new Date(from) : undefined;
 
   const toValidator = (date: Date) =>
-    isValidDate(fromDate) && date >= fromDate ? '' : 'The "to" date must be after the "from" date';
+    fromDate
+      ? isValidDate(fromDate) && date >= fromDate
+        ? ''
+        : t('The "to" date must be after the "from" date')
+      : '';
 
   return (
     <>
       <DatePicker
-        value=""
+        value={from}
         onChange={onFromChange}
         aria-label="Start date"
         placeholder="YYYY-MM-DD"
       />
-      <div style={{ margin: 'auto', paddingLeft: 4, paddingRight: 4 }}>to</div>
+      <div style={{ alignSelf: 'baseline', padding: 6 }}>{t('to')}</div>
       <DatePicker
         value={to}
         onChange={onToChange}
-        isDisabled={!isValidDate(fromDate)}
+        isDisabled={!fromDate || !isValidDate(fromDate)}
         rangeStart={fromDate}
         validators={[toValidator]}
         aria-label="End date"
-        placeholder="YYYY-MM-DD"
+        placeholder={t('now')}
+        invalidFormatText={t('Invalid date format')}
       />
+      {to !== undefined && (
+        <Button
+          variant="control"
+          style={{ alignSelf: 'flex-start' }}
+          onClick={() => {
+            setTo('');
+          }}
+        >
+          <TimesCircleIcon />
+        </Button>
+      )}
     </>
   );
 }

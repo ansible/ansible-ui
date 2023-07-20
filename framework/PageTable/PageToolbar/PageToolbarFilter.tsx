@@ -82,7 +82,14 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
         {toolbarFilters.length === 1 ? (
           <>
             {showLabel && (
-              <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
+              <InputGroupText
+                style={{
+                  border: 0,
+                  padding: 6,
+                  color: 'inherit',
+                  alignSelf: 'flex-start',
+                }}
+              >
                 {toolbarFilters[0].label}
               </InputGroupText>
             )}
@@ -284,12 +291,14 @@ function ToolbarFilterComponent(props: {
           id={props.id ?? filter.key}
           label={filter.label}
           placeholder={filter.placeholder}
-          value={values.length > 0 ? values[0] : ''}
-          setValue={(value) => {
+          values={values}
+          setValues={(newValues) => {
             for (const value of values) {
               removeFilter(value);
             }
-            addFilter(value);
+            for (const value of newValues) {
+              addFilter(value);
+            }
           }}
           options={filter.options}
           isRequired={filter.isRequired}
