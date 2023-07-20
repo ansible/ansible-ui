@@ -136,7 +136,7 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     return (
       <Toolbar
         className="border-bottom dark-2"
-        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8, zIndex: 400 }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>

@@ -13,6 +13,7 @@ export function PageSingleSelect(props: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  icon?: ReactNode;
 }) {
   const { value, onChange, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +36,7 @@ export function PageSingleSelect(props: {
       isExpanded={isOpen}
       style={{ width: 200 }}
     >
+      {props.icon && <span style={{ paddingRight: 6 }}>{props.icon}</span>}
       {selectedText ?? placeholder}
     </MenuToggle>
   );

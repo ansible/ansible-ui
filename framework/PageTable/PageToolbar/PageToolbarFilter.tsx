@@ -1,16 +1,17 @@
 import {
   InputGroup,
   InputGroupText,
-  SelectOption,
   SelectVariant,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
+
+import { SelectOption } from '@patternfly/react-core/next';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { FormGroupSelect } from '../../PageForm/Inputs/FormGroupSelect';
+import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import {
@@ -95,19 +96,18 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             )}
           </>
         ) : (
-          <FormGroupSelect
+          <PageSingleSelect
             id="filter"
-            onSelect={(_, v) => setSeletedFilterKey(v.toString())}
             value={selectedFilterKey}
-            placeholderText=""
-            selectedIcon={<FilterIcon />}
+            onChange={setSeletedFilterKey}
+            icon={<FilterIcon />}
           >
             {toolbarFilters.map((filter) => (
-              <SelectOption key={filter.key} value={filter.key}>
+              <SelectOption key={filter.key} itemId={filter.key}>
                 {filter.label}
               </SelectOption>
             ))}
-          </FormGroupSelect>
+          </PageSingleSelect>
         )}
       </InputGroup>
       <ToolbarFilterComponent
