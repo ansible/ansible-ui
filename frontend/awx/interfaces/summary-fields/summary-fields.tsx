@@ -42,6 +42,21 @@ export interface SummaryFieldJob {
   elapsed: number;
 }
 
+export interface SummaryFieldInventory {
+  description: string;
+  has_active_failures: boolean;
+  has_inventory_sources: boolean;
+  hosts_with_active_failures: number;
+  id: number;
+  inventory_sources_with_failures: number;
+  kind: string;
+  name: string;
+  organization_id: number;
+  total_groups: number;
+  total_hosts: number;
+  total_inventory_sources: number;
+}
+
 export interface JobSummaryFields {
   organization?: SummaryFieldsOrganization;
   inventory?: {
