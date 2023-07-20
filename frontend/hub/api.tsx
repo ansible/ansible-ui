@@ -22,6 +22,10 @@ export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
   return process.env.HUB_API_BASE_PATH + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
+export function getRepoURL() {
+  return 'https://localhost:3002' + process.env.HUB_API_BASE_PATH;
+}
+
 export type QueryParams = {
   [key: string]: string | undefined;
 };

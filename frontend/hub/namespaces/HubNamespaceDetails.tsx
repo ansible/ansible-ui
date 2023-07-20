@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Stack, PageSection, Card, Text, ClipboardCopy } from '@patternfly/react-core';
 import {
   PageActions,
   PageHeader,
@@ -20,7 +21,7 @@ import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
 import { useCollectionFilters } from '../collections/hooks/useCollectionFilters';
 import { useCollectionVersionColumns } from '../collections/hooks/useCollectionVersionColumns';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { hubAPI } from '../api';
+import { hubAPI, getRepoURL } from '../api';
 import { DropdownPosition } from '@patternfly/react-core';
 
 export function NamespaceDetails() {
@@ -52,6 +53,9 @@ export function NamespaceDetails() {
         <PageTab label={t('Collections')}>
           <CollectionsTab namespace={namespace} />
         </PageTab>
+        <PageTab label={t('CLI Configuration')}>
+          <CLIConfigTab />
+        </PageTab>
         <PageTab label={t('Namespace Details')}>
           <NamespaceDetailsTab />
         </PageTab>
@@ -65,6 +69,47 @@ function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   // eslint-disable-next-line no-console
   const tableColumns = useHubNamespacesColumns();
   return <PageDetailsFromColumns item={namespace} columns={tableColumns} />;
+}
+
+function CLIConfigTab() {
+  const { t } = useTranslation();
+  return (
+    <PageLayout>
+      <PageSection style={{ gap: '16px' }}>
+        <Card
+          isFlat
+          isLarge
+          isRounded
+          style={{
+            transition: 'box-shadow 0.25s',
+            cursor: 'default',
+            maxWidth: '100%',
+            padding: '24px',
+          }}
+        >
+          <Stack>
+            <ClipboardCopy hoverTip="Copy" clickTip="Copied" style={{ borderRadius: 4 }}>
+              {getRepoURL()}
+            </ClipboardCopy>
+          </Stack>
+          <Stack hasGutter style={{ paddingTop: '16px' }}>
+            <Text>
+              {t(
+                'Note: Use this URL to configure ansible-galaxy to upload collections to this namespace. More information on ansible-galaxy configurations can be found '
+              )}
+              <Link
+                to="https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#configuring-the-ansible-galaxy-client"
+                target="_blank"
+              >
+                {t('here')}
+              </Link>
+              {t('.')}
+            </Text>
+          </Stack>
+        </Card>
+      </PageSection>
+    </PageLayout>
+  );
 }
 
 function CollectionsTab(props: { namespace?: HubNamespace }) {
