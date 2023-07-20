@@ -105,7 +105,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     return items;
   }, [items, isItemNonActionable]);
 
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(sortedItems);
+  const pagination = usePaged(sortedItems);
   const [confirmed, setConfirmed] = useState(!confirmText);
   /**
    * If there are non-actionable rows, the first column will contain exclamation icons
@@ -178,14 +178,11 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               ))}
             <PageTable<T>
               key="items"
-              pageItems={paged}
+              pageItems={pagination.paged}
               itemCount={items.length}
               tableColumns={columnsForConfirmation}
               keyFn={keyFn}
-              page={page}
-              perPage={perPage}
-              setPage={setPage}
-              setPerPage={setPerPage}
+              pagination={pagination}
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"

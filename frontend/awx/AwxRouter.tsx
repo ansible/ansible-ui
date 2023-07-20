@@ -53,6 +53,7 @@ import { ManagementJobPage } from './administration/management-jobs/ManagementJo
 import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
+import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -78,6 +79,14 @@ export function AwxRouter() {
         ].map((path) => {
           return <Route path={path} key={path} element={<CreateSchedule />} />;
         })}
+        {[
+          RouteObjWithoutPrefix.JobTemplateSchedulePage,
+          RouteObjWithoutPrefix.WorkflowJobTemplateSchedulePage,
+          RouteObjWithoutPrefix.ProjectSchedulePage,
+          RouteObjWithoutPrefix.InventorySourceSchedulePage,
+        ].map((path) => (
+          <Route path={path} key={path} element={<SchedulePage />} />
+        ))}
         <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
         <Route path={RouteObjWithoutPrefix.ActivityStream} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<PageNotImplemented />} />

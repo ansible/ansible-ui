@@ -156,7 +156,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
     void process();
   }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText]);
 
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
+  const pagination = usePaged(items);
 
   return (
     <Modal
@@ -195,7 +195,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
         >
           <PageTable<T>
             key="status"
-            pageItems={[...paged]}
+            pageItems={[...pagination.paged]}
             itemCount={items.length}
             tableColumns={[
               ...actionColumns,
@@ -227,10 +227,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
               },
             ]}
             keyFn={keyFn}
-            page={page}
-            perPage={perPage}
-            setPage={setPage}
-            setPerPage={setPerPage}
+            pagination={pagination}
             compact
             errorStateTitle=""
             emptyStateTitle="No items"
