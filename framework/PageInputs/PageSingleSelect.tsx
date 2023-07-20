@@ -51,6 +51,7 @@ export function PageSingleSelect(props: {
       onOpenChange={setIsOpen}
       toggle={Toggle}
       // shouldFocusToggleOnSelect PF5??
+      style={{ zIndex: isOpen ? 9999 : undefined }}
     >
       <SelectList>{props.children}</SelectList>
     </Select>

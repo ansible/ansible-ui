@@ -73,7 +73,7 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         if (child.props.value === value) selectedLabel = child.props.children;
       });
       return (
-        <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+        <Flex spaceItems={{ default: 'spaceItemsSm' }} flexWrap={{ default: 'nowrap' }}>
           {props.selectedIcon && <FlexItem>{props.selectedIcon}</FlexItem>}
           <FlexItem>{selectedLabel ?? value ?? ''}</FlexItem>
         </Flex>
@@ -101,6 +101,7 @@ export function FormGroupSelect(props: FormGroupSelectProps) {
         validated={helperTextInvalid ? 'error' : undefined}
         isDisabled={props.isDisabled || isReadOnly}
         hasPlaceholderStyle
+        style={{ zIndex: open ? 9999 : undefined }}
       >
         {children as ReactElement[]}
       </Select>

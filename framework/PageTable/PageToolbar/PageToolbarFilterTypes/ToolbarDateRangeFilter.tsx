@@ -1,4 +1,4 @@
-import { DatePicker, Flex, FlexItem, ToolbarItem, isValidDate } from '@patternfly/react-core';
+import { DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
 import { SelectOption } from '@patternfly/react-core/next';
 import { useEffect, useState } from 'react';
 import { PageSingleSelect } from '../../../PageInputs/PageSingleSelect';
@@ -50,31 +50,21 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   }
 
   return (
-    <ToolbarItem>
-      <Flex alignItems={{ default: 'alignItemsCenter' }} spaceItems={{ default: 'spaceItemsSm' }}>
-        <FlexItem>
-          <PageSingleSelect
-            value={selectedOption?.value ?? ''}
-            onChange={onSelectChange}
-            placeholder={placeholder}
-          >
-            {props.options.map((option) => (
-              <SelectOption
-                key={option.label}
-                itemId={option.value}
-                description={option.description}
-              >
-                {option.label}
-              </SelectOption>
-            ))}
-          </PageSingleSelect>
-        </FlexItem>
-        {selectedOption && selectedOption.isCustom && (
-          <FlexItem>
-            <DateRange value={props.value} setValue={setValue} />
-          </FlexItem>
-        )}
-      </Flex>
+    <ToolbarItem style={{}}>
+      <PageSingleSelect
+        value={selectedOption?.value ?? ''}
+        onChange={onSelectChange}
+        placeholder={placeholder}
+      >
+        {props.options.map((option) => (
+          <SelectOption key={option.label} itemId={option.value} description={option.description}>
+            {option.label}
+          </SelectOption>
+        ))}
+      </PageSingleSelect>
+      {selectedOption && selectedOption.isCustom && (
+        <DateRange value={props.value} setValue={setValue} />
+      )}
     </ToolbarItem>
   );
 }
@@ -114,27 +104,23 @@ export function DateRange(props: { value: string; setValue: (value: string) => v
     isValidDate(fromDate) && date >= fromDate ? '' : 'The "to" date must be after the "from" date';
 
   return (
-    <Flex alignItems={{ default: 'alignItemsCenter' }} spaceItems={{ default: 'spaceItemsXs' }}>
-      <FlexItem>
-        <DatePicker
-          value=""
-          onChange={onFromChange}
-          aria-label="Start date"
-          placeholder="YYYY-MM-DD"
-        />
-      </FlexItem>
-      <FlexItem>to</FlexItem>
-      <FlexItem>
-        <DatePicker
-          value={to}
-          onChange={onToChange}
-          isDisabled={!isValidDate(fromDate)}
-          rangeStart={fromDate}
-          validators={[toValidator]}
-          aria-label="End date"
-          placeholder="YYYY-MM-DD"
-        />
-      </FlexItem>
-    </Flex>
+    <>
+      <DatePicker
+        value=""
+        onChange={onFromChange}
+        aria-label="Start date"
+        placeholder="YYYY-MM-DD"
+      />
+      <div style={{ margin: 'auto', paddingLeft: 4, paddingRight: 4 }}>to</div>
+      <DatePicker
+        value={to}
+        onChange={onToChange}
+        isDisabled={!isValidDate(fromDate)}
+        rangeStart={fromDate}
+        validators={[toValidator]}
+        aria-label="End date"
+        placeholder="YYYY-MM-DD"
+      />
+    </>
   );
 }

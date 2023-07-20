@@ -2,6 +2,7 @@ import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patter
 import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
+import './ToolbarSelectFilter.css';
 
 /** A filter that allows the user to select a single option from a list of options. */
 export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {

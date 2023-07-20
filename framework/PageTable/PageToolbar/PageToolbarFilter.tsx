@@ -3,8 +3,6 @@ import {
   InputGroupText,
   SelectOption,
   SelectVariant,
-  Split,
-  SplitItem,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
@@ -80,58 +78,52 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
 
   return (
     <ToolbarItem>
-      <Split style={{ zIndex: 400 }}>
-        <SplitItem>
-          <InputGroup>
-            {toolbarFilters.length === 1 ? (
-              <>
-                {showLabel && (
-                  <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
-                    {toolbarFilters[0].label}
-                  </InputGroupText>
-                )}
-              </>
-            ) : (
-              <FormGroupSelect
-                id="filter"
-                onSelect={(_, v) => setSeletedFilterKey(v.toString())}
-                value={selectedFilterKey}
-                placeholderText=""
-                selectedIcon={<FilterIcon />}
-              >
-                {toolbarFilters.map((filter) => (
-                  <SelectOption key={filter.key} value={filter.key}>
-                    {filter.label}
-                  </SelectOption>
-                ))}
-              </FormGroupSelect>
+      <InputGroup>
+        {toolbarFilters.length === 1 ? (
+          <>
+            {showLabel && (
+              <InputGroupText style={{ border: 0, padding: '6px 6px', color: 'inherit' }}>
+                {toolbarFilters[0].label}
+              </InputGroupText>
             )}
-          </InputGroup>
-        </SplitItem>
-        <SplitItem isFilled>
-          <ToolbarFilterComponent
-            id="filter-input"
-            filter={selectedFilter}
-            addFilter={(value: string) => {
-              setFilters?.((filters) => {
-                let values = filters?.[selectedFilterKey];
-                if (!values) values = [];
-                if (!values.includes(value)) values.push(value);
-                return { ...filters, [selectedFilterKey]: values };
-              });
-            }}
-            removeFilter={(value: string) => {
-              setFilters?.((filters) => {
-                let values = filters?.[selectedFilterKey];
-                if (!values) values = [];
-                values = values.filter((v) => v !== value);
-                return { ...filters, [selectedFilterKey]: values };
-              });
-            }}
-            values={filters?.[selectedFilterKey] ?? []}
-          />
-        </SplitItem>
-      </Split>
+          </>
+        ) : (
+          <FormGroupSelect
+            id="filter"
+            onSelect={(_, v) => setSeletedFilterKey(v.toString())}
+            value={selectedFilterKey}
+            placeholderText=""
+            selectedIcon={<FilterIcon />}
+          >
+            {toolbarFilters.map((filter) => (
+              <SelectOption key={filter.key} value={filter.key}>
+                {filter.label}
+              </SelectOption>
+            ))}
+          </FormGroupSelect>
+        )}
+      </InputGroup>
+      <ToolbarFilterComponent
+        id="filter-input"
+        filter={selectedFilter}
+        addFilter={(value: string) => {
+          setFilters?.((filters) => {
+            let values = filters?.[selectedFilterKey];
+            if (!values) values = [];
+            if (!values.includes(value)) values.push(value);
+            return { ...filters, [selectedFilterKey]: values };
+          });
+        }}
+        removeFilter={(value: string) => {
+          setFilters?.((filters) => {
+            let values = filters?.[selectedFilterKey];
+            if (!values) values = [];
+            values = values.filter((v) => v !== value);
+            return { ...filters, [selectedFilterKey]: values };
+          });
+        }}
+        values={filters?.[selectedFilterKey] ?? []}
+      />
     </ToolbarItem>
   );
 }
