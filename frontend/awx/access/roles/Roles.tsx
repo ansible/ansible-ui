@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, TextCell } from '../../../../framework';
+import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { Role } from '../../interfaces/Role';
 import { IRoles, useRolesMetadata } from './useRoleMetadata';
@@ -12,7 +12,7 @@ export function useRolesFilters() {
       {
         key: 'role',
         label: t('Role'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'role_field__icontains',
         comparison: 'contains',
       },

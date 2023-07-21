@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
 import { Toolbar, ToolbarContent } from '@patternfly/react-core';
-import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
+import { Dispatch, SetStateAction } from 'react';
 import { IToolbarFilter } from '../../../../../framework';
+import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 
 interface IJobOutputToolbarProps {
   toolbarFilters: IToolbarFilter[];
@@ -17,8 +17,8 @@ export function JobOutputToolbar(props: IJobOutputToolbarProps) {
       <ToolbarContent>
         <PageToolbarFilters
           toolbarFilters={toolbarFilters}
-          filters={filters}
-          setFilters={setFilters}
+          filterState={filters}
+          setFilterState={setFilters}
         />
       </ToolbarContent>
     </Toolbar>

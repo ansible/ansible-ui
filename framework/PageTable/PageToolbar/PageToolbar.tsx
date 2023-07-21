@@ -1,12 +1,11 @@
 import {
-  Flex,
   OnPerPageSelect,
   OnSetPage,
+  ToolbarContent as PFToolbarContent,
   Pagination,
   PaginationVariant,
   Skeleton,
   Toolbar,
-  ToolbarContent as PFToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -23,7 +22,10 @@ import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
 
 const FlexGrowDiv = styled.div`
+  display: flex;
   flex-grow: 1;
+  justify-content: end;
+  flex-wrap: wrap;
 `;
 
 const ToolbarContent = styled(PFToolbarContent)`
@@ -33,7 +35,7 @@ const ToolbarContent = styled(PFToolbarContent)`
   }
 `;
 
-export type PagetableToolbarProps<T extends object> = {
+export type PageTableToolbarProps<T extends object> = {
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -77,7 +79,7 @@ export type PagetableToolbarProps<T extends object> = {
   sortOptions?: PageTableSortOption[];
 };
 
-export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<T>) {
+export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<T>) {
   const {
     itemCount,
     page,
@@ -134,7 +136,7 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
     return (
       <Toolbar
         className="border-bottom dark-2"
-        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8, zIndex: 400 }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>
@@ -166,11 +168,13 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
         )}
 
         {/* Filters */}
-        <PageToolbarFilters
-          toolbarFilters={toolbarFilters}
-          filters={filters}
-          setFilters={setFilters}
-        />
+        {filters && (
+          <PageToolbarFilters
+            toolbarFilters={toolbarFilters}
+            filterState={filters}
+            setFilterState={setFilters}
+          />
+        )}
 
         {/* Actions */}
         <ToolbarGroup variant="button-group">
@@ -181,11 +185,8 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
           />
         </ToolbarGroup>
 
-        {/* Spacing */}
-        <FlexGrowDiv />
-
         {/* The flex below is needed to make the toolbar wrap elements properly */}
-        <Flex>
+        <FlexGrowDiv>
           {/* Sort */}
           <PageToolbarSort
             sort={sort}
@@ -207,26 +208,26 @@ export function PageTableToolbar<T extends object>(props: PagetableToolbarProps<
               openColumnModal={openColumnModal}
             />
           )}
-        </Flex>
 
-        {/* Pagination */}
-        {!props.disablePagination && (
-          <ToolbarItem
-            visibility={{ default: 'hidden', '2xl': 'visible' }}
-            style={{ marginLeft: 24 }}
-          >
-            <Pagination
-              variant={PaginationVariant.top}
-              isCompact
-              itemCount={itemCount}
-              perPage={perPage}
-              page={page}
-              onSetPage={onSetPage}
-              onPerPageSelect={onPerPageSelect}
-              style={{ marginTop: -8, marginBottom: -8 }}
-            />
-          </ToolbarItem>
-        )}
+          {/* Pagination */}
+          {!props.disablePagination && (
+            <ToolbarItem
+              visibility={{ default: 'hidden', '2xl': 'visible' }}
+              style={{ marginLeft: 24 }}
+            >
+              <Pagination
+                variant={PaginationVariant.top}
+                isCompact
+                itemCount={itemCount}
+                perPage={perPage}
+                page={page}
+                onSetPage={onSetPage}
+                onPerPageSelect={onPerPageSelect}
+                style={{ marginTop: -8, marginBottom: -8 }}
+              />
+            </ToolbarItem>
+          )}
+        </FlexGrowDiv>
       </ToolbarContent>
     </Toolbar>
   );

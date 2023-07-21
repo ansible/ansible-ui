@@ -1,13 +1,7 @@
-import React from 'react';
-import { SplitItem, Split, SelectOptionObject, ToolbarGroup } from '@patternfly/react-core';
+import { SelectOptionObject, Split, SplitItem, ToolbarGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import DateInput from './Date';
-import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
-export interface IToolbarDateFilter extends ToolbarFilterCommon {
-  /** Filter for filtering by user text input. */
-  type: 'date';
-}
 const today = (days = 0): Date => {
   const date = new Date();
   date.setDate(date.getDate() + days);

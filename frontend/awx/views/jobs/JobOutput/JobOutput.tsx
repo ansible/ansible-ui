@@ -1,14 +1,14 @@
-import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
-import styled from 'styled-components';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
-import './JobOutput.css';
-import { JobStatusBar } from './JobStatusBar';
 import { HostStatusBar } from './HostStatusBar';
-import { JobOutputToolbar } from './JobOutputToolbar';
+import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
-import type { IToolbarFilter } from '../../../../../framework';
+import { JobOutputToolbar } from './JobOutputToolbar';
+import { JobStatusBar } from './JobStatusBar';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -42,7 +42,7 @@ function useOutputFilters() {
       {
         key: 'stdout',
         label: t('Search output'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'stdout__icontains',
         placeholder: t('Filter by keyword'),
         comparison: 'contains',
@@ -50,7 +50,7 @@ function useOutputFilters() {
       {
         key: 'event',
         label: t('Event'),
-        type: 'select',
+        type: ToolbarFilterType.MultiSelect,
         query: 'event',
         placeholder: t('Select event type'),
         options: [

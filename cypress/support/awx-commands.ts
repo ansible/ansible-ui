@@ -95,17 +95,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
-  cy.get('#filter-form-group').within(() => {
-    cy.get('.pf-c-select button').as('filterTypeBtn');
-    cy.get('@filterTypeBtn').should('not.be.disabled');
-    cy.get('@filterTypeBtn').click();
-    cy.get('.pf-c-select__menu').within(() => {
-      cy.clickButton(text);
-    });
-  });
-});
-
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
     .first()
@@ -115,18 +104,6 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
         cy.contains('button', `${text} per page`).click();
       });
     });
-});
-
-Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').within(() => {
-    cy.get('input').clear().type(text, { delay: 0 });
-  });
-  cy.get('[aria-label="apply filter"]').click();
-});
-
-Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
-  cy.selectToolbarFilterType(filterLabel);
-  cy.filterTableByText(text);
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {

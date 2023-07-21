@@ -1,9 +1,9 @@
-import { useMemo, useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../framework';
-import { pulpAPI } from '../../api';
-import { useGet } from '../../../common/crud/useGet';
 import { SelectVariant } from '@patternfly/react-core';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useGet } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../api';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
@@ -25,21 +25,21 @@ export function useCollectionFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'keywords',
         comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'namespace',
         comparison: 'equals',
       },
       {
         key: 'repository',
         label: t('Repository'),
-        type: 'selectTypeAhead',
+        type: ToolbarFilterType.SingleSelect,
         query: 'repository',
         variant: SelectVariant.single,
         options:
@@ -55,14 +55,14 @@ export function useCollectionFilters() {
       {
         key: 'tags',
         label: t('Tags'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'tags',
         comparison: 'equals',
       },
       {
         key: 'type',
         label: t('Type'),
-        type: 'select',
+        type: ToolbarFilterType.MultiSelect,
         query: 'type',
         options: [
           { label: t('Synced'), value: 'synced' },
@@ -73,7 +73,7 @@ export function useCollectionFilters() {
       {
         key: 'signature',
         label: t('Signature'),
-        type: 'select',
+        type: ToolbarFilterType.MultiSelect,
         query: 'sign_state',
         options: [
           { label: t('Signed'), value: 'signed' },

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 
 export function useActivationHistoryFilters() {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ export function useActivationHistoryFilters() {
       {
         key: 'status',
         label: t('Status'),
-        type: 'select',
+        type: ToolbarFilterType.MultiSelect,
         query: 'status',
         options: [
           { label: t('New'), value: 'new' },

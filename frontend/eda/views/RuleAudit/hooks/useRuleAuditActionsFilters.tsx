@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useRuleAuditActionsFilters() {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ export function useRuleAuditActionsFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name',
         comparison: 'startsWith',
       },

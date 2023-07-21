@@ -8,22 +8,26 @@ import {
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
+
 /** Filter for filtering by user text input. */
 export interface IToolbarTextFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user text input. */
-  type: 'string';
+  type: ToolbarFilterType.Text;
 
   /** The comparison to use when filtering. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
 }
 
-export function ToolbarTextFilter(
-  props: {
-    id?: string;
-    addFilter: (value: string) => void;
-  } & Pick<IToolbarTextFilter, 'comparison' | 'placeholder'>
-) {
+export interface IToolbarTextFilterProps {
+  id?: string;
+  addFilter: (value: string) => void;
+  placeholder?: string;
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+}
+
+export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
   const { t } = useTranslation();
   const [value, setValue] = useState('');
   let placeholder = props.placeholder;

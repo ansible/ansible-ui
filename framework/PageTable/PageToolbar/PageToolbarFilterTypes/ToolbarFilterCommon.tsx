@@ -7,7 +7,7 @@ export interface ToolbarFilterCommon {
   /** The label to show for the filter. */
   label: string;
 
-  /** Indicated if the filter should be pinned outside of the filter select. */
+  /** Indicates if the filter should be pinned outside of the filter select. */
   isPinned?: boolean;
 
   /** Query used by the useView hook to perform the filtering. */
