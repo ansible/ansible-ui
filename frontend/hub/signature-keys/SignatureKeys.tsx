@@ -14,11 +14,12 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
 } from '../../../framework';
 import { downloadTextFile } from '../../../framework/utils/download-file';
+import { pulpAPI, pulpHrefKeyFn } from '../api';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
-import { pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
@@ -104,7 +105,7 @@ export function useSignatureKeyFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name',
         comparison: 'equals',
       },

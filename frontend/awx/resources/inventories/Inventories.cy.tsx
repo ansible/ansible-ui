@@ -1,3 +1,4 @@
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
@@ -26,8 +27,7 @@ describe('Inventories.cy.ts', () => {
         'orgFilterRequest'
       );
       cy.hasTitle(/^Inventories$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
         cy.contains(/^Inventory type$/).should('be.visible');
@@ -149,7 +149,7 @@ describe('Inventories.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

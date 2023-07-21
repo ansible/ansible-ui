@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -21,7 +21,7 @@ export function useProjectsFilters() {
       {
         key: 'type',
         label: t('Type'),
-        type: 'select',
+        type: ToolbarFilterType.MultiSelect,
         query: 'scm_type',
         options: [
           { label: t('Manual'), value: '' },

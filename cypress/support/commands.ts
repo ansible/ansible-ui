@@ -31,6 +31,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './common-commands';
 import './eda-commands';
 import './rest-commands';
 
@@ -82,6 +83,30 @@ declare global {
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
 
       setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+
+      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * Find the toolbar filter select, click it and returns the opened menu element.
+       *
+       * @example
+       * ```
+       * cy.openToolbarFilterTypeSelect().within(() => {
+       *   cy.contains(/^Name$/).should('be.visible');
+       * });
+       * ```
+       */
+      openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
+
+      filterBySingleSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
+
+      filterByMultiSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 
 export function useRemoteFilters() {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ export function useRemoteFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__icontains',
         comparison: 'contains',
       },
