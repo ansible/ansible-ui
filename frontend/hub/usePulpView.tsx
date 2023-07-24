@@ -9,8 +9,8 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 
 export interface PulpItemsResponse<T extends object> {
   count: number;
@@ -40,10 +40,10 @@ export function usePulpView<T extends object>({
   disableQueryString?: boolean;
   queryParams?: QueryParams;
 }): IHubView<T> {
-  const view = useView(
-    { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
-    disableQueryString
-  );
+  const view = useView({
+    defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const { page, perPage, sort, sortDirection, filters } = view;

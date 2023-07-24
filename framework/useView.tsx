@@ -1,6 +1,16 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { useIsMountedRef } from './components/useIsMounted';
 import { useSearchParams } from './components/useSearchParams';
+import { useWindowLocation } from './components/useWindowLocation';
 
+/**
+ * The IView interface defines the state for a table.
+ *
+ * It includes:
+ * - pagination
+ * - sorting
+ * - filters
+ */
 export interface IView {
   page: number;
   setPage: (page: number) => void;
@@ -11,12 +21,68 @@ export interface IView {
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
   filters: Record<string, string[]>;
-  defaultFilters?: Record<string, string[]>;
   setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters: () => void;
 }
 
-export function useView(view?: Partial<IView> | undefined, disableQueryString?: boolean): IView {
+/**
+ * The useView hook manages the state for tables.
+ *
+ * This includes:
+ * - page
+ * - perPage
+ * - sort
+ * - sortDirection
+ * - filters
+ *
+ * It also manages the query string parameters for the table.
+ * It will load the dafulat values from the query string if they exist.
+ * It will also update the query string when the values change.
+ *
+ * In most use cases, you will not need to use this hook directly.
+ * Instead, you will use a wrapper hook that uses this hook.
+ * That wrapper hook will be the hook that knows how to work with the data from the API.
+ */
+export function useView(options: {
+  /**
+   * The default values to use for the view
+   * - filters
+   * - sort
+   * - sortDirection
+   */
+  defaultValues?: Partial<Pick<IView, 'filters' | 'sort' | 'sortDirection'>> | undefined;
+
+  /**
+   * Disable the use of query string parameters when using this view
+   * - useful when there are two tables or a table in a modal
+   */
+  disableQueryString?: boolean;
+
+  /**
+   * An array of query string keys to ignore when updating the query string for filters.
+   * This is the opposite of filterQueryStringKeys and only one should be used.
+   *
+   * Example:
+   *   if ignoreQueryStringKeys=['abc'] then clearing filters would not clear 'abc' from the query string
+   *   this would allow pages to have querystirng values that are not cleared by filters.
+   */
+  ignoreQueryStringKeys?: string[];
+
+  /**
+   * An array of query string keys that represent the filter state in the query string.
+   * This is the opposite of ignoreQueryStringKeys and only one should be used.
+   *
+   * This is useful when the filters are known up front.
+   * In most of the framework, the filter keys are known up front and can be passed in,
+   * utilizing this option.
+   */
+  filterQueryStringKeys?: string[];
+}): IView {
+  const { defaultValues, disableQueryString, ignoreQueryStringKeys, filterQueryStringKeys } =
+    options;
+
+  const mountedRef = useIsMountedRef();
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [page, setPage] = useState(() => {
@@ -29,7 +95,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
         }
       }
     }
-    return view?.page ?? 1;
+    return 1;
   });
 
   const [perPage, setPerPage] = useState(() => {
@@ -49,7 +115,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
         return perPage;
       }
     }
-    return view?.perPage ?? 10;
+    return 10;
   });
 
   const [sort, setSort] = useState(() => {
@@ -60,7 +126,7 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
         return querySort;
       }
     }
-    return view?.sort ?? '';
+    return defaultValues?.sort ?? '';
   });
 
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
@@ -71,47 +137,70 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
         return 'asc';
       }
     }
-    return view?.sortDirection ?? 'asc';
+    return defaultValues?.sortDirection ?? 'asc';
   });
 
   const [filters, setFilters] = useState<Record<string, string[]>>(() => {
-    const filters: Record<string, string[]> = view?.defaultFilters ? view.defaultFilters : {};
-
+    const filters: Record<string, string[]> = defaultValues?.filters ?? {};
     for (const key of searchParams.keys()) {
-      switch (key) {
-        case 'sort':
-        case 'page':
-        case 'perPage':
-          break;
-        default: {
-          const value = searchParams.get(key);
-          if (value) {
-            const values = value.split(',');
-            filters[key] = values;
-          }
-        }
+      if (defaultIgnoreQueryStringKeys.includes(key)) continue;
+      const value = searchParams.get(key);
+      if (value) {
+        const values = value.split(',');
+        filters[key] = values;
       }
     }
-    if (Object.keys(filters)) return filters;
-    return view?.filters ?? {};
+    return filters;
   });
 
   const clearAllFilters = useCallback(() => setFilters({}), [setFilters]);
 
+  const location = useWindowLocation();
+
   useEffect(() => {
     if (disableQueryString) return;
-    const newSearchParams = new URLSearchParams();
-    sortDirection === 'asc'
-      ? newSearchParams.set('sort', sort)
-      : newSearchParams.set('sort', `-${sort}`);
+    const newSearchParams = new URLSearchParams(location.location?.search ?? '/');
     newSearchParams.set('page', page.toString());
     newSearchParams.set('perPage', perPage.toString());
+    newSearchParams.set('sort', sortDirection === 'asc' ? sort : `-${sort}`);
+
+    // Remove all query string keys that are for filters
+    for (const key of searchParams.keys()) {
+      if (defaultIgnoreQueryStringKeys.includes(key)) continue;
+      if (ignoreQueryStringKeys?.includes(key)) continue;
+      if (filterQueryStringKeys) {
+        if (filterQueryStringKeys.includes(key)) {
+          newSearchParams.delete(key);
+        }
+        continue;
+      }
+      newSearchParams.delete(key);
+    }
+
+    // For each filter with value, add it to the query string
     for (const filter in filters) {
       newSearchParams.set(filter, filters[filter].join(','));
     }
-    localStorage.setItem('perPage', perPage.toString());
+
     setSearchParams(newSearchParams);
-  }, [sort, sortDirection, setSearchParams, disableQueryString, page, perPage, filters]);
+  }, [
+    sort,
+    sortDirection,
+    setSearchParams,
+    disableQueryString,
+    page,
+    perPage,
+    filters,
+    ignoreQueryStringKeys,
+    filterQueryStringKeys,
+    mountedRef,
+    searchParams,
+    location.location?.search,
+  ]);
+
+  useEffect(() => {
+    localStorage.setItem('perPage', perPage.toString());
+  }, [perPage]);
 
   return useMemo(
     () => ({
@@ -130,3 +219,6 @@ export function useView(view?: Partial<IView> | undefined, disableQueryString?: 
     [clearAllFilters, filters, page, perPage, sort, sortDirection]
   );
 }
+
+/** Ignore these query string keys when updating the query string for filters */
+const defaultIgnoreQueryStringKeys = ['page', 'perPage', 'sort'];
