@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 import './ToolbarSelectFilter.css';
+import { PageTableProps } from '../../PageTable';
 
 /** A filter that allows the user to select a single option from a list of options. */
 export interface IToolbarSingleSelectFilter extends IToolbarSelectFilter {
@@ -16,10 +17,16 @@ export interface IToolbarMultiSelectFilter extends IToolbarSelectFilter {
   type: ToolbarFilterType.MultiSelect;
 }
 
-export interface IToolbarSelectFilter extends ToolbarFilterCommon {
+export interface IToolbarSelectFilter<T extends object = any> extends ToolbarFilterCommon {
   options: IToolbarFilterOption[];
   hasSearch?: boolean;
   onSearchTextChange?: (searchText: string) => void;
+
+  // shows modal with grid that allows user to select items, when there are more than "showOverNItems" in the dropdown
+  gridModal?: {
+    showOverNItems: number;
+    pageTableProps: PageTableProps<T>;
+  };
 }
 
 export interface IToolbarFilterOption {
