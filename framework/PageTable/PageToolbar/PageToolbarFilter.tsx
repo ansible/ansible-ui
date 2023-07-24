@@ -6,6 +6,7 @@ import {
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { SelectOption } from '@patternfly/react-core/next';
 import { FilterIcon } from '@patternfly/react-icons';
@@ -252,14 +253,15 @@ function ToolbarFilterComponent(props: {
   removeFilter: (value: string) => void;
 }): JSX.Element {
   const { filter, values, addFilter, removeFilter } = props;
+  const { t } = useTranslation();
 
   switch (filter.type) {
     case ToolbarFilterType.SingleSelect || ToolbarFilterType.MultiSelect: {
       if (filter.searchGrid) {
-        if (filter.options.length > filter.searchGrid?.showOverRowCount) {
+        if (filter.options.length > (filter.searchGrid?.showOverRowCount || 5)) {
           return (
-            <Modal>
-              <PageTable {...filter.searchGrid.pageTableProps}></PageTable>
+            <Modal title={t`Modal`} isOpen={true}>
+              {filter.searchGrid.renderContent()}
             </Modal>
           );
         }

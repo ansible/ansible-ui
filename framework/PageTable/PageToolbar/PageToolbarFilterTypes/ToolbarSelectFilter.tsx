@@ -1,5 +1,5 @@
 import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 import './ToolbarSelectFilter.css';
@@ -26,8 +26,8 @@ export interface IToolbarMultiSelectFilter<T extends object = object> extends To
 }
 
 export interface IToolbarSearchGrid<T extends object = object> {
-  showOverRowCount: number;
-  pageTableProps: PageTableProps<T>;
+  showOverRowCount?: number;
+  renderContent: () => React.ReactNode;
 }
 
 export interface IToolbarFilterOption {

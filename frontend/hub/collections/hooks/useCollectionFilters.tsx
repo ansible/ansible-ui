@@ -1,9 +1,10 @@
 import { SelectVariant } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType, ITableColumn, TextCell } from '../../../../framework';
 import { pulpAPI } from '../../api';
 import { usePulpView } from '../../usePulpView';
+import { PageTable } from '../../../../framework/PageTable/PageTable';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
@@ -26,6 +27,11 @@ export function useCollectionFilters() {
     url: pulpAPI`/repositories/ansible/ansible`,
     keyFn: (item) => item.name,
   });
+
+  const repoColumns = useMemo<ITableColumn<Repository>[]>(
+    () => [{ header: 'Name', cell: (repository) => <TextCell text={repository.name} /> }],
+    []
+  );
 
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -55,6 +61,21 @@ export function useCollectionFilters() {
           }) || [],
         placeholder: t('Select repositories'),
         hasSearch: true,
+        searchGrid: {
+          renderContent: () => {
+            return (
+              <PageTable<Repository>
+                tableColumns={repoColumns}
+                errorStateTitle={t('Error loading repositories')}
+                emptyStateTitle={t('No repositories yet')}
+                // emptyStateDescription={t('To get started, create an repository.')}
+                // emptyStateButtonText={t('Add repository')}
+                // emptyStateButtonClick={() => navigate(RouteObj.CreateRepository)}
+                {...repositoryView}
+              />
+            );
+          },
+        },
       },
       {
         key: 'tags',
