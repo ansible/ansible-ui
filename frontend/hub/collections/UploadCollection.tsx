@@ -28,6 +28,7 @@ import { usePulpView } from '../usePulpView';
 import { IToolbarFilter } from '../../../framework';
 import { nameKeyFn } from '../api';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
+import { ToolbarFilterType } from '../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 
 interface UploadData {
   file: unknown;
@@ -259,7 +260,7 @@ export function useRepoFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__icontains',
         comparison: 'startsWith',
       },
