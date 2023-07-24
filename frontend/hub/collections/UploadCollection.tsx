@@ -30,7 +30,6 @@ import { nameKeyFn } from '../api';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
 import { ToolbarFilterType } from '../../../framework/PageTable/PageToolbar/PageToolbarFilter';
 
-
 interface UploadData {
   file: unknown;
 }
