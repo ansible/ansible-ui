@@ -9,8 +9,8 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 
 export interface HubItemsResponse<T extends object> {
   meta: {
@@ -49,13 +49,13 @@ export function useHubView<T extends object>({
   sortKey?: string;
   defaultFilters?: Record<string, string[]>;
 }): IHubView<T> {
-  const view = useView(
-    {
+  const view = useView({
+    defaultValues: {
       sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
-      defaultFilters,
+      filters: defaultFilters,
     },
-    disableQueryString
-  );
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const { page, perPage, sort, sortDirection, filters } = view;

@@ -28,12 +28,10 @@ export function useInMemoryView<T extends object>(options: {
   error?: Error;
 }): IInMemoryView<T> {
   const { items, keyFn, tableColumns, toolbarFilters, disableQueryString } = options;
-  const view = useView(
-    {
-      sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
-    },
-    disableQueryString
-  );
+  const view = useView({
+    defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    disableQueryString,
+  });
   const { page, perPage, sort, sortDirection, filters } = view;
 
   const sorted = useSorted(items);

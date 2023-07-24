@@ -35,7 +35,7 @@ export function AutomationServers() {
 
   const tableColumns = useAutomationServersColumns();
   const { automationServers } = useAutomationServers();
-  const view = useView();
+  const view = useView({});
   const selected = useSelected(automationServers, automationServerKeyFn);
 
   const addAutomationServer = useAddAutomationServer();
