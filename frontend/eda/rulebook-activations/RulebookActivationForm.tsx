@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
   PageFormDataEditor,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormSwitch,
   PageFormTextInput,
@@ -140,7 +140,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
         placeholderText={t('Select project')}
@@ -172,7 +172,7 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
         placeholderText={t('Select decision environment')}
@@ -189,7 +189,7 @@ export function RulebookActivationInputs() {
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}

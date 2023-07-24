@@ -2,12 +2,12 @@ import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { PageForm, PageFormSelectOption, usePageDialog } from '../../../framework';
+import { PageForm, PageFormSelect, usePageDialog } from '../../../framework';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
+import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 import { useAutomationServers } from '../contexts/AutomationServerProvider';
 import { AutomationServer } from '../interfaces/AutomationServer';
 import { AutomationServerType } from '../interfaces/AutomationServerType';
-import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 
 const ModalFormDiv = styled.div`
   padding: 24px;
@@ -68,7 +68,7 @@ export function AddAutomationServerDialog() {
             validate={isValidUrl}
             isRequired
           />
-          <PageFormSelectOption<AutomationServer>
+          <PageFormSelect<AutomationServer>
             label={t('Automation type')}
             name="type"
             placeholderText={t('Select automation type')}

@@ -1,11 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  PageFormSelectOption,
-  PageHeader,
-  PageLayout,
-  compareStrings,
-} from '../../../../framework';
+import { PageFormSelect, PageHeader, PageLayout, compareStrings } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -17,10 +12,10 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { getAwxError } from '../../useAwxView';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -147,7 +142,7 @@ function CredentialInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormSelectOption<Credential>
+      <PageFormSelect<Credential>
         label={t('Credential type')}
         placeholderText={t('Select credential type')}
         name="credential_type"

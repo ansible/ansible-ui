@@ -61,7 +61,6 @@ export type PageFormTextInputProps<
    */
   label?: string;
 
-  // TODO - convert this to `help: ReactNode` and use the `HelperText` component
   labelHelpTitle?: string;
   labelHelp?: ReactNode;
 
