@@ -58,10 +58,24 @@ export function useView(options: {
    */
   disableQueryString?: boolean;
 
-  /** A list of query string keys to ignore when updating the query string å*/
+  /**
+   * An array of query string keys to ignore when updating the query string for filters.
+   * This is the opposite of filterQueryStringKeys and only one should be used.
+   *
+   * Example:
+   *   if ignoreQueryStringKeys=['abc'] then clearing filters would not clear 'abc' from the query string
+   *   this would allow pages to have querystirng values that are not cleared by filters.
+   */
   ignoreQueryStringKeys?: string[];
 
-  /** A list of query string keys to filter out when updating the query string */
+  /**
+   * An array of query string keys that represent the filter state in the query string.
+   * This is the opposite of ignoreQueryStringKeys and only one should be used.
+   *
+   * This is useful when the filters are known up front.
+   * In most of the framework, the filter keys are known up front and can be passed in,
+   * utilizing this option.
+   */
   filterQueryStringKeys?: string[];
 }): IView {
   const { defaultValues, disableQueryString, ignoreQueryStringKeys, filterQueryStringKeys } =
