@@ -1,20 +1,20 @@
-import { useParams } from 'react-router-dom';
-import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
-import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
-import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
-import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
-import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
-import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
-import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
+import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { RegularInventory } from '../../../interfaces/Inventory';
 import { InventorySource } from '../../../interfaces/InventorySource';
-import { Project } from '../../../interfaces/Project';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { Project } from '../../../interfaces/Project';
+import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
+import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
+import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
+import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
+import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 
 export function ScheduleInputs(props: {
   timeZones: { value: string; label: string; key: string }[];
@@ -63,7 +63,7 @@ export function ScheduleInputs(props: {
     <>
       {params['*']?.startsWith('schedules') ? (
         <>
-          <PageFormSelectOption<ScheduleFormFields>
+          <PageFormSelect<ScheduleFormFields>
             isRequired={!params['*']?.startsWith('schedules')}
             labelHelpTitle={t('Resource type')}
             labelHelp={t('Select a resource type onto which this schedule will be applied.')}
@@ -112,7 +112,7 @@ export function ScheduleInputs(props: {
           <PageFormTextInput name={'name'} isRequired label={t('Schedule Name')} />
           <PageFormTextInput name={'description'} label={t('Description')} />
           <PageFormDateTimePicker label={t('Start date/time')} name={'startDateTime'} />
-          <PageFormSelectOption<ScheduleFormFields>
+          <PageFormSelect<ScheduleFormFields>
             name="timezone"
             placeholderText={t('Select time zone')}
             label={t('Time zone')}

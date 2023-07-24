@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { PageFormSelectOption, PageFormTextInput } from '../../../../../framework';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -57,7 +57,7 @@ export function WebhookSubForm() {
     pathname.endsWith('/add') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
   return (
     <FormSection title={t('Webhook details')}>
-      <PageFormSelectOption<JobTemplateForm>
+      <PageFormSelect<JobTemplateForm>
         name="webhook_service"
         label={t('Webhook service')}
         options={[

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageForm, PageFormSelectOption, useBulkActionDialog } from '../../../../framework';
+import { PageForm, PageFormSelect, useBulkActionDialog } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -97,7 +97,7 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
       onCancel={() => navigate(-1)}
       submitText={t('Submit')}
     >
-      <PageFormSelectOption
+      <PageFormSelect
         name="role"
         label={t('Role')}
         placeholderText={t('Select role')}
