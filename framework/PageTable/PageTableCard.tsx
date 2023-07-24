@@ -38,7 +38,12 @@ export interface IPageTableCard {
   title: ReactNode;
   subtitle?: ReactNode;
   cardBody: ReactNode;
-  labels?: { label: string; color?: LabelColor }[]; // TODO - disable/enable auto generated filters
+  labels?: {
+    label: string;
+    color?: LabelColor;
+    icon?: ReactNode;
+    variant?: 'outline' | 'filled' | undefined;
+  }[]; // TODO - disable/enable auto generated filters
   badge?: string;
   badgeColor?: LabelColor;
   badgeTooltip?: string;
@@ -213,7 +218,12 @@ export function PageTableCard<T extends object>(props: {
               {card.labels && (
                 <LabelGroup numLabels={999}>
                   {card.labels.map((item) => (
-                    <Label key={item.label} color={item.color}>
+                    <Label
+                      key={item.label}
+                      color={item.color}
+                      icon={item.icon}
+                      variant={item.variant}
+                    >
                       <Truncate content={item.label} style={{ minWidth: 0 }} />
                     </Label>
                   ))}
