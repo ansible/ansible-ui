@@ -77,14 +77,14 @@ const CardFooterLabelsDiv = styled.div`
   flex-grow: 1;
 `;
 
-const PageDetailDiv = styled.div`
+export const PageDetailDiv = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 8px;
   flex-wrap: wrap;
 `;
 
-const ColumnsDiv = styled.div`
+export const ColumnsDiv = styled.div`
   display: flex;
   gap: 6px;
   align-items: baseline;
