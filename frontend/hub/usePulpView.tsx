@@ -12,7 +12,7 @@ import {
 import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
 
-export interface PulpItemsResponse<T extends object> {
+interface PulpItemsResponse<T extends object> {
   count: number;
   results: T[];
   next?: string;

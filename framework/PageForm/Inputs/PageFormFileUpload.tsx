@@ -1,5 +1,5 @@
 import { FileUpload } from '@patternfly/react-core';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
