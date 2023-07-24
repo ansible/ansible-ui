@@ -1,4 +1,5 @@
 import {
+  Modal,
   SelectVariant,
   ToolbarFilter,
   ToolbarGroup,
@@ -22,6 +23,7 @@ import {
   ToolbarSelectFilter,
 } from './PageToolbarFilterTypes/ToolbarSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
+import { PageTable } from '../PageTable';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
@@ -250,6 +252,21 @@ function ToolbarFilterComponent(props: {
   removeFilter: (value: string) => void;
 }): JSX.Element {
   const { filter, values, addFilter, removeFilter } = props;
+
+  switch (filter.type) {
+    case ToolbarFilterType.SingleSelect || ToolbarFilterType.MultiSelect: {
+      if (filter.searchGrid) {
+        if (filter.options.length > filter.searchGrid?.showOverRowCount) {
+          return (
+            <Modal>
+              <PageTable {...filter.searchGrid.pageTableProps}></PageTable>
+            </Modal>
+          );
+        }
+      }
+    }
+  }
+
   switch (filter.type) {
     case ToolbarFilterType.Text:
       return (

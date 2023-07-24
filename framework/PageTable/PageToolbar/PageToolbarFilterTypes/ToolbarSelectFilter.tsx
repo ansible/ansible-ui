@@ -3,23 +3,31 @@ import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 import './ToolbarSelectFilter.css';
+import { PageTableProps } from '../../PageTable';
 
 /** A filter that allows the user to select a single option from a list of options. */
-export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
+export interface IToolbarSingleSelectFilter<T extends object = object> extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleSelect;
   options: IToolbarFilterOption[];
   isRequired?: boolean; // Some pinned filters can be required such as a date range
   defaultValue?: string; // For required filters, the default value to use, otherwise, the first option is used
   hasSearch?: boolean;
   onSearchTextChange?: (searchText: string) => void;
+  searchGrid?: IToolbarSearchGrid<T>;
 }
 
 /** A filter that allows the user to select multiple options from a list of options. */
-export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
+export interface IToolbarMultiSelectFilter<T extends object = object> extends ToolbarFilterCommon {
   type: ToolbarFilterType.MultiSelect;
   options: IToolbarFilterOption[];
   hasSearch?: boolean;
   onSearchTextChange?: (searchText: string) => void;
+  searchGrid?: IToolbarSearchGrid<T>;
+}
+
+export interface IToolbarSearchGrid<T extends object = object> {
+  showOverRowCount: number;
+  pageTableProps: PageTableProps<T>;
 }
 
 export interface IToolbarFilterOption {
