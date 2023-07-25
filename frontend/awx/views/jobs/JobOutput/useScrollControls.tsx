@@ -1,4 +1,10 @@
-import { RefObject, useCallback, useEffect, useState, useRef } from 'react';
+import { RefObject, useEffect, useState } from 'react';
+
+function isAtBottom(el: HTMLElement) {
+  const { clientHeight, scrollHeight, scrollTop } = el;
+  const scrollTopMax = scrollHeight - clientHeight;
+  return scrollTop >= scrollTopMax;
+}
 
 export function useScrollControls(
   containerRef: RefObject<HTMLElement>,
@@ -7,64 +13,50 @@ export function useScrollControls(
   numRows: number,
   isJobRunning: boolean
 ) {
-  // const [forceSecondScrollToEnd, setForceSecondScroll] = useState(false);
-  const [wasJobRunning, setWasJobRunning] = useState(isJobRunning);
-  const lastScrollTop = useRef(0);
+  const [numTicksAtBottom, setNumTicksAtBottom] = useState(0);
 
+  /* Keep scrolled to bottom if follow mode is enabled */
   useEffect(() => {
-    if (!containerRef.current) {
+    if (!isFollowModeEnabled) {
       return;
     }
-    // console.log({ isFollowModeEnabled, numRows, forceSecondScrollToEnd });
-    if (isFollowModeEnabled /*|| forceSecondScrollToEnd*/) {
-      // console.log({
-      //   scrollTop,
-      //   scrollHeight,
-      //   isHigher: scrollHeight < scrollTop,
-      // });
-      containerRef.current.scrollTo({ top: containerRef.current.scrollHeight });
-      /*
-        After scrolling to the bottom, the height of the element is more accurately
-        calculated when the events at the bottom render. This can cause the total
-        height to increase slightly, so we will need to scroll to the bottom a
-        second time on the successive render.
-      */
-      // setForceSecondScroll(true);
-    }
-    // if (!isFollowModeEnabled) {
-    //   setForceSecondScroll(false);
-    // }
-  }, [isFollowModeEnabled, numRows, containerRef]);
-
-  useEffect(() => {
-    if (wasJobRunning && !isJobRunning) {
-      setTimeout(() => {
-        setWasJobRunning(false);
-      }, 1500);
-    }
-  }, [isJobRunning, wasJobRunning]);
-
-  const onScroll = useCallback(() => {
-    // console.log('onScroll');
-    if (!containerRef.current) return;
-    const { clientHeight, scrollHeight, scrollTop } = containerRef.current;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
-    if (!isAtBottom && !wasJobRunning) {
-      // console.log('disabling follow mode');
-      setIsFollowModeEnabled(false);
-    }
-    lastScrollTop.current = scrollTop;
-  }, [containerRef, setIsFollowModeEnabled, wasJobRunning]);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const el = containerRef.current;
-    el.addEventListener('scroll', onScroll);
+    const interval = setInterval(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTo({ top: containerRef.current.scrollHeight });
+      }
+    }, 200);
 
     return () => {
-      el.removeEventListener('scroll', onScroll);
+      clearInterval(interval);
     };
-  }, [containerRef, onScroll]);
+  }, [isFollowModeEnabled, containerRef]);
+
+  /* If job isn't running, wait a short delay to ensure view stays scrolled
+     all the way to the bottom; then disable follow mode */
+  useEffect(() => {
+    if (!isFollowModeEnabled || isJobRunning) {
+      return;
+    }
+    const interval = setInterval(() => {
+      if (!containerRef.current) {
+        return;
+      }
+      if (numTicksAtBottom >= 3) {
+        setIsFollowModeEnabled(false);
+        return;
+      }
+
+      if (isAtBottom(containerRef.current)) {
+        setNumTicksAtBottom((prev) => prev + 1);
+      } else {
+        setNumTicksAtBottom(0);
+      }
+    }, 200);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isFollowModeEnabled, isJobRunning, containerRef, numTicksAtBottom, setIsFollowModeEnabled]);
 
   const scrollToTop = () => {
     containerRef.current?.scrollTo({ top: 0 });

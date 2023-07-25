@@ -33,7 +33,6 @@ export function JobOutputToolbar(props: IJobOutputToolbarProps) {
       setIsFollowModeEnabled(false);
     } else {
       setIsFollowModeEnabled(true);
-      // scrollToEnd();
     }
   };
 

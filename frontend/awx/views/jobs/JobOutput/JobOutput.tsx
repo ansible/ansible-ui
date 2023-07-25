@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -23,12 +23,6 @@ export function JobOutput(props: { job: Job; reloadJob: () => void }) {
   const [filterState, setFilterState] = useState<IFilterState>({});
   const isRunning = isJobRunning(job.status);
   const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
-
-  // useEffect(() => {
-  //   if (!isRunning && isFollowModeEnabled) {
-  //     setIsFollowModeEnabled(false);
-  //   }
-  // }, [isRunning, isFollowModeEnabled]);
 
   if (!job) {
     return <Skeleton />;

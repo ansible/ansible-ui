@@ -57,7 +57,6 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     filterState,
     50
   );
-  // const [isScrolledToEnd, setIsScrolledToEnd] = useState(isFollowModeEnabled);
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];

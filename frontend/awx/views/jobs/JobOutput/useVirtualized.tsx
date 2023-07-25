@@ -7,7 +7,6 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
   const [containerHeight, setContainerHeight] = useState(0);
 
   const onScroll = useCallback(() => {
-    // console.log('onScroll');
     if (!containerRef.current) return;
     setScrollTop(containerRef.current.scrollTop);
     setContainerHeight(containerRef.current.clientHeight);
@@ -24,7 +23,6 @@ export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, item
   }, [containerRef, onScroll]);
 
   const onResize = useCallback(() => {
-    // console.log('onResize');
     if (!containerRef.current) return;
     setContainerHeight(containerRef.current.clientHeight);
   }, [containerRef]);
