@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../framework';
-import { useAutomationServersColumns } from '../AutomationServers';
-import { useAutomationServers } from '../contexts/AutomationServerProvider';
-import { AutomationServer, automationServerKeyFn } from '../interfaces/AutomationServer';
+import { AutomationServer } from '../AutomationServer';
+import { indexedDbItemKey, useIndexedDbDeleteItem } from '../IndexDb';
+import { useAutomationServersColumns } from './useAutomationServersColumns';
 
 export function useRemoveAutomationServers() {
   const { t } = useTranslation();
-  const a = useAutomationServers();
+  const indexedDbDeleteItem = useIndexedDbDeleteItem('servers');
   const confirmationColumns = useAutomationServersColumns({
     disableLinks: true,
     disableSort: true,
@@ -20,13 +20,12 @@ export function useRemoveAutomationServers() {
       }),
       actionButtonText: t('Delete servers', { count: servers.length }),
       items: servers.sort((l, r) => compareStrings(l.name, r.name)),
-      keyFn: automationServerKeyFn,
+      keyFn: indexedDbItemKey,
       isDanger: true,
       confirmationColumns,
       actionColumns: confirmationColumns,
       actionFn: (automationServer: AutomationServer) => {
-        a.setAutomationServers(a.automationServers.filter((a) => a !== automationServer));
-        return Promise.resolve();
+        return indexedDbDeleteItem(automationServer.id);
       },
     });
   };

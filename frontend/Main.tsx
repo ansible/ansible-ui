@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PageFramework } from '../framework';
 import ErrorBoundary from '../framework/components/ErrorBoundary';
+import { RouteObj } from './Routes';
+import { AutomationServersProvider } from './automation-servers/AutomationServersProvider';
 import { AutomationServersRoute } from './automation-servers/AutomationServersRoute';
-import { AutomationServersProvider } from './automation-servers/contexts/AutomationServerProvider';
+import { IndexedDbProvider } from './automation-servers/IndexDb';
+import { AWX } from './awx/Awx';
 import { Disclaimer } from './common/Disclaimer';
 import { Login } from './common/Login';
 import { PageNotFound } from './common/PageNotFound';
-import { shouldShowAutmationServers } from './common/should-show-autmation-servers';
-import { AWX } from './awx/Awx';
 import { EventDriven } from './eda/EventDriven';
 import { Hub } from './hub/Hub';
-import { RouteObj } from './Routes';
 
 export default function Main() {
   const { t } = useTranslation();
@@ -21,11 +21,13 @@ export default function Main() {
     // <StrictMode>
     <ErrorBoundary message={t('An error occured')}>
       <Disclaimer>
-        <AutomationServersProvider>
-          <BrowserRouter>
-            <Routing />
-          </BrowserRouter>
-        </AutomationServersProvider>
+        <IndexedDbProvider databaseName="ansible">
+          <AutomationServersProvider>
+            <BrowserRouter>
+              <Routing />
+            </BrowserRouter>
+          </AutomationServersProvider>
+        </IndexedDbProvider>
       </Disclaimer>
     </ErrorBoundary>
     // </StrictMode>
@@ -35,19 +37,23 @@ export default function Main() {
 function Routing() {
   const navigate = useNavigate();
 
-  const { showAutomationServers, showAWX, showHub, showEda } = shouldShowAutmationServers();
-
   return (
     <PageFramework navigate={navigate}>
       <Routes>
-        {showAutomationServers && (
+        {!process.env.UI_MODE && (
           <Route path={RouteObj.AutomationServers} element={<AutomationServersRoute />} />
         )}
-        {showAWX && <Route path={RouteObj.AWX + '/*'} element={<AWX />} />}
-        {showHub && <Route path={RouteObj.Hub + '/*'} element={<Hub />} />}
-        {showEda && <Route path={RouteObj.Eda + '/*'} element={<EventDriven />} />}
+        {(!process.env.UI_MODE || process.env.UI_MODE === 'AWX') && (
+          <Route path={RouteObj.AWX + '/*'} element={<AWX />} />
+        )}
+        {(!process.env.UI_MODE || process.env.UI_MODE === 'HUB') && (
+          <Route path={RouteObj.Hub + '/*'} element={<Hub />} />
+        )}
+        {(!process.env.UI_MODE || process.env.UI_MODE === 'EDA') && (
+          <Route path={RouteObj.Eda + '/*'} element={<EventDriven />} />
+        )}
         <Route path={RouteObj.Login} element={<Login />} />
-        {showAutomationServers ? (
+        {!process.env.UI_MODE ? (
           <Route path="/" element={<Navigate to={RouteObj.AutomationServers} />} />
         ) : (
           <Route path="/" element={<Navigate to={RouteObj.Login} />} />

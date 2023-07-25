@@ -26,9 +26,7 @@ declare namespace NodeJS {
     VERSION: string;
     DELAY: string;
     PWA: string;
-    AWX: string;
-    HUB: string;
-    EDA: string;
+    UI_MODE?: 'AWX' | 'HUB' | 'EDA' | 'GALAXY';
     AWX_ROUTE_PREFIX: string;
     HUB_ROUTE_PREFIX: string;
     EDA_ROUTE_PREFIX: string;

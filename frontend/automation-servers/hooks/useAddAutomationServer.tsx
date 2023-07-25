@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { PageForm, PageFormSelect, usePageDialog } from '../../../framework';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
-import { useAutomationServers } from '../contexts/AutomationServerProvider';
-import { AutomationServer } from '../interfaces/AutomationServer';
-import { AutomationServerType } from '../interfaces/AutomationServerType';
+import { AutomationServer } from '../AutomationServer';
+import { useIndexDbPutItem } from '../IndexDb';
+import { useAutomationServerTypes } from './useAutomationServerTypes';
 
 const ModalFormDiv = styled.div`
   padding: 24px;
@@ -25,16 +25,15 @@ export function useAddAutomationServer() {
 export function AddAutomationServerDialog() {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
-
-  const { setAutomationServers } = useAutomationServers();
-
+  const putIndexDbItem = useIndexDbPutItem('servers');
   const [_, setDialog] = usePageDialog();
   const onClose = () => setDialog(undefined);
-  const onSubmit = (data: AutomationServer) => {
-    setAutomationServers((servers) => [...servers.filter((a) => a.url !== data.url), data]);
+  const onSubmit = (automationServer: AutomationServer) => {
+    void putIndexDbItem(automationServer);
     onClose();
     return Promise.resolve();
   };
+  const automationServerTypes = useAutomationServerTypes();
 
   return (
     <Modal
@@ -46,7 +45,7 @@ export function AddAutomationServerDialog() {
       hasNoBodyWrapper
     >
       <ModalFormDiv>
-        <PageForm
+        <PageForm<AutomationServer>
           submitText={t('Add automation server')}
           onSubmit={onSubmit}
           isVertical
@@ -54,7 +53,7 @@ export function AddAutomationServerDialog() {
           disableScrolling
           disableBody
           disablePadding
-          defaultValue={{ name: '', url: '', type: AutomationServerType.AWX }}
+          defaultValue={{ name: '', url: '' }}
         >
           <PageFormTextInput<AutomationServer>
             label={t('Name')}
@@ -73,27 +72,11 @@ export function AddAutomationServerDialog() {
             label={t('Automation type')}
             name="type"
             placeholderText={t('Select automation type')}
-            options={[
-              {
-                label: t('AWX Ansible server'),
-                description: t(
-                  'Define, operate, scale, and delegate automation across your enterprise.'
-                ),
-                value: AutomationServerType.AWX,
-              },
-              {
-                label: t('Galaxy Ansible server'),
-                description: t('Discover, publish, and manage your Ansible collections.'),
-                value: AutomationServerType.HUB,
-              },
-              {
-                label: t('EDA server'),
-                description: t(
-                  'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
-                ),
-                value: AutomationServerType.EDA,
-              },
-            ]}
+            options={Object.values(automationServerTypes).map((automationServerType) => ({
+              label: automationServerType.name,
+              description: automationServerType.description,
+              value: automationServerType.type,
+            }))}
             isRequired
           />
         </PageForm>

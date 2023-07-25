@@ -4,19 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { usePageNavBarClick, usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
 import { RouteObj } from '../Routes';
-import { AutomationServerSwitcher } from '../automation-servers/components/AutomationServerSwitcher';
-import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
-import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { AutomationServerType } from '../automation-servers/AutomationServer';
+import { AutomationServerSwitcher } from '../automation-servers/AutomationServerSwitcher';
+import { useActiveAutomationServer } from '../automation-servers/AutomationServersProvider';
 import { isRouteActive } from './Masthead';
-import { shouldShowAutmationServers } from './should-show-autmation-servers';
 
 export function CommonSidebar(props: { children?: ReactNode }) {
   const { t } = useTranslation();
   const location = useLocation();
-  const { automationServer } = useAutomationServers();
+  const automationServer = useActiveAutomationServer();
   const navBar = usePageNavSideBar();
   const onClick = usePageNavBarClick();
-  const { showAutomationServers } = shouldShowAutmationServers();
+  const showAutomationServers = !process.env.UI_MODE;
   return (
     <PageSidebar
       isNavOpen={navBar.isOpen}

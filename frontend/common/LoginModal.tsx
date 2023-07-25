@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageForm, PageFormSelect, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
+import { LoadingState } from '../../framework/components/LoadingState';
 import { RouteObj } from '../Routes';
-import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
-import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
-import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
-import { hubAPI } from '../hub/api';
+import { AutomationServerType } from '../automation-servers/AutomationServer';
+import { useAutomationServers } from '../automation-servers/AutomationServersProvider';
+import { useSetActiveAutomationServer } from '../automation-servers/hooks/useSetActiveAutomationServer';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -18,12 +18,12 @@ const LoginModalDiv = styled.div`
   padding: 24px;
 `;
 
-export function LoginModal(props: { server?: string; onLogin?: () => void }) {
+export function LoginModal(props: { serverId?: string | number; onLogin?: () => void }) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const navigate = useNavigate();
   const onClose = () => {
-    if (process.env.EDA === 'true') {
+    if (process.env.UI_MODE === 'EDA') {
       navigate(-1);
     }
     setDialog(undefined);
@@ -42,12 +42,12 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
       title={t('Login')}
       aria-label={t('Login')}
       onClose={onClose}
-      showClose={process.env.EDA !== 'true'}
+      showClose={!process.env.UI_MODE}
       variant={ModalVariant.small}
       hasNoBodyWrapper
     >
       <LoginModalDiv>
-        <LoginForm defaultServer={props.server} onLogin={props.onLogin} />
+        <LoginForm defaultServerId={props.serverId} onLogin={props.onLogin} />
       </LoginModalDiv>
     </Modal>
   );
@@ -57,10 +57,10 @@ export function useLoginModal(onLogin?: () => void) {
   const [_, setDialog] = usePageDialog();
   const onLoginHandler = useCallback(() => onLogin?.(), [onLogin]);
   return useCallback(
-    (server?: string) =>
+    (serverId?: string | number) =>
       setDialog(
         <LoginModal
-          server={server}
+          serverId={serverId}
           onLogin={() => {
             setDialog(undefined);
             onLoginHandler();
@@ -71,46 +71,45 @@ export function useLoginModal(onLogin?: () => void) {
   );
 }
 
-function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
+function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { automationServers, setAutomationServer } = useAutomationServers();
+  const automationServers = useAutomationServers();
+  const setActiveAutomationServer = useSetActiveAutomationServer();
 
   useInvalidateCacheOnUnmount();
 
   const onSubmit = useCallback<
-    PageFormSubmitHandler<{ server: string; username: string; password: string }>
+    PageFormSubmitHandler<{ serverId: string | number; username: string; password: string }>
   >(
     async (data, setError) => {
       try {
-        let automationServer: AutomationServer | undefined;
-        if (process.env.AWX === 'true') {
-          automationServer = { name: '', url: '', type: AutomationServerType.AWX };
-        } else if (process.env.HUB === 'true') {
-          automationServer = { name: '', url: '', type: AutomationServerType.HUB };
-        } else if (process.env.EDA === 'true') {
-          automationServer = { name: '', url: '', type: AutomationServerType.EDA };
-        } else {
-          automationServer = automationServers.find((server) => server.url === data.server);
-        }
+        const automationServer = automationServers?.find(
+          (automationServer) => automationServer.id === data.serverId
+        );
         if (!automationServer) return;
+
+        setActiveAutomationServer?.(automationServer);
+        setCookie('server', automationServer.url);
 
         let loginPageUrl: string;
         switch (automationServer.type) {
           case AutomationServerType.AWX:
             loginPageUrl = '/api/login/';
             break;
-          case AutomationServerType.HUB:
-            loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
-            break;
           case AutomationServerType.EDA:
             loginPageUrl = '/api/eda/v1/auth/session/login/';
+            break;
+          case AutomationServerType.Galaxy:
+            loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
+            break;
+          case AutomationServerType.HUB:
+            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
             break;
         }
         if (!loginPageUrl) return;
 
-        setCookie('server', data.server);
         const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
         let searchString = 'name="csrfmiddlewaretoken" value="';
         if (automationServer.type === AutomationServerType.EDA) searchString = 'csrfToken: "';
@@ -122,6 +121,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             loginPage.indexOf('"', searchStringIndex + searchString.length)
           );
         }
+
         const searchParams = new URLSearchParams();
         if (csrfmiddlewaretoken) {
           searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
@@ -130,6 +130,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         searchParams.set('username', data.username);
         searchParams.set('password', data.password);
         searchParams.set('next', '/');
+
         try {
           await ky.post(loginPageUrl, {
             credentials: 'include',
@@ -149,8 +150,6 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
           }
         }
 
-        localStorage.setItem('server', data.server);
-        setAutomationServer(automationServer);
         switch (automationServer.type) {
           case AutomationServerType.AWX:
             navigate(RouteObj.Dashboard);
@@ -159,6 +158,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             navigate(RouteObj.EdaDashboard);
             break;
           case AutomationServerType.HUB:
+          case AutomationServerType.Galaxy:
             navigate(RouteObj.HubDashboard);
             break;
         }
@@ -172,8 +172,9 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
         }
       }
     },
-    [automationServers, navigate, props, setAutomationServer, t]
+    [automationServers, navigate, props, setActiveAutomationServer, t]
   );
+  if (!automationServers) return <LoadingState />;
 
   return (
     <PageForm
@@ -183,37 +184,29 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       isVertical
       singleColumn
       defaultValue={
-        process.env.EDA === 'true'
+        process.env.UI_MODE
           ? {}
           : {
-              server: automationServers.find((automationServer) =>
-                props.defaultServer
-                  ? automationServer.url === props.defaultServer
-                  : localStorage.getItem('server')
-              )?.url,
+              serverId: automationServers?.find((automationServer) =>
+                props.defaultServerId
+                  ? automationServer.id === props.defaultServerId
+                  : automationServer.isActive
+              )?.id,
             }
       }
       disableBody
       disablePadding
       disableScrolling
     >
-      {process.env.AWX !== 'true' && process.env.HUB !== 'true' && process.env.EDA !== 'true' && (
+      {!process.env.UI_MODE && (
         <PageFormSelect
-          name="server"
+          name="serverId"
           label={t('Automation server')}
           placeholderText={t('Select automation server')}
-          options={automationServers.map((automationServer) => ({
+          options={(automationServers ?? []).map((automationServer) => ({
             label: automationServer.name,
             description: automationServer.url,
-            value: automationServer.url,
-            group:
-              automationServer?.type === AutomationServerType.AWX
-                ? t('AWX Ansible server')
-                : automationServer?.type === AutomationServerType.HUB
-                ? t('Galaxy Ansible server')
-                : automationServer?.type === AutomationServerType.EDA
-                ? t('EDA server')
-                : t('Unknown'),
+            value: automationServer.id,
           }))}
           isRequired
         />

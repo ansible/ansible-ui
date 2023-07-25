@@ -9,7 +9,7 @@ import {
 } from 'react';
 import useReactWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue, WebSocketHook } from 'react-use-websocket/dist/lib/types';
-import { useAutomationServers } from '../../automation-servers/contexts/AutomationServerProvider';
+import { useActiveAutomationServer } from '../../automation-servers/AutomationServersProvider';
 import { getCookie } from '../../common/crud/cookie';
 
 interface Subscriptions {
@@ -34,13 +34,13 @@ function useWebSocket() {
 }
 
 export function WebSocketProvider(props: { children?: ReactNode }) {
-  const { automationServer } = useAutomationServers();
+  const automationServer = useActiveAutomationServer();
   const [webSocketUrl, setWebSocketUrl] = useState<string | null>(null);
   const webSocket = useReactWebSocket(webSocketUrl, { shouldReconnect: () => true });
   const [subscriptions, setSubscriptions] = useState<Subscriptions>({});
 
   useEffect(() => {
-    if (automationServer || process.env.AWX === 'true') {
+    if (automationServer || process.env.UI_MODE === 'AWX') {
       const loc = window.location;
       let new_uri: string;
       if (loc.protocol === 'https:') {

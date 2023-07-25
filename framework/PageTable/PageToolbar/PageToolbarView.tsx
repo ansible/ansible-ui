@@ -31,7 +31,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
   if (!props.disableListView) viewTypeCount++;
 
   return (
-    <ToolbarGroup variant="button-group" style={{ justifyContent: 'end' }}>
+    <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
       {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
         <ToolbarItem>
           <Tooltip content={translations.manageColumns}>

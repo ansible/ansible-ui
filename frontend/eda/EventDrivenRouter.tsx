@@ -20,7 +20,7 @@ import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
-import { EdaUserDetails, EdaMyDetails } from './UserAccess/Users/EdaUserDetails';
+import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';

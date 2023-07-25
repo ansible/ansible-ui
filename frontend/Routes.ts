@@ -9,6 +9,7 @@ const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
 const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
   ? (process.env.HUB_ROUTE_PREFIX as RouteType)
   : '/hub';
+
 const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
   ? (process.env.EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
