@@ -16,6 +16,7 @@ function add(string, depth)
     return depthString(depth) + string + '\n';
 }
 
+// add line or multiline of commented string
 function addComment(string, depth)
 {
     let resString = '';
@@ -31,6 +32,7 @@ function addComment(string, depth)
     }
 }
 
+// transforms schemaKey into interface name
 function schemaKeyToInterface(schemaKey)
 {
     const myString = schemaKey.replaceAll('.', '');
@@ -38,6 +40,7 @@ function schemaKeyToInterface(schemaKey)
     return result;
 }
 
+// returns string with tabulators defined by depth
 function depthString(depth)
 {
     let string = '';
@@ -55,6 +58,12 @@ function refToObjectKey(ref)
     const prefix = '#/components/schemas/';
     return ref.slice(prefix.length);
 }
+
+// search for paths and connects them to schemas, also to schemas that are inside results with pagination
+// example:
+//   PaginatedCollectionVersionSearchListResponseList<CollectionVersionSearchListResponse>
+//   /api/content/{path}/v3/plugin/ansible/search/collection-versions/
+// this API returns PaginatedCollectionVersionSearchListResponseList which contains list of CollectionVersionSearchListResponse
 
 function createPathsForSchemas(jsonData)
 {
@@ -128,6 +137,7 @@ function createPathsForSchemas(jsonData)
         }
     }
   
+    // write the schemas into file that can use for better orientation of what can be generated
     fs.writeFile('paths-and-objects.txt', fileContent, 'utf8', (err) => {
          
         if (err) {
@@ -141,6 +151,8 @@ function createPathsForSchemas(jsonData)
     return pathSchemas;
 }
 
+// searches what type the result API contains. We have basic two results.
+// one contains results.items and another contains data.items
 function searchForListObject(jsonData, objName, objKey, pathKey)
 {
     try
@@ -169,6 +181,7 @@ function searchForListObject(jsonData, objName, objKey, pathKey)
     }
 }
 
+// searches for fields of interface
 function serializeObjectInterface(schema, depth, interfaceName, needImport)
 {
     try
@@ -250,12 +263,11 @@ try
                 let needImport = {};
                 const schema = schemas[schemaKey];
                 const interfaceName = schemaKeyToInterface(schemaKey);
-                const filePath = 'generated/' + interfaceName + '.ts';
 
                 let fileContent = '';
                 let interfacePath = null;
 
-                fileContent += add('// Modified at ' + new Date().toLocaleString());
+                fileContent += add('// Created at ' + new Date().toLocaleString());
                 
                 if (pathSchemas[interfaceName])
                 {
@@ -298,8 +310,8 @@ try
                 // description
                 if (schema?.properties)
                 {
-                let serRes = serializeObjectInterface(schema, 1, interfaceName, needImport);
-                fileContent += serRes.fileContent;
+                    let serRes = serializeObjectInterface(schema, 1, interfaceName, needImport);
+                    fileContent += serRes.fileContent;
                 }
 
                 fileContent += add('};');
@@ -307,11 +319,13 @@ try
                 let fileContent2 = '';
 
 
+                // some types may use another types inside, import them
+                // and also generate them as filesToGenerate
                 for (var imported in needImport)
                 {
                     fileContent2 += add(`import ${imported} from "./${imported}";`);
              
-                    if (filesToGenerate.includes(interfaceName))
+                    if (filesToGenerate.includes(interfaceName) && !filesToGenerate.includes(imported))
                     {
                         filesToGenerate.push(imported);
                     }
