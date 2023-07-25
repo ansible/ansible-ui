@@ -34,11 +34,11 @@ export function useAutomationServersColumns(_options?: {
         value: (server) => server.url,
         cell: (server) => <CopyCell text={server.url} />,
       },
-      {
-        header: t('Labels'),
-        type: 'labels',
-        value: (server) => server.labels,
-      },
+      // {
+      //   header: t('Labels'),
+      //   type: 'labels',
+      //   value: (server) => server.labels,
+      // },
     ],
     [automationServerTypes, openLoginModal, t]
   );
