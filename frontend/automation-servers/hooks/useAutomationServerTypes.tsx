@@ -1,8 +1,8 @@
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AutomationServerType } from '../AutomationServer';
 import AwxIcon from '../../assets/AWX.svg';
 import EdaIcon from '../../assets/EDA.svg';
+import { AutomationServerType } from '../AutomationServer';
 
 export function useAutomationServerTypes() {
   const { t } = useTranslation();
@@ -13,13 +13,13 @@ export function useAutomationServerTypes() {
     > = {
       [AutomationServerType.AWX]: {
         type: AutomationServerType.AWX,
-        name: t('AWX'),
+        name: t('AWX Ansible Server'),
         description: t('Define, operate, scale, and delegate automation across your enterprise.'),
         icon: <AwxIcon />,
       },
       [AutomationServerType.EDA]: {
         type: AutomationServerType.EDA,
-        name: t('Event Driven Automation'),
+        name: t('Event Driven Automation Server'),
         description: t(
           'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
         ),
@@ -27,7 +27,7 @@ export function useAutomationServerTypes() {
       },
       [AutomationServerType.Galaxy]: {
         type: AutomationServerType.Galaxy,
-        name: t('Galaxy'),
+        name: t('Galaxy Server'),
         description: t(
           'Community-driven hub for sharing, finding, and enhancing Ansible roles and collections.'
         ),
