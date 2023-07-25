@@ -9,10 +9,10 @@ import {
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
 import { IEdaView } from '../../useEventDrivenView';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { useRuleAuditColumns } from '../../views/RuleAudit/hooks/useRuleAuditColumns';
 
-export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAudit> }) {
+export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAuditItem> }) {
   const { view } = props;
   const { t } = useTranslation();
   const tableColumns = useRuleAuditColumns();
