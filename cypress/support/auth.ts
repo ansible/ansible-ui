@@ -1,3 +1,5 @@
+import { randomString } from '../../framework/utils/random-string';
+
 Cypress.Commands.add(
   'login',
   (server: string, username: string, password: string, serverType: string) => {
@@ -5,7 +7,7 @@ Cypress.Commands.add(
     window.localStorage.setItem('disclaimer', 'true');
 
     if (Cypress.env('TEST_STANDALONE') === true) {
-      if (serverType === 'Event Driven Automation Server') {
+      if (serverType === 'EDA server') {
         // Standalone EDA login
         cy.visit(`/login`, {
           retryOnStatusCodeFailure: true,
@@ -15,7 +17,7 @@ Cypress.Commands.add(
         cy.typeInputByLabel(/^Password$/, password);
         cy.get('button[type=submit]').click();
         return;
-      } else if (serverType === 'AWX Ansible Server') {
+      } else if (serverType === 'AWX Ansible server') {
         // Standalone AWX login
         cy.visit(`/ui_next`, {
           retryOnStatusCodeFailure: true,
@@ -35,13 +37,15 @@ Cypress.Commands.add(
     });
 
     cy.clickButton(/^Add automation server$/);
-    cy.typeInputByLabel(/^Name$/, 'E2E');
-    cy.typeInputByLabel(/^Url$/, server);
-    cy.get('.pf-c-select__toggle').click();
-    cy.clickButton(serverType);
-    cy.get('button[type=submit]').click();
+    const automationServerName = 'E2E ' + randomString(4);
+    cy.getDialog().within(() => {
+      cy.typeInputByLabel(/^Name$/, automationServerName);
+      cy.typeInputByLabel(/^Url$/, server);
+      cy.selectDropdownOptionByLabel(/^Automation type$/, serverType);
+      cy.get('button[type=submit]').click();
+    });
 
-    cy.contains('a', /^E2E$/).click();
+    cy.contains('a', automationServerName).click();
     cy.typeInputByLabel(/^Username$/, username);
     cy.typeInputByLabel(/^Password$/, password);
     cy.get('button[type=submit]').click();
