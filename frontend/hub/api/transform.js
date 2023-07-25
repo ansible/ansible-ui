@@ -1,13 +1,16 @@
+// @ts-nocheck
 console.log('Running script...');
+console.log('cwd = ' + process.cwd());
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
 
-const filePrefix = '';
 
-// Specify the path to your JSON file
-const filePath = path.join(__dirname, 'swagger.json');
+const filesToGenerate = [];
+const filesContent = {};
 
+let firstParam = process.argv[2];
+
+// adds one line of string
 function add(string, depth)
 {
     return depthString(depth) + string + '\n';
@@ -99,7 +102,7 @@ function createPathsForSchemas(jsonData)
                             pathSchemas[objName] =  { path : pathKey, objectName: objName, objectKey : objKey, listItem: searchForListObject(jsonData, objName, objKey, pathKey) };
                             
                             let listItemName = pathSchemas[objName].listItem?.name;
-                            let finalname = objName;
+                            let finalName = objName;
 
                             if (listItemName)
                             {
@@ -119,70 +122,23 @@ function createPathsForSchemas(jsonData)
                     }
             }   
         
-        }catch(ex)
+        }catch(error)
         {
-            debugger;
+            console.log(error);
         }
     }
-
-    // link items in list paths
-    /*for (var pathKey in pathSchemas)
-    {
-        let obj = pathSchemas[pathKey];
-
-        let listName = obj?.listItem?.name;
-
-        if (!name2) continue;
-        debugger;
-        let obj2 = pathSchemas[name2];
-
-        if (obj2)
-        {
-          obj2.path = obj.path;
-        }else
-        {
-            debugger;
-        }
-    }*/
-
-    
-    const filePath = path.join(__dirname, filePrefix + 'paths-and-objects.txt');
-    fs.writeFile(filePath, fileContent, 'utf8', (err) => {
+  
+    fs.writeFile('paths-and-objects.txt', fileContent, 'utf8', (err) => {
          
         if (err) {
-            debugger;
             console.error('Error writing file:', err);
         } else {
-        console.log(`File ${filePath} written successfully!`);
+        console.log(`File paths-and-objects.txt written successfully!`);
         }
     });
 
 
     return pathSchemas;
-}
-
-function createIndexFile(jsonData)
-{
-    const data = jsonData.components.schemas;
-    let fileContent = '';
-
-    for(var key in data)
-    {
-        // export * from "./RepositoryResponse";
-        const interface = schemaKeyToInterface(key);
-        fileContent += add(`export * from  "./${interface}";`);
-    }
-
-    const filePath = path.join(__dirname, filePrefix + 'api-schemas/index.ts');
-    fs.writeFile(filePath, fileContent, 'utf8', (err) => {
-         
-        if (err) {
-            debugger;
-            console.error('Error writing file:', err);
-        } else {
-        console.log(`File ${filePath} written successfully!`);
-        }
-    });
 }
 
 function searchForListObject(jsonData, objName, objKey, pathKey)
@@ -206,46 +162,17 @@ function searchForListObject(jsonData, objName, objKey, pathKey)
         let newObjName = schemaKeyToInterface(newObjKey);
 
         return { key : newObjKey, name : newObjName };
-    }catch(ex)
+    }catch(error)
     {
-        debugger;
+        console.log(error);
         return null;
     }
 }
 
-/*
-function getPathFromSchemaListItem(pathSchemas, name)
-{
-    let obj = null;
-    
-
-
-    for (var key in pathSchemas){ 
-        let schema = pathSchemas[key];
-
-        if (key == 'PaginatedansibleCollectionVersionResponseList' && name == 'CollectionVersionSearchListResponse')
-        {
-            debugger;
-        }
-        
-        if (schema.listItem?.name == name)
-        {
-            return {path : schema.path, origin : schema.objectName};
-        }
- 
-    }
-
-    return null;
-}*/
-
-
-
-function serializeObjectInterface(schema, depth, interface, needImport)
+function serializeObjectInterface(schema, depth, interfaceName, needImport)
 {
     try
     {
-
-
         let fileContent = '';
 
         for (var propertyKey in schema.properties) {
@@ -260,14 +187,6 @@ function serializeObjectInterface(schema, depth, interface, needImport)
             {
                 fileContent += addComment(description, depth);
                 
-            }else
-            {
-                //fileContent += add('// no description', depth);
-            }
-
-            if (property.allOf)
-            {
-
             }
 
             if (type == 'string')
@@ -295,127 +214,141 @@ function serializeObjectInterface(schema, depth, interface, needImport)
                 needImport[objectName] = true;
                 continue;
             }
-
-
-            if (type == 'object')
-            {
-               
-               /* fileContent += add('{', depth);
-                if (property) { 
-                    debugger;
-                    fileContent += add(serializeObjectInterface(property), depth + 1 ); 
-                }
-                fileContent += add('}', depth);
-                */
-            }
         };
 
 
         return { fileContent };
-    }catch(ex)
+    }catch(error)
     {
-        debugger;
+        console.log(error);
         return '';
     }
 }
 
-// Read the JSON file
-fs.readFile(filePath, 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error reading file:', err);
-    return;
-  }
 
-  try {
-    // Parse the JSON data
-    const jsonData = JSON.parse(data);
+try
+{
+    // Read the JSON file
+    fs.readFile('swagger.json', 'utf8', (err, data) => {
 
-    const pathSchemas = createPathsForSchemas(jsonData);
-    createIndexFile(jsonData);
-    const schemas = jsonData.components.schemas;
-    const keys = Object.keys(schemas);
-    
-    keys.forEach( (schemaKey) => {
-      
-        try{
-            let needImport = {};
-            const schema = schemas[schemaKey];
-            const interface = schemaKeyToInterface(schemaKey);
-            const filePath = path.join(__dirname, filePrefix + 'api-schemas/' + interface + '.ts');
+    if (err) {
+        console.error('Error reading file:', err);
+        return;
+    }
 
-            let fileContent = '';
-            let interfacePath = null;
+    try {
+        // Parse the JSON data
+        const jsonData = JSON.parse(data);
 
-            fileContent += add('// Autogenerated file. Please do not modify.');
-            fileContent += add('// Modified at ' + new Date().toLocaleString());
-            
-            if (pathSchemas[interface])
-            {
-                interfacePath = pathSchemas[interface]?.path;
-                if (interfacePath)
+        const pathSchemas = createPathsForSchemas(jsonData);
+        const schemas = jsonData.components.schemas;
+        const keys = Object.keys(schemas);
+        
+        keys.forEach( (schemaKey) => {
+        
+            try{
+                let needImport = {};
+                const schema = schemas[schemaKey];
+                const interfaceName = schemaKeyToInterface(schemaKey);
+                const filePath = 'generated/' + interfaceName + '.ts';
+
+                let fileContent = '';
+                let interfacePath = null;
+
+                fileContent += add('// Modified at ' + new Date().toLocaleString());
+                
+                if (pathSchemas[interfaceName])
                 {
-                    fileContent += add('// ' + interfacePath);
-                }else
-                {
-                    try
+                    interfacePath = pathSchemas[interfaceName]?.path;
+                    if (interfacePath)
                     {
-                        interfacePath = pathSchemas[interface].listItemOf?.path;
-                        let itemOfObjectName = pathSchemas[interface].listItemOf?.objectName;
                         fileContent += add('// ' + interfacePath);
-                        fileContent += add('// Part of response collection ' + itemOfObjectName );
-                    }catch(ex)
+                    }else
                     {
-                        debugger;
+                        try
+                        {
+                            interfacePath = pathSchemas[interfaceName].listItemOf?.path;
+                            let itemOfObjectName = pathSchemas[interfaceName].listItemOf?.objectName;
+                            fileContent += add('// ' + interfacePath);
+                            fileContent += add('// Part of response collection ' + itemOfObjectName );
+                        }catch(error)
+                        {
+                            console.log(error);
+                        }
+                    }
+
+                    if (interfacePath.includes(firstParam))
+                    {
+                        filesToGenerate.push(interfaceName);
+                    }
+
+                    if (!firstParam)
+                    {
+                        filesToGenerate.push(interfaceName);
                     }
                 }
-            }
-            
-            if (schema.description)
+                
+                if (schema.description)
+                {
+                    fileContent += addComment(schema.description);
+                }   
+        
+                fileContent += add(`export interface ${interfaceName} {`);
+
+                // description
+                if (schema?.properties)
+                {
+                let serRes = serializeObjectInterface(schema, 1, interfaceName, needImport);
+                fileContent += serRes.fileContent;
+                }
+
+                fileContent += add('};');
+
+                let fileContent2 = '';
+
+
+                for (var imported in needImport)
+                {
+                    fileContent2 += add(`import ${imported} from "./${imported}";`);
+             
+                    if (filesToGenerate.includes(interfaceName))
+                    {
+                        filesToGenerate.push(imported);
+                    }
+                }
+                
+                fileContent2 += fileContent;
+
+                filesContent[interfaceName] = fileContent2;
+             
+            }catch(error)
             {
-                fileContent += addComment(schema.description);
-            }   
-    
-            fileContent += add(`export interface ${interface} {`);
-
-            // description
-            if (schema?.properties)
-            { 
-
-              let serRes = serializeObjectInterface(schema, 1, interface, needImport);
-              fileContent += serRes.fileContent;
+                console.log(error);
             }
+        });
+        
+        console.log('All done');
+        for (var i in filesToGenerate)
+        {
+            const fileToGenerate = filesToGenerate[i];
+            console.log('writing ' + fileToGenerate);
+            const fileContent = filesContent[fileToGenerate];
 
-            fileContent += add('};');
-
-            let fileContent2 = '';
-
-
-            for (var imported in needImport)
-            {
-                fileContent2 += add('import { ' + imported +' } from "./index";');
-            }
-            
-            fileContent2 += fileContent;
-
-            console.log('writing ' + filePath);
-            fs.writeFile(filePath, fileContent2, 'utf8', (err) => {
-         
+            fs.writeFile(`generated/${fileToGenerate}` + '.ts', fileContent, 'utf8', (err) => {
+        
                 if (err) {
-                    debugger;
                     console.error('Error writing file:', err);
                 } else {
-                console.log(`File ${filePath} written successfully!`);
+                console.log(`File ${fileToGenerate} written successfully!`);
                 }
             });
-        }catch( ex)
-        {
-            debugger;
         }
-    });
-    
-    // Use the parsed JSON data
 
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-  }
-});
+    } catch (error) {
+        console.error('Error parsing JSON:', error);
+    }
+    });
+}catch(error)
+{
+    console.log(error);
+}
