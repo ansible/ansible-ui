@@ -224,7 +224,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           expandedRowFunctions.push((item) => {
             const value = descriptionColumn.value?.(item);
             if (value) {
-              return <div>{value}</div>;
+              return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
             }
           });
         } else {
@@ -236,6 +236,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
         <PageDetailsFromColumns
+          key={props.keyFn(item)}
           item={item}
           columns={expandedRowColumns}
           disablePadding
